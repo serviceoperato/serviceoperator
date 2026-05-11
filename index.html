@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';d.setAttribute('data-theme',t)})();</script>
+<script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
 <title>ServiceOpera.to — AI Service Operations · Thailand</title>
 <meta name="description" content="Jack — AI service operator. I design and run automation systems for hospitality, medical and property businesses across Thailand." />
 <link rel="icon" href="favicon.png" type="image/png" sizes="any" />
@@ -304,5 +304,6 @@
 
 <script src="theme.js"></script>
 <script src="app.js"></script>
+<script src="debug.js"></script>
 </body>
 </html>

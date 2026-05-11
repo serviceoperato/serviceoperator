@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';d.setAttribute('data-theme',t)})();</script>
+<script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
 <title>404 · ServiceOpera.to</title>
 <link rel="icon" href="favicon.png" type="image/png" sizes="any" />
 <link rel="apple-touch-icon" href="favicon.png" />
@@ -44,5 +44,6 @@
   </div>
 </div>
 <script src="theme.js"></script>
+<script src="debug.js"></script>
 </body>
 </html>
