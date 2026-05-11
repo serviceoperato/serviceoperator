@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin · ServiceOpera.to</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" href="favicon.png" type="image/png" sizes="any" />
+<link rel="apple-touch-icon" href="favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600&family=JetBrains+Mono:wght@400;500;700&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body class="page-admin">
+
+<div class="grain" aria-hidden="true"></div>
+
+<div id="adminGate" class="admin-gate">
+  <div class="admin-gate__card">
+    <div class="admin-gate__brand">
+      <img class="gate__brand-img" src="logo-icon.svg" width="36" height="36" alt="" decoding="async" />
+      <span>Admin</span>
+    </div>
+    <p class="mono" style="color: var(--amber-2); margin-bottom: 1rem;">— SERVICEOPERA.TO</p>
+    <h1>Sign in</h1>
+    <p id="adminConfigBanner" class="admin-config-banner is-hidden mono">
+      Add <strong>admin-config.js</strong> (copy from <strong>admin-config.example.js</strong>) and set <strong>window.__ADMIN_PASSWORD__</strong>. File is gitignored.
+    </p>
+    <p class="admin-gate__lede">Use your admin email and password. This gate runs in the browser only — not a substitute for server-side auth.</p>
+
+    <form id="adminGateForm" class="portal-form" autocomplete="on">
+      <label>
+        <span class="mono">EMAIL</span>
+        <input type="email" name="email" required autocomplete="username" value="jack@serviceopera.to" />
+      </label>
+      <label>
+        <span class="mono">PASSWORD</span>
+        <input type="password" name="password" required autocomplete="current-password" placeholder="••••••••" />
+      </label>
+      <button type="submit" class="btn btn--primary btn--block">Enter admin →</button>
+      <p class="portal-form__hint mono" id="adminGateHint"></p>
+    </form>
+
+    <p class="modal__footnote"><a href="/">← Back to site</a></p>
+  </div>
+</div>
+
+<div id="adminWorkspace" class="admin-workspace is-hidden">
+  <header class="admin-topbar">
+    <a href="/" class="admin-topbar__home">
+      <img src="logo-icon.svg" width="32" height="32" alt="" decoding="async" />
+      <span>ServiceOpera.to</span>
+    </a>
+    <div class="admin-topbar__meta mono">ADMIN · jack@serviceopera.to</div>
+    <button type="button" class="admin-topbar__logout" id="adminLogout">Sign out</button>
+  </header>
+
+  <main class="admin-main">
+    <h1 class="admin-main__title">Control panel</h1>
+    <p class="admin-main__sub">Square actions below are placeholders until each area is wired to your stack.</p>
+
+    <div id="adminTiles" class="admin-tiles" role="navigation" aria-label="Admin sections"></div>
+
+    <section id="adminPanel" class="admin-panel is-hidden" aria-live="polite">
+      <h2 id="adminPanelTitle" class="admin-panel__title mono"></h2>
+      <div id="adminPanelBody" class="admin-panel__body"></div>
+    </section>
+  </main>
+</div>
+
+<script src="admin-config.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

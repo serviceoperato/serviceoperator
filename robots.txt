@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /client.html
+Disallow: /admin.html
 
 Sitemap: https://serviceopera.to/sitemap.xml

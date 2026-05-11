@@ -15,8 +15,11 @@ A complete, deployable site under **`serviceopera.to`** with:
 | `client.html` | **The "secret page".** Password-protected private demo workspace. You send one prospect a unique username + password; they log in and see a dashboard themed for *their* business. |
 | `styles.css` | Shared black / white / indigo design system. |
 | `app.js` | Landing-page modal + credential check. |
+| `admin.html` | **Admin panel** (linked from the home nav as “Admin”). Square tiles for Monitor, Users & payouts, DB console, etc. — UI shells until you wire a backend. |
+| `admin.js` | Admin gate + tile behaviour. |
+| `admin-config.js` | Sets `window.__ADMIN_PASSWORD__` for `jack@serviceopera.to`. **Not secure** (credentials in static JS); use only as a convenience shell until you add real server auth. |
 
-The two pages share styling but the client page is hidden behind a login gate and marked `noindex, nofollow` so it doesn't show up on Google.
+The two pages share styling but the client page is hidden behind a login gate and marked `noindex, nofollow` so it doesn't show up on Google. **`admin.html`** is also `noindex` and disallowed in `robots.txt`.
 
 ---
 
