@@ -1,0 +1,5 @@
+# Railway/Nixpacks: this repo is static files; Node is only used to run `serve`.
+# Without package.json + start, Railpack may look for src/index.js and fail.
+
+[start]
+cmd = "npm start"

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>404 · Service Opera</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=JetBrains+Mono:wght@300;400;500;700&family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+<style>
+  .err-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: var(--gutter); }
+  .err-card {
+    background: var(--ink-2);
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    padding: 3rem 2.5rem;
+    max-width: 520px;
+    width: 100%;
+    text-align: center;
+  }
+  .err-card h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    margin: 1rem 0;
+  }
+  .err-card p { color: var(--bone); margin-bottom: 2rem; }
+</style>
+</head>
+<body class="page-home">
+<div class="grain" aria-hidden="true"></div>
+<div class="err-wrap">
+  <div class="err-card">
+    <p class="mono" style="color: var(--amber-2);">— 404 · LOST IN THE WINGS</p>
+    <h1>This act doesn't exist.</h1>
+    <p>The page you're looking for isn't here. It may have been moved, or perhaps it was never written.</p>
+    <a href="/" class="btn btn--primary">← Back to the start</a>
+  </div>
+</div>
+</body>
+</html>
