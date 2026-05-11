@@ -296,13 +296,23 @@ a:hover { color: var(--amber-2); }
   filter: var(--logo-filter);
 }
 
-/* Official ServiceOpera.to lockup (transparent PNG: black + indigo) */
+/* Official ServiceOpera.to lockup — transparent PNG, no CSS recolour in either theme.
+   On dark theme the page canvas is near-black; transparent pixels show that canvas, so
+   charcoal strokes in the artwork need a hair of separation (chip), not a filter. */
 .brand-logo {
   width: auto;
   height: auto;
   object-fit: contain;
   background: transparent;
   mix-blend-mode: normal;
+}
+[data-theme="dark"] .brand-logo {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+[data-theme="light"] .brand-logo {
+  background: transparent;
+  border-radius: 0;
 }
 .nav__logo-img.brand-logo {
   height: 40px;
