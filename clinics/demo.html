@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>What's broken in Pattaya's clinics — Service Opera</title>
+<link rel="icon" href="../favicon.png" type="image/png" sizes="any" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=JetBrains+Mono:wght@300;400;500;700&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  .page-clinics-demo .clinics-hero__title { font-family: var(--font-display); font-weight: 400; font-size: clamp(2.2rem, 5vw, 4rem); line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 1.5rem; }
+  .page-clinics-demo .clinics-hero__title .line { display: block; opacity: 0; transform: translateY(16px); animation: rise .85s cubic-bezier(.2,.7,.2,1) forwards; }
+  .page-clinics-demo .clinics-hero__title .line:nth-child(1) { animation-delay: .06s; }
+  .page-clinics-demo .clinics-hero__title .line:nth-child(2) { animation-delay: .16s; }
+  .page-clinics-demo .clinics-hero__title .line:nth-child(3) { animation-delay: .26s; }
+  .page-clinics-demo .clinics-hero__title .line:nth-child(4) { animation-delay: .36s; }
+  .clinics-skel { display: grid; gap: 1rem; max-width: 720px; margin: 2rem auto; padding: 0 var(--gutter); }
+  .clinics-skel__b { height: 72px; background: var(--ink-2); border: 1px solid var(--line); border-radius: 4px; animation: pulse 2s ease-in-out infinite; }
+  .clinics-skel__b:nth-child(2) { animation-delay: .15s; }
+  .clinics-skel__b:nth-child(3) { animation-delay: .3s; }
+  .clinics-pain-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-top: 2rem; }
+  .clinics-pain-card { background: var(--ink-2); border: 1px solid var(--line-strong); border-radius: 6px; padding: 1.25rem 1.2rem; transition: transform .2s, border-color .2s; }
+  .clinics-pain-card:hover { transform: translateY(-3px); border-color: var(--amber); }
+  .clinics-pain-card__idx { color: var(--amber-2); margin-bottom: .5rem; }
+  .clinics-pain-card__theme { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .1em; color: var(--paper); margin-bottom: .35rem; }
+  .clinics-pain-card__meta { font-family: var(--font-mono); font-size: .68rem; color: var(--mute-2); margin-bottom: .75rem; }
+  .clinics-pain-card__quote { font-family: var(--font-display); font-style: italic; font-weight: 300; color: var(--bone); font-size: .95rem; line-height: 1.45; }
+  .clinics-chart { width: 100%; max-width: 760px; height: 280px; margin: 2rem auto 0; }
+  .clinics-chart__row { display: flex; align-items: center; gap: .75rem; margin-bottom: .55rem; }
+  .clinics-chart__label { width: 5.5rem; flex-shrink: 0; font-family: var(--font-mono); font-size: .65rem; color: var(--mute-2); text-align: right; }
+  .clinics-chart__track { flex: 1; height: 20px; background: var(--ink-3); border-radius: 3px; overflow: hidden; border: 1px solid var(--amber-deep); }
+  .clinics-chart__bar { height: 100%; background: var(--amber); }
+  .clinics-chart__count { width: 2rem; font-family: var(--font-mono); font-size: .68rem; color: var(--bone); }
+  .clinics-fix-row { display: grid; grid-template-columns: 2.5rem 1fr 1fr; gap: .75rem; align-items: center; padding: .85rem 0; border-bottom: 1px solid var(--line); transition: background .2s, transform .2s; }
+  .clinics-fix-row:hover { background: rgba(99, 102, 241, 0.06); }
+  .clinics-fix-row:hover .clinics-fix-row__label { transform: translateX(4px); }
+  .clinics-fix-row__label { transition: transform .2s; }
+  .clinics-fix-row__barwrap { height: 6px; background: var(--ink-3); border-radius: 3px; overflow: hidden; }
+  .clinics-fix-row__bar { height: 100%; background: var(--amber); border-radius: 3px; }
+  .clinics-fallback { text-align: center; padding: 4rem var(--gutter); color: var(--bone); }
+.page-clinics-demo .nav__links a { display: inline !important; }
+</style>
+</head>
+<body class="page-client page-clinics-demo">
+
+<div class="grain" aria-hidden="true"></div>
+
+<nav class="nav">
+  <a href="/" class="nav__logo">
+    <img class="nav__logo-img" src="../logo-icon.svg" width="40" height="40" alt="" decoding="async" />
+    <span class="nav__name">ServiceOpera.to</span>
+  </a>
+  <div class="nav__links">
+    <a href="/">Home</a>
+    <a href="mailto:jack@serviceopera.to" class="nav__cta">jack@serviceopera.to</a>
+  </div>
+</nav>
+
+<div id="demoSkeleton" class="clinics-skel" aria-hidden="true">
+  <div class="clinics-skel__b"></div>
+  <div class="clinics-skel__b"></div>
+  <div class="clinics-skel__b"></div>
+</div>
+
+<div id="demoFallback" class="clinics-fallback is-hidden">
+  <p>Could not load clinic audit data.</p>
+  <p><a href="mailto:jack@serviceopera.to" class="btn btn--primary" style="display:inline-block;margin-top:1rem;">Email Jack</a></p>
+</div>
+
+<main id="demoRoot" class="is-hidden">
+  <header class="client-hero" style="border-bottom: 1px solid var(--line);">
+    <div class="client-hero__eyebrow">
+      <span class="dot dot--live"></span>
+      <span class="mono" id="demoEyebrow">— PATTAYA · MEDICAL VERTICAL · UPDATED</span>
+    </div>
+    <h1 class="clinics-hero__title">
+      <span class="line">I looked at</span>
+      <span class="line"><span class="line--accent"><span id="sampleSizeHero">47</span> clinics</span></span>
+      <span class="line">in Pattaya.</span>
+      <span class="line line--italic">Here's what they're losing.</span>
+    </h1>
+    <p class="client-hero__lede" style="max-width: 40em;">
+      Dental, aesthetic, IVF. I pulled every public signal — Google reviews, websites, opening hours, patient feedback in 5 languages — and ran the same five-point operations audit on each. The picture is consistent. So is the fix.
+    </p>
+    <div class="client-hero__stats">
+      <div class="client-stat">
+        <div class="client-stat__label mono">SAMPLE SIZE</div>
+        <div class="client-stat__value"><span id="statSample">47</span></div>
+        <div class="client-stat__delta">dental · aesthetic · IVF</div>
+      </div>
+      <div class="client-stat">
+        <div class="client-stat__label mono">AVG MONTHLY LEAKAGE</div>
+        <div class="client-stat__value">€<span id="statAvgLeak">11.4</span><span>k</span></div>
+        <div class="client-stat__delta up">▲ conservative estimate</div>
+      </div>
+      <div class="client-stat">
+        <div class="client-stat__label mono">WITHOUT ONLINE BOOKING</div>
+        <div class="client-stat__value"><span id="statNoBook">64</span><span>%</span></div>
+        <div class="client-stat__delta">patients drop in the first click</div>
+      </div>
+      <div class="client-stat">
+        <div class="client-stat__label mono">WITHOUT LANGUAGE SWITCHER</div>
+        <div class="client-stat__value"><span id="statNoLang">78</span><span>%</span></div>
+        <div class="client-stat__delta">1 in 3 patients reads Russian or Chinese</div>
+      </div>
+    </div>
+  </header>
+
+  <section class="section" style="padding-top: 4rem;">
+    <div class="section__header">
+      <span class="eyebrow mono">— 01 · WHAT YOUR PATIENTS ACTUALLY COMPLAIN ABOUT</span>
+      <h2 class="section__title">Five pains. Same every clinic.</h2>
+      <p class="section__sub" id="painSub">Drawn from negative reviews across the sample. Translated where needed. Clustered by theme, not by clinic.</p>
+    </div>
+    <div id="painGrid" class="clinics-pain-grid"></div>
+  </section>
+
+  <section class="section section--method" style="margin-top: 2rem;">
+    <div class="section__header">
+      <span class="eyebrow mono">— 02 · THE NUMBER NOBODY LOOKS AT</span>
+      <h2 class="section__title"><span id="totalLeakTitle">€537k</span> walking out the door every month.</h2>
+      <p class="section__sub" id="leakSub">Across the clinics audited. Distributed like this:</p>
+    </div>
+    <div id="leakChart" class="clinics-chart"></div>
+    <p class="mono" style="margin-top: 1.25rem; font-size: .65rem !important; color: var(--mute-2); max-width: 760px; margin-left: auto; margin-right: auto; line-height: 1.5;">
+      Formula: monthly patients (review-derived) × avg ticket per vertical × sum of present leakage factors. Capped at €30k/clinic to stay conservative. Full method available on request.
+    </p>
+  </section>
+
+  <section class="section">
+    <div class="section__header">
+      <span class="eyebrow mono">— 03 · WHAT WOULD MOVE THE NEEDLE</span>
+      <h2 class="section__title">Five things. Ranked by demand.</h2>
+    </div>
+    <div id="fixList" style="max-width: 720px; margin: 0 auto;"></div>
+  </section>
+
+  <section class="section">
+    <div class="section__header">
+      <span class="eyebrow mono">— 04 · WHAT I'D DO IN YOUR CLINIC</span>
+      <h2 class="section__title">A small system, shipped in <em>14 days.</em></h2>
+    </div>
+    <ol class="method" style="max-width: 850px;">
+      <li class="method__step">
+        <div class="method__num">i.</div>
+        <div class="method__body">
+          <h4>Day 1–3 · Audit</h4>
+          <p>I sit with your numbers and your three closest competitors. You get a private brief — like this one, but with your name on it.</p>
+        </div>
+      </li>
+      <li class="method__step">
+        <div class="method__num">ii.</div>
+        <div class="method__body">
+          <h4>Day 4–11 · Build</h4>
+          <p>I wire the one fix that hurts most. WhatsApp concierge, intake form, review autopilot — whichever moves your number. Fixed scope. Fixed price. Live before day 14.</p>
+        </div>
+      </li>
+      <li class="method__step">
+        <div class="method__num">iii.</div>
+        <div class="method__body">
+          <h4>Day 12–14 · Run</h4>
+          <p>We watch it for 72 hours, tune it, hand it to your team. If it doesn't earn its keep in 60 days, you stop paying. Written.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="section section--cta">
+    <div class="cta">
+      <h2>Want to see this for your clinic?</h2>
+      <p>Send me your clinic's name. In 48 hours I'll send you a private page like this one — with your numbers, your three closest competitors, your three highest-ROI fixes. No call required. No deck. Just the work.</p>
+      <div class="cta__actions">
+        <a href="mailto:jack@serviceopera.to?subject=Private%20clinic%20audit&body=Hi%20Jack%2C%0A%0AClinic%20name%3A%0AWebsite%3A%0AOne%20thing%20I%27d%20like%20to%20fix%20first%3A%0A%0AThanks." class="btn btn--primary btn--lg">jack@serviceopera.to</a>
+        <a href="https://wa.me/?text=Hi%20Jack%20-%20clinic%20audit%20request" class="btn btn--ghost btn--lg" target="_blank" rel="noopener">WhatsApp Jack</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer" style="padding-top: 2rem;">
+    <div class="footer__legal mono" id="demoFooter">© 2026 SERVICE OPERA · CLINICS VERTICAL · DATA REFRESHED</div>
+  </footer>
+</main>
+
+<script>
+(function () {
+  var skel = document.getElementById('demoSkeleton');
+  var root = document.getElementById('demoRoot');
+  var fb = document.getElementById('demoFallback');
+
+  function fmtK(n) {
+    if (n === 0) return '0';
+    if (n >= 1000) return (n / 1000).toFixed(n % 1000 === 0 ? 0 : 1) + 'k';
+    return String(n);
+  }
+
+  function fmtDate(iso) {
+    try {
+      var d = new Date(iso);
+      return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    } catch (e) { return iso; }
+  }
+
+  function bucketLabel(i, buckets) {
+    if (i >= buckets.length - 1) return '€' + fmtK(buckets[buckets.length - 1]) + '+';
+    var a = buckets[i];
+    var b = buckets[i + 1];
+    return '€' + fmtK(a) + '–€' + fmtK(b);
+  }
+
+  function hydrate(d) {
+    var h = d.headline_stats;
+    var n = d.sample_size;
+    document.getElementById('demoEyebrow').textContent = '— PATTAYA · MEDICAL VERTICAL · UPDATED ' + fmtDate(d.generated_at);
+    document.getElementById('sampleSizeHero').textContent = n;
+    document.getElementById('statSample').textContent = n;
+    document.getElementById('statAvgLeak').textContent = (h.avg_monthly_leakage_eur / 1000).toFixed(1);
+    document.getElementById('statNoBook').textContent = h.clinics_without_booking_form_pct;
+    document.getElementById('statNoLang').textContent = h.clinics_without_lang_switcher_pct;
+    var totalK = fmtK(h.total_monthly_leakage_eur_sample);
+    document.getElementById('totalLeakTitle').textContent = '€' + totalK + ' walking out the door every month.';
+    document.getElementById('leakSub').textContent = 'Across the ' + n + ' clinics I audited. Distributed like this:';
+    var neg = d.negative_review_snippets_total || 0;
+    document.getElementById('painSub').textContent = 'Drawn from ' + neg + ' negative reviews across the sample. Translated where needed. Clustered by theme, not by clinic.';
+
+    var grid = document.getElementById('painGrid');
+    (d.pain_themes_global || []).forEach(function (t, idx) {
+      var card = document.createElement('article');
+      card.className = 'clinics-pain-card';
+      card.innerHTML =
+        '<div class="clinics-pain-card__idx mono">[ ' + String(idx + 1).padStart(2, '0') + ' ]</div>' +
+        '<div class="clinics-pain-card__theme">' + t.theme.toUpperCase() + '</div>' +
+        '<div class="clinics-pain-card__meta">' + t.count + ' mentions</div>' +
+        '<p class="clinics-pain-card__quote">&ldquo;' + t.sample_quote + '&rdquo;</p>';
+      grid.appendChild(card);
+    });
+
+    var chart = document.getElementById('leakChart');
+    var buckets = d.leakage_distribution.buckets_eur;
+    var counts = d.leakage_distribution.counts;
+    var maxC = Math.max.apply(null, counts);
+    counts.forEach(function (c, i) {
+      var row = document.createElement('div');
+      row.className = 'clinics-chart__row';
+      var pct = maxC ? (c / maxC) * 100 : 0;
+      row.innerHTML =
+        '<div class="clinics-chart__label">' + bucketLabel(i, buckets) + '</div>' +
+        '<div class="clinics-chart__track"><div class="clinics-chart__bar" data-target-pct="' + pct + '" style="width:0%"></div></div>' +
+        '<div class="clinics-chart__count">' + c + '</div>';
+      chart.appendChild(row);
+    });
+
+    var fl = document.getElementById('fixList');
+    (d.fix_demand_ranking || []).forEach(function (f, i) {
+      var row = document.createElement('div');
+      row.className = 'clinics-fix-row';
+      var pct = n ? (f.clinics_who_need_this / n) * 100 : 0;
+      row.innerHTML =
+        '<div class="mono" style="color:var(--amber-2);">' + String(i + 1).padStart(2, '0') + '</div>' +
+        '<div class="clinics-fix-row__label">' + f.label + '</div>' +
+        '<div><div class="clinics-fix-row__barwrap"><div class="clinics-fix-row__bar" style="width:' + pct + '%"></div></div>' +
+        '<span class="mono" style="font-size:.65rem;color:var(--mute-2);">' + f.clinics_who_need_this + ' clinics</span></div>';
+      fl.appendChild(row);
+    });
+
+    document.getElementById('demoFooter').textContent =
+      '© 2026 SERVICE OPERA · CLINICS VERTICAL · DATA REFRESHED ' + fmtDate(d.generated_at);
+
+    requestAnimationFrame(function () {
+      chart.querySelectorAll('.clinics-chart__bar').forEach(function (bar, i) {
+        setTimeout(function () {
+          bar.style.transition = 'width .6s cubic-bezier(.2,.7,.2,1)';
+          bar.style.width = bar.getAttribute('data-target-pct') + '%';
+        }, 80 * i);
+      });
+    });
+  }
+
+  fetch('./_data.json')
+    .then(function (r) { if (!r.ok) throw new Error('bad status'); return r.json(); })
+    .then(function (d) {
+      skel.classList.add('is-hidden');
+      hydrate(d);
+      root.classList.remove('is-hidden');
+    })
+    .catch(function () {
+      skel.classList.add('is-hidden');
+      fb.classList.remove('is-hidden');
+    });
+})();
+</script>
+</body>
+</html>

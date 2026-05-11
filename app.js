@@ -117,7 +117,13 @@
     titleEl.querySelector('.line').textContent = c.title;
     ledeEl.textContent = c.lede;
     mailBtn.textContent = c.cta;
-    mailBtn.setAttribute('href', 'mailto:jack@serviceopera.to?subject=' + encodeURIComponent(c.subject));
+    if (key === 'clinics') {
+      mailBtn.setAttribute('href', 'clinics/demo.html');
+      heroCopy.classList.add('has-clinic-pitch');
+    } else {
+      mailBtn.setAttribute('href', 'mailto:jack@serviceopera.to?subject=' + encodeURIComponent(c.subject));
+      heroCopy.classList.remove('has-clinic-pitch');
+    }
   }
 
   function setActive(key) {

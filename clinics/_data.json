@@ -1,0 +1,34 @@
+{
+  "generated_at": "2026-05-11T12:00:00Z",
+  "sample_size": 47,
+  "verticals": { "dental": 22, "aesthetic": 18, "ivf": 4, "mixed": 3 },
+  "headline_stats": {
+    "clinics_without_booking_form_pct": 64,
+    "clinics_without_whatsapp_pct": 31,
+    "clinics_without_lang_switcher_pct": 78,
+    "clinics_with_recent_negative_pct": 42,
+    "avg_languages_seen": 3.4,
+    "median_review_response_rate_pct": null,
+    "avg_monthly_leakage_eur": 11400,
+    "total_monthly_leakage_eur_sample": 537000
+  },
+  "pain_themes_global": [
+    { "theme": "communication issues", "count": 38, "sample_quote": "They never replied to my WhatsApp after the consult." },
+    { "theme": "long wait times", "count": 29, "sample_quote": "Two hours past my appointment time and still waiting." },
+    { "theme": "follow-up gaps", "count": 24, "sample_quote": "No one called with my lab results." },
+    { "theme": "language barriers", "count": 19, "sample_quote": "The English on the website did not match the experience at reception." },
+    { "theme": "pricing transparency", "count": 12, "sample_quote": "Final bill was nothing like the quote." }
+  ],
+  "leakage_distribution": {
+    "buckets_eur": [0, 2500, 5000, 10000, 20000, 30000],
+    "counts": [3, 9, 14, 13, 6, 2]
+  },
+  "negative_review_snippets_total": 312,
+  "fix_demand_ranking": [
+    { "fix_id": "wa_concierge", "label": "24/7 multilingual WhatsApp concierge", "clinics_who_need_this": 33 },
+    { "fix_id": "lang_intake", "label": "Multilingual patient intake form", "clinics_who_need_this": 29 },
+    { "fix_id": "booking_form", "label": "Online booking + deposit capture", "clinics_who_need_this": 27 },
+    { "fix_id": "review_drafts", "label": "AI-drafted review replies", "clinics_who_need_this": 24 },
+    { "fix_id": "followup_seq", "label": "Automated follow-up sequence", "clinics_who_need_this": 18 }
+  ]
+}
