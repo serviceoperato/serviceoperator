@@ -1,0 +1,16 @@
+<!-- Full wordmark for dark UI: ServiceOpera.to -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 118" role="img" aria-label="ServiceOpera.to">
+  <style>
+    .word { font-family: 'Inter Tight', 'Segoe UI', system-ui, sans-serif; font-weight: 600; font-size: 28px; letter-spacing: -0.02em; }
+  </style>
+  <g transform="translate(102,6)">
+    <circle cx="48" cy="32" r="22" fill="none" stroke="#a5b4fc" stroke-width="6" stroke-dasharray="23.038 92.153" transform="rotate(-90 48 32)"/>
+    <circle cx="48" cy="32" r="22" fill="none" stroke="#ffffff" stroke-width="6" stroke-dasharray="23.038 92.153" transform="rotate(-30 48 32)"/>
+    <text x="48" y="40" text-anchor="middle" font-family="Segoe UI,system-ui,sans-serif" font-size="22" font-weight="800" letter-spacing="-0.06em">
+      <tspan fill="#ffffff">S</tspan><tspan fill="#a5b4fc">O</tspan>
+    </text>
+  </g>
+  <text x="150" y="102" text-anchor="middle" class="word">
+    <tspan fill="#ffffff">Service</tspan><tspan fill="#a5b4fc">Opera</tspan><tspan fill="#ffffff">.to</tspan>
+  </text>
+</svg>

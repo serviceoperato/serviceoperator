@@ -78,19 +78,18 @@ a:hover { color: var(--amber-2); }
   border-bottom: 1px solid var(--line);
 }
 .nav__logo {
-  display: flex; align-items: center; gap: .55rem;
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: 1.1rem;
-  letter-spacing: -0.01em;
+  display: flex; align-items: center; gap: .65rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
 }
-.nav__mark {
-  color: var(--amber);
-  font-size: 1.3rem;
-  display: inline-block;
-  animation: spin 14s linear infinite;
+.nav__logo-img {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: block;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
 
 .nav__links { display: flex; align-items: center; gap: 2rem; }
 .nav__links a { font-size: .9rem; color: var(--bone); }
@@ -146,6 +145,15 @@ a:hover { color: var(--amber-2); }
   align-items: center;
   gap: .65rem;
   margin-bottom: 2.5rem;
+}
+.hero__brand {
+  margin: 0 0 1.75rem;
+  max-width: min(280px, 88vw);
+}
+.hero__brand-img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 .dot {
   width: 8px; height: 8px;
@@ -572,11 +580,21 @@ a:hover { color: var(--amber-2); }
   .footer__cols { grid-template-columns: 1fr 1fr; }
 }
 .footer__logo {
-  font-family: var(--font-display);
-  font-size: 1.2rem;
-  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
   margin-bottom: .5rem;
 }
+.footer__logo-img {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+.footer__logo-text { color: var(--paper); }
 .footer__tag { color: var(--mute-2); font-size: .9rem; max-width: 30em; }
 .footer__label {
   color: var(--amber-2);
@@ -693,11 +711,17 @@ a:hover { color: var(--amber-2); }
   align-items: center;
 }
 .client-nav__brand {
-  font-family: var(--font-display);
-  font-weight: 500;
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: -0.02em;
   display: flex;
   align-items: center;
   gap: .55rem;
+}
+.client-nav__brand-img {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
 }
 .client-nav__client {
   font-family: var(--font-mono);
@@ -1097,14 +1121,20 @@ a:hover { color: var(--amber-2); }
   width: 100%;
 }
 .gate__brand {
-  font-family: var(--font-display);
-  font-size: 1.3rem;
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
   margin-bottom: 2.5rem;
   display: flex;
   align-items: center;
   gap: .55rem;
 }
-.gate__brand .nav__mark { font-size: 1.5rem; }
+.gate__brand-img {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
 .gate h1 {
   font-family: var(--font-display);
   font-size: 2.2rem;

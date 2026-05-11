@@ -162,7 +162,7 @@ Try the demo with username `demo` and password `demo` — it'll show the workspa
 ## 8. Brand notes
 
 - **Name:** Service Opera — reads as *Service Operator*. Jack is an AI service operator: systems, pipelines, and runbooks for real service businesses — not a creative studio pitch.
-- **Mark:** ◐ (half-circle) — implying "always partly running, always partly on".
+- **Mark:** `logo-icon.svg` / `favicon.svg` — SO monogram inside a six-segment aperture (black + indigo on light surfaces; white + light indigo on the dark site).
 - **Tone:** confident, dry, restrained. Never "supercharge", "revolutionize", "synergize". The pitch is: *engineered automation, observable results, honest pricing.*
 - **Colors:** black (`#000000`), white (`#ffffff`), indigo accent (`#6366f1` and lighter `#a5b4fc`). Accents stay sparse — mostly monochrome surfaces with indigo for focus states, links, and CTAs.
 - **Typography:** Fraunces (display) + Inter Tight (body) + JetBrains Mono (technical labels).
