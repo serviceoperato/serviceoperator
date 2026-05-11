@@ -296,23 +296,28 @@ a:hover { color: var(--amber-2); }
   filter: var(--logo-filter);
 }
 
-/* Official ServiceOpera.to lockup — transparent PNG, no CSS recolour in either theme.
-   On dark theme the page canvas is near-black; transparent pixels show that canvas, so
-   charcoal strokes in the artwork need a hair of separation (chip), not a filter. */
+/* Official ServiceOpera.to lockup — transparent PNG; never apply --logo-filter here. */
 .brand-logo {
   width: auto;
   height: auto;
   object-fit: contain;
   background: transparent;
   mix-blend-mode: normal;
+  filter: none;
 }
+/* Dark canvas: charcoal/black ink needs a light translucent panel, not a flattened matte. */
 [data-theme="dark"] .brand-logo {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  padding: 0.2em 0.38em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 [data-theme="light"] .brand-logo {
   background: transparent;
   border-radius: 0;
+  padding: 0;
+  filter: none;
 }
 .nav__logo-img.brand-logo {
   height: 40px;
