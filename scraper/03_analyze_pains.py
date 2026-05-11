@@ -124,7 +124,7 @@ def analyze_clinic(c: dict) -> dict:
     ws = scan_website(c.get("website") or "")
 
     months = months_since_first_review(c)
-    monthly_patients = max(1, int((review_count / max(months, 12)) * PATIENT_TO_REVIEW)))
+    monthly_patients = max(1, int((review_count / max(months, 12)) * PATIENT_TO_REVIEW))
     vertical = c.get("vertical") or "mixed"
     ticket = TICKETS.get(vertical, TICKETS["mixed"])
 

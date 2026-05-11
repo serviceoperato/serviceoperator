@@ -109,6 +109,14 @@ def main() -> None:
     avg_leak = int(round(sum(leaks) / n)) if n else 0
     total_leak = sum(leaks)
 
+    prev_themes: list = []
+    prev_path = REPO / "clinics" / "_data.json"
+    if prev_path.is_file():
+        try:
+            prev_themes = (json.loads(prev_path.read_text(encoding="utf-8"))).get("pain_themes_global") or []
+        except json.JSONDecodeError:
+            pass
+
     data = {
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "sample_size": n,
@@ -124,10 +132,15 @@ def main() -> None:
             "avg_monthly_leakage_eur": avg_leak,
             "total_monthly_leakage_eur_sample": total_leak,
         },
-        "pain_themes_global": [],
+        "pain_themes_global": prev_themes,
         "leakage_distribution": {"buckets_eur": edges, "counts": counts},
         "fix_demand_ranking": ranking,
     }
+    if not data["pain_themes_global"]:
+        print(
+            "WARN: pain_themes_global is empty — run LLM clustering (see BUILD) or keep prior themes in _data.json.",
+            file=sys.stderr,
+        )
 
     out_json = REPO / "clinics" / "_data.json"
     out_json.parent.mkdir(parents=True, exist_ok=True)
