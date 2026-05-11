@@ -19,7 +19,7 @@ Stack constraints: **pure static HTML/CSS/vanilla JS only.** No frameworks, no b
 
 ## 1. Project context
 
-Service Opera is a one-person freelance brand selling bespoke AI automation systems to three B2B verticals in Pattaya, Thailand:
+Service Opera is a one-person freelance brand selling bespoke AI automation systems to three B2B verticals across Thailand:
 
 1. Hospitality (boutique hotels, serviced apartments, pool villas, 8–80 keys)
 2. Medical & Wellness (dental, aesthetic, IVF, wellness retreats serving medical tourists)
@@ -192,8 +192,8 @@ Single-file HTML. Structure below; **live copy is defined in `index.html` in the
 ### Head
 
 ```html
-<title>Service Opera — AI Service Operations · Pattaya</title>
-<meta name="description" content="Jack — AI service operator. I design and run automation systems for hospitality, medical and property businesses in Pattaya.">
+<title>Service Opera — AI Service Operations · Thailand</title>
+<meta name="description" content="Jack — AI service operator. I design and run automation systems for hospitality, medical and property businesses across Thailand.">
 ```
 
 Preconnect to Google Fonts. Link `styles.css`. No favicon yet (Cursor: skip favicon, leave a TODO comment in HTML).
@@ -219,7 +219,7 @@ Preconnect to Google Fonts. Link `styles.css`. No favicon yet (Cursor: skip favi
 
 ### Hero copy (exact)
 
-Eyebrow: `CURRENTLY OPERATING · PATTAYA, TH · UTC+7` (mono, preceded by a pulsing amber live dot).
+Eyebrow: `CURRENTLY OPERATING · SERVING THAILAND · ICT UTC+7` (mono, preceded by a pulsing accent live dot).
 
 Title — 2 lines, animated in:
 ```
@@ -228,11 +228,11 @@ engineered.         ← accent line (--amber, italic, indented padding-left 3em)
 ```
 
 Lede:
-> Automation that runs your business while you run your business. I'm Jack — I design and run automation systems for hospitality, medical and property businesses in Pattaya: workflows and pipelines for bookings, reviews, leads and pricing, engineered and deployed so your team stays on the floor.
+> Automation that runs your business while you run your business. I'm Jack — I design and run automation systems for hospitality, medical and property businesses across Thailand: workflows and pipelines for bookings, reviews, leads and pricing, engineered and deployed so your team stays on the floor.
 
 Actions:
 - Primary: `See the work` → `#build`
-- Ghost: `Start a conversation →` → `mailto:jack@serviceopera.to?subject=Pattaya%20automation%20enquiry`
+- Ghost: `Start a conversation →` → `mailto:jack@serviceopera.to?subject=Thailand%20automation%20enquiry`
 
 Marquee strip (below actions, full-width between top and bottom `--line` borders, italic Fraunces 1.3rem):
 ```
@@ -269,7 +269,7 @@ Each card:
 | 01 | WhatsApp & Booking Concierge | An AI agent that answers guests and patients 24/7 on WhatsApp, LINE and web chat — quotes rooms, confirms appointments, takes deposits, hands off to a human when it matters. | · EN · TH · RU · ZH · DE / · Cloudbeds / Opera / Mews / SimplyBook / · Stripe & Omise payment links |
 | 02 | Review Intelligence | Monitors Google, Booking, Agoda, TripAdvisor in real time. Drafts contextual replies in your voice, flags operational issues to the right manager, and surfaces what your guests actually feel. | · Sentiment + topic clustering / · Reply drafts, you approve / · Weekly executive digest |
 | 03 | Lead Engine & CRM | Captures every enquiry from Meta ads, web, walk-ins and referrals into one pipeline. Auto-qualifies, scores, follows up, books the call — so nothing rots in an inbox. | · HubSpot / Pipedrive / GoHighLevel / · Automated follow-up sequences / · Attribution & cost-per-booking |
-| 04 | Competitor & Pricing Radar | Tracks competitor rates, packages and availability across Pattaya nightly. Surfaces revenue opportunities and tells you exactly when to flex price — without staring at OTAs all day. | · Nightly rate scrapes / · Demand & event signals / · Slack / email briefings |
+| 04 | Competitor & Pricing Radar | Tracks competitor rates, packages and availability across Thailand nightly. Surfaces revenue opportunities and tells you exactly when to flex price — without staring at OTAs all day. | · Nightly rate scrapes / · Demand & event signals / · Slack / email briefings |
 
 Grid: `repeat(auto-fit, minmax(280px, 1fr))`, 1px `--line` separators (achieved with `gap: 1px; background: var(--line);` and each card has solid `--ink` bg).
 
@@ -287,7 +287,7 @@ Three steps, each a row with `i.` / `ii.` / `iii.` in italic amber Fraunces 2.5r
 ### Sectors
 
 Eyebrow: `— 03 · WHO I WORK WITH`
-Title: `Three sectors. *One city.*`
+Title: `Three sectors. *One country.*`
 
 | Icon | Title | Mono caption | Body |
 |---|---|---|---|
@@ -311,7 +311,7 @@ Boxed, dark gradient, faint amber border glow.
 
 - h2: `Have a problem worth automating?`
 - p: `Tell me what's eating your week. If I think automation can fix it, I'll build you a private demo — on the house — so you can judge the work, not the pitch.`
-- Primary button: `jack@serviceopera.to` → mailto with prefilled subject `Pattaya automation enquiry` and body template (URL-encoded):
+- Primary button: `jack@serviceopera.to` → mailto with prefilled subject `Thailand automation enquiry` and body template (URL-encoded):
   ```
   Hi Jack,
 
@@ -325,12 +325,12 @@ Boxed, dark gradient, faint amber border glow.
 ### Footer
 
 Four columns:
-1. `◐ Service Opera` + tagline `AI service operations & automation · Pattaya, Thailand`
+1. `◐ Service Opera` + tagline `AI service operations & automation · Thailand`
 2. `CONTACT` / mailto link to `jack@serviceopera.to`
 3. `HOURS` / `Mon — Fri · 09:00 — 19:00 ICT`
 4. `PRIVATE ACCESS` / link `Open client portal` (id `footerPortal`, opens modal)
 
-Legal strip: `© 2026 SERVICE OPERA · ALL RIGHTS, NONE RESERVED · BUILT IN PATTAYA`
+Legal strip: `© 2026 SERVICE OPERA · ALL RIGHTS, NONE RESERVED · BUILT IN THAILAND`
 
 ### Portal modal
 
@@ -432,7 +432,7 @@ Body class: `page-client`.
 
 **Client hero** — eyebrow with live dot + `CONFIDENTIAL · PREPARED FOR YOU · UPDATED TODAY`. h1 contains `<span id="clientName">` token. Lede paragraph (verbatim):
 
-> Below are four automation systems, already wired against simulated data from your business and your three closest competitors in Pattaya. Click around — this is what a dialed-in week of service operations could look like.
+> Below are four automation systems, already wired against simulated data from your business and benchmark competitors across Thailand. Click around — this is what a dialed-in week of service operations could look like.
 
 Stats strip (4 cells, mono labels + Fraunces values + green delta):
 - `REPLY TIME` → `28s` → `▲ vs 4h 12m manual`
@@ -505,16 +505,16 @@ Score chips: `.score--hot` rust-tinted, `.score--warm` amber-tinted, `.score--co
 
 #### Module 04 — Competitor & Pricing Radar (`.module--wide`)
 
-Header: `04 · Competitor & Pricing Radar` + green `NIGHTLY` badge + meta `Pattaya · same room category · next 14 days · scraped 03:00 ICT`.
+Header: `04 · Competitor & Pricing Radar` + green `NIGHTLY` badge + meta `Thailand · same room category · next 14 days · scraped 03:00 ICT`.
 
 Four competitor rows (first row id `#myBusinessRow`, will be replaced with client business name by JS):
 
 | Name (+ sub) | Price | Delta | Occ |
 |---|---|---|---|
 | Your property / DELUXE SEA VIEW · BREAKFAST INCL. | ฿2,980 | — stable (flat) | OCC 78% |
-| Hilton Pattaya / DELUXE OCEAN · BREAKFAST INCL. | ฿3,750 | ▲ ฿200 vs yesterday (up) | OCC 84% |
+| Hilton Bangkok / DELUXE OCEAN · BREAKFAST INCL. | ฿3,750 | ▲ ฿200 vs yesterday (up) | OCC 84% |
 | Centara Grand Mirage / DELUXE FAMILY · HB | ฿4,200 | ▲ ฿350 vs last week (up) | OCC 91% |
-| Amari Pattaya / DELUXE SEA · ROOM ONLY | ฿3,180 | ▼ ฿120 vs yesterday (down) | OCC 72% |
+| Amari Bangkok / DELUXE SEA · ROOM ONLY | ฿3,180 | ▼ ฿120 vs yesterday (down) | OCC 72% |
 
 Pricing suggestion callout (verbatim):
 
@@ -564,10 +564,10 @@ Responsibilities:
 
 ```js
 const CREDENTIALS = {
-  'amari-resort':    { password: 'demo2026', business: 'Amari Resort Pattaya' },
+  'amari-resort':    { password: 'demo2026', business: 'Amari Resort · Thailand' },
   'serenity-dental': { password: 'demo2026', business: 'Serenity Dental Clinic' },
-  'jomtien-living':  { password: 'demo2026', business: 'Jomtien Living Properties' },
-  'demo':            { password: 'demo',     business: 'Demo Property · Pattaya' },
+  'jomtien-living':  { password: 'demo2026', business: 'Coastal Living Properties' },
+  'demo':            { password: 'demo',     business: 'Demo Property · Thailand' },
 };
 ```
 
@@ -687,7 +687,7 @@ curl -sI https://serviceopera.to/robots.txt          # expect 200, contains "Dis
 Manual smoke test (open in browser):
 1. `https://serviceopera.to` renders landing.
 2. "Client portal →" button opens modal.
-3. Enter `demo` / `demo` → redirect to `/client.html#demo` → workspace renders with business name "Demo Property · Pattaya".
+3. Enter `demo` / `demo` → redirect to `/client.html#demo` → workspace renders with business name "Demo Property · Thailand".
 4. Chat module accepts input and shows a canned reply.
 5. Sign out returns to landing.
 6. Direct visit to `https://serviceopera.to/client.html` shows the gate (not the workspace).

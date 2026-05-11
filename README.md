@@ -1,6 +1,6 @@
 # Service Opera — operating manual
 
-AI service operations and automation for Pattaya operators.
+AI service operations and automation for operators across Thailand.
 Owner: **Jack** · `jack@serviceopera.to`
 
 ---
@@ -11,7 +11,7 @@ A complete, deployable site under **`serviceopera.to`** with:
 
 | File | What it is |
 |---|---|
-| `index.html` | Public landing page. Sells you as a premium automation freelancer for Pattaya hospitality, medical and property businesses. |
+| `index.html` | Public landing page. Sells you as a premium automation freelancer for hospitality, medical and property businesses across Thailand. |
 | `client.html` | **The "secret page".** Password-protected private demo workspace. You send one prospect a unique username + password; they log in and see a dashboard themed for *their* business. |
 | `styles.css` | Shared black / white / indigo design system. |
 | `app.js` | Landing-page modal + credential check. |
@@ -22,7 +22,7 @@ The two pages share styling but the client page is hidden behind a login gate an
 
 ## 2. The 3 sectors I targeted (and why)
 
-Based on real Pattaya market data:
+Based on real Thailand market data:
 
 1. **Hospitality** — boutique hotels, serviced apartments, pool villas. High ticket, recurring need, multilingual guest volume.
 2. **Medical & Wellness** — dental, aesthetic, IVF, wellness retreats. Thailand is Asia's #1 medical tourism destination, growing 4–6% annually, with patients spending big and needing intake in RU/ZH/AR/EN.
@@ -56,7 +56,7 @@ Find a real business in one of the 3 sectors. Owner's name + email + Instagram o
 Open `client.html` and `app.js`. Add a new entry in **both** `CREDENTIALS` objects:
 
 ```js
-'amari-resort': { password: 'demo2026', business: 'Amari Resort Pattaya' },
+'amari-resort': { password: 'demo2026', business: 'Amari Resort · Thailand' },
 ```
 
 Convention I used: `slug-of-business` as username, an 8-char password.
@@ -64,7 +64,7 @@ Convention I used: `slug-of-business` as username, an 8-char password.
 
 ### Step 3 — *(Optional but recommended)* personalize the demo
 Open `client.html` and swap a few details so it feels truly built for them:
-- The 3 competitors in the **Pricing Radar** module → put their *actual* 3 closest competitors in Pattaya.
+- The 3 competitors in the **Pricing Radar** module → put their *actual* 3 closest competitors in their market (anywhere in Thailand).
 - The chat module top bubble → change "Anna" to a realistic guest name and the room type to match their property.
 - The "Revenue Opportunity" paragraph → if you can find a real event in their window, drop it in.
 
@@ -78,7 +78,7 @@ Body template:
 
 > Hi {First name},
 >
-> I'm Jack — I design and run AI automation systems for hospitality and medical operators in Pattaya. Rather than send another cold pitch, I spent an afternoon and built you a private demo workspace showing what a dialed-in week of service operations could look like once a few workflows are automated.
+> I'm Jack — I design and run AI automation systems for hospitality and medical operators across Thailand. Rather than send another cold pitch, I spent an afternoon and built you a private demo workspace showing what a dialed-in week of service operations could look like once a few workflows are automated.
 >
 > It's a real working page, not a PDF. Have a look when you have 5 minutes:
 >
@@ -155,7 +155,7 @@ python3 -m http.server 8000
 
 Then open `http://localhost:8000`.
 
-Try the demo with username `demo` and password `demo` — it'll show the workspace themed as "Demo Property · Pattaya".
+Try the demo with username `demo` and password `demo` — it'll show the workspace themed as "Demo Property · Thailand".
 
 ---
 

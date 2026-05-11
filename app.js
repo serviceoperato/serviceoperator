@@ -41,10 +41,10 @@
   // Per ogni prospect Jack genera una entry qui (o serve da backend).
   // username -> { password, slug, business }
   const CREDENTIALS = {
-    'amari-resort':   { password: 'demo2026', slug: 'amari-resort',   business: 'Amari Resort Pattaya' },
+    'amari-resort':   { password: 'demo2026', slug: 'amari-resort',   business: 'Amari Resort · Thailand' },
     'serenity-dental':{ password: 'demo2026', slug: 'serenity-dental',business: 'Serenity Dental Clinic' },
-    'jomtien-living': { password: 'demo2026', slug: 'jomtien-living', business: 'Jomtien Living Properties' },
-    'demo':           { password: 'demo',     slug: 'demo',           business: 'Demo Property · Pattaya' },
+    'jomtien-living': { password: 'demo2026', slug: 'jomtien-living', business: 'Coastal Living Properties' },
+    'demo':           { password: 'demo',     slug: 'demo',           business: 'Demo Property · Thailand' },
   };
 
   if (form) {
