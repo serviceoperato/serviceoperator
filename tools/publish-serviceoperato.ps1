@@ -1,6 +1,6 @@
 #Requires -Version 5.1
 <#
-  Creates https://github.com/serviceoperato/serviceopera.to-site (if missing) and pushes main + tags.
+  Creates https://github.com/serviceoperato/serviceoperator (if missing) and pushes main + tags.
   Usage (in Cursor / PowerShell, once):
     $env:SERVICEOPERATO_GITHUB_PAT = 'ghp_xxxxxxxx'   # PAT: serviceoperato account, scope: repo
     ./tools/publish-serviceoperato.ps1
@@ -11,7 +11,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $owner = 'serviceoperato'
-$repo = 'serviceopera.to-site'
+$repo = 'serviceoperator'
 $pat = $env:SERVICEOPERATO_GITHUB_PAT
 if (-not $pat) {
   Write-Error 'Set SERVICEOPERATO_GITHUB_PAT to a GitHub PAT for the serviceoperato account (repo scope).'
@@ -39,7 +39,7 @@ try {
 if (-not $exists) {
   $body = @{
     name        = $repo
-    description = 'Service Opera static site (landing + client workspace)'
+    description = 'Service Opera static site (landing + client workspace) — serviceoperator'
     private     = $false
     has_issues  = $true
     has_wiki    = $false
