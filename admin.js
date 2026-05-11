@@ -35,8 +35,9 @@
   var panelBody = document.getElementById('adminPanelBody');
   var configBanner = document.getElementById('adminConfigBanner');
 
-  if (!ADMIN_PASSWORD && configBanner) {
-    configBanner.classList.remove('is-hidden');
+  if (configBanner) {
+    if (!ADMIN_PASSWORD) configBanner.classList.remove('is-hidden');
+    else configBanner.classList.add('is-hidden');
   }
 
   function showWorkspace() {
