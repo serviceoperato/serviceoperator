@@ -117,6 +117,16 @@ Any static host (Vercel, GitHub Pages, even an S3 bucket). The whole site is 4 f
 **Option D — Railway (Dockerfile recommended):**
 The `Dockerfile` serves the same static files with **nginx** and adds security headers (global + `/client.html` noindex/cache) similar to `netlify.toml`. Railway will detect the Dockerfile and set `PORT` automatically.
 
+**Collegare questo repo a Railway (GitHub → deploy automatico):**
+
+1. In [Railway](https://railway.com) apri il progetto e l’ambiente che usi in produzione.
+2. Seleziona il **servizio frontend** (quello che deve servire il sito statico).
+3. Vai su **Settings** (ingranaggio del servizio) → sezione **Source** / **Connect repo** (testi simili in base alla UI).
+4. Collega **GitHub** e scegli il repository **`serviceoperato/serviceoperator`**, branch **`main`**. Se il monorepo non è alla root del repo, imposta **Root Directory** di conseguenza (per questo repo lascia la root del repository).
+5. Se Railway chiede permessi aggiuntivi, in GitHub apri [Installazioni app GitHub](https://github.com/settings/installations) → **Railway** → **Configure** e concedi l’accesso al repository (o a tutta l’org `serviceoperato`).
+6. Nel servizio, abilita **Deploy / Auto deploy on push** (o equivalente) per il branch `main`, così ogni `git push` su `main` avvia un nuovo deploy. Se non parte subito, usa **Redeploy** dal menu del servizio o la Command Palette (**Deploy latest commit**).
+7. Riferimento ufficiale: [GitHub autodeploys su Railway](https://docs.railway.com/guides/github-autodeploys).
+
 **Option E — Railway without Docker:** A minimal `package.json` + `npm start` runs [`serve`](https://github.com/vercel/serve) on `$PORT` for Nixpacks-only deploys. If Railpack looks for `src/index.js`, prefer the Dockerfile path or set **Start Command** to `npm start` with root at this folder.
 
 ---
