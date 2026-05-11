@@ -2,6 +2,7 @@
  * Debug panel: storage (as "DB"), browser ("frontend"), same-origin HTTP ("backend").
  */
 (function () {
+  var DOCK_ID = 'soDebugDock';
   var PANEL_ID = 'soDebugPanel';
   var BTN_ID = 'soDebugFab';
   var LS_PROBE = '__so_debug_probe__';
@@ -206,38 +207,40 @@
   function mount() {
     if (document.getElementById(BTN_ID)) return;
 
+    var dock = document.createElement('div');
+    dock.id = DOCK_ID;
+    dock.className = 'debug-dock';
+
     var fab = document.createElement('button');
     fab.id = BTN_ID;
     fab.type = 'button';
     fab.className = 'debug-fab mono';
     fab.textContent = 'Debug info';
-    fab.setAttribute('aria-label', 'Apri informazioni di debug');
-    fab.setAttribute('aria-haspopup', 'dialog');
+    fab.setAttribute('aria-label', 'Mostra o nascondi informazioni di debug');
     fab.setAttribute('aria-expanded', 'false');
     fab.setAttribute('aria-controls', PANEL_ID);
 
     var panel = document.createElement('div');
     panel.id = PANEL_ID;
     panel.className = 'debug-panel is-hidden';
-    panel.setAttribute('role', 'dialog');
-    panel.setAttribute('aria-modal', 'true');
+    panel.setAttribute('role', 'region');
     panel.setAttribute('aria-label', 'Report debug');
     panel.innerHTML =
-      '<div class="debug-panel__backdrop" data-debug-close></div>' +
       '<div class="debug-panel__card">' +
       '<div class="debug-panel__head">' +
-      '<span class="mono debug-panel__title">— DEBUG · 50 checks</span>' +
-      '<button type="button" class="debug-panel__close mono" data-debug-close aria-label="Chiudi">×</button>' +
+      '<span class="mono debug-panel__title" id="soDebugTitle">— DEBUG · 50 checks</span>' +
+      '<button type="button" class="debug-panel__close mono" data-debug-close aria-label="Chiudi pannello">×</button>' +
       '</div>' +
-      '<p class="debug-panel__sub mono">DB = storage locale · FE = browser · BE = HTTP verso questo host (sito statico).</p>' +
+      '<p class="debug-panel__sub mono">DB = storage locale · FE = browser · BE = HTTP verso questo host. Seleziona il testo sotto e copia (Ctrl+C), oppure usa il pulsante.</p>' +
       '<div class="debug-panel__status mono" id="soDebugStatus">Esecuzione…</div>' +
-      '<pre class="debug-panel__out mono" id="soDebugOut"></pre>' +
+      '<pre class="debug-panel__out mono" id="soDebugOut" tabindex="0"></pre>' +
       '<div class="debug-panel__actions">' +
       '<button type="button" class="btn btn--ghost mono debug-panel__copy" id="soDebugCopy">Copia report</button>' +
       '</div></div>';
 
-    document.body.appendChild(fab);
-    document.body.appendChild(panel);
+    dock.appendChild(fab);
+    dock.appendChild(panel);
+    document.body.appendChild(dock);
 
     var out = document.getElementById('soDebugOut');
     var status = document.getElementById('soDebugStatus');

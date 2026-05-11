@@ -1521,13 +1521,25 @@ a:hover { color: var(--amber-2); }
 .admin-panel__stub strong { color: var(--amber); }
 
 /* ============================================
-   DEBUG (bottom-left probe panel)
+   DEBUG (bottom-left: niente overlay — stessa pagina, testo selezionabile)
    ============================================ */
-.debug-fab {
+.debug-dock {
   position: fixed;
   bottom: max(1rem, env(safe-area-inset-bottom, 0px));
   left: max(1rem, env(safe-area-inset-left, 0px));
   z-index: 350;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  max-width: min(calc(100vw - 2rem), 720px);
+  pointer-events: none;
+}
+.debug-dock > * {
+  pointer-events: auto;
+}
+.debug-fab {
+  position: static;
   font-size: 0.65rem !important;
   letter-spacing: 0.12em;
   text-transform: none;
@@ -1546,37 +1558,30 @@ a:hover { color: var(--amber-2); }
   background: var(--ink-3);
 }
 .debug-panel {
-  position: fixed;
-  inset: 0;
-  z-index: 230;
+  position: static;
+  width: 100%;
+  max-height: min(70vh, 620px);
+  min-height: 0;
   display: flex;
-  align-items: flex-end;
-  justify-content: flex-start;
-  padding: 1rem var(--gutter) 4.25rem;
-  pointer-events: none;
-}
-.debug-panel:not(.is-hidden) {
-  pointer-events: auto;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
 }
 .debug-panel.is-hidden {
   display: none;
 }
-.debug-panel__backdrop {
-  position: absolute;
-  inset: 0;
-  background: var(--modal-backdrop);
-  backdrop-filter: blur(6px);
-}
 .debug-panel__card {
   position: relative;
-  width: min(640px, 100%);
-  max-height: min(72vh, 560px);
+  width: 100%;
+  max-height: 100%;
+  min-height: 0;
+  flex: 1;
   display: flex;
   flex-direction: column;
   background: var(--ink-2);
   border: 1px solid var(--line-strong);
   border-radius: 6px;
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   overflow: hidden;
 }
 .debug-panel__head {
@@ -1622,6 +1627,7 @@ a:hover { color: var(--amber-2); }
   margin: 0;
   padding: 0.75rem 1rem;
   flex: 1;
+  min-height: 0;
   overflow: auto;
   font-size: 0.62rem !important;
   line-height: 1.5;
@@ -1632,6 +1638,9 @@ a:hover { color: var(--amber-2); }
   word-break: break-word;
   background: var(--ink);
   border-top: 1px solid var(--line);
+  user-select: text;
+  -webkit-user-select: text;
+  cursor: text;
 }
 .debug-panel__actions {
   padding: 0.65rem 1rem;
