@@ -1,6 +1,6 @@
 {
   "name": "serviceopera-site",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "description": "Static site; package.json exists only so Railway/Nixpacks can run a static file server (no bundler).",
   "scripts": {
