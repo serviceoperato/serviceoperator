@@ -133,10 +133,15 @@ The `Dockerfile` runs **Node**: `server.mjs` serves **`public/`** and sets the s
 | `ADMIN_JWT_SECRET` | Strongly recommended | Long random string; signs session tokens. If omitted, a random secret is generated at **each process start** (sessions break on redeploy). |
 | `ADMIN_EMAIL` | Optional | Defaults to `jack@serviceopera.to`. Only this address receives codes. |
 
+**Troubleshooting — “Forgot password?” / Resend**
+
+- `RESEND_API_KEY` must be on **the same Railway service that runs `node server.mjs`** (the Docker deploy from this repo). A separate static-only service or a CDN in front of the site will not see those variables unless `/api/*` is routed to Node.
+- In **Deploy logs** after startup, look for `[serviceopera] v…` and either `Resend: RESEND_API_KEY is set` or `missing`. If the dashboard shows the variable but logs say `missing`, confirm you edited **this** service, then **Redeploy** so a new container starts with the env.
+
 **Collegare questo repo a Railway (GitHub → deploy automatico):**
 
 1. In [Railway](https://railway.com) apri il progetto e l’ambiente che usi in produzione.
-2. Seleziona il **servizio frontend** (quello che deve servire il sito statico).
+2. Seleziona il **servizio che esegue Node** (Dockerfile / `npm start` → `server.mjs`), non un host solo-statico senza `/api/*`.
 3. Vai su **Settings** (ingranaggio del servizio) → sezione **Source** / **Connect repo** (testi simili in base alla UI).
 4. Collega **GitHub** e scegli il repository **`serviceoperato/serviceoperator`**, branch **`main`**. Se il monorepo non è alla root del repo, imposta **Root Directory** di conseguenza (per questo repo lascia la root del repository).
 5. Se Railway chiede permessi aggiuntivi, in GitHub apri [Installazioni app GitHub](https://github.com/settings/installations) → **Railway** → **Configure** e concedi l’accesso al repository (o a tutta l’org `serviceoperato`).

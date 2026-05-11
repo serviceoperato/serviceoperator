@@ -142,6 +142,8 @@ app.get('/api/version', (_req, res) => {
 
 app.get('/api/admin/capabilities', (_req, res) => {
   res.json({
+    service: 'serviceopera',
+    version: appVersion,
     otpEnabled: Boolean(RESEND_API_KEY),
     clinicUsersApi: true,
     clinicPasswordResetEmail: Boolean(RESEND_API_KEY),
@@ -150,7 +152,11 @@ app.get('/api/admin/capabilities', (_req, res) => {
 
 app.get('/api/auth/clinic-capabilities', (_req, res) => {
   res.setHeader('Cache-Control', 'no-store');
-  res.json({ passwordResetEmail: Boolean(RESEND_API_KEY) });
+  res.json({
+    service: 'serviceopera',
+    version: appVersion,
+    passwordResetEmail: Boolean(RESEND_API_KEY),
+  });
 });
 
 app.post('/api/admin/send-code', async (req, res) => {
@@ -398,7 +404,10 @@ app.use((req, res) => {
 
 const port = Number(process.env.PORT) || 8080;
 app.listen(port, '0.0.0.0', () => {
+  console.log(`[serviceopera] v${appVersion} listening on ${port} · public=${publicDir} · data=${dataDir}`);
   console.log(
-    'Listening on ' + port + ' · public=' + publicDir + ' · data=' + dataDir + ' · otp=' + Boolean(RESEND_API_KEY)
+    RESEND_API_KEY
+      ? '[serviceopera] Resend: RESEND_API_KEY is set (admin OTP + clinic forgot-password).'
+      : '[serviceopera] Resend: RESEND_API_KEY missing — set it on this Railway service and redeploy.'
   );
 });
