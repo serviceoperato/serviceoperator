@@ -3,7 +3,7 @@
 **Target executor:** Cursor AI (Composer / Agent mode with terminal + GitHub access)
 **Project root:** existing repo `serviceopera-site` (already deployed to `https://serviceopera.to` via Netlify, `main` branch auto-deploys).
 **Owner:** Jack — `jack@serviceopera.to`
-**Goal of this build:** scrape ~50 medical clinics in Pattaya (dental, aesthetic, IVF), run a pain-point analysis on each using only publicly observable signals, and ship a **single universal demo page** at `/clinics/demo` that any cold-outreach prospect can be sent to. The page must visibly impress: real data, charts, a quantified revenue-leakage estimate, and three concrete fixes Jack would deploy in 14 days.
+**Goal of this build:** scrape ~50 medical clinics in Thailand (dental, aesthetic, IVF), run a pain-point analysis on each using only publicly observable signals, and ship a **single universal demo page** at `/clinics/demo` that any cold-outreach prospect can be sent to. The page must visibly impress: real data, charts, a quantified revenue-leakage estimate, and three concrete fixes Jack would deploy in 14 days.
 
 ---
 
@@ -107,18 +107,18 @@ Pause and ask the user to copy `.env.example` to `.env` and paste their two API 
 Behavior:
 - Use Google Places API (New) **Text Search** endpoint: `POST https://places.googleapis.com/v1/places:searchText`.
 - Run 5 separate queries to cover the verticals broadly:
-  1. `dental clinic Pattaya`
-  2. `aesthetic clinic Pattaya`
-  3. `cosmetic surgery Pattaya`
-  4. `dermatology clinic Pattaya`
-  5. `IVF fertility clinic Pattaya`
+  1. `dental clinic Thailand`
+  2. `aesthetic clinic Thailand`
+  3. `cosmetic surgery Thailand`
+  4. `dermatology clinic Thailand`
+  5. `IVF fertility clinic Thailand`
 - For each query, request these `X-Goog-FieldMask` fields:
   `places.id,places.displayName,places.formattedAddress,places.location,places.rating,places.userRatingCount,places.websiteUri,places.internationalPhoneNumber,places.googleMapsUri,places.primaryType,places.types,places.priceLevel,places.regularOpeningHours.weekdayDescriptions`
 - Paginate up to 60 results per query (Places New caps at 20 per page, 3 pages via `nextPageToken`).
 - **Deduplicate** across queries by `place.id`.
 - **Filter:**
   - Drop any place without `websiteUri` AND fewer than 10 reviews (no signal, not useful as prospect).
-  - Drop places located outside the Pattaya/Jomtien/Naklua/Bang Lamung bounding box (rough: lat 12.85–13.05, lng 100.85–100.99).
+  - Drop places located outside the bounded target area in Thailand (rough: lat 12.85–13.05, lng 100.85–100.99).
   - Drop places where `primaryType` contains `hospital` (we want clinics, not hospitals — they're too big).
 - **Target output size:** 40–60 clinics. If under 40, log a warning but continue.
 
@@ -140,7 +140,7 @@ Each record in `clinics.json`:
   "types": ["dentist", "health", ...],
   "price_level": "PRICE_LEVEL_MODERATE",
   "hours": ["Monday: 9–18", ...],
-  "discovered_via": ["dental clinic Pattaya"],
+  "discovered_via": ["dental clinic Thailand"],
   "vertical": "dental"   // inferred from queries/types: dental | aesthetic | ivf | mixed
 }
 ```
@@ -187,7 +187,7 @@ For each clinic compute the following metrics. These are the **pain signals** th
 8. **`pain_sentiment_clusters`** — **LLM call**: send all negative review texts (across all clinics, batched) to OpenAI `gpt-4o-mini` with this system prompt:
 
    ```
-   You are an operations analyst. You will receive a JSON array of negative patient review snippets from Pattaya medical clinics. Group them into 3–6 short pain themes (e.g., "long wait times", "communication issues", "follow-up gaps"). Return JSON: [{theme: string, count: int, sample_quote: string}]. Be precise. No marketing language.
+   You are an operations analyst. You will receive a JSON array of negative patient review snippets from medical clinics in Thailand. Group them into 3–6 short pain themes (e.g., "long wait times", "communication issues", "follow-up gaps"). Return JSON: [{theme: string, count: int, sample_quote: string}]. Be precise. No marketing language.
    ```
 
    Run **once globally** (not per clinic) to keep cost minimal. Tag each clinic with the themes that appear in its own negative reviews.
@@ -311,7 +311,7 @@ This is the page every cold-outreach email links to. It must feel like Jack alre
 
 ### 5.1 Boilerplate
 
-Same head as the rest of the site. Load `../styles.css`. Add `<meta name="robots" content="noindex, nofollow">`. Title: `What's broken in Pattaya's clinics — Service Opera`.
+Same head as the rest of the site. Load `../styles.css`. Add `<meta name="robots" content="noindex, nofollow">`. Title: `What's broken in Thailand's clinics — Service Opera`.
 
 Body class: `page-clinics-demo`. Same grain overlay, same nav (link back to `/`).
 
@@ -330,13 +330,13 @@ At the top of an inline script, fetch `_data.json` with `fetch('./_data.json').t
 
 ### 5.4 Hero
 
-Eyebrow (mono, amber): `— PATTAYA · MEDICAL VERTICAL · UPDATED <date from generated_at>`
+Eyebrow (mono, amber): `— THAILAND · MEDICAL VERTICAL · UPDATED <date from generated_at>`
 
 Title (Fraunces, line-by-line rise animation):
 ```
 I looked at
 <span class="line--accent"><span id="sampleSize">47</span> clinics</span>
-in Pattaya.
+in Thailand.
 <span class="line--italic">Here's what they're losing.</span>
 ```
 
@@ -435,7 +435,7 @@ The existing landing page already has (or will have, per prior spec) three verti
 Update the Clinics pill so its CTA button now links to `./clinics/demo.html` instead of mailto. Hotels and Properties remain mailto until their demos are built. Keep the swap-hero JS untouched.
 
 Add a small `mono` line below the CTA on the Clinics tab:
-> `Live audit · 47 Pattaya clinics · updated weekly`
+> `Live audit · 47 Thailand clinics · updated weekly`
 
 Hyperlink that line to `/clinics/demo.html` too.
 

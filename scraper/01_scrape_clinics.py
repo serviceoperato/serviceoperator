@@ -26,19 +26,19 @@ FIELD_MASK = (
 )
 
 QUERIES = [
-    "dental clinic Pattaya",
-    "aesthetic clinic Pattaya",
-    "cosmetic surgery Pattaya",
-    "dermatology clinic Pattaya",
-    "IVF fertility clinic Pattaya",
+    "dental clinic Thailand",
+    "aesthetic clinic Thailand",
+    "cosmetic surgery Thailand",
+    "dermatology clinic Thailand",
+    "IVF fertility clinic Thailand",
 ]
 
 QUERY_VERTICAL = {
-    "dental clinic Pattaya": "dental",
-    "aesthetic clinic Pattaya": "aesthetic",
-    "cosmetic surgery Pattaya": "aesthetic",
-    "dermatology clinic Pattaya": "mixed",
-    "IVF fertility clinic Pattaya": "ivf",
+    "dental clinic Thailand": "dental",
+    "aesthetic clinic Thailand": "aesthetic",
+    "cosmetic surgery Thailand": "aesthetic",
+    "dermatology clinic Thailand": "mixed",
+    "IVF fertility clinic Thailand": "ivf",
 }
 
 BBOX = {"lat_min": 12.85, "lat_max": 13.05, "lng_min": 100.85, "lng_max": 100.99}

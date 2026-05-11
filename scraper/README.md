@@ -1,4 +1,4 @@
-# Clinics scraper (Pattaya)
+# Clinics scraper (Thailand)
 
 Python 3.11+. Produces `clinics.json` → `enriched.json` → `analysis.json` → `../clinics/_data.json` plus a local-only prospect export `clinic_index.csv` (gitignored).
 
