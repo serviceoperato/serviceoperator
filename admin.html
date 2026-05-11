@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';d.setAttribute('data-theme',t)})();</script>
 <title>Admin · ServiceOpera.to</title>
 <meta name="robots" content="noindex, nofollow" />
 <link rel="icon" href="favicon.png" type="image/png" sizes="any" />
@@ -18,6 +19,7 @@
 
 <div id="adminGate" class="admin-gate">
   <div class="admin-gate__card">
+    <button type="button" class="theme-toggle theme-toggle--corner" data-theme-toggle aria-label="Tema"></button>
     <div class="admin-gate__brand">
       <img class="gate__brand-img" src="logo-icon.svg" width="36" height="36" alt="" decoding="async" />
       <span>Admin</span>
@@ -53,7 +55,10 @@
       <span>ServiceOpera.to</span>
     </a>
     <div class="admin-topbar__meta mono">ADMIN · jack@serviceopera.to</div>
-    <button type="button" class="admin-topbar__logout" id="adminLogout">Sign out</button>
+    <div class="admin-topbar__actions">
+      <button type="button" class="theme-toggle" data-theme-toggle aria-label="Tema"></button>
+      <button type="button" class="admin-topbar__logout" id="adminLogout">Sign out</button>
+    </div>
   </header>
 
   <main class="admin-main">
@@ -69,6 +74,7 @@
   </main>
 </div>
 
+<script src="theme.js"></script>
 <script src="admin-config.js"></script>
 <script src="admin.js"></script>
 </body>

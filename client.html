@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';d.setAttribute('data-theme',t)})();</script>
 <title>Private Workspace · ServiceOpera.to</title>
 <meta name="robots" content="noindex, nofollow" />
 <link rel="icon" href="favicon.png" type="image/png" sizes="any" />
@@ -19,6 +20,7 @@
 <!-- ============ LOGIN GATE ============ -->
 <div class="gate" id="gate">
   <div class="gate__card">
+    <button type="button" class="theme-toggle theme-toggle--corner" data-theme-toggle aria-label="Tema"></button>
     <div class="gate__brand">
       <img class="gate__brand-img" src="logo-icon.svg" width="36" height="36" alt="" decoding="async" />
       <span>ServiceOpera.to</span>
@@ -56,7 +58,10 @@
       </a>
       <span class="client-nav__client" id="clientLabel">— Private Workspace</span>
     </div>
-    <button class="client-nav__logout" id="logoutBtn">Sign out ↗</button>
+    <div class="client-nav__actions">
+      <button type="button" class="theme-toggle" data-theme-toggle aria-label="Tema"></button>
+      <button class="client-nav__logout" id="logoutBtn">Sign out ↗</button>
+    </div>
   </nav>
 
   <!-- Hero -->
@@ -359,6 +364,7 @@
 
 </div>
 
+<script src="theme.js"></script>
 <script>
 // =============================================
 // Client workspace — auth + light interactivity
