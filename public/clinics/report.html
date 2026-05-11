@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
 <meta name="robots" content="noindex, nofollow" />
-<title>What's broken in Thailand's clinics — Service Opera</title>
+<title>Clinic report · ServiceOpera.to</title>
 <link rel="icon" href="../favicon.png" type="image/png" sizes="any" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -60,6 +60,12 @@
     <a href="mailto:jack@serviceopera.to" class="nav__cta">jack@serviceopera.to</a>
   </div>
 </nav>
+
+<div id="demoAuthGate" class="clinics-fallback is-hidden">
+  <p class="mono" style="color: var(--amber-2); margin-bottom: 0.75rem;">— PRIVATE REPORT</p>
+  <p>Sign in with the email and password you received for this report.</p>
+  <p style="margin-top: 1.25rem;"><a class="btn btn--primary" id="demoAuthLoginLink" href="../login.html">Log in</a></p>
+</div>
 
 <div id="demoSkeleton" class="clinics-skel" aria-hidden="true">
   <div class="clinics-skel__b"></div>
@@ -280,17 +286,56 @@
     });
   }
 
-  fetch('./_data.json')
-    .then(function (r) { if (!r.ok) throw new Error('bad status'); return r.json(); })
-    .then(function (d) {
-      skel.classList.add('is-hidden');
-      hydrate(d);
-      root.classList.remove('is-hidden');
+  var authGate = document.getElementById('demoAuthGate');
+  var authLoginLink = document.getElementById('demoAuthLoginLink');
+  var params = new URLSearchParams(window.location.search);
+  var slug = (params.get('slug') || '').trim();
+
+  function showAuthGate() {
+    skel.classList.add('is-hidden');
+    if (authGate) {
+      if (authLoginLink && slug) {
+        authLoginLink.href = '../login.html?slug=' + encodeURIComponent(slug);
+      }
+      authGate.classList.remove('is-hidden');
+    }
+  }
+
+  if (!slug) {
+    skel.classList.add('is-hidden');
+    fb.querySelector('p').textContent = 'Missing report link (?slug=…). Ask Jack for the full URL.';
+    fb.classList.remove('is-hidden');
+  } else {
+    var token = '';
+    try {
+      token = sessionStorage.getItem('so_clinic_jwt') || '';
+    } catch (e) {}
+    var headers = {};
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+
+    fetch('/api/clinics/report-data?slug=' + encodeURIComponent(slug), {
+      credentials: 'same-origin',
+      headers: headers,
     })
-    .catch(function () {
-      skel.classList.add('is-hidden');
-      fb.classList.remove('is-hidden');
-    });
+      .then(function (r) {
+        if (r.status === 401) {
+          showAuthGate();
+          throw new Error('unauthorized');
+        }
+        if (!r.ok) throw new Error('bad status');
+        return r.json();
+      })
+      .then(function (d) {
+        skel.classList.add('is-hidden');
+        hydrate(d);
+        root.classList.remove('is-hidden');
+      })
+      .catch(function (err) {
+        if (err && err.message === 'unauthorized') return;
+        skel.classList.add('is-hidden');
+        fb.classList.remove('is-hidden');
+      });
+  }
 })();
 </script>
 <script src="../theme.js"></script>

@@ -18,7 +18,9 @@ A complete, deployable site under **`serviceopera.to`**. All static assets live 
 | `public/admin.html` | **Admin panel** (linked from the home nav as “Admin”). |
 | `public/admin.js` | Admin gate + tiles. With **`RESEND_API_KEY`** on the host, sign-in is **email OTP + server session**; without it, optional `admin-config.js` password for local/static preview only. |
 | `public/admin-config.js` | Optional: `window.__ADMIN_PASSWORD__` for local preview when the server has no Resend key. **Do not rely on this in production.** |
-| `server.mjs` | Static file host + `/api/admin/*` (capabilities, send-code, verify-code, session). |
+| `server.mjs` | Static file host + `/api/admin/*` + **clinic users** (`/api/clinic-users`, `/api/auth/clinic-login`, `/api/clinics/report-data`). User rows live in **`DATA_DIR`/clinic_users.json** (default `./data`, Docker `/app/data`). |
+| `public/login.html` | Clinic log-in; stores `so_clinic_jwt` and redirects to `/clinics/report.html?slug=…`. |
+| `public/clinics/report.html` | Private report view (same layout as the public demo); needs a valid clinic session and slug-specific or fallback `_data.json`. |
 
 The client and admin pages are marked `noindex, nofollow` and disallowed in `robots.txt` where applicable.
 
@@ -184,7 +186,7 @@ Try the client demo with username `demo` and password `demo` — it'll show the 
 ## 8. Brand notes
 
 - **Name:** Service Opera — reads as *Service Operator*. Jack is an AI service operator: systems, pipelines, and runbooks for real service businesses — not a creative studio pitch.
-- **Mark:** `public/logo-icon.svg` (site UI) + **`public/favicon.png`** (browser tab / home screen).
+- **Mark:** `public/logo.png` — official ServiceOpera.to lockup (emblem + wordmark), also used as **`favicon.png`**.
 - **Tone:** confident, dry, restrained. Never "supercharge", "revolutionize", "synergize". The pitch is: *engineered automation, observable results, honest pricing.*
 - **Colors:** black (`#000000`), white (`#ffffff`), indigo accent (`#6366f1` and lighter `#a5b4fc`). Accents stay sparse — mostly monochrome surfaces with indigo for focus states, links, and CTAs.
 - **Typography:** Fraunces (display) + Inter Tight (body) + JetBrains Mono (technical labels).

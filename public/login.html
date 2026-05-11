@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
+<title>Log in · Clinic report · ServiceOpera.to</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" href="favicon.png" type="image/png" sizes="any" />
+<link rel="apple-touch-icon" href="favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600&family=JetBrains+Mono:wght@400;500;700&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body class="page-admin">
+
+<div class="grain" aria-hidden="true"></div>
+
+<div class="admin-gate">
+  <div class="admin-gate__card">
+    <button type="button" class="theme-toggle theme-toggle--corner" data-theme-toggle aria-label="Tema"></button>
+    <div class="admin-gate__brand">
+      <img class="gate__brand-img brand-logo" src="logo.png" width="220" height="90" alt="ServiceOpera.to" decoding="async" />
+    </div>
+    <p class="mono" style="color: var(--amber-2); margin-bottom: 1rem;">— CLINIC REPORT ACCESS</p>
+    <h1>Log in</h1>
+    <p class="admin-gate__lede" id="loginLede">Use the email and password Jack set up for your private report.</p>
+
+    <form id="clinicLoginForm" class="portal-form" autocomplete="on">
+      <label>
+        <span class="mono">EMAIL</span>
+        <input type="email" name="email" id="clinicEmail" required autocomplete="username" />
+      </label>
+      <label>
+        <span class="mono">PASSWORD</span>
+        <input type="password" name="password" id="clinicPassword" required autocomplete="current-password" placeholder="••••••••" />
+      </label>
+      <button type="submit" class="btn btn--primary btn--block">Open report →</button>
+      <p class="portal-form__hint mono" id="loginHint"></p>
+    </form>
+
+    <p class="modal__footnote"><a href="/">← Back to site</a></p>
+  </div>
+</div>
+
+<script src="theme.js"></script>
+<script>
+(function () {
+  var form = document.getElementById('clinicLoginForm');
+  var hint = document.getElementById('loginHint');
+  var lede = document.getElementById('loginLede');
+  var params = new URLSearchParams(window.location.search);
+  var slugHint = (params.get('slug') || '').trim();
+  if (slugHint && lede) {
+    lede.textContent =
+      'You were sent here for report “' + slugHint + '”. After sign-in you will be taken to that page.';
+  }
+
+  function setHint(msg, kind) {
+    if (!hint) return;
+    hint.textContent = msg;
+    hint.className = 'portal-form__hint mono' + (kind === 'error' ? ' is-error' : kind === 'ok' ? ' is-ok' : '');
+  }
+
+  if (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var fd = new FormData(form);
+      var email = (fd.get('email') || '').toString().trim();
+      var password = (fd.get('password') || '').toString();
+      setHint('Signing in…', '');
+      fetch('/api/auth/clinic-login', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, password: password }),
+      })
+        .then(function (r) {
+          return r.json().then(function (j) {
+            return { ok: r.ok, j: j };
+          });
+        })
+        .then(function (x) {
+          if (!x.ok || !x.j || !x.j.token) {
+            setHint((x.j && x.j.error) || 'Invalid email or password.', 'error');
+            var pw = document.getElementById('clinicPassword');
+            if (pw) pw.value = '';
+            return;
+          }
+          try {
+            sessionStorage.setItem('so_clinic_jwt', x.j.token);
+          } catch (err) {}
+          setHint('Redirecting…', 'ok');
+          var dest = x.j.reportUrl || '/clinics/report.html?slug=' + encodeURIComponent(x.j.reportSlug);
+          if (dest.charAt(0) !== '/') dest = '/' + dest;
+          window.location.href = dest;
+        })
+        .catch(function () {
+          setHint('Network error or server unavailable (this page needs the live ServiceOpera host).', 'error');
+        });
+    });
+  }
+})();
+</script>
+</body>
+</html>

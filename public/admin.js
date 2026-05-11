@@ -29,6 +29,7 @@
   var submitBtn = document.getElementById('adminSubmitBtn');
 
   var TILES = [
+    { id: 'clinic-reports', label: 'Clinic report access' },
     { id: 'monitor', label: 'Monitor' },
     { id: 'users-payouts', label: 'Users & payouts' },
     { id: 'user-profiling', label: 'User profiling' },
@@ -264,8 +265,154 @@
     });
   }
 
+  function getAdminBearer() {
+    return sessionStorage.getItem(JWT_KEY) || '';
+  }
+
+  function renderClinicUserRows(users) {
+    if (!users || !users.length) {
+      return '<li class="mono" style="opacity:.75;">No clinic users yet.</li>';
+    }
+    return users
+      .map(function (u) {
+        var url = '/clinics/report.html?slug=' + encodeURIComponent(u.reportSlug);
+        return (
+          '<li style="margin-bottom:.75rem;padding-bottom:.75rem;border-bottom:1px solid var(--line);">' +
+          '<span style="color:var(--amber-2);">' +
+          escapeHtml(u.email) +
+          '</span><br /><span class="mono" style="font-size:.65rem;">slug: ' +
+          escapeHtml(u.reportSlug) +
+          '</span><br /><a href="' +
+          url +
+          '" class="mono" style="font-size:.65rem;">' +
+          url +
+          '</a></li>'
+        );
+      })
+      .join('');
+  }
+
+  function escapeHtml(s) {
+    return String(s || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function loadClinicUsersList() {
+    var listEl = document.getElementById('clinicUserList');
+    if (!listEl) return;
+    var token = getAdminBearer();
+    fetch('/api/clinic-users', {
+      method: 'GET',
+      credentials: 'same-origin',
+      headers: { Authorization: 'Bearer ' + token },
+    })
+      .then(function (r) {
+        return r.json().then(function (j) {
+          return { ok: r.ok, j: j };
+        });
+      })
+      .then(function (x) {
+        if (!x.ok) {
+          listEl.innerHTML = '<li class="mono is-error">Could not load users.</li>';
+          return;
+        }
+        listEl.innerHTML = renderClinicUserRows(x.j.users);
+      })
+      .catch(function () {
+        listEl.innerHTML = '<li class="mono is-error">Network error.</li>';
+      });
+  }
+
+  function openClinicReportsPanel(tile) {
+    if (!panel || !panelTitle || !panelBody) return;
+    panelTitle.textContent = tile.label;
+    var token = getAdminBearer();
+    if (!token) {
+      panelBody.innerHTML =
+        '<p class="admin-panel__stub">After you sign in with <strong>email OTP</strong> on the live server, you can register clinic emails and passwords here. They appear in the on-disk user store and can open <strong>/clinics/report.html?slug=…</strong> after using <strong>Log in</strong> in the site header.</p>' +
+        '<p class="admin-panel__stub">Browser-only admin password (local <code>admin-config.js</code>) cannot call this API.</p>';
+      panel.classList.remove('is-hidden');
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      return;
+    }
+
+    panelBody.innerHTML =
+      '<p class="admin-panel__body">Add a clinic user: they sign in with this email and password, then only see the report for the <strong>slug</strong> you set. Data file: <code>public/clinics/data/&lt;slug&gt;.json</code> (falls back to <code>_data.json</code> if missing).</p>' +
+      '<form id="clinicUserCreateForm" class="portal-form" style="max-width: 28rem; margin-top: 1rem;">' +
+      '<label><span class="mono">CLINIC EMAIL</span><input type="email" name="email" required autocomplete="off" /></label>' +
+      '<label><span class="mono">PASSWORD</span><input type="password" name="password" required minlength="8" autocomplete="new-password" placeholder="min 8 characters" /></label>' +
+      '<label><span class="mono">REPORT SLUG</span><input type="text" name="reportSlug" required pattern="[a-z0-9][a-z0-9-]*" title="Lowercase letters, numbers, hyphens" placeholder="e.g. serenity-dental-q2" /></label>' +
+      '<button type="submit" class="btn btn--primary">Save clinic user</button>' +
+      '<p class="portal-form__hint mono" id="clinicUserFormHint"></p></form>' +
+      '<h3 class="admin-panel__title mono" style="margin-top: 2rem;">Registered users</h3>' +
+      '<ul id="clinicUserList" class="mono" style="list-style: none; padding: 0; margin: 0; line-height: 1.5;"></ul>';
+
+    var form = document.getElementById('clinicUserCreateForm');
+    var fh = document.getElementById('clinicUserFormHint');
+    if (form) {
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (fh) {
+          fh.textContent = '';
+          fh.className = 'portal-form__hint mono';
+        }
+        var fd = new FormData(form);
+        var body = {
+          email: (fd.get('email') || '').toString().trim(),
+          password: (fd.get('password') || '').toString(),
+          reportSlug: (fd.get('reportSlug') || '').toString().trim().toLowerCase(),
+        };
+        fetch('/api/clinic-users', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: {
+            Authorization: 'Bearer ' + getAdminBearer(),
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(body),
+        })
+          .then(function (r) {
+            return r.json().then(function (j) {
+              return { ok: r.ok, j: j };
+            });
+          })
+          .then(function (x) {
+            if (!x.ok) {
+              if (fh) {
+                fh.textContent = (x.j && x.j.error) || 'Could not save.';
+                fh.className = 'portal-form__hint mono is-error';
+              }
+              return;
+            }
+            if (fh) {
+              fh.textContent = 'Saved. Clinic can log in and open /clinics/report.html?slug=' + body.reportSlug;
+              fh.className = 'portal-form__hint mono is-ok';
+            }
+            form.reset();
+            loadClinicUsersList();
+          })
+          .catch(function () {
+            if (fh) {
+              fh.textContent = 'Network error.';
+              fh.className = 'portal-form__hint mono is-error';
+            }
+          });
+      });
+    }
+    loadClinicUsersList();
+    panel.classList.remove('is-hidden');
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
   function openPanel(tile) {
     if (!panel || !panelTitle || !panelBody) return;
+    if (tile.id === 'clinic-reports') {
+      openClinicReportsPanel(tile);
+      return;
+    }
     panelTitle.textContent = tile.label;
     panelBody.innerHTML =
       '<p class="admin-panel__stub">This control is a UI shell. Hook <strong>' +
