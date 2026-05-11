@@ -32,30 +32,34 @@
   </div>
 </nav>
 
+<div class="vertical-pills-wrap">
+  <div class="vertical-pills" role="tablist" aria-label="Business vertical">
+    <button type="button" class="vertical-pill vertical-pill--active mono" role="tab" aria-selected="true" data-vertical="clinics">🏥 Clinics</button>
+    <button type="button" class="vertical-pill mono" role="tab" aria-selected="false" data-vertical="hotels">🏨 Hotels</button>
+    <button type="button" class="vertical-pill mono" role="tab" aria-selected="false" data-vertical="properties">🏡 Properties</button>
+  </div>
+</div>
+
 <!-- HERO -->
 <header class="hero">
   <div class="hero__inner">
-    <div class="hero__meta">
-      <span class="dot dot--live"></span>
-      <span class="mono">CURRENTLY OPERATING · SERVING THAILAND · ICT UTC+7</span>
-    </div>
-
     <p class="hero__brand">
       <img class="hero__brand-img" src="logo.svg" width="240" height="94" alt="ServiceOpera.to" decoding="async" />
     </p>
 
-    <h1 class="hero__title">
-      <span class="line">AI service operations,</span>
-      <span class="line line--accent">engineered.</span>
-    </h1>
+    <div class="hero-copy" id="heroCopy">
+      <h1 class="hero__title hero__title--vertical" id="heroTitleEl">
+        <span class="line line--italic">I know which patients you're losing — and why.</span>
+      </h1>
 
-    <p class="hero__lede">
-      Automation that runs your business while you run your business. I'm Jack — I design and run automation systems for hospitality, medical and property businesses across Thailand: workflows and pipelines for bookings, reviews, leads and pricing, engineered and deployed so your team stays on the floor.
-    </p>
+      <p class="hero__lede" id="heroLedeEl">
+        Every clinic in Pattaya leaks revenue in the same three places. I find yours, fix them quietly, and show you the money you didn't know was walking out the door.
+      </p>
 
-    <div class="hero__actions">
-      <a href="#build" class="btn btn--primary">See the work</a>
-      <a href="mailto:jack@serviceopera.to?subject=Thailand%20automation%20enquiry" class="btn btn--ghost">Start a conversation →</a>
+      <div class="hero__actions">
+        <a href="mailto:jack@serviceopera.to?subject=Clinics%20%E2%80%94%20show%20me%20the%20leak" class="btn btn--primary" id="heroVerticalMail">Show me the leak →</a>
+        <a href="#build" class="btn btn--ghost">See the work</a>
+      </div>
     </div>
 
     <!-- Marquee of sector keywords -->

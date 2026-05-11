@@ -127,10 +127,53 @@ a:hover { color: var(--amber-2); }
 }
 
 /* ============================================
+   VERTICAL PILLS (landing)
+   ============================================ */
+.vertical-pills-wrap {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 5.75rem var(--gutter) 1.25rem;
+  text-align: center;
+}
+.vertical-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.65rem;
+}
+.vertical-pill {
+  font-family: var(--font-mono);
+  font-size: 0.72rem !important;
+  letter-spacing: 0.08em;
+  text-transform: none !important;
+  padding: 0.55rem 1.15rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--bone);
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+.vertical-pill:hover {
+  border-color: var(--amber);
+  color: var(--amber-2);
+}
+.vertical-pill--active {
+  background: var(--amber);
+  color: var(--ink) !important;
+  border-color: var(--amber);
+}
+.vertical-pill:focus-visible {
+  outline: 2px solid var(--amber-2);
+  outline-offset: 3px;
+}
+
+/* ============================================
    HERO
    ============================================ */
 .hero {
-  padding: 9rem var(--gutter) 5rem;
+  padding: 3rem var(--gutter) 5rem;
   max-width: var(--max);
   margin: 0 auto;
   display: grid;
@@ -166,6 +209,20 @@ a:hover { color: var(--amber-2); }
   display: block;
   width: 100%;
   height: auto;
+}
+
+.hero-copy {
+  transition: opacity 200ms ease;
+}
+.hero__title--vertical {
+  font-size: clamp(2rem, 5.2vw, 4.25rem);
+  line-height: 1.05;
+}
+.hero__title--vertical .line {
+  padding-left: 0;
+  opacity: 1;
+  transform: none;
+  animation: none;
 }
 .dot {
   width: 8px; height: 8px;
