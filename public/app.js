@@ -91,21 +91,21 @@
       title: "I know which patients you're losing — and why.",
       lede:
         "Every clinic in Thailand leaks revenue in the same three places. I find yours, fix them quietly, and show you the money you didn't know was walking out the door.",
-      cta: 'Show me the leak →',
+      cta: 'Show me the leak',
       subject: 'Clinics — show me the leak',
     },
     hotels: {
       title: "Your competitors are charging more. You don't know it yet.",
       lede:
         'I watch every rate, every review, every booking signal in Thailand — and turn it into one number that tells you exactly when to move. While your team sleeps.',
-      cta: "Show me tonight's number →",
+      cta: "Show me tonight's number",
       subject: "Hotels — tonight's number",
     },
     properties: {
       title: "Every lead you didn't call back is still out there.",
       lede:
         'Most property leads in Thailand die in an inbox within 48 hours. I bring them back, score them, and book the viewing — before your competitor does.',
-      cta: 'Show me the lost leads →',
+      cta: 'Show me the lost leads',
       subject: 'Properties — lost leads',
     },
   };
@@ -116,7 +116,7 @@
     titleEl.innerHTML = '<span class="line line--italic"></span>';
     titleEl.querySelector('.line').textContent = c.title;
     ledeEl.textContent = c.lede;
-    mailBtn.textContent = c.cta;
+    mailBtn.innerHTML = c.cta + '<span class="ico-arrow-r" aria-hidden="true"></span>';
     if (key === 'clinics') {
       mailBtn.setAttribute('href', 'clinics/demo.html');
       heroCopy.classList.add('has-clinic-pitch');

@@ -82,7 +82,7 @@
         gateLede.textContent =
           'Enter the admin email, tap “Send sign-in code”, then enter the 6-digit code from your inbox. The server validates your session.';
       }
-      if (submitBtn) submitBtn.textContent = 'Sign in with code →';
+      if (submitBtn) submitBtn.innerHTML = 'Sign in with code<span class="ico-arrow-r" aria-hidden="true"></span>';
       if (configBanner) configBanner.classList.add('is-hidden');
     } else {
       if (otpWrap) otpWrap.classList.add('is-hidden');
@@ -93,7 +93,7 @@
         gateLede.textContent =
           'Use your admin email and password. This gate runs in the browser only unless the host exposes email sign-in (RESEND_API_KEY).';
       }
-      if (submitBtn) submitBtn.textContent = 'Enter admin →';
+      if (submitBtn) submitBtn.innerHTML = 'Enter admin<span class="ico-arrow-r" aria-hidden="true"></span>';
       if (configBanner) {
         if (!ADMIN_PASSWORD) configBanner.classList.remove('is-hidden');
         else configBanner.classList.add('is-hidden');

@@ -37,7 +37,7 @@
         <span class="mono">PASSWORD</span>
         <input type="password" name="password" required placeholder="••••••••" />
       </label>
-      <button type="submit" class="btn btn--primary btn--block">Enter →</button>
+      <button type="submit" class="btn btn--primary btn--block">Enter<span class="ico-arrow-r" aria-hidden="true"></span></button>
       <p class="portal-form__hint mono" id="gateHint"></p>
     </form>
 
@@ -58,7 +58,7 @@
     </div>
     <div class="client-nav__actions">
       <button type="button" class="theme-toggle" data-theme-toggle aria-label="Tema"></button>
-      <button class="client-nav__logout" id="logoutBtn">Sign out ↗</button>
+      <button class="client-nav__logout" id="logoutBtn">Sign out<span class="ico-ext" aria-hidden="true"></span></button>
     </div>
   </nav>
 
@@ -77,22 +77,22 @@
       <div class="client-stat">
         <div class="client-stat__label mono">REPLY TIME</div>
         <div class="client-stat__value">28<span>s</span></div>
-        <div class="client-stat__delta up">▲ vs 4h 12m manual</div>
+        <div class="client-stat__delta up"><span class="ico-tri ico-tri--up" aria-hidden="true"></span>vs 4h 12m manual</div>
       </div>
       <div class="client-stat">
         <div class="client-stat__label mono">REVIEW SCORE</div>
         <div class="client-stat__value">4.7<span>/5</span></div>
-        <div class="client-stat__delta up">▲ +0.4 last 30d</div>
+        <div class="client-stat__delta up"><span class="ico-tri ico-tri--up" aria-hidden="true"></span>+0.4 last 30d</div>
       </div>
       <div class="client-stat">
         <div class="client-stat__label mono">QUALIFIED LEADS</div>
         <div class="client-stat__value">142</div>
-        <div class="client-stat__delta up">▲ 3.7× pipeline</div>
+        <div class="client-stat__delta up"><span class="ico-tri ico-tri--up" aria-hidden="true"></span>3.7× pipeline</div>
       </div>
       <div class="client-stat">
         <div class="client-stat__label mono">REVENUE OPPORTUNITY</div>
         <div class="client-stat__value">฿284<span>k</span></div>
-        <div class="client-stat__delta up">▲ next 14 days</div>
+        <div class="client-stat__delta up"><span class="ico-tri ico-tri--up" aria-hidden="true"></span>next 14 days</div>
       </div>
     </div>
   </header>
@@ -120,7 +120,7 @@
         </div>
         <div class="bubble bubble--bot">
           <div class="bubble__meta">Concierge · 14:02</div>
-          Hi Anna 👋 Yes — we have 2 Deluxe Sea-View rooms left for those dates. 3 nights, 2 adults: ฿8,940 total (breakfast included). Want me to hold one for 15 minutes while you decide?
+          Hi Anna — Yes, we have 2 Deluxe Sea-View rooms left for those dates. 3 nights, 2 adults: ฿8,940 total (breakfast included). Want me to hold one for 15 minutes while you decide?
         </div>
         <div class="bubble bubble--guest">
           <div class="bubble__meta">Anna · 14:03</div>
@@ -128,7 +128,7 @@
         </div>
         <div class="bubble bubble--bot">
           <div class="bubble__meta">Concierge · 14:03</div>
-          Of course. Here's your secure payment link for ฿2,682 (30%): <u>pay.serviceopera.to/abc-xyz</u> — once it clears I'll send your confirmation and a check-in guide. ✨
+          Of course. Here's your secure payment link for ฿2,682 (30%): <u>pay.serviceopera.to/abc-xyz</u> — once it clears I'll send your confirmation and a check-in guide.
         </div>
       </div>
 
@@ -155,7 +155,7 @@
         <div class="review">
           <div class="review__header">
             <span class="review__author">Marc Dubois</span>
-            <span class="review__stars">★★★★★</span>
+            <span class="review__stars" aria-label="5 out of 5"><span class="review__dot review__dot--on"></span><span class="review__dot review__dot--on"></span><span class="review__dot review__dot--on"></span><span class="review__dot review__dot--on"></span><span class="review__dot review__dot--on"></span></span>
             <span class="review__src">GOOGLE · 2H AGO</span>
           </div>
           <p class="review__text">"Staff went above and beyond. Khun Ploy at reception remembered our anniversary and arranged something special. Will absolutely return."</p>
@@ -173,12 +173,12 @@
         <div class="review">
           <div class="review__header">
             <span class="review__author">Elena Volkova</span>
-            <span class="review__stars">★★★☆☆</span>
+            <span class="review__stars" aria-label="3 out of 5"><span class="review__dot review__dot--on"></span><span class="review__dot review__dot--on"></span><span class="review__dot review__dot--on"></span><span class="review__dot"></span><span class="review__dot"></span></span>
             <span class="review__src">BOOKING · 6H AGO</span>
           </div>
           <p class="review__text">"Room was great but AC in room 412 was very noisy at night. Otherwise lovely stay, breakfast excellent."</p>
           <div class="review__reply">
-            <span class="review__reply-label">DRAFTED REPLY · MAINTENANCE FLAGGED ▲</span>
+            <span class="review__reply-label">DRAFTED REPLY · MAINTENANCE FLAGGED <span class="ico-tri ico-tri--up" aria-hidden="true"></span></span>
             Elena, thank you for the honest feedback — and we're sorry the AC kept you up. Maintenance has been notified about room 412 today. We hope to welcome you back when everything is at its best.
           </div>
           <div class="review__actions">
@@ -191,13 +191,13 @@
         <div class="review">
           <div class="review__header">
             <span class="review__author">Liu Wei · 刘伟</span>
-            <span class="review__stars">★★★★★</span>
+            <span class="review__stars" aria-label="5 out of 5"><span class="review__dot review__dot--on"></span><span class="review__dot review__dot--on"></span><span class="review__dot review__dot--on"></span><span class="review__dot review__dot--on"></span><span class="review__dot review__dot--on"></span></span>
             <span class="review__src">AGODA · 11H AGO</span>
           </div>
           <p class="review__text">"位置很好，员工友好，泳池很干净。强烈推荐！"</p>
           <div class="review__reply">
             <span class="review__reply-label">DRAFTED REPLY · ZH</span>
-            刘先生您好，非常感谢您的好评！我们很高兴您喜欢泳池和团队的服务，期待很快再次见到您。🌴
+            刘先生您好，非常感谢您的好评！我们很高兴您喜欢泳池和团队的服务，期待很快再次见到您。
           </div>
           <div class="review__actions">
             <button class="btn-mini is-primary">Approve &amp; Post</button>
@@ -306,7 +306,7 @@
             <div class="competitor__sub">DELUXE OCEAN · BREAKFAST INCL.</div>
           </div>
           <div class="competitor__price">฿3,750</div>
-          <div class="competitor__delta delta--up">▲ ฿200 vs yesterday</div>
+          <div class="competitor__delta delta--up"><span class="ico-tri ico-tri--up" aria-hidden="true"></span>฿200 vs yesterday</div>
           <div class="competitor__occ">OCC 84%</div>
         </div>
         <div class="competitor">
@@ -315,7 +315,7 @@
             <div class="competitor__sub">DELUXE FAMILY · HB</div>
           </div>
           <div class="competitor__price">฿4,200</div>
-          <div class="competitor__delta delta--up">▲ ฿350 vs last week</div>
+          <div class="competitor__delta delta--up"><span class="ico-tri ico-tri--up" aria-hidden="true"></span>฿350 vs last week</div>
           <div class="competitor__occ">OCC 91%</div>
         </div>
         <div class="competitor">
@@ -324,17 +324,17 @@
             <div class="competitor__sub">DELUXE SEA · ROOM ONLY</div>
           </div>
           <div class="competitor__price">฿3,180</div>
-          <div class="competitor__delta delta--down">▼ ฿120 vs yesterday</div>
+          <div class="competitor__delta delta--down"><span class="ico-tri ico-tri--down" aria-hidden="true"></span>฿120 vs yesterday</div>
           <div class="competitor__occ">OCC 72%</div>
         </div>
       </div>
 
       <div class="pricing-suggestion">
-        <span class="pricing-suggestion__label">▲ REVENUE OPPORTUNITY · NEXT 14 NIGHTS</span>
+        <span class="pricing-suggestion__label"><span class="ico-tri ico-tri--up" aria-hidden="true"></span>REVENUE OPPORTUNITY · NEXT 14 NIGHTS</span>
         <p class="pricing-suggestion__text">
           Competitors are pricing <strong>+18% above you</strong> on the March 12–19 window driven by a major medical tourism event in Thailand. Your occupancy is forecast at <strong>89%</strong> at current rates — a recommended lift of <strong>฿320/night</strong> would capture an additional <strong>~฿284,000</strong> over the period with negligible booking pace impact.
           <br/><br/>
-          → Approve in one click and rates push to Cloudbeds and all connected OTAs.
+          <span class="ico-arrow-r ico-arrow-r--inline" aria-hidden="true"></span>Approve in one click and rates push to Cloudbeds and all connected OTAs.
         </p>
       </div>
     </section>
@@ -349,7 +349,7 @@
       Everything you see above runs on live data once we connect it to your PMS, OTAs, Meta and Google. The pilot takes 14 days and you only pay if it ships. If after the demo you'd rather just chat about what's possible, that's fine too — no decks, just answers.
     </p>
     <div class="client-cta__actions">
-      <a href="mailto:jack@serviceopera.to?subject=Let's%20talk%20-%20automation%20pilot&body=Hi%20Jack%2C%0A%0AI%27ve%20seen%20the%20private%20workspace%20and%20I%27d%20like%20to%20talk%20about%20a%20pilot.%0A%0ABusiness%3A%0AThe%20system%20that%20interests%20me%20most%3A%0ABest%20time%20to%20call%3A%0A%0AThanks." class="btn btn--primary btn--lg">Email Jack →</a>
+      <a href="mailto:jack@serviceopera.to?subject=Let's%20talk%20-%20automation%20pilot&body=Hi%20Jack%2C%0A%0AI%27ve%20seen%20the%20private%20workspace%20and%20I%27d%20like%20to%20talk%20about%20a%20pilot.%0A%0ABusiness%3A%0AThe%20system%20that%20interests%20me%20most%3A%0ABest%20time%20to%20call%3A%0A%0AThanks." class="btn btn--primary btn--lg">Email Jack<span class="ico-arrow-r" aria-hidden="true"></span></a>
       <a href="https://wa.me/?text=Hi%20Jack%2C%20I%27ve%20seen%20the%20private%20demo." class="btn btn--ghost btn--lg" target="_blank" rel="noopener">WhatsApp</a>
     </div>
   </section>

@@ -215,7 +215,7 @@
     fab.id = BTN_ID;
     fab.type = 'button';
     fab.className = 'debug-fab mono';
-    fab.textContent = 'Debug info';
+    fab.textContent = 'Debug';
     fab.setAttribute('aria-label', 'Mostra o nascondi informazioni di debug');
     fab.setAttribute('aria-expanded', 'false');
     fab.setAttribute('aria-controls', PANEL_ID);
@@ -229,7 +229,7 @@
       '<div class="debug-panel__card">' +
       '<div class="debug-panel__head">' +
       '<span class="mono debug-panel__title" id="soDebugTitle">— DEBUG · 50 checks</span>' +
-      '<button type="button" class="debug-panel__close mono" data-debug-close aria-label="Chiudi pannello">×</button>' +
+      '<button type="button" class="debug-panel__close mono" data-debug-close aria-label="Chiudi pannello"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg></button>' +
       '</div>' +
       '<p class="debug-panel__sub mono">DB = storage locale · FE = browser · BE = HTTP verso questo host. Seleziona il testo sotto e copia (Ctrl+C), oppure usa il pulsante.</p>' +
       '<div class="debug-panel__status mono" id="soDebugStatus">Esecuzione…</div>' +
@@ -241,6 +241,25 @@
     dock.appendChild(fab);
     dock.appendChild(panel);
     document.body.appendChild(dock);
+
+    function applyAppVersion(ver) {
+      if (!ver) return;
+      var v = String(ver).trim();
+      if (!v) return;
+      fab.textContent = 'Debug · v' + v;
+      fab.setAttribute('aria-label', 'Mostra o nascondi informazioni di debug (v' + v + ')');
+      var titleEl = document.getElementById('soDebugTitle');
+      if (titleEl) titleEl.textContent = '— DEBUG v' + v + ' · 50 checks';
+    }
+
+    fetch(new URL('/api/version', window.location.origin), { cache: 'no-store' })
+      .then(function (r) {
+        return r.ok ? r.json() : null;
+      })
+      .then(function (j) {
+        if (j && j.version) applyAppVersion(j.version);
+      })
+      .catch(function () {});
 
     var out = document.getElementById('soDebugOut');
     var status = document.getElementById('soDebugStatus');

@@ -10,6 +10,14 @@ import { assertReportSlug, createClinicStore } from './clinic-store.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(__dirname, 'public');
+
+let appVersion = '0.0.0';
+try {
+  const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json'), 'utf8'));
+  if (pkg && typeof pkg.version === 'string') appVersion = pkg.version;
+} catch {
+  /* keep default */
+}
 const dataDir = process.env.DATA_DIR || path.join(__dirname, 'data');
 fs.mkdirSync(dataDir, { recursive: true });
 const clinicStore = createClinicStore(dataDir);
@@ -123,6 +131,11 @@ app.use((req, res, next) => {
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
   next();
+});
+
+app.get('/api/version', (_req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  res.json({ version: appVersion });
 });
 
 app.get('/api/admin/capabilities', (_req, res) => {
