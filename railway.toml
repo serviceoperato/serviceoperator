@@ -1,0 +1,13 @@
+# Railway: run the Node API + static public/ host (not a static-only publish).
+# Settings → Deploy: leave Start Command empty to use this file, or set `node server.mjs`.
+# Settings → Build: Dockerfile (recommended) or Nixpacks with `npm start` from nixpacks.toml.
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+startCommand = "node server.mjs"
+healthcheckPath = "/api/version"
+healthcheckTimeout = 30
+restartPolicyType = "ON_FAILURE"

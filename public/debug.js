@@ -398,6 +398,18 @@
       bodyCs.backgroundColor,
   });
 
+  function apiProbeNote(status, json, serviceKey) {
+    if (status === 404) {
+      return ' · note=static-only or wrong Railway start (need node server.mjs / Dockerfile)';
+    }
+    if (!status) return ' · note=network error';
+    if (status !== 200) return ' · note=unexpected HTTP ' + status;
+    if (!json || json[serviceKey] !== 'serviceopera') {
+      return ' · note=HTTP 200 but not ServiceOpera Node JSON (CDN/static?)';
+    }
+    return ' · note=Node API OK';
+  }
+
   var verProbe = await timedJson('/api/version');
   lines.push({
     cat: 'BE',
@@ -408,7 +420,14 @@
       verProbe.ms +
       ' ms' +
       (verProbe.ok ? ' · ok' : ' · fail') +
-      (verProbe.json && verProbe.json.version ? ' · version=' + verProbe.json.version : verProbe.err ? ' · ' + verProbe.err : ''),
+      (verProbe.json && verProbe.json.version ? ' · version=' + verProbe.json.version : verProbe.err ? ' · ' + verProbe.err : '') +
+      (verProbe.status === 404
+        ? ' · note=static-only or wrong Railway start (need node server.mjs / Dockerfile)'
+        : verProbe.ok && verProbe.json && verProbe.json.version
+          ? ' · note=Node API OK'
+          : verProbe.ok
+            ? ' · note=HTTP 200 but unexpected JSON'
+            : ''),
   });
   var clinicCap = await timedJson('/api/auth/clinic-capabilities');
   var cc = clinicCap.json || {};
@@ -422,7 +441,11 @@
       ' ms · service=' +
       (cc.service != null ? cc.service : 'n/a') +
       ' · passwordResetEmail=' +
-      (cc.passwordResetEmail != null ? String(cc.passwordResetEmail) : 'n/a'),
+      (cc.passwordResetEmail != null ? String(cc.passwordResetEmail) : 'n/a') +
+      apiProbeNote(clinicCap.status, cc, 'service') +
+      (clinicCap.status === 200 && cc.service === 'serviceopera' && cc.passwordResetEmail === false
+        ? ' · resend=RESEND_API_KEY unset on Node service'
+        : ''),
   });
   var adminCap = await timedJson('/api/admin/capabilities');
   var ac = adminCap.json || {};
@@ -436,7 +459,11 @@
       ' ms · otpEnabled=' +
       (ac.otpEnabled != null ? String(ac.otpEnabled) : 'n/a') +
       ' · clinicPasswordResetEmail=' +
-      (ac.clinicPasswordResetEmail != null ? String(ac.clinicPasswordResetEmail) : 'n/a'),
+      (ac.clinicPasswordResetEmail != null ? String(ac.clinicPasswordResetEmail) : 'n/a') +
+      apiProbeNote(adminCap.status, ac, 'service') +
+      (adminCap.status === 200 && ac.service === 'serviceopera' && ac.otpEnabled === false
+        ? ' · resend=RESEND_API_KEY unset on Node service'
+        : ''),
   });
 
     return lines;
