@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
+<meta name="robots" content="noindex, nofollow" />
+<title>Pattaya public-footprint audit sample · Service Opera</title>
+<link rel="icon" href="../../favicon.png" type="image/png" sizes="any" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=JetBrains+Mono:wght@300;400;500;700&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../styles.css" />
+<style>
+  .page-sea-audit .sea-hero__title { font-family: var(--font-display); font-weight: 400; font-size: clamp(1.85rem, 4.2vw, 3.1rem); line-height: 1.08; letter-spacing: -0.03em; margin-bottom: 1rem; max-width: 52rem; }
+  .page-sea-audit .sea-hero__title .line { display: block; opacity: 0; transform: translateY(12px); animation: rise .75s cubic-bezier(.2,.7,.2,1) forwards; }
+  .page-sea-audit .sea-hero__title .line:nth-child(1) { animation-delay: .05s; }
+  .page-sea-audit .sea-hero__title .line:nth-child(2) { animation-delay: .14s; }
+  .page-sea-audit .sea-hero__title .line:nth-child(3) { animation-delay: .23s; }
+  .sea-note { border: 1px solid var(--line-strong); background: var(--ink-2); border-radius: 6px; padding: 1rem 1.15rem; margin-top: 1.5rem; max-width: 48rem; font-size: 0.88rem; color: var(--bone); line-height: 1.5; }
+  .sea-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+  .sea-card { background: var(--ink-2); border: 1px solid var(--line-strong); border-radius: 6px; padding: 1.15rem 1.1rem; }
+  .sea-card__k { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.12em; color: var(--mute-2); margin-bottom: 0.45rem; }
+  .sea-card__v { font-size: 1rem; color: var(--paper); font-weight: 500; }
+  .sea-findings { list-style: none; max-width: 48rem; margin-top: 1rem; }
+  .sea-findings li { position: relative; padding-left: 1.35rem; margin-bottom: 0.75rem; color: var(--bone); }
+  .sea-findings li::before { content: ''; position: absolute; left: 0; top: 0.55em; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); }
+  .sea-visual { margin-top: 1.25rem; border: 1px solid var(--line); border-radius: 8px; background: var(--ink-2); padding: 1rem; }
+  .sea-visual img { display: block; width: 100%; height: auto; }
+  .sea-visual-grid { display: grid; gap: 1.25rem; margin-top: 0.5rem; }
+  @media (min-width: 900px) { .sea-visual-grid { grid-template-columns: 1fr 1fr; } }
+  .sea-opp { border-bottom: 1px solid var(--line); padding: 1.15rem 0; }
+  .sea-opp:last-child { border-bottom: none; }
+  .sea-opp__h { font-family: var(--font-display); font-size: 1.15rem; margin-bottom: 0.35rem; }
+  .sea-opp__meta { font-family: var(--font-mono); font-size: 0.65rem; color: var(--amber-2); margin-bottom: 0.5rem; }
+  .sea-table-wrap { overflow-x: auto; margin-top: 1rem; border: 1px solid var(--line-strong); border-radius: 6px; }
+  .sea-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  .sea-table th, .sea-table td { padding: 0.65rem 0.75rem; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .sea-table th { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.08em; color: var(--mute-2); background: var(--ink-3); }
+  .sea-table tr:last-child td { border-bottom: none; }
+  .sea-series { display: grid; gap: 0.75rem; margin-top: 1rem; }
+  @media (min-width: 720px) { .sea-series { grid-template-columns: repeat(2, 1fr); } }
+  .sea-series__card { border: 1px solid var(--line); border-radius: 6px; padding: 0.85rem 1rem; background: var(--ink-2); border-left: 4px solid var(--sea-c, var(--amber)); }
+  .sea-fallback { text-align: center; padding: 4rem var(--gutter); color: var(--bone); }
+  .sea-skel { display: grid; gap: 1rem; max-width: 720px; margin: 2rem auto; padding: 0 var(--gutter); }
+  .sea-skel__b { height: 64px; background: var(--ink-2); border: 1px solid var(--line); border-radius: 4px; animation: pulse 2s ease-in-out infinite; }
+  .page-sea-audit .nav__links a { display: inline !important; }
+</style>
+</head>
+<body class="page-client page-sea-audit">
+
+<div class="grain" aria-hidden="true"></div>
+
+<nav class="nav">
+  <a href="/" class="nav__logo">
+    <img class="nav__logo-img brand-logo" src="../../logo.png" width="220" height="90" alt="ServiceOpera.to" decoding="async" />
+  </a>
+  <div class="nav__links">
+    <a href="/">Home</a>
+    <a href="../demo.html">Clinics vertical</a>
+    <a href="../../login.html" class="nav__login mono">Log in</a>
+    <button type="button" class="theme-toggle" data-theme-toggle aria-label="Theme"></button>
+    <a href="mailto:jack@serviceopera.to" class="nav__cta">jack@serviceopera.to</a>
+  </div>
+</nav>
+
+<div id="seaSkel" class="sea-skel" aria-hidden="true">
+  <div class="sea-skel__b"></div>
+  <div class="sea-skel__b"></div>
+  <div class="sea-skel__b"></div>
+</div>
+
+<div id="seaFb" class="sea-fallback is-hidden">
+  <p>Could not load audit pack data.</p>
+  <p><a href="mailto:jack@serviceopera.to" class="btn btn--primary" style="display:inline-block;margin-top:1rem;">Email Jack</a></p>
+</div>
+
+<main id="seaRoot" class="is-hidden">
+  <header class="client-hero" style="border-bottom: 1px solid var(--line);">
+    <div class="client-hero__eyebrow">
+      <span class="dot dot--live"></span>
+      <span class="mono" id="seaEyebrow">—</span>
+    </div>
+    <h1 class="sea-hero__title" id="seaTitleWrap"></h1>
+    <p class="client-hero__lede" style="max-width: 44em;" id="seaSubtitle"></p>
+    <div class="sea-note mono" style="font-size:0.68rem !important;">
+      Demonstration layout only. This audit was not commissioned by the clinic. Positioning: public data automation audit for Pattaya clinics.
+    </div>
+  </header>
+
+  <section class="section" style="padding-top: 3rem;">
+    <div class="section__header">
+      <span class="eyebrow mono">— 01 · PUBLIC FOOTPRINT SUMMARY</span>
+      <h2 class="section__title">What the public signals support</h2>
+    </div>
+    <ul class="sea-findings" id="seaFindings"></ul>
+    <div class="sea-grid-3" id="seaMeta"></div>
+  </section>
+
+  <section class="section">
+    <div class="section__header">
+      <span class="eyebrow mono">— 02 · VISUAL MAPS (PACK ASSETS)</span>
+      <h2 class="section__title">Automation story in three charts</h2>
+      <p class="section__sub">Static SVGs from the audit pack; data is snapshot-based.</p>
+    </div>
+    <div class="sea-visual">
+      <p class="mono" style="font-size:0.65rem;color:var(--mute-2);margin-bottom:0.75rem;">Public footprint vs pressure vs upside</p>
+      <img src="./visuals/audit_lines.svg" width="920" height="360" alt="Multi-series line chart across patient journey stages" decoding="async" />
+    </div>
+    <div class="sea-visual-grid">
+      <div class="sea-visual">
+        <p class="mono" style="font-size:0.65rem;color:var(--mute-2);margin-bottom:0.75rem;">Funnel</p>
+        <img src="./visuals/automation_funnel.svg" alt="Automation funnel diagram" decoding="async" />
+      </div>
+      <div class="sea-visual">
+        <p class="mono" style="font-size:0.65rem;color:var(--mute-2);margin-bottom:0.75rem;">Competitor radar</p>
+        <img src="./visuals/competitor_radar.svg" alt="Competitor radar chart" decoding="async" />
+      </div>
+    </div>
+    <p class="mono" id="seaScoreMethod" style="margin-top:1.25rem;font-size:0.65rem !important;color:var(--mute-2);max-width:52rem;line-height:1.55;"></p>
+    <div class="sea-series" id="seaSeries"></div>
+  </section>
+
+  <section class="section">
+    <div class="section__header">
+      <span class="eyebrow mono">— 03 · AUTOMATION OPPORTUNITIES</span>
+      <h2 class="section__title">Ranked build blocks</h2>
+    </div>
+    <div id="seaOpps" style="max-width: 720px; margin: 0 auto;"></div>
+  </section>
+
+  <section class="section">
+    <div class="section__header">
+      <span class="eyebrow mono">— 04 · COMPETITOR BENCHMARK (PUBLIC)</span>
+      <h2 class="section__title">Who shows up next to them</h2>
+    </div>
+    <div class="sea-table-wrap">
+      <table class="sea-table" id="seaBench">
+        <thead><tr><th>Clinic</th><th>Type</th><th>Threat</th><th>Automation angle</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section section--cta">
+    <div class="cta" id="seaCta">
+      <h2></h2>
+      <p></p>
+      <div class="cta__actions">
+        <a href="mailto:jack@serviceopera.to?subject=Clinic%20automation%20audit" class="btn btn--primary btn--lg">jack@serviceopera.to</a>
+        <a href="../demo.html" class="btn btn--ghost btn--lg">Thailand clinics sample</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-bottom: 4rem;">
+    <div class="sea-note" style="max-width: 52rem; margin: 0 auto;">
+      <strong style="color: var(--paper);">Disclaimer</strong><br />
+      This audit is based only on public information. Ratings, review counts and prices should be refreshed before client delivery.
+    </div>
+  </section>
+
+  <footer class="footer" style="padding-top: 0;">
+    <div class="footer__legal mono" id="seaFooter">© 2026 SERVICE OPERA</div>
+  </footer>
+</main>
+
+<script>
+(function () {
+  var skel = document.getElementById('seaSkel');
+  var root = document.getElementById('seaRoot');
+  var fb = document.getElementById('seaFb');
+
+  function titleLines(text) {
+    var parts = text.split('. ');
+    var wrap = document.getElementById('seaTitleWrap');
+    wrap.innerHTML = '';
+    for (var i = 0; i < parts.length; i++) {
+      var bit = parts[i].trim();
+      if (i < parts.length - 1) bit += '.';
+      else if (bit.charAt(bit.length - 1) !== '.') bit += '.';
+      var span = document.createElement('span');
+      span.className = 'line';
+      span.textContent = bit;
+      wrap.appendChild(span);
+    }
+  }
+
+  function hydrate(sections, profile, scores, opps, bench) {
+    var t = profile.target;
+    document.getElementById('seaEyebrow').textContent =
+      '— ' + sections.hero.eyebrow + ' · UPDATED ' + (profile.generated_at || scores.generated_at || '');
+
+    titleLines(sections.hero.title);
+    document.getElementById('seaSubtitle').textContent = sections.hero.subtitle;
+
+    var ul = document.getElementById('seaFindings');
+    sections.key_findings.forEach(function (f) {
+      var li = document.createElement('li');
+      li.textContent = f;
+      ul.appendChild(li);
+    });
+
+    var meta = document.getElementById('seaMeta');
+    function card(k, v) {
+      var d = document.createElement('div');
+      d.className = 'sea-card';
+      d.innerHTML = '<div class="sea-card__k">' + k + '</div><div class="sea-card__v">' + v + '</div>';
+      meta.appendChild(d);
+    }
+    card('CLINIC (PUBLIC NAME)', t.name);
+    card('MARKET / CITY', t.market + ' · ' + t.city);
+    card('CHANNELS OBSERVED', (t.public_channels_found || []).join(' · '));
+
+    document.getElementById('seaScoreMethod').textContent = scores.method || '';
+
+    var ser = document.getElementById('seaSeries');
+    (scores.series || []).forEach(function (s) {
+      var d = document.createElement('div');
+      d.className = 'sea-series__card';
+      d.style.setProperty('--sea-c', s.color);
+      d.innerHTML =
+        '<div class="mono" style="font-size:0.62rem;color:var(--mute-2);margin-bottom:0.35rem;">' +
+        s.label +
+        '</div><p style="font-size:0.82rem;color:var(--bone);line-height:1.45;">' +
+        s.interpretation +
+        '</p>';
+      ser.appendChild(d);
+    });
+
+    var op = document.getElementById('seaOpps');
+    opps.forEach(function (o) {
+      var row = document.createElement('div');
+      row.className = 'sea-opp';
+      row.innerHTML =
+        '<div class="sea-opp__meta">PRIORITY ' +
+        o.priority +
+        '</div><h3 class="sea-opp__h">' +
+        o.name +
+        '</h3><p style="color:var(--bone);font-size:0.92rem;margin-bottom:0.5rem;">' +
+        o.business_value +
+        '</p><p class="mono" style="font-size:0.68rem;color:var(--mute-2);">' +
+        o.site_copy +
+        '</p>';
+      op.appendChild(row);
+    });
+
+    var tb = document.querySelector('#seaBench tbody');
+    bench.forEach(function (b) {
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td><strong>' +
+        b.name +
+        '</strong></td><td>' +
+        b.type +
+        '</td><td class="mono">' +
+        b.threat_level +
+        '</td><td style="color:var(--bone);font-size:0.86rem;">' +
+        b.automation_observation +
+        '</td>';
+      tb.appendChild(tr);
+    });
+
+    var cta = sections.cta || {};
+    var ctaEl = document.getElementById('seaCta');
+    ctaEl.querySelector('h2').textContent = cta.title || '';
+    ctaEl.querySelector('p').textContent = cta.copy || '';
+
+    document.getElementById('seaFooter').textContent =
+      '© 2026 SERVICE OPERA · PUBLIC-DATA AUDIT SAMPLE · ' + (profile.generated_at || '');
+  }
+
+  var urls = [
+    './data/content_sections.json',
+    './data/clinic_profile.json',
+    './data/audit_scores.json',
+    './data/automation_opportunities.json',
+    './data/competitor_benchmark.json'
+  ];
+
+  Promise.all(
+    urls.map(function (u) {
+      return fetch(u).then(function (r) {
+        if (!r.ok) throw new Error('bad');
+        return r.json();
+      });
+    })
+  )
+    .then(function (arr) {
+      skel.classList.add('is-hidden');
+      hydrate(arr[0], arr[1], arr[2], arr[3], arr[4]);
+      root.classList.remove('is-hidden');
+    })
+    .catch(function () {
+      skel.classList.add('is-hidden');
+      fb.classList.remove('is-hidden');
+    });
+})();
+</script>
+<script src="../../theme.js"></script>
+<script src="../../debug.js"></script>
+</body>
+</html>

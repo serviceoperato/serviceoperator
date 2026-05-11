@@ -89,6 +89,8 @@
   var slugHint = (params.get('slug') || '').trim();
   var resetToken = (params.get('reset') || '').trim();
   var resetEmailEnabled = false;
+  /** true if /api/auth/clinic-capabilities returned HTTP 200 (we are on Node host, not static-only). */
+  var capabilitiesHttpOk = false;
   var gateTitle = document.getElementById('clinicGateTitle');
 
   if (slugHint && lede) {
@@ -141,16 +143,32 @@
 
   fetch('/api/auth/clinic-capabilities', { cache: 'no-store' })
     .then(function (r) {
+      capabilitiesHttpOk = r.ok;
       return r.ok ? r.json() : {};
     })
     .then(function (cap) {
       resetEmailEnabled = Boolean(cap && cap.passwordResetEmail);
-      if (!resetEmailEnabled && forgotHelp) {
+      if (!forgotHelp) return;
+      if (resetEmailEnabled) {
         forgotHelp.textContent =
-          'Email-based reset is not enabled on this server. Contact Jack (your administrator) to set a new password for your clinic account.';
+          'Enter the email Jack registered for your report, then we will send a one-time link to set a new password (via Resend).';
+        return;
       }
+      if (!capabilitiesHttpOk) {
+        forgotHelp.textContent =
+          'Automatic reset needs the live Node server. If you opened this file from disk or a static host, open the same URL on Railway (or run npm start) so /api/auth/* works.';
+        return;
+      }
+      forgotHelp.textContent =
+        'Automatic reset uses Resend (same as admin email codes). Ask Jack to add RESEND_API_KEY and RESEND_FROM in Railway for this service — then “Forgot password?” will email you a link. Until then, Jack can set a new password in Admin → clinic users.';
     })
-    .catch(function () {});
+    .catch(function () {
+      capabilitiesHttpOk = false;
+      if (forgotHelp) {
+        forgotHelp.textContent =
+          'Could not reach the server. Use your deployed site URL (Node + Express), not a static preview, for automatic password reset.';
+      }
+    });
 
   if (resetToken && resetForm) {
     showResetMode();
@@ -159,10 +177,17 @@
   if (forgotToggle) {
     forgotToggle.addEventListener('click', function () {
       if (!resetEmailEnabled) {
-        setHint(
-          'Password reset by email is not available here. Please contact Jack to reset your clinic password.',
-          'error'
-        );
+        if (!capabilitiesHttpOk) {
+          setHint(
+            'Automatic email reset is unavailable: this page is not talking to the Node API. Open login from your Railway URL (or run npm start locally).',
+            'error'
+          );
+        } else {
+          setHint(
+            'Resend is not configured on the server yet. Jack must set RESEND_API_KEY (and RESEND_FROM) on Railway — same variables as admin OTP — then forgot-password emails work automatically.',
+            'error'
+          );
+        }
         return;
       }
       showForgotMode();
