@@ -141,6 +141,7 @@ app.get('/api/version', (_req, res) => {
 });
 
 app.get('/api/admin/capabilities', (_req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
   res.json({
     service: 'serviceopera',
     version: appVersion,

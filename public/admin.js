@@ -9,6 +9,8 @@
   var JWT_KEY = 'so_admin_jwt';
 
   var otpEnabled = false;
+  var capabilitiesHttpOk = false;
+  var capabilitiesFromOurServer = false;
 
   var gate = document.getElementById('adminGate');
   var workspace = document.getElementById('adminWorkspace');
@@ -95,24 +97,39 @@
       }
       if (submitBtn) submitBtn.innerHTML = 'Enter admin<span class="ico-arrow-r" aria-hidden="true"></span>';
       if (configBanner) {
-        if (!ADMIN_PASSWORD) configBanner.classList.remove('is-hidden');
-        else configBanner.classList.add('is-hidden');
+        if (capabilitiesFromOurServer) {
+          configBanner.innerHTML =
+            'This host runs the ServiceOpera Node API, but <strong>RESEND_API_KEY</strong> is empty at runtime. Add it on the <strong>same Railway service</strong> that runs <code>server.mjs</code>, redeploy, then confirm deploy logs show “Resend: RESEND_API_KEY is set”. Until then, set <strong>admin-config.js</strong> for a local password only.';
+          configBanner.classList.remove('is-hidden');
+        } else if (!capabilitiesHttpOk) {
+          configBanner.innerHTML =
+            'Email sign-in needs the live Node API (<code>/api/admin/capabilities</code>). Open this site from Railway or <code>npm start</code>, not a static-only host.';
+          configBanner.classList.remove('is-hidden');
+        } else if (!ADMIN_PASSWORD) {
+          configBanner.innerHTML =
+            'For local static preview: add <strong>admin-config.js</strong> (copy from <strong>admin-config.example.js</strong>) and set <strong>window.__ADMIN_PASSWORD__</strong>. On production (Node + Resend), use email codes instead.';
+          configBanner.classList.remove('is-hidden');
+        } else configBanner.classList.add('is-hidden');
       }
     }
   }
 
   function fetchCapabilities() {
-    return fetch('/api/admin/capabilities', { method: 'GET', credentials: 'same-origin' })
+    return fetch('/api/admin/capabilities', { method: 'GET', credentials: 'same-origin', cache: 'no-store' })
       .then(function (r) {
+        capabilitiesHttpOk = r.ok;
         if (!r.ok) throw new Error('bad');
         return r.json();
       })
       .then(function (j) {
+        capabilitiesFromOurServer = Boolean(j && j.service === 'serviceopera');
         otpEnabled = Boolean(j && j.otpEnabled);
         applyCapabilities();
       })
       .catch(function () {
         otpEnabled = false;
+        capabilitiesHttpOk = false;
+        capabilitiesFromOurServer = false;
         applyCapabilities();
       });
   }
@@ -238,10 +255,22 @@
       }
 
       if (!ADMIN_PASSWORD) {
-        setHint(
-          'Password not configured. Copy admin-config.example.js to admin-config.js and set window.__ADMIN_PASSWORD__, or deploy with RESEND_API_KEY for email codes.',
-          'error'
-        );
+        if (capabilitiesFromOurServer) {
+          setHint(
+            'Email sign-in is off: RESEND_API_KEY is unset on this Railway service. Add it to the service running server.mjs, redeploy, and confirm deploy logs show “Resend: RESEND_API_KEY is set”.',
+            'error'
+          );
+        } else if (!capabilitiesHttpOk) {
+          setHint(
+            'Cannot reach /api/admin/capabilities. Use the Railway Node deploy (or npm start), not a static-only host.',
+            'error'
+          );
+        } else {
+          setHint(
+            'Password not configured. Copy admin-config.example.js to admin-config.js and set window.__ADMIN_PASSWORD__, or deploy with RESEND_API_KEY for email codes.',
+            'error'
+          );
+        }
         return;
       }
       if (email !== ADMIN_EMAIL.toLowerCase() || password !== ADMIN_PASSWORD) {

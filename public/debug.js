@@ -83,7 +83,7 @@
   }
 
   function envSafeArea() {
-    var probe = document.createElement('motion.div');
+    var probe = document.createElement('div');
     probe.style.cssText =
       'position:fixed;visibility:hidden;pointer-events:none;' +
       'padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)';
@@ -488,7 +488,7 @@
       fab.removeAttribute('title');
       fab.setAttribute('aria-label', 'Mostra o nascondi informazioni di debug (versione ' + v + ')');
       var titleEl = document.getElementById('soDebugTitle');
-      if (titleEl) titleEl.textContent = '— DEBUG v' + v + ' · 53 checks';
+      if (titleEl) titleEl.textContent = '— DEBUG v' + v + ' · 63 checks';
     }
 
     fetch(new URL('/api/version', window.location.origin), { cache: 'no-store' })
