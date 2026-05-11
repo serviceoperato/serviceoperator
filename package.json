@@ -1,9 +1,17 @@
 {
   "name": "serviceopera-site",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "private": true,
-  "description": "Static site; package.json exists only so Railway/Nixpacks can run a static file server (no bundler).",
+  "type": "module",
+  "description": "Static site served by Node (Express); admin OTP via Resend when RESEND_API_KEY is set.",
   "scripts": {
-    "start": "npx --yes serve@14 . -l tcp://0.0.0.0:$PORT"
+    "start": "node server.mjs",
+    "preview:static": "npx --yes serve@14 . -l tcp://0.0.0.0:3000"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
   }
 }

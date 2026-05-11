@@ -3,10 +3,8 @@ node_modules
 .env
 .env.*
 *.log
-# Non servono nell’immagine nginx (evita COPY accidentali da contesto ampliato)
 README.md
 BUILD.md
 netlify.toml
 nixpacks.toml
-package.json
 tools/

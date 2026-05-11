@@ -1,26 +1,18 @@
-# Static site + security headers. Railway sets PORT at runtime; we inject it into
-# nginx config here (official nginx ${PORT} templates are unreliable with Railway).
-# Bump: trigger fresh Railway deploy when HTTP logs / routing look stale after a green build.
+# Node serves /app/public + admin email OTP (Resend).
+# Railway: RESEND_API_KEY, RESEND_FROM, ADMIN_JWT_SECRET (optional ADMIN_EMAIL).
 
-FROM nginx:alpine
+FROM node:20-alpine
 
-RUN rm -f /etc/nginx/conf.d/default.conf
+WORKDIR /app
 
-COPY docker/nginx.site.conf /etc/nginx/nginx.site.conf
-COPY docker/entrypoint.sh /entrypoint.sh
-RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
 
-# Statici serviti da nginx (root + cartelle referenziate da index / client / admin).
-COPY index.html client.html styles.css app.js robots.txt 404.html \
-  theme.js debug.js logo-icon.svg logo.svg favicon.png \
-  admin.html admin.js admin-config.js admin-config.example.js \
-  /usr/share/nginx/html/
-COPY clinics /usr/share/nginx/html/clinics/
-RUN test -f /usr/share/nginx/html/index.html \
-    && test -f /usr/share/nginx/html/debug.js \
-    && test -f /usr/share/nginx/html/theme.js \
-    && test -f /usr/share/nginx/html/client.html \
-    && test -f /usr/share/nginx/html/clinics/demo.html \
-    && ls -la /usr/share/nginx/html/
+COPY server.mjs ./
+COPY public ./public/
 
-ENTRYPOINT ["/entrypoint.sh"]
+RUN test -f /app/public/index.html \
+  && test -f /app/public/admin.html \
+  && test -f /app/server.mjs
+
+ENTRYPOINT ["node", "server.mjs"]

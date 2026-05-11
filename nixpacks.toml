@@ -1,5 +1,5 @@
-# Railway/Nixpacks: this repo is static files; Node is only used to run `serve`.
-# Without package.json + start, Railpack may look for src/index.js and fail.
+# Railway/Nixpacks: npm start runs server.mjs (Express + static public/).
+# Prefer the Dockerfile on Railway for identical behaviour.
 
 [start]
 cmd = "npm start"

@@ -27,20 +27,29 @@
     <p class="mono" style="color: var(--amber-2); margin-bottom: 1rem;">— SERVICEOPERA.TO</p>
     <h1>Sign in</h1>
     <p id="adminConfigBanner" class="admin-config-banner is-hidden mono">
-      Add <strong>admin-config.js</strong> (copy from <strong>admin-config.example.js</strong>) and set <strong>window.__ADMIN_PASSWORD__</strong>. File is gitignored.
+      For local static preview: add <strong>admin-config.js</strong> (copy from <strong>admin-config.example.js</strong>) and set <strong>window.__ADMIN_PASSWORD__</strong>. On production (Node + Resend), use email codes instead.
     </p>
-    <p class="admin-gate__lede">Use your admin email and password. This gate runs in the browser only — not a substitute for server-side auth.</p>
+    <p class="admin-gate__lede" id="adminGateLede">Use your admin email. On the live server a one-time code is sent by email; locally you can use a password from admin-config.js.</p>
 
     <form id="adminGateForm" class="portal-form" autocomplete="on">
       <label>
         <span class="mono">EMAIL</span>
-        <input type="email" name="email" required autocomplete="username" value="jack@serviceopera.to" />
+        <input type="email" name="email" id="adminEmailInput" required autocomplete="username" value="jack@serviceopera.to" />
       </label>
-      <label>
-        <span class="mono">PASSWORD</span>
-        <input type="password" name="password" required autocomplete="current-password" placeholder="••••••••" />
-      </label>
-      <button type="submit" class="btn btn--primary btn--block">Enter admin →</button>
+      <div id="adminOtpWrap" class="is-hidden">
+        <label>
+          <span class="mono">CODE FROM EMAIL</span>
+          <input type="text" name="code" id="adminCodeInput" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="6-digit code" />
+        </label>
+      </div>
+      <div id="adminPasswordWrap">
+        <label>
+          <span class="mono">PASSWORD</span>
+          <input type="password" name="password" id="adminPasswordInput" autocomplete="current-password" placeholder="••••••••" />
+        </label>
+      </div>
+      <button type="button" class="btn btn--ghost btn--block mono is-hidden" id="adminSendCodeBtn">Send sign-in code →</button>
+      <button type="submit" class="btn btn--primary btn--block" id="adminSubmitBtn">Enter admin →</button>
       <p class="portal-form__hint mono" id="adminGateHint"></p>
     </form>
 

@@ -203,6 +203,7 @@ a:hover { color: var(--amber-2); }
 
 [data-theme="light"] .nav__logo-img,
 [data-theme="light"] .hero__brand-img,
+[data-theme="light"] .footer__logo-img,
 [data-theme="light"] .gate__brand-img,
 [data-theme="light"] .client-nav__brand-img,
 [data-theme="light"] .admin-topbar__home img {
@@ -1545,17 +1546,21 @@ a:hover { color: var(--amber-2); }
   text-transform: none;
   padding: 0.5rem 0.75rem;
   border-radius: 3px;
-  border: 1px solid var(--line-strong);
-  background: var(--ink-2);
-  color: var(--mute-2);
+  border: 1px solid var(--amber-deep);
+  background: var(--amber);
+  color: var(--on-accent-text);
   cursor: pointer;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
   transition: border-color 0.2s, color 0.2s, background 0.2s;
 }
 .debug-fab:hover {
-  border-color: var(--amber);
-  color: var(--amber-2);
-  background: var(--ink-3);
+  border-color: var(--amber-2);
+  color: var(--on-accent-text);
+  background: var(--amber-deep);
+}
+.debug-fab:focus-visible {
+  outline: 2px solid var(--amber-2);
+  outline-offset: 2px;
 }
 .debug-panel {
   position: static;

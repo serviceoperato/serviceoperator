@@ -7,19 +7,20 @@ Owner: **Jack** · `jack@serviceopera.to`
 
 ## 1. What you have
 
-A complete, deployable site under **`serviceopera.to`** with:
+A complete, deployable site under **`serviceopera.to`**. All static assets live in **`public/`** (HTML, CSS, JS, logos, `clinics/`). **`server.mjs`** is a small Node (Express) server: it serves `public/` and, when configured, sends **admin sign-in codes by email** (Resend).
 
-| File | What it is |
+| Path | What it is |
 |---|---|
-| `index.html` | Public landing page. Sells you as a premium automation freelancer for hospitality, medical and property businesses across Thailand. |
-| `client.html` | **The "secret page".** Password-protected private demo workspace. You send one prospect a unique username + password; they log in and see a dashboard themed for *their* business. |
-| `styles.css` | Shared black / white / indigo design system. |
-| `app.js` | Landing-page modal + credential check. |
-| `admin.html` | **Admin panel** (linked from the home nav as “Admin”). Square tiles for Monitor, Users & payouts, DB console, etc. — UI shells until you wire a backend. |
-| `admin.js` | Admin gate + tile behaviour. |
-| `admin-config.js` | Sets `window.__ADMIN_PASSWORD__` for `jack@serviceopera.to`. **Not secure** (credentials in static JS); use only as a convenience shell until you add real server auth. |
+| `public/index.html` | Public landing page. Sells you as a premium automation freelancer for hospitality, medical and property businesses across Thailand. |
+| `public/client.html` | **The "secret page".** Demo workspace behind a **browser-only** username/password (see `public/app.js`). For real data, replace with server-side auth. |
+| `public/styles.css` | Shared black / white / indigo design system. |
+| `public/app.js` | Landing-page modal + demo credential check. |
+| `public/admin.html` | **Admin panel** (linked from the home nav as “Admin”). |
+| `public/admin.js` | Admin gate + tiles. With **`RESEND_API_KEY`** on the host, sign-in is **email OTP + server session**; without it, optional `admin-config.js` password for local/static preview only. |
+| `public/admin-config.js` | Optional: `window.__ADMIN_PASSWORD__` for local preview when the server has no Resend key. **Do not rely on this in production.** |
+| `server.mjs` | Static file host + `/api/admin/*` (capabilities, send-code, verify-code, session). |
 
-The two pages share styling but the client page is hidden behind a login gate and marked `noindex, nofollow` so it doesn't show up on Google. **`admin.html`** is also `noindex` and disallowed in `robots.txt`.
+The client and admin pages are marked `noindex, nofollow` and disallowed in `robots.txt` where applicable.
 
 ---
 
@@ -56,7 +57,7 @@ This is the workflow you described, mapped to the assets:
 Find a real business in one of the 3 sectors. Owner's name + email + Instagram or website. Aim for 8–80 keys (hotels), independent clinics, 20–200 doors (property).
 
 ### Step 2 — Create their credentials
-Open `client.html` and `app.js`. Add a new entry in **both** `CREDENTIALS` objects:
+Open `public/client.html` and `public/app.js`. Add a new entry in **both** `CREDENTIALS` objects:
 
 ```js
 'amari-resort': { password: 'demo2026', business: 'Amari Resort · Thailand' },
@@ -66,7 +67,7 @@ Convention I used: `slug-of-business` as username, an 8-char password.
 (If you later move to a real backend, this becomes a database lookup. For now: static, fine.)
 
 ### Step 3 — *(Optional but recommended)* personalize the demo
-Open `client.html` and swap a few details so it feels truly built for them:
+Open `public/client.html` and swap a few details so it feels truly built for them:
 - The 3 competitors in the **Pricing Radar** module → put their *actual* 3 closest competitors in their market (anywhere in Thailand).
 - The chat module top bubble → change "Anna" to a realistic guest name and the room type to match their property.
 - The "Revenue Opportunity" paragraph → if you can find a real event in their window, drop it in.
@@ -105,20 +106,29 @@ If the demo is real and personalized, **roughly 1 in 8 to 1 in 12** owners reply
 You bought the domain. To put the site online (free):
 
 **Option A — Netlify (5 minutes):**
-1. Push `serviceopera/` folder to a free GitHub repo.
+1. Push this repo to GitHub.
 2. Sign in at netlify.com → "Add new site" → "Import from Git" → pick the repo.
-3. Build command: *(empty)* · Publish directory: `/`
+3. Build command: *(empty)* · Publish directory: **`public`** (see `netlify.toml`).
 4. Add custom domain `serviceopera.to`. Netlify gives you DNS records — paste them into your domain registrar.
-5. SSL is automatic.
+5. SSL is automatic. **Note:** Netlify static deploys do **not** run `server.mjs`; admin email codes require Railway (or another Node host), not Netlify static alone.
 
 **Option B — Cloudflare Pages (also free, faster):**
 Same flow at pages.cloudflare.com. If you bought the domain via a registrar that supports Cloudflare DNS, even faster.
 
 **Option C — pure static (cheapest, you handle):**
-Any static host (Vercel, GitHub Pages, even an S3 bucket). The whole site is 4 files + fonts from Google. No build step.
+Any static host (Vercel, GitHub Pages, S3). Publish the **`public/`** folder. No build step. Admin email OTP will **not** be available unless you add a separate API.
 
 **Option D — Railway (Dockerfile recommended):**
-The `Dockerfile` serves the same static files with **nginx** and adds security headers (global + `/client.html` noindex/cache) similar to `netlify.toml`. Railway will detect the Dockerfile and set `PORT` automatically.
+The `Dockerfile` runs **Node**: `server.mjs` serves **`public/`** and sets the same style of security headers as `netlify.toml` (including `Cache-Control` / `X-Robots-Tag` on `client.html`). Railway sets `PORT` automatically.
+
+**Railway — variables for admin sign-in by email**
+
+| Variable | Required | Purpose |
+|---|---|---|
+| `RESEND_API_KEY` | Yes, for email OTP | [Resend](https://resend.com) API key; when set, `/admin.html` uses “Send sign-in code” instead of `admin-config.js`. |
+| `RESEND_FROM` | Recommended | Verified sender, e.g. `ServiceOpera <noreply@yourdomain.com>`. Resend’s test domain only delivers to your own mailbox. |
+| `ADMIN_JWT_SECRET` | Strongly recommended | Long random string; signs session tokens. If omitted, a random secret is generated at **each process start** (sessions break on redeploy). |
+| `ADMIN_EMAIL` | Optional | Defaults to `jack@serviceopera.to`. Only this address receives codes. |
 
 **Collegare questo repo a Railway (GitHub → deploy automatico):**
 
@@ -130,13 +140,15 @@ The `Dockerfile` serves the same static files with **nginx** and adds security h
 6. Nel servizio, abilita **Deploy / Auto deploy on push** (o equivalente) per il branch `main`, così ogni `git push` su `main` avvia un nuovo deploy. Se non parte subito, usa **Redeploy** dal menu del servizio o la Command Palette (**Deploy latest commit**).
 7. Riferimento ufficiale: [GitHub autodeploys su Railway](https://docs.railway.com/guides/github-autodeploys).
 
-**Option E — Railway without Docker:** A minimal `package.json` + `npm start` runs [`serve`](https://github.com/vercel/serve) on `$PORT` for Nixpacks-only deploys. If Railpack looks for `src/index.js`, prefer the Dockerfile path or set **Start Command** to `npm start` with root at this folder.
+**Option E — Railway without Docker (Nixpacks):** `npm start` runs **`node server.mjs`**, same as the Docker image. The repo must include **`public/`** with all static files.
 
 ---
 
 ## 6. Hardening the "secret page" later
 
-Right now the password check is **client-side JavaScript** — which is fine for a demo because the page contains no real data. Anyone determined enough could open DevTools and read the `CREDENTIALS` object.
+The **client** demo (`public/client.html`) still uses **client-side** `CREDENTIALS` in `public/app.js` — fine for fake data; anyone can read it in DevTools.
+
+**Admin** on a Railway (or other) Node deploy with **`RESEND_API_KEY`** uses a **one-time email code** and a **server-signed session** (no password in the browser). That is appropriate for a UI shell; wire a real identity provider before storing sensitive data.
 
 When you start handling real client data (e.g. a live competitor scrape for an actual paying client), switch to:
 
@@ -150,22 +162,29 @@ For pure cold-outreach demos with fake data, the current setup is honestly enoug
 
 ## 7. Quick local preview
 
-From inside the `serviceopera/` folder:
+From the repository root:
 
 ```bash
-python3 -m http.server 8000
+npm install
+npm start
 ```
 
-Then open `http://localhost:8000`.
+Then open `http://localhost:8080` (or whatever `PORT` is). This runs **`server.mjs`** so `/api/admin/capabilities` exists; without `RESEND_API_KEY`, admin still allows a password via `public/admin-config.js`.
 
-Try the demo with username `demo` and password `demo` — it'll show the workspace themed as "Demo Property · Thailand".
+For a zero-dependency static check only (no admin API):
+
+```bash
+npx --yes serve@14 public -l 8000
+```
+
+Try the client demo with username `demo` and password `demo` — it'll show the workspace themed as "Demo Property · Thailand".
 
 ---
 
 ## 8. Brand notes
 
 - **Name:** Service Opera — reads as *Service Operator*. Jack is an AI service operator: systems, pipelines, and runbooks for real service businesses — not a creative studio pitch.
-- **Mark:** `logo-icon.svg` (site UI) + **`favicon.png`** (browser tab / home screen) — SO monogram in the circular aperture (black + indigo on light surfaces; white + light indigo in `logo-icon.svg` on the dark site).
+- **Mark:** `public/logo-icon.svg` (site UI) + **`public/favicon.png`** (browser tab / home screen).
 - **Tone:** confident, dry, restrained. Never "supercharge", "revolutionize", "synergize". The pitch is: *engineered automation, observable results, honest pricing.*
 - **Colors:** black (`#000000`), white (`#ffffff`), indigo accent (`#6366f1` and lighter `#a5b4fc`). Accents stay sparse — mostly monochrome surfaces with indigo for focus states, links, and CTAs.
 - **Typography:** Fraunces (display) + Inter Tight (body) + JetBrains Mono (technical labels).
