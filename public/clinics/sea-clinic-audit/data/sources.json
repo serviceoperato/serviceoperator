@@ -1,0 +1,92 @@
+{
+  "sea_home": {
+    "title": "SEA Aesthetic & Wellness Clinic homepage",
+    "url": "https://www.seaclinicth.com/",
+    "notes": "Public services, Dr. Pom positioning, success story structure."
+  },
+  "sea_contact": {
+    "title": "SEA Clinic contact page",
+    "url": "https://www.seaclinicth.com/contact/",
+    "notes": "Public contact info, social links, embedded review widget."
+  },
+  "sea_reviews_page": {
+    "title": "SEA Clinic beauty clinic / review landing page",
+    "url": "https://www.seaclinicth.com/beautyclinicpattaya/",
+    "notes": "Public review snippets and review-widget material."
+  },
+  "sea_botox": {
+    "title": "SEA Clinic Botox page",
+    "url": "https://www.seaclinicth.com/botox/",
+    "notes": "Public Botox service content and WhatsApp CTA."
+  },
+  "sea_filler": {
+    "title": "SEA Clinic Fillers page",
+    "url": "https://www.seaclinicth.com/fillers/",
+    "notes": "Public filler treatment content and WhatsApp CTA."
+  },
+  "sea_laser": {
+    "title": "SEA Clinic Laser Hair Removal page",
+    "url": "https://www.seaclinicth.com/laser-hair-removal/",
+    "notes": "Public laser service content and WhatsApp CTA."
+  },
+  "sea_ulthera": {
+    "title": "SEA Clinic Ulthera SPT page",
+    "url": "https://www.seaclinicth.com/ulthera-spt/",
+    "notes": "Public Ulthera SPT treatment content and WhatsApp CTA."
+  },
+  "sea_vaginal": {
+    "title": "SEA Clinic Vaginal Care page",
+    "url": "https://www.seaclinicth.com/vaginal-care/",
+    "notes": "Public vaginal care treatment content and WhatsApp CTA."
+  },
+  "sea_iv": {
+    "title": "SEA Clinic IV Vitamin Drips page",
+    "url": "https://www.seaclinicth.com/iv-vitamin-drips/",
+    "notes": "Public IV treatment content and WhatsApp CTA."
+  },
+  "sea_exilis": {
+    "title": "SEA Clinic Exilis Ultra 360 page",
+    "url": "https://www.seaclinicth.com/exilis-ultra-360/",
+    "notes": "Public Exilis treatment content and WhatsApp CTA."
+  },
+  "sea_wish": {
+    "title": "SEA Clinic Wish Pro page",
+    "url": "https://www.seaclinicth.com/wish-pro/",
+    "notes": "Public Wish Pro treatment content and WhatsApp CTA."
+  },
+  "sea_facial": {
+    "title": "SEA Clinic 8-in-1 Facial page",
+    "url": "https://www.seaclinicth.com/8-in-1-facial/",
+    "notes": "Public 8-in-1 Facial treatment content and WhatsApp CTA."
+  },
+  "sea_uel": {
+    "title": "SEA Clinic U+E+L Program page",
+    "url": "https://www.seaclinicth.com/uel-program/",
+    "notes": "Public U+E+L treatment content and WhatsApp CTA."
+  },
+  "sea_prices": {
+    "title": "SEA Clinic Face & Body Treatment price page",
+    "url": "https://www.seaclinicth.com/services/face-body-treatment/",
+    "notes": "Public pricing for Exilis, Miracle 8-in-1, and Wish Pro packages."
+  },
+  "sea_success": {
+    "title": "SEA Clinic Success Stories page",
+    "url": "https://www.seaclinicth.com/success-stories/",
+    "notes": "Public success-story topics and treatment proof assets."
+  },
+  "lannawadee": {
+    "title": "Lannawadee Clinic Aesthetic Center Pattaya",
+    "url": "https://www.lannawadeeclinic.com/aesthetic-center-pattaya/",
+    "notes": "Competitor positioning signals."
+  },
+  "finn": {
+    "title": "ThaiClinic listing: FINN Clinic Pattaya",
+    "url": "https://thaiclinic.co/beauty-clinic/finn-clinic-pattaya/",
+    "notes": "Competitor service signals."
+  },
+  "gowabi_botox": {
+    "title": "GoWabi Botox services in Pattaya",
+    "url": "https://www.gowabi.com/en/places/beauty-clinics/botox-services/in-pattaya-thailand",
+    "notes": "Marketplace price and rating signals for Botox-related offers."
+  }
+}

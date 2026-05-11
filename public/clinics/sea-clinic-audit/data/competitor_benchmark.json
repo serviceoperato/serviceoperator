@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Lannawadee Clinic Pattaya",
+    "type": "Aesthetic clinic / surgery-oriented competitor",
+    "public_positioning_signals": "Customized facial analysis, FDA-approved equipment/medication claims, specialist doctors, hospital-level safety language.",
+    "threat_level": "High",
+    "automation_observation": "Strong trust positioning; SEA can counter with faster consultation, clearer WhatsApp intake and review-driven proof.",
+    "source": "lannawadee"
+  },
+  {
+    "name": "FINN Clinic Pattaya",
+    "type": "Beauty clinic competitor",
+    "public_positioning_signals": "Vaginal lifting, diode hair removal, Botox, FAT treatments, fillers and thread lifts.",
+    "threat_level": "Medium",
+    "automation_observation": "Broad catalog overlap; SEA can differentiate with doctor-led personalization and premium consultation automation.",
+    "source": "finn"
+  },
+  {
+    "name": "APEX Hospital & Beauty Clinic Pattaya",
+    "type": "Marketplace-visible competitor",
+    "public_positioning_signals": "GoWabi listing shows rating signal and discounted Botox bundle.",
+    "threat_level": "High",
+    "automation_observation": "Price-visible competitor; SEA needs treatment comparison pages and retargeting for high-intent Botox searches.",
+    "source": "gowabi_botox"
+  },
+  {
+    "name": "LIV Wellness Clinic Pattaya",
+    "type": "Marketplace-visible wellness/aesthetic competitor",
+    "public_positioning_signals": "GoWabi listing shows Botox and anti-aging bundle offers.",
+    "threat_level": "Medium",
+    "automation_observation": "Bundle competition; SEA can build IV drip + injectables funnels for tourists and residents.",
+    "source": "gowabi_botox"
+  },
+  {
+    "name": "Vivian Clinic Pattaya",
+    "type": "Marketplace-visible clinic competitor",
+    "public_positioning_signals": "GoWabi listing shows low-price Botox options.",
+    "threat_level": "Medium",
+    "automation_observation": "Price-sensitive lead pressure; SEA should route bargain leads differently from premium doctor-consultation leads.",
+    "source": "gowabi_botox"
+  }
+]

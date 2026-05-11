@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="560" viewBox="0 0 980 560" role="img" aria-label="Competitor radar">
+<rect width="100%" height="100%" rx="26" fill="#FFFFFF"/>
+<text x="70" y="54" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700" fill="#111827">Pattaya aesthetic competitor radar</text>
+<text x="70" y="80" font-family="Inter, Arial, sans-serif" font-size="14" fill="#6B7280">Public data snapshot: service overlap, price visibility and automation angle.</text>
+<g font-family="Inter, Arial, sans-serif">
+  <rect x="70" y="125" width="840" height="72" rx="18" fill="#F9FAFB" stroke="#E5E7EB"/>
+  <circle cx="110" cy="161" r="10" fill="#EF4444"/><text x="135" y="154" font-size="16" font-weight="700" fill="#111827">APEX Pattaya</text><text x="135" y="176" font-size="13" fill="#6B7280">Marketplace-visible Botox bundle; price pressure on high-intent leads.</text>
+  <rect x="70" y="215" width="840" height="72" rx="18" fill="#F9FAFB" stroke="#E5E7EB"/>
+  <circle cx="110" cy="251" r="10" fill="#F97316"/><text x="135" y="244" font-size="16" font-weight="700" fill="#111827">Lannawadee Clinic</text><text x="135" y="266" font-size="13" fill="#6B7280">Strong trust language: custom analysis, expert hands, safety-first claims.</text>
+  <rect x="70" y="305" width="840" height="72" rx="18" fill="#F9FAFB" stroke="#E5E7EB"/>
+  <circle cx="110" cy="341" r="10" fill="#7C3AED"/><text x="135" y="334" font-size="16" font-weight="700" fill="#111827">FINN Clinic Pattaya</text><text x="135" y="356" font-size="13" fill="#6B7280">Broad catalog overlap: hair removal, Botox, FAT, fillers and thread lifts.</text>
+  <rect x="70" y="395" width="840" height="72" rx="18" fill="#F9FAFB" stroke="#E5E7EB"/>
+  <circle cx="110" cy="431" r="10" fill="#10B981"/><text x="135" y="424" font-size="16" font-weight="700" fill="#111827">LIV / Vivian marketplace clinics</text><text x="135" y="446" font-size="13" fill="#6B7280">Price-sensitive offers make lead segmentation and premium positioning critical.</text>
+  <text x="70" y="520" font-size="15" fill="#374151">Strategic response: do not fight only on price. Build faster consultation, proof routing and follow-up automation.</text>
+</g>
+</svg>

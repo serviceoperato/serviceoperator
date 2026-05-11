@@ -1,0 +1,114 @@
+[
+  {
+    "provider": "SEA Clinic",
+    "treatment": "Exilis 360 Face/Body",
+    "offer": "1 time",
+    "price_thb": 8500,
+    "source": "sea_prices"
+  },
+  {
+    "provider": "SEA Clinic",
+    "treatment": "Exilis 360 Face/Body",
+    "offer": "5 get 1 free",
+    "price_thb": 39000,
+    "source": "sea_prices"
+  },
+  {
+    "provider": "SEA Clinic",
+    "treatment": "Exilis Vaginal",
+    "offer": "1 get 1 free",
+    "price_thb": 18500,
+    "source": "sea_prices"
+  },
+  {
+    "provider": "SEA Clinic",
+    "treatment": "Exilis Vaginal",
+    "offer": "2 get 2 free",
+    "price_thb": 31500,
+    "source": "sea_prices"
+  },
+  {
+    "provider": "SEA Clinic",
+    "treatment": "Miracle 8-in-1",
+    "offer": "1 time",
+    "price_thb": 990,
+    "source": "sea_prices"
+  },
+  {
+    "provider": "SEA Clinic",
+    "treatment": "Miracle 8-in-1",
+    "offer": "10 get 2 free",
+    "price_thb": 9990,
+    "source": "sea_prices"
+  },
+  {
+    "provider": "SEA Clinic",
+    "treatment": "Wish Pro",
+    "offer": "1 time",
+    "price_thb": 5000,
+    "source": "sea_prices"
+  },
+  {
+    "provider": "SEA Clinic",
+    "treatment": "Wish Pro",
+    "offer": "1 get 1 free",
+    "price_thb": 3500,
+    "source": "sea_prices"
+  },
+  {
+    "provider": "SEA Clinic",
+    "treatment": "Wish Pro",
+    "offer": "5 get 1 free",
+    "price_thb": 9600,
+    "source": "sea_prices"
+  },
+  {
+    "provider": "SEA Clinic",
+    "treatment": "Wish Pro",
+    "offer": "10 get 2 free",
+    "price_thb": 18000,
+    "source": "sea_prices"
+  },
+  {
+    "provider": "APEX Hospital & Beauty Clinic Pattaya",
+    "treatment": "Botox USA 50 Units + free laser area",
+    "offer": "Marketplace discount",
+    "price_thb": 11500,
+    "source": "gowabi_botox"
+  },
+  {
+    "provider": "LIV Wellness Clinic Pattaya",
+    "treatment": "Nabota Korea 50 Units",
+    "offer": "Marketplace listing",
+    "price_thb": 5900,
+    "source": "gowabi_botox"
+  },
+  {
+    "provider": "LIV Wellness Clinic Pattaya",
+    "treatment": "xeo.min 100u",
+    "offer": "Marketplace listing",
+    "price_thb": 11900,
+    "source": "gowabi_botox"
+  },
+  {
+    "provider": "Vivian Clinic Pattaya",
+    "treatment": "Neuranox 50 Units",
+    "offer": "Marketplace listing",
+    "price_thb": 3895,
+    "source": "gowabi_botox"
+  },
+  {
+    "provider": "Vivian Clinic Pattaya",
+    "treatment": "Neuranox 100 Units",
+    "offer": "Marketplace listing",
+    "price_thb": 6895,
+    "source": "gowabi_botox"
+  },
+  {
+    "provider": "Vivian Clinic Pattaya",
+    "treatment": "Nabota 100 Units",
+    "offer": "Marketplace listing",
+    "price_thb": 7895,
+    "source": "gowabi_botox"
+  }
+]

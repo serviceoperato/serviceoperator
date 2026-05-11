@@ -1,0 +1,17 @@
+provider,treatment,offer,price_thb,source
+SEA Clinic,Exilis 360 Face/Body,1 time,8500,sea_prices
+SEA Clinic,Exilis 360 Face/Body,5 get 1 free,39000,sea_prices
+SEA Clinic,Exilis Vaginal,1 get 1 free,18500,sea_prices
+SEA Clinic,Exilis Vaginal,2 get 2 free,31500,sea_prices
+SEA Clinic,Miracle 8-in-1,1 time,990,sea_prices
+SEA Clinic,Miracle 8-in-1,10 get 2 free,9990,sea_prices
+SEA Clinic,Wish Pro,1 time,5000,sea_prices
+SEA Clinic,Wish Pro,1 get 1 free,3500,sea_prices
+SEA Clinic,Wish Pro,5 get 1 free,9600,sea_prices
+SEA Clinic,Wish Pro,10 get 2 free,18000,sea_prices
+APEX Hospital & Beauty Clinic Pattaya,Botox USA 50 Units + free laser area,Marketplace discount,11500,gowabi_botox
+LIV Wellness Clinic Pattaya,Nabota Korea 50 Units,Marketplace listing,5900,gowabi_botox
+LIV Wellness Clinic Pattaya,xeo.min 100u,Marketplace listing,11900,gowabi_botox
+Vivian Clinic Pattaya,Neuranox 50 Units,Marketplace listing,3895,gowabi_botox
+Vivian Clinic Pattaya,Neuranox 100 Units,Marketplace listing,6895,gowabi_botox
+Vivian Clinic Pattaya,Nabota 100 Units,Marketplace listing,7895,gowabi_botox

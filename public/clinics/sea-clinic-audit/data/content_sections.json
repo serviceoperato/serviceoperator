@@ -1,0 +1,19 @@
+{
+  "hero": {
+    "eyebrow": "PUBLIC DATA AUTOMATION AUDIT · PATTAYA CLINICS",
+    "title": "SEA Clinic already has reputation. The next growth layer is structured automation.",
+    "subtitle": "A public-footprint audit showing how WhatsApp, LINE, reviews, treatment demand and competitor signals can become a tracked clinic growth system."
+  },
+  "key_findings": [
+    "SEA Clinic has a strong public treatment catalog and clear doctor-led trust positioning.",
+    "The public website shows multiple high-margin treatment categories but the visible conversion path is mainly consultation via WhatsApp/contact form.",
+    "Review assets are strong enough to power an automated review engine and multilingual social proof layer.",
+    "Competitor pressure is visible in Botox and beauty-clinic marketplaces; price-sensitive leads should be separated from premium consultation leads.",
+    "The biggest commercial opportunity is not more content. It is structured inquiry capture, lead scoring, reminders and post-treatment reviews."
+  ],
+  "cta": {
+    "title": "Proposed build",
+    "copy": "AI Clinic Concierge + Review Engine + Competitor Radar for Pattaya aesthetic clinics.",
+    "button": "Show the automation map"
+  }
+}

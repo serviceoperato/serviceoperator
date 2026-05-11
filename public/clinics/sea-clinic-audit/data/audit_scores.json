@@ -1,0 +1,66 @@
+{
+  "generated_at": "2026-05-11",
+  "method": "Inferred public-footprint scoring from observed website, public channels, visible reviews, CTAs and competitor price signals. Not internal analytics.",
+  "stages": [
+    "Awareness",
+    "Trust",
+    "Inquiry",
+    "Booking",
+    "Follow-up",
+    "Review"
+  ],
+  "series": [
+    {
+      "label": "Current public footprint",
+      "color": "#10B981",
+      "values": [
+        72,
+        82,
+        61,
+        46,
+        34,
+        65
+      ],
+      "interpretation": "Strong reputation and service catalog; weaker visible lead tracking and lifecycle automation."
+    },
+    {
+      "label": "Competitor pressure",
+      "color": "#F97316",
+      "values": [
+        64,
+        70,
+        69,
+        58,
+        42,
+        52
+      ],
+      "interpretation": "Marketplace-visible Botox competitors create pressure on price-sensitive leads."
+    },
+    {
+      "label": "Automation upside",
+      "color": "#7C3AED",
+      "values": [
+        55,
+        68,
+        87,
+        91,
+        84,
+        79
+      ],
+      "interpretation": "Highest upside sits in inquiry capture, booking conversion, reminders and review loops."
+    },
+    {
+      "label": "Lost lead risk",
+      "color": "#EF4444",
+      "values": [
+        34,
+        28,
+        67,
+        73,
+        76,
+        49
+      ],
+      "interpretation": "Risk is concentrated after the first message: unqualified chats, slow follow-up, no retargeting."
+    }
+  ]
+}

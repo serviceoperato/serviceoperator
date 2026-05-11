@@ -1,0 +1,102 @@
+[
+  {
+    "service": "Botox",
+    "category": "Injectables",
+    "public_claim_summary": "Botulinum toxin treatments using premium brands from USA, Germany and Korea; positioned for wrinkles, contouring, sweating and muscle tension.",
+    "cta_observed": "WhatsApp consultation",
+    "automation_angle": "Botox lead qualification: area, units, previous treatment date, brand preference, contraindication warning, booking CTA.",
+    "source": "sea_botox",
+    "high_margin_potential": 5,
+    "lead_intent_score": 5
+  },
+  {
+    "service": "Fillers",
+    "category": "Injectables",
+    "public_claim_summary": "Hyaluronic-acid facial filler from Italy and Korea; positioned for volume restoration, contouring, hydration and natural results.",
+    "cta_observed": "WhatsApp consultation",
+    "automation_angle": "Filler consultation flow: target area, desired result, prior filler history, budget band, doctor-consultation booking.",
+    "source": "sea_filler",
+    "high_margin_potential": 5,
+    "lead_intent_score": 5
+  },
+  {
+    "service": "Laser Hair Removal",
+    "category": "Laser / Device",
+    "public_claim_summary": "Long Pulse Nd:YAG laser positioned for all skin types and hair reduction with wider skin-quality benefits.",
+    "cta_observed": "WhatsApp consultation",
+    "automation_angle": "Laser package recommender: area, skin type, session plan, promo capture, appointment reminders.",
+    "source": "sea_laser",
+    "high_margin_potential": 4,
+    "lead_intent_score": 4
+  },
+  {
+    "service": "Ulthera SPT",
+    "category": "Lifting / Device",
+    "public_claim_summary": "FDA-cleared micro-focused ultrasound for non-invasive lifting and collagen remodeling.",
+    "cta_observed": "WhatsApp consultation",
+    "automation_angle": "Premium lifting funnel: age band, concern area, downtime expectation, consult conversion, before/after education.",
+    "source": "sea_ulthera",
+    "high_margin_potential": 5,
+    "lead_intent_score": 4
+  },
+  {
+    "service": "Vaginal Care",
+    "category": "Intimate wellness",
+    "public_claim_summary": "FDA-approved non-invasive vaginal care using laser and radiofrequency technologies.",
+    "cta_observed": "WhatsApp consultation",
+    "automation_angle": "Private inquiry flow: discreet FAQ, doctor consult booking, privacy-first follow-up, sensitive content guardrails.",
+    "source": "sea_vaginal",
+    "high_margin_potential": 4,
+    "lead_intent_score": 3
+  },
+  {
+    "service": "IV Vitamin Drips",
+    "category": "Wellness",
+    "public_claim_summary": "IV vitamins, minerals and antioxidants positioned for hydration, immunity, skin and overall wellness.",
+    "cta_observed": "WhatsApp consultation",
+    "automation_angle": "Tourist/wellness funnel: fatigue, hangover, immunity, skin glow, same-day booking, reactivation after 30 days.",
+    "source": "sea_iv",
+    "high_margin_potential": 3,
+    "lead_intent_score": 4
+  },
+  {
+    "service": "Exilis Ultra 360",
+    "category": "Body contouring / Device",
+    "public_claim_summary": "Monopolar radiofrequency and ultrasound for non-invasive fat reduction and skin tightening.",
+    "cta_observed": "WhatsApp consultation",
+    "automation_angle": "Body-contouring nurture: target area, expected sessions, package pricing, progress follow-up.",
+    "source": "sea_exilis",
+    "high_margin_potential": 4,
+    "lead_intent_score": 4
+  },
+  {
+    "service": "Wish Pro",
+    "category": "Skin facial / Device",
+    "public_claim_summary": "Magnetic infusion technology with interchangeable heads for hydration and skin rejuvenation.",
+    "cta_observed": "WhatsApp consultation",
+    "automation_angle": "Low-friction facial upsell: skin concern quiz, add-on flow, post-treatment product recommendation.",
+    "source": "sea_wish",
+    "high_margin_potential": 3,
+    "lead_intent_score": 3
+  },
+  {
+    "service": "8-in-1 Facial",
+    "category": "Skin facial",
+    "public_claim_summary": "Multi-technology facial with ultrasonic cleansing, iontophoresis, LED therapy and microcurrent stimulation.",
+    "cta_observed": "WhatsApp consultation",
+    "automation_angle": "Entry offer funnel: first-time facial booking, upsell to Wish Pro/Exilis, review request automation.",
+    "source": "sea_facial",
+    "high_margin_potential": 3,
+    "lead_intent_score": 4
+  },
+  {
+    "service": "U+E+L Program",
+    "category": "Combination program",
+    "public_claim_summary": "Combination of Ulthera, Exilis Ultra 360 and Long Pulse Nd:YAG Laser for lifting, tightening and smoothing.",
+    "cta_observed": "WhatsApp consultation",
+    "automation_angle": "Premium bundle funnel: eligibility quiz, concern mapping, bundled quote, deposit request.",
+    "source": "sea_uel",
+    "high_margin_potential": 5,
+    "lead_intent_score": 4
+  }
+]

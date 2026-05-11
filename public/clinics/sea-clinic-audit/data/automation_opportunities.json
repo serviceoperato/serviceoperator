@@ -1,0 +1,102 @@
+[
+  {
+    "name": "AI WhatsApp / LINE Clinic Concierge",
+    "priority": 1,
+    "business_value": "Capture inquiries 24/7 and qualify high-intent treatment leads before human staff respond.",
+    "target_services": [
+      "Botox",
+      "Fillers",
+      "Ulthera SPT",
+      "IV Vitamin Drips",
+      "Exilis Ultra 360"
+    ],
+    "inputs_to_capture": [
+      "Treatment interest",
+      "Preferred date/time",
+      "Language",
+      "Budget band",
+      "Previous treatment history",
+      "Urgency",
+      "Photo consent flag"
+    ],
+    "site_copy": "Every inquiry becomes a clean clinic pipeline: treatment, intent, urgency and follow-up status."
+  },
+  {
+    "name": "Review Intelligence & Follow-Up Engine",
+    "priority": 2,
+    "business_value": "Turn completed treatments into new Google reviews and detect unhappy clients before public complaints.",
+    "target_services": [
+      "All services"
+    ],
+    "inputs_to_capture": [
+      "Treatment completed",
+      "Satisfaction score",
+      "Review request status",
+      "Language",
+      "Staff/doctor mention"
+    ],
+    "site_copy": "After each visit, happy clients are guided toward reviews; unhappy clients are routed to private recovery."
+  },
+  {
+    "name": "Treatment Recommendation Quiz",
+    "priority": 3,
+    "business_value": "Convert website visitors into structured consultation requests with a safe, non-diagnostic decision path.",
+    "target_services": [
+      "Botox",
+      "Fillers",
+      "Laser Hair Removal",
+      "Ulthera SPT",
+      "Exilis Ultra 360",
+      "8-in-1 Facial"
+    ],
+    "inputs_to_capture": [
+      "Concern area",
+      "Desired result",
+      "Downtime tolerance",
+      "Budget band",
+      "Language",
+      "Treatment history"
+    ],
+    "site_copy": "Visitors do not need to understand the catalog; the system routes them to the right consultation path."
+  },
+  {
+    "name": "Competitor Price & Promo Radar",
+    "priority": 4,
+    "business_value": "Track visible marketplace offers and prevent SEA from being blindsided by discount-led competitors.",
+    "target_services": [
+      "Botox",
+      "Fillers",
+      "Facials",
+      "IV wellness"
+    ],
+    "inputs_to_capture": [
+      "Provider",
+      "Treatment",
+      "Advertised price",
+      "Rating",
+      "Offer type",
+      "Date observed"
+    ],
+    "site_copy": "SEA can defend premium positioning while reacting intelligently to aggressive public promos."
+  },
+  {
+    "name": "No-Show & Reactivation Automation",
+    "priority": 5,
+    "business_value": "Reduce missed appointments and bring clients back for repeat treatments and package renewals.",
+    "target_services": [
+      "Laser Hair Removal",
+      "Botox",
+      "Fillers",
+      "IV Vitamin Drips",
+      "Facials"
+    ],
+    "inputs_to_capture": [
+      "Last treatment date",
+      "Recommended interval",
+      "Package remaining",
+      "Reminder language",
+      "Preferred channel"
+    ],
+    "site_copy": "The money is not only in new leads; it is in repeat treatments triggered at the right time."
+  }
+]
