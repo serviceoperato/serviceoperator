@@ -1,5 +1,6 @@
 # Static site + security headers. Railway sets PORT at runtime; we inject it into
 # nginx config here (official nginx ${PORT} templates are unreliable with Railway).
+# Bump: trigger fresh Railway deploy when HTTP logs / routing look stale after a green build.
 
 FROM nginx:alpine
 
