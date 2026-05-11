@@ -76,7 +76,7 @@
 })();
 
 // =============================================
-// Landing: vertical hero (clinics / hotels / properties)
+// Landing: vertical hero (clinics / hotels / real estate — key still `properties`)
 // =============================================
 (function verticalHero() {
   var pills = document.querySelectorAll('.vertical-pill[data-vertical]');
@@ -106,7 +106,7 @@
       lede:
         'Most property leads in Thailand die in an inbox within 48 hours. I bring them back, score them, and book the viewing — before your competitor does.',
       cta: 'Show me the lost leads',
-      subject: 'Properties — lost leads',
+      subject: 'Real Estate — lost leads',
     },
   };
 

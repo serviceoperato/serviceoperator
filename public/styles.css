@@ -24,7 +24,8 @@
   --modal-backdrop: rgba(0, 0, 0, 0.86);
   --score-cold-bg: rgba(255, 255, 255, 0.08);
   --delta-muted-bg: rgba(255, 255, 255, 0.06);
-  --pill-on-amber: #0a0a0f;
+  /* Text / icons on solid indigo (--amber) surfaces */
+  --pill-on-amber: #ffffff;
   --on-accent-text: #ffffff;
   --grain-opacity: 0.06;
   --logo-filter: none;
@@ -58,7 +59,7 @@
   --modal-backdrop: rgba(12, 14, 24, 0.42);
   --score-cold-bg: rgba(12, 14, 24, 0.06);
   --delta-muted-bg: rgba(12, 14, 24, 0.05);
-  --pill-on-amber: #0a0a0f;
+  --pill-on-amber: #ffffff;
   --grain-opacity: 0.035;
   --logo-filter: brightness(0) saturate(100%) invert(10%) sepia(30%) saturate(2200%) hue-rotate(220deg) brightness(0.72) contrast(1.08);
   color-scheme: light;
@@ -80,18 +81,19 @@ body {
   position: relative;
 }
 
-/* Grain overlay everywhere */
+/* Grain: texture on the page canvas only — must stay *below* UI (nav, logos, modals)
+   or mix-blend-mode: overlay will composite on top of transparent PNGs and look like a black mat. */
 .grain {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 100;
+  z-index: -1;
   opacity: var(--grain-opacity);
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-::selection { background: var(--amber); color: var(--paper); }
+::selection { background: var(--amber); color: var(--on-accent-text); }
 
 a { color: inherit; text-decoration: none; transition: color .2s ease; }
 a:hover { color: var(--amber-2); }
@@ -129,18 +131,6 @@ a:hover { color: var(--amber-2); }
 .nav__links { display: flex; align-items: center; gap: 2rem; }
 .nav__links a { font-size: .9rem; color: var(--bone); }
 .nav__links a:not(.nav__cta):hover { color: var(--paper); }
-.nav__admin {
-  font-size: .72rem !important;
-  letter-spacing: 0.1em;
-  color: var(--mute-2) !important;
-  padding: .4rem .65rem;
-  border: 1px solid var(--line);
-  border-radius: 2px;
-}
-.nav__admin:hover {
-  color: var(--amber-2) !important;
-  border-color: var(--amber);
-}
 .nav__login {
   font-size: .72rem !important;
   letter-spacing: 0.1em;
@@ -264,6 +254,7 @@ a:hover { color: var(--amber-2); }
 }
 [data-theme="light"] .theme-toggle:hover {
   background: rgba(79, 70, 229, 0.15);
+  color: var(--amber-deep);
 }
 .theme-toggle--corner {
   position: absolute;
@@ -293,6 +284,8 @@ a:hover { color: var(--amber-2); }
   width: auto;
   height: auto;
   object-fit: contain;
+  background: transparent;
+  mix-blend-mode: normal;
 }
 .nav__logo-img.brand-logo {
   height: 40px;
@@ -356,7 +349,7 @@ a:hover { color: var(--amber-2); }
 }
 
 @media (max-width: 720px) {
-  .nav__links a:not(.nav__cta):not(.nav__admin):not(.nav__login) { display: none; }
+  .nav__links a:not(.nav__cta):not(.nav__login) { display: none; }
 }
 
 /* ============================================
@@ -403,7 +396,7 @@ a:hover { color: var(--amber-2); }
   display: block;
 }
 .vertical-pill--active .vertical-pill__icon {
-  color: var(--pill-on-amber);
+  color: var(--on-accent-text);
 }
 .vertical-pill:hover {
   border-color: var(--amber);
@@ -411,7 +404,7 @@ a:hover { color: var(--amber-2); }
 }
 .vertical-pill--active {
   background: var(--amber);
-  color: var(--pill-on-amber) !important;
+  color: var(--on-accent-text) !important;
   border-color: var(--amber);
 }
 .vertical-pill:focus-visible {
@@ -1324,7 +1317,7 @@ a:hover { color: var(--amber-2); }
   cursor: pointer;
   font-family: var(--font-body);
 }
-.chat__input button:hover { background: var(--amber); color: var(--paper); }
+.chat__input button:hover { background: var(--amber); color: var(--on-accent-text); }
 
 /* Reviews module */
 .reviews { display: flex; flex-direction: column; gap: .8rem; flex: 1; }
@@ -1400,7 +1393,7 @@ a:hover { color: var(--amber-2); }
 }
 .btn-mini:hover { border-color: var(--amber); color: var(--amber-2); }
 .btn-mini.is-primary { background: var(--paper); color: var(--ink); border-color: var(--paper); }
-.btn-mini.is-primary:hover { background: var(--amber); border-color: var(--amber); color: var(--paper); }
+.btn-mini.is-primary:hover { background: var(--amber); border-color: var(--amber); color: var(--on-accent-text); }
 
 /* Leads module */
 .leads-table {

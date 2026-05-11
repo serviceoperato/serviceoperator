@@ -15,11 +15,11 @@ A complete, deployable site under **`serviceopera.to`**. All static assets live 
 | `public/client.html` | **The "secret page".** Demo workspace behind a **browser-only** username/password (see `public/app.js`). For real data, replace with server-side auth. |
 | `public/styles.css` | Shared black / white / indigo design system. |
 | `public/app.js` | Landing-page modal + demo credential check. |
-| `public/admin.html` | **Admin panel** (linked from the home nav as “Admin”). |
+| `public/admin.html` | **Admin panel** — open from **`login.html`** via “Administrator sign-in”. |
 | `public/admin.js` | Admin gate + tiles. With **`RESEND_API_KEY`** on the host, sign-in is **email OTP + server session**; without it, optional `admin-config.js` password for local/static preview only. |
 | `public/admin-config.js` | Optional: `window.__ADMIN_PASSWORD__` for local preview when the server has no Resend key. **Do not rely on this in production.** |
 | `server.mjs` | Static file host + `/api/admin/*` + **clinic users** (`/api/clinic-users`, `/api/auth/clinic-login`, `/api/clinics/report-data`). User rows live in **`DATA_DIR`/clinic_users.json** (default `./data`, Docker `/app/data`). |
-| `public/login.html` | Clinic log-in; stores `so_clinic_jwt` and redirects to `/clinics/report.html?slug=…`. |
+| `public/login.html` | Clinic log-in; link to **admin** gate; stores `so_clinic_jwt` and redirects to `/clinics/report.html?slug=…`. |
 | `public/clinics/report.html` | Private report view (same layout as the public demo); needs a valid clinic session and slug-specific or fallback `_data.json`. |
 
 The client and admin pages are marked `noindex, nofollow` and disallowed in `robots.txt` where applicable.
