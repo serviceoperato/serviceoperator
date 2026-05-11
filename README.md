@@ -1,6 +1,6 @@
 # Service Opera — operating manual
 
-Bespoke AI automation for Pattaya operators.
+AI service operations and automation for Pattaya operators.
 Owner: **Jack** · `jack@serviceopera.to`
 
 ---
@@ -13,7 +13,7 @@ A complete, deployable site under **`serviceopera.to`** with:
 |---|---|
 | `index.html` | Public landing page. Sells you as a premium automation freelancer for Pattaya hospitality, medical and property businesses. |
 | `client.html` | **The "secret page".** Password-protected private demo workspace. You send one prospect a unique username + password; they log in and see a dashboard themed for *their* business. |
-| `styles.css` | Shared dark editorial / amber-luxury design system. |
+| `styles.css` | Shared ink-and-amber technical design system. |
 | `app.js` | Landing-page modal + credential check. |
 
 The two pages share styling but the client page is hidden behind a login gate and marked `noindex, nofollow` so it doesn't show up on Google.
@@ -78,7 +78,7 @@ Body template:
 
 > Hi {First name},
 >
-> I'm Jack — I build AI automation systems for hospitality and medical operators in Pattaya. Rather than send another cold pitch, I spent an afternoon and built you a private demo workspace showing what your operating week could look like once a few things are automated.
+> I'm Jack — I design and run AI automation systems for hospitality and medical operators in Pattaya. Rather than send another cold pitch, I spent an afternoon and built you a private demo workspace showing what a dialed-in week of service operations could look like once a few workflows are automated.
 >
 > It's a real working page, not a PDF. Have a look when you have 5 minutes:
 >
@@ -161,11 +161,11 @@ Try the demo with username `demo` and password `demo` — it'll show the workspa
 
 ## 8. Brand notes
 
-- **Name:** Service Opera. The metaphor is operations-as-theatre: every business is a production, automation is the stagecraft nobody sees.
+- **Name:** Service Opera — reads as *Service Operator*. Jack is an AI service operator: systems, pipelines, and runbooks for real service businesses — not a creative studio pitch.
 - **Mark:** ◐ (half-circle) — implying "always partly running, always partly on".
-- **Tone:** confident, dry, restrained. Never "supercharge", "revolutionize", "synergize". The pitch is: *quiet machinery, observable results, honest pricing.*
+- **Tone:** confident, dry, restrained. Never "supercharge", "revolutionize", "synergize". The pitch is: *engineered automation, observable results, honest pricing.*
 - **Colors:** ink black (`#0a0a0b`), bone paper (`#f4efe6`), amber (`#d4a24c`). Used sparingly — amber only on accents and CTAs.
-- **Typography:** Fraunces (display, drama) + Inter Tight (body) + JetBrains Mono (technical labels).
+- **Typography:** Fraunces (display) + Inter Tight (body) + JetBrains Mono (technical labels).
 
 Don't dilute the brand. The whole point is to *not* look like every other AI-agency template.
 

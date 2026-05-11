@@ -1,5 +1,5 @@
 /* ============================================
-   SERVICE OPERA — dark editorial / amber luxury
+   SERVICE OPERA — ink & amber technical luxury
    ============================================ */
 
 :root {
@@ -379,7 +379,7 @@ a:hover { color: var(--amber-2); }
   max-width: 50em;
 }
 
-/* ACTS GRID */
+/* Systems capability grid */
 .acts-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));

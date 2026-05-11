@@ -105,7 +105,7 @@ Sitemap: https://serviceopera.to/sitemap.xml
 
 ## 3. Design system (non-negotiable)
 
-**Aesthetic direction:** dark editorial / amber luxury. Reads like a magazine masthead, not a SaaS template. No purple gradients. No glassmorphism abuse. No emoji except where copy explicitly contains them. No stock icons.
+**Aesthetic direction:** ink-and-amber technical luxury — reads like an operator, not a SaaS template. No purple gradients. No glassmorphism abuse. No emoji except where copy explicitly contains them. No stock icons.
 
 ### Color tokens (CSS variables, defined in `styles.css :root`)
 
@@ -187,13 +187,13 @@ Modal: full-viewport backdrop `rgba(10,10,11,0.85)` with `backdrop-filter: blur(
 
 ## 4. Page: `index.html` (public landing)
 
-Single-file HTML. Below is the exact structure and copy. Do not paraphrase the copy. Do not add or remove sections.
+Single-file HTML. Structure below; **live copy is defined in `index.html` in the repo** (keep spec in sync when changing marketing).
 
 ### Head
 
 ```html
-<title>Service Opera — AI Automation for Pattaya Operators</title>
-<meta name="description" content="Bespoke AI automation systems for hotels, clinics and property managers in Pattaya. Built by Jack at Service Opera.">
+<title>Service Opera — AI Service Operations · Pattaya</title>
+<meta name="description" content="Jack — AI service operator. I design and run automation systems for hospitality, medical and property businesses in Pattaya.">
 ```
 
 Preconnect to Google Fonts. Link `styles.css`. No favicon yet (Cursor: skip favicon, leave a TODO comment in HTML).
@@ -203,7 +203,7 @@ Preconnect to Google Fonts. Link `styles.css`. No favicon yet (Cursor: skip favi
 1. **Grain overlay** (`<div class="grain" aria-hidden="true">`)
 2. **Nav** (fixed, blurred)
 3. **Hero** (2-column grid: title block + decorative card stack)
-4. **Acts grid** (`#acts`) — 4 capability cards in a 2×2 grid (1px lines between, no gutters)
+4. **Systems grid** (`#build`) — 4 capability cards in a 2×2 grid (1px lines between, no gutters)
 5. **Method** (`#method`) — 3-step ordered list on `--ink-2` background, full-bleed
 6. **Sectors** (`#proof`) — 3 cards, middle one (medical) is `--featured` with amber-tinted background
 7. **Quote** — centered italic blockquote
@@ -214,26 +214,24 @@ Preconnect to Google Fonts. Link `styles.css`. No favicon yet (Cursor: skip favi
 ### Nav
 
 - Left: `◐ Service Opera` (rotating mark).
-- Right links: `Acts`, `Method`, `Proof`, then a pill-shaped CTA `jack@serviceopera.to` (mailto, mono font, amber color, amber bg on hover).
+- Right links: `Systems`, `Method`, `Proof`, then a pill-shaped CTA `jack@serviceopera.to` (mailto, mono font, amber color, amber bg on hover).
 - Below 720px viewport: hide nav links except the CTA pill.
 
 ### Hero copy (exact)
 
 Eyebrow: `CURRENTLY OPERATING · PATTAYA, TH · UTC+7` (mono, preceded by a pulsing amber live dot).
 
-Title — 4 lines, animated in:
+Title — 2 lines, animated in:
 ```
-Operations
-as theatre.       ← italic, --bone, indented padding-left 1.5em
-Automation
-as craft.         ← italic, --amber, indented padding-left 3em
+AI service operations,
+engineered.         ← accent line (--amber, italic, indented padding-left 3em)
 ```
 
 Lede:
-> I build bespoke AI systems for hotels, clinics and property operators in Pattaya — quiet machinery that handles bookings, reviews, leads and pricing while you run the floor.
+> Automation that runs your business while you run your business. I'm Jack — I design and run automation systems for hospitality, medical and property businesses in Pattaya: workflows and pipelines for bookings, reviews, leads and pricing, engineered and deployed so your team stays on the floor.
 
 Actions:
-- Primary: `See the work` → `#acts`
+- Primary: `See the work` → `#build`
 - Ghost: `Start a conversation →` → `mailto:jack@serviceopera.to?subject=Pattaya%20automation%20enquiry`
 
 Marquee strip (below actions, full-width between top and bottom `--line` borders, italic Fraunces 1.3rem):
@@ -254,9 +252,9 @@ Three tilted mini-cards stacked, absolute-positioned within a 320×360 container
 
 On `:hover` of the parent aside, each card translateY(-6px) with slight X shift.
 
-### Acts (4 cards)
+### Systems (4 cards)
 
-Eyebrow: `— ACT I · WHAT I BUILD`
+Eyebrow: `— 01 · WHAT I BUILD`
 Title: `Four systems. *One operator.*` (em in italic amber)
 Sub: `Every engagement is built around one of these four cores, configured to your property and stitched into the tools you already use.`
 
@@ -277,18 +275,18 @@ Grid: `repeat(auto-fit, minmax(280px, 1fr))`, 1px `--line` separators (achieved 
 
 ### Method (full-bleed dark)
 
-Eyebrow: `— ACT II · HOW IT GOES`
+Eyebrow: `— 02 · HOW I WORK`
 Title: `A short, honest process.`
 
 Three steps, each a row with `i.` / `ii.` / `iii.` in italic amber Fraunces 2.5rem on the left, body on the right. Horizontal lines between.
 
-1. **Reconnaissance** — I study your property and your three closest competitors. You receive a private brief — a real, working demo built for your business, not a slide deck.
+1. **Reconnaissance** — I study your property and your three closest competitors. You receive a private brief — a real, working demo built for your business, not a generic deck.
 2. **Pilot** — We pick one system and put it live in 14 days. Fixed scope, fixed price, observable results. If it doesn't earn its keep, we stop.
-3. **Production** — We expand to the rest of the suite, integrate it with your team, and I stay on as your retained operator at a monthly rate.
+3. **Rollout** — We expand to the rest of the suite, wire it into your team workflows, and I stay on as your retained operator at a monthly rate.
 
 ### Sectors
 
-Eyebrow: `— ACT III · WHO IT'S FOR`
+Eyebrow: `— 03 · WHO I WORK WITH`
 Title: `Three sectors. *One city.*`
 
 | Icon | Title | Mono caption | Body |
@@ -303,9 +301,9 @@ Medical card gets `.sector--featured` (amber-tinted gradient bg).
 
 Centered, Fraunces italic 1.6–2.6rem clamp, max-width 28em:
 
-> "The best automation is the one nobody on your team notices — they just stop drowning."
+> "Good automation is invisible. Your team stops drowning, your guests stop waiting, your numbers start moving — and nobody can point to the thing that did it."
 
-Cite line: `— Jack · Service Opera` (mono, amber, 0.8rem, letter-spacing 0.1em).
+Cite line: `— Jack · Service Operator` (mono, amber, 0.8rem, letter-spacing 0.1em).
 
 ### CTA
 
@@ -327,7 +325,7 @@ Boxed, dark gradient, faint amber border glow.
 ### Footer
 
 Four columns:
-1. `◐ Service Opera` + tagline `Bespoke AI automation. Pattaya, Thailand.`
+1. `◐ Service Opera` + tagline `AI service operations & automation · Pattaya, Thailand`
 2. `CONTACT` / mailto link to `jack@serviceopera.to`
 3. `HOURS` / `Mon — Fri · 09:00 — 19:00 ICT`
 4. `PRIVATE ACCESS` / link `Open client portal` (id `footerPortal`, opens modal)
@@ -365,7 +363,7 @@ Build a single stylesheet covering both pages. Required sections, in order:
 8. Pulse keyframe (`@keyframes pulse`) for live dot.
 9. Spin keyframe (`@keyframes spin`) for `◐` mark.
 10. Section primitives, eyebrow, section title.
-11. Acts grid (1px-line trick).
+11. Systems grid (1px-line trick).
 12. Method (full-bleed background on `--ink-2`).
 13. Sectors grid + `.sector--featured`.
 14. Quote, CTA box, footer.
@@ -434,7 +432,7 @@ Body class: `page-client`.
 
 **Client hero** — eyebrow with live dot + `CONFIDENTIAL · PREPARED FOR YOU · UPDATED TODAY`. h1 contains `<span id="clientName">` token. Lede paragraph (verbatim):
 
-> Below are four automation systems, already wired against simulated data from your business and your three closest competitors in Pattaya. Click around — this is what your operating week could look like.
+> Below are four automation systems, already wired against simulated data from your business and your three closest competitors in Pattaya. Click around — this is what a dialed-in week of service operations could look like.
 
 Stats strip (4 cells, mono labels + Fraunces values + green delta):
 - `REPLY TIME` → `28s` → `▲ vs 4h 12m manual`
@@ -528,9 +526,9 @@ Pricing suggestion callout (verbatim):
 ### Client CTA
 
 Eyebrow `— WHEN YOU'RE READY`
-h2: `If this looks like the operating week you want, *let's build it for real.*`
+h2: `If this looks like the workflow you want running, *let's deploy it for real.*`
 p:
-> Everything you see above runs on live data once we connect it to your PMS, OTAs, Meta and Google. The pilot takes 14 days and you only pay if it ships. If after the demo you'd rather just chat about what's possible, that's fine too — no slides, just answers.
+> Everything you see above runs on live data once we connect it to your PMS, OTAs, Meta and Google. The pilot takes 14 days and you only pay if it ships. If after the demo you'd rather just chat about what's possible, that's fine too — no decks, just answers.
 
 Buttons:
 - Primary `Email Jack →` → `mailto:jack@serviceopera.to?subject=Let's%20talk%20-%20automation%20pilot&body=...` (body URL-encoded: `Hi Jack,\n\nI've seen the private workspace and I'd like to talk about a pilot.\n\nBusiness:\nThe system that interests me most:\nBest time to call:\n\nThanks.`)
@@ -594,10 +592,10 @@ const cannedReplies = [
 
 Create `404.html` matching the dark aesthetic. Same header/grain. Centered card:
 
-- Mono `— 404 · LOST IN THE WINGS`
-- h1 (Fraunces 3rem): `This act doesn't exist.`
-- p: `The page you're looking for isn't here. It may have been moved, or perhaps it was never written.`
-- Button: `← Back to the start` → `/`
+- Mono `— 404 · NOT FOUND`
+- h1 (Fraunces 3rem): `This URL isn't in the deployment.`
+- p: `The page you're looking for isn't here. It may have been moved, or the link is wrong.`
+- Button: `← Back to home` → `/`
 
 Inline minimal CSS that imports `styles.css`, no extra JS.
 
