@@ -13,17 +13,27 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=JetBrains+Mono:wght@300;400;500;700&family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css" />
 </head>
-<body class="page-client">
+<body class="page-client page-client--with-nav">
 
 <div class="grain" aria-hidden="true"></div>
+
+<nav class="nav" aria-label="Primary">
+  <a href="/" class="nav__logo">
+    <img class="nav__logo-img brand-logo" src="logo.png" width="220" height="90" alt="ServiceOpera.to — home" decoding="async" />
+  </a>
+  <div class="nav__links">
+    <a href="/#build">Systems</a>
+    <a href="/#method">Method</a>
+    <a href="/#proof">Proof</a>
+    <a href="/login.html" class="nav__login mono">Log in</a>
+    <button type="button" class="theme-toggle" data-theme-toggle aria-label="Tema"></button>
+    <a href="mailto:jack@serviceopera.to" class="nav__cta" title="jack@serviceopera.to">jack@serviceopera.to</a>
+  </div>
+</nav>
 
 <!-- ============ LOGIN GATE ============ -->
 <div class="gate" id="gate">
   <div class="gate__card">
-    <button type="button" class="theme-toggle theme-toggle--corner" data-theme-toggle aria-label="Tema"></button>
-    <div class="gate__brand">
-      <img class="gate__brand-img brand-logo" src="logo.png" width="220" height="90" alt="ServiceOpera.to" decoding="async" />
-    </div>
     <div class="mono" style="color: var(--amber-2); margin-bottom: 1rem;">— PRIVATE WORKSPACE</div>
     <h1>Welcome back.</h1>
     <p>This page was built for one business. Enter the credentials from Jack's email to open your workspace.</p>
@@ -48,19 +58,10 @@
 <!-- ============ WORKSPACE (hidden until auth) ============ -->
 <div id="workspace" class="is-hidden">
 
-  <!-- Top nav -->
-  <nav class="client-nav">
-    <div style="display: flex; align-items: center;">
-      <a href="/" class="client-nav__brand">
-        <img class="client-nav__brand-img brand-logo" src="logo.png" width="200" height="82" alt="ServiceOpera.to" decoding="async" />
-      </a>
-      <span class="client-nav__client" id="clientLabel">— Private Workspace</span>
-    </div>
-    <div class="client-nav__actions">
-      <button type="button" class="theme-toggle" data-theme-toggle aria-label="Tema"></button>
-      <button class="client-nav__logout" id="logoutBtn">Sign out<span class="ico-ext" aria-hidden="true"></span></button>
-    </div>
-  </nav>
+  <div class="client-workspace-bar">
+    <span class="client-workspace-bar__label" id="clientLabel">— Private Workspace</span>
+    <button type="button" class="client-nav__logout" id="logoutBtn">Sign out<span class="ico-ext" aria-hidden="true"></span></button>
+  </div>
 
   <!-- Hero -->
   <header class="client-hero">

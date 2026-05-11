@@ -13,16 +13,26 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600&family=JetBrains+Mono:wght@400;500;700&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css" />
 </head>
-<body class="page-admin">
+<body class="page-admin page-admin--with-nav">
 
 <div class="grain" aria-hidden="true"></div>
 
+<nav class="nav" aria-label="Primary">
+  <a href="/" class="nav__logo">
+    <img class="nav__logo-img brand-logo" src="logo.png" width="220" height="90" alt="ServiceOpera.to — home" decoding="async" />
+  </a>
+  <div class="nav__links">
+    <a href="/#build">Systems</a>
+    <a href="/#method">Method</a>
+    <a href="/#proof">Proof</a>
+    <a href="/login.html" class="nav__login mono">Log in</a>
+    <button type="button" class="theme-toggle" data-theme-toggle aria-label="Tema"></button>
+    <a href="mailto:jack@serviceopera.to" class="nav__cta" title="jack@serviceopera.to">jack@serviceopera.to</a>
+  </div>
+</nav>
+
 <div class="admin-gate">
   <div class="admin-gate__card">
-    <button type="button" class="theme-toggle theme-toggle--corner" data-theme-toggle aria-label="Tema"></button>
-    <div class="admin-gate__brand">
-      <img class="gate__brand-img brand-logo" src="logo.png" width="220" height="90" alt="ServiceOpera.to" decoding="async" />
-    </div>
     <p class="mono" style="color: var(--amber-2); margin-bottom: 1rem;">— CLINIC REPORT ACCESS</p>
     <h1 id="clinicGateTitle">Log in</h1>
     <p class="admin-gate__lede" id="loginLede">Use the email and password Jack set up for your private report.</p>
@@ -72,6 +82,7 @@
 </div>
 
 <script src="theme.js"></script>
+<script src="debug.js"></script>
 <script>
 (function () {
   var form = document.getElementById('clinicLoginForm');

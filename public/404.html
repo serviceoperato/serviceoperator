@@ -32,9 +32,23 @@
   .err-card p { color: var(--bone); margin-bottom: 2rem; }
 </style>
 </head>
-<body class="page-home">
+<body class="page-home page-home--with-nav">
 <div class="grain" aria-hidden="true"></div>
-<button type="button" class="theme-toggle theme-toggle--floating" data-theme-toggle aria-label="Tema"></button>
+
+<nav class="nav" aria-label="Primary">
+  <a href="/" class="nav__logo">
+    <img class="nav__logo-img brand-logo" src="logo.png" width="220" height="90" alt="ServiceOpera.to — home" decoding="async" />
+  </a>
+  <div class="nav__links">
+    <a href="/#build">Systems</a>
+    <a href="/#method">Method</a>
+    <a href="/#proof">Proof</a>
+    <a href="/login.html" class="nav__login mono">Log in</a>
+    <button type="button" class="theme-toggle" data-theme-toggle aria-label="Tema"></button>
+    <a href="mailto:jack@serviceopera.to" class="nav__cta" title="jack@serviceopera.to">jack@serviceopera.to</a>
+  </div>
+</nav>
+
 <div class="err-wrap">
   <div class="err-card">
     <p class="mono" style="color: var(--amber-2);">— 404 · NOT FOUND</p>

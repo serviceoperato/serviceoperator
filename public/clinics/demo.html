@@ -42,22 +42,23 @@
   .clinics-fix-row__barwrap { height: 6px; background: var(--ink-3); border-radius: 3px; overflow: hidden; }
   .clinics-fix-row__bar { height: 100%; background: var(--amber); border-radius: 3px; }
   .clinics-fallback { text-align: center; padding: 4rem var(--gutter); color: var(--bone); }
-.page-clinics-demo .nav__links a { display: inline !important; }
 </style>
 </head>
 <body class="page-client page-clinics-demo">
 
 <div class="grain" aria-hidden="true"></div>
 
-<nav class="nav">
+<nav class="nav" aria-label="Primary">
   <a href="/" class="nav__logo">
-    <img class="nav__logo-img brand-logo" src="../logo.png" width="220" height="90" alt="ServiceOpera.to" decoding="async" />
+    <img class="nav__logo-img brand-logo" src="../logo.png" width="220" height="90" alt="ServiceOpera.to — home" decoding="async" />
   </a>
   <div class="nav__links">
-    <a href="/">Home</a>
-    <a href="../login.html" class="nav__login mono">Log in</a>
+    <a href="/#build">Systems</a>
+    <a href="/#method">Method</a>
+    <a href="/#proof">Proof</a>
+    <a href="/login.html" class="nav__login mono">Log in</a>
     <button type="button" class="theme-toggle" data-theme-toggle aria-label="Tema"></button>
-    <a href="mailto:jack@serviceopera.to" class="nav__cta">jack@serviceopera.to</a>
+    <a href="mailto:jack@serviceopera.to" class="nav__cta" title="jack@serviceopera.to">jack@serviceopera.to</a>
   </div>
 </nav>
 

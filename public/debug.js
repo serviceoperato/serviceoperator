@@ -201,6 +201,80 @@
       text: '50 · ISO timestamp (client): ' + new Date().toISOString(),
     });
 
+    function brandLogoAlphaProbe(img) {
+      if (!img || !img.complete || !img.naturalWidth) return 'n/a (incomplete)';
+      try {
+        var cv = document.createElement('canvas');
+        var w = Math.min(16, img.naturalWidth);
+        var h = Math.min(16, img.naturalHeight);
+        cv.width = w;
+        cv.height = h;
+        var xctx = cv.getContext('2d');
+        if (!xctx) return 'n/a (no 2d context)';
+        xctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight, 0, 0, w, h);
+        var d = xctx.getImageData(0, 0, 1, 1).data;
+        return 'TL rgba ' + d[0] + ',' + d[1] + ',' + d[2] + ',' + d[3] + ' (alpha<255 ⇒ decoded transparency)';
+      } catch (e) {
+        return 'n/a (' + (e && e.message ? e.message : String(e)) + ')';
+      }
+    }
+
+    (function pushBrandLogoDiagnostics() {
+      var img = document.querySelector('img.brand-logo');
+      if (!img) {
+        lines.push({ cat: 'FE', text: '51 · brand-logo: (no img.brand-logo in DOM)' });
+        lines.push({ cat: 'FE', text: '52 · brand-logo computed: n/a' });
+        lines.push({ cat: 'FE', text: '53 · brand-logo parent / alpha probe: n/a' });
+        return;
+      }
+      var fname = '';
+      try {
+        var u = new URL(img.currentSrc || img.src, window.location.href);
+        fname = u.pathname.split('/').pop() || u.href;
+      } catch (e2) {
+        fname = img.getAttribute('src') || '';
+      }
+      var nat = img.naturalWidth && img.naturalHeight ? img.naturalWidth + '×' + img.naturalHeight : '(not decoded)';
+      lines.push({
+        cat: 'FE',
+        text:
+          '51 · brand-logo file: ' +
+          fname +
+          ' · complete=' +
+          (img.complete ? 'yes' : 'no') +
+          ' · natural=' +
+          nat,
+      });
+      var cs = window.getComputedStyle(img);
+      lines.push({
+        cat: 'FE',
+        text:
+          '52 · brand-logo computed: background=' +
+          cs.backgroundColor +
+          ' · mix-blend=' +
+          cs.mixBlendMode +
+          ' · opacity=' +
+          cs.opacity,
+      });
+      var par = img.parentElement;
+      var ps = par ? window.getComputedStyle(par) : null;
+      var parDesc = par
+        ? '<' + par.tagName.toLowerCase() + (par.className ? '.' + String(par.className).trim().replace(/\s+/g, '.') : '') + '>'
+        : '(none)';
+      lines.push({
+        cat: 'FE',
+        text:
+          '53 · brand-logo parent ' +
+          parDesc +
+          ': bg=' +
+          (ps ? ps.backgroundColor : 'n/a') +
+          ' · radius=' +
+          (ps ? ps.borderRadius : 'n/a') +
+          ' · ' +
+          brandLogoAlphaProbe(img),
+      });
+    })();
+
     return lines;
   }
 
@@ -228,10 +302,10 @@
     panel.innerHTML =
       '<div class="debug-panel__card">' +
       '<div class="debug-panel__head">' +
-      '<span class="mono debug-panel__title" id="soDebugTitle">— DEBUG · 50 checks</span>' +
+      '<span class="mono debug-panel__title" id="soDebugTitle">— DEBUG · 53 checks</span>' +
       '<button type="button" class="debug-panel__close mono" data-debug-close aria-label="Chiudi pannello"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg></button>' +
       '</div>' +
-      '<p class="debug-panel__sub mono">DB = storage locale · FE = browser · BE = HTTP verso questo host. Seleziona il testo sotto e copia (Ctrl+C), oppure usa il pulsante.</p>' +
+      '<p class="debug-panel__sub mono">DB = storage locale · FE = browser · BE = HTTP verso questo host. Righe 51–53: diagnostica <code>img.brand-logo</code> (file, CSS, campione pixel TL su canvas). Seleziona il testo sotto e copia (Ctrl+C), oppure usa il pulsante.</p>' +
       '<div class="debug-panel__status mono" id="soDebugStatus">Esecuzione…</div>' +
       '<pre class="debug-panel__out mono" id="soDebugOut" tabindex="0"></pre>' +
       '<div class="debug-panel__actions">' +
@@ -250,7 +324,7 @@
       fab.removeAttribute('title');
       fab.setAttribute('aria-label', 'Mostra o nascondi informazioni di debug (versione ' + v + ')');
       var titleEl = document.getElementById('soDebugTitle');
-      if (titleEl) titleEl.textContent = '— DEBUG v' + v + ' · 50 checks';
+      if (titleEl) titleEl.textContent = '— DEBUG v' + v + ' · 53 checks';
     }
 
     fetch(new URL('/api/version', window.location.origin), { cache: 'no-store' })
@@ -303,7 +377,7 @@
     });
 
     panel.addEventListener('click', function (e) {
-      if (e.target.getAttribute('data-debug-close') != null) close();
+      if (e.target && e.target.closest && e.target.closest('[data-debug-close]')) close();
     });
 
     document.getElementById('soDebugCopy').addEventListener('click', function () {
