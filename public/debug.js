@@ -59,6 +59,49 @@
     return { line: name + ': HTTP ' + r.status + ' · ' + ms + ' ms' + (r.ok ? ' · ok' : ' · fail') + tail };
   }
 
+  async function timedJson(name, url) {
+    var t0 = performance.now();
+    try {
+      var r = await fetch(url, { method: 'GET', cache: 'no-store', credentials: 'same-origin' });
+      var ms = Math.round(performance.now() - t0);
+      var j = null;
+      try {
+        j = await r.json();
+      } catch (e2) {
+        j = null;
+      }
+      return { ok: r.ok, status: r.status, ms: ms, json: j };
+    } catch (e) {
+      return {
+        ok: false,
+        status: 0,
+        ms: Math.round(performance.now() - t0),
+        json: null,
+        err: e && e.message ? e.message : String(e),
+      };
+    }
+  }
+
+  function envSafeArea() {
+    var probe = document.createElement('motion.div');
+    probe.style.cssText =
+      'position:fixed;visibility:hidden;pointer-events:none;' +
+      'padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)';
+    document.body.appendChild(probe);
+    var cs = window.getComputedStyle(probe);
+    var out =
+      'top=' +
+      cs.paddingTop +
+      ' · right=' +
+      cs.paddingRight +
+      ' · bottom=' +
+      cs.paddingBottom +
+      ' · left=' +
+      cs.paddingLeft;
+    probe.remove();
+    return out;
+  }
+
   async function buildLines() {
     var lines = [];
     var origin = window.location.origin;
@@ -275,6 +318,127 @@
       });
     })();
 
+  var rootEl = document.documentElement;
+  var rootCs = window.getComputedStyle(rootEl);
+  var bodyCs = window.getComputedStyle(document.body);
+  var docClientW = rootEl.clientWidth;
+  var docScrollW = rootEl.scrollWidth;
+  var overflowX = docScrollW > docClientW + 1;
+  lines.push({
+    cat: 'FE',
+    text:
+      '54 · layout overflow-x: ' +
+      (overflowX ? 'yes' : 'no') +
+      ' · doc clientW=' +
+      docClientW +
+      ' · scrollW=' +
+      docScrollW +
+      ' · Δ=' +
+      (docScrollW - docClientW) +
+      'px · scrollX=' +
+      window.scrollX,
+  });
+  lines.push({
+    cat: 'FE',
+    text:
+      '55 · overflow CSS: html overflow-x=' +
+      rootCs.overflowX +
+      ' · body overflow-x=' +
+      bodyCs.overflowX +
+      ' · body overflow-y=' +
+      bodyCs.overflowY,
+  });
+  var vv = window.visualViewport;
+  lines.push({
+    cat: 'FE',
+    text: vv
+      ? '56 · visualViewport: ' +
+        Math.round(vv.width) +
+        '×' +
+        Math.round(vv.height) +
+        ' · scale=' +
+        vv.scale +
+        ' · offsetTop=' +
+        Math.round(vv.offsetTop) +
+        ' · offsetLeft=' +
+        Math.round(vv.offsetLeft)
+      : '56 · visualViewport: n/a',
+  });
+  lines.push({ cat: 'FE', text: '57 · safe-area (env): ' + envSafeArea() });
+  lines.push({
+    cat: 'FE',
+    text:
+      '58 · display-mode standalone: ' +
+      mm('(display-mode: standalone)') +
+      ' · prefers-contrast more: ' +
+      mm('(prefers-contrast: more)'),
+  });
+  var logos = document.querySelectorAll('img.brand-logo');
+  var logoSrcs = [];
+  for (var li = 0; li < logos.length; li++) {
+    try {
+      logoSrcs.push(new URL(logos[li].currentSrc || logos[li].src, window.location.href).pathname);
+    } catch (e3) {
+      logoSrcs.push(logos[li].getAttribute('src') || '(src?)');
+    }
+  }
+  lines.push({
+    cat: 'FE',
+    text:
+      '59 · brand-logo count: ' +
+      logos.length +
+      (logoSrcs.length ? ' · paths: ' + logoSrcs.join(', ') : ''),
+  });
+  lines.push({
+    cat: 'FE',
+    text:
+      '60 · canvas --ink: ' +
+      rootCs.getPropertyValue('--ink').trim() +
+      ' · body background: ' +
+      bodyCs.backgroundColor,
+  });
+
+  var verProbe = await timedJson('/api/version');
+  lines.push({
+    cat: 'BE',
+    text:
+      '61 · API /api/version: HTTP ' +
+      verProbe.status +
+      ' · ' +
+      verProbe.ms +
+      ' ms' +
+      (verProbe.ok ? ' · ok' : ' · fail') +
+      (verProbe.json && verProbe.json.version ? ' · version=' + verProbe.json.version : verProbe.err ? ' · ' + verProbe.err : ''),
+  });
+  var clinicCap = await timedJson('/api/auth/clinic-capabilities');
+  var cc = clinicCap.json || {};
+  lines.push({
+    cat: 'BE',
+    text:
+      '62 · API clinic-capabilities: HTTP ' +
+      clinicCap.status +
+      ' · ' +
+      clinicCap.ms +
+      ' ms · service=' +
+      (cc.service != null ? cc.service : 'n/a') +
+      ' · passwordResetEmail=' +
+      (cc.passwordResetEmail != null ? String(cc.passwordResetEmail) : 'n/a'),
+  });
+  var adminCap = await timedJson('/api/admin/capabilities');
+  var ac = adminCap.json || {};
+  lines.push({
+    cat: 'BE',
+    text:
+      '63 · API admin-capabilities: HTTP ' +
+      adminCap.status +
+      ' · ' +
+      adminCap.ms +
+      ' ms · otpEnabled=' +
+      (ac.otpEnabled != null ? String(ac.otpEnabled) : 'n/a') +
+      ' · clinicPasswordResetEmail=' +
+      (ac.clinicPasswordResetEmail != null ? String(ac.clinicPasswordResetEmail) : 'n/a'),
+  });
+
     return lines;
   }
 
@@ -302,10 +466,10 @@
     panel.innerHTML =
       '<div class="debug-panel__card">' +
       '<div class="debug-panel__head">' +
-      '<span class="mono debug-panel__title" id="soDebugTitle">— DEBUG · 53 checks</span>' +
+      '<span class="mono debug-panel__title" id="soDebugTitle">— DEBUG · 63 checks</span>' +
       '<button type="button" class="debug-panel__close mono" data-debug-close aria-label="Chiudi pannello"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg></button>' +
       '</div>' +
-      '<p class="debug-panel__sub mono">DB = storage locale · FE = browser · BE = HTTP verso questo host. Righe 51–53: diagnostica <code>img.brand-logo</code> (file, CSS, campione pixel TL su canvas). Seleziona il testo sotto e copia (Ctrl+C), oppure usa il pulsante.</p>' +
+      '<p class="debug-panel__sub mono">DB = storage locale · FE = browser · BE = HTTP verso questo host. Righe 51–53: <code>img.brand-logo</code>. Righe 54–60: layout, viewport, safe-area, tema. Righe 61–63: <code>/api/version</code> e capabilities Resend/login. Seleziona il testo sotto e copia (Ctrl+C), oppure usa il pulsante.</p>' +
       '<div class="debug-panel__status mono" id="soDebugStatus">Esecuzione…</div>' +
       '<pre class="debug-panel__out mono" id="soDebugOut" tabindex="0"></pre>' +
       '<div class="debug-panel__actions">' +
