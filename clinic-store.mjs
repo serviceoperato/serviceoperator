@@ -122,5 +122,37 @@ export function createClinicStore(dataDir) {
       if (!verifyPassword(password, u.passwordHash)) return null;
       return { id: u.id, email: u.email, reportSlug: u.reportSlug };
     },
+
+    /** @returns {{ id: string, email: string, reportSlug: string } | null} */
+    getUserByEmail(email) {
+      const em = normalizeEmail(email);
+      const data = load();
+      const u = data.users.find((x) => x.email === em);
+      if (!u) return null;
+      return { id: u.id, email: u.email, reportSlug: u.reportSlug };
+    },
+
+    setPasswordForUser(userId, newPassword) {
+      if (typeof userId !== 'string' || !userId) {
+        const err = new Error('Invalid user.');
+        err.status = 400;
+        throw err;
+      }
+      if (typeof newPassword !== 'string' || newPassword.length < 8) {
+        const err = new Error('Password must be at least 8 characters.');
+        err.status = 400;
+        throw err;
+      }
+      const data = load();
+      const u = data.users.find((x) => x.id === userId);
+      if (!u) {
+        const err = new Error('User not found.');
+        err.status = 404;
+        throw err;
+      }
+      u.passwordHash = hashPassword(newPassword);
+      save(data);
+      return { id: u.id, email: u.email, reportSlug: u.reportSlug };
+    },
   };
 }

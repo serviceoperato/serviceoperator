@@ -30,6 +30,7 @@ const JWT_SECRET = (process.env.ADMIN_JWT_SECRET || '').trim() || crypto.randomB
 const OTP_TTL_MS = 10 * 60 * 1000;
 const JWT_TTL_MS = 8 * 60 * 60 * 1000;
 const CLINIC_JWT_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+const CLINIC_RESET_JWT_MS = 60 * 60 * 1000;
 const SEND_WINDOW_MS = 15 * 60 * 1000;
 const MAX_SENDS_PER_WINDOW = 4;
 
@@ -122,6 +123,7 @@ async function sendResendEmail({ to, subject, html }) {
 }
 
 const app = express();
+app.set('trust proxy', 1);
 app.disable('x-powered-by');
 app.use(express.json({ limit: '48kb' }));
 
@@ -139,7 +141,16 @@ app.get('/api/version', (_req, res) => {
 });
 
 app.get('/api/admin/capabilities', (_req, res) => {
-  res.json({ otpEnabled: Boolean(RESEND_API_KEY), clinicUsersApi: true });
+  res.json({
+    otpEnabled: Boolean(RESEND_API_KEY),
+    clinicUsersApi: true,
+    clinicPasswordResetEmail: Boolean(RESEND_API_KEY),
+  });
+});
+
+app.get('/api/auth/clinic-capabilities', (_req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  res.json({ passwordResetEmail: Boolean(RESEND_API_KEY) });
 });
 
 app.post('/api/admin/send-code', async (req, res) => {
@@ -242,6 +253,90 @@ app.post('/api/auth/clinic-login', (req, res) => {
   return res.json({ ok: true, token, reportSlug: user.reportSlug, reportUrl });
 });
 
+function publicOrigin(req) {
+  const fromEnv = (process.env.PUBLIC_ORIGIN || '').trim().replace(/\/$/, '');
+  if (fromEnv) return fromEnv;
+  const host = req.get('host') || 'localhost';
+  const xfProto = req.headers['x-forwarded-proto'];
+  const proto =
+    typeof xfProto === 'string' && xfProto.length ? xfProto.split(',')[0].trim() : req.protocol || 'http';
+  return `${proto}://${host}`.replace(/\/$/, '');
+}
+
+app.post('/api/auth/clinic-request-reset', async (req, res) => {
+  const generic = {
+    ok: true,
+    message: 'If that email is registered for a clinic report, we sent a link to reset your password. Check your inbox.',
+  };
+  if (!RESEND_API_KEY) {
+    return res.status(503).json({
+      error:
+        'Password reset by email is not available on this server. Please contact your administrator (Jack) to set a new password.',
+    });
+  }
+  const email = typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+  const ip = clientIp(req);
+  const sends = pruneSends(ip);
+  if (sends.length >= MAX_SENDS_PER_WINDOW) {
+    return res.status(429).json({ error: 'Too many requests. Try again later.' });
+  }
+
+  const user = email && email.includes('@') ? clinicStore.getUserByEmail(email) : null;
+  if (!user) {
+    return res.json(generic);
+  }
+
+  const resetToken = signJwt({
+    v: 1,
+    role: 'clinic_reset',
+    sub: user.id,
+    email: user.email,
+    exp: Date.now() + CLINIC_RESET_JWT_MS,
+  });
+  const origin = publicOrigin(req);
+  const link = `${origin}/login.html?reset=${encodeURIComponent(resetToken)}`;
+
+  try {
+    await sendResendEmail({
+      to: user.email,
+      subject: 'ServiceOpera — reset your clinic report password',
+      html:
+        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">You asked to reset the password for your <strong>ServiceOpera.to</strong> clinic report access.</p>' +
+        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111"><a href="' +
+        String(link).replace(/"/g, '&quot;') +
+        '" style="color:#1e3a5f;font-weight:600">Reset password</a> (link expires in one hour.)</p>' +
+        '<p style="font-family:system-ui,sans-serif;font-size:13px;color:#444">If you did not request this, ignore this email.</p>',
+    });
+    sends.push(Date.now());
+    sendTimestampsByIp.set(ip, sends);
+  } catch (e) {
+    const status = e.status || 502;
+    return res.status(status).json({ error: 'Could not send email. Try again later or contact support.' });
+  }
+
+  return res.json(generic);
+});
+
+app.post('/api/auth/clinic-reset-password', (req, res) => {
+  const token = typeof req.body?.token === 'string' ? req.body.token.trim() : '';
+  const password = typeof req.body?.password === 'string' ? req.body.password : '';
+  const p = verifyJwt(token);
+  if (!p || p.role !== 'clinic_reset' || typeof p.sub !== 'string' || typeof p.email !== 'string') {
+    return res.status(401).json({ error: 'Invalid or expired reset link. Request a new one from the login page.' });
+  }
+  const row = clinicStore.getUserByEmail(p.email);
+  if (!row || row.id !== p.sub) {
+    return res.status(401).json({ error: 'Invalid or expired reset link. Request a new one from the login page.' });
+  }
+  try {
+    clinicStore.setPasswordForUser(p.sub, password);
+  } catch (e) {
+    const status = e.status || 400;
+    return res.status(status).json({ error: e.message || 'Bad request' });
+  }
+  return res.json({ ok: true, message: 'Password updated. You can sign in now.' });
+});
+
 app.get('/api/auth/clinic-session', (req, res) => {
   const p = verifyJwt(getBearer(req));
   if (!p || p.role !== 'clinic' || typeof p.reportSlug !== 'string') return res.status(401).json({ ok: false });
@@ -278,7 +373,11 @@ app.use(
     index: ['index.html'],
     setHeaders(res, filePath) {
       const norm = filePath.split(path.sep).join('/');
-      if (filePath.endsWith('client.html') || norm.includes('/clinics/report.html')) {
+      if (
+        filePath.endsWith('client.html') ||
+        filePath.endsWith('login.html') ||
+        norm.includes('/clinics/report.html')
+      ) {
         res.setHeader('Cache-Control', 'no-store');
         res.setHeader('X-Robots-Tag', 'noindex, nofollow');
       }

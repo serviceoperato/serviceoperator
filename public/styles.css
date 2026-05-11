@@ -1049,6 +1049,43 @@ a:hover { color: var(--amber-2); }
 }
 .portal-form__hint.is-error { color: var(--rust); }
 .portal-form__hint.is-ok { color: var(--amber-2); }
+.portal-form__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+.portal-form__linkbtn {
+  font: inherit;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--amber-deep);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.portal-form__linkbtn:hover {
+  color: var(--amber);
+}
+.portal-form__linkbtn:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+.portal-form__muted {
+  font-size: 0.88rem;
+  color: var(--mute);
+  line-height: 1.45;
+  margin: 0;
+}
+.portal-form__back {
+  margin-top: 0.5rem;
+}
 .modal__footnote {
   margin-top: 1.8rem;
   color: var(--mute-2);
@@ -1737,9 +1774,14 @@ a:hover { color: var(--amber-2); }
 }
 .debug-fab {
   position: static;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-size: 0.65rem !important;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.06em;
   text-transform: none;
+  min-width: 2.5rem;
+  min-height: 2rem;
   padding: 0.5rem 0.75rem;
   border-radius: 3px;
   border: 1px solid var(--amber-deep);

@@ -215,7 +215,7 @@
     fab.id = BTN_ID;
     fab.type = 'button';
     fab.className = 'debug-fab mono';
-    fab.textContent = 'Debug';
+    fab.textContent = '';
     fab.setAttribute('aria-label', 'Mostra o nascondi informazioni di debug');
     fab.setAttribute('aria-expanded', 'false');
     fab.setAttribute('aria-controls', PANEL_ID);
@@ -246,8 +246,9 @@
       if (!ver) return;
       var v = String(ver).trim();
       if (!v) return;
-      fab.textContent = 'Debug · v' + v;
-      fab.setAttribute('aria-label', 'Mostra o nascondi informazioni di debug (v' + v + ')');
+      fab.textContent = v;
+      fab.removeAttribute('title');
+      fab.setAttribute('aria-label', 'Mostra o nascondi informazioni di debug (versione ' + v + ')');
       var titleEl = document.getElementById('soDebugTitle');
       if (titleEl) titleEl.textContent = '— DEBUG v' + v + ' · 50 checks';
     }
@@ -258,8 +259,15 @@
       })
       .then(function (j) {
         if (j && j.version) applyAppVersion(j.version);
+        else {
+          fab.textContent = '';
+          fab.setAttribute('title', 'Informazioni di debug');
+        }
       })
-      .catch(function () {});
+      .catch(function () {
+        fab.textContent = '';
+        fab.setAttribute('title', 'Informazioni di debug');
+      });
 
     var out = document.getElementById('soDebugOut');
     var status = document.getElementById('soDebugStatus');

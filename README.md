@@ -127,8 +127,9 @@ The `Dockerfile` runs **Node**: `server.mjs` serves **`public/`** and sets the s
 
 | Variable | Required | Purpose |
 |---|---|---|
-| `RESEND_API_KEY` | Yes, for email OTP | [Resend](https://resend.com) API key; when set, `/admin.html` uses “Send sign-in code” instead of `admin-config.js`. |
+| `RESEND_API_KEY` | Yes, for email OTP | [Resend](https://resend.com) API key; when set, `/admin.html` uses “Send sign-in code” instead of `admin-config.js`, and **`/login.html`** can send **clinic password-reset** emails (“Forgot password?”). |
 | `RESEND_FROM` | Recommended | Verified sender, e.g. `ServiceOpera <noreply@yourdomain.com>`. Resend’s test domain only delivers to your own mailbox. |
+| `PUBLIC_ORIGIN` | Optional | Full public URL of the site (e.g. `https://serviceopera.to`), no trailing slash. Used in reset links if the reverse proxy does not pass a reliable host/proto. |
 | `ADMIN_JWT_SECRET` | Strongly recommended | Long random string; signs session tokens. If omitted, a random secret is generated at **each process start** (sessions break on redeploy). |
 | `ADMIN_EMAIL` | Optional | Defaults to `jack@serviceopera.to`. Only this address receives codes. |
 
