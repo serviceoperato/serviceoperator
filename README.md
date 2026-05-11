@@ -13,7 +13,7 @@ A complete, deployable site under **`serviceopera.to`** with:
 |---|---|
 | `index.html` | Public landing page. Sells you as a premium automation freelancer for Pattaya hospitality, medical and property businesses. |
 | `client.html` | **The "secret page".** Password-protected private demo workspace. You send one prospect a unique username + password; they log in and see a dashboard themed for *their* business. |
-| `styles.css` | Shared ink-and-amber technical design system. |
+| `styles.css` | Shared black / white / indigo design system. |
 | `app.js` | Landing-page modal + credential check. |
 
 The two pages share styling but the client page is hidden behind a login gate and marked `noindex, nofollow` so it doesn't show up on Google.
@@ -164,7 +164,7 @@ Try the demo with username `demo` and password `demo` — it'll show the workspa
 - **Name:** Service Opera — reads as *Service Operator*. Jack is an AI service operator: systems, pipelines, and runbooks for real service businesses — not a creative studio pitch.
 - **Mark:** ◐ (half-circle) — implying "always partly running, always partly on".
 - **Tone:** confident, dry, restrained. Never "supercharge", "revolutionize", "synergize". The pitch is: *engineered automation, observable results, honest pricing.*
-- **Colors:** ink black (`#0a0a0b`), bone paper (`#f4efe6`), amber (`#d4a24c`). Used sparingly — amber only on accents and CTAs.
+- **Colors:** black (`#000000`), white (`#ffffff`), indigo accent (`#6366f1` and lighter `#a5b4fc`). Accents stay sparse — mostly monochrome surfaces with indigo for focus states, links, and CTAs.
 - **Typography:** Fraunces (display) + Inter Tight (body) + JetBrains Mono (technical labels).
 
 Don't dilute the brand. The whole point is to *not* look like every other AI-agency template.

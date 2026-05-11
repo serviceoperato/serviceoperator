@@ -105,25 +105,25 @@ Sitemap: https://serviceopera.to/sitemap.xml
 
 ## 3. Design system (non-negotiable)
 
-**Aesthetic direction:** ink-and-amber technical luxury — reads like an operator, not a SaaS template. No purple gradients. No glassmorphism abuse. No emoji except where copy explicitly contains them. No stock icons.
+**Aesthetic direction:** black, white, and indigo — reads like an operator, not a SaaS template. No extra accent hues beyond the indigo family. No glassmorphism abuse. No emoji except where copy explicitly contains them. No stock icons.
 
 ### Color tokens (CSS variables, defined in `styles.css :root`)
 
 ```
---ink:        #0a0a0b   /* page background */
---ink-2:      #131316   /* card/section background */
---ink-3:      #1c1c20   /* nested card */
---paper:      #f4efe6   /* primary text */
---paper-2:    #e8e1d4
---bone:       #d8d2c4   /* secondary text */
---mute:       #6b6b73   /* tertiary */
---mute-2:     #95918a
---amber:      #d4a24c   /* primary accent */
---amber-2:    #e8b85e   /* hover accent */
---amber-deep: #8a6420
---rust:       #b85a3a   /* error/danger */
---line:       rgba(244,239,230,0.12)
---line-strong:rgba(244,239,230,0.22)
+--ink:        #000000   /* page background */
+--ink-2:      #0a0a0f   /* card/section background */
+--ink-3:      #12121a   /* nested card */
+--paper:      #ffffff   /* primary text on dark */
+--paper-2:    #f4f4f5
+--bone:       rgba(255,255,255,0.78)   /* secondary text */
+--mute:       rgba(255,255,255,0.42)
+--mute-2:     rgba(255,255,255,0.58)
+--amber:      #6366f1   /* indigo accent (legacy token name) */
+--amber-2:    #a5b4fc   /* lighter indigo */
+--amber-deep: #312e81
+--rust:       #818cf8   /* secondary accent / states */
+--line:       rgba(255,255,255,0.12)
+--line-strong:rgba(255,255,255,0.22)
 ```
 
 ### Typography
