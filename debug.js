@@ -210,7 +210,8 @@
     fab.id = BTN_ID;
     fab.type = 'button';
     fab.className = 'debug-fab mono';
-    fab.textContent = 'Debug';
+    fab.textContent = 'Debug info';
+    fab.setAttribute('aria-label', 'Apri informazioni di debug');
     fab.setAttribute('aria-haspopup', 'dialog');
     fab.setAttribute('aria-expanded', 'false');
     fab.setAttribute('aria-controls', PANEL_ID);

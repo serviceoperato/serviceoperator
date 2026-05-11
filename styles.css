@@ -1525,12 +1525,12 @@ a:hover { color: var(--amber-2); }
    ============================================ */
 .debug-fab {
   position: fixed;
-  bottom: 1rem;
-  left: var(--gutter);
-  z-index: 220;
+  bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+  left: max(1rem, env(safe-area-inset-left, 0px));
+  z-index: 350;
   font-size: 0.65rem !important;
   letter-spacing: 0.12em;
-  text-transform: uppercase;
+  text-transform: none;
   padding: 0.5rem 0.75rem;
   border-radius: 3px;
   border: 1px solid var(--line-strong);

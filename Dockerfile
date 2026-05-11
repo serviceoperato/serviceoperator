@@ -10,14 +10,17 @@ COPY docker/nginx.site.conf /etc/nginx/nginx.site.conf
 COPY docker/entrypoint.sh /entrypoint.sh
 RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
 
-# Elenco esplicito: se un file manca nel contesto di build, Docker fallisce subito (non “in silenzio”).
-COPY index.html client.html styles.css app.js robots.txt 404.html /usr/share/nginx/html/
+# Statici serviti da nginx (root + cartelle referenziate da index / client / admin).
+COPY index.html client.html styles.css app.js robots.txt 404.html \
+  theme.js debug.js logo-icon.svg logo.svg favicon.png \
+  admin.html admin.js admin-config.js admin-config.example.js \
+  /usr/share/nginx/html/
+COPY clinics /usr/share/nginx/html/clinics/
 RUN test -f /usr/share/nginx/html/index.html \
+    && test -f /usr/share/nginx/html/debug.js \
+    && test -f /usr/share/nginx/html/theme.js \
     && test -f /usr/share/nginx/html/client.html \
-    && test -f /usr/share/nginx/html/styles.css \
-    && test -f /usr/share/nginx/html/app.js \
-    && test -f /usr/share/nginx/html/robots.txt \
-    && test -f /usr/share/nginx/html/404.html \
+    && test -f /usr/share/nginx/html/clinics/demo.html \
     && ls -la /usr/share/nginx/html/
 
 ENTRYPOINT ["/entrypoint.sh"]
