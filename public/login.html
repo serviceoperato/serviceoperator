@@ -263,7 +263,6 @@
     lines.push('▸ Class: transport / fetch did not return a normal HTTP response');
     lines.push('▸ Request: ' + method + ' ' + path + ' (same origin as this page)');
     lines.push('▸ Client time (ISO): ' + new Date().toISOString());
-    lines.push('▸ Client time (ISO): ' + new Date().toISOString());
     lines.push('▸ Error name: ' + (e.name || '(none)'));
     lines.push('▸ Error message: ' + (e.message || String(e)));
     lines.push('▸ Page URL: ' + window.location.href);
@@ -294,17 +293,34 @@
     var lines = [];
     lines.push('▸ Class: HTTP reply was not JSON (cannot read server message)');
     lines.push('▸ Client time (ISO): ' + new Date().toISOString());
-    lines.push('▸ Client time (ISO): ' + new Date().toISOString());
     lines.push('▸ Request: ' + method + ' ' + path);
     lines.push('▸ HTTP: ' + status + ' ' + (statusText || ''));
     lines.push('▸ Content-Type: ' + (contentType || '(none)'));
     lines.push('▸ JSON.parse: ' + (parseMsg || 'failed'));
     lines.push('▸ Body preview: ' + safeBodyPreview(rawText));
     lines.push('▸ ' + summarizeApiProbeState());
+    var apiProbeOk = capabilitiesStatus === 200 && clinicApiFromOurServer;
     if (status === 404) {
       lines.push(
         '▸ Likely cause: CDN/static bucket returned its own 404/HTML page — no Node route handled ' + path + '.'
       );
+    } else if (status === 502 || status === 504) {
+      if (apiProbeOk) {
+        lines.push(
+          '▸ Likely cause: gateway/proxy (often Cloudflare Worker) could not get a valid response from origin for this POST — timeouts, cold Railway, wrong origin in Worker fetch, or upstream crash on write paths.'
+        );
+        lines.push(
+          '▸ Hint: GET clinic-capabilities succeeded from this browser; compare how the Worker forwards POST ' +
+            path +
+            ' (same origin host, method, body) and raise subrequest timeouts / check Railway logs.'
+        );
+      } else {
+        lines.push(
+          '▸ Likely cause: HTTP ' +
+            status +
+            ' — upstream unreachable, timed out, or overloaded; HTML error page from gateway instead of JSON.'
+        );
+      }
     } else if (status >= 500) {
       lines.push(
         '▸ Likely cause: upstream crashed or timed out — HTML error page from proxy instead of JSON from server.mjs.'
@@ -312,9 +328,23 @@
     } else if (/<html|<!doctype/i.test(rawText || '')) {
       lines.push('▸ Likely cause: response is an HTML document (landing or error template), not the ServiceOpera API.');
     }
-    lines.push(
-      '▸ Fix: deploy backend with `node server.mjs`, map /api/* to that process (Railway Dockerfile + correct startCommand), not static `public/` only.'
-    );
+    if (status === 404) {
+      lines.push(
+        '▸ Fix: deploy backend with `node server.mjs`, map /api/* to that process (Railway Dockerfile + correct startCommand), not static `public/` only.'
+      );
+    } else if ((status === 502 || status === 504) && apiProbeOk) {
+      lines.push(
+        '▸ Fix: lightweight GET works but this POST failed at the edge — verify Cloudflare Worker (or proxy) forwards POST ' +
+          path +
+          ' to the Railway origin, matches headers/body, and uses an adequate subrequest timeout; tail Railway logs for crashes on write routes.'
+      );
+    } else {
+      lines.push(
+        '▸ Fix: check Railway deploy logs and server.mjs for errors on ' +
+          path +
+          '; ensure the reverse proxy routes all of /api/* to the same Node process that answered clinic-capabilities.'
+      );
+    }
     return lines.join('\n');
   }
 
