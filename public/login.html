@@ -111,7 +111,7 @@
       </label>
       <button type="submit" class="btn btn--primary btn--block">Open report<span class="ico-arrow-r" aria-hidden="true"></span></button>
       <div class="portal-form__actions" style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;justify-content:space-between">
-        <button type="button" class="portal-form__linkbtn is-hidden" id="clinicRegisterToggle">Create account</button>
+        <button type="button" class="portal-form__linkbtn" id="clinicRegisterToggle">Create account</button>
         <button type="button" class="portal-form__linkbtn" id="clinicForgotToggle">Forgot password?</button>
       </div>
       <p class="portal-form__hint" id="loginHint"></p>
@@ -311,12 +311,29 @@
       clinicApiFromOurServer = Boolean(cap && cap.service === 'serviceopera');
       resetEmailEnabled = clinicApiFromOurServer && Boolean(cap && cap.passwordResetEmail);
       selfRegisterEnabled = clinicApiFromOurServer && Boolean(cap && cap.selfRegister);
-      if (registerToggle) registerToggle.classList.toggle('is-hidden', !selfRegisterEnabled);
+      var regHelp = document.getElementById('clinicRegisterHelp');
+      if (regHelp) {
+        if (selfRegisterEnabled) {
+          regHelp.textContent =
+            'Create an account with your email and a password (min 8 characters). Your private report ID is generated automatically.';
+        } else if (!clinicApiFromOurServer) {
+          regHelp.textContent =
+            'This page must be served by the ServiceOpera Node host (not static files only) to complete sign-up. If submit fails, write to jack@serviceopera.to.';
+        } else {
+          regHelp.textContent =
+            'If account creation is rejected, the server may have self-registration disabled — email jack@serviceopera.to or ask Jack to set CLINIC_SELF_REGISTER on Railway.';
+        }
+      }
       if (forgotHelp) forgotHelp.textContent = forgotResetHelpText();
     })
     .catch(function () {
       capabilitiesStatus = 0;
       clinicApiFromOurServer = false;
+      var regHelp = document.getElementById('clinicRegisterHelp');
+      if (regHelp) {
+        regHelp.textContent =
+          'Could not reach the server API. Sign-up needs the live Node deploy. If it keeps failing, write to jack@serviceopera.to.';
+      }
       if (forgotHelp) forgotHelp.textContent = forgotResetHelpText();
     });
 
@@ -336,13 +353,6 @@
 
   if (registerToggle) {
     registerToggle.addEventListener('click', function () {
-      if (!selfRegisterEnabled) {
-        setHint(
-          'Self-registration is not enabled on this server. Write to jack@serviceopera.to for access.',
-          'error'
-        );
-        return;
-      }
       showRegisterMode();
     });
   }
