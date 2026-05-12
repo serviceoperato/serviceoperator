@@ -24,7 +24,7 @@
 
   function syncButtons() {
     var dark = current() === 'dark';
-    var label = dark ? 'Attiva tema chiaro (sole)' : 'Attiva tema scuro (luna)';
+    var label = dark ? 'Switch to light theme' : 'Switch to dark theme';
     document.querySelectorAll('[data-theme-toggle]').forEach(function (btn) {
       btn.setAttribute('aria-label', label);
       btn.setAttribute('title', label);

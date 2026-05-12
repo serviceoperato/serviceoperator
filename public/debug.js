@@ -107,7 +107,7 @@
     var origin = window.location.origin;
     var path = window.location.pathname;
 
-    /* —— DB (persistenza locale) —— */
+    /* —— DB (local persistence) —— */
     lines.push({ cat: 'DB', text: '01 · localStorage roundtrip: ' + dbRoundtrip() });
     var lsKeys = storageKeys(localStorage);
     lines.push({ cat: 'DB', text: '02 · localStorage key count: ' + lsKeys.length });
@@ -466,43 +466,43 @@
         : ''),
   });
 
-    /* —— Reset password clinica (solo login.html) —— */
+    /* —— Clinic password reset (login.html only) —— */
     var onClinicLogin = /\/login\.html$/i.test(path) || path === '/login' || path.endsWith('/login.html');
     if (onClinicLogin) {
       lines.push({
         cat: 'PW',
         text:
-          '01 · Reset password via email: il browser chiama POST /api/auth/clinic-request-reset sullo stesso origin. Serve il backend Node (server.mjs), non un host solo-statico.',
+          '01 · Reset password via email: the browser calls POST /api/auth/clinic-request-reset on the same origin. Requires the Node backend (server.mjs), not a static-only host.',
       });
       var apiMissing = verProbe.status === 404 || clinicCap.status === 404;
       if (apiMissing) {
         lines.push({
           cat: 'PW',
           text:
-            '02 · Problema rilevato: righe [BE] 61–62 con HTTP 404 ⇒ questo URL non espone /api/*. La pagina HTML c’è, ma Express non gira qui: nessuna mail di reset può partire.',
+            '02 · Issue detected: [BE] rows 61–62 return HTTP 404 ⇒ this URL does not expose /api/*. The HTML page loads, but Express is not running here: no reset email can be sent.',
         });
         lines.push({
           cat: 'PW',
           text:
-            '03 · Fix (Railway): un servizio che avvia `node server.mjs` (Dockerfile del repo + `railway.toml` con startCommand). Evita di pubblicare solo `public/` come sito statico sull’URL usato per il login.',
+            '03 · Fix (Railway): run a service that starts `node server.mjs` (repo Dockerfile + `railway.toml` startCommand). Do not publish only `public/` as a static site on the URL used for login.',
         });
       } else if (clinicCap.status === 200 && cc.service === 'serviceopera' && cc.passwordResetEmail === false) {
         lines.push({
           cat: 'PW',
           text:
-            '02 · API raggiungibile ma passwordResetEmail=false: imposta RESEND_API_KEY e RESEND_FROM (mittente verificato su Resend) sul servizio Node, ridistribuisci e ricarica.',
+            '02 · API reachable but passwordResetEmail=false: set RESEND_API_KEY and RESEND_FROM (verified sender in Resend) on the Node service, redeploy, and reload.',
         });
       } else if (clinicCap.status === 200 && cc.service === 'serviceopera' && cc.passwordResetEmail === true) {
         lines.push({
           cat: 'PW',
           text:
-            '02 · API e invio reset configurati (passwordResetEmail=true). Se non ricevi mail: cartella spam, email errata, o controlla log Resend / deploy Railway.',
+            '02 · API and reset email configured (passwordResetEmail=true). If no mail arrives: check spam, wrong email, or inspect Resend / Railway deploy logs.',
         });
       } else {
         lines.push({
           cat: 'PW',
           text:
-            '02 · Stato misto: clinic-capabilities HTTP ' +
+            '02 · Mixed state: clinic-capabilities HTTP ' +
             clinicCap.status +
             ' · service=' +
             (cc.service != null ? String(cc.service) : 'n/a') +
@@ -513,7 +513,7 @@
       lines.push({
         cat: 'PW',
         text:
-          '04 · Workaround: Jack può impostare una nuova password da Admin → clinic users finché il dominio non punta al servizio Node con le API attive.',
+          '04 · Workaround: Jack can set a new password in Admin → clinic users until the domain points at the Node service with active APIs.',
       });
     }
 
@@ -532,7 +532,7 @@
     fab.type = 'button';
     fab.className = 'debug-fab mono';
     fab.textContent = '';
-    fab.setAttribute('aria-label', 'Mostra o nascondi informazioni di debug');
+    fab.setAttribute('aria-label', 'Show or hide debug information');
     fab.setAttribute('aria-expanded', 'false');
     fab.setAttribute('aria-controls', PANEL_ID);
 
@@ -540,18 +540,18 @@
     panel.id = PANEL_ID;
     panel.className = 'debug-panel is-hidden';
     panel.setAttribute('role', 'region');
-    panel.setAttribute('aria-label', 'Report debug');
+    panel.setAttribute('aria-label', 'Debug report');
     panel.innerHTML =
       '<div class="debug-panel__card">' +
       '<div class="debug-panel__head">' +
       '<span class="mono debug-panel__title" id="soDebugTitle">— DEBUG · … checks</span>' +
-      '<button type="button" class="debug-panel__close mono" data-debug-close aria-label="Chiudi pannello"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg></button>' +
+      '<button type="button" class="debug-panel__close mono" data-debug-close aria-label="Close panel"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg></button>' +
       '</div>' +
-      '<p class="debug-panel__sub mono">DB = storage locale · FE = browser · BE = HTTP verso questo host. Righe 51–53: <code>img.brand-logo</code>. Righe 54–60: layout, viewport, safe-area, tema. Righe 61–63: <code>/api/version</code> e capabilities (Resend / login). Su <code>login.html</code> compaiono anche le righe <strong>[PW]</strong> (diagnostica reset password). Seleziona il testo sotto e copia (Ctrl+C), oppure usa il pulsante.</p>' +
-      '<div class="debug-panel__status mono" id="soDebugStatus">Esecuzione…</div>' +
+      '<p class="debug-panel__sub mono">DB = local storage · FE = browser · BE = HTTP to this host. Rows 51–53: <code>img.brand-logo</code>. Rows 54–60: layout, viewport, safe-area, theme. Rows 61–63: <code>/api/version</code> and capabilities (Resend / login). On <code>login.html</code>, <strong>[PW]</strong> rows (password-reset diagnostics) appear too. Select the text below and copy (Ctrl+C), or use the button.</p>' +
+      '<div class="debug-panel__status mono" id="soDebugStatus">Running…</div>' +
       '<pre class="debug-panel__out mono" id="soDebugOut" tabindex="0"></pre>' +
       '<div class="debug-panel__actions">' +
-      '<button type="button" class="btn btn--ghost mono debug-panel__copy" id="soDebugCopy">Copia report</button>' +
+      '<button type="button" class="btn btn--ghost mono debug-panel__copy" id="soDebugCopy">Copy report</button>' +
       '</div></div>';
 
     dock.appendChild(fab);
@@ -564,7 +564,7 @@
       if (!v) return;
       fab.textContent = v;
       fab.removeAttribute('title');
-      fab.setAttribute('aria-label', 'Mostra o nascondi informazioni di debug (versione ' + v + ')');
+      fab.setAttribute('aria-label', 'Show or hide debug information (version ' + v + ')');
     }
 
     fetch(new URL('/api/version', window.location.origin), { cache: 'no-store' })
@@ -575,12 +575,12 @@
         if (j && j.version) applyAppVersion(j.version);
         else {
           fab.textContent = '';
-          fab.setAttribute('title', 'Informazioni di debug');
+          fab.setAttribute('title', 'Debug information');
         }
       })
       .catch(function () {
         fab.textContent = '';
-        fab.setAttribute('title', 'Informazioni di debug');
+        fab.setAttribute('title', 'Debug information');
       });
 
     var out = document.getElementById('soDebugOut');
@@ -594,11 +594,11 @@
     function open() {
       panel.classList.remove('is-hidden');
       fab.setAttribute('aria-expanded', 'true');
-      status.textContent = 'Esecuzione test…';
+      status.textContent = 'Running tests…';
       out.textContent = '';
       buildLines()
         .then(function (lines) {
-          status.textContent = 'Completato · ' + lines.length + ' righe';
+          status.textContent = 'Complete · ' + lines.length + ' lines';
           var titleEl = document.getElementById('soDebugTitle');
           var vv = fab.textContent ? fab.textContent.trim() : '';
           if (titleEl) {
@@ -611,7 +611,7 @@
             .join('\n');
         })
         .catch(function (e) {
-          status.textContent = 'Errore raccolta dati';
+          status.textContent = 'Error collecting data';
           out.textContent = String(e && e.message ? e.message : e);
         });
     }
@@ -631,14 +631,14 @@
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(t).then(
           function () {
-            status.textContent = 'Copiato negli appunti';
+            status.textContent = 'Copied to clipboard';
           },
           function () {
-            status.textContent = 'Copia non riuscita';
+            status.textContent = 'Copy failed';
           }
         );
       } else {
-        status.textContent = 'Clipboard API non disponibile';
+        status.textContent = 'Clipboard API unavailable';
       }
     });
 
