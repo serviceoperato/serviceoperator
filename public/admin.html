@@ -22,10 +22,7 @@
     <img class="nav__logo-img brand-logo" src="logo.png" width="220" height="90" alt="ServiceOpera.to — home" decoding="async" />
   </a>
   <div class="nav__links">
-    <a href="/#build">Systems</a>
-    <a href="/#method">Method</a>
-    <a href="/#proof">Proof</a>
-    <a href="/login.html" class="nav__login mono">Log in</a>
+    <a href="/login.html" class="nav__login mono" id="navPortalAuth" data-so-nav-account data-login-href="/login.html" data-admin-href="/admin.html">Log in</a>
     <button type="button" class="theme-toggle" data-theme-toggle aria-label="Theme"></button>
     <a href="mailto:jack@serviceopera.to" class="nav__cta" title="jack@serviceopera.to">jack@serviceopera.to</a>
   </div>
@@ -83,11 +80,22 @@
 
   <main class="admin-main admin-main--wide">
     <div id="adminMainDefault">
-      <h1 class="admin-main__title">Users &amp; portal access</h1>
-      <p class="admin-main__sub mono" style="font-size:0.75rem">ThaiFans-style admin shell: confirmed portal users and pending email confirmations. Other sections open placeholder panels until wired to your stack.</p>
+      <h1 class="admin-main__title" id="usersTableTitle">Admin users</h1>
 
       <section class="tf-admin-table-card" id="usersSection" aria-labelledby="usersTableTitle">
-        <h2 id="usersTableTitle" class="tf-admin-section-title mono">Admin users</h2>
+        <div class="tf-admin-toolbar mono" id="adminUsersToolbar">
+          <input type="search" id="adminUsersSearch" placeholder="Search email, username, name…" aria-label="Search users" />
+          <select id="adminUsersFilter" aria-label="Filter users">
+            <option value="all">All users</option>
+            <option value="active">Active</option>
+            <option value="pending">Pending confirmation</option>
+          </select>
+          <select id="adminUsersSort" aria-label="Sort users">
+            <option value="recent">Sort: newest</option>
+            <option value="name">Sort: name (A→Z)</option>
+          </select>
+          <button type="button" class="tf-admin-toolbar__btn" id="adminUsersCsvBtn">CSV</button>
+        </div>
         <p class="mono tf-admin-muted" id="usersTableHint"></p>
         <div style="overflow-x:auto">
           <table class="tf-users-table mono" id="tfUsersTable">
@@ -136,6 +144,24 @@
         <p id="adminInboxHint" class="admin-inbox__hint mono"></p>
         <div id="adminInboxBody" class="admin-inbox__body"></div>
       </section>
+
+      <section class="tf-admin-devtools mono" id="adminDevTools">
+        <h2 class="tf-admin-section-title">Dev tools — fake profiles</h2>
+        <p class="tf-admin-muted" style="margin-bottom:1rem;max-width:40rem;line-height:1.5">
+          Generate demo creator profiles with placeholder photos. Idempotent — re-running skips existing accounts.
+          Password for all fake accounts: <code>ServiceOpera2024!</code>
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:0.65rem;align-items:center">
+          <button type="button" class="btn btn--primary" id="adminSeed100">Generate 100 fake profiles</button>
+          <button type="button" class="btn btn--ghost" id="adminSeed20">Generate 20</button>
+          <button type="button" class="btn btn--ghost" id="adminSeedFix">Fix existing (weight/height/online)</button>
+        </div>
+        <p class="tf-admin-muted" id="adminSeedResult" style="margin-top:0.75rem"></p>
+      </section>
+
+      <p class="tf-admin-legal mono">
+        ServiceOpera.to is an independent platform and is not affiliated with, authorized by, endorsed by, sponsored by, or officially connected with any third-party dating or social platform. Third-party trademarks remain the property of their respective owners.
+      </p>
     </div>
 
     <div id="adminPanel" class="admin-panel is-hidden" aria-live="polite">
@@ -145,6 +171,7 @@
   </main>
 </div>
 
+<script src="user-account-menu.js"></script>
 <script src="theme.js"></script>
 <script src="debug.js"></script>
 <script src="admin-config.js"></script>

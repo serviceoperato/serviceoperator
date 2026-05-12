@@ -30,6 +30,11 @@
   var passwordInput = document.getElementById('adminPasswordInput');
   var codeInput = document.getElementById('adminCodeInput');
   var submitBtn = document.getElementById('adminSubmitBtn');
+  var cachedUsers = [];
+  var cachedPending = [];
+  var usersFilter = 'all';
+  var usersSort = 'recent';
+  var usersSearch = '';
 
   function loadTfVersion() {
     if (!tfVerNum) return;
@@ -56,6 +61,59 @@
     return s.slice(0, 8) || '—';
   }
 
+  function displayNameFromEmail(email) {
+    var e = String(email || '').trim();
+    var at = e.indexOf('@');
+    return at > 0 ? e.slice(0, at) : e || '—';
+  }
+
+  function applyUsersView() {
+    var users = cachedUsers.slice();
+    var q = usersSearch.trim().toLowerCase();
+    if (q) {
+      users = users.filter(function (u) {
+        var blob = [u.email, u.reportSlug, u.id].join(' ').toLowerCase();
+        return blob.indexOf(q) >= 0;
+      });
+    }
+    if (usersFilter === 'pending') {
+      users = [];
+    }
+    if (usersSort === 'name') {
+      users.sort(function (a, b) {
+        return displayNameFromEmail(a.email).localeCompare(displayNameFromEmail(b.email));
+      });
+    } else {
+      users.sort(function (a, b) {
+        return String(b.createdAt || '').localeCompare(String(a.createdAt || ''));
+      });
+    }
+    return users;
+  }
+
+  function openUserEditProfile(user) {
+    if (!panel || !panelTitle || !panelBody) return;
+    if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.add('is-hidden');
+    panelTitle.textContent = 'Edit profile';
+    panelBody.innerHTML =
+      '<p class="admin-panel__body mono">Portal user <strong>' +
+      escapeHtml(user.email) +
+      '</strong> · report slug <code>' +
+      escapeHtml(user.reportSlug) +
+      '</code>.</p>' +
+      '<p class="admin-panel__stub">Full profile editing (gender, spend, admin flags) is not wired on ServiceOpera yet — use <strong>User reports</strong> to rotate passwords and slugs.</p>' +
+      '<p class="admin-panel__stub"><button type="button" class="btn btn--ghost mono" id="stubBackToUsers">← Back to users</button></p>';
+    var back = document.getElementById('stubBackToUsers');
+    if (back) {
+      back.addEventListener('click', function () {
+        panel.classList.add('is-hidden');
+        if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.remove('is-hidden');
+      });
+    }
+    panel.classList.remove('is-hidden');
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
   function renderTfUsersTable(data) {
     var tb = document.getElementById('tfUsersTbody');
     var uh = document.getElementById('usersTableHint');
@@ -64,10 +122,15 @@
     if (!tb) return;
     var users = (data && (data.users || data.clinicUsers)) || [];
     var pending = (data && data.pendingRegistrations) || [];
+    cachedUsers = users;
+    cachedPending = pending;
+    users = applyUsersView();
     if (uh) {
       uh.textContent =
         users.length === 0
-          ? 'No confirmed users in the JSON store yet.'
+          ? usersFilter === 'pending'
+            ? 'Use the pending confirmations section below.'
+            : 'No confirmed users in the JSON store yet.'
           : 'Confirmed users (newest first in inbox; full list here).';
     }
     if (paging) paging.textContent = users.length + ' users · page 1 / 1';
@@ -79,6 +142,7 @@
         .map(function (u) {
           var idDisp = shortDisplayId(u.id);
           var reportUrl = '/clinics/report.html?slug=' + encodeURIComponent(u.reportSlug);
+          var name = displayNameFromEmail(u.email);
           return (
             '<tr>' +
             '<td>' +
@@ -88,26 +152,37 @@
             escapeHtml(u.email) +
             '</td>' +
             '<td>' +
-            escapeHtml(u.reportSlug) +
+            escapeHtml(name) +
             '</td>' +
             '<td>—</td>' +
             '<td>Yes</td>' +
             '<td>—</td>' +
             '<td>—</td>' +
-            '<td>— / —</td>' +
+            '<td>0 / 0</td>' +
             '<td>—</td>' +
             '<td>—</td>' +
             '<td>—</td>' +
             '<td>' +
             escapeHtml(formatAdminTs(u.createdAt)) +
             '</td>' +
-            '<td><a href="' +
+            '<td><button type="button" class="tf-admin-toolbar__btn js-edit-user" data-user-id="' +
+            escapeHtml(String(u.id)) +
+            '">Edit profile</button> · <a href="' +
             reportUrl +
             '">Open report</a></td>' +
             '</tr>'
           );
         })
         .join('');
+      tb.querySelectorAll('.js-edit-user').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var uid = btn.getAttribute('data-user-id');
+          var match = cachedUsers.filter(function (u) {
+            return String(u.id) === String(uid);
+          })[0];
+          if (match) openUserEditProfile(match);
+        });
+      });
     }
     if (pendEl) {
       if (!pending.length) {
@@ -179,10 +254,40 @@
     row1.className = 'tf-admin-nav__row';
     row1.appendChild(
       makeNavPill('Monitor ▾', function () {
-        var m = document.getElementById('adminInbox');
-        if (m) m.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        var menu = tfNav.querySelector('.tf-admin-nav__monitor-menu');
+        if (menu) menu.classList.toggle('is-hidden');
       })
     );
+    var monitorMenu = document.createElement('div');
+    monitorMenu.className = 'tf-admin-nav__monitor-menu is-hidden';
+    [
+      ['Users & payouts', 'users'],
+      ['User profiling', 'profiling'],
+      ['DB console', 'db'],
+      ['Activity log', 'activity'],
+      ['Deploy log', 'deploy'],
+      ['Site appearance', 'branding'],
+      ['Dashboard', 'dashboard'],
+      ['Media moderation', 'media'],
+      ['Photo approvals', 'photos'],
+      ['Photos chat', 'chatimg'],
+      ['Photo stories', 'stories'],
+      ['Messages', 'messages'],
+      ['Chat', 'chat'],
+    ].forEach(function (pair) {
+      monitorMenu.appendChild(
+        makeNavPill(pair[0], function () {
+          monitorMenu.classList.add('is-hidden');
+          if (pair[1] === 'users') {
+            if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.remove('is-hidden');
+            if (panel) panel.classList.add('is-hidden');
+            var el = document.getElementById('usersSection');
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          } else openStubPanel(pair[0], pair[1]);
+        })
+      );
+    });
+    row1.appendChild(monitorMenu);
     [
       ['Users & payouts', 'users'],
       ['User profiling', 'profiling'],
@@ -202,11 +307,18 @@
         })
       );
     });
+    row1.appendChild(
+      makeNavPill('Dashboard', function () {
+        openStubPanel('Dashboard', 'dashboard');
+      })
+    );
     tfNav.appendChild(row1);
+    var mediaWrap = document.createElement('div');
+    mediaWrap.className = 'tf-admin-nav__media-wrap';
     var lab = document.createElement('div');
     lab.className = 'tf-admin-nav__label';
     lab.textContent = 'Media moderation';
-    tfNav.appendChild(lab);
+    mediaWrap.appendChild(lab);
     var row2 = document.createElement('div');
     row2.className = 'tf-admin-nav__row';
     [
@@ -226,7 +338,8 @@
         openUserReportsPanel({ id: 'user-reports', label: 'User report access' });
       })
     );
-    tfNav.appendChild(row2);
+    mediaWrap.appendChild(row2);
+    tfNav.appendChild(mediaWrap);
   }
 
   function showWorkspace() {
@@ -815,4 +928,70 @@
       loadWorkQueue();
     });
   }
+
+  var usersSearchEl = document.getElementById('adminUsersSearch');
+  if (usersSearchEl) {
+    usersSearchEl.addEventListener('input', function () {
+      usersSearch = usersSearchEl.value || '';
+      renderTfUsersTable({ users: cachedUsers, pendingRegistrations: cachedPending });
+    });
+  }
+  var usersFilterEl = document.getElementById('adminUsersFilter');
+  if (usersFilterEl) {
+    usersFilterEl.addEventListener('change', function () {
+      usersFilter = usersFilterEl.value || 'all';
+      renderTfUsersTable({ users: cachedUsers, pendingRegistrations: cachedPending });
+    });
+  }
+  var usersSortEl = document.getElementById('adminUsersSort');
+  if (usersSortEl) {
+    usersSortEl.addEventListener('change', function () {
+      usersSort = usersSortEl.value || 'recent';
+      renderTfUsersTable({ users: cachedUsers, pendingRegistrations: cachedPending });
+    });
+  }
+  var usersCsvBtn = document.getElementById('adminUsersCsvBtn');
+  if (usersCsvBtn) {
+    usersCsvBtn.addEventListener('click', function () {
+      var rows = applyUsersView();
+      var lines = [
+        'id,email,name,report_slug,created_at',
+      ].concat(
+        rows.map(function (u) {
+          return [
+            shortDisplayId(u.id),
+            u.email,
+            displayNameFromEmail(u.email),
+            u.reportSlug,
+            u.createdAt || '',
+          ]
+            .map(function (v) {
+              return '"' + String(v || '').replace(/"/g, '""') + '"';
+            })
+            .join(',');
+        })
+      );
+      var blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'serviceopera-users.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  function seedStubMessage(action) {
+    var out = document.getElementById('adminSeedResult');
+    if (!out) return;
+    out.textContent =
+      action +
+      ' is not wired on ServiceOpera — this block mirrors ThaiFans admin for layout only.';
+  }
+  var seed100 = document.getElementById('adminSeed100');
+  if (seed100) seed100.addEventListener('click', function () { seedStubMessage('Fake profile seeding'); });
+  var seed20 = document.getElementById('adminSeed20');
+  if (seed20) seed20.addEventListener('click', function () { seedStubMessage('Fake profile seeding'); });
+  var seedFix = document.getElementById('adminSeedFix');
+  if (seedFix) seedFix.addEventListener('click', function () { seedStubMessage('Profile fix pass'); });
 })();
