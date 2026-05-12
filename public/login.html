@@ -103,7 +103,7 @@
     <form id="clinicLoginForm" class="portal-form" autocomplete="on">
       <label>
         <span class="portal-caption">EMAIL</span>
-        <input type="email" name="email" id="clinicEmail" required autocomplete="username" />
+        <input type="email" name="email" id="clinicEmail" required autocomplete="username" placeholder="jack@serviceopera.to" />
       </label>
       <label id="clinicPasswordWrap">
         <span class="portal-caption">PASSWORD</span>
@@ -118,20 +118,19 @@
     </form>
 
     <form id="clinicRegisterForm" class="portal-form is-hidden" autocomplete="on" aria-live="polite">
-      <p class="portal-form__muted" id="clinicRegisterHelp">
-        Create an account with your email and a password (min 8 characters). Your private report ID is generated automatically.
-      </p>
+      <div class="portal-form__muted" id="clinicRegisterHelpBlock" style="margin-bottom: 1rem">
+        <p style="margin: 0 0 0.65rem 0">Use the email and password Jack set up for your private report.</p>
+        <p style="margin: 0" id="clinicRegisterHelpNote">
+          If account creation is rejected, the server may have self-registration disabled — email jack@serviceopera.to or ask Jack to set CLINIC_SELF_REGISTER on Railway.
+        </p>
+      </div>
       <label>
         <span class="portal-caption">EMAIL</span>
-        <input type="email" name="email" id="clinicRegEmail" required autocomplete="email" />
+        <input type="email" name="email" id="clinicRegEmail" required autocomplete="email" placeholder="jack@serviceopera.to" />
       </label>
       <label>
         <span class="portal-caption">PASSWORD</span>
         <input type="password" name="password" id="clinicRegPassword" required minlength="8" autocomplete="new-password" placeholder="min 8 characters" />
-      </label>
-      <label>
-        <span class="portal-caption">CONFIRM PASSWORD</span>
-        <input type="password" name="confirmPassword" id="clinicRegConfirm" required minlength="8" autocomplete="new-password" />
       </label>
       <button type="submit" class="btn btn--primary btn--block">Create account<span class="ico-arrow-r" aria-hidden="true"></span></button>
       <button type="button" class="portal-form__linkbtn portal-form__back" id="clinicRegisterBack">Back to sign in</button>
@@ -311,16 +310,16 @@
       clinicApiFromOurServer = Boolean(cap && cap.service === 'serviceopera');
       resetEmailEnabled = clinicApiFromOurServer && Boolean(cap && cap.passwordResetEmail);
       selfRegisterEnabled = clinicApiFromOurServer && Boolean(cap && cap.selfRegister);
-      var regHelp = document.getElementById('clinicRegisterHelp');
-      if (regHelp) {
+      var regNote = document.getElementById('clinicRegisterHelpNote');
+      if (regNote) {
         if (selfRegisterEnabled) {
-          regHelp.textContent =
-            'Create an account with your email and a password (min 8 characters). Your private report ID is generated automatically.';
+          regNote.textContent =
+            'Your private report ID is generated automatically when you create your account. Password: min 8 characters.';
         } else if (!clinicApiFromOurServer) {
-          regHelp.textContent =
+          regNote.textContent =
             'This page must be served by the ServiceOpera Node host (not static files only) to complete sign-up. If submit fails, write to jack@serviceopera.to.';
         } else {
-          regHelp.textContent =
+          regNote.textContent =
             'If account creation is rejected, the server may have self-registration disabled — email jack@serviceopera.to or ask Jack to set CLINIC_SELF_REGISTER on Railway.';
         }
       }
@@ -329,9 +328,9 @@
     .catch(function () {
       capabilitiesStatus = 0;
       clinicApiFromOurServer = false;
-      var regHelp = document.getElementById('clinicRegisterHelp');
-      if (regHelp) {
-        regHelp.textContent =
+      var regNote = document.getElementById('clinicRegisterHelpNote');
+      if (regNote) {
+        regNote.textContent =
           'Could not reach the server API. Sign-up needs the live Node deploy. If it keeps failing, write to jack@serviceopera.to.';
       }
       if (forgotHelp) forgotHelp.textContent = forgotResetHelpText();
@@ -370,13 +369,8 @@
       var fd = new FormData(registerForm);
       var email = (fd.get('email') || '').toString().trim();
       var pw = (fd.get('password') || '').toString();
-      var cf = (fd.get('confirmPassword') || '').toString();
       if (pw.length < 8) {
         setRegisterHint('Password must be at least 8 characters.', 'error');
-        return;
-      }
-      if (pw !== cf) {
-        setRegisterHint('Passwords do not match.', 'error');
         return;
       }
       setRegisterHint('Creating account…', '');
