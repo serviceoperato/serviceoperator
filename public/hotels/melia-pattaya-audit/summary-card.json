@@ -1,0 +1,47 @@
+{
+  "card": {
+    "brand": "ServiceOpera.to",
+    "operator": "Jack — Service Operator · Thailand",
+    "card_type": "audit_summary",
+    "generated": "2026-05-12",
+    "business": {
+      "name": "Meliá Pattaya Hotel",
+      "type": "5-Star Luxury Hotel",
+      "location": "Pattaya, Thailand",
+      "opened": "2025-02-15",
+      "rooms": 265,
+      "website": "https://www.melia.com/en/hotels/thailand/pattaya/melia-pattaya"
+    },
+    "headline_scores": {
+      "google_maps": "4.6 / 5 (610 reviews)",
+      "tripadvisor": "4.0 / 5 · #2 of 623 hotels",
+      "booking_com": "9.6 / 10 (350+ reviews)",
+      "agoda": "9.1 / 10 (626 reviews)",
+      "trip_com": "9.3 / 10 (191 reviews)",
+      "total_reviews_all_platforms": 2200
+    },
+    "audit_verdict": {
+      "reputation_health": "STRONG",
+      "automation_maturity": "CRITICAL GAP",
+      "revenue_opportunity": "HIGH",
+      "urgency": "IMMEDIATE ACTION RECOMMENDED"
+    },
+    "top_3_wins": [
+      "Deploy WhatsApp pre-arrival upsell flow (spa, The Level upgrade, transfer) — 14-day activation",
+      "Launch AI review response engine across 5 platforms — respond to 2,200 reviews in backlog + ongoing",
+      "Set up post-checkout review solicitation to accelerate Google velocity by 40-70%"
+    ],
+    "estimated_impact": {
+      "monthly_revenue_thb": "650,000 – 1,600,000",
+      "annual_revenue_usd": "$215,000 – $530,000",
+      "note": "Estimated from public signals + industry benchmarks"
+    },
+    "suggested_package": {
+      "name": "OPERA PRIME",
+      "monthly_fee_thb": "35,000 – 65,000",
+      "roi_multiple": "10x – 25x",
+      "activation_days": 14
+    },
+    "pitch_one_liner": "Your guests love you. You're #2 in Pattaya after 15 months. Now let automation do what your team can't — capture every upsell, respond to every review, fill every spa booking. In 14 days."
+  }
+}

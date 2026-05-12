@@ -1,0 +1,343 @@
+{
+  "meta": {
+    "report_title": "ServiceOpera.to AI Service Audit Report",
+    "business": "Meliá Pattaya Hotel",
+    "audit_date": "2026-05-12",
+    "prepared_by": "Jack — Service Operator · Thailand",
+    "brand": "ServiceOpera.to",
+    "tagline": "AI systems for Thailand service businesses. No fluff. Just results.",
+    "version": "1.0"
+  },
+  "business_snapshot": {
+    "name": "Meliá Pattaya Hotel",
+    "category": "5-Star Luxury Hotel",
+    "parent_brand": "Meliá Hotels International",
+    "opened": "2025-02-15",
+    "address": "370 Moo 9, Nongprue, Banglamung, Chon Buri 20150, Thailand",
+    "phone": "+66 33 168 555",
+    "email": "info.pattaya@melia.com",
+    "website": "https://www.melia.com/en/hotels/thailand/pattaya/melia-pattaya",
+    "facebook": "https://www.facebook.com/MeliaPattayaHotel/",
+    "instagram": "https://www.instagram.com/meliapattayahotel/",
+    "rooms": 265,
+    "rate_from_usd": 156,
+    "rate_to_usd": 370,
+    "services": [
+      "YHI Spa",
+      "Lay Beach Club",
+      "3 Restaurants",
+      "The Kidsdom",
+      "The Level Club Lounge",
+      "Rooftop Bar",
+      "Gym",
+      "Coworking Space",
+      "Meeting Rooms",
+      "Saltwater Pool with Waterslide"
+    ]
+  },
+  "reputation_audit": {
+    "platforms": [
+      {
+        "name": "Google Maps",
+        "score": 4.6,
+        "score_max": 5,
+        "review_count": 610,
+        "data_type": "estimated_from_public_signals",
+        "url": "https://www.google.com/maps"
+      },
+      {
+        "name": "TripAdvisor",
+        "score": 4.0,
+        "score_max": 5,
+        "review_count": 423,
+        "rank": "#2 of 623 hotels in Pattaya",
+        "data_type": "public",
+        "url": "https://www.tripadvisor.com/Hotel_Review-g293919-d32730129-Reviews-Melia_Pattaya_Hotel-Pattaya_Chonburi_Province.html"
+      },
+      {
+        "name": "Booking.com",
+        "score": 9.6,
+        "score_max": 10,
+        "review_count": 350,
+        "data_type": "public",
+        "url": "https://www.booking.com/hotel/th/melia-pattaya.html"
+      },
+      {
+        "name": "Agoda",
+        "score": 9.1,
+        "score_max": 10,
+        "review_count": 626,
+        "data_type": "public"
+      },
+      {
+        "name": "Trip.com",
+        "score": 9.3,
+        "score_max": 10,
+        "review_count": 191,
+        "data_type": "public",
+        "url": "https://us.trip.com/hotels/pattaya-hotel-detail-125124664/meli-pattaya-hotel/review.html"
+      }
+    ],
+    "total_reviews": 2200,
+    "strengths": [
+      "Staff warmth and Spanish hospitality positioning",
+      "Breakfast quality praised across platforms",
+      "Consistent cleanliness scores",
+      "The Level Club Lounge — universally positive",
+      "Pool waterslide and Kidsdom driving family loyalty",
+      "Sea view rooms — strong positive sentiment"
+    ],
+    "risks": [
+      "Pool perceived as small for 5-star expectation",
+      "Room dampness / musty odour complaints — operational issue",
+      "Low ceilings in standard rooms — architectural",
+      "Breakfast staff attitude inconsistency",
+      "No clothes-drying facility — extended-stay friction",
+      "Nighttime maintenance response slow",
+      "Hotel not beachfront — guest expectation mismatch"
+    ],
+    "review_response": {
+      "responsible_person": "Taemasin Teeyakasame (Guest Experience Manager)",
+      "method": "manual",
+      "estimated_response_time_days": "3-14",
+      "automation_detected": false,
+      "review_solicitation_automation": false,
+      "assessment": "CRITICAL GAP — 2,200+ reviews across channels managed manually by one person"
+    }
+  },
+  "guest_journey_audit": {
+    "pre_arrival": {
+      "booking_confirmation": "OTA-generated only — no branded direct confirmation",
+      "pre_arrival_upsell": "NOT DETECTED",
+      "whatsapp_contact": "NOT DETECTED",
+      "line_oa": "NOT DETECTED",
+      "checkin_preference_form": "NOT DETECTED",
+      "airport_transfer_automation": "NOT DETECTED"
+    },
+    "on_property": {
+      "ai_concierge": "NOT DETECTED",
+      "in_stay_upsell_automation": "NOT DETECTED",
+      "mid_stay_satisfaction_check": "NOT DETECTED",
+      "activity_booking_self_service": "NOT DETECTED"
+    },
+    "post_departure": {
+      "review_solicitation_automation": "NOT DETECTED",
+      "local_loyalty_program": "MeliáRewards (brand-level only)",
+      "direct_feedback_capture": "NOT DETECTED"
+    }
+  },
+  "booking_friction": {
+    "website_live_chat": false,
+    "chatbot_detected": false,
+    "whatsapp_visible": false,
+    "line_visible": false,
+    "direct_booking_incentive": "MeliáRewards — standard brand offer",
+    "social_dm_automation": false,
+    "ota_platforms_listed": 7,
+    "ota_commission_estimate_pct": "15-25"
+  },
+  "competitor_analysis": {
+    "competitors": [
+      {
+        "name": "Hilton Pattaya",
+        "rate_usd_low": 199,
+        "rate_usd_high": 372,
+        "tripadvisor_rank_pattaya": "estimated top 20",
+        "url": "https://www.kayak.com/Pattaya-Hotels-Hilton-Pattaya.341113.ksp"
+      },
+      {
+        "name": "Avani Pattaya Resort",
+        "rate_usd_low": 110,
+        "rate_usd_high": 165,
+        "tripadvisor_rank_pattaya": "#26 of 623",
+        "url": "https://www.kayak.com/Pattaya-Hotels-Avani-Pattaya-Resort.44757.ksp"
+      }
+    ],
+    "pricing_insight": "Meliá is priced at or above Hilton but outperforms on review score — under-pricing its premium position"
+  },
+  "automation_opportunities": [
+    {
+      "id": 1,
+      "name": "WhatsApp Pre-Arrival Upsell Flow",
+      "impact": "HIGH",
+      "effort": "LOW",
+      "priority": "IMMEDIATE",
+      "channel": "WhatsApp Business API",
+      "est_revenue_thb_monthly": "120000-280000"
+    },
+    {
+      "id": 2,
+      "name": "AI Review Response Engine",
+      "impact": "HIGH",
+      "effort": "LOW",
+      "priority": "IMMEDIATE",
+      "channel": "Google, TripAdvisor, Booking.com, Agoda, Trip.com",
+      "est_workload_reduction_pct": 80
+    },
+    {
+      "id": 3,
+      "name": "Post-Checkout Review Solicitation",
+      "impact": "HIGH",
+      "effort": "LOW",
+      "priority": "IMMEDIATE",
+      "channel": "WhatsApp + Email",
+      "est_review_velocity_increase_pct": "40-70"
+    },
+    {
+      "id": 4,
+      "name": "LINE Official Account Setup",
+      "impact": "HIGH",
+      "effort": "MEDIUM",
+      "priority": "HIGH",
+      "channel": "LINE OA",
+      "note": "52M Thai LINE users — primary domestic guest messaging channel"
+    },
+    {
+      "id": 5,
+      "name": "Website AI Concierge Chatbot",
+      "impact": "HIGH",
+      "effort": "MEDIUM",
+      "priority": "HIGH",
+      "channel": "Website + Messenger"
+    },
+    {
+      "id": 6,
+      "name": "Mid-Stay Satisfaction Recovery Bot",
+      "impact": "MEDIUM",
+      "effort": "LOW",
+      "priority": "HIGH",
+      "channel": "WhatsApp"
+    },
+    {
+      "id": 7,
+      "name": "Spa & F&B Broadcast Automation",
+      "impact": "HIGH",
+      "effort": "LOW",
+      "priority": "IMMEDIATE",
+      "channel": "WhatsApp + LINE",
+      "est_revenue_thb_monthly": "80000-200000"
+    },
+    {
+      "id": 8,
+      "name": "Direct Booking Conversion Funnel",
+      "impact": "HIGH",
+      "effort": "HIGH",
+      "priority": "MEDIUM",
+      "channel": "Website + WhatsApp",
+      "est_revenue_thb_monthly": "150000-350000"
+    },
+    {
+      "id": 9,
+      "name": "Rate Intelligence Dashboard",
+      "impact": "MEDIUM",
+      "effort": "MEDIUM",
+      "priority": "MEDIUM",
+      "channel": "Internal dashboard"
+    },
+    {
+      "id": 10,
+      "name": "Social DM Auto-Response",
+      "impact": "MEDIUM",
+      "effort": "LOW",
+      "priority": "MEDIUM",
+      "channel": "Facebook + Instagram"
+    }
+  ],
+  "estimated_impact": {
+    "monthly_thb_low": 650000,
+    "monthly_thb_high": 1600000,
+    "annual_thb_low": 7800000,
+    "annual_thb_high": 19200000,
+    "annual_usd_low": 215000,
+    "annual_usd_high": 530000,
+    "note": "All figures estimated from public signals and industry benchmarks. Not guaranteed."
+  },
+  "serviceopera_offer": {
+    "package_name": "OPERA PRIME",
+    "tagline": "Full-Stack AI Guest Operations System",
+    "monthly_fee_thb_low": 35000,
+    "monthly_fee_thb_high": 65000,
+    "estimated_roi_multiple": "10x-25x",
+    "roi_timeframe_days": 90,
+    "modules": [
+      "WhatsApp Automation",
+      "LINE Official Account",
+      "AI Review Engine",
+      "Social DM Automation",
+      "Rate Intelligence Dashboard",
+      "Upsell Campaigns (Spa, F&B, The Level, Transfer)",
+      "Direct Booking Funnel",
+      "Monthly KPI Reporting"
+    ],
+    "activation_days": 14,
+    "full_deployment_days": 30,
+    "pitch": "You've built the best new hotel in Pattaya in 5 years. Your guests love you. You're #2 on TripAdvisor after 15 months. But right now you have 2,200 unmanaged reviews, zero WhatsApp automation, no pre-arrival upsell, and your spa is sitting empty while guests sunbathe without any invitation. We fix that. In 14 days."
+  },
+  "sources": [
+    {
+      "title": "TripAdvisor — Meliá Pattaya Hotel",
+      "url": "https://www.tripadvisor.com/Hotel_Review-g293919-d32730129-Reviews-Melia_Pattaya_Hotel-Pattaya_Chonburi_Province.html",
+      "data_type": "Rating, reviews, rank"
+    },
+    {
+      "title": "Booking.com — Meliá Pattaya Hotel",
+      "url": "https://www.booking.com/hotel/th/melia-pattaya.html",
+      "data_type": "Score, review count, pricing"
+    },
+    {
+      "title": "Trip.com Reviews — Meliá Pattaya",
+      "url": "https://us.trip.com/hotels/pattaya-hotel-detail-125124664/meli-pattaya-hotel/review.html",
+      "data_type": "Score, review count"
+    },
+    {
+      "title": "Official Website — Meliá Pattaya",
+      "url": "https://www.melia.com/en/hotels/thailand/pattaya/melia-pattaya",
+      "data_type": "Property info, rooms, services"
+    },
+    {
+      "title": "The Level — Official",
+      "url": "https://www.melia.com/en/hotels/thailand/pattaya/melia-pattaya/the-level",
+      "data_type": "The Level features"
+    },
+    {
+      "title": "Facebook — MeliaPattayaHotel",
+      "url": "https://www.facebook.com/MeliaPattayaHotel/",
+      "data_type": "Social presence, followers (17K)"
+    },
+    {
+      "title": "Instagram — meliapattayahotel",
+      "url": "https://www.instagram.com/meliapattayahotel/",
+      "data_type": "Social presence, 6,697 followers"
+    },
+    {
+      "title": "The Beat Asia — Opening",
+      "url": "https://thebeat.asia/bangkok/nomads/stay/melia-pattaya-hotel-opening",
+      "data_type": "Opening date, launch features"
+    },
+    {
+      "title": "KAYAK — Hilton Pattaya",
+      "url": "https://www.kayak.com/Pattaya-Hotels-Hilton-Pattaya.341113.ksp",
+      "data_type": "Competitor rates"
+    },
+    {
+      "title": "KAYAK — Avani Pattaya",
+      "url": "https://www.kayak.com/Pattaya-Hotels-Avani-Pattaya-Resort.44757.ksp",
+      "data_type": "Competitor rates"
+    },
+    {
+      "title": "Booking.com Reviews — Meliá Pattaya",
+      "url": "https://www.booking.com/reviews/th/hotel/melia-pattaya.html",
+      "data_type": "Guest feedback"
+    },
+    {
+      "title": "BW Hotelier — The Level Launch",
+      "url": "https://www.bwhotelier.com/article/new-melia-pattaya-hotel-launches-the-level-567265",
+      "data_type": "The Level features"
+    },
+    {
+      "title": "Hootsuite — Meliá Social Strategy",
+      "url": "https://www.hootsuite.com/resources/melia-inbox",
+      "data_type": "Corporate social media automation context"
+    }
+  ]
+}

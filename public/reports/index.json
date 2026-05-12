@@ -9,6 +9,11 @@
       "href": "/clinics/demo.html"
     }
   ],
-  "hotels": [],
+  "hotels": [
+    {
+      "title": "Meliá Pattaya Hotel — AI service audit",
+      "href": "/hotels/melia-pattaya-audit/"
+    }
+  ],
   "properties": []
 }
