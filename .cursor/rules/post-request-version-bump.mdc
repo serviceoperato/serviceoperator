@@ -1,0 +1,17 @@
+---
+description: Dopo ogni richiesta completata, bump versione patch e push su origin
+alwaysApply: true
+---
+
+# Version bump a fine richiesta
+
+Quando una richiesta dell’utente è **completata** in questo repository:
+
+1. Se nel corso della richiesta sono stati modificati file del progetto **oppure** è stato eseguito lavoro operativo da pubblicare (script, fix, ecc.), prima di concludere eseguire in PowerShell dalla root del repo:
+   - `npm version patch -m "chore: release v%s"`
+   - `git push`
+   - `git push --tags`
+2. Il comando `git bump` non è disponibile in questa toolchain: usare **`npm version patch`** (allinea `package.json` / `package-lock.json`, crea commit e tag `v*`).
+3. Richieste **solo informative** (nessuna modifica ai file e nessuna azione da lasciare sul repo) possono omettere il bump.
+
+Il working tree deve essere pulito prima di `npm version patch` (eventuali altre modifiche vanno committate o scartate prima del bump).
