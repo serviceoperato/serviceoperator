@@ -51,6 +51,7 @@
   function showWorkspace() {
     if (gate) gate.classList.add('is-hidden');
     if (workspace) workspace.classList.remove('is-hidden');
+    loadWorkQueue();
   }
 
   function hideWorkspace() {
@@ -298,6 +299,200 @@
     return sessionStorage.getItem(JWT_KEY) || '';
   }
 
+  function formatAdminTs(iso) {
+    if (!iso) return '';
+    try {
+      var d = new Date(iso);
+      if (isNaN(d.getTime())) return String(iso);
+      return d.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+    } catch (e) {
+      return String(iso);
+    }
+  }
+
+  function inboxCol(title, innerHtml) {
+    return (
+      '<div class="admin-inbox__col">' +
+      '<h3 class="admin-inbox__col-title mono">' +
+      escapeHtml(title) +
+      '</h3>' +
+      innerHtml +
+      '</div>'
+    );
+  }
+
+  function renderWorkQueue(data) {
+    var body = document.getElementById('adminInboxBody');
+    if (!body) return;
+    var pending = data.pendingRegistrations || [];
+    var users = data.clinicUsers || [];
+    var orphans = data.orphanReportDataFiles || [];
+    var files = (data.clinicReportFiles || []).slice(0, 24);
+    var pages = data.managedPages || [];
+
+    var pHtml = '<ul class="admin-inbox__list">';
+    if (!pending.length) {
+      pHtml += '<li><p class="admin-inbox__empty">No pending email confirmations.</p></li>';
+    } else {
+      pending.forEach(function (p) {
+        var reportUrl = '/clinics/report.html?slug=' + encodeURIComponent(p.reportSlug);
+        pHtml +=
+          '<li><span style="color:var(--amber-2);">' +
+          escapeHtml(p.email) +
+          '</span><br /><span class="admin-inbox__slug mono">slug: ' +
+          escapeHtml(p.reportSlug) +
+          ' · ' +
+          escapeHtml(formatAdminTs(p.createdAt)) +
+          '</span><br /><a class="mono admin-inbox__slug" href="' +
+          reportUrl +
+          '">' +
+          escapeHtml(reportUrl) +
+          '</a></li>';
+      });
+    }
+    pHtml += '</ul>';
+
+    var uHtml = '<ul class="admin-inbox__list">';
+    if (!users.length) {
+      uHtml += '<li><p class="admin-inbox__empty">No clinic users yet.</p></li>';
+    } else {
+      users.slice(0, 12).forEach(function (u) {
+        var reportUrl = '/clinics/report.html?slug=' + encodeURIComponent(u.reportSlug);
+        uHtml +=
+          '<li><span style="color:var(--amber-2);">' +
+          escapeHtml(u.email) +
+          '</span><br /><span class="admin-inbox__slug mono">slug: ' +
+          escapeHtml(u.reportSlug) +
+          ' · ' +
+          escapeHtml(formatAdminTs(u.createdAt)) +
+          '</span><br /><a class="mono admin-inbox__slug" href="' +
+          reportUrl +
+          '">' +
+          escapeHtml(reportUrl) +
+          '</a></li>';
+      });
+    }
+    uHtml += '</ul>';
+
+    var oHtml = '<ul class="admin-inbox__list">';
+    if (!orphans.length) {
+      oHtml +=
+        '<li><p class="admin-inbox__empty">No orphan data files — each JSON matches a user or pending signup.</p></li>';
+    } else {
+      orphans.forEach(function (f) {
+        var when =
+          f.mtimeMs != null ? formatAdminTs(new Date(f.mtimeMs).toISOString()) : '';
+        oHtml +=
+          '<li><span class="admin-inbox__warn mono">' +
+          escapeHtml(f.slug) +
+          '</span><br /><span class="admin-inbox__slug mono">' +
+          escapeHtml(f.relPath) +
+          (when ? ' · ' + escapeHtml(when) : '') +
+          '</span></li>';
+      });
+    }
+    oHtml += '</ul>';
+
+    var fHtml = '<ul class="admin-inbox__list">';
+    if (!files.length) {
+      fHtml += '<li><p class="admin-inbox__empty">No JSON files in clinics/data yet.</p></li>';
+    } else {
+      files.forEach(function (f) {
+        var reportUrl = '/clinics/report.html?slug=' + encodeURIComponent(f.slug);
+        var when =
+          f.mtimeMs != null ? formatAdminTs(new Date(f.mtimeMs).toISOString()) : '';
+        fHtml +=
+          '<li><span class="mono">' +
+          escapeHtml(f.slug) +
+          '</span><br /><span class="admin-inbox__slug mono">' +
+          escapeHtml(f.relPath) +
+          (when ? ' · ' + escapeHtml(when) : '') +
+          '</span><br /><a class="mono admin-inbox__slug" href="' +
+          reportUrl +
+          '">Preview report</a></li>';
+      });
+    }
+    fHtml += '</ul>';
+
+    var pgHtml = '<ul class="admin-inbox__list">';
+    if (!pages.length) {
+      pgHtml += '<li><p class="admin-inbox__empty">No tracked pages found on disk.</p></li>';
+    } else {
+      pages.forEach(function (pg) {
+        var when =
+          pg.mtimeMs != null ? formatAdminTs(new Date(pg.mtimeMs).toISOString()) : '';
+        pgHtml +=
+          '<li><a href="' +
+          escapeHtml(pg.path) +
+          '" class="mono">' +
+          escapeHtml(pg.path) +
+          '</a><br /><span class="admin-inbox__slug mono">' +
+          escapeHtml(when) +
+          '</span></li>';
+      });
+    }
+    pgHtml += '</ul>';
+
+    body.innerHTML =
+      inboxCol('Pending registrations (awaiting email confirmation)', pHtml) +
+      inboxCol('Clinic users (newest first)', uHtml) +
+      inboxCol('Report data files without user / pending', oHtml) +
+      inboxCol('Recent report JSON files', fHtml) +
+      inboxCol('Managed pages', pgHtml);
+  }
+
+  function loadWorkQueue() {
+    var hint = document.getElementById('adminInboxHint');
+    var body = document.getElementById('adminInboxBody');
+    if (!body) return;
+    var token = getAdminBearer();
+    if (!token) {
+      if (hint) {
+        hint.textContent =
+          'Sign in with email OTP on the live server to load pending registrations, report files, and page timestamps. Browser-only admin password cannot call this API.';
+        hint.className = 'admin-inbox__hint mono';
+      }
+      body.innerHTML =
+        '<p class="admin-inbox__empty">Operations inbox requires an admin JWT from the server.</p>';
+      return;
+    }
+    if (hint) {
+      hint.textContent = 'Loading…';
+      hint.className = 'admin-inbox__hint mono';
+    }
+    fetch('/api/admin/work-queue', {
+      method: 'GET',
+      credentials: 'same-origin',
+      headers: { Authorization: 'Bearer ' + token },
+    })
+      .then(function (r) {
+        return r.json().then(function (j) {
+          return { ok: r.ok, j: j };
+        });
+      })
+      .then(function (x) {
+        if (!x.ok) {
+          if (hint) {
+            hint.textContent = (x.j && x.j.error) || 'Could not load inbox.';
+            hint.className = 'admin-inbox__hint mono is-error';
+          }
+          body.innerHTML = '';
+          return;
+        }
+        if (hint) {
+          hint.textContent = 'Updated ' + formatAdminTs(x.j.generatedAt) + '.';
+          hint.className = 'admin-inbox__hint mono is-ok';
+        }
+        renderWorkQueue(x.j);
+      })
+      .catch(function () {
+        if (hint) {
+          hint.textContent = 'Network error.';
+          hint.className = 'admin-inbox__hint mono is-error';
+        }
+      });
+  }
+
   function renderClinicUserRows(users) {
     if (!users || !users.length) {
       return '<li class="mono" style="opacity:.75;">No clinic users yet.</li>';
@@ -422,6 +617,7 @@
             }
             form.reset();
             loadClinicUsersList();
+            loadWorkQueue();
           })
           .catch(function () {
             if (fh) {
@@ -469,6 +665,13 @@
         openPanel(tile);
       });
       tilesEl.appendChild(btn);
+    });
+  }
+
+  var inboxRefresh = document.getElementById('adminInboxRefresh');
+  if (inboxRefresh) {
+    inboxRefresh.addEventListener('click', function () {
+      loadWorkQueue();
     });
   }
 })();

@@ -23,6 +23,72 @@ const dataDir = process.env.DATA_DIR || path.join(__dirname, 'data');
 fs.mkdirSync(dataDir, { recursive: true });
 const clinicStore = createClinicStore(dataDir);
 
+const clinicDataDir = path.join(publicDir, 'clinics', 'data');
+
+function statMtimeMs(filePath) {
+  try {
+    return fs.statSync(filePath).mtimeMs;
+  } catch {
+    return null;
+  }
+}
+
+/** JSON blobs under public/clinics/data — one file per report slug. */
+function listClinicReportJsonFiles() {
+  if (!fs.existsSync(clinicDataDir)) return [];
+  const out = [];
+  for (const name of fs.readdirSync(clinicDataDir)) {
+    if (!name.endsWith('.json')) continue;
+    const slug = name.slice(0, -5);
+    const full = path.join(clinicDataDir, name);
+    out.push({
+      slug,
+      relPath: path.posix.join('clinics/data', name.replace(/\\/g, '/')),
+      mtimeMs: statMtimeMs(full),
+    });
+  }
+  return out.sort((a, b) => (b.mtimeMs || 0) - (a.mtimeMs || 0));
+}
+
+/** Site pages Jack commonly edits or ships — presence + last modified. */
+const MANAGED_PAGE_FILES = ['index.html', 'login.html', 'places-leads.html', 'clinics/report.html', 'admin.html'];
+
+function buildAdminWorkQueue() {
+  const pending = clinicStore
+    .listPendingSummaries()
+    .slice()
+    .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+  const clinicUsers = clinicStore
+    .listUsers()
+    .slice()
+    .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+  const takenSlugs = new Set([
+    ...clinicUsers.map((u) => u.reportSlug),
+    ...pending.map((p) => p.reportSlug),
+  ]);
+  const clinicReportFiles = listClinicReportJsonFiles();
+  const orphanReportDataFiles = clinicReportFiles.filter((f) => !takenSlugs.has(f.slug));
+  const managedPages = MANAGED_PAGE_FILES.map((rel) => {
+    const full = path.join(publicDir, ...rel.split('/'));
+    const mtimeMs = statMtimeMs(full);
+    return {
+      path: '/' + rel.replace(/\\/g, '/'),
+      relPath: rel.replace(/\\/g, '/'),
+      mtimeMs,
+      exists: mtimeMs != null,
+    };
+  }).filter((p) => p.exists);
+
+  return {
+    pendingRegistrations: pending,
+    clinicUsers,
+    clinicReportFiles,
+    orphanReportDataFiles,
+    managedPages,
+    generatedAt: new Date().toISOString(),
+  };
+}
+
 const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'jack@serviceopera.to').trim().toLowerCase();
 const RESEND_API_KEY = (process.env.RESEND_API_KEY || '').trim();
 const RESEND_FROM = (process.env.RESEND_FROM || 'ServiceOpera <onboarding@resend.dev>').trim();
@@ -337,6 +403,14 @@ app.get('/api/admin/session', (req, res) => {
 
 app.get('/api/clinic-users', requireAdmin, (_req, res) => {
   res.json({ users: clinicStore.listUsers() });
+});
+
+app.get('/api/admin/work-queue', requireAdmin, (_req, res) => {
+  try {
+    res.json(buildAdminWorkQueue());
+  } catch (e) {
+    res.status(500).json({ error: e.message || 'Failed to build work queue' });
+  }
 });
 
 app.post('/api/clinic-users', requireAdmin, (req, res) => {

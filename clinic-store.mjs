@@ -73,9 +73,15 @@ export function createClinicStore(dataDir) {
   }
 
   function loadPending() {
-    const o = readJson(pendingFile);
-    if (!o || !Array.isArray(o.pending)) return { pending: [] };
-    return { pending: o.pending };
+    if (!fs.existsSync(pendingFile)) return { pending: [] };
+    try {
+      const raw = fs.readFileSync(pendingFile, 'utf8');
+      const o = JSON.parse(raw);
+      if (!o || !Array.isArray(o.pending)) return { pending: [] };
+      return { pending: o.pending };
+    } catch {
+      return { pending: [] };
+    }
   }
 
   function savePending(pdata) {
@@ -125,6 +131,17 @@ export function createClinicStore(dataDir) {
         email: u.email,
         reportSlug: u.reportSlug,
         createdAt: u.createdAt,
+      }));
+    },
+
+    /** Pending email confirmations (no password hashes). */
+    listPendingSummaries() {
+      const pdata = loadPending();
+      return pdata.pending.map((p) => ({
+        id: p.id,
+        email: p.email,
+        reportSlug: p.reportSlug,
+        createdAt: p.createdAt,
       }));
     },
 

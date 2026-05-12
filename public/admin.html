@@ -81,6 +81,15 @@
     <h1 class="admin-main__title">Control panel</h1>
     <p class="admin-main__sub">Square actions below are placeholders until each area is wired to your stack.</p>
 
+    <section id="adminInbox" class="admin-inbox" aria-labelledby="adminInboxTitle">
+      <div class="admin-inbox__head">
+        <h2 id="adminInboxTitle" class="admin-inbox__title mono">Operations inbox</h2>
+        <button type="button" class="btn btn--ghost mono" id="adminInboxRefresh">Refresh</button>
+      </div>
+      <p id="adminInboxHint" class="admin-inbox__hint mono"></p>
+      <div id="adminInboxBody" class="admin-inbox__body"></div>
+    </section>
+
     <div id="adminTiles" class="admin-tiles" role="navigation" aria-label="Admin sections"></div>
 
     <section id="adminPanel" class="admin-panel is-hidden" aria-live="polite">
