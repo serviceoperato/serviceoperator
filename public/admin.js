@@ -7,6 +7,7 @@
 
   var SESSION_KEY = 'so_admin_session';
   var JWT_KEY = 'so_admin_jwt';
+  var PORTAL_JWT_KEYS = ['so_user_jwt', 'so_clinic_jwt'];
 
   var otpEnabled = false;
   var capabilitiesHttpOk = false;
@@ -431,6 +432,17 @@
       });
   }
 
+  function getPortalJwt() {
+    var i;
+    for (i = 0; i < PORTAL_JWT_KEYS.length; i++) {
+      try {
+        var token = sessionStorage.getItem(PORTAL_JWT_KEYS[i]);
+        if (token) return token;
+      } catch (e) {}
+    }
+    return '';
+  }
+
   function tryRestoreJwtSession() {
     var token = sessionStorage.getItem(JWT_KEY);
     if (!token || !otpEnabled) return Promise.resolve(false);
@@ -453,6 +465,31 @@
       });
   }
 
+  function tryRestorePortalAdminSession() {
+    var portalJwt = getPortalJwt();
+    if (!portalJwt) return Promise.resolve(false);
+    return fetch('/api/admin/bootstrap-from-portal', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { Authorization: 'Bearer ' + portalJwt },
+      cache: 'no-store',
+    })
+      .then(function (r) {
+        return r.json().then(function (j) {
+          return { ok: r.ok, j: j };
+        });
+      })
+      .then(function (x) {
+        if (!x.ok || !x.j || !x.j.token) return false;
+        sessionStorage.setItem(JWT_KEY, x.j.token);
+        showWorkspace();
+        return true;
+      })
+      .catch(function () {
+        return false;
+      });
+  }
+
   function tryRestoreLegacySession() {
     if (otpEnabled) return false;
     if (sessionStorage.getItem(SESSION_KEY) === '1' && ADMIN_PASSWORD) {
@@ -467,6 +504,9 @@
 
   fetchCapabilities().then(function () {
     return tryRestoreJwtSession();
+  }).then(function (restored) {
+    if (restored) return true;
+    return tryRestorePortalAdminSession();
   }).then(function (restored) {
     if (!restored) tryRestoreLegacySession();
   });

@@ -495,6 +495,18 @@ app.get('/api/admin/session', (req, res) => {
   return res.json({ ok: true, email: p.email });
 });
 
+app.post('/api/admin/bootstrap-from-portal', (req, res) => {
+  const p = verifyJwt(getBearer(req));
+  if (!p || !isPortalSessionRole(p.role) || typeof p.email !== 'string') {
+    return res.status(401).json({ ok: false, error: 'Unauthorized' });
+  }
+  if (p.email.trim().toLowerCase() !== ADMIN_EMAIL) {
+    return res.status(403).json({ ok: false, error: 'Forbidden' });
+  }
+  const token = signJwt({ v: 1, role: 'admin', email: ADMIN_EMAIL, exp: Date.now() + JWT_TTL_MS });
+  return res.json({ ok: true, token, expiresInMs: JWT_TTL_MS });
+});
+
 function listPortalUsersForAdmin(_req, res) {
   res.json({ users: userStore.listUsers() });
 }
