@@ -39,6 +39,8 @@ const OTP_TTL_MS = 10 * 60 * 1000;
 const JWT_TTL_MS = 8 * 60 * 60 * 1000;
 const CLINIC_JWT_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const CLINIC_RESET_JWT_MS = 60 * 60 * 1000;
+/** Email confirmation link after self-registration (pending row finalized on click). */
+const CLINIC_VERIFY_JWT_MS = 48 * 60 * 60 * 1000;
 const SEND_WINDOW_MS = 15 * 60 * 1000;
 const MAX_SENDS_PER_WINDOW = 4;
 
@@ -130,6 +132,16 @@ async function sendResendEmail({ to, subject, html }) {
   }
 }
 
+function publicOrigin(req) {
+  const fromEnv = (process.env.PUBLIC_ORIGIN || '').trim().replace(/\/$/, '');
+  if (fromEnv) return fromEnv;
+  const host = req.get('host') || 'localhost';
+  const xfProto = req.headers['x-forwarded-proto'];
+  const proto =
+    typeof xfProto === 'string' && xfProto.length ? xfProto.split(',')[0].trim() : req.protocol || 'http';
+  return `${proto}://${host}`.replace(/\/$/, '');
+}
+
 const app = express();
 app.set('trust proxy', 1);
 app.disable('x-powered-by');
@@ -166,12 +178,19 @@ app.get('/api/auth/clinic-capabilities', (_req, res) => {
     version: appVersion,
     passwordResetEmail: Boolean(RESEND_API_KEY),
     selfRegister: Boolean(CLINIC_SELF_REGISTER),
+    registrationConfirmEmail: Boolean(RESEND_API_KEY && CLINIC_SELF_REGISTER),
   });
 });
 
-app.post('/api/auth/clinic-register', (req, res) => {
+app.post('/api/auth/clinic-register', async (req, res) => {
   if (!CLINIC_SELF_REGISTER) {
     return res.status(403).json({ error: 'Self-registration is disabled. Contact jack@serviceopera.to for access.' });
+  }
+  if (!RESEND_API_KEY) {
+    return res.status(503).json({
+      error:
+        'Email confirmation requires RESEND_API_KEY on this server. Contact jack@serviceopera.to or ask your administrator to configure Resend.',
+    });
   }
   const email = typeof req.body?.email === 'string' ? req.body.email : '';
   const password = typeof req.body?.password === 'string' ? req.body.password : '';
@@ -180,18 +199,43 @@ app.post('/api/auth/clinic-register', (req, res) => {
   if (sends.length >= MAX_SENDS_PER_WINDOW) {
     return res.status(429).json({ error: 'Too many requests. Try again later.' });
   }
+  let pending;
   try {
-    clinicStore.createUser({ email, password });
-    sends.push(Date.now());
-    sendTimestampsByIp.set(ip, sends);
-    return res.status(201).json({
-      ok: true,
-      message: 'Account created. You can sign in below.',
-    });
+    pending = clinicStore.createPendingRegistration({ email, password });
   } catch (e) {
     const status = e.status || 400;
     return res.status(status).json({ error: e.message || 'Bad request' });
   }
+  const verifyJwtToken = signJwt({
+    v: 1,
+    role: 'clinic_verify',
+    sub: pending.id,
+    email: pending.email,
+    exp: Date.now() + CLINIC_VERIFY_JWT_MS,
+  });
+  const origin = publicOrigin(req);
+  const link = `${origin}/login.html?verify=${encodeURIComponent(verifyJwtToken)}`;
+  try {
+    await sendResendEmail({
+      to: pending.email,
+      subject: 'ServiceOpera — confirm your clinic report account',
+      html:
+        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">Thanks for signing up for <strong>ServiceOpera.to</strong> clinic report access.</p>' +
+        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111"><a href="' +
+        String(link).replace(/"/g, '&quot;') +
+        '" style="color:#1e3a5f;font-weight:600">Confirm your email</a> (link expires in 48 hours.)</p>' +
+        '<p style="font-family:system-ui,sans-serif;font-size:13px;color:#444">If you did not register, ignore this email.</p>',
+    });
+    sends.push(Date.now());
+    sendTimestampsByIp.set(ip, sends);
+  } catch (e) {
+    const status = e.status || 502;
+    return res.status(status).json({ error: 'Could not send confirmation email. Try again later or contact support.' });
+  }
+  return res.status(201).json({
+    ok: true,
+    message: 'Check your inbox for a confirmation link to activate your account.',
+  });
 });
 
 app.post('/api/admin/send-code', async (req, res) => {
@@ -294,16 +338,6 @@ app.post('/api/auth/clinic-login', (req, res) => {
   return res.json({ ok: true, token, reportSlug: user.reportSlug, reportUrl });
 });
 
-function publicOrigin(req) {
-  const fromEnv = (process.env.PUBLIC_ORIGIN || '').trim().replace(/\/$/, '');
-  if (fromEnv) return fromEnv;
-  const host = req.get('host') || 'localhost';
-  const xfProto = req.headers['x-forwarded-proto'];
-  const proto =
-    typeof xfProto === 'string' && xfProto.length ? xfProto.split(',')[0].trim() : req.protocol || 'http';
-  return `${proto}://${host}`.replace(/\/$/, '');
-}
-
 app.post('/api/auth/clinic-request-reset', async (req, res) => {
   const generic = {
     ok: true,
@@ -376,6 +410,28 @@ app.post('/api/auth/clinic-reset-password', (req, res) => {
     return res.status(status).json({ error: e.message || 'Bad request' });
   }
   return res.json({ ok: true, message: 'Password updated. You can sign in now.' });
+});
+
+app.post('/api/auth/clinic-verify-email', (req, res) => {
+  const token = typeof req.body?.token === 'string' ? req.body.token.trim() : '';
+  const p = verifyJwt(token);
+  if (!p || p.role !== 'clinic_verify' || typeof p.sub !== 'string' || typeof p.email !== 'string') {
+    return res
+      .status(401)
+      .json({ error: 'Invalid or expired confirmation link. Register again from the login page.' });
+  }
+  try {
+    const created = clinicStore.finalizePendingRegistration(p.sub, p.email);
+    return res.status(201).json({
+      ok: true,
+      message: 'Email confirmed. You can sign in below.',
+      email: created.email,
+      reportSlug: created.reportSlug,
+    });
+  } catch (e) {
+    const status = e.status || 400;
+    return res.status(status).json({ error: e.message || 'Bad request' });
+  }
 });
 
 app.get('/api/auth/clinic-session', (req, res) => {

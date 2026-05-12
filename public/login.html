@@ -182,6 +182,8 @@
   var params = new URLSearchParams(window.location.search);
   var slugHint = (params.get('slug') || '').trim();
   var resetToken = (params.get('reset') || '').trim();
+  /** One-time email confirmation after self-registration (`?verify=`). Takes precedence over `reset`. */
+  var verifyToken = (params.get('verify') || '').trim();
   var resetEmailEnabled = false;
   /** HTTP status from /api/auth/clinic-capabilities (0 = network error). */
   var capabilitiesStatus = 0;
@@ -193,6 +195,16 @@
   var registerBack = document.getElementById('clinicRegisterBack');
   var registerHintEl = document.getElementById('registerHint');
   var selfRegisterEnabled = false;
+  var registrationConfirmOk = false;
+
+  function stripVerifyQueryFromUrl() {
+    try {
+      var u = new URL(window.location.href);
+      u.searchParams.delete('verify');
+      var q = u.searchParams.toString();
+      history.replaceState({}, '', u.pathname + (q ? '?' + q : '') + u.hash);
+    } catch (err) {}
+  }
 
   if (slugHint && lede) {
     lede.textContent =
@@ -310,11 +322,15 @@
       clinicApiFromOurServer = Boolean(cap && cap.service === 'serviceopera');
       resetEmailEnabled = clinicApiFromOurServer && Boolean(cap && cap.passwordResetEmail);
       selfRegisterEnabled = clinicApiFromOurServer && Boolean(cap && cap.selfRegister);
+      registrationConfirmOk = clinicApiFromOurServer && Boolean(cap && cap.registrationConfirmEmail);
       var regNote = document.getElementById('clinicRegisterHelpNote');
       if (regNote) {
-        if (selfRegisterEnabled) {
+        if (selfRegisterEnabled && registrationConfirmOk) {
           regNote.textContent =
-            'Your private report ID is generated automatically when you create your account. Password: min 8 characters.';
+            'We will email you a confirmation link. After you confirm, you can sign in. Password: min 8 characters.';
+        } else if (selfRegisterEnabled && clinicApiFromOurServer && !registrationConfirmOk) {
+          regNote.textContent =
+            'Sign-up needs RESEND_API_KEY on this server to send the confirmation email. Contact jack@serviceopera.to.';
         } else if (!clinicApiFromOurServer) {
           regNote.textContent =
             'This page must be served by the ServiceOpera Node host (not static files only) to complete sign-up. If submit fails, write to jack@serviceopera.to.';
@@ -336,7 +352,39 @@
       if (forgotHelp) forgotHelp.textContent = forgotResetHelpText();
     });
 
-  if (resetToken && resetForm) {
+  if (verifyToken) {
+    setHint('Confirming your email…', '');
+    fetch('/api/auth/clinic-verify-email', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: verifyToken }),
+    })
+      .then(function (r) {
+        return r.json().then(function (j) {
+          return { ok: r.ok, j: j };
+        });
+      })
+      .then(function (x) {
+        verifyToken = '';
+        stripVerifyQueryFromUrl();
+        showLoginMode();
+        if (!x.ok) {
+          setHint((x.j && x.j.error) || 'Confirmation failed.', 'error');
+          return;
+        }
+        var em = x.j && x.j.email ? String(x.j.email) : '';
+        var loginEmail = document.getElementById('clinicEmail');
+        if (loginEmail && em) loginEmail.value = em;
+        setHint(x.j && x.j.message ? x.j.message : 'Email confirmed. Sign in below.', 'ok');
+      })
+      .catch(function () {
+        verifyToken = '';
+        stripVerifyQueryFromUrl();
+        showLoginMode();
+        setHint('Network error while confirming. Open the link again from your email.', 'error');
+      });
+  } else if (resetToken && resetForm) {
     showResetMode();
   }
 
@@ -373,7 +421,7 @@
         setRegisterHint('Password must be at least 8 characters.', 'error');
         return;
       }
-      setRegisterHint('Creating account…', '');
+      setRegisterHint('Sending confirmation email…', '');
       fetch('/api/auth/clinic-register', {
         method: 'POST',
         credentials: 'same-origin',
@@ -387,16 +435,17 @@
         })
         .then(function (x) {
           if (!x.ok) {
-            setRegisterHint((x.j && x.j.error) || 'Could not create account.', 'error');
+            setRegisterHint((x.j && x.j.error) || 'Could not start registration.', 'error');
             return;
           }
-          var loginEmail = document.getElementById('clinicEmail');
-          var loginPw = document.getElementById('clinicPassword');
-          if (loginEmail) loginEmail.value = email;
-          if (loginPw) loginPw.value = pw;
           registerForm.reset();
           showLoginMode();
-          setHint(x.j && x.j.message ? x.j.message : 'Account created. Sign in below.', 'ok');
+          var loginEmail = document.getElementById('clinicEmail');
+          if (loginEmail && email) loginEmail.value = email;
+          setHint(
+            x.j && x.j.message ? x.j.message : 'Check your inbox for a confirmation link, then sign in below.',
+            'ok'
+          );
         })
         .catch(function () {
           setRegisterHint('Network error or server unavailable.', 'error');

@@ -62,6 +62,7 @@ function writeJson(file, data) {
 
 export function createClinicStore(dataDir) {
   const file = path.join(dataDir, 'clinic_users.json');
+  const pendingFile = path.join(dataDir, 'clinic_pending.json');
 
   function load() {
     return readJson(file);
@@ -69,6 +70,16 @@ export function createClinicStore(dataDir) {
 
   function save(data) {
     writeJson(file, data);
+  }
+
+  function loadPending() {
+    const o = readJson(pendingFile);
+    if (!o || !Array.isArray(o.pending)) return { pending: [] };
+    return { pending: o.pending };
+  }
+
+  function savePending(pdata) {
+    writeJson(pendingFile, pdata);
   }
 
   /** Derive a valid report slug prefix from the email local part (before @). */
@@ -87,11 +98,15 @@ export function createClinicStore(dataDir) {
     }
   }
 
-  /** Pick a slug not yet used in `data.users`. */
-  function uniqueReportSlug(data, base) {
+  /** Pick a slug not yet used by confirmed users or pending sign-ups. */
+  function uniqueReportSlug(data, pdata, base) {
+    const taken = new Set([
+      ...data.users.map((u) => u.reportSlug),
+      ...pdata.pending.map((p) => p.reportSlug),
+    ]);
     let candidate = base;
     let n = 0;
-    while (data.users.some((u) => u.reportSlug === candidate)) {
+    while (taken.has(candidate)) {
       n += 1;
       candidate = (base + '-' + n).slice(0, 64);
       if (n > 500) {
@@ -126,11 +141,19 @@ export function createClinicStore(dataDir) {
         throw err;
       }
       const data = load();
+      const pdata = loadPending();
+      if (pdata.pending.some((p) => p.email === em)) {
+        const err = new Error(
+          'That email has a pending registration. Check your inbox to confirm, or wait and try again.'
+        );
+        err.status = 409;
+        throw err;
+      }
       let slug;
       if (typeof reportSlug === 'string' && reportSlug.trim()) {
         slug = assertReportSlug(reportSlug.trim());
       } else {
-        slug = uniqueReportSlug(data, baseSlugFromEmail(em));
+        slug = uniqueReportSlug(data, pdata, baseSlugFromEmail(em));
       }
       if (data.users.some((u) => u.email === em)) {
         const err = new Error('That email is already registered.');
@@ -139,6 +162,11 @@ export function createClinicStore(dataDir) {
       }
       if (data.users.some((u) => u.reportSlug === slug)) {
         const err = new Error('That report ID is already taken.');
+        err.status = 409;
+        throw err;
+      }
+      if (pdata.pending.some((p) => p.reportSlug === slug)) {
+        const err = new Error('That report ID is reserved by a pending sign-up.');
         err.status = 409;
         throw err;
       }
@@ -153,6 +181,95 @@ export function createClinicStore(dataDir) {
       data.users.push(row);
       save(data);
       return { id, email: em, reportSlug: slug, createdAt: row.createdAt };
+    },
+
+    /**
+     * Stage a self-service sign-up (password stored hashed until email is confirmed).
+     * @returns {{ id: string, email: string, reportSlug: string }}
+     */
+    createPendingRegistration({ email, password }) {
+      const em = normalizeEmail(email);
+      if (!em || !em.includes('@')) {
+        const err = new Error('Invalid email.');
+        err.status = 400;
+        throw err;
+      }
+      if (typeof password !== 'string' || password.length < 8) {
+        const err = new Error('Password must be at least 8 characters.');
+        err.status = 400;
+        throw err;
+      }
+      const data = load();
+      const pdata = loadPending();
+      if (data.users.some((u) => u.email === em)) {
+        const err = new Error('That email is already registered.');
+        err.status = 409;
+        throw err;
+      }
+      pdata.pending = pdata.pending.filter((p) => p.email !== em);
+      const base = baseSlugFromEmail(em);
+      const slug = uniqueReportSlug(data, pdata, base);
+      const id = crypto.randomUUID();
+      const row = {
+        id,
+        email: em,
+        passwordHash: hashPassword(password),
+        reportSlug: slug,
+        createdAt: new Date().toISOString(),
+      };
+      pdata.pending.push(row);
+      savePending(pdata);
+      return { id, email: em, reportSlug: slug, createdAt: row.createdAt };
+    },
+
+    /** Promote a pending row to a confirmed user (after email verification). */
+    finalizePendingRegistration(pendingId, jwtEmail) {
+      if (typeof pendingId !== 'string' || !pendingId) {
+        const err = new Error('Invalid registration.');
+        err.status = 400;
+        throw err;
+      }
+      const pdata = loadPending();
+      const idx = pdata.pending.findIndex((p) => p.id === pendingId);
+      if (idx < 0) {
+        const err = new Error('Registration not found or already completed.');
+        err.status = 404;
+        throw err;
+      }
+      const pen = pdata.pending[idx];
+      if (typeof jwtEmail === 'string' && jwtEmail && normalizeEmail(pen.email) !== normalizeEmail(jwtEmail)) {
+        const err = new Error('Invalid confirmation link.');
+        err.status = 401;
+        throw err;
+      }
+      const data = load();
+      if (data.users.some((u) => u.email === pen.email)) {
+        pdata.pending.splice(idx, 1);
+        savePending(pdata);
+        const err = new Error('That email is already registered.');
+        err.status = 409;
+        throw err;
+      }
+      if (data.users.some((u) => u.reportSlug === pen.reportSlug)) {
+        pdata.pending.splice(idx, 1);
+        savePending(pdata);
+        const err = new Error('That report ID is no longer available. Start registration again.');
+        err.status = 409;
+        throw err;
+      }
+      const uid = crypto.randomUUID();
+      const userRow = {
+        id: uid,
+        email: pen.email,
+        passwordHash: pen.passwordHash,
+        reportSlug: pen.reportSlug,
+        createdAt: new Date().toISOString(),
+      };
+      data.users.push(userRow);
+      pdata.pending.splice(idx, 1);
+      save(data);
+      savePending(pdata);
+      return { id: uid, email: pen.email, reportSlug: pen.reportSlug, createdAt: userRow.createdAt };
     },
 
     verifyLogin(email, password) {
