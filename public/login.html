@@ -10,10 +10,73 @@
 <link rel="apple-touch-icon" href="favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600&family=JetBrains+Mono:wght@400;500;700&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css" />
+<style>
+  /* Clinic login only: serif title + sans UI (no monospace) */
+  .page-clinic-access {
+    font-family: var(--font-body);
+  }
+  .page-clinic-access .portal-caption {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--mute-2);
+  }
+  .page-clinic-access .portal-caption--accent {
+    color: var(--amber-2);
+    margin-bottom: 1rem;
+  }
+  .page-clinic-access .admin-gate__card > h1 {
+    font-family: var(--font-display);
+    font-weight: 500;
+  }
+  .page-clinic-access .admin-gate__card h2 {
+    font-family: var(--font-display);
+    font-weight: 500;
+  }
+  .page-clinic-access .portal-form input {
+    font-family: var(--font-body);
+  }
+  .page-clinic-access .portal-form__hint {
+    font-family: var(--font-body);
+  }
+  .page-clinic-access .portal-form__linkbtn {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-bottom: 1px solid var(--line-strong);
+    padding-bottom: 0.1em;
+  }
+  .page-clinic-access .portal-form__linkbtn:hover {
+    text-decoration: none;
+    border-bottom-color: var(--amber);
+  }
+  .page-clinic-access .modal__footnote {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+  }
+  .page-clinic-access .modal__footnote a {
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+  }
+  .page-clinic-access .nav__login {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+</style>
 </head>
-<body class="page-admin page-admin--with-nav">
+<body class="page-admin page-admin--with-nav page-clinic-access">
 
 <div class="grain" aria-hidden="true"></div>
 
@@ -25,7 +88,7 @@
     <a href="/#build">Systems</a>
     <a href="/#method">Method</a>
     <a href="/#proof">Proof</a>
-    <a href="/login.html" class="nav__login mono">Log in</a>
+    <a href="/login.html" class="nav__login">Log in</a>
     <button type="button" class="theme-toggle" data-theme-toggle aria-label="Tema"></button>
     <a href="mailto:jack@serviceopera.to" class="nav__cta" title="jack@serviceopera.to">jack@serviceopera.to</a>
   </div>
@@ -33,17 +96,17 @@
 
 <div class="admin-gate">
   <div class="admin-gate__card">
-    <p class="mono" style="color: var(--amber-2); margin-bottom: 1rem;">— CLINIC REPORT ACCESS</p>
+    <p class="portal-caption portal-caption--accent">— CLINIC REPORT ACCESS</p>
     <h1 id="clinicGateTitle">Log in</h1>
     <p class="admin-gate__lede" id="loginLede">Use the email and password Jack set up for your private report.</p>
 
     <form id="clinicLoginForm" class="portal-form" autocomplete="on">
       <label>
-        <span class="mono">EMAIL</span>
+        <span class="portal-caption">EMAIL</span>
         <input type="email" name="email" id="clinicEmail" required autocomplete="username" />
       </label>
       <label id="clinicPasswordWrap">
-        <span class="mono">PASSWORD</span>
+        <span class="portal-caption">PASSWORD</span>
         <input type="password" name="password" id="clinicPassword" required autocomplete="current-password" placeholder="••••••••" />
       </label>
       <button type="submit" class="btn btn--primary btn--block">Open report<span class="ico-arrow-r" aria-hidden="true"></span></button>
@@ -51,7 +114,7 @@
         <button type="button" class="portal-form__linkbtn is-hidden" id="clinicRegisterToggle">Create account</button>
         <button type="button" class="portal-form__linkbtn" id="clinicForgotToggle">Forgot password?</button>
       </div>
-      <p class="portal-form__hint mono" id="loginHint"></p>
+      <p class="portal-form__hint" id="loginHint"></p>
     </form>
 
     <form id="clinicRegisterForm" class="portal-form is-hidden" autocomplete="on" aria-live="polite">
@@ -59,27 +122,27 @@
         Create an account with your email and a password (min 8 characters). Your private report ID is generated automatically.
       </p>
       <label>
-        <span class="mono">EMAIL</span>
+        <span class="portal-caption">EMAIL</span>
         <input type="email" name="email" id="clinicRegEmail" required autocomplete="email" />
       </label>
       <label>
-        <span class="mono">PASSWORD</span>
+        <span class="portal-caption">PASSWORD</span>
         <input type="password" name="password" id="clinicRegPassword" required minlength="8" autocomplete="new-password" placeholder="min 8 characters" />
       </label>
       <label>
-        <span class="mono">CONFIRM PASSWORD</span>
+        <span class="portal-caption">CONFIRM PASSWORD</span>
         <input type="password" name="confirmPassword" id="clinicRegConfirm" required minlength="8" autocomplete="new-password" />
       </label>
       <button type="submit" class="btn btn--primary btn--block">Create account<span class="ico-arrow-r" aria-hidden="true"></span></button>
       <button type="button" class="portal-form__linkbtn portal-form__back" id="clinicRegisterBack">Back to sign in</button>
-      <p class="portal-form__hint mono" id="registerHint"></p>
+      <p class="portal-form__hint" id="registerHint"></p>
     </form>
 
     <div id="clinicForgotPanel" class="portal-form is-hidden" aria-live="polite">
       <p class="portal-form__muted" id="clinicForgotHelp">
         Enter the email Jack registered for your report, then we will send a one-time link to set a new password.
       </p>
-      <button type="button" class="btn btn--ghost btn--block mono" id="clinicSendReset">Send reset link</button>
+      <button type="button" class="btn btn--ghost btn--block" id="clinicSendReset">Send reset link</button>
       <button type="button" class="portal-form__linkbtn portal-form__back" id="clinicForgotBack">Back to sign in</button>
     </div>
 
@@ -87,15 +150,15 @@
       <h2 style="font-size: 1.1rem; margin: 0 0 0.5rem; font-weight: 600; font-family: var(--font-display, Georgia, serif)">Set a new password</h2>
       <p class="portal-form__muted">Choose a password of at least 8 characters, then sign in as usual.</p>
       <label>
-        <span class="mono">NEW PASSWORD</span>
+        <span class="portal-caption">NEW PASSWORD</span>
         <input type="password" name="newPassword" id="clinicNewPw" required minlength="8" autocomplete="new-password" placeholder="min 8 characters" />
       </label>
       <label>
-        <span class="mono">CONFIRM</span>
+        <span class="portal-caption">CONFIRM</span>
         <input type="password" name="confirmPassword" id="clinicConfirmPw" required minlength="8" autocomplete="new-password" placeholder="repeat password" />
       </label>
       <button type="submit" class="btn btn--primary btn--block">Save password<span class="ico-arrow-r" aria-hidden="true"></span></button>
-      <p class="portal-form__hint mono" id="resetHint"></p>
+      <p class="portal-form__hint" id="resetHint"></p>
     </form>
 
     <p class="modal__footnote"><a href="/"><span class="ico-arrow-l" aria-hidden="true"></span>Back to site</a></p>
@@ -140,20 +203,20 @@
   function setHint(msg, kind) {
     if (!hint) return;
     hint.textContent = msg;
-    hint.className = 'portal-form__hint mono' + (kind === 'error' ? ' is-error' : kind === 'ok' ? ' is-ok' : '');
+    hint.className = 'portal-form__hint' + (kind === 'error' ? ' is-error' : kind === 'ok' ? ' is-ok' : '');
   }
 
   function setResetHint(msg, kind) {
     if (!resetHint) return;
     resetHint.textContent = msg;
-    resetHint.className = 'portal-form__hint mono' + (kind === 'error' ? ' is-error' : kind === 'ok' ? ' is-ok' : '');
+    resetHint.className = 'portal-form__hint' + (kind === 'error' ? ' is-error' : kind === 'ok' ? ' is-ok' : '');
   }
 
   function setRegisterHint(msg, kind) {
     if (!registerHintEl) return;
     registerHintEl.textContent = msg;
     registerHintEl.className =
-      'portal-form__hint mono' + (kind === 'error' ? ' is-error' : kind === 'ok' ? ' is-ok' : '');
+      'portal-form__hint' + (kind === 'error' ? ' is-error' : kind === 'ok' ? ' is-ok' : '');
   }
 
   function showLoginMode() {

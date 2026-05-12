@@ -10,9 +10,56 @@
 <link rel="apple-touch-icon" href="../favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=JetBrains+Mono:wght@300;400;500;700&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../styles.css" />
 <style>
+  /* Clinic report: Fraunces for hero titles only; sans labels (no monospace) */
+  .page-clinic-report-access .report-caption {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--mute-2);
+  }
+  .page-clinic-report-access .report-caption--accent { color: var(--amber-2); }
+  .page-clinic-report-access .report-eyebrow {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    display: inline-block;
+    color: var(--amber-2);
+    margin-bottom: 1rem;
+  }
+  .page-clinic-report-access .nav__login {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .page-clinic-report-access .clinics-pain-card__idx {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--amber-2);
+  }
+  .clinics-fix-row__num {
+    color: var(--amber-2);
+    font-family: var(--font-body);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+  }
+  .page-clinic-report-access .clinics-fix-meta {
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--mute-2);
+  }
   .page-clinics-demo .clinics-hero__title { font-family: var(--font-display); font-weight: 400; font-size: clamp(2.2rem, 5vw, 4rem); line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 1.5rem; }
   .page-clinics-demo .clinics-hero__title .line { display: block; opacity: 0; transform: translateY(16px); animation: rise .85s cubic-bezier(.2,.7,.2,1) forwards; }
   .page-clinics-demo .clinics-hero__title .line:nth-child(1) { animation-delay: .06s; }
@@ -27,15 +74,15 @@
   .clinics-pain-card { background: var(--ink-2); border: 1px solid var(--line-strong); border-radius: 6px; padding: 1.25rem 1.2rem; transition: transform .2s, border-color .2s; }
   .clinics-pain-card:hover { transform: translateY(-3px); border-color: var(--amber); }
   .clinics-pain-card__idx { color: var(--amber-2); margin-bottom: .5rem; }
-  .clinics-pain-card__theme { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .1em; color: var(--paper); margin-bottom: .35rem; }
-  .clinics-pain-card__meta { font-family: var(--font-mono); font-size: .68rem; color: var(--mute-2); margin-bottom: .75rem; }
+  .clinics-pain-card__theme { font-family: var(--font-body); font-size: .72rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--paper); margin-bottom: .35rem; }
+  .clinics-pain-card__meta { font-family: var(--font-body); font-size: .68rem; font-weight: 500; letter-spacing: .08em; color: var(--mute-2); margin-bottom: .75rem; }
   .clinics-pain-card__quote { font-family: var(--font-display); font-style: italic; font-weight: 300; color: var(--bone); font-size: .95rem; line-height: 1.45; }
   .clinics-chart { width: 100%; max-width: 760px; height: 280px; margin: 2rem auto 0; }
   .clinics-chart__row { display: flex; align-items: center; gap: .75rem; margin-bottom: .55rem; }
-  .clinics-chart__label { width: 5.5rem; flex-shrink: 0; font-family: var(--font-mono); font-size: .65rem; color: var(--mute-2); text-align: right; }
+  .clinics-chart__label { width: 5.5rem; flex-shrink: 0; font-family: var(--font-body); font-size: .65rem; font-weight: 500; letter-spacing: .08em; color: var(--mute-2); text-align: right; }
   .clinics-chart__track { flex: 1; height: 20px; background: var(--ink-3); border-radius: 3px; overflow: hidden; border: 1px solid var(--amber-deep); }
   .clinics-chart__bar { height: 100%; background: var(--amber); }
-  .clinics-chart__count { width: 2rem; font-family: var(--font-mono); font-size: .68rem; color: var(--bone); }
+  .clinics-chart__count { width: 2rem; font-family: var(--font-body); font-size: .68rem; font-weight: 500; letter-spacing: .04em; color: var(--bone); }
   .clinics-fix-row { display: grid; grid-template-columns: 2.5rem 1fr 1fr; gap: .75rem; align-items: center; padding: .85rem 0; border-bottom: 1px solid var(--line); transition: background .2s, transform .2s; }
   .clinics-fix-row:hover { background: rgba(99, 102, 241, 0.06); }
   .clinics-fix-row:hover .clinics-fix-row__label { transform: translateX(4px); }
@@ -45,7 +92,7 @@
   .clinics-fallback { text-align: center; padding: 4rem var(--gutter); color: var(--bone); }
 </style>
 </head>
-<body class="page-client page-clinics-demo">
+<body class="page-client page-clinics-demo page-clinic-report-access">
 
 <div class="grain" aria-hidden="true"></div>
 
@@ -57,14 +104,14 @@
     <a href="/#build">Systems</a>
     <a href="/#method">Method</a>
     <a href="/#proof">Proof</a>
-    <a href="/login.html" class="nav__login mono">Log in</a>
+    <a href="/login.html" class="nav__login">Log in</a>
     <button type="button" class="theme-toggle" data-theme-toggle aria-label="Tema"></button>
     <a href="mailto:jack@serviceopera.to" class="nav__cta" title="jack@serviceopera.to">jack@serviceopera.to</a>
   </div>
 </nav>
 
 <div id="demoAuthGate" class="clinics-fallback is-hidden">
-  <p class="mono" style="color: var(--amber-2); margin-bottom: 0.75rem;">— PRIVATE REPORT</p>
+  <p class="report-caption report-caption--accent" style="margin-bottom: 0.75rem;">— PRIVATE REPORT</p>
   <p>Sign in with the email and password you received for this report.</p>
   <p style="margin-top: 1.25rem;"><a class="btn btn--primary" id="demoAuthLoginLink" href="../login.html">Log in</a></p>
 </div>
@@ -84,7 +131,7 @@
   <header class="client-hero" style="border-bottom: 1px solid var(--line);">
     <div class="client-hero__eyebrow">
       <span class="dot dot--live"></span>
-      <span class="mono" id="demoEyebrow">— THAILAND · MEDICAL VERTICAL · UPDATED</span>
+      <span class="report-caption" id="demoEyebrow">— THAILAND · MEDICAL VERTICAL · UPDATED</span>
     </div>
     <h1 class="clinics-hero__title">
       <span class="line">I looked at</span>
@@ -97,27 +144,27 @@
     </p>
     <div class="client-hero__stats">
       <div class="client-stat">
-        <div class="client-stat__label mono">SAMPLE SIZE</div>
+        <div class="client-stat__label report-caption">SAMPLE SIZE</div>
         <div class="client-stat__value"><span id="statSample">47</span></div>
         <div class="client-stat__delta">dental · aesthetic · IVF</div>
       </div>
       <div class="client-stat">
-        <div class="client-stat__label mono">AVG MONTHLY LEAKAGE</div>
+        <div class="client-stat__label report-caption">AVG MONTHLY LEAKAGE</div>
         <div class="client-stat__value">€<span id="statAvgLeak">11.4</span><span>k</span></div>
         <div class="client-stat__delta up"><span class="ico-tri ico-tri--up" aria-hidden="true"></span>conservative estimate</div>
       </div>
       <div class="client-stat">
-        <div class="client-stat__label mono">WITHOUT ONLINE BOOKING</div>
+        <div class="client-stat__label report-caption">WITHOUT ONLINE BOOKING</div>
         <div class="client-stat__value"><span id="statNoBook">64</span><span>%</span></div>
         <div class="client-stat__delta">patients drop in the first click</div>
       </div>
       <div class="client-stat">
-        <div class="client-stat__label mono">WITHOUT LANGUAGE SWITCHER</div>
+        <div class="client-stat__label report-caption">WITHOUT LANGUAGE SWITCHER</div>
         <div class="client-stat__value"><span id="statNoLang">78</span><span>%</span></div>
         <div class="client-stat__delta">1 in 3 patients reads Russian or Chinese</div>
       </div>
     </div>
-    <p class="mono" style="margin-top:1.75rem;font-size:0.72rem;color:var(--mute-2);max-width:48rem;line-height:1.5;">
+    <p class="report-caption" style="margin-top:1.75rem;font-size:0.72rem;max-width:48rem;line-height:1.5;text-transform:none;letter-spacing:0.06em;font-weight:400;">
       <a href="sea-clinic-audit/" style="color:var(--amber-2);text-decoration:underline;text-underline-offset:3px;">Public-footprint audit sample (Thailand)</a>
       — illustration from public signals only; not commissioned by the clinic.
     </p>
@@ -125,7 +172,7 @@
 
   <section class="section" style="padding-top: 4rem;">
     <div class="section__header">
-      <span class="eyebrow mono">— 01 · WHAT YOUR PATIENTS ACTUALLY COMPLAIN ABOUT</span>
+      <span class="report-eyebrow">— 01 · WHAT YOUR PATIENTS ACTUALLY COMPLAIN ABOUT</span>
       <h2 class="section__title">Five pains. Same every clinic.</h2>
       <p class="section__sub" id="painSub">Drawn from negative reviews across the sample. Translated where needed. Clustered by theme, not by clinic.</p>
     </div>
@@ -134,19 +181,19 @@
 
   <section class="section section--method" style="margin-top: 2rem;">
     <div class="section__header">
-      <span class="eyebrow mono">— 02 · THE NUMBER NOBODY LOOKS AT</span>
+      <span class="report-eyebrow">— 02 · THE NUMBER NOBODY LOOKS AT</span>
       <h2 class="section__title"><span id="totalLeakTitle">€537k</span> walking out the door every month.</h2>
       <p class="section__sub" id="leakSub">Across the clinics audited. Distributed like this:</p>
     </div>
     <div id="leakChart" class="clinics-chart"></div>
-    <p class="mono" style="margin-top: 1.25rem; font-size: .65rem !important; color: var(--mute-2); max-width: 760px; margin-left: auto; margin-right: auto; line-height: 1.5;">
+    <p class="report-caption" style="margin-top: 1.25rem; font-size: .65rem !important; max-width: 760px; margin-left: auto; margin-right: auto; line-height: 1.5; text-transform: none; letter-spacing: 0.05em; font-weight: 400;">
       Formula: monthly patients (review-derived) × avg ticket per vertical × sum of present leakage factors. Capped at €30k/clinic to stay conservative. Full method available on request.
     </p>
   </section>
 
   <section class="section">
     <div class="section__header">
-      <span class="eyebrow mono">— 03 · WHAT WOULD MOVE THE NEEDLE</span>
+      <span class="report-eyebrow">— 03 · WHAT WOULD MOVE THE NEEDLE</span>
       <h2 class="section__title">Five things. Ranked by demand.</h2>
     </div>
     <div id="fixList" style="max-width: 720px; margin: 0 auto;"></div>
@@ -154,7 +201,7 @@
 
   <section class="section">
     <div class="section__header">
-      <span class="eyebrow mono">— 04 · WHAT I'D DO IN YOUR CLINIC</span>
+      <span class="report-eyebrow">— 04 · WHAT I'D DO IN YOUR CLINIC</span>
       <h2 class="section__title">A small system, shipped in <em>14 days.</em></h2>
     </div>
     <ol class="method" style="max-width: 850px;">
@@ -194,7 +241,7 @@
   </section>
 
   <footer class="footer" style="padding-top: 2rem;">
-    <div class="footer__legal mono" id="demoFooter">© 2026 SERVICE OPERA · CLINICS VERTICAL · DATA REFRESHED</div>
+    <div class="footer__legal report-caption" id="demoFooter" style="text-align:center;">© 2026 SERVICE OPERA · CLINICS VERTICAL · DATA REFRESHED</div>
   </footer>
 </main>
 
@@ -244,7 +291,7 @@
       var card = document.createElement('article');
       card.className = 'clinics-pain-card';
       card.innerHTML =
-        '<div class="clinics-pain-card__idx mono">[ ' + String(idx + 1).padStart(2, '0') + ' ]</div>' +
+        '<div class="clinics-pain-card__idx">[ ' + String(idx + 1).padStart(2, '0') + ' ]</div>' +
         '<div class="clinics-pain-card__theme">' + t.theme.toUpperCase() + '</div>' +
         '<div class="clinics-pain-card__meta">' + t.count + ' mentions</div>' +
         '<p class="clinics-pain-card__quote">&ldquo;' + t.sample_quote + '&rdquo;</p>';
@@ -272,10 +319,10 @@
       row.className = 'clinics-fix-row';
       var pct = n ? (f.clinics_who_need_this / n) * 100 : 0;
       row.innerHTML =
-        '<div class="mono" style="color:var(--amber-2);">' + String(i + 1).padStart(2, '0') + '</div>' +
+        '<div class="clinics-fix-row__num">' + String(i + 1).padStart(2, '0') + '</div>' +
         '<div class="clinics-fix-row__label">' + f.label + '</div>' +
         '<div><div class="clinics-fix-row__barwrap"><div class="clinics-fix-row__bar" style="width:' + pct + '%"></div></div>' +
-        '<span class="mono" style="font-size:.65rem;color:var(--mute-2);">' + f.clinics_who_need_this + ' clinics</span></div>';
+        '<span class="clinics-fix-meta">' + f.clinics_who_need_this + ' clinics</span></div>';
       fl.appendChild(row);
     });
 
