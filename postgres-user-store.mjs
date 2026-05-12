@@ -525,6 +525,19 @@ export function createPostgresUserStore(pool) {
         confirmedUserCount: users.rows[0]?.count || 0,
         pendingRegistrationCount: pending.rows[0]?.count || 0,
         tables: ['portal_users', 'portal_pending_registrations'],
+        profileColumns: [
+          'display_name',
+          'gender',
+          'is_active',
+          'is_admin',
+          'is_plus',
+          'spend_cents',
+          'earned_cents',
+          'last_login_at',
+          'last_login_ip',
+          'country',
+          'updated_at',
+        ],
       };
     },
   };

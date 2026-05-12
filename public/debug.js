@@ -82,6 +82,57 @@
     }
   }
 
+  function jwtKeySummary() {
+    var keys = [
+      { key: 'so_user_jwt', label: 'portal user' },
+      { key: 'so_clinic_jwt', label: 'legacy clinic' },
+      { key: 'so_admin_jwt', label: 'admin OTP' },
+    ];
+    var parts = [];
+    for (var i = 0; i < keys.length; i++) {
+      var raw = '';
+      try {
+        raw = localStorage.getItem(keys[i].key) || '';
+      } catch (e) {
+        raw = '';
+      }
+      parts.push(keys[i].label + '=' + (raw ? 'present · len=' + raw.length : 'not set'));
+    }
+    return parts.join(' · ');
+  }
+
+  function readPortalJwt() {
+    try {
+      return localStorage.getItem('so_user_jwt') || localStorage.getItem('so_clinic_jwt') || '';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  async function timedJsonAuth(url, token) {
+    var t0 = performance.now();
+    try {
+      var headers = token ? { Authorization: 'Bearer ' + token } : {};
+      var r = await fetch(url, { method: 'GET', cache: 'no-store', credentials: 'same-origin', headers: headers });
+      var ms = Math.round(performance.now() - t0);
+      var j = null;
+      try {
+        j = await r.json();
+      } catch (e2) {
+        j = null;
+      }
+      return { ok: r.ok, status: r.status, ms: ms, json: j };
+    } catch (e) {
+      return {
+        ok: false,
+        status: 0,
+        ms: Math.round(performance.now() - t0),
+        json: null,
+        err: e && e.message ? e.message : String(e),
+      };
+    }
+  }
+
   function envSafeArea() {
     var probe = document.createElement('div');
     probe.style.cssText =
@@ -510,6 +561,7 @@
   var storeProbe = await timedJson('/api/debug/user-store');
   var storeJson = storeProbe.json || {};
   var store = storeJson.storage || null;
+  var deploy = storeJson.deploy || null;
   lines.push({
     cat: 'DB',
     text:
@@ -520,58 +572,210 @@
       ' ms' +
       (storeProbe.ok ? ' · ok' : ' · fail') +
       (storeProbe.status === 404
-        ? ' · note=Node API not running; user_accounts.json is not reachable from this host'
+        ? ' · note=Node API not running; user persistence is not reachable from this host'
         : storeJson.service === 'serviceopera' && store
-          ? ' · note=server JSON user store'
+          ? ' · note=server user store summary'
           : storeProbe.err
             ? ' · ' + storeProbe.err
             : ''),
   });
+  if (deploy) {
+    lines.push({
+      cat: 'OPS',
+      text:
+        '70 · deploy user store backend: ' +
+        (deploy.userStoreBackend || 'n/a') +
+        ' · DATABASE_URL on server: ' +
+        (deploy.databaseUrlConfigured ? 'configured' : 'not set (JSON fallback)') +
+        ' · Node ' +
+        (deploy.nodeVersion || 'n/a'),
+    });
+    lines.push({
+      cat: 'OPS',
+      text:
+        '71 · deploy DATA_DIR: ' +
+        (deploy.dataDir || 'n/a') +
+        ' · selfRegister=' +
+        (deploy.portalSelfRegister != null ? String(deploy.portalSelfRegister) : 'n/a') +
+        ' · resend=' +
+        (deploy.resendConfigured != null ? String(deploy.resendConfigured) : 'n/a') +
+        ' · confirmEmail=' +
+        (deploy.registrationConfirmEmail != null ? String(deploy.registrationConfirmEmail) : 'n/a') +
+        ' · adminEmailConfigured=' +
+        (deploy.adminEmailConfigured != null ? String(deploy.adminEmailConfigured) : 'n/a'),
+    });
+  }
   if (store) {
     lines.push({
       cat: 'DB',
       text:
-        '70 · user store backend: ' +
+        '72 · user store backend: ' +
         store.backend +
-        ' · DATA_DIR=' +
-        store.dataDir +
-        ' · writable=' +
-        store.writable,
+        (store.backend === 'postgres'
+          ? ' · persistence=PostgreSQL (portal_users / portal_pending_registrations)'
+          : ' · persistence=JSON files under DATA_DIR'),
     });
     lines.push({
       cat: 'DB',
       text:
-        '71 · confirmed users: ' +
+        '73 · confirmed users: ' +
         store.confirmedUserCount +
         ' · pending registrations: ' +
         store.pendingRegistrationCount,
     });
+    if (store.backend === 'postgres') {
+      lines.push({
+        cat: 'DB',
+        text:
+          '74 · Postgres tables: ' +
+          (store.tables && store.tables.length ? store.tables.join(', ') : '(none reported)'),
+      });
+      lines.push({
+        cat: 'DB',
+        text:
+          '75 · portal_users profile columns: ' +
+          (store.profileColumns && store.profileColumns.length
+            ? store.profileColumns.join(', ')
+            : 'display_name, gender, is_active, is_admin, is_plus, spend_cents, earned_cents, last_login_at, last_login_ip, country, updated_at'),
+      });
+      lines.push({
+        cat: 'OPS',
+        text:
+          '76 · Railway Postgres: tables appear after the Node service starts with DATABASE_URL; empty counts until register/login flows run.',
+      });
+    } else {
+      lines.push({
+        cat: 'DB',
+        text:
+          '74 · DATA_DIR: ' +
+          (store.dataDir || 'n/a') +
+          ' · writable=' +
+          (store.writable != null ? String(store.writable) : 'n/a'),
+      });
+      lines.push({
+        cat: 'DB',
+        text:
+          '75 · accounts file: ' +
+          (store.accountsFileStats && store.accountsFileStats.exists ? 'present' : 'missing') +
+          ' · bytes=' +
+          (store.accountsFileStats ? store.accountsFileStats.bytes : 'n/a') +
+          (store.accountsFileStats && store.accountsFileStats.mtimeIso
+            ? ' · mtime=' + store.accountsFileStats.mtimeIso
+            : ''),
+      });
+      lines.push({
+        cat: 'DB',
+        text:
+          '76 · pending file: ' +
+          (store.pendingFileStats && store.pendingFileStats.exists ? 'present' : 'missing') +
+          ' · bytes=' +
+          (store.pendingFileStats ? store.pendingFileStats.bytes : 'n/a'),
+      });
+    }
+  } else if (storeProbe.status === 404) {
     lines.push({
-      cat: 'DB',
+      cat: 'OPS',
       text:
-        '72 · accounts file: ' +
-        (store.accountsFileStats && store.accountsFileStats.exists ? 'present' : 'missing') +
-        ' · bytes=' +
-        (store.accountsFileStats ? store.accountsFileStats.bytes : 'n/a') +
-        (store.accountsFileStats && store.accountsFileStats.mtimeIso
-          ? ' · mtime=' + store.accountsFileStats.mtimeIso
+        '72 · user accounts are not saved in the browser; they require the Node server (node server.mjs) and DATABASE_URL or a persistent DATA_DIR volume on Railway.',
+    });
+  }
+
+  lines.push({
+    cat: 'AUTH',
+    text:
+      '77 · browser JWT keys: ' +
+      jwtKeySummary(),
+  });
+  var portalJwt = readPortalJwt();
+  var sessionProbe = await timedJsonAuth('/api/auth/user-session', portalJwt);
+  lines.push({
+    cat: 'AUTH',
+    text:
+      '78 · API /api/auth/user-session: HTTP ' +
+      sessionProbe.status +
+      ' · ' +
+      sessionProbe.ms +
+      ' ms' +
+      (sessionProbe.json && sessionProbe.json.ok && sessionProbe.json.email
+        ? ' · email=' + sessionProbe.json.email + ' · reportSlug=' + sessionProbe.json.reportSlug
+        : portalJwt
+          ? ' · note=JWT present but session rejected or expired'
+          : ' · note=no portal JWT in localStorage'),
+  });
+  lines.push({
+    cat: 'AUTH',
+    text:
+      '79 · auth routes (same origin): POST /api/auth/user-register · POST /api/auth/user-verify-email · POST /api/auth/user-login · POST /api/auth/user-login-otp · GET /api/auth/user-capabilities',
+  });
+  lines.push({
+    cat: 'AUTH',
+    text:
+      '80 · admin routes: GET /api/admin/capabilities · POST /api/admin/bootstrap-from-portal · GET /api/admin/work-queue · PATCH /api/user-accounts/:id',
+  });
+  lines.push({
+    cat: 'OPS',
+    text:
+      '81 · register flow: POST /api/auth/user-register → row in portal_pending_registrations → email link POST /api/auth/user-verify-email → row in portal_users → login POST /api/auth/user-login',
+  });
+  lines.push({
+    cat: 'OPS',
+    text:
+      '82 · admin access: sign in on /login.html (portal JWT) then /admin.html bootstraps admin JWT when ADMIN_EMAIL matches; no standalone /admin.html gate.',
+  });
+  if (store && store.backend === 'postgres') {
+    lines.push({
+      cat: 'OPS',
+      text:
+        '83 · Postgres health: backend=postgres · confirmed=' +
+        store.confirmedUserCount +
+        ' · pending=' +
+        store.pendingRegistrationCount +
+        (store.confirmedUserCount === 0 && store.pendingRegistrationCount === 0
+          ? ' · note=schema ready; run a real signup to populate rows'
           : ''),
     });
+  } else if (store && store.backend === 'json-files') {
     lines.push({
-      cat: 'DB',
+      cat: 'OPS',
       text:
-        '73 · pending file: ' +
-        (store.pendingFileStats && store.pendingFileStats.exists ? 'present' : 'missing') +
-        ' · bytes=' +
-        (store.pendingFileStats ? store.pendingFileStats.bytes : 'n/a'),
+        '83 · JSON store health: confirmed=' +
+        store.confirmedUserCount +
+        ' · pending=' +
+        store.pendingRegistrationCount +
+        ' · set DATABASE_URL on Railway Node service for PostgreSQL persistence',
     });
   } else if (storeProbe.status === 404) {
     lines.push({
-      cat: 'DB',
+      cat: 'OPS',
       text:
-        '70 · user accounts are not saved in the browser; they require the Node server and a persistent DATA_DIR volume on Railway.',
+        '83 · deploy fix: run node server.mjs on the public hostname (Dockerfile/railway.toml), reference ${{Postgres.DATABASE_URL}} on the backend service, redeploy, then reload this panel.',
     });
   }
+  lines.push({
+    cat: 'OPS',
+    text:
+      '84 · production hosts (reference): backend serviceoperato-backend-production.up.railway.app · frontend serviceoperato-frontend-production.up.railway.app · both should answer GET /api/version with HTTP 200',
+  });
+  lines.push({
+    cat: 'BE',
+    text:
+      '85 · this page origin serves /api/*: ' +
+      (verProbe.status === 200 && verProbe.json && verProbe.json.version
+        ? 'yes · version=' + verProbe.json.version
+        : verProbe.status === 404
+          ? 'no · static-only or wrong Railway start command'
+          : 'unknown · HTTP ' + verProbe.status),
+  });
+  lines.push({
+    cat: 'OPS',
+    text:
+      '86 · portal capabilities: selfRegister=' +
+      (cc.selfRegister != null ? String(cc.selfRegister) : 'n/a') +
+      ' · registrationConfirmEmail=' +
+      (cc.registrationConfirmEmail != null ? String(cc.registrationConfirmEmail) : 'n/a') +
+      ' · passwordResetEmail=' +
+      (cc.passwordResetEmail != null ? String(cc.passwordResetEmail) : 'n/a'),
+  });
 
     /* —— Portal password reset (login.html only) —— */
     var onPortalLogin = /\/login\.html$/i.test(path) || path === '/login' || path.endsWith('/login.html');
@@ -654,7 +858,7 @@
       '<span class="mono debug-panel__title" id="soDebugTitle">— DEBUG · … checks</span>' +
       '<button type="button" class="debug-panel__close mono" data-debug-close aria-label="Close panel"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg></button>' +
       '</div>' +
-      '<p class="debug-panel__sub mono">DB = local storage · FE = browser · BE = HTTP to this host. Rows 51–53: <code>img.brand-logo</code>. Rows 54–60: layout, viewport, safe-area, theme. Rows 61–63: <code>/api/version</code> and capabilities (Resend / login). Rows 64–68: secure context, focus, fonts, storage estimate, service worker. Rows 69–73: server user JSON store (<code>/api/debug/user-store</code>). On <code>login.html</code>, <strong>[PW]</strong> rows (password-reset diagnostics) appear too. Select the text below and copy (Ctrl+C), or use the button.</p>' +
+      '<p class="debug-panel__sub mono">DB = browser storage + server user store · FE = browser · BE = same-origin HTTP · OPS = deploy/Railway/Postgres · AUTH = portal JWT/session. Rows 51–60: layout/logo/theme. Rows 61–63: <code>/api/version</code> and capabilities. Rows 64–68: secure context, fonts, service worker. Rows 69–86: persistence (<code>/api/debug/user-store</code>), auth routes, register flow, production hosts. On <code>login.html</code>, <strong>[PW]</strong> rows too. Select the text below and copy (Ctrl+C), or use the button.</p>' +
       '<div class="debug-panel__status mono" id="soDebugStatus">Running…</div>' +
       '<pre class="debug-panel__out mono" id="soDebugOut" tabindex="0"></pre>' +
       '<div class="debug-panel__actions">' +

@@ -380,7 +380,23 @@ app.get('/api/debug/user-store', async (_req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   try {
     const storage = await userStore.getStorageSummary();
-    return res.json({ ok: true, service: 'serviceopera', version: appVersion, storage });
+    const databaseUrlConfigured = Boolean((process.env.DATABASE_URL || '').trim());
+    return res.json({
+      ok: true,
+      service: 'serviceopera',
+      version: appVersion,
+      storage,
+      deploy: {
+        databaseUrlConfigured,
+        dataDir,
+        portalSelfRegister: Boolean(PORTAL_SELF_REGISTER),
+        resendConfigured: Boolean(RESEND_API_KEY),
+        registrationConfirmEmail: Boolean(RESEND_API_KEY && PORTAL_SELF_REGISTER),
+        adminEmailConfigured: Boolean((process.env.ADMIN_EMAIL || '').trim()),
+        nodeVersion: process.version,
+        userStoreBackend: storage.backend || userStore.backend || (databaseUrlConfigured ? 'postgres' : 'json-files'),
+      },
+    });
   } catch (e) {
     return res.status(500).json({
       ok: false,

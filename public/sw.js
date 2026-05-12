@@ -45,6 +45,7 @@ function staleWhileRevalidate(request, cacheName, event) {
         event.waitUntil(
           network.then(function (fresh) {
             if (!fresh || !fresh.ok) return;
+            if (cacheName !== ASSET_CACHE) return;
             return self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (list) {
               list.forEach(function (client) {
                 client.postMessage({
