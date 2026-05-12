@@ -1,0 +1,335 @@
+{
+  "meta": {
+    "report_title": "AI Automation Audit Report — The Dental Design Center",
+    "prepared_by": "ServiceOpera.to",
+    "operator": "Jack — Service Operator · Thailand",
+    "audit_date": "2026-05",
+    "version": "1.0",
+    "report_type": "Public Data AI Readiness Audit",
+    "category": "Dental Clinic / International Patient Focus"
+  },
+  "business": {
+    "name": "The Dental Design Center (DDC)",
+    "short_name": "DDC Pattaya",
+    "address": "365/12–13 Soi 10, Pattaya Second Road, Banglamung, Chonburi 20150, Thailand",
+    "phone_numbers": ["(038) 111844", "(038) 111845", "094-960-4966"],
+    "email": "info@dentaldesignpattaya.com",
+    "website": "https://dentaldesignpattaya.com",
+    "google_maps": "https://g.page/dentaldesigncenter",
+    "facebook": "https://www.facebook.com/dentalclinicpattaya/",
+    "years_operating_estimate": "~15 years",
+    "lead_dentists": [
+      {
+        "name": "Dr. Ken Kasidis",
+        "specialty": "Implantologist & Prosthodontist",
+        "credentials": ["Chulalongkorn University", "University of Adelaide", "University of Toronto", "TADI Board Member", "AACD Member", "ICOI Diplomate & Fellow"],
+        "implants_placed_claimed": "10,000+"
+      },
+      {
+        "name": "Dr. Ning Porndee",
+        "specialty": "Orthodontist",
+        "credentials": ["Chulalongkorn University", "Mahidol University", "NYU Post-Graduate Orthodontics", "AAO Member"]
+      }
+    ],
+    "specialties": ["Dental Implants", "Invisalign", "Veneers", "Full Mouth Rehabilitation", "Cosmetic Dentistry", "Orthodontics"],
+    "technology": ["iTero Element 3D Scanner", "Cone Beam CT (CBCT)", "Class B Autoclave (EU Standard)", "7 LCD Chair Stations"],
+    "awards": ["Best Dentists in Thailand 2018 — Global Patients' Choice Awards (dentaldepartures.com)"],
+    "invisalign_status": "Sole Elite Platinum Provider in Pattaya City & Eastern Thailand",
+    "languages": ["English", "Thai", "Chinese (Mandarin — contact page only)"],
+    "target_market": ["International dental tourists", "Australian/European/American patients", "Local expats"],
+    "audit_potential_score": 9.2
+  },
+  "patient_journey": {
+    "stages": [
+      {
+        "stage": "Discovery",
+        "status": "Functional",
+        "gaps": ["No paid search visibility detected", "Organic-only dependency"]
+      },
+      {
+        "stage": "First Contact",
+        "status": "Friction",
+        "gaps": ["No live chat widget", "No WhatsApp button", "No LINE ID on homepage", "No chatbot for after-hours"]
+      },
+      {
+        "stage": "Consultation",
+        "status": "Manual",
+        "gaps": ["Unknown auto-reply speed", "No SLA published", "Time-zone gap risk for international patients"]
+      },
+      {
+        "stage": "Booking",
+        "status": "High Friction",
+        "gaps": ["No real-time calendar widget", "No instant confirmation", "Requires back-and-forth"]
+      },
+      {
+        "stage": "Pre-Visit",
+        "status": "Missing",
+        "gaps": ["No automated appointment reminders", "No new patient intake form page"]
+      },
+      {
+        "stage": "Post-Visit",
+        "status": "Partial",
+        "gaps": ["No automated review request workflow", "Low review volume vs. claimed patient volume"]
+      }
+    ]
+  },
+  "intake_booking_friction": {
+    "overall_friction_level": "HIGH",
+    "friction_points": [
+      {
+        "id": 1,
+        "issue": "No Real-Time Booking Widget",
+        "severity": "critical",
+        "impact": "International patients choose competitors with instant booking"
+      },
+      {
+        "id": 2,
+        "issue": "Free Consultation Form with Unknown Response Time",
+        "severity": "critical",
+        "impact": "Patients may wait 12–18 hours for a reply; competitor response time wins"
+      },
+      {
+        "id": 3,
+        "issue": "No WhatsApp or LINE Button on Homepage",
+        "severity": "critical",
+        "impact": "LINE is Thailand's dominant messaging platform; absence kills local conversion"
+      },
+      {
+        "id": 4,
+        "issue": "Pricing Page Lacks Interactive Cost Estimator",
+        "severity": "medium",
+        "impact": "High-value patients cannot self-qualify; staff time wasted on unqualified inquiries"
+      },
+      {
+        "id": 5,
+        "issue": "5-Step International Booking Process",
+        "severity": "high",
+        "impact": "Each step is a drop-off point with no automation bridge"
+      }
+    ]
+  },
+  "reputation_audit": {
+    "platforms": [
+      {
+        "platform": "WhatClinic",
+        "service_score": "8.1 / 10",
+        "vote_count": 97,
+        "verified_reviews": 5,
+        "url": "https://www.whatclinic.com/dentists/thailand/pattaya/the-dental-design-center"
+      },
+      {
+        "platform": "DentalDepartures",
+        "notes": "Award 2018; listed; current review volume not quantified from public data",
+        "url": "https://www.dentaldepartures.com/dentist/the-dental-design-center"
+      },
+      {
+        "platform": "TripAdvisor",
+        "risk_flag": true,
+        "notes": "One detailed negative review (2017) — multi-visit lab closure, advance payment dispute, rude staff complaint. No public clinic response found.",
+        "url": "https://www.tripadvisor.com/ShowTopic-g293915-i3686-k10818006-Pattaya_Dental_Design_Center_Review-Thailand.html"
+      },
+      {
+        "platform": "Bookimed",
+        "notes": "Listed in Pattaya dental category; limited review volume vs. Bangkok Hospital Pattaya"
+      },
+      {
+        "platform": "Google Maps",
+        "notes": "Active listing (g.page/dentaldesigncenter). Review volume estimated as below-market from public signal analysis.",
+        "url": "https://g.page/dentaldesigncenter"
+      }
+    ],
+    "overall_risk_level": "MEDIUM-HIGH",
+    "key_finding": "Review volume is disproportionately low relative to 15-year operating history and claimed 10,000+ implant placements. No automated review request system detected."
+  },
+  "review_pattern": {
+    "velocity": "LOW — estimated 1–3 new reviews/month",
+    "primary_issue": "No post-treatment review request automation",
+    "opportunity": "Systematic automation could drive 8–15 new Google reviews per month based on estimated patient volume",
+    "response_to_negatives": "No public evidence of clinic responding to TripAdvisor negative review"
+  },
+  "trust_signals": {
+    "strong": [
+      "2018 Global Patients Choice Award — Best Dentists Thailand",
+      "Dr. Kasidis: Chulalongkorn + Adelaide + Toronto + TADI + AACD + ICOI Fellow",
+      "Sole Elite Platinum Invisalign Provider Pattaya City & Eastern Thailand",
+      "iTero 3D, CBCT imaging, Class B autoclave",
+      "7 LCD-equipped dental chairs",
+      "Multilingual contact page (EN/TH/ZH)"
+    ],
+    "weak_or_missing": [
+      "No patient count displayed on website",
+      "Video testimonials buried in sub-page not homepage",
+      "No before/after gallery on homepage",
+      "No WhatsApp/LINE verification badges",
+      "No JCI/ISO accreditation badge",
+      "Facebook only 618 likes (last post estimated Oct 2024)",
+      "No live social media activity signal"
+    ]
+  },
+  "follow_up_gaps": [
+    "No automated post-visit review request sequence",
+    "No appointment reminder system (no SMS/WhatsApp/LINE detected)",
+    "No re-engagement for returning patients (no loyalty/recall system)",
+    "No follow-up for abandoned consultation form submissions",
+    "No post-treatment aftercare protocol communication automation"
+  ],
+  "multilingual_risks": [
+    {
+      "risk": "After-hours English inquiry → no staff online",
+      "severity": "HIGH",
+      "affected_market": "Australian, European, American tourists"
+    },
+    {
+      "risk": "Mandarin email inquiry → unclear response capacity",
+      "severity": "MEDIUM",
+      "affected_market": "Chinese dental tourists"
+    },
+    {
+      "risk": "LINE message from Thai local → no visible LINE ID",
+      "severity": "HIGH",
+      "affected_market": "Thai locals and expats"
+    },
+    {
+      "risk": "WhatsApp message → no WhatsApp button on site",
+      "severity": "HIGH",
+      "affected_market": "International dental tourists"
+    },
+    {
+      "risk": "Non-English review left unanswered",
+      "severity": "MEDIUM",
+      "affected_market": "European expats (German, Russian, French)"
+    }
+  ],
+  "automation_opportunities": [
+    {
+      "id": "AO-01",
+      "name": "AI Patient Receptionist (LINE + WhatsApp + Email)",
+      "impact": "Critical",
+      "effort": "Low",
+      "priority": "P1",
+      "description": "24/7 AI bot trained on DDC service menu, pricing, FAQs. Responds in EN/TH/ZH within 60 seconds."
+    },
+    {
+      "id": "AO-02",
+      "name": "Post-Treatment Review Request Sequence",
+      "impact": "Critical",
+      "effort": "Very Low",
+      "priority": "P1",
+      "description": "Day 1 thank you + care, Day 7 check-in + Google review ask, Day 30 satisfaction + referral"
+    },
+    {
+      "id": "AO-03",
+      "name": "Instant Booking Confirmation Auto-Reply",
+      "impact": "Critical",
+      "effort": "Low",
+      "priority": "P1",
+      "description": "Automated confirmation within 2 minutes of form submission with pricing PDF and next steps"
+    },
+    {
+      "id": "AO-04",
+      "name": "Automated Appointment Reminder Stack (3-touch)",
+      "impact": "High",
+      "effort": "Low",
+      "priority": "P2"
+    },
+    {
+      "id": "AO-05",
+      "name": "Abandoned Consultation Re-Engagement",
+      "impact": "High",
+      "effort": "Medium",
+      "priority": "P2"
+    },
+    {
+      "id": "AO-06",
+      "name": "Multilingual Chatbot (EN/TH/ZH)",
+      "impact": "Medium",
+      "effort": "Medium",
+      "priority": "P3"
+    },
+    {
+      "id": "AO-07",
+      "name": "Before/After Content Automation Pipeline",
+      "impact": "Medium",
+      "effort": "Medium",
+      "priority": "P3"
+    }
+  ],
+  "quick_wins_14_day": {
+    "week_1": [
+      "Deploy auto-reply email for consultation form (60-second response + pricing PDF)",
+      "Add WhatsApp click-to-chat to homepage and contact page",
+      "Activate LINE Official Account with greeting + FAQ menu",
+      "Build 3-message post-treatment review sequence",
+      "Launch automated appointment reminder (24hr + 2hr)"
+    ],
+    "week_2": [
+      "Deploy AI intake bot on LINE + WhatsApp",
+      "Create before/after content pipeline with consent system",
+      "Set up Google review monitoring + response library (EN/TH/ZH)",
+      "Establish conversion tracking baseline"
+    ],
+    "expected_outcomes": {
+      "auto_response_rate": "0% → 100%",
+      "whatsapp_line_capture": "Newly operational",
+      "review_accumulation": "Begins within 14 days",
+      "noshow_reduction_estimate": "20–35%"
+    }
+  },
+  "estimated_impact": {
+    "disclaimer": "All figures are directional estimates based on industry benchmarks. Actual figures unavailable from public data.",
+    "metrics": [
+      {
+        "metric": "Inquiry response time",
+        "current_estimate": "4–24 hours",
+        "post_automation": "< 2 minutes"
+      },
+      {
+        "metric": "Inquiry-to-booking conversion",
+        "current_estimate": "15–20%",
+        "post_automation": "30–40%"
+      },
+      {
+        "metric": "Google reviews per month",
+        "current_estimate": "1–3",
+        "post_automation": "8–15"
+      },
+      {
+        "metric": "No-show rate",
+        "current_estimate": "20–30%",
+        "post_automation": "10–15%"
+      }
+    ],
+    "conservative_revenue_uplift_thb_annual": "500,000 – 1,500,000"
+  },
+  "serviceopera_offer": {
+    "package_name": "DDC Growth Stack — AI Automation System",
+    "components": [
+      "AI Patient Receptionist (LINE + WhatsApp + Email, EN/TH/ZH)",
+      "Booking Confirmation + 3-Touch Reminder System",
+      "Post-Treatment Review Request Sequence",
+      "Abandoned Consultation Re-Engagement Drip",
+      "Google Review Monitoring + Response Templates",
+      "30-Day Onboarding & Setup",
+      "Monthly Performance Report"
+    ],
+    "investment": "Proposal-based",
+    "entry_pitch": "DDC has world-class dentists and technology. The service is there. The automation isn't. Right now, you're losing bookings every night to clinics with WhatsApp bots and instant replies. Let's fix that in 14 days."
+  },
+  "sources": [
+    { "id": 1, "name": "DDC Official Website", "url": "https://dentaldesignpattaya.com" },
+    { "id": 2, "name": "DDC Contact Page", "url": "https://dentaldesignpattaya.com/contact-us/" },
+    { "id": 3, "name": "DDC Fees & Offers", "url": "https://dentaldesignpattaya.com/fees-offers/" },
+    { "id": 4, "name": "DDC About Us", "url": "https://dentaldesignpattaya.com/about-us/" },
+    { "id": 5, "name": "DDC Meet the Dentist", "url": "https://dentaldesignpattaya.com/meet-the-dentist/" },
+    { "id": 6, "name": "DDC Testimonials", "url": "https://dentaldesignpattaya.com/testimonial/" },
+    { "id": 7, "name": "DDC Facebook Page", "url": "https://www.facebook.com/dentalclinicpattaya/" },
+    { "id": 8, "name": "WhatClinic", "url": "https://www.whatclinic.com/dentists/thailand/pattaya/the-dental-design-center" },
+    { "id": 9, "name": "DentalDepartures", "url": "https://www.dentaldepartures.com/dentist/the-dental-design-center" },
+    { "id": 10, "name": "TripAdvisor Review Thread", "url": "https://www.tripadvisor.com/ShowTopic-g293915-i3686-k10818006-Pattaya_Dental_Design_Center_Review-Thailand.html" },
+    { "id": 11, "name": "Bookimed", "url": "https://us-uk.bookimed.com/clinics/country=thailand/city=pattaya/direction=dentistry/" },
+    { "id": 12, "name": "ThaiMed.co", "url": "https://thaimed.co/dentists-in-pattaya/" },
+    { "id": 13, "name": "Pacific Prime Thailand", "url": "https://www.pacificprime.co.th/blog/top-10-dental-clinics-for-expats-in-pattaya/" },
+    { "id": 14, "name": "MyMediTravel", "url": "https://www.mymeditravel.com/medical-centers/thailand/pattaya/bang-lamung/the-dental-design-center" },
+    { "id": 15, "name": "DentalTravelServices", "url": "https://www.dentaltravelservices.com/dental-clinics/dentist/the-dental-design-center" }
+  ]
+}
