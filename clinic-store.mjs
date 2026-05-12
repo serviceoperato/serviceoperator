@@ -98,6 +98,11 @@ function withProfileDefaults(user) {
     lastLoginAt: user.lastLoginAt || null,
     lastLoginIp: user.lastLoginIp || null,
     country: user.country || null,
+    lastLoginCity: user.lastLoginCity || null,
+    lastLoginRegion: user.lastLoginRegion || null,
+    lastUserAgent: user.lastUserAgent || null,
+    loginCount: Number(user.loginCount) || 0,
+    lastSeenAt: user.lastSeenAt || null,
     createdAt,
     updatedAt: user.updatedAt || createdAt,
   };
@@ -116,6 +121,11 @@ function newUserProfileFields(email) {
     lastLoginAt: null,
     lastLoginIp: null,
     country: null,
+    lastLoginCity: null,
+    lastLoginRegion: null,
+    lastUserAgent: null,
+    loginCount: 0,
+    lastSeenAt: null,
     createdAt,
     updatedAt: createdAt,
   };
@@ -413,15 +423,32 @@ export function createUserStore(dataDir, adminEmail) {
       return { id: u.id, email: u.email, reportSlug: u.reportSlug };
     },
 
-    recordLogin(userId, { ip, country } = {}) {
+    recordLogin(userId, { ip, country, city, region, userAgent } = {}) {
       if (typeof userId !== 'string' || !userId) return null;
       const data = load();
       const u = data.users.find((x) => x.id === userId);
       if (!u) return null;
       const now = new Date().toISOString();
       u.lastLoginAt = now;
+      u.lastSeenAt = now;
       if (typeof ip === 'string' && ip.trim()) u.lastLoginIp = ip.trim();
       if (typeof country === 'string' && country.trim()) u.country = country.trim().toUpperCase();
+      if (typeof city === 'string' && city.trim()) u.lastLoginCity = city.trim();
+      if (typeof region === 'string' && region.trim()) u.lastLoginRegion = region.trim();
+      if (typeof userAgent === 'string' && userAgent.trim()) u.lastUserAgent = userAgent.trim();
+      u.loginCount = (Number(u.loginCount) || 0) + 1;
+      u.updatedAt = now;
+      save(data);
+      return withProfileDefaults(u);
+    },
+
+    touchLastSeen(userId) {
+      if (typeof userId !== 'string' || !userId) return null;
+      const data = load();
+      const u = data.users.find((x) => x.id === userId);
+      if (!u) return null;
+      const now = new Date().toISOString();
+      u.lastSeenAt = now;
       u.updatedAt = now;
       save(data);
       return withProfileDefaults(u);

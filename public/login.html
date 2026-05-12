@@ -177,7 +177,7 @@
     <div class="tf-portal">
       <p class="portal-caption portal-caption--accent tf-portal__eyebrow">— USER ACCESS</p>
       <h1 id="userGateTitle">Log in</h1>
-      <p class="admin-gate__lede" id="loginLede">Sign in with password or a one-time email code (same pattern as ThaiFans).</p>
+      <p class="admin-gate__lede" id="loginLede">Sign in with password or a one-time email code.</p>
       <div id="bannerSession" class="tf-banner tf-banner--hint is-hidden" role="status"></div>
       <div id="bannerRegistered" class="tf-banner tf-banner--ok is-hidden" role="status"></div>
       <div id="bannerPasswordUpdated" class="tf-banner tf-banner--ok is-hidden" role="status"></div>
@@ -857,7 +857,7 @@
             'You were sent here for report “' + slugHint + '”. After sign-in you will be taken to that page.';
         } else if (lede) {
           lede.textContent =
-            'Sign in with password or a one-time email code (same pattern as ThaiFans).';
+            'Sign in with password or a one-time email code.';
         }
       });
     });
@@ -915,6 +915,7 @@
         }
         try {
           sessionStorage.setItem('so_user_jwt', lj.token);
+          if (lj.sessionId) sessionStorage.setItem('so_user_session_id', lj.sessionId);
         } catch (err) {}
         setHint('Redirecting…', 'ok');
         setLoginErr('');

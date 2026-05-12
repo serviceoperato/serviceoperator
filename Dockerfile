@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
-COPY server.mjs clinic-store.mjs postgres-user-store.mjs ./
+COPY server.mjs clinic-store.mjs postgres-user-store.mjs user-telemetry.mjs ./
 COPY lib ./lib/
 COPY public ./public/
 

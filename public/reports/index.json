@@ -1,0 +1,14 @@
+{
+  "clinics": [
+    {
+      "title": "Sea clinic audit (sample)",
+      "href": "/clinics/sea-clinic-audit/"
+    },
+    {
+      "title": "Clinic methodology demo",
+      "href": "/clinics/demo.html"
+    }
+  ],
+  "hotels": [],
+  "properties": []
+}

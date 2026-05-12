@@ -1,5 +1,5 @@
 /**
- * ThaiFans-style left site menu (hamburger + slide-in drawer) for ServiceOpera.to.
+ * Left site menu (hamburger + slide-in drawer) for ServiceOpera.to.
  */
 (function () {
   'use strict';
@@ -17,30 +17,33 @@
           title: 'Hotels & serviced apartments',
           description:
             'Concierge, reviews and rate intelligence for teams running keys across Thailand without a full revenue desk.',
-          href: '/',
+          href: '/hotels.html',
         },
         {
           title: 'Clinics, dental & wellness',
           description:
             'Intake, follow-up and review workflows for clinics serving mixed local and international demand.',
-          href: '/clinics/demo.html',
+          href: '/clinics.html',
         },
         {
           title: 'Property & rental operators',
           description:
             'Lead capture, owner updates and tenant comms so you grow doors without linear back-office growth.',
-          href: '/client.html',
+          href: '/property.html',
         },
       ],
     },
     {
       id: 'discovery',
-      title: 'Discovery',
+      title: 'Site',
       links: [
         { href: '/', label: 'Home' },
-        { href: '/clinics/demo.html', label: 'Clinics sample' },
-        { href: '/clinics/sea-clinic-audit/', label: 'Sea clinic audit' },
-        { href: '/client.html', label: 'Client workspace demo' },
+        { href: '/about.html', label: 'About' },
+        { href: '/reports.html', label: 'Reports' },
+        { href: '/hotels.html', label: 'Hotels' },
+        { href: '/clinics.html', label: 'Clinics' },
+        { href: '/property.html', label: 'Property' },
+        { href: '/engagement.html', label: 'Engagement' },
       ],
     },
     {

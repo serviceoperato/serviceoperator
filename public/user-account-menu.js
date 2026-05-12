@@ -335,6 +335,15 @@
 
   window.__SO_USER_ACCOUNT_MENU__ = true;
 
+  (function loadUserActivity() {
+    if (document.querySelector('script[data-so-user-activity]')) return;
+    var script = document.createElement('script');
+    script.src = '/user-activity.js';
+    script.defer = true;
+    script.setAttribute('data-so-user-activity', '1');
+    document.head.appendChild(script);
+  })();
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', mountAll);
   } else {

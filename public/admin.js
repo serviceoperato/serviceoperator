@@ -37,6 +37,8 @@
   var usersFilter = 'all';
   var usersSort = 'recent';
   var usersSearch = '';
+  var reportCatalog = null;
+  var reportCatalogVertical = 'clinics';
 
   function loadTfVersion() {
     if (!tfVerNum) return;
@@ -142,16 +144,124 @@
     return spend + ' / ' + earned;
   }
 
+  function formatDurationMs(ms) {
+    if (ms == null || !Number.isFinite(Number(ms))) return '—';
+    var minutes = Math.max(1, Math.round(Number(ms) / 60000));
+    return minutes + ' min';
+  }
+
+  function formatLocation(user) {
+    var parts = [];
+    if (user && user.lastLoginCity) parts.push(String(user.lastLoginCity));
+    if (user && user.country) parts.push(String(user.country));
+    if (user && user.lastLoginRegion && parts.indexOf(String(user.lastLoginRegion)) === -1) {
+      parts.push(String(user.lastLoginRegion));
+    }
+    return parts.length ? parts.join(', ') : '—';
+  }
+
+  function renderUserTelemetryHtml(telemetry) {
+    var sessions = (telemetry && telemetry.sessions) || [];
+    var events = (telemetry && telemetry.events) || [];
+    var sessionHtml = sessions.length
+      ? '<ul class="tf-admin-telemetry__list">' +
+        sessions
+          .map(function (s) {
+            return (
+              '<li><strong>' +
+              escapeHtml(formatAdminTs(s.startedAt) || '—') +
+              '</strong> · ' +
+              escapeHtml(formatDurationMs(s.durationMs)) +
+              ' · IP ' +
+              escapeHtml(s.ip || '—') +
+              ' · ' +
+              escapeHtml([s.city, s.region, s.country].filter(Boolean).join(', ') || '—') +
+              (s.userAgent ? '<br /><span class="tf-admin-muted">' + escapeHtml(s.userAgent) + '</span>' : '') +
+              '</li>'
+            );
+          })
+          .join('') +
+        '</ul>'
+      : '<p class="tf-admin-muted">No login sessions recorded yet.</p>';
+    var eventHtml = events.length
+      ? '<ul class="tf-admin-telemetry__list">' +
+        events
+          .map(function (e) {
+            return (
+              '<li><strong>' +
+              escapeHtml(e.type || 'event') +
+              '</strong> · ' +
+              escapeHtml(formatAdminTs(e.createdAt) || '—') +
+              ' · ' +
+              escapeHtml(e.pagePath || '—') +
+              (e.durationMs != null ? ' · ' + escapeHtml(formatDurationMs(e.durationMs)) : '') +
+              '</li>'
+            );
+          })
+          .join('') +
+        '</ul>'
+      : '<p class="tf-admin-muted">No page activity recorded yet.</p>';
+    return (
+      '<section class="tf-admin-telemetry">' +
+      '<h3 class="admin-panel__title mono">Login sessions</h3>' +
+      sessionHtml +
+      '<h3 class="admin-panel__title mono" style="margin-top:1.5rem">Page activity</h3>' +
+      eventHtml +
+      '</section>'
+    );
+  }
+
+  function loadUserTelemetrySection(user) {
+    var mount = document.getElementById('adminUserTelemetry');
+    if (!mount || !user || !user.id) return;
+    mount.innerHTML = '<p class="tf-admin-muted mono">Loading activity…</p>';
+    fetch('/api/user-accounts/' + encodeURIComponent(user.id) + '/telemetry', {
+      method: 'GET',
+      credentials: 'same-origin',
+      headers: { Authorization: 'Bearer ' + getAdminBearer() },
+    })
+      .then(function (r) {
+        return r.json().then(function (j) {
+          return { ok: r.ok, j: j };
+        });
+      })
+      .then(function (x) {
+        if (!x.ok) {
+          mount.innerHTML =
+            '<p class="tf-admin-muted mono">Activity is unavailable until the Node API is running on this host.</p>';
+          return;
+        }
+        mount.innerHTML = renderUserTelemetryHtml(x.j);
+      })
+      .catch(function () {
+        mount.innerHTML = '<p class="tf-admin-muted mono">Could not load activity.</p>';
+      });
+  }
+
   function openUserEditProfile(user) {
     if (!panel || !panelTitle || !panelBody) return;
+    if (!user || !user.id) return;
     if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.add('is-hidden');
     panelTitle.textContent = 'Edit profile';
+    var adminToken = getAdminBearer();
     panelBody.innerHTML =
+      (adminToken
+        ? ''
+        : '<p class="admin-panel__body mono is-error">Sign in with admin email OTP on the Node host to save profile changes.</p>') +
       '<p class="admin-panel__body mono">Portal user <strong>' +
       escapeHtml(user.email) +
       '</strong> · report slug <code>' +
       escapeHtml(user.reportSlug) +
-      '</code>.</p>' +
+      '</code> · logins <strong>' +
+      escapeHtml(String(Number(user.loginCount) || 0)) +
+      '</strong> · last seen <strong>' +
+      escapeHtml(formatAdminTs(user.lastSeenAt) || '—') +
+      '</strong>.</p>' +
+      '<p class="admin-panel__body mono">Last login IP <code>' +
+      escapeHtml(user.lastLoginIp || '—') +
+      '</code> · location <strong>' +
+      escapeHtml(formatLocation(user)) +
+      '</strong>.</p>' +
       '<form id="adminUserProfileForm" class="portal-form" style="max-width: 32rem; margin-top: 1rem;">' +
       '<label><span class="mono">DISPLAY NAME</span><input type="text" name="displayName" required value="' +
       escapeHtml(userDisplayName(user)) +
@@ -162,6 +272,15 @@
       '<label><span class="mono">COUNTRY</span><input type="text" name="country" maxlength="2" placeholder="e.g. US" value="' +
       escapeHtml(user.country || '') +
       '" /></label>' +
+      '<label><span class="mono">LAST LOGIN CITY</span><input type="text" value="' +
+      escapeHtml(user.lastLoginCity || '—') +
+      '" readonly /></label>' +
+      '<label><span class="mono">LAST LOGIN REGION</span><input type="text" value="' +
+      escapeHtml(user.lastLoginRegion || '—') +
+      '" readonly /></label>' +
+      '<label><span class="mono">LAST USER AGENT</span><input type="text" value="' +
+      escapeHtml(user.lastUserAgent || '—') +
+      '" readonly /></label>' +
       '<label><span class="mono">ACTIVE</span><select name="active"><option value="true"' +
       (user.active !== false ? ' selected' : '') +
       '>Yes</option><option value="false"' +
@@ -185,7 +304,8 @@
       '" /></label>' +
       '<button type="submit" class="btn btn--primary">Save profile</button>' +
       '<p class="portal-form__hint mono" id="adminUserProfileHint"></p></form>' +
-      '<p class="admin-panel__stub"><button type="button" class="btn btn--ghost mono" id="stubBackToUsers">← Back to users</button></p>';
+      '<div id="adminUserTelemetry" class="tf-admin-telemetry-wrap mono"></div>' +
+      '<p class="admin-panel__actions"><button type="button" class="btn btn--ghost mono" id="stubBackToUsers">← Back to users</button></p>';
     var back = document.getElementById('stubBackToUsers');
     if (back) {
       back.addEventListener('click', function () {
@@ -195,6 +315,11 @@
     }
     var profileForm = document.getElementById('adminUserProfileForm');
     var profileHint = document.getElementById('adminUserProfileHint');
+    if (profileForm && !adminToken) {
+      profileForm.querySelectorAll('input, select, button').forEach(function (el) {
+        el.disabled = true;
+      });
+    }
     if (profileForm) {
       profileForm.addEventListener('submit', function (e) {
         e.preventDefault();
@@ -249,6 +374,7 @@
           });
       });
     }
+    loadUserTelemetrySection(user);
     panel.classList.remove('is-hidden');
     panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
@@ -275,7 +401,7 @@
     if (paging) paging.textContent = users.length + ' users · page 1 / 1';
     if (!users.length) {
       tb.innerHTML =
-        '<tr><td colspan="13" style="opacity:0.85">No users yet. Use <strong>User reports</strong> in the nav to add one.</td></tr>';
+        '<tr><td colspan="15" style="opacity:0.85">No users yet. Use <strong>User reports</strong> in the nav to add one.</td></tr>';
     } else {
       tb.innerHTML = users
         .map(function (u) {
@@ -315,7 +441,10 @@
             escapeHtml(u.lastLoginIp || '—') +
             '</td>' +
             '<td>' +
-            escapeHtml(u.country || '—') +
+            escapeHtml(formatLocation(u)) +
+            '</td>' +
+            '<td>' +
+            escapeHtml(String(Number(u.loginCount) || 0)) +
             '</td>' +
             '<td>' +
             escapeHtml(formatAdminTs(u.createdAt)) +
@@ -371,15 +500,113 @@
       .replace(/"/g, '&quot;');
   }
 
+  function openDeployLogPanel() {
+    if (!panel || !panelTitle || !panelBody) return;
+    if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.add('is-hidden');
+    panelTitle.textContent = 'Deploy log';
+    panelBody.innerHTML =
+      '<p class="admin-panel__body mono" id="deployLogStatus">Loading deployment status…</p>' +
+      '<pre class="mono tf-admin-deploy-log" id="deployLogOut"></pre>' +
+      '<p class="admin-panel__actions"><button type="button" class="btn btn--ghost mono" id="deployLogBack">← Back to users</button></p>';
+    var back = document.getElementById('deployLogBack');
+    if (back) {
+      back.addEventListener('click', function () {
+        panel.classList.add('is-hidden');
+        if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.remove('is-hidden');
+        var usersSection = document.getElementById('usersSection');
+        if (usersSection) usersSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+    panel.classList.remove('is-hidden');
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    var statusEl = document.getElementById('deployLogStatus');
+    var outEl = document.getElementById('deployLogOut');
+    var lines = [];
+    lines.push('Page origin: ' + window.location.origin);
+    lines.push('Loaded at: ' + new Date().toISOString());
+
+    function finish() {
+      if (outEl) outEl.textContent = lines.join('\n');
+      if (statusEl) statusEl.textContent = 'Deployment status for this admin session.';
+    }
+
+    Promise.all([
+      fetch('/api/version', { cache: 'no-store' }).then(function (r) {
+        return r.json().then(function (j) {
+          return { ok: r.ok, status: r.status, json: j };
+        });
+      }),
+      fetch('/api/debug/user-store', { cache: 'no-store' }).then(function (r) {
+        return r.json().then(function (j) {
+          return { ok: r.ok, status: r.status, json: j };
+        });
+      }),
+      fetch('/api/admin/work-queue', {
+        cache: 'no-store',
+        headers: { Authorization: 'Bearer ' + getAdminBearer() },
+      }).then(function (r) {
+        return r.json().then(function (j) {
+          return { ok: r.ok, status: r.status, json: j };
+        });
+      }),
+    ])
+      .then(function (results) {
+        var version = results[0];
+        var store = results[1];
+        var queue = results[2];
+        lines.push('GET /api/version: HTTP ' + version.status + (version.json && version.json.version ? ' · version=' + version.json.version : ''));
+        lines.push('GET /api/debug/user-store: HTTP ' + store.status);
+        if (store.json && store.json.storage) {
+          lines.push('User store backend: ' + (store.json.storage.backend || 'n/a'));
+          lines.push(
+            'Users: confirmed=' +
+              (store.json.storage.confirmedUserCount != null ? store.json.storage.confirmedUserCount : 'n/a') +
+              ' · pending=' +
+              (store.json.storage.pendingRegistrationCount != null ? store.json.storage.pendingRegistrationCount : 'n/a')
+          );
+          if (store.json.storage.tables && store.json.storage.tables.length) {
+            lines.push('Postgres tables: ' + store.json.storage.tables.join(', '));
+          }
+        }
+        if (store.json && store.json.deploy) {
+          lines.push('DATABASE_URL on server: ' + (store.json.deploy.databaseUrlConfigured ? 'configured' : 'not set'));
+          lines.push('Node runtime: ' + (store.json.deploy.nodeVersion || 'n/a'));
+          lines.push('DATA_DIR: ' + (store.json.deploy.dataDir || 'n/a'));
+          lines.push('Self-register: ' + String(!!store.json.deploy.portalSelfRegister));
+          lines.push('Resend configured: ' + String(!!store.json.deploy.resendConfigured));
+        }
+        lines.push('GET /api/admin/work-queue: HTTP ' + queue.status);
+        if (queue.json && queue.json.generatedAt) {
+          lines.push('Work queue generated at: ' + queue.json.generatedAt);
+        }
+        if (queue.json && Array.isArray(queue.json.managedPages)) {
+          lines.push('Managed pages on this host:');
+          queue.json.managedPages.forEach(function (page) {
+            lines.push(
+              '  · ' +
+                (page.path || page.relPath || 'page') +
+                (page.mtimeMs != null ? ' · mtime=' + formatAdminTs(new Date(page.mtimeMs).toISOString()) : '')
+            );
+          });
+        } else if (queue.status === 401) {
+          lines.push('Admin work queue requires an admin OTP session on this host.');
+        }
+        finish();
+      })
+      .catch(function () {
+        lines.push('Could not load deployment status from this host.');
+        finish();
+      });
+  }
+
   function openStubPanel(title, stubId) {
     if (!panel || !panelTitle || !panelBody) return;
     if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.add('is-hidden');
     panelTitle.textContent = title;
     panelBody.innerHTML =
-      '<p class="admin-panel__stub">ThaiFans-style admin section. <strong>' +
-      escapeHtml(stubId) +
-      '</strong> is not wired on ServiceOpera — hook your stack when you add Postgres, media, or chat.</p>' +
-      '<p class="admin-panel__stub"><button type="button" class="btn btn--ghost mono" id="stubBackToUsers">← Back to users</button></p>';
+      '<p class="admin-panel__stub">This admin section is not available on ServiceOpera yet.</p>' +
+      '<p class="admin-panel__actions"><button type="button" class="btn btn--ghost mono" id="stubBackToUsers">← Back to users</button></p>';
     var back = document.getElementById('stubBackToUsers');
     if (back) {
       back.addEventListener('click', function () {
@@ -407,42 +634,6 @@
     tfNav.innerHTML = '';
     var row1 = document.createElement('div');
     row1.className = 'tf-admin-nav__row';
-    row1.appendChild(
-      makeNavPill('Monitor ▾', function () {
-        var menu = tfNav.querySelector('.tf-admin-nav__monitor-menu');
-        if (menu) menu.classList.toggle('is-hidden');
-      })
-    );
-    var monitorMenu = document.createElement('div');
-    monitorMenu.className = 'tf-admin-nav__monitor-menu is-hidden';
-    [
-      ['Users & payouts', 'users'],
-      ['User profiling', 'profiling'],
-      ['DB console', 'db'],
-      ['Activity log', 'activity'],
-      ['Deploy log', 'deploy'],
-      ['Site appearance', 'branding'],
-      ['Dashboard', 'dashboard'],
-      ['Media moderation', 'media'],
-      ['Photo approvals', 'photos'],
-      ['Photos chat', 'chatimg'],
-      ['Photo stories', 'stories'],
-      ['Messages', 'messages'],
-      ['Chat', 'chat'],
-    ].forEach(function (pair) {
-      monitorMenu.appendChild(
-        makeNavPill(pair[0], function () {
-          monitorMenu.classList.add('is-hidden');
-          if (pair[1] === 'users') {
-            if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.remove('is-hidden');
-            if (panel) panel.classList.add('is-hidden');
-            var el = document.getElementById('usersSection');
-            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          } else openStubPanel(pair[0], pair[1]);
-        })
-      );
-    });
-    row1.appendChild(monitorMenu);
     [
       ['Users & payouts', 'users'],
       ['User profiling', 'profiling'],
@@ -453,11 +644,18 @@
     ].forEach(function (pair) {
       row1.appendChild(
         makeNavPill(pair[0], function () {
-          if (pair[1] === 'users') {
+          if (pair[1] === 'users' || pair[1] === 'profiling') {
             if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.remove('is-hidden');
             if (panel) panel.classList.add('is-hidden');
             var el = document.getElementById('usersSection');
             if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          } else if (pair[1] === 'deploy') {
+            openDeployLogPanel();
+          } else if (pair[1] === 'activity') {
+            if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.remove('is-hidden');
+            if (panel) panel.classList.add('is-hidden');
+            var inbox = document.getElementById('adminInbox');
+            if (inbox) inbox.scrollIntoView({ behavior: 'smooth', block: 'start' });
           } else openStubPanel(pair[0], pair[1]);
         })
       );
@@ -497,11 +695,93 @@
     tfNav.appendChild(mediaWrap);
   }
 
+  function renderAdminReports() {
+    var listEl = document.getElementById('adminReportsList');
+    var hintEl = document.getElementById('adminReportsHint');
+    if (!listEl) return;
+    var items = (reportCatalog && reportCatalog[reportCatalogVertical]) || [];
+    if (!items.length) {
+      listEl.innerHTML =
+        '<p class="tf-admin-muted">No ' +
+        escapeHtml(reportCatalogVertical) +
+        ' reports listed yet. Add links in <code>public/reports/index.json</code> or slug JSON under <code>public/clinics/data/</code>.</p>';
+    } else {
+      listEl.innerHTML =
+        '<ul class="tf-admin-reports__links">' +
+        items
+          .map(function (item) {
+            var href = item.href || '#';
+            var title = item.title || href;
+            var slug = item.slug ? ' <span class="tf-admin-reports__slug">(' + escapeHtml(item.slug) + ')</span>' : '';
+            return (
+              '<li><a href="' +
+              escapeHtml(href) +
+              '">' +
+              escapeHtml(title) +
+              '</a>' +
+              slug +
+              '</li>'
+            );
+          })
+          .join('') +
+        '</ul>';
+    }
+    if (hintEl) {
+      hintEl.textContent =
+        items.length +
+        ' ' +
+        reportCatalogVertical +
+        ' report link' +
+        (items.length === 1 ? '' : 's') +
+        ' · source: public/reports/index.json and clinics/data slug files';
+    }
+    document.querySelectorAll('[data-report-vertical]').forEach(function (btn) {
+      var active = btn.getAttribute('data-report-vertical') === reportCatalogVertical;
+      btn.classList.toggle('is-active', active);
+      btn.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+  }
+
+  function loadReportCatalog() {
+    var token = getAdminBearer();
+    var request = token
+      ? fetch('/api/admin/report-catalog', {
+          method: 'GET',
+          credentials: 'same-origin',
+          headers: { Authorization: 'Bearer ' + token },
+        })
+      : fetch('/reports/index.json', { cache: 'no-store' });
+    return request
+      .then(function (r) {
+        return r.json().then(function (j) {
+          return { ok: r.ok, j: j };
+        });
+      })
+      .then(function (x) {
+        if (!x.ok || !x.j) {
+          reportCatalog = { clinics: [], hotels: [], properties: [] };
+          renderAdminReports();
+          return;
+        }
+        reportCatalog = {
+          clinics: x.j.clinics || [],
+          hotels: x.j.hotels || [],
+          properties: x.j.properties || [],
+        };
+        renderAdminReports();
+      })
+      .catch(function () {
+        reportCatalog = { clinics: [], hotels: [], properties: [] };
+        renderAdminReports();
+      });
+  }
+
   function showWorkspace() {
     if (gate) gate.classList.add('is-hidden');
     if (workspace) workspace.classList.remove('is-hidden');
     loadTfVersion();
     buildTfNav();
+    loadReportCatalog();
     loadWorkQueue();
   }
 
@@ -1137,8 +1417,18 @@
   if (inboxRefresh) {
     inboxRefresh.addEventListener('click', function () {
       loadWorkQueue();
+      loadReportCatalog();
     });
   }
+
+  document.querySelectorAll('[data-report-vertical]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var key = btn.getAttribute('data-report-vertical');
+      if (!key) return;
+      reportCatalogVertical = key;
+      renderAdminReports();
+    });
+  });
 
   var usersSearchEl = document.getElementById('adminUsersSearch');
   if (usersSearchEl) {

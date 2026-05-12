@@ -81,6 +81,17 @@
 
   <main class="admin-main admin-main--wide">
     <div id="adminMainDefault">
+      <section class="tf-admin-reports" id="adminReportsSection" aria-labelledby="adminReportsTitle">
+        <h2 class="tf-admin-section-title mono" id="adminReportsTitle">Client reports</h2>
+        <div class="tf-admin-reports__tabs mono" role="tablist" aria-label="Report verticals">
+          <button type="button" class="tf-admin-reports__tab is-active" data-report-vertical="clinics" role="tab" aria-selected="true">Clinics</button>
+          <button type="button" class="tf-admin-reports__tab" data-report-vertical="hotels" role="tab" aria-selected="false">Hotels</button>
+          <button type="button" class="tf-admin-reports__tab" data-report-vertical="properties" role="tab" aria-selected="false">Properties</button>
+        </div>
+        <div id="adminReportsList" class="tf-admin-reports__list mono" role="tabpanel"></div>
+        <p class="mono tf-admin-muted tf-admin-reports__hint" id="adminReportsHint">Links load from <code>public/reports/index.json</code> and slug JSON files under <code>public/clinics/data/</code>.</p>
+      </section>
+
       <h1 class="admin-main__title" id="usersTableTitle">Admin users</h1>
 
       <section class="tf-admin-table-card" id="usersSection" aria-labelledby="usersTableTitle">
@@ -112,7 +123,8 @@
                 <th>Spend / Earned</th>
                 <th>Last login</th>
                 <th>IP</th>
-                <th>Country</th>
+                <th>Location</th>
+                <th>Logins</th>
                 <th>Created</th>
                 <th>Actions</th>
               </tr>

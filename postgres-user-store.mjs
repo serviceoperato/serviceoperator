@@ -34,6 +34,11 @@ const PROFILE_COLUMN_MIGRATIONS = [
   'ALTER TABLE portal_users ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMPTZ',
   'ALTER TABLE portal_users ADD COLUMN IF NOT EXISTS last_login_ip TEXT',
   'ALTER TABLE portal_users ADD COLUMN IF NOT EXISTS country TEXT',
+  'ALTER TABLE portal_users ADD COLUMN IF NOT EXISTS last_login_city TEXT',
+  'ALTER TABLE portal_users ADD COLUMN IF NOT EXISTS last_login_region TEXT',
+  'ALTER TABLE portal_users ADD COLUMN IF NOT EXISTS last_user_agent TEXT',
+  'ALTER TABLE portal_users ADD COLUMN IF NOT EXISTS login_count BIGINT NOT NULL DEFAULT 0',
+  'ALTER TABLE portal_users ADD COLUMN IF NOT EXISTS last_seen_at TIMESTAMPTZ',
   'ALTER TABLE portal_users ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()',
 ];
 
@@ -65,6 +70,11 @@ function mapPortalUserRow(row) {
     lastLoginAt: isoTimestamp(row.last_login_at),
     lastLoginIp: row.last_login_ip || null,
     country: row.country || null,
+    lastLoginCity: row.last_login_city || null,
+    lastLoginRegion: row.last_login_region || null,
+    lastUserAgent: row.last_user_agent || null,
+    loginCount: Number(row.login_count) || 0,
+    lastSeenAt: isoTimestamp(row.last_seen_at),
     createdAt: isoTimestamp(row.created_at),
     updatedAt: isoTimestamp(row.updated_at) || isoTimestamp(row.created_at),
   };
@@ -85,6 +95,11 @@ SELECT
   last_login_at,
   last_login_ip,
   country,
+  last_login_city,
+  last_login_region,
+  last_user_agent,
+  login_count,
+  last_seen_at,
   created_at,
   updated_at
 FROM portal_users
@@ -388,15 +403,23 @@ export function createPostgresUserStore(pool) {
       return { id: row.id, email: row.email, reportSlug: row.report_slug };
     },
 
-    async recordLogin(userId, { ip, country } = {}) {
+    async recordLogin(userId, { ip, country, city, region, userAgent } = {}) {
       if (typeof userId !== 'string' || !userId) return null;
       const loginIp = typeof ip === 'string' && ip.trim() ? ip.trim() : null;
       const loginCountry = typeof country === 'string' && country.trim() ? country.trim().toUpperCase() : null;
+      const loginCity = typeof city === 'string' && city.trim() ? city.trim() : null;
+      const loginRegion = typeof region === 'string' && region.trim() ? region.trim() : null;
+      const loginUserAgent = typeof userAgent === 'string' && userAgent.trim() ? userAgent.trim() : null;
       const result = await pool.query(
         `UPDATE portal_users
          SET last_login_at = NOW(),
+             last_seen_at = NOW(),
              last_login_ip = COALESCE($2, last_login_ip),
              country = COALESCE($3, country),
+             last_login_city = COALESCE($4, last_login_city),
+             last_login_region = COALESCE($5, last_login_region),
+             last_user_agent = COALESCE($6, last_user_agent),
+             login_count = COALESCE(login_count, 0) + 1,
              updated_at = NOW()
          WHERE id = $1
          RETURNING
@@ -413,9 +436,46 @@ export function createPostgresUserStore(pool) {
            last_login_at,
            last_login_ip,
            country,
+           last_login_city,
+           last_login_region,
+           last_user_agent,
+           login_count,
+           last_seen_at,
            created_at,
            updated_at`,
-        [userId, loginIp, loginCountry]
+        [userId, loginIp, loginCountry, loginCity, loginRegion, loginUserAgent]
+      );
+      return mapPortalUserRow(result.rows[0]);
+    },
+
+    async touchLastSeen(userId) {
+      if (typeof userId !== 'string' || !userId) return null;
+      const result = await pool.query(
+        `UPDATE portal_users
+         SET last_seen_at = NOW(), updated_at = NOW()
+         WHERE id = $1
+         RETURNING
+           id,
+           email,
+           report_slug,
+           display_name,
+           gender,
+           is_active,
+           is_admin,
+           is_plus,
+           spend_cents,
+           earned_cents,
+           last_login_at,
+           last_login_ip,
+           country,
+           last_login_city,
+           last_login_region,
+           last_user_agent,
+           login_count,
+           last_seen_at,
+           created_at,
+           updated_at`,
+        [userId]
       );
       return mapPortalUserRow(result.rows[0]);
     },

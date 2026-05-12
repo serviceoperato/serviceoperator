@@ -92,7 +92,7 @@
     for (var i = 0; i < keys.length; i++) {
       var raw = '';
       try {
-        raw = localStorage.getItem(keys[i].key) || '';
+        raw = sessionStorage.getItem(keys[i].key) || localStorage.getItem(keys[i].key) || '';
       } catch (e) {
         raw = '';
       }
@@ -103,7 +103,13 @@
 
   function readPortalJwt() {
     try {
-      return localStorage.getItem('so_user_jwt') || localStorage.getItem('so_clinic_jwt') || '';
+      return (
+        sessionStorage.getItem('so_user_jwt') ||
+        sessionStorage.getItem('so_clinic_jwt') ||
+        localStorage.getItem('so_user_jwt') ||
+        localStorage.getItem('so_clinic_jwt') ||
+        ''
+      );
     } catch (e) {
       return '';
     }
@@ -133,6 +139,57 @@
     }
   }
 
+  var EXPECTED_POSTGRES_TABLES = ['portal_users', 'portal_pending_registrations'];
+  var EXPECTED_POSTGRES_PROFILE_COLUMNS = [
+    'display_name',
+    'gender',
+    'is_active',
+    'is_admin',
+    'is_plus',
+    'spend_cents',
+    'earned_cents',
+    'last_login_at',
+    'last_login_ip',
+    'country',
+    'updated_at',
+  ];
+  var REFERENCE_NODE_ORIGINS = ['https://serviceoperato-backend-production.up.railway.app'];
+
+  async function timedJsonAbsolute(url) {
+    var t0 = performance.now();
+    try {
+      var r = await fetch(url, { method: 'GET', cache: 'no-store', mode: 'cors' });
+      var ms = Math.round(performance.now() - t0);
+      var j = null;
+      try {
+        j = await r.json();
+      } catch (e2) {
+        j = null;
+      }
+      return { ok: r.ok, status: r.status, ms: ms, json: j };
+    } catch (e) {
+      return {
+        ok: false,
+        status: 0,
+        ms: Math.round(performance.now() - t0),
+        json: null,
+        err: e && e.message ? e.message : String(e),
+      };
+    }
+  }
+
+  async function probeReferenceUserStore(pageOrigin) {
+    var out = [];
+    for (var i = 0; i < REFERENCE_NODE_ORIGINS.length; i++) {
+      var refOrigin = String(REFERENCE_NODE_ORIGINS[i] || '').replace(/\/$/, '');
+      if (!refOrigin || refOrigin === pageOrigin) continue;
+      var probe = await timedJsonAbsolute(refOrigin + '/api/debug/user-store');
+      out.push({ origin: refOrigin, probe: probe });
+      if (probe.json && probe.json.storage) return out;
+    }
+    return out;
+  }
+
   function envSafeArea() {
     var probe = document.createElement('div');
     probe.style.cssText =
@@ -158,23 +215,28 @@
     var origin = window.location.origin;
     var path = window.location.pathname;
 
-    /* —— DB (local persistence) —— */
-    lines.push({ cat: 'DB', text: '01 · localStorage roundtrip: ' + dbRoundtrip() });
+    /* —— Browser storage (not server PostgreSQL) —— */
+    lines.push({ cat: 'STORE', text: '01 · localStorage roundtrip: ' + dbRoundtrip() });
     var lsKeys = storageKeys(localStorage);
-    lines.push({ cat: 'DB', text: '02 · localStorage key count: ' + lsKeys.length });
-    lines.push({ cat: 'DB', text: '03 · localStorage keys: ' + (lsKeys.join(', ') || '(empty)') });
+    lines.push({ cat: 'STORE', text: '02 · localStorage key count: ' + lsKeys.length });
+    lines.push({ cat: 'STORE', text: '03 · localStorage keys: ' + (lsKeys.join(', ') || '(empty)') });
     var th = '';
     try {
       th = localStorage.getItem('so-theme') || '(not set)';
     } catch (e) {
       th = '(read error)';
     }
-    lines.push({ cat: 'DB', text: '04 · localStorage so-theme: ' + th });
+    lines.push({ cat: 'STORE', text: '04 · localStorage so-theme: ' + th });
     var ssKeys = storageKeys(sessionStorage);
-    lines.push({ cat: 'DB', text: '05 · sessionStorage key count: ' + ssKeys.length });
-    lines.push({ cat: 'DB', text: '06 · sessionStorage keys: ' + (ssKeys.join(', ') || '(empty)') });
-    lines.push({ cat: 'DB', text: '07 · IndexedDB in window: ' + ('indexedDB' in window ? 'yes' : 'no') });
-    lines.push({ cat: 'DB', text: '08 · navigator.cookieEnabled: ' + (navigator.cookieEnabled ? 'yes' : 'no') });
+    lines.push({ cat: 'STORE', text: '05 · sessionStorage key count: ' + ssKeys.length });
+    lines.push({ cat: 'STORE', text: '06 · sessionStorage keys: ' + (ssKeys.join(', ') || '(empty)') });
+    lines.push({ cat: 'STORE', text: '07 · IndexedDB in window: ' + ('indexedDB' in window ? 'yes' : 'no') });
+    lines.push({ cat: 'STORE', text: '08 · navigator.cookieEnabled: ' + (navigator.cookieEnabled ? 'yes' : 'no') });
+    lines.push({
+      cat: 'STORE',
+      text:
+        '08b · note: [STORE] rows are browser-only. Server PostgreSQL / Railway tables are reported in [DB] rows 69+.',
+    });
 
     /* —— FRONTEND —— */
     lines.push({ cat: 'FE', text: '09 · data-theme: ' + (document.documentElement.getAttribute('data-theme') || '(unset)') });
@@ -473,7 +535,7 @@
   } catch (e4) {
     storageEstimate = 'n/a (' + (e4 && e4.message ? e4.message : String(e4)) + ')';
   }
-  lines.push({ cat: 'DB', text: '67 · storage estimate: ' + storageEstimate });
+  lines.push({ cat: 'STORE', text: '67 · storage estimate: ' + storageEstimate });
   var swController = 'n/a';
   try {
     if ('serviceWorker' in navigator) {
@@ -562,28 +624,101 @@
   var storeJson = storeProbe.json || {};
   var store = storeJson.storage || null;
   var deploy = storeJson.deploy || null;
+  var storeSource = 'same-origin';
+  var referenceProbes = [];
+
+  if (!store) {
+    referenceProbes = await probeReferenceUserStore(origin);
+    for (var rp = 0; rp < referenceProbes.length; rp++) {
+      var ref = referenceProbes[rp];
+      if (ref.probe && ref.probe.json && ref.probe.json.storage) {
+        store = ref.probe.json.storage;
+        deploy = ref.probe.json.deploy || null;
+        storeJson = ref.probe.json;
+        storeSource = ref.origin;
+        break;
+      }
+    }
+  }
+
   lines.push({
     cat: 'DB',
     text:
-      '69 · API /api/debug/user-store: HTTP ' +
+      '69 · API /api/debug/user-store (this page): HTTP ' +
       storeProbe.status +
       ' · ' +
       storeProbe.ms +
       ' ms' +
       (storeProbe.ok ? ' · ok' : ' · fail') +
       (storeProbe.status === 404
-        ? ' · note=Node API not running; user persistence is not reachable from this host'
-        : storeJson.service === 'serviceopera' && store
+        ? ' · note=Node API not running on this hostname'
+        : storeJson.service === 'serviceopera' && storeProbe.json && storeProbe.json.storage
           ? ' · note=server user store summary'
           : storeProbe.err
             ? ' · ' + storeProbe.err
             : ''),
   });
+  lines.push({
+    cat: 'DB',
+    text:
+      '70 · server database visible on this page: ' +
+      (storeProbe.status === 200 && storeProbe.json && storeProbe.json.storage ? 'yes' : 'no'),
+  });
+  if (storeProbe.status !== 200 || !storeProbe.json || !storeProbe.json.storage) {
+    for (var rpi = 0; rpi < referenceProbes.length; rpi++) {
+      var refRow = referenceProbes[rpi];
+      var refProbe = refRow.probe || {};
+      var refStore = refProbe.json && refProbe.json.storage ? refProbe.json.storage : null;
+      lines.push({
+        cat: 'DB',
+        text:
+          '71 · reference Node probe ' +
+          refRow.origin +
+          '/api/debug/user-store: HTTP ' +
+          (refProbe.status || 0) +
+          ' · ' +
+          (refProbe.ms != null ? refProbe.ms : 'n/a') +
+          ' ms' +
+          (refStore
+            ? ' · backend=' + refStore.backend + ' · tables=' + (refStore.tables || EXPECTED_POSTGRES_TABLES).join(', ')
+            : refProbe.err
+              ? ' · ' + refProbe.err
+              : ' · note=remote Node API not reachable from browser (CORS/network)'),
+      });
+    }
+    if (!referenceProbes.length) {
+      lines.push({
+        cat: 'DB',
+        text:
+          '71 · reference Node probe: skipped (no alternate Node origin configured for this page)',
+      });
+    }
+  }
+  if (store) {
+    lines.push({
+      cat: 'DB',
+      text:
+        '72 · user store source: ' +
+        storeSource +
+        ' · backend=' +
+        store.backend +
+        (store.backend === 'postgres'
+          ? ' · persistence=PostgreSQL'
+          : ' · persistence=JSON files under DATA_DIR'),
+    });
+  } else {
+    lines.push({
+      cat: 'DB',
+      text:
+        '72 · user store source: unavailable · expected PostgreSQL tables when Node + DATABASE_URL: ' +
+        EXPECTED_POSTGRES_TABLES.join(', '),
+    });
+  }
   if (deploy) {
     lines.push({
-      cat: 'OPS',
+      cat: 'DB',
       text:
-        '70 · deploy user store backend: ' +
+        '73 · deploy user store backend: ' +
         (deploy.userStoreBackend || 'n/a') +
         ' · DATABASE_URL on server: ' +
         (deploy.databaseUrlConfigured ? 'configured' : 'not set (JSON fallback)') +
@@ -591,9 +726,9 @@
         (deploy.nodeVersion || 'n/a'),
     });
     lines.push({
-      cat: 'OPS',
+      cat: 'DB',
       text:
-        '71 · deploy DATA_DIR: ' +
+        '74 · deploy DATA_DIR: ' +
         (deploy.dataDir || 'n/a') +
         ' · selfRegister=' +
         (deploy.portalSelfRegister != null ? String(deploy.portalSelfRegister) : 'n/a') +
@@ -609,16 +744,7 @@
     lines.push({
       cat: 'DB',
       text:
-        '72 · user store backend: ' +
-        store.backend +
-        (store.backend === 'postgres'
-          ? ' · persistence=PostgreSQL (portal_users / portal_pending_registrations)'
-          : ' · persistence=JSON files under DATA_DIR'),
-    });
-    lines.push({
-      cat: 'DB',
-      text:
-        '73 · confirmed users: ' +
+        '75 · confirmed users: ' +
         store.confirmedUserCount +
         ' · pending registrations: ' +
         store.pendingRegistrationCount,
@@ -627,27 +753,33 @@
       lines.push({
         cat: 'DB',
         text:
-          '74 · Postgres tables: ' +
-          (store.tables && store.tables.length ? store.tables.join(', ') : '(none reported)'),
+          '76 · Postgres tables: ' +
+          (store.tables && store.tables.length ? store.tables.join(', ') : EXPECTED_POSTGRES_TABLES.join(', ')),
       });
       lines.push({
         cat: 'DB',
         text:
-          '75 · portal_users profile columns: ' +
+          '77 · portal_users profile columns: ' +
           (store.profileColumns && store.profileColumns.length
             ? store.profileColumns.join(', ')
-            : 'display_name, gender, is_active, is_admin, is_plus, spend_cents, earned_cents, last_login_at, last_login_ip, country, updated_at'),
+            : EXPECTED_POSTGRES_PROFILE_COLUMNS.join(', ')),
       });
       lines.push({
-        cat: 'OPS',
+        cat: 'DB',
         text:
-          '76 · Railway Postgres: tables appear after the Node service starts with DATABASE_URL; empty counts until register/login flows run.',
+          '78 · Postgres row counts: confirmed=' +
+          store.confirmedUserCount +
+          ' · pending=' +
+          store.pendingRegistrationCount +
+          (store.confirmedUserCount === 0 && store.pendingRegistrationCount === 0
+            ? ' · note=tables exist; no user rows yet'
+            : ''),
       });
     } else {
       lines.push({
         cat: 'DB',
         text:
-          '74 · DATA_DIR: ' +
+          '76 · DATA_DIR: ' +
           (store.dataDir || 'n/a') +
           ' · writable=' +
           (store.writable != null ? String(store.writable) : 'n/a'),
@@ -655,7 +787,7 @@
       lines.push({
         cat: 'DB',
         text:
-          '75 · accounts file: ' +
+          '77 · accounts file: ' +
           (store.accountsFileStats && store.accountsFileStats.exists ? 'present' : 'missing') +
           ' · bytes=' +
           (store.accountsFileStats ? store.accountsFileStats.bytes : 'n/a') +
@@ -666,7 +798,7 @@
       lines.push({
         cat: 'DB',
         text:
-          '76 · pending file: ' +
+          '78 · pending file: ' +
           (store.pendingFileStats && store.pendingFileStats.exists ? 'present' : 'missing') +
           ' · bytes=' +
           (store.pendingFileStats ? store.pendingFileStats.bytes : 'n/a'),
@@ -674,9 +806,20 @@
     }
   } else if (storeProbe.status === 404) {
     lines.push({
-      cat: 'OPS',
+      cat: 'DB',
       text:
-        '72 · user accounts are not saved in the browser; they require the Node server (node server.mjs) and DATABASE_URL or a persistent DATA_DIR volume on Railway.',
+        '75 · server PostgreSQL: not visible from this page origin · expected tables: ' +
+        EXPECTED_POSTGRES_TABLES.join(', '),
+    });
+    lines.push({
+      cat: 'DB',
+      text:
+        '76 · expected portal_users columns: ' + EXPECTED_POSTGRES_PROFILE_COLUMNS.join(', '),
+    });
+    lines.push({
+      cat: 'DB',
+      text:
+        '77 · user accounts are not saved in browser storage; they require the Node server (node server.mjs) and DATABASE_URL or a persistent DATA_DIR volume on Railway.',
     });
   }
 
@@ -700,7 +843,7 @@
         ? ' · email=' + sessionProbe.json.email + ' · reportSlug=' + sessionProbe.json.reportSlug
         : portalJwt
           ? ' · note=JWT present but session rejected or expired'
-          : ' · note=no portal JWT in localStorage'),
+          : ' · note=no portal JWT in sessionStorage/localStorage'),
   });
   lines.push({
     cat: 'AUTH',
@@ -858,7 +1001,7 @@
       '<span class="mono debug-panel__title" id="soDebugTitle">— DEBUG · … checks</span>' +
       '<button type="button" class="debug-panel__close mono" data-debug-close aria-label="Close panel"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg></button>' +
       '</div>' +
-      '<p class="debug-panel__sub mono">DB = browser storage + server user store · FE = browser · BE = same-origin HTTP · OPS = deploy/Railway/Postgres · AUTH = portal JWT/session. Rows 51–60: layout/logo/theme. Rows 61–63: <code>/api/version</code> and capabilities. Rows 64–68: secure context, fonts, service worker. Rows 69–86: persistence (<code>/api/debug/user-store</code>), auth routes, register flow, production hosts. On <code>login.html</code>, <strong>[PW]</strong> rows too. Select the text below and copy (Ctrl+C), or use the button.</p>' +
+      '<p class="debug-panel__sub mono">STORE = browser storage only · FE = browser · BE = same-origin HTTP · DB = server PostgreSQL / user store · OPS = deploy/Railway · AUTH = portal JWT/session. Rows 01–08b: localStorage/sessionStorage (not Railway tables). Rows 69–78: <code>/api/debug/user-store</code> plus reference Node probe when this host is static-only. On <code>login.html</code>, <strong>[PW]</strong> rows too. Select the text below and copy (Ctrl+C), or use the button.</p>' +
       '<div class="debug-panel__status mono" id="soDebugStatus">Running…</div>' +
       '<pre class="debug-panel__out mono" id="soDebugOut" tabindex="0"></pre>' +
       '<div class="debug-panel__actions">' +

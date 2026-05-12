@@ -8,6 +8,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { assertReportSlug, createUserStore, normalizeEmail } from './clinic-store.mjs';
 import { createPostgresUserStore, ensurePostgresUserSchema } from './postgres-user-store.mjs';
+import { createUserTelemetryStore, ensureUserTelemetrySchema } from './user-telemetry.mjs';
 import { searchTextAllPages } from './lib/google-places-search.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -36,12 +37,19 @@ async function initUserStore() {
           : undefined,
     });
     await ensurePostgresUserSchema(pool, adminEmail);
-    return createPostgresUserStore(pool);
+    await ensureUserTelemetrySchema(pool);
+    return {
+      userStore: createPostgresUserStore(pool),
+      telemetryStore: createUserTelemetryStore({ pool }),
+    };
   }
-  return createUserStore(dataDir, adminEmail);
+  return {
+    userStore: createUserStore(dataDir, adminEmail),
+    telemetryStore: createUserTelemetryStore({ dataDir }),
+  };
 }
 
-const userStore = await initUserStore();
+const { userStore, telemetryStore } = await initUserStore();
 
 const clinicDataDir = path.join(publicDir, 'clinics', 'data');
 
@@ -68,6 +76,91 @@ function listClinicReportJsonFiles() {
     });
   }
   return out.sort((a, b) => (b.mtimeMs || 0) - (a.mtimeMs || 0));
+}
+
+function loadReportManifest() {
+  const filePath = path.join(publicDir, 'reports', 'index.json');
+  if (!fs.existsSync(filePath)) {
+    return { clinics: [], hotels: [], properties: [] };
+  }
+  try {
+    const raw = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    return {
+      clinics: Array.isArray(raw.clinics) ? raw.clinics : [],
+      hotels: Array.isArray(raw.hotels) ? raw.hotels : [],
+      properties: Array.isArray(raw.properties) ? raw.properties : [],
+    };
+  } catch {
+    return { clinics: [], hotels: [], properties: [] };
+  }
+}
+
+function normalizeReportVertical(value) {
+  const s = String(value || '')
+    .toLowerCase()
+    .trim();
+  if (s === 'hotel' || s === 'hotels') return 'hotels';
+  if (s === 'property' || s === 'properties' || s === 'real_estate' || s === 'real-estate') {
+    return 'properties';
+  }
+  return 'clinics';
+}
+
+function readSlugReportMeta(slug) {
+  const candidates = [path.join(clinicDataDir, `${slug}.json`)];
+  for (const full of candidates) {
+    if (!fs.existsSync(full)) continue;
+    try {
+      const data = JSON.parse(fs.readFileSync(full, 'utf8'));
+      const title = data.business_name || data.title || data.name || slug;
+      const vertical = normalizeReportVertical(data.vertical || data.category || 'clinics');
+      return { title: String(title), vertical };
+    } catch {
+      /* try next */
+    }
+  }
+  return { title: slug, vertical: 'clinics' };
+}
+
+function normalizeReportLink(item) {
+  if (!item || typeof item.href !== 'string' || !item.href.trim()) return null;
+  return {
+    title: String(item.title || item.href).trim(),
+    href: item.href.trim(),
+    slug: typeof item.slug === 'string' && item.slug.trim() ? item.slug.trim() : null,
+  };
+}
+
+function dedupeReportLinks(items) {
+  const seen = new Set();
+  const out = [];
+  for (const item of items) {
+    const normalized = normalizeReportLink(item);
+    if (!normalized) continue;
+    if (seen.has(normalized.href)) continue;
+    seen.add(normalized.href);
+    out.push(normalized);
+  }
+  return out;
+}
+
+async function buildReportCatalog() {
+  const manifest = loadReportManifest();
+  const buckets = {
+    clinics: manifest.clinics.map(normalizeReportLink).filter(Boolean),
+    hotels: manifest.hotels.map(normalizeReportLink).filter(Boolean),
+    properties: manifest.properties.map(normalizeReportLink).filter(Boolean),
+  };
+  for (const file of listClinicReportJsonFiles()) {
+    const meta = readSlugReportMeta(file.slug);
+    const href = `/clinics/report.html?slug=${encodeURIComponent(file.slug)}`;
+    buckets[meta.vertical].push({ title: meta.title, href, slug: file.slug });
+  }
+  return {
+    clinics: dedupeReportLinks(buckets.clinics),
+    hotels: dedupeReportLinks(buckets.hotels),
+    properties: dedupeReportLinks(buckets.properties),
+  };
 }
 
 /** Site pages Jack commonly edits or ships — presence + last modified. */
@@ -267,13 +360,99 @@ function clientCountry(req) {
   return null;
 }
 
-async function recordPortalLogin(req, user) {
-  if (!user || typeof user.id !== 'string' || !user.id) return;
-  if (typeof userStore.recordLogin !== 'function') return;
+function clientCity(req) {
+  const candidates = [
+    req.headers['cf-ipcity'],
+    req.headers['x-vercel-ip-city'],
+    req.headers['cloudfront-viewer-city'],
+  ];
+  for (const value of candidates) {
+    if (typeof value === 'string' && value.trim()) return value.trim();
+  }
+  return null;
+}
+
+function clientRegion(req) {
+  const candidates = [
+    req.headers['cf-region'],
+    req.headers['x-vercel-ip-country-region'],
+    req.headers['cloudfront-viewer-country-region'],
+  ];
+  for (const value of candidates) {
+    if (typeof value === 'string' && value.trim()) return value.trim();
+  }
+  return null;
+}
+
+function clientUserAgent(req) {
+  const ua = req.get('user-agent');
+  return typeof ua === 'string' && ua.trim() ? ua.trim() : null;
+}
+
+async function lookupGeoFromIp(ip) {
+  const trimmed = String(ip || '')
+    .trim()
+    .replace(/^::ffff:/, '');
+  if (!trimmed || trimmed === 'unknown') return null;
+  if (
+    trimmed === '::1' ||
+    /^127\./.test(trimmed) ||
+    /^10\./.test(trimmed) ||
+    /^192\.168\./.test(trimmed) ||
+    /^172\.(1[6-9]|2\d|3[01])\./.test(trimmed)
+  ) {
+    return null;
+  }
   try {
-    await userStore.recordLogin(user.id, { ip: clientIp(req), country: clientCountry(req) });
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 2500);
+    const response = await fetch(
+      `http://ip-api.com/json/${encodeURIComponent(trimmed)}?fields=status,countryCode,city,regionName`,
+      { signal: controller.signal }
+    );
+    clearTimeout(timer);
+    if (!response.ok) return null;
+    const json = await response.json();
+    if (!json || json.status !== 'success') return null;
+    return {
+      country: typeof json.countryCode === 'string' ? json.countryCode.toUpperCase() : null,
+      city: typeof json.city === 'string' ? json.city : null,
+      region: typeof json.regionName === 'string' ? json.regionName : null,
+    };
   } catch {
-    /* login should still succeed if audit write fails */
+    return null;
+  }
+}
+
+async function recordPortalLogin(req, user) {
+  if (!user || typeof user.id !== 'string' || !user.id) return null;
+  const meta = {
+    ip: clientIp(req),
+    country: clientCountry(req),
+    city: clientCity(req),
+    region: clientRegion(req),
+    userAgent: clientUserAgent(req),
+  };
+  if (!meta.country || !meta.city) {
+    const resolved = await lookupGeoFromIp(meta.ip);
+    if (resolved) {
+      meta.country = meta.country || resolved.country;
+      meta.city = meta.city || resolved.city;
+      meta.region = meta.region || resolved.region;
+    }
+  }
+  if (typeof userStore.recordLogin === 'function') {
+    try {
+      await userStore.recordLogin(user.id, meta);
+    } catch {
+      /* login should still succeed if audit write fails */
+    }
+  }
+  if (!telemetryStore || typeof telemetryStore.startLoginSession !== 'function') return null;
+  try {
+    return await telemetryStore.startLoginSession(user.id, meta);
+  } catch {
+    return null;
   }
 }
 
@@ -371,12 +550,28 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/api/version', (_req, res) => {
+function allowDebugCors(req, res) {
+  const origin = req.get('origin');
+  if (origin) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Vary', 'Origin');
+  }
+}
+
+app.options(['/api/debug/user-store', '/api/version'], (req, res) => {
+  allowDebugCors(req, res);
+  res.status(204).end();
+});
+
+app.get('/api/version', (req, res) => {
+  allowDebugCors(req, res);
   res.setHeader('Cache-Control', 'no-store');
   res.json({ version: appVersion });
 });
 
-app.get('/api/debug/user-store', async (_req, res) => {
+app.get('/api/debug/user-store', async (req, res) => {
+  allowDebugCors(req, res);
   res.setHeader('Cache-Control', 'no-store');
   try {
     const storage = await userStore.getStorageSummary();
@@ -593,6 +788,15 @@ app.get('/api/admin/work-queue', requireAdmin, async (_req, res) => {
   }
 });
 
+app.get('/api/admin/report-catalog', requireAdmin, async (_req, res) => {
+  try {
+    const catalog = await buildReportCatalog();
+    res.json({ ok: true, ...catalog });
+  } catch (e) {
+    res.status(500).json({ error: e.message || 'Failed to load report catalog.' });
+  }
+});
+
 async function createPortalUserAdmin(req, res) {
   try {
     const email = req.body?.email;
@@ -623,6 +827,53 @@ async function updatePortalUserAdmin(req, res) {
 app.patch('/api/user-accounts/:id', requireAdmin, updatePortalUserAdmin);
 app.patch('/api/clinic-users/:id', requireAdmin, updatePortalUserAdmin);
 
+app.get('/api/user-accounts/:id/telemetry', requireAdmin, async (req, res) => {
+  if (!telemetryStore || typeof telemetryStore.getUserTelemetry !== 'function') {
+    return res.status(501).json({ error: 'User telemetry is not available on this server.' });
+  }
+  try {
+    const telemetry = await telemetryStore.getUserTelemetry(req.params.id);
+    return res.json({ ok: true, ...telemetry });
+  } catch (e) {
+    return res.status(500).json({ error: e.message || 'Failed to load user telemetry.' });
+  }
+});
+app.get('/api/clinic-users/:id/telemetry', requireAdmin, async (req, res) => {
+  if (!telemetryStore || typeof telemetryStore.getUserTelemetry !== 'function') {
+    return res.status(501).json({ error: 'User telemetry is not available on this server.' });
+  }
+  try {
+    const telemetry = await telemetryStore.getUserTelemetry(req.params.id);
+    return res.json({ ok: true, ...telemetry });
+  } catch (e) {
+    return res.status(500).json({ error: e.message || 'Failed to load user telemetry.' });
+  }
+});
+
+dualPost('/api/auth/user-activity', '/api/auth/clinic-activity', async (req, res) => {
+  const p = verifyJwt(getBearer(req));
+  if (!p || !isPortalSessionRole(p.role) || typeof p.sub !== 'string') {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  if (!telemetryStore || typeof telemetryStore.appendEvents !== 'function') {
+    return res.status(501).json({ error: 'User telemetry is not available on this server.' });
+  }
+  const sessionId = typeof req.body?.sessionId === 'string' ? req.body.sessionId.trim() : '';
+  const events = Array.isArray(req.body?.events) ? req.body.events.slice(0, 25) : [];
+  if (!sessionId || !events.length) {
+    return res.status(400).json({ error: 'Missing sessionId or events.' });
+  }
+  try {
+    const written = await telemetryStore.appendEvents(p.sub, sessionId, events);
+    if (typeof userStore.touchLastSeen === 'function') {
+      await userStore.touchLastSeen(p.sub);
+    }
+    return res.json({ ok: true, written });
+  } catch (e) {
+    return res.status(500).json({ error: e.message || 'Failed to save activity.' });
+  }
+});
+
 dualPost('/api/auth/user-login', '/api/auth/clinic-login', async (req, res) => {
   const email = typeof req.body?.email === 'string' ? req.body.email : '';
   const password = typeof req.body?.password === 'string' ? req.body.password : '';
@@ -637,7 +888,7 @@ dualPost('/api/auth/user-login', '/api/auth/clinic-login', async (req, res) => {
     }
     return res.status(401).json({ error: 'Invalid email or password.' });
   }
-  await recordPortalLogin(req, user);
+  const sessionId = await recordPortalLogin(req, user);
   const token = signJwt({
     v: 1,
     role: 'user',
@@ -647,7 +898,7 @@ dualPost('/api/auth/user-login', '/api/auth/clinic-login', async (req, res) => {
     exp: Date.now() + CLINIC_JWT_TTL_MS,
   });
   const reportUrl = '/clinics/report.html?slug=' + encodeURIComponent(user.reportSlug);
-  return res.json({ ok: true, token, reportSlug: user.reportSlug, reportUrl });
+  return res.json({ ok: true, token, reportSlug: user.reportSlug, reportUrl, sessionId });
 });
 
 dualPost('/api/auth/user-otp/send', '/api/auth/clinic-otp/send', async (req, res) => {
@@ -722,7 +973,7 @@ dualPost('/api/auth/user-login-otp', '/api/auth/clinic-login-otp', async (req, r
     return res.status(401).json({ error: 'Invalid email or code.' });
   }
   portalOtpByEmail.delete(email);
-  await recordPortalLogin(req, user);
+  const sessionId = await recordPortalLogin(req, user);
   const token = signJwt({
     v: 1,
     role: 'user',
@@ -732,7 +983,7 @@ dualPost('/api/auth/user-login-otp', '/api/auth/clinic-login-otp', async (req, r
     exp: Date.now() + CLINIC_JWT_TTL_MS,
   });
   const reportUrl = '/clinics/report.html?slug=' + encodeURIComponent(user.reportSlug);
-  return res.json({ ok: true, token, reportSlug: user.reportSlug, reportUrl });
+  return res.json({ ok: true, token, reportSlug: user.reportSlug, reportUrl, sessionId });
 });
 
 dualPost('/api/auth/user-resend-confirmation', '/api/auth/clinic-resend-confirmation', async (req, res) => {
@@ -991,6 +1242,7 @@ app.use(
         filePath.endsWith('login.html') ||
         filePath.endsWith('register.html') ||
         filePath.endsWith('admin.html') ||
+        filePath.endsWith('admin.js') ||
         filePath.endsWith('places-leads.html') ||
         norm.includes('/clinics/report.html')
       ) {
