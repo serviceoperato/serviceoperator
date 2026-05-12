@@ -45,7 +45,8 @@ const CLINIC_VERIFY_JWT_MS = 48 * 60 * 60 * 1000;
 const SEND_WINDOW_MS = 15 * 60 * 1000;
 const MAX_SENDS_PER_WINDOW = 4;
 
-const GOOGLE_MAPS_API_KEY = (process.env.GOGLE_MAPS_API_KEY || '').trim();
+// Accept both the correct and a legacy misspelling env var.
+const GOOGLE_MAPS_API_KEY = (process.env.GOOGLE_MAPS_API_KEY || process.env.GOGLE_MAPS_API_KEY || '').trim();
 const PLACES_API_MIN_GAP_MS = Number(process.env.PLACES_API_MIN_GAP_MS || 400);
 
 /** Minimum spacing between outbound Google Places HTTP calls (same process). */

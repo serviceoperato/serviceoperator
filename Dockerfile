@@ -9,6 +9,7 @@ COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
 COPY server.mjs clinic-store.mjs ./
+COPY lib ./lib/
 COPY public ./public/
 
 RUN mkdir -p /app/data \
