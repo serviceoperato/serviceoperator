@@ -466,6 +466,57 @@
         : ''),
   });
 
+    /* —— Reset password clinica (solo login.html) —— */
+    var onClinicLogin = /\/login\.html$/i.test(path) || path === '/login' || path.endsWith('/login.html');
+    if (onClinicLogin) {
+      lines.push({
+        cat: 'PW',
+        text:
+          '01 · Reset password via email: il browser chiama POST /api/auth/clinic-request-reset sullo stesso origin. Serve il backend Node (server.mjs), non un host solo-statico.',
+      });
+      var apiMissing = verProbe.status === 404 || clinicCap.status === 404;
+      if (apiMissing) {
+        lines.push({
+          cat: 'PW',
+          text:
+            '02 · Problema rilevato: righe [BE] 61–62 con HTTP 404 ⇒ questo URL non espone /api/*. La pagina HTML c’è, ma Express non gira qui: nessuna mail di reset può partire.',
+        });
+        lines.push({
+          cat: 'PW',
+          text:
+            '03 · Fix (Railway): un servizio che avvia `node server.mjs` (Dockerfile del repo + `railway.toml` con startCommand). Evita di pubblicare solo `public/` come sito statico sull’URL usato per il login.',
+        });
+      } else if (clinicCap.status === 200 && cc.service === 'serviceopera' && cc.passwordResetEmail === false) {
+        lines.push({
+          cat: 'PW',
+          text:
+            '02 · API raggiungibile ma passwordResetEmail=false: imposta RESEND_API_KEY e RESEND_FROM (mittente verificato su Resend) sul servizio Node, ridistribuisci e ricarica.',
+        });
+      } else if (clinicCap.status === 200 && cc.service === 'serviceopera' && cc.passwordResetEmail === true) {
+        lines.push({
+          cat: 'PW',
+          text:
+            '02 · API e invio reset configurati (passwordResetEmail=true). Se non ricevi mail: cartella spam, email errata, o controlla log Resend / deploy Railway.',
+        });
+      } else {
+        lines.push({
+          cat: 'PW',
+          text:
+            '02 · Stato misto: clinic-capabilities HTTP ' +
+            clinicCap.status +
+            ' · service=' +
+            (cc.service != null ? String(cc.service) : 'n/a') +
+            ' · passwordResetEmail=' +
+            (cc.passwordResetEmail != null ? String(cc.passwordResetEmail) : 'n/a'),
+        });
+      }
+      lines.push({
+        cat: 'PW',
+        text:
+          '04 · Workaround: Jack può impostare una nuova password da Admin → clinic users finché il dominio non punta al servizio Node con le API attive.',
+      });
+    }
+
     return lines;
   }
 
@@ -493,10 +544,10 @@
     panel.innerHTML =
       '<div class="debug-panel__card">' +
       '<div class="debug-panel__head">' +
-      '<span class="mono debug-panel__title" id="soDebugTitle">— DEBUG · 63 checks</span>' +
+      '<span class="mono debug-panel__title" id="soDebugTitle">— DEBUG · … checks</span>' +
       '<button type="button" class="debug-panel__close mono" data-debug-close aria-label="Chiudi pannello"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg></button>' +
       '</div>' +
-      '<p class="debug-panel__sub mono">DB = storage locale · FE = browser · BE = HTTP verso questo host. Righe 51–53: <code>img.brand-logo</code>. Righe 54–60: layout, viewport, safe-area, tema. Righe 61–63: <code>/api/version</code> e capabilities Resend/login. Seleziona il testo sotto e copia (Ctrl+C), oppure usa il pulsante.</p>' +
+      '<p class="debug-panel__sub mono">DB = storage locale · FE = browser · BE = HTTP verso questo host. Righe 51–53: <code>img.brand-logo</code>. Righe 54–60: layout, viewport, safe-area, tema. Righe 61–63: <code>/api/version</code> e capabilities (Resend / login). Su <code>login.html</code> compaiono anche le righe <strong>[PW]</strong> (diagnostica reset password). Seleziona il testo sotto e copia (Ctrl+C), oppure usa il pulsante.</p>' +
       '<div class="debug-panel__status mono" id="soDebugStatus">Esecuzione…</div>' +
       '<pre class="debug-panel__out mono" id="soDebugOut" tabindex="0"></pre>' +
       '<div class="debug-panel__actions">' +
@@ -514,8 +565,6 @@
       fab.textContent = v;
       fab.removeAttribute('title');
       fab.setAttribute('aria-label', 'Mostra o nascondi informazioni di debug (versione ' + v + ')');
-      var titleEl = document.getElementById('soDebugTitle');
-      if (titleEl) titleEl.textContent = '— DEBUG v' + v + ' · 63 checks';
     }
 
     fetch(new URL('/api/version', window.location.origin), { cache: 'no-store' })
@@ -550,6 +599,11 @@
       buildLines()
         .then(function (lines) {
           status.textContent = 'Completato · ' + lines.length + ' righe';
+          var titleEl = document.getElementById('soDebugTitle');
+          var vv = fab.textContent ? fab.textContent.trim() : '';
+          if (titleEl) {
+            titleEl.textContent = vv ? '— DEBUG v' + vv + ' · ' + lines.length + ' checks' : '— DEBUG · ' + lines.length + ' checks';
+          }
           out.textContent = lines
             .map(function (row) {
               return '[' + row.cat + '] ' + row.text;
