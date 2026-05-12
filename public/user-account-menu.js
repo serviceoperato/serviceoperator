@@ -1,5 +1,5 @@
 /**
- * Top-bar account control (ThaiFans-style): hub shortcuts + avatar menu with Settings / Admin.
+ * Top-bar account control: avatar menu with Settings / Admin.
  */
 (function () {
   'use strict';
@@ -225,36 +225,6 @@
     root.className = 'so-nav-account so-nav-account--authed';
     root.innerHTML = '';
 
-    var hub = document.createElement('div');
-    hub.className = 'so-nav-account__hub';
-    hub.setAttribute('aria-label', 'Account shortcuts');
-    [
-      { href: '#', label: 'Favorites', badge: '0' },
-      { href: '#', label: 'Friends', badge: '' },
-      { href: '#', label: 'Location', badge: '' },
-      { href: '#', label: 'Messages', badge: '0' },
-    ].forEach(function (item) {
-      var link = document.createElement('a');
-      link.className = 'so-nav-account__hub-link mono';
-      link.href = item.href;
-      var label = document.createElement('span');
-      label.textContent = item.label;
-      link.appendChild(label);
-      if (item.badge) {
-        var badge = document.createElement('span');
-        badge.className = 'so-nav-account__hub-badge';
-        badge.textContent = item.badge;
-        link.appendChild(badge);
-      }
-      link.addEventListener('click', function (e) {
-        if (item.href === '#') {
-          e.preventDefault();
-        }
-      });
-      hub.appendChild(link);
-    });
-    root.appendChild(hub);
-
     var wrap = document.createElement('div');
     wrap.className = 'so-user-menu';
 
@@ -281,10 +251,6 @@
     panel.className = 'so-user-menu__panel is-hidden';
     panel.setAttribute('role', 'menu');
 
-    panel.appendChild(menuRow('#', 'Favorites', { badge: '0' }));
-    panel.appendChild(menuRow('#', 'Friends'));
-    panel.appendChild(menuRow('#', 'Location'));
-    panel.appendChild(menuRow('#', 'Messages', { badge: '0' }));
     panel.appendChild(menuRow(loginHref, label, { accent: true }));
     panel.appendChild(menuRow(loginHref, 'Settings'));
     if (showAdmin) {
