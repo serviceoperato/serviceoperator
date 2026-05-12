@@ -1,6 +1,6 @@
 {
   "name": "serviceopera-site",
-  "version": "1.1.9",
+  "version": "1.1.10",
   "private": true,
   "type": "module",
   "description": "Static site served by Node (Express); admin OTP via Resend when RESEND_API_KEY is set.",
