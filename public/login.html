@@ -47,10 +47,32 @@
         <input type="password" name="password" id="clinicPassword" required autocomplete="current-password" placeholder="••••••••" />
       </label>
       <button type="submit" class="btn btn--primary btn--block">Open report<span class="ico-arrow-r" aria-hidden="true"></span></button>
-      <div class="portal-form__actions">
+      <div class="portal-form__actions" style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;justify-content:space-between">
+        <button type="button" class="portal-form__linkbtn is-hidden" id="clinicRegisterToggle">Create account</button>
         <button type="button" class="portal-form__linkbtn" id="clinicForgotToggle">Forgot password?</button>
       </div>
       <p class="portal-form__hint mono" id="loginHint"></p>
+    </form>
+
+    <form id="clinicRegisterForm" class="portal-form is-hidden" autocomplete="on" aria-live="polite">
+      <p class="portal-form__muted" id="clinicRegisterHelp">
+        Create an account with your email and a password (min 8 characters). Your private report ID is generated automatically.
+      </p>
+      <label>
+        <span class="mono">EMAIL</span>
+        <input type="email" name="email" id="clinicRegEmail" required autocomplete="email" />
+      </label>
+      <label>
+        <span class="mono">PASSWORD</span>
+        <input type="password" name="password" id="clinicRegPassword" required minlength="8" autocomplete="new-password" placeholder="min 8 characters" />
+      </label>
+      <label>
+        <span class="mono">CONFIRM PASSWORD</span>
+        <input type="password" name="confirmPassword" id="clinicRegConfirm" required minlength="8" autocomplete="new-password" />
+      </label>
+      <button type="submit" class="btn btn--primary btn--block">Create account<span class="ico-arrow-r" aria-hidden="true"></span></button>
+      <button type="button" class="portal-form__linkbtn portal-form__back" id="clinicRegisterBack">Back to sign in</button>
+      <p class="portal-form__hint mono" id="registerHint"></p>
     </form>
 
     <div id="clinicForgotPanel" class="portal-form is-hidden" aria-live="polite">
@@ -104,6 +126,11 @@
   /** true only if JSON includes service marker from server.mjs (avoids CDN/static 200 + wrong body). */
   var clinicApiFromOurServer = false;
   var gateTitle = document.getElementById('clinicGateTitle');
+  var registerForm = document.getElementById('clinicRegisterForm');
+  var registerToggle = document.getElementById('clinicRegisterToggle');
+  var registerBack = document.getElementById('clinicRegisterBack');
+  var registerHintEl = document.getElementById('registerHint');
+  var selfRegisterEnabled = false;
 
   if (slugHint && lede) {
     lede.textContent =
@@ -122,20 +149,39 @@
     resetHint.className = 'portal-form__hint mono' + (kind === 'error' ? ' is-error' : kind === 'ok' ? ' is-ok' : '');
   }
 
+  function setRegisterHint(msg, kind) {
+    if (!registerHintEl) return;
+    registerHintEl.textContent = msg;
+    registerHintEl.className =
+      'portal-form__hint mono' + (kind === 'error' ? ' is-error' : kind === 'ok' ? ' is-ok' : '');
+  }
+
   function showLoginMode() {
     if (gateTitle) gateTitle.textContent = 'Log in';
     if (form) form.classList.remove('is-hidden');
     if (forgotPanel) forgotPanel.classList.add('is-hidden');
     if (resetForm) resetForm.classList.add('is-hidden');
+    if (registerForm) registerForm.classList.add('is-hidden');
     if (passwordWrap) passwordWrap.classList.remove('is-hidden');
     var pwInput = document.getElementById('clinicPassword');
     if (pwInput) pwInput.setAttribute('required', 'required');
+  }
+
+  function showRegisterMode() {
+    if (gateTitle) gateTitle.textContent = 'Create account';
+    if (form) form.classList.add('is-hidden');
+    if (forgotPanel) forgotPanel.classList.add('is-hidden');
+    if (resetForm) resetForm.classList.add('is-hidden');
+    if (registerForm) registerForm.classList.remove('is-hidden');
+    setHint('', '');
+    setRegisterHint('', '');
   }
 
   function showForgotMode() {
     if (form) form.classList.remove('is-hidden');
     if (forgotPanel) forgotPanel.classList.remove('is-hidden');
     if (resetForm) resetForm.classList.add('is-hidden');
+    if (registerForm) registerForm.classList.add('is-hidden');
     if (passwordWrap) passwordWrap.classList.add('is-hidden');
     var pwInput = document.getElementById('clinicPassword');
     if (pwInput) {
@@ -149,6 +195,7 @@
     if (gateTitle) gateTitle.textContent = 'Reset password';
     if (form) form.classList.add('is-hidden');
     if (forgotPanel) forgotPanel.classList.add('is-hidden');
+    if (registerForm) registerForm.classList.add('is-hidden');
     if (resetForm) resetForm.classList.remove('is-hidden');
     if (lede) lede.textContent = 'Use the form below to set a new password for your clinic report access.';
   }
@@ -200,6 +247,8 @@
     .then(function (cap) {
       clinicApiFromOurServer = Boolean(cap && cap.service === 'serviceopera');
       resetEmailEnabled = clinicApiFromOurServer && Boolean(cap && cap.passwordResetEmail);
+      selfRegisterEnabled = clinicApiFromOurServer && Boolean(cap && cap.selfRegister);
+      if (registerToggle) registerToggle.classList.toggle('is-hidden', !selfRegisterEnabled);
       if (forgotHelp) forgotHelp.textContent = forgotResetHelpText();
     })
     .catch(function () {
@@ -219,6 +268,72 @@
         return;
       }
       showForgotMode();
+    });
+  }
+
+  if (registerToggle) {
+    registerToggle.addEventListener('click', function () {
+      if (!selfRegisterEnabled) {
+        setHint(
+          'Self-registration is not enabled on this server. Write to jack@serviceopera.to for access.',
+          'error'
+        );
+        return;
+      }
+      showRegisterMode();
+    });
+  }
+
+  if (registerBack) {
+    registerBack.addEventListener('click', function () {
+      showLoginMode();
+      setRegisterHint('', '');
+    });
+  }
+
+  if (registerForm) {
+    registerForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var fd = new FormData(registerForm);
+      var email = (fd.get('email') || '').toString().trim();
+      var pw = (fd.get('password') || '').toString();
+      var cf = (fd.get('confirmPassword') || '').toString();
+      if (pw.length < 8) {
+        setRegisterHint('Password must be at least 8 characters.', 'error');
+        return;
+      }
+      if (pw !== cf) {
+        setRegisterHint('Passwords do not match.', 'error');
+        return;
+      }
+      setRegisterHint('Creating account…', '');
+      fetch('/api/auth/clinic-register', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, password: pw }),
+      })
+        .then(function (r) {
+          return r.json().then(function (j) {
+            return { ok: r.ok, j: j };
+          });
+        })
+        .then(function (x) {
+          if (!x.ok) {
+            setRegisterHint((x.j && x.j.error) || 'Could not create account.', 'error');
+            return;
+          }
+          var loginEmail = document.getElementById('clinicEmail');
+          var loginPw = document.getElementById('clinicPassword');
+          if (loginEmail) loginEmail.value = email;
+          if (loginPw) loginPw.value = pw;
+          registerForm.reset();
+          showLoginMode();
+          setHint(x.j && x.j.message ? x.j.message : 'Account created. Sign in below.', 'ok');
+        })
+        .catch(function () {
+          setRegisterHint('Network error or server unavailable.', 'error');
+        });
     });
   }
 

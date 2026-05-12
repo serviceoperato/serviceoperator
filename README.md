@@ -128,6 +128,7 @@ The `Dockerfile` runs **Node**: `server.mjs` serves **`public/`** and sets the s
 |---|---|---|
 | `RESEND_API_KEY` | Yes, for automatic email | [Resend](https://resend.com) API key. When set on **`server.mjs`**: admin OTP on `/admin.html`, **and** automatic clinic **“Forgot password?”** on `/login.html` (reset link email — no extra code paths). If unset, clinic users see a message to configure Resend or use admin to change passwords. |
 | `RESEND_FROM` | Recommended | Verified sender, e.g. `ServiceOpera <noreply@yourdomain.com>`. Resend’s test domain only delivers to your own mailbox. |
+| `CLINIC_SELF_REGISTER` | Optional | Set to `true` or `1` on **`server.mjs`** to show **Create account** on `/login.html` and allow `POST /api/auth/clinic-register` (email + password; report slug derived from email). Leave unset/false to keep invite-only accounts (Admin creates users). |
 | `PUBLIC_ORIGIN` | Optional | Full public URL of the site (e.g. `https://serviceopera.to`), no trailing slash. Used in reset links if the reverse proxy does not pass a reliable host/proto. |
 | `ADMIN_JWT_SECRET` | Strongly recommended | Long random string; signs session tokens. If omitted, a random secret is generated at **each process start** (sessions break on redeploy). |
 | `ADMIN_EMAIL` | Optional | Defaults to `jack@serviceopera.to`. Only this address receives codes. |

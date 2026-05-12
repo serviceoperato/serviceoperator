@@ -71,6 +71,37 @@ export function createClinicStore(dataDir) {
     writeJson(file, data);
   }
 
+  /** Derive a valid report slug prefix from the email local part (before @). */
+  function baseSlugFromEmail(email) {
+    const em = normalizeEmail(email);
+    const local = (em.split('@')[0] || 'user').toLowerCase();
+    let s = local.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    if (!s.length) s = 'user';
+    if (!/^[a-z0-9]/.test(s)) s = 'u' + s.replace(/^[^a-z0-9]+/, '');
+    s = s.slice(0, 56);
+    try {
+      assertReportSlug(s);
+      return s;
+    } catch {
+      return 'user-' + crypto.randomBytes(4).toString('hex');
+    }
+  }
+
+  /** Pick a slug not yet used in `data.users`. */
+  function uniqueReportSlug(data, base) {
+    let candidate = base;
+    let n = 0;
+    while (data.users.some((u) => u.reportSlug === candidate)) {
+      n += 1;
+      candidate = (base + '-' + n).slice(0, 64);
+      if (n > 500) {
+        candidate = (base + '-' + crypto.randomBytes(4).toString('hex')).slice(0, 64);
+        break;
+      }
+    }
+    return assertReportSlug(candidate);
+  }
+
   return {
     file,
     listUsers() {
@@ -94,10 +125,20 @@ export function createClinicStore(dataDir) {
         err.status = 400;
         throw err;
       }
-      const slug = assertReportSlug(reportSlug);
       const data = load();
+      let slug;
+      if (typeof reportSlug === 'string' && reportSlug.trim()) {
+        slug = assertReportSlug(reportSlug.trim());
+      } else {
+        slug = uniqueReportSlug(data, baseSlugFromEmail(em));
+      }
       if (data.users.some((u) => u.email === em)) {
         const err = new Error('That email is already registered.');
+        err.status = 409;
+        throw err;
+      }
+      if (data.users.some((u) => u.reportSlug === slug)) {
+        const err = new Error('That report ID is already taken.');
         err.status = 409;
         throw err;
       }

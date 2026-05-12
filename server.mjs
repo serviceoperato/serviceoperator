@@ -25,6 +25,9 @@ const clinicStore = createClinicStore(dataDir);
 const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'jack@serviceopera.to').trim().toLowerCase();
 const RESEND_API_KEY = (process.env.RESEND_API_KEY || '').trim();
 const RESEND_FROM = (process.env.RESEND_FROM || 'ServiceOpera <onboarding@resend.dev>').trim();
+const CLINIC_SELF_REGISTER =
+  process.env.CLINIC_SELF_REGISTER === '1' ||
+  String(process.env.CLINIC_SELF_REGISTER || '').toLowerCase() === 'true';
 const JWT_SECRET = (process.env.ADMIN_JWT_SECRET || '').trim() || crypto.randomBytes(32).toString('hex');
 
 const OTP_TTL_MS = 10 * 60 * 1000;
@@ -157,7 +160,33 @@ app.get('/api/auth/clinic-capabilities', (_req, res) => {
     service: 'serviceopera',
     version: appVersion,
     passwordResetEmail: Boolean(RESEND_API_KEY),
+    selfRegister: Boolean(CLINIC_SELF_REGISTER),
   });
+});
+
+app.post('/api/auth/clinic-register', (req, res) => {
+  if (!CLINIC_SELF_REGISTER) {
+    return res.status(403).json({ error: 'Self-registration is disabled. Contact jack@serviceopera.to for access.' });
+  }
+  const email = typeof req.body?.email === 'string' ? req.body.email : '';
+  const password = typeof req.body?.password === 'string' ? req.body.password : '';
+  const ip = clientIp(req);
+  const sends = pruneSends(ip);
+  if (sends.length >= MAX_SENDS_PER_WINDOW) {
+    return res.status(429).json({ error: 'Too many requests. Try again later.' });
+  }
+  try {
+    clinicStore.createUser({ email, password });
+    sends.push(Date.now());
+    sendTimestampsByIp.set(ip, sends);
+    return res.status(201).json({
+      ok: true,
+      message: 'Account created. You can sign in below.',
+    });
+  } catch (e) {
+    const status = e.status || 400;
+    return res.status(status).json({ error: e.message || 'Bad request' });
+  }
 });
 
 app.post('/api/admin/send-code', async (req, res) => {
@@ -410,5 +439,10 @@ app.listen(port, '0.0.0.0', () => {
     RESEND_API_KEY
       ? '[serviceopera] Resend: RESEND_API_KEY is set (admin OTP + clinic forgot-password).'
       : '[serviceopera] Resend: RESEND_API_KEY missing — set it on this Railway service and redeploy.'
+  );
+  console.log(
+    CLINIC_SELF_REGISTER
+      ? '[serviceopera] Clinic self-register: enabled (CLINIC_SELF_REGISTER=true).'
+      : '[serviceopera] Clinic self-register: off (set CLINIC_SELF_REGISTER=true to allow public sign-up).'
   );
 });
