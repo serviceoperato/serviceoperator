@@ -30,9 +30,9 @@
   --grain-opacity: 0.06;
   --logo-filter: none;
 
-  --font-display: 'Fraunces', 'Times New Roman', serif;
-  --font-body: 'Inter Tight', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  --font-display: 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
   --max: 1280px;
   --gutter: clamp(1.25rem, 4vw, 3rem);
@@ -78,7 +78,7 @@ body {
   background: var(--ink);
   color: var(--paper);
   font-family: var(--font-body);
-  font-size: 17px;
+  font-size: 15px;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -104,7 +104,16 @@ body {
 a { color: inherit; text-decoration: none; transition: color .2s ease; }
 a:hover { color: var(--amber-2); }
 
-.mono { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mute-2); }
+.mono { font-family: var(--font-mono); font-size: 0.8125rem; letter-spacing: 0.02em; color: var(--mute-2); }
+.font-data,
+.font-mono-data {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: inherit;
+}
 
 /* ============================================
    NAV
@@ -774,7 +783,7 @@ html.so-site-nav-open {
 }
 
 .hero__title {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-weight: 400;
   font-size: clamp(3rem, 8vw, 6.5rem);
   line-height: 0.95;
@@ -907,7 +916,7 @@ html.so-site-nav-open {
   display: flex;
   gap: 2rem;
   animation: scroll 40s linear infinite;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-style: italic;
   font-size: 1.3rem;
   color: var(--mute-2);
@@ -965,7 +974,7 @@ html.so-site-nav-open {
 
 .mini-card__label { color: var(--amber-2); margin-bottom: .6rem; }
 .mini-card__metric {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 2.6rem;
   font-weight: 500;
   letter-spacing: -0.03em;
@@ -1012,7 +1021,7 @@ html.so-site-nav-open {
   margin-bottom: 1rem;
 }
 .section__title {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: clamp(2.2rem, 5vw, 4rem);
   font-weight: 400;
   line-height: 1.05;
@@ -1056,7 +1065,7 @@ html.so-site-nav-open {
   transition: color .3s ease;
 }
 .act h3 {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 1.5rem;
   font-weight: 500;
   margin-bottom: .8rem;
@@ -1089,7 +1098,7 @@ html.so-site-nav-open {
 }
 .method__step:last-child { border-bottom: 1px solid var(--line); }
 .method__num {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-style: italic;
   font-size: 2.5rem;
   font-weight: 300;
@@ -1097,7 +1106,7 @@ html.so-site-nav-open {
   line-height: 1;
 }
 .method__body h4 {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 1.5rem;
   font-weight: 500;
   margin-bottom: .5rem;
@@ -1132,7 +1141,7 @@ html.so-site-nav-open {
   line-height: 0;
 }
 .sector h3 {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 1.7rem;
   font-weight: 500;
   margin-bottom: .6rem;
@@ -1146,7 +1155,7 @@ html.so-site-nav-open {
   padding: 8rem var(--gutter);
 }
 .section--quote blockquote {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-style: italic;
   font-weight: 300;
   font-size: clamp(1.6rem, 4vw, 2.6rem);
@@ -1186,7 +1195,7 @@ html.so-site-nav-open {
   opacity: .5;
 }
 .cta h2 {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 400;
   letter-spacing: -0.02em;
@@ -1308,7 +1317,7 @@ html.so-site-nav-open {
 .modal__close:hover { color: var(--amber-2); }
 .modal__eyebrow { color: var(--amber-2); margin-bottom: .8rem; }
 .modal__card h3 {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 2rem;
   font-weight: 500;
   letter-spacing: -0.015em;
@@ -1473,7 +1482,7 @@ html.so-site-nav-open {
   margin-bottom: 1.5rem;
 }
 .client-hero h1 {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: clamp(2.4rem, 5.5vw, 4.5rem);
   font-weight: 400;
   line-height: 1;
@@ -1502,7 +1511,7 @@ html.so-site-nav-open {
 .client-stat:last-child { border-right: 0; }
 .client-stat__label { color: var(--mute-2); margin-bottom: .4rem; }
 .client-stat__value {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 2rem;
   font-weight: 500;
   letter-spacing: -0.02em;
@@ -1543,7 +1552,7 @@ html.so-site-nav-open {
 }
 .module__title-row { display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; }
 .module__title {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 1.35rem;
   font-weight: 500;
   letter-spacing: -0.01em;
@@ -1764,7 +1773,7 @@ html.so-site-nav-open {
 .competitor__name { font-weight: 500; }
 .competitor__sub { font-family: var(--font-mono); font-size: .65rem; color: var(--mute-2); text-transform: uppercase; letter-spacing: 0.08em; margin-top: .15rem; }
 .competitor__price {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 1.3rem;
   font-weight: 500;
   letter-spacing: -0.01em;
@@ -1824,7 +1833,7 @@ html.so-site-nav-open {
 }
 .client-cta__eyebrow { color: var(--amber-2); margin-bottom: 1rem; display: inline-block; }
 .client-cta h2 {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: clamp(1.8rem, 4vw, 2.8rem);
   font-weight: 400;
   letter-spacing: -0.02em;
@@ -1870,7 +1879,7 @@ html.so-site-nav-open {
   height: 36px;
 }
 .gate h1 {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 2.2rem;
   font-weight: 500;
   letter-spacing: -0.02em;
@@ -1977,7 +1986,7 @@ html.so-site-nav-open {
   gap: .55rem;
 }
 .admin-gate__card h1 {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 2rem;
   font-weight: 500;
   letter-spacing: -0.02em;
@@ -2057,7 +2066,7 @@ html.so-site-nav-open {
   width: 100%;
 }
 .admin-main__title {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: clamp(1.75rem, 4vw, 2.5rem);
   font-weight: 500;
   letter-spacing: -0.02em;
@@ -2533,16 +2542,6 @@ html.so-site-nav-open {
   cursor: pointer;
 }
 .tf-admin-toolbar__btn:hover { border-color: var(--amber); }
-.tf-admin-devtools { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
-.tf-admin-legal {
-  margin-top: 2.5rem;
-  padding-top: 1.25rem;
-  border-top: 1px solid var(--line);
-  color: var(--mute-2);
-  font-size: 0.72rem;
-  line-height: 1.55;
-  max-width: 52rem;
-}
 .tf-admin-nav__media-wrap {
   width: 100%;
   display: flex;

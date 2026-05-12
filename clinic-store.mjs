@@ -350,6 +350,43 @@ export function createUserStore(dataDir) {
       save(data);
       return { id: u.id, email: u.email, reportSlug: u.reportSlug };
     },
+
+    getStorageSummary() {
+      function statSafe(target) {
+        try {
+          if (!fs.existsSync(target)) return { exists: false, bytes: 0, mtimeIso: null };
+          const st = fs.statSync(target);
+          return { exists: true, bytes: st.size, mtimeIso: st.mtime.toISOString() };
+        } catch (e) {
+          return { exists: false, bytes: 0, mtimeIso: null, readError: e.message || 'read failed' };
+        }
+      }
+
+      const data = load();
+      const pdata = loadPending();
+      let writable = 'unknown';
+      try {
+        fs.mkdirSync(dataDir, { recursive: true });
+        fs.accessSync(dataDir, fs.constants.W_OK);
+        writable = 'ok';
+      } catch {
+        writable = 'fail';
+      }
+
+      return {
+        backend: 'json-files',
+        dataDir,
+        writable,
+        accountsFile: file,
+        pendingFile,
+        accountsFileStats: statSafe(file),
+        pendingFileStats: statSafe(pendingFile),
+        legacyAccountsFileStats: statSafe(legacyUsersFile),
+        legacyPendingFileStats: statSafe(legacyPendingFile),
+        confirmedUserCount: data.users.length,
+        pendingRegistrationCount: pdata.pending.length,
+      };
+    },
   };
 }
 

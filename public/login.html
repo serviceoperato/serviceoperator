@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" href="favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css" />
 <script src="/page-skeleton.js"></script>
 <style>
@@ -31,11 +31,11 @@
     margin-bottom: 1rem;
   }
   .page-user-portal .admin-gate__card > h1 {
-    font-family: var(--font-display);
+    font-family: var(--font-body);
     font-weight: 500;
   }
   .page-user-portal .admin-gate__card h2 {
-    font-family: var(--font-display);
+    font-family: var(--font-body);
     font-weight: 500;
   }
   .page-user-portal .portal-form input {
@@ -236,7 +236,7 @@
     </div>
 
     <form id="userResetForm" class="portal-form is-hidden" autocomplete="on">
-      <h2 style="font-size: 1.1rem; margin: 0 0 0.5rem; font-weight: 600; font-family: var(--font-display, Georgia, serif)">Set a new password</h2>
+      <h2 style="font-size: 1.1rem; margin: 0 0 0.5rem; font-weight: 700; font-family: var(--font-body)">Set a new password</h2>
       <p class="portal-form__muted">Choose a password of at least 8 characters, then sign in as usual.</p>
       <label>
         <span class="portal-caption">NEW PASSWORD</span>
@@ -303,6 +303,7 @@
 
   var params = new URLSearchParams(window.location.search);
   var slugHint = (params.get('slug') || '').trim();
+  var nextPath = (params.get('next') || '').trim();
   var resetToken = (params.get('reset') || '').trim();
   /** One-time email confirmation after self-registration (`?verify=`). Takes precedence over `reset`. */
   var verifyToken = (params.get('verify') || '').trim();
@@ -328,6 +329,8 @@
   if (slugHint && lede) {
     lede.textContent =
       'You were sent here for report “' + slugHint + '”. After sign-in you will be taken to that page.';
+  } else if (nextPath === '/admin.html' && lede) {
+    lede.textContent = 'Sign in with your ServiceOpera account to open the admin console.';
   }
 
   if (params.get('registered') === '1' && bannerRegistered) {
@@ -899,6 +902,10 @@
         var lj = res.json || {};
         if (!res.okHttp || !lj.token) {
           var eLogin = (lj.error || 'Sign-in failed.') + '';
+          if (res.status === 404) {
+            eLogin =
+              'This host is not running the ServiceOpera Node API, so user accounts cannot be read or saved. Deploy server.mjs with a persistent DATA_DIR volume (see debug rows 61–63 and 69–70).';
+          }
           setHint('', '');
           setLoginErr(eLogin);
           var pwEl = document.getElementById('userPassword');
@@ -911,7 +918,12 @@
         } catch (err) {}
         setHint('Redirecting…', 'ok');
         setLoginErr('');
-        var dest = lj.reportUrl || '/clinics/report.html?slug=' + encodeURIComponent(lj.reportSlug);
+        var dest = '';
+        if (nextPath && nextPath.charAt(0) === '/' && nextPath.indexOf('//') !== 0) {
+          dest = nextPath;
+        } else {
+          dest = lj.reportUrl || '/clinics/report.html?slug=' + encodeURIComponent(lj.reportSlug);
+        }
         if (dest.charAt(0) !== '/') dest = '/' + dest;
         window.location.href = dest;
       });

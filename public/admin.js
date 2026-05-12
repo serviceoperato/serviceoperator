@@ -541,13 +541,20 @@
     return false;
   }
 
+  function redirectToPortalLogin() {
+    window.location.replace('/login.html?next=' + encodeURIComponent('/admin.html'));
+  }
+
   fetchCapabilities().then(function () {
     return tryRestoreJwtSession();
   }).then(function (restored) {
     if (restored) return true;
     return tryRestorePortalAdminSession();
   }).then(function (restored) {
-    if (!restored) tryRestoreLegacySession();
+    if (restored) return true;
+    return !!tryRestoreLegacySession();
+  }).then(function (restored) {
+    if (!restored) redirectToPortalLogin();
   });
 
   if (sendCodeBtn) {
@@ -1059,18 +1066,4 @@
       URL.revokeObjectURL(url);
     });
   }
-
-  function seedStubMessage(action) {
-    var out = document.getElementById('adminSeedResult');
-    if (!out) return;
-    out.textContent =
-      action +
-      ' is not wired on ServiceOpera — this block mirrors ThaiFans admin for layout only.';
-  }
-  var seed100 = document.getElementById('adminSeed100');
-  if (seed100) seed100.addEventListener('click', function () { seedStubMessage('Fake profile seeding'); });
-  var seed20 = document.getElementById('adminSeed20');
-  if (seed20) seed20.addEventListener('click', function () { seedStubMessage('Fake profile seeding'); });
-  var seedFix = document.getElementById('adminSeedFix');
-  if (seedFix) seedFix.addEventListener('click', function () { seedStubMessage('Profile fix pass'); });
 })();

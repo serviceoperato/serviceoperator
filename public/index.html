@@ -10,13 +10,13 @@
 <link rel="apple-touch-icon" href="favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Inter+Tight:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css" />
 <script src="/page-skeleton.js"></script>
 <style>
   /* Homepage layout only — does not change shared components */
   .home-lp {
-    font-family: "DM Sans", system-ui, sans-serif;
+    font-family: var(--font-body);
     font-weight: 300;
     max-width: var(--max);
     margin: 0 auto;
@@ -32,9 +32,9 @@
     margin: 0 0 1.25rem;
   }
   .home-lp__h1 {
-    font-family: Fraunces, Georgia, serif;
-    font-weight: 300;
-    font-size: 42px;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: clamp(2.5rem, 4vw, 3rem);
     line-height: 1.12;
     letter-spacing: -0.02em;
     margin: 0 0 1.25rem;
@@ -46,8 +46,8 @@
     font-style: italic;
   }
   .home-lp__sub {
-    font-family: "DM Sans", system-ui, sans-serif;
-    font-weight: 300;
+    font-family: var(--font-body);
+    font-weight: 400;
     font-size: 1rem;
     line-height: 1.55;
     color: var(--mute-2);
@@ -65,7 +65,7 @@
     gap: 0.55rem;
     background: #0a0a0a;
     color: #fff;
-    font-family: "DM Sans", system-ui, sans-serif;
+    font-family: var(--font-body);
     font-size: 14px;
     font-weight: 500;
     text-decoration: none;
@@ -104,7 +104,7 @@
     }
   }
   .home-lp__metric-val {
-    font-family: Fraunces, Georgia, serif;
+    font-family: var(--font-body);
     font-weight: 300;
     font-size: clamp(1.85rem, 5vw, 2.35rem);
     letter-spacing: -0.02em;
@@ -112,7 +112,7 @@
     margin-bottom: 0.35rem;
   }
   .home-lp__metric-lbl {
-    font-family: "DM Sans", system-ui, sans-serif;
+    font-family: var(--font-body);
     font-weight: 400;
     font-size: 0.78rem;
     color: var(--mute-2);
@@ -150,14 +150,14 @@
     height: 28px;
   }
   .home-lp__card h3 {
-    font-family: "DM Sans", system-ui, sans-serif;
+    font-family: var(--font-body);
     font-weight: 500;
     font-size: 1rem;
     margin: 0 0 0.5rem;
     color: var(--paper);
   }
   .home-lp__card p {
-    font-family: "DM Sans", system-ui, sans-serif;
+    font-family: var(--font-body);
     font-weight: 300;
     font-size: 0.9rem;
     line-height: 1.5;
@@ -176,7 +176,7 @@
     gap: 1rem 1.25rem;
     padding: 1.15rem 0;
     border-top: 1px solid var(--line);
-    font-family: "DM Sans", system-ui, sans-serif;
+    font-family: var(--font-body);
   }
   .home-lp__step:first-child {
     border-top: none;
@@ -210,7 +210,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    font-family: "DM Sans", system-ui, sans-serif;
+    font-family: var(--font-body);
     font-size: 0.85rem;
     font-weight: 400;
     color: var(--mute-2);

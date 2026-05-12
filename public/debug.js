@@ -507,6 +507,72 @@
         : ''),
   });
 
+  var storeProbe = await timedJson('/api/debug/user-store');
+  var storeJson = storeProbe.json || {};
+  var store = storeJson.storage || null;
+  lines.push({
+    cat: 'DB',
+    text:
+      '69 · API /api/debug/user-store: HTTP ' +
+      storeProbe.status +
+      ' · ' +
+      storeProbe.ms +
+      ' ms' +
+      (storeProbe.ok ? ' · ok' : ' · fail') +
+      (storeProbe.status === 404
+        ? ' · note=Node API not running; user_accounts.json is not reachable from this host'
+        : storeJson.service === 'serviceopera' && store
+          ? ' · note=server JSON user store'
+          : storeProbe.err
+            ? ' · ' + storeProbe.err
+            : ''),
+  });
+  if (store) {
+    lines.push({
+      cat: 'DB',
+      text:
+        '70 · user store backend: ' +
+        store.backend +
+        ' · DATA_DIR=' +
+        store.dataDir +
+        ' · writable=' +
+        store.writable,
+    });
+    lines.push({
+      cat: 'DB',
+      text:
+        '71 · confirmed users: ' +
+        store.confirmedUserCount +
+        ' · pending registrations: ' +
+        store.pendingRegistrationCount,
+    });
+    lines.push({
+      cat: 'DB',
+      text:
+        '72 · accounts file: ' +
+        (store.accountsFileStats && store.accountsFileStats.exists ? 'present' : 'missing') +
+        ' · bytes=' +
+        (store.accountsFileStats ? store.accountsFileStats.bytes : 'n/a') +
+        (store.accountsFileStats && store.accountsFileStats.mtimeIso
+          ? ' · mtime=' + store.accountsFileStats.mtimeIso
+          : ''),
+    });
+    lines.push({
+      cat: 'DB',
+      text:
+        '73 · pending file: ' +
+        (store.pendingFileStats && store.pendingFileStats.exists ? 'present' : 'missing') +
+        ' · bytes=' +
+        (store.pendingFileStats ? store.pendingFileStats.bytes : 'n/a'),
+    });
+  } else if (storeProbe.status === 404) {
+    lines.push({
+      cat: 'DB',
+      text:
+        '70 · user accounts are not saved in the browser; they require the Node server and a persistent DATA_DIR volume on Railway.',
+    });
+  }
+
     /* —— Portal password reset (login.html only) —— */
     var onPortalLogin = /\/login\.html$/i.test(path) || path === '/login' || path.endsWith('/login.html');
     if (onPortalLogin) {
@@ -588,7 +654,7 @@
       '<span class="mono debug-panel__title" id="soDebugTitle">— DEBUG · … checks</span>' +
       '<button type="button" class="debug-panel__close mono" data-debug-close aria-label="Close panel"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg></button>' +
       '</div>' +
-      '<p class="debug-panel__sub mono">DB = local storage · FE = browser · BE = HTTP to this host. Rows 51–53: <code>img.brand-logo</code>. Rows 54–60: layout, viewport, safe-area, theme. Rows 61–63: <code>/api/version</code> and capabilities (Resend / login). Rows 64–68: secure context, focus, fonts, storage estimate, service worker. On <code>login.html</code>, <strong>[PW]</strong> rows (password-reset diagnostics) appear too. Select the text below and copy (Ctrl+C), or use the button.</p>' +
+      '<p class="debug-panel__sub mono">DB = local storage · FE = browser · BE = HTTP to this host. Rows 51–53: <code>img.brand-logo</code>. Rows 54–60: layout, viewport, safe-area, theme. Rows 61–63: <code>/api/version</code> and capabilities (Resend / login). Rows 64–68: secure context, focus, fonts, storage estimate, service worker. Rows 69–73: server user JSON store (<code>/api/debug/user-store</code>). On <code>login.html</code>, <strong>[PW]</strong> rows (password-reset diagnostics) appear too. Select the text below and copy (Ctrl+C), or use the button.</p>' +
       '<div class="debug-panel__status mono" id="soDebugStatus">Running…</div>' +
       '<pre class="debug-panel__out mono" id="soDebugOut" tabindex="0"></pre>' +
       '<div class="debug-panel__actions">' +

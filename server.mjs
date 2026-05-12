@@ -334,6 +334,20 @@ app.get('/api/version', (_req, res) => {
   res.json({ version: appVersion });
 });
 
+app.get('/api/debug/user-store', (_req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  try {
+    const storage = userStore.getStorageSummary();
+    return res.json({ ok: true, service: 'serviceopera', version: appVersion, storage });
+  } catch (e) {
+    return res.status(500).json({
+      ok: false,
+      service: 'serviceopera',
+      error: e.message || 'Failed to read user store.',
+    });
+  }
+});
+
 app.get('/api/admin/capabilities', (_req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   res.json({
@@ -540,7 +554,16 @@ dualPost('/api/auth/user-login', '/api/auth/clinic-login', (req, res) => {
   const email = typeof req.body?.email === 'string' ? req.body.email : '';
   const password = typeof req.body?.password === 'string' ? req.body.password : '';
   const user = userStore.verifyLogin(email, password);
-  if (!user) return res.status(401).json({ error: 'Invalid email or password.' });
+  if (!user) {
+    const pending = userStore.findPendingByEmail(email);
+    if (pending) {
+      return res.status(403).json({
+        error:
+          'This email is waiting for confirmation. Open the link from your signup email, then sign in. You can also use “Resend confirmation link” below.',
+      });
+    }
+    return res.status(401).json({ error: 'Invalid email or password.' });
+  }
   const token = signJwt({
     v: 1,
     role: 'user',
