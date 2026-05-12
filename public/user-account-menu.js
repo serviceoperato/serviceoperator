@@ -43,6 +43,27 @@
     return at > 0 ? e.slice(0, at) : e;
   }
 
+  function decodeJwtEmail(token) {
+    try {
+      var parts = String(token || '').split('.');
+      if (parts.length < 2) return '';
+      var payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      while (payload.length % 4) payload += '=';
+      var json = JSON.parse(atob(payload));
+      return typeof json.email === 'string' ? json.email : '';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function portalEmail() {
+    if (sessionCache && sessionCache.email) return sessionCache.email;
+    var jwt = getPortalJwt();
+    if (jwt) return decodeJwtEmail(jwt);
+    if (adminOk) return ADMIN_EMAIL;
+    return '';
+  }
+
   function initialsFromLabel(label) {
     var parts = String(label || '')
       .trim()
@@ -100,9 +121,16 @@
               email: x.json.email || '',
               reportSlug: x.json.reportSlug || '',
             };
-          } else {
+            return;
+          }
+          if (x.status === 401) {
             sessionCache = null;
             clearPortalJwt();
+            return;
+          }
+          var fallbackEmail = decodeJwtEmail(portalJwt);
+          if (fallbackEmail) {
+            sessionCache = { email: fallbackEmail, reportSlug: '' };
           }
         })
       );
@@ -188,7 +216,7 @@
   }
 
   function renderAuthed(root) {
-    var email = (sessionCache && sessionCache.email) || (adminOk ? ADMIN_EMAIL : '');
+    var email = portalEmail();
     var label = displayNameFromEmail(email);
     var loginHref = resolveLoginHref(root);
     var adminHref = resolveAdminHref(root);
@@ -291,7 +319,8 @@
   }
 
   function mountRoot(root) {
-    if (!root) return;
+    if (!root || root.getAttribute('data-so-nav-mounted') === '1') return;
+    root.setAttribute('data-so-nav-mounted', '1');
     var portalJwt = getPortalJwt();
     var adminJwt = getAdminJwt();
     if (!portalJwt && !adminJwt) {
@@ -299,6 +328,10 @@
       adminOk = false;
       renderGuest(root);
       return;
+    }
+    if (portalJwt && !sessionCache) {
+      var seedEmail = decodeJwtEmail(portalJwt);
+      if (seedEmail) sessionCache = { email: seedEmail, reportSlug: '' };
     }
     renderAuthed(root);
     loadSessionState().then(function () {
@@ -333,6 +366,8 @@
       }
     }
   }
+
+  window.__SO_USER_ACCOUNT_MENU__ = true;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', mountAll);

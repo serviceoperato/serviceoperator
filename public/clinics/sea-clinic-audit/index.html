@@ -52,11 +52,13 @@
 <div class="grain" aria-hidden="true"></div>
 
 <nav class="nav" aria-label="Primary">
-  <a href="/" class="nav__logo">
-    <img class="nav__logo-img brand-logo" src="../../logo.png" width="220" height="90" alt="ServiceOpera.to — home" decoding="async" />
-  </a>
+  <div class="nav__start">
+    <a href="/" class="nav__logo">
+      <img class="nav__logo-img brand-logo" src="../../logo.png" width="220" height="90" alt="ServiceOpera.to — home" decoding="async" />
+    </a>
+  </div>
   <div class="nav__links">
-    <a href="/login.html" class="nav__login mono">Log in</a>
+    <a href="/login.html" class="nav__login mono" id="navPortalAuth" data-login-href="/login.html" data-admin-href="/admin.html">Log in</a>
     <button type="button" class="theme-toggle" data-theme-toggle aria-label="Theme"></button>
     <a href="mailto:jack@serviceopera.to" class="nav__cta" title="jack@serviceopera.to">jack@serviceopera.to</a>
   </div>
@@ -295,6 +297,8 @@
     });
 })();
 </script>
+<script src="/site-nav-drawer.js"></script>
+<script src="/user-account-menu.js"></script>
 <script src="../../theme.js"></script>
 <script src="../../debug.js"></script>
 </body>

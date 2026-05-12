@@ -305,6 +305,11 @@ html.so-site-nav-open {
   min-width: 0;
   flex: 1 1 auto;
   justify-content: flex-end;
+  overflow: visible;
+}
+.nav__links .so-nav-account {
+  flex-shrink: 0;
+  max-width: min(100%, 18rem);
 }
 .nav__links a { font-size: .9rem; color: var(--bone); }
 .nav__links a:not(.nav__cta):hover { color: var(--paper); }
