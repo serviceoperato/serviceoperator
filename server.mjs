@@ -148,20 +148,38 @@ function pruneSends(ip) {
 }
 
 function resendFailureMessage(err, fallback) {
-  const detail = String(err?.resendDetail || err?.message || '').toLowerCase();
+  const detailRaw = String(err?.resendDetail || err?.message || '');
+  const detail = detailRaw.toLowerCase();
+  const docDomains = 'https://resend.com/docs/dashboard/domains/introduction';
   if (
     detail.includes('only send') ||
     detail.includes('testing emails') ||
     detail.includes('test emails') ||
     detail.includes('sandbox')
   ) {
-    return 'Resend is still using the test sender. Set RESEND_FROM on Railway to a verified domain address (not onboarding@resend.dev), redeploy, then try again.';
+    return (
+      'Resend blocked this send: RESEND_FROM is still using the sandbox / test sender (e.g. onboarding@resend.dev).\n\n' +
+      '▸ Meaning · In test mode Resend delivers only to the mailbox tied to your Resend account—not arbitrary addresses.\n\n' +
+      '▸ Fix · Add & verify your real domain under Resend (Domains → DNS records), then set RESEND_FROM on Railway to e.g. "ServiceOpera <noreply@yourdomain.com>" and redeploy.\n\n' +
+      '▸ Docs · ' +
+      docDomains
+    );
   }
   if (detail.includes('domain') && (detail.includes('verify') || detail.includes('verified'))) {
-    return 'The sender domain is not verified in Resend. Update RESEND_FROM on Railway to a verified address, redeploy, and try again.';
+    return (
+      'Resend blocked this send: the domain (or mailbox) used in RESEND_FROM is not verified in your Resend project.\n\n' +
+      '▸ Fix · Open Resend → Domains, add `yourdomain`, add the SPF/DKIM/verification DNS records until status is verified.\n\n' +
+      '▸ Then · Set Railway `RESEND_FROM` to an address @ that domain (matching a verified sender in Resend), save, redeploy this service.\n\n' +
+      '▸ Check · Deploy logs still show `[serviceopera] Resend: RESEND_FROM=…`; if the variable isn’t picked up, trigger a redeploy.\n\n' +
+      '▸ Docs · ' +
+      docDomains
+    );
   }
   if (detail.includes('invalid api key') || detail.includes('unauthorized') || detail.includes('api key')) {
-    return 'Resend rejected the API key on this server. Check RESEND_API_KEY on Railway, redeploy, and try again.';
+    return (
+      'Resend rejected this request: invalid or unauthorised API credential.\n\n' +
+      '▸ Fix · In Railway open the Node service → Variables → regenerate or paste a fresh RESEND_API_KEY from Resend (API Keys), redeploy.'
+    );
   }
   return fallback;
 }

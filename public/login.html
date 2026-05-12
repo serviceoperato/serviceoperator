@@ -218,6 +218,11 @@
     return 'portal-form__hint' + k + (detail ? ' portal-form__hint--detail' : '');
   }
 
+  function verboseErrorHint(msg) {
+    var s = String(msg || '');
+    return s.indexOf('\n') >= 0 || s.length > 260;
+  }
+
   function setHint(msg, kind, detail) {
     if (!hint) return;
     hint.textContent = msg;
@@ -558,7 +563,8 @@
         }
         if (!res.okHttp) {
           var jfail = res.json || {};
-          setHint((jfail.error || 'Confirmation failed.') + '', 'error');
+          var eConf = (jfail.error || 'Confirmation failed.') + '';
+          setHint(eConf, 'error', verboseErrorHint(eConf));
           return;
         }
         var j = res.json || {};
@@ -638,7 +644,8 @@
         }
         if (!res.okHttp) {
           var ej = res.json || {};
-          setRegisterHint((ej.error || 'Could not start registration.') + '', 'error');
+          var eReg = (ej.error || 'Could not start registration.') + '';
+          setRegisterHint(eReg, 'error', verboseErrorHint(eReg));
           return;
         }
         var jr = res.json || {};
@@ -693,7 +700,8 @@
         }
         if (!res.okHttp) {
           var er = res.json || {};
-          setHint((er.error || 'Could not send reset email.') + '', 'error');
+          var eReset = (er.error || 'Could not send reset email.') + '';
+          setHint(eReset, 'error', verboseErrorHint(eReset));
           return;
         }
         var jr = res.json || {};
@@ -741,7 +749,8 @@
         }
         if (!res.okHttp) {
           var jx = res.json || {};
-          setResetHint((jx.error || 'Reset failed.') + '', 'error');
+          var ePw = (jx.error || 'Reset failed.') + '';
+          setResetHint(ePw, 'error', verboseErrorHint(ePw));
           return;
         }
         var jr = res.json || {};
@@ -791,7 +800,8 @@
         }
         var lj = res.json || {};
         if (!res.okHttp || !lj.token) {
-          setHint((lj.error || 'Invalid email or password.') + '', 'error');
+          var eLogin = (lj.error || 'Invalid email or password.') + '';
+          setHint(eLogin, 'error', verboseErrorHint(eLogin));
           var pwEl = document.getElementById('clinicPassword');
           if (pwEl) pwEl.value = '';
           return;
