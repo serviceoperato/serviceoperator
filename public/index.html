@@ -4,18 +4,229 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
-<title>Jack — Service Operator · AI Operations for Thailand · serviceopera.to</title>
-<meta name="description" content="Jack — Service Operator (serviceopera.to). AI operations for Thailand hotels, clinics and property businesses: public data, reviews, competitors and lead flows turned into practical automation." />
+<title>Jack — Service Operator · Thailand · serviceopera.to</title>
+<meta name="description" content="Jack — Service Operator. AI systems for Thailand hotels, clinics and property managers. Pilot in 14 days." />
 <link rel="icon" href="favicon.png" type="image/png" sizes="any" />
 <link rel="apple-touch-icon" href="favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400&family=JetBrains+Mono:wght@300;400;500;700&family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Inter+Tight:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css" />
+<style>
+  /* Homepage layout only — does not change shared components */
+  .home-lp {
+    font-family: "DM Sans", system-ui, sans-serif;
+    font-weight: 300;
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 5.5rem var(--gutter) 3.5rem;
+    color: var(--paper);
+  }
+  .home-lp__eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--mute-2);
+    margin: 0 0 1.25rem;
+  }
+  .home-lp__h1 {
+    font-family: Fraunces, Georgia, serif;
+    font-weight: 300;
+    font-size: 42px;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    margin: 0 0 1.25rem;
+  }
+  .home-lp__h1 span {
+    display: block;
+  }
+  .home-lp__h1-italic {
+    font-style: italic;
+  }
+  .home-lp__sub {
+    font-family: "DM Sans", system-ui, sans-serif;
+    font-weight: 300;
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--mute-2);
+    max-width: 36em;
+    margin: 0 0 1.75rem;
+  }
+  .home-lp__rule {
+    border: none;
+    border-top: 1px solid var(--line);
+    margin: 2.25rem 0;
+  }
+  .home-lp__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    background: #0a0a0a;
+    color: #fff;
+    font-family: "DM Sans", system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 0.72rem 1.15rem;
+    border-radius: 2px;
+    border: 1px solid #0a0a0a;
+  }
+  .home-lp__cta:hover {
+    opacity: 0.92;
+  }
+  .home-lp__cta svg {
+    flex-shrink: 0;
+  }
+  .home-lp__cta .ico-arrow-r {
+    margin-left: 0.15em;
+    color: #fff;
+  }
+  [data-theme="dark"] .home-lp__cta {
+    background: #f5f5f5;
+    color: #0a0a0a;
+    border-color: #f5f5f5;
+  }
+  [data-theme="dark"] .home-lp__cta .ico-arrow-r {
+    color: #0a0a0a;
+  }
+  .home-lp__metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    text-align: center;
+    padding: 0.25rem 0 0.5rem;
+  }
+  @media (max-width: 640px) {
+    .home-lp__metrics {
+      grid-template-columns: 1fr;
+    }
+  }
+  .home-lp__metric-val {
+    font-family: Fraunces, Georgia, serif;
+    font-weight: 300;
+    font-size: clamp(1.85rem, 5vw, 2.35rem);
+    letter-spacing: -0.02em;
+    display: block;
+    margin-bottom: 0.35rem;
+  }
+  .home-lp__metric-lbl {
+    font-family: "DM Sans", system-ui, sans-serif;
+    font-weight: 400;
+    font-size: 0.78rem;
+    color: var(--mute-2);
+    line-height: 1.35;
+    max-width: 12rem;
+    margin: 0 auto;
+  }
+  .home-lp__sectors {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 0.25rem;
+  }
+  @media (max-width: 900px) {
+    .home-lp__sectors {
+      grid-template-columns: 1fr;
+    }
+  }
+  .home-lp__card {
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1.35rem 1.25rem;
+  }
+  [data-theme="dark"] .home-lp__card {
+    background: var(--ink-2);
+  }
+  .home-lp__card-icon {
+    color: var(--amber-2);
+    margin-bottom: 0.75rem;
+  }
+  .home-lp__card-icon svg {
+    display: block;
+    width: 28px;
+    height: 28px;
+  }
+  .home-lp__card h3 {
+    font-family: "DM Sans", system-ui, sans-serif;
+    font-weight: 500;
+    font-size: 1rem;
+    margin: 0 0 0.5rem;
+    color: var(--paper);
+  }
+  .home-lp__card p {
+    font-family: "DM Sans", system-ui, sans-serif;
+    font-weight: 300;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--mute-2);
+    margin: 0;
+  }
+  .home-lp__steps {
+    list-style: none;
+    margin: 2rem 0 0;
+    padding: 0;
+    max-width: 42rem;
+  }
+  .home-lp__step {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem 1.25rem;
+    padding: 1.15rem 0;
+    border-top: 1px solid var(--line);
+    font-family: "DM Sans", system-ui, sans-serif;
+  }
+  .home-lp__step:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+  .home-lp__step-num {
+    font-weight: 500;
+    font-size: 0.85rem;
+    color: var(--mute-2);
+    letter-spacing: 0.04em;
+  }
+  .home-lp__step-body strong {
+    font-weight: 500;
+    color: var(--paper);
+    display: block;
+    margin-bottom: 0.35rem;
+  }
+  .home-lp__step-body p {
+    margin: 0;
+    font-weight: 300;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--mute-2);
+  }
+  .home-lp-footer {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 2rem var(--gutter) 3rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    font-family: "DM Sans", system-ui, sans-serif;
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--mute-2);
+    border-top: 1px solid var(--line);
+  }
+  .home-lp-footer a {
+    color: var(--paper);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .home-lp-footer a:hover {
+    text-decoration: underline;
+  }
+</style>
 </head>
 <body class="page-home">
 
-<!-- Grain overlay -->
 <div class="grain" aria-hidden="true"></div>
 
 <!-- Navigation -->
@@ -33,248 +244,98 @@
   </div>
 </nav>
 
-<div class="vertical-pills-wrap">
-  <div class="vertical-pills" role="tablist" aria-label="Business vertical">
-    <button type="button" class="vertical-pill vertical-pill--active mono" role="tab" aria-selected="true" data-vertical="clinics"><span class="vertical-pill__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11 2h2v9h9v2h-9v9h-2v-9H2v-2h9V2z"/></svg></span>Clinics</button>
-    <button type="button" class="vertical-pill mono" role="tab" aria-selected="false" data-vertical="hotels"><span class="vertical-pill__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14V9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5"/><path d="M3 14v6h18v-6"/><path d="M7 14v-3a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v3"/></svg></span>Hotels</button>
-    <button type="button" class="vertical-pill mono" role="tab" aria-selected="false" data-vertical="properties"><span class="vertical-pill__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 5l9 6.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9.5z"/></svg></span>Real Estate</button>
-  </div>
-</div>
+<main class="home-lp">
+  <p class="home-lp__eyebrow">Jack — Service Operator · Thailand</p>
+  <h1 class="home-lp__h1">
+    <span>AI systems for Thailand service businesses.</span>
+    <span>No fluff.</span>
+    <span class="home-lp__h1-italic">Just results.</span>
+  </h1>
+  <p class="home-lp__sub">
+    I study your operation, build one automation that earns its keep in 14 days, then expand.
+    Hotels, clinics, property managers.
+  </p>
+  <!-- Replace href with your real calendar URL (Cal.com, Calendly, etc.) -->
+  <a class="home-lp__cta" href="https://cal.com/YOUR_CALENDAR" target="_blank" rel="noopener noreferrer">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+      <path d="M16 2v4M8 2v4M3 10h18"/>
+    </svg>
+    Book a 30-min call
+    <span class="ico-arrow-r" aria-hidden="true"></span>
+  </a>
 
-<!-- HERO -->
-<header class="hero">
-  <div class="hero__inner">
-    <p class="hero__brand">
-      <img class="hero__brand-img brand-logo" src="logo.png" width="280" height="115" alt="ServiceOpera.to — Jack, Service Operator" decoding="async" />
-    </p>
-    <p class="hero__byline mono">Jack — Service Operator · <a href="https://www.serviceopera.to">www.serviceopera.to</a></p>
+  <hr class="home-lp__rule" />
 
-    <div class="hero-copy has-hero-sample" id="heroCopy">
-      <h1 class="hero__title hero__title--lead" id="heroTitleEl">
-        <span class="line">AI Operations for Thailand</span>
-        <span class="line line--soft">Hotels, Clinics &amp; Property Businesses</span>
-      </h1>
-
-      <p class="hero__lede" id="heroLedeEl">
-        I analyze public business data, reviews, competitors and lead flows, then build practical AI systems that help Thailand service businesses capture more inquiries, reply faster and automate repetitive work.
-      </p>
-
-      <div class="hero__actions">
-        <a href="mailto:jack@serviceopera.to?subject=Request%3A%20Private%20AI%20Operations%20Report&amp;body=Hi%20Jack%2C%0A%0ABusiness%20name%3A%0ACity%20%2F%20area%20in%20Thailand%3A%0AWebsite%3A%0AWhat%20I%20want%20the%20report%20to%20focus%20on%3A%0A%0AThanks." class="btn btn--primary" id="heroPrimaryCta">View your private AI Operations Report<span class="ico-arrow-r" aria-hidden="true"></span></a>
-        <a href="mailto:jack@serviceopera.to?subject=Request%3A%20Automation%20Audit&amp;body=Hi%20Jack%2C%0A%0ABusiness%20name%3A%0ASector%20%28hotel%20%2F%20clinic%20%2F%20property%29%3A%0AWhat%20feels%20broken%20in%20operations%20today%3A%0A%0AThanks." class="btn btn--ghost" id="heroSecondaryCta">Request an Automation Audit</a>
-      </div>
-      <p class="hero__clinic-pitch mono" id="heroSamplePitch">
-        <a href="clinics/demo.html">Thailand sector research sample · 47 clinics · updated weekly</a>
-      </p>
+  <div class="home-lp__metrics">
+    <div>
+      <span class="home-lp__metric-val">98.4%</span>
+      <p class="home-lp__metric-lbl">Guest &amp; patient replies under 30s</p>
     </div>
-
-    <!-- Marquee of sector keywords -->
-    <div class="marquee" aria-hidden="true">
-      <div class="marquee__track">
-        <span>Hospitality</span><span>·</span>
-        <span>Medical &amp; Wellness</span><span>·</span>
-        <span>Property Management</span><span>·</span>
-        <span>WhatsApp Concierge</span><span>·</span>
-        <span>Review Intelligence</span><span>·</span>
-        <span>Lead Engine</span><span>·</span>
-        <span>Competitor Radar</span><span>·</span>
-        <span>Hospitality</span><span>·</span>
-        <span>Medical &amp; Wellness</span><span>·</span>
-        <span>Property Management</span><span>·</span>
-        <span>WhatsApp Concierge</span><span>·</span>
-        <span>Review Intelligence</span><span>·</span>
-        <span>Lead Engine</span><span>·</span>
-        <span>Competitor Radar</span><span>·</span>
-      </div>
+    <div>
+      <span class="home-lp__metric-val">3.7×</span>
+      <p class="home-lp__metric-lbl">Qualified pipeline</p>
+    </div>
+    <div>
+      <span class="home-lp__metric-val">+1.2</span>
+      <p class="home-lp__metric-lbl">90-day review lift</p>
     </div>
   </div>
 
-  <!-- Decorative side -->
-  <aside class="hero__aside" aria-hidden="true">
-    <div class="card-stack">
-      <div class="mini-card mini-card--1">
-        <div class="mini-card__label mono">CHECK-IN BOT</div>
-        <div class="mini-card__metric">98.4<span>%</span></div>
-        <div class="mini-card__sub">guest replies under 30s</div>
-      </div>
-      <div class="mini-card mini-card--2">
-        <div class="mini-card__label mono">REVIEWS</div>
-        <div class="mini-card__metric">+1.2<span class="ico-star" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7L12 17.8 5.7 21l2.3-7-6-4.6h7.6L12 2z"/></svg></span></div>
-        <div class="mini-card__sub">90-day avg lift</div>
-      </div>
-      <div class="mini-card mini-card--3">
-        <div class="mini-card__label mono">LEADS</div>
-        <div class="mini-card__metric">3.7<span class="mono" style="opacity:.85">x</span></div>
-        <div class="mini-card__sub">qualified pipeline</div>
-      </div>
-    </div>
-  </aside>
-</header>
+  <hr class="home-lp__rule" />
 
-<!-- ACTS -->
-<section id="build" class="section section--acts">
-  <div class="section__header">
-    <span class="eyebrow mono">— 01 · WHAT I BUILD</span>
-    <h2 class="section__title">Four systems. <em>One operator.</em></h2>
-    <p class="section__sub">Every engagement is built around one of these four cores, configured to your Thailand operation and stitched into the tools you already use.</p>
+  <div class="home-lp__sectors">
+    <article class="home-lp__card">
+      <div class="home-lp__card-icon" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 5l9 6.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9.5z"/></svg>
+      </div>
+      <h3>Hotels &amp; serviced apartments</h3>
+      <p>Concierge, reviews and rate intelligence for teams running keys across Thailand without a full revenue desk.</p>
+    </article>
+    <article class="home-lp__card">
+      <div class="home-lp__card-icon" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="3"/></svg>
+      </div>
+      <h3>Clinics, dental &amp; wellness</h3>
+      <p>Intake, follow-up and review workflows for clinics serving mixed local and international demand.</p>
+    </article>
+    <article class="home-lp__card">
+      <div class="home-lp__card-icon" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="12" rx="1"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M8 21v-2M16 21v-2"/></svg>
+      </div>
+      <h3>Property &amp; rental operators</h3>
+      <p>Lead capture, owner updates and tenant comms so you grow doors without linear back-office growth.</p>
+    </article>
   </div>
 
-  <div class="acts-grid">
-    <article class="act">
-      <div class="act__num mono">01</div>
-      <h3>WhatsApp &amp; Booking Concierge</h3>
-      <p>An AI agent that answers guests and patients 24/7 on WhatsApp, LINE and web chat — quotes rooms, confirms appointments, takes deposits, hands off to a human when it matters.</p>
-      <ul class="act__bullets mono">
-        <li>· EN · TH · RU · ZH · DE</li>
-        <li>· Cloudbeds / Opera / Mews / SimplyBook</li>
-        <li>· Stripe &amp; Omise payment links</li>
-      </ul>
-    </article>
-
-    <article class="act">
-      <div class="act__num mono">02</div>
-      <h3>Review Intelligence</h3>
-      <p>Monitors Google, Booking, Agoda, TripAdvisor in real time. Drafts contextual replies in your voice, flags operational issues to the right manager, and surfaces what your guests actually feel.</p>
-      <ul class="act__bullets mono">
-        <li>· Sentiment + topic clustering</li>
-        <li>· Reply drafts, you approve</li>
-        <li>· Weekly executive digest</li>
-      </ul>
-    </article>
-
-    <article class="act">
-      <div class="act__num mono">03</div>
-      <h3>Lead Engine &amp; CRM</h3>
-      <p>Captures every enquiry from Meta ads, web, walk-ins and referrals into one pipeline. Auto-qualifies, scores, follows up, books the call — so nothing rots in an inbox.</p>
-      <ul class="act__bullets mono">
-        <li>· HubSpot / Pipedrive / GoHighLevel</li>
-        <li>· Automated follow-up sequences</li>
-        <li>· Attribution &amp; cost-per-booking</li>
-      </ul>
-    </article>
-
-    <article class="act">
-      <div class="act__num mono">04</div>
-      <h3>Competitor &amp; Pricing Radar</h3>
-      <p>Tracks competitor rates, packages and availability across Thailand nightly. Surfaces revenue opportunities and tells you exactly when to flex price — without staring at OTAs all day.</p>
-      <ul class="act__bullets mono">
-        <li>· Nightly rate scrapes</li>
-        <li>· Demand &amp; event signals</li>
-        <li>· Slack / email briefings</li>
-      </ul>
-    </article>
-  </div>
-</section>
-
-<!-- METHOD -->
-<section id="method" class="section section--method">
-  <div class="section__header">
-    <span class="eyebrow mono">— 02 · HOW I WORK</span>
-    <h2 class="section__title">A short, honest process.</h2>
-  </div>
-
-  <ol class="method">
-    <li class="method__step">
-      <div class="method__num">i.</div>
-      <div class="method__body">
-        <h4>Reconnaissance</h4>
-        <p>I study your business and your closest competitors in-market. You receive a private brief — a real, working demo built for your business, not a generic deck.</p>
+  <ol class="home-lp__steps">
+    <li class="home-lp__step">
+      <span class="home-lp__step-num">01</span>
+      <div class="home-lp__step-body">
+        <strong>Reconnaissance</strong>
+        <p>I map your operation and in-market signals; you get a tight brief, not a generic slide deck.</p>
       </div>
     </li>
-    <li class="method__step">
-      <div class="method__num">ii.</div>
-      <div class="method__body">
-        <h4>Pilot</h4>
-        <p>We pick one system and put it live in 14 days. Fixed scope, fixed price, observable results. If it doesn't earn its keep, we stop.</p>
+    <li class="home-lp__step">
+      <span class="home-lp__step-num">02</span>
+      <div class="home-lp__step-body">
+        <strong>Pilot — 14 days, fixed price</strong>
+        <p>One automation goes live with clear scope; we only continue if it earns its keep.</p>
       </div>
     </li>
-    <li class="method__step">
-      <div class="method__num">iii.</div>
-      <div class="method__body">
-        <h4>Rollout</h4>
-        <p>We expand to the rest of the suite, wire it into your team workflows, and I stay on as your retained operator at a monthly rate.</p>
+    <li class="home-lp__step">
+      <span class="home-lp__step-num">03</span>
+      <div class="home-lp__step-body">
+        <strong>Rollout</strong>
+        <p>We scale what works into your daily ops and I stay available as your operator on a monthly cadence.</p>
       </div>
     </li>
   </ol>
-</section>
+</main>
 
-<!-- PROOF / SECTORS -->
-<section id="proof" class="section section--proof">
-  <div class="section__header">
-    <span class="eyebrow mono">— 03 · WHO I WORK WITH</span>
-    <h2 class="section__title">Three sectors. <em>One country.</em></h2>
-  </div>
-
-  <div class="sectors">
-    <div class="sector">
-      <div class="sector__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 5l9 6.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9.5z"/></svg></div>
-      <h3>Hotels &amp; serviced apartments</h3>
-      <p class="mono">THAILAND · INDEPENDENT &amp; BOUTIQUE OPERATORS</p>
-      <p class="sector__body">Booking concierge, review intelligence and competitor pricing radar — for teams running real keys across Thailand without a full revenue desk.</p>
-    </div>
-
-    <div class="sector sector--featured">
-      <div class="sector__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="3"/></svg></div>
-      <h3>Clinics, dental, beauty &amp; wellness</h3>
-      <p class="mono">THAILAND · MEDICAL &amp; CONSUMER AESTHETIC</p>
-      <p class="sector__body">Patient intake, treatment quoting, follow-up and review handling — tuned for Thailand clinics that serve mixed local and international demand.</p>
-    </div>
-
-    <div class="sector">
-      <div class="sector__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="12" rx="1"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M8 21v-2M16 21v-2"/></svg></div>
-      <h3>Property &amp; rental operators</h3>
-      <p class="mono">THAILAND · AGENCIES · SERVICED RENTALS</p>
-      <p class="sector__body">Property managers, real estate agencies and serviced rental operators — lead capture from portals and ads, owner reporting, tenant comms and ticketing, without scaling headcount line-for-line.</p>
-    </div>
-  </div>
-</section>
-
-<!-- QUOTE -->
-<section class="section section--quote">
-  <blockquote>
-    <p>&ldquo;Good automation is invisible. Your team stops drowning, your guests stop waiting, your numbers start moving — and nobody can point to the thing that did it.&rdquo;</p>
-    <cite>— Jack · Service Operator</cite>
-  </blockquote>
-</section>
-
-<!-- CTA -->
-<section class="section section--cta">
-  <div class="cta">
-    <h2>Thailand operations, handled with care.</h2>
-    <p>If the work is a fit, you get a private brief first — clear scope, calm execution, no theatre. Start with a report or an audit; we go deeper only when it earns its place.</p>
-    <div class="cta__actions">
-      <a href="mailto:jack@serviceopera.to?subject=Request%3A%20Private%20AI%20Operations%20Report&amp;body=Hi%20Jack%2C%0A%0ABusiness%20name%3A%0ACity%20%2F%20area%20in%20Thailand%3A%0AWebsite%3A%0AWhat%20I%20want%20the%20report%20to%20focus%20on%3A%0A%0AThanks." class="btn btn--primary btn--lg">View your private AI Operations Report<span class="ico-arrow-r" aria-hidden="true"></span></a>
-      <a href="mailto:jack@serviceopera.to?subject=Request%3A%20Automation%20Audit&amp;body=Hi%20Jack%2C%0A%0ABusiness%20name%3A%0ASector%20%28hotel%20%2F%20clinic%20%2F%20property%29%3A%0AWhat%20feels%20broken%20in%20operations%20today%3A%0A%0AThanks." class="btn btn--ghost btn--lg">Request an Automation Audit</a>
-      <a href="#" class="btn btn--ghost btn--lg" id="clientPortalBtn">Client portal</a>
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer class="footer">
-  <div class="footer__cols">
-    <div>
-      <div class="footer__logo">
-        <img class="footer__logo-img brand-logo" src="logo.png" width="200" height="82" alt="ServiceOpera.to" decoding="async" />
-      </div>
-      <p class="footer__tag">Jack — Service Operator · <a href="https://www.serviceopera.to" class="footer__site-link">www.serviceopera.to</a> · Thailand</p>
-    </div>
-    <div>
-      <p class="footer__label mono">CONTACT</p>
-      <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a>
-    </div>
-    <div>
-      <p class="footer__label mono">HOURS</p>
-      <p>Mon — Fri · 09:00 — 19:00 ICT</p>
-    </div>
-    <div>
-      <p class="footer__label mono">PRIVATE ACCESS</p>
-      <a href="#" id="footerPortal">Open client portal</a>
-    </div>
-  </div>
-  <div class="footer__legal mono">
-    © 2026 SERVICE OPERA · ALL RIGHTS, NONE RESERVED · BUILT IN THAILAND
-  </div>
+<footer class="home-lp-footer">
+  <span>© 2026 Service Opera · Built in Thailand</span>
+  <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a>
 </footer>
 
 <!-- Client portal modal -->
@@ -305,6 +366,5 @@
 
 <script src="theme.js"></script>
 <script src="app.js"></script>
-<script src="debug.js"></script>
 </body>
 </html>
