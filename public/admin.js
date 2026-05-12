@@ -62,18 +62,18 @@
     var paging = document.getElementById('usersPaging');
     var pendEl = document.getElementById('pendingRegBody');
     if (!tb) return;
-    var users = (data && data.clinicUsers) || [];
+    var users = (data && (data.users || data.clinicUsers)) || [];
     var pending = (data && data.pendingRegistrations) || [];
     if (uh) {
       uh.textContent =
         users.length === 0
-          ? 'No confirmed clinic users in the JSON store yet.'
-          : 'Confirmed clinic users (newest first in inbox; full list here).';
+          ? 'No confirmed users in the JSON store yet.'
+          : 'Confirmed users (newest first in inbox; full list here).';
     }
     if (paging) paging.textContent = users.length + ' users · page 1 / 1';
     if (!users.length) {
       tb.innerHTML =
-        '<tr><td colspan="13" style="opacity:0.85">No users yet. Use <strong>Clinic reports</strong> in the nav to add one.</td></tr>';
+        '<tr><td colspan="13" style="opacity:0.85">No users yet. Use <strong>User reports</strong> in the nav to add one.</td></tr>';
     } else {
       tb.innerHTML = users
         .map(function (u) {
@@ -221,9 +221,9 @@
       row2.appendChild(makeNavPill(pair[0], function () { openStubPanel(pair[0], pair[1]); }));
     });
     row2.appendChild(
-      makeNavPill('Clinic reports', function () {
+      makeNavPill('User reports', function () {
         if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.remove('is-hidden');
-        openClinicReportsPanel({ id: 'clinic-reports', label: 'Clinic report access' });
+        openUserReportsPanel({ id: 'user-reports', label: 'User report access' });
       })
     );
     tfNav.appendChild(row2);
@@ -508,7 +508,7 @@
     var body = document.getElementById('adminInboxBody');
     if (!body) return;
     var pending = data.pendingRegistrations || [];
-    var users = data.clinicUsers || [];
+    var users = data.users || data.clinicUsers || [];
     var orphans = data.orphanReportDataFiles || [];
     var files = (data.clinicReportFiles || []).slice(0, 24);
     var pages = data.managedPages || [];
@@ -537,7 +537,7 @@
 
     var uHtml = '<ul class="admin-inbox__list">';
     if (!users.length) {
-      uHtml += '<li><p class="admin-inbox__empty">No clinic users yet.</p></li>';
+      uHtml += '<li><p class="admin-inbox__empty">No users yet.</p></li>';
     } else {
       users.slice(0, 12).forEach(function (u) {
         var reportUrl = '/clinics/report.html?slug=' + encodeURIComponent(u.reportSlug);
@@ -618,7 +618,7 @@
 
     body.innerHTML =
       inboxCol('Pending registrations (awaiting email confirmation)', pHtml) +
-      inboxCol('Clinic users (newest first)', uHtml) +
+      inboxCol('Users (newest first)', uHtml) +
       inboxCol('Report data files without user / pending', oHtml) +
       inboxCol('Recent report JSON files', fHtml) +
       inboxCol('Managed pages', pgHtml);
@@ -637,7 +637,7 @@
       }
       body.innerHTML =
         '<p class="admin-inbox__empty">Operations inbox requires an admin JWT from the server.</p>';
-      renderTfUsersTable({ clinicUsers: [], pendingRegistrations: [] });
+      renderTfUsersTable({ users: [], pendingRegistrations: [] });
       return;
     }
     if (hint) {
@@ -678,9 +678,9 @@
       });
   }
 
-  function renderClinicUserRows(users) {
+  function renderPortalUserRows(users) {
     if (!users || !users.length) {
-      return '<li class="mono" style="opacity:.75;">No clinic users yet.</li>';
+      return '<li class="mono" style="opacity:.75;">No users yet.</li>';
     }
     return users
       .map(function (u) {
@@ -701,11 +701,11 @@
       .join('');
   }
 
-  function loadClinicUsersList() {
-    var listEl = document.getElementById('clinicUserList');
+  function loadPortalUsersList() {
+    var listEl = document.getElementById('portalUserList');
     if (!listEl) return;
     var token = getAdminBearer();
-    fetch('/api/clinic-users', {
+    fetch('/api/user-accounts', {
       method: 'GET',
       credentials: 'same-origin',
       headers: { Authorization: 'Bearer ' + token },
@@ -720,20 +720,20 @@
           listEl.innerHTML = '<li class="mono is-error">Could not load users.</li>';
           return;
         }
-        listEl.innerHTML = renderClinicUserRows(x.j.users);
+        listEl.innerHTML = renderPortalUserRows(x.j.users);
       })
       .catch(function () {
         listEl.innerHTML = '<li class="mono is-error">Network error.</li>';
       });
   }
 
-  function openClinicReportsPanel(tile) {
+  function openUserReportsPanel(tile) {
     if (!panel || !panelTitle || !panelBody) return;
     panelTitle.textContent = tile.label;
     var token = getAdminBearer();
     if (!token) {
       panelBody.innerHTML =
-        '<p class="admin-panel__stub">After you sign in with <strong>email OTP</strong> on the live server, you can register clinic emails and passwords here. They appear in the on-disk user store and can open <strong>/clinics/report.html?slug=…</strong> after using <strong>Log in</strong> in the site header.</p>' +
+        '<p class="admin-panel__stub">After you sign in with <strong>email OTP</strong> on the live server, you can register user emails and passwords here. They appear in the on-disk user store and can open <strong>/clinics/report.html?slug=…</strong> after using <strong>Log in</strong> in the site header.</p>' +
         '<p class="admin-panel__stub">Browser-only admin password (local <code>admin-config.js</code>) cannot call this API.</p>';
       panel.classList.remove('is-hidden');
       panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -741,18 +741,18 @@
     }
 
     panelBody.innerHTML =
-      '<p class="admin-panel__body">Add a clinic user: they sign in with this email and password, then only see the report for the <strong>slug</strong> you set. Data file: <code>public/clinics/data/&lt;slug&gt;.json</code> (falls back to <code>_data.json</code> if missing).</p>' +
-      '<form id="clinicUserCreateForm" class="portal-form" style="max-width: 28rem; margin-top: 1rem;">' +
-      '<label><span class="mono">CLINIC EMAIL</span><input type="email" name="email" required autocomplete="off" /></label>' +
+      '<p class="admin-panel__body">Add a user: they sign in with this email and password, then only see the report for the <strong>slug</strong> you set. Data file: <code>public/clinics/data/&lt;slug&gt;.json</code> (falls back to <code>_data.json</code> if missing).</p>' +
+      '<form id="portalUserCreateForm" class="portal-form" style="max-width: 28rem; margin-top: 1rem;">' +
+      '<label><span class="mono">EMAIL</span><input type="email" name="email" required autocomplete="off" /></label>' +
       '<label><span class="mono">PASSWORD</span><input type="password" name="password" required minlength="8" autocomplete="new-password" placeholder="min 8 characters" /></label>' +
       '<label><span class="mono">REPORT SLUG</span><input type="text" name="reportSlug" required pattern="[a-z0-9][a-z0-9-]*" title="Lowercase letters, numbers, hyphens" placeholder="e.g. serenity-dental-q2" /></label>' +
-      '<button type="submit" class="btn btn--primary">Save clinic user</button>' +
-      '<p class="portal-form__hint mono" id="clinicUserFormHint"></p></form>' +
+      '<button type="submit" class="btn btn--primary">Save user</button>' +
+      '<p class="portal-form__hint mono" id="portalUserFormHint"></p></form>' +
       '<h3 class="admin-panel__title mono" style="margin-top: 2rem;">Registered users</h3>' +
-      '<ul id="clinicUserList" class="mono" style="list-style: none; padding: 0; margin: 0; line-height: 1.5;"></ul>';
+      '<ul id="portalUserList" class="mono" style="list-style: none; padding: 0; margin: 0; line-height: 1.5;"></ul>';
 
-    var form = document.getElementById('clinicUserCreateForm');
-    var fh = document.getElementById('clinicUserFormHint');
+    var form = document.getElementById('portalUserCreateForm');
+    var fh = document.getElementById('portalUserFormHint');
     if (form) {
       form.addEventListener('submit', function (e) {
         e.preventDefault();
@@ -766,7 +766,7 @@
           password: (fd.get('password') || '').toString(),
           reportSlug: (fd.get('reportSlug') || '').toString().trim().toLowerCase(),
         };
-        fetch('/api/clinic-users', {
+        fetch('/api/user-accounts', {
           method: 'POST',
           credentials: 'same-origin',
           headers: {
@@ -789,11 +789,11 @@
               return;
             }
             if (fh) {
-              fh.textContent = 'Saved. Clinic can log in and open /clinics/report.html?slug=' + body.reportSlug;
+              fh.textContent = 'Saved. User can log in and open /clinics/report.html?slug=' + body.reportSlug;
               fh.className = 'portal-form__hint mono is-ok';
             }
             form.reset();
-            loadClinicUsersList();
+            loadPortalUsersList();
             loadWorkQueue();
           })
           .catch(function () {
@@ -804,7 +804,7 @@
           });
       });
     }
-    loadClinicUsersList();
+    loadPortalUsersList();
     panel.classList.remove('is-hidden');
     panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }

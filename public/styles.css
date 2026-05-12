@@ -1124,7 +1124,8 @@ a:hover { color: var(--amber-2); }
   border: 1px solid color-mix(in srgb, var(--rust) 28%, transparent);
   line-height: 1.45;
 }
-.page-clinic-access .portal-form__hint.portal-form__hint--detail {
+.page-clinic-access .portal-form__hint.portal-form__hint--detail,
+.page-user-portal .portal-form__hint.portal-form__hint--detail {
   font-family: var(--font-mono);
   font-size: 0.65rem !important;
 }

@@ -466,21 +466,21 @@
             ? ' · note=HTTP 200 but unexpected JSON'
             : ''),
   });
-  var clinicCap = await timedJson('/api/auth/clinic-capabilities');
-  var cc = clinicCap.json || {};
+  var portalCap = await timedJson('/api/auth/user-capabilities');
+  var cc = portalCap.json || {};
   lines.push({
     cat: 'BE',
     text:
-      '62 · API clinic-capabilities: HTTP ' +
-      clinicCap.status +
+      '62 · API user-capabilities: HTTP ' +
+      portalCap.status +
       ' · ' +
-      clinicCap.ms +
+      portalCap.ms +
       ' ms · service=' +
       (cc.service != null ? cc.service : 'n/a') +
       ' · passwordResetEmail=' +
       (cc.passwordResetEmail != null ? String(cc.passwordResetEmail) : 'n/a') +
-      apiProbeNote(clinicCap.status, cc, 'service') +
-      (clinicCap.status === 200 && cc.service === 'serviceopera' && cc.passwordResetEmail === false
+      apiProbeNote(portalCap.status, cc, 'service') +
+      (portalCap.status === 200 && cc.service === 'serviceopera' && cc.passwordResetEmail === false
         ? ' · resend=RESEND_API_KEY unset on Node service'
         : ''),
   });
@@ -495,23 +495,27 @@
       adminCap.ms +
       ' ms · otpEnabled=' +
       (ac.otpEnabled != null ? String(ac.otpEnabled) : 'n/a') +
-      ' · clinicPasswordResetEmail=' +
-      (ac.clinicPasswordResetEmail != null ? String(ac.clinicPasswordResetEmail) : 'n/a') +
+      ' · userPasswordResetEmail=' +
+      (ac.userPasswordResetEmail != null
+        ? String(ac.userPasswordResetEmail)
+        : ac.clinicPasswordResetEmail != null
+          ? String(ac.clinicPasswordResetEmail)
+          : 'n/a') +
       apiProbeNote(adminCap.status, ac, 'service') +
       (adminCap.status === 200 && ac.service === 'serviceopera' && ac.otpEnabled === false
         ? ' · resend=RESEND_API_KEY unset on Node service'
         : ''),
   });
 
-    /* —— Clinic password reset (login.html only) —— */
-    var onClinicLogin = /\/login\.html$/i.test(path) || path === '/login' || path.endsWith('/login.html');
-    if (onClinicLogin) {
+    /* —— Portal password reset (login.html only) —— */
+    var onPortalLogin = /\/login\.html$/i.test(path) || path === '/login' || path.endsWith('/login.html');
+    if (onPortalLogin) {
       lines.push({
         cat: 'PW',
         text:
-          '01 · Reset password via email: the browser calls POST /api/auth/clinic-request-reset on the same origin. Requires the Node backend (server.mjs), not a static-only host.',
+          '01 · Reset password via email: the browser calls POST /api/auth/user-request-reset on the same origin. Requires the Node backend (server.mjs), not a static-only host.',
       });
-      var apiMissing = verProbe.status === 404 || clinicCap.status === 404;
+      var apiMissing = verProbe.status === 404 || portalCap.status === 404;
       if (apiMissing) {
         lines.push({
           cat: 'PW',
@@ -523,13 +527,13 @@
           text:
             '03 · Fix (Railway): run a service that starts `node server.mjs` (repo Dockerfile + `railway.toml` startCommand). Do not publish only `public/` as a static site on the URL used for login.',
         });
-      } else if (clinicCap.status === 200 && cc.service === 'serviceopera' && cc.passwordResetEmail === false) {
+      } else if (portalCap.status === 200 && cc.service === 'serviceopera' && cc.passwordResetEmail === false) {
         lines.push({
           cat: 'PW',
           text:
             '02 · API reachable but passwordResetEmail=false: set RESEND_API_KEY and RESEND_FROM (verified sender in Resend) on the Node service, redeploy, and reload.',
         });
-      } else if (clinicCap.status === 200 && cc.service === 'serviceopera' && cc.passwordResetEmail === true) {
+      } else if (portalCap.status === 200 && cc.service === 'serviceopera' && cc.passwordResetEmail === true) {
         lines.push({
           cat: 'PW',
           text:
@@ -539,8 +543,8 @@
         lines.push({
           cat: 'PW',
           text:
-            '02 · Mixed state: clinic-capabilities HTTP ' +
-            clinicCap.status +
+            '02 · Mixed state: user-capabilities HTTP ' +
+            portalCap.status +
             ' · service=' +
             (cc.service != null ? String(cc.service) : 'n/a') +
             ' · passwordResetEmail=' +
@@ -550,7 +554,7 @@
       lines.push({
         cat: 'PW',
         text:
-          '04 · Workaround: Jack can set a new password in Admin → clinic users until the domain points at the Node service with active APIs.',
+          '04 · Workaround: Jack can set a new password in Admin → Users until the domain points at the Node service with active APIs.',
       });
     }
 

@@ -13,14 +13,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css" />
 <style>
-  .page-clinic-access { font-family: var(--font-body); min-height: 100vh; }
-  .tf-reg-wrap { max-width: 420px; margin: 0 auto; padding: 2rem 1.5rem; position: relative; }
-  .tf-lang-pill {
-    position: absolute; top: 0; right: 0;
-    display: inline-flex; border: 1px solid var(--line-strong); border-radius: 9999px; overflow: hidden; background: var(--ink);
-  }
-  .tf-lang-pill__btn { border: none; background: transparent; color: var(--mute-2); font-weight: 700; font-size: 0.72rem; padding: 0.35rem 0.55rem; cursor: pointer; font-family: var(--font-body); }
-  .tf-lang-pill__btn.is-active { background: color-mix(in srgb, var(--amber) 18%, transparent); color: var(--paper); }
+  .page-user-portal { font-family: var(--font-body); min-height: 100vh; }
+  .tf-reg-wrap { max-width: 420px; margin: 0 auto; padding: 2rem 1.5rem; }
   .tf-account-pick { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 1.1rem; }
   .tf-account-card {
     flex: 1; min-width: 160px; padding: 0.9rem 1rem; border-radius: 16px; cursor: pointer; text-align: left;
@@ -35,14 +29,14 @@
   .tf-input { width: 100%; padding: 0.85rem 0.9rem; border-radius: 12px; border: 1px solid var(--line-strong); background: var(--ink); color: var(--paper); font-size: 1rem; box-sizing: border-box; font-family: var(--font-body); }
   .tf-cap { display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--mute-2); }
   .tf-success-icon { width: 92px; height: 92px; border-radius: 24px; border: 1px solid var(--line); background: var(--ink-2); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.1rem; font-size: 2rem; }
-  .page-clinic-access .nav__login { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; }
-  .page-clinic-access .portal-caption {
+  .page-user-portal .nav__login { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; }
+  .page-user-portal .portal-caption {
     font-size: 0.72rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mute-2);
   }
-  .page-clinic-access .portal-caption--accent { color: var(--amber-2); }
+  .page-user-portal .portal-caption--accent { color: var(--amber-2); }
 </style>
 </head>
-<body class="page-admin page-admin--with-nav page-clinic-access">
+<body class="page-admin page-admin--with-nav page-user-portal">
 
 <div class="grain" aria-hidden="true"></div>
 
@@ -54,7 +48,7 @@
     <a href="/#build">Systems</a>
     <a href="/#method">Method</a>
     <a href="/#proof">Proof</a>
-    <a href="/login.html" class="nav__login">Log in</a>
+    <a href="/login.html" class="nav__login" id="navPortalAuth">Log in</a>
     <button type="button" class="theme-toggle" data-theme-toggle aria-label="Theme"></button>
     <a href="mailto:jack@serviceopera.to" class="nav__cta" title="jack@serviceopera.to">jack@serviceopera.to</a>
   </div>
@@ -64,11 +58,7 @@
   <div class="admin-gate__card" style="max-width: 460px">
     <div id="regStepForm">
       <div class="tf-reg-wrap">
-        <div class="tf-lang-pill" role="group" aria-label="Language">
-          <button type="button" class="tf-lang-pill__btn is-active" id="langEn">EN</button>
-          <button type="button" class="tf-lang-pill__btn" id="langTh">TH</button>
-        </div>
-        <p class="portal-caption portal-caption--accent" style="margin-bottom:1rem">— CLINIC REPORT ACCESS</p>
+        <p class="portal-caption portal-caption--accent" style="margin-bottom:1rem">— USER ACCESS</p>
         <h1 id="regTitle" style="font-size:1.65rem;font-weight:900;margin:0;font-family:var(--font-display)">Create account</h1>
         <p id="regSub" class="admin-gate__lede" style="margin-top:0.45rem">Private report login — same flow shape as ThaiFans register (account type → email → password → confirm email).</p>
 
@@ -77,7 +67,7 @@
             <span class="tf-account-card__icon" aria-hidden="true">👤</span>
             <span class="tf-account-card__body">
               <span class="tf-account-card__title" id="lblPersonTitle">Individual</span>
-              <span class="tf-account-card__sub" id="lblPersonSub">Personal clinic or provider access.</span>
+              <span class="tf-account-card__sub" id="lblPersonSub">Personal account — access your private report.</span>
             </span>
             <span aria-hidden="true" style="font-weight:900">✓</span>
           </button>
@@ -121,72 +111,15 @@
   </div>
 </div>
 
+<script src="user-nav-session.js"></script>
 <script src="theme.js"></script>
 <script>
 (function () {
   var accountType = 'real_person';
-  var uiLang = 'en';
-  try { uiLang = localStorage.getItem('so_ui_lang') === 'th' ? 'th' : 'en'; } catch (e) {}
-  var STR = {
-    en: {
-      title: 'Create account',
-      sub: 'Private report login — same flow shape as ThaiFans register (account type → email → password → confirm email).',
-      email: 'EMAIL', pw: 'PASSWORD', submit: 'Create account',
-      personT: 'Individual', personS: 'Personal clinic or provider access.',
-      bizT: 'Business', bizS: 'Team or organisation managing a report.',
-      have: 'Already have an account?', login: 'Log in',
-      sentT: 'Check your email',
-      sentB: 'We sent a confirmation link. Open it to activate your account, then return to log in.',
-      goLogin: 'Go to log in',
-      errEmail: 'Enter a valid email.',
-      errPw: 'Password must be at least 8 characters.',
-    },
-    th: {
-      title: 'สร้างบัญชี',
-      sub: 'เข้าถึงรายงานส่วนตัว — ขั้นตอนแบบเดียวกับ ThaiFans',
-      email: 'อีเมล', pw: 'รหัสผ่าน', submit: 'สร้างบัญชี',
-      personT: 'บุคคล', personS: 'คลินิกหรือผู้ให้บริการ',
-      bizT: 'ธุรกิจ', bizS: 'ทีมหรือองค์กร',
-      have: 'มีบัญชีแล้ว?', login: 'เข้าสู่ระบบ',
-      sentT: 'ตรวจสอบอีเมล',
-      sentB: 'เราส่งลิงก์ยืนยันแล้ว เปิดลิงก์เพื่อเปิดใช้งาน แล้วกลับมาเข้าสู่ระบบ',
-      goLogin: 'ไปหน้าเข้าสู่ระบบ',
-      errEmail: 'อีเมลไม่ถูกต้อง',
-      errPw: 'รหัสผ่านอย่างน้อย 8 ตัว',
-    },
+  var ERR = {
+    email: 'Enter a valid email.',
+    pw: 'Password must be at least 8 characters.',
   };
-
-  function applyLang() {
-    var t = STR[uiLang] || STR.en;
-    document.getElementById('regTitle').textContent = t.title;
-    document.getElementById('regSub').textContent = t.sub;
-    document.getElementById('capEmail').textContent = t.email;
-    document.getElementById('capPw').textContent = t.pw;
-    document.getElementById('regSubmit').innerHTML = t.submit + '<span class="ico-arrow-r" aria-hidden="true"></span>';
-    document.getElementById('lblPersonTitle').textContent = t.personT;
-    document.getElementById('lblPersonSub').textContent = t.personS;
-    document.getElementById('lblBizTitle').textContent = t.bizT;
-    document.getElementById('lblBizSub').textContent = t.bizS;
-    document.getElementById('haveAcct').textContent = t.have;
-    document.getElementById('lnkLogin').textContent = t.login;
-    document.getElementById('sentTitle').textContent = t.sentT;
-    document.getElementById('sentBody').textContent = t.sentB;
-    document.getElementById('lnkAfter').textContent = t.goLogin;
-    document.getElementById('langEn').classList.toggle('is-active', uiLang === 'en');
-    document.getElementById('langTh').classList.toggle('is-active', uiLang === 'th');
-  }
-  applyLang();
-
-  document.getElementById('langEn').addEventListener('click', function () {
-    uiLang = 'en';
-    try { localStorage.setItem('so_ui_lang', 'en'); } catch (e) {}
-    applyLang();
-  });
-  document.getElementById('langTh').addEventListener('click', function () {
-    uiLang = 'th';
-    try { localStorage.setItem('so_ui_lang', 'th'); } catch (e) {}
-    applyLang();
-  });
 
   function pickType(type, btn) {
     accountType = type;
@@ -217,24 +150,23 @@
 
   document.getElementById('regForm').addEventListener('submit', function (e) {
     e.preventDefault();
-    var t = STR[uiLang] || STR.en;
     var email = (document.getElementById('regEmail').value || '').trim();
     var pw = (document.getElementById('regPw').value || '').trim();
     var hint = document.getElementById('regHint');
     hint.textContent = '';
     hint.className = 'portal-form__hint';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      hint.textContent = t.errEmail;
+      hint.textContent = ERR.email;
       hint.className = 'portal-form__hint is-error';
       return;
     }
     if (pw.length < 8) {
-      hint.textContent = t.errPw;
+      hint.textContent = ERR.pw;
       hint.className = 'portal-form__hint is-error';
       return;
     }
     hint.textContent = '…';
-    req('POST', '/api/auth/clinic-register', { email: email, password: pw, account_type: accountType }).then(function (r) {
+    req('POST', '/api/auth/user-register', { email: email, password: pw, account_type: accountType }).then(function (r) {
       if (!r.ok) {
         hint.textContent = (r.json && r.json.error) || 'Request failed.';
         hint.className = 'portal-form__hint is-error';

@@ -13,11 +13,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css" />
 <style>
-  /* Clinic login only: serif title + sans UI (no monospace) */
-  .page-clinic-access {
+  /* Portal login — serif title + sans UI (no monospace) */
+  .page-user-portal {
     font-family: var(--font-body);
   }
-  .page-clinic-access .portal-caption {
+  .page-user-portal .portal-caption {
     font-family: var(--font-body);
     font-size: 0.72rem;
     font-weight: 500;
@@ -25,25 +25,25 @@
     text-transform: uppercase;
     color: var(--mute-2);
   }
-  .page-clinic-access .portal-caption--accent {
+  .page-user-portal .portal-caption--accent {
     color: var(--amber-2);
     margin-bottom: 1rem;
   }
-  .page-clinic-access .admin-gate__card > h1 {
+  .page-user-portal .admin-gate__card > h1 {
     font-family: var(--font-display);
     font-weight: 500;
   }
-  .page-clinic-access .admin-gate__card h2 {
+  .page-user-portal .admin-gate__card h2 {
     font-family: var(--font-display);
     font-weight: 500;
   }
-  .page-clinic-access .portal-form input {
+  .page-user-portal .portal-form input {
     font-family: var(--font-body);
   }
-  .page-clinic-access .portal-form__hint {
+  .page-user-portal .portal-form__hint {
     font-family: var(--font-body);
   }
-  .page-clinic-access .portal-form__linkbtn {
+  .page-user-portal .portal-form__linkbtn {
     font-family: var(--font-body);
     font-size: 0.72rem;
     font-weight: 500;
@@ -53,21 +53,21 @@
     border-bottom: 1px solid var(--line-strong);
     padding-bottom: 0.1em;
   }
-  .page-clinic-access .portal-form__linkbtn:hover {
+  .page-user-portal .portal-form__linkbtn:hover {
     text-decoration: none;
     border-bottom-color: var(--amber);
   }
-  .page-clinic-access .modal__footnote {
+  .page-user-portal .modal__footnote {
     font-family: var(--font-body);
     font-size: 0.85rem;
   }
-  .page-clinic-access .modal__footnote a {
+  .page-user-portal .modal__footnote a {
     font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     font-size: 0.72rem;
   }
-  .page-clinic-access .nav__login {
+  .page-user-portal .nav__login {
     font-family: var(--font-body);
     font-size: 0.72rem;
     font-weight: 500;
@@ -75,30 +75,6 @@
     text-transform: uppercase;
   }
   .tf-portal { position: relative; }
-  .tf-lang-pill {
-    position: absolute;
-    top: 0;
-    right: 0;
-    display: inline-flex;
-    border: 1px solid var(--line-strong);
-    border-radius: 9999px;
-    overflow: hidden;
-    background: var(--ink);
-  }
-  .tf-lang-pill__btn {
-    border: none;
-    background: transparent;
-    color: var(--mute-2);
-    font-weight: 700;
-    font-size: 0.72rem;
-    padding: 0.35rem 0.55rem;
-    cursor: pointer;
-    font-family: var(--font-body);
-  }
-  .tf-lang-pill__btn.is-active {
-    background: color-mix(in srgb, var(--amber) 18%, transparent);
-    color: var(--paper);
-  }
   .tf-mode-toggle {
     display: flex;
     gap: 0.5rem;
@@ -121,7 +97,7 @@
     background: var(--ink-2);
     border-color: var(--amber-2);
   }
-  .tf-input, .page-clinic-access .tf-input {
+  .tf-input, .page-user-portal .tf-input {
     width: 100%;
     padding: 0.75rem;
     border-radius: 8px;
@@ -180,7 +156,7 @@
   .tf-resend-block p { margin: 0 0 0.35rem; }
 </style>
 </head>
-<body class="page-admin page-admin--with-nav page-clinic-access">
+<body class="page-admin page-admin--with-nav page-user-portal">
 
 <div class="grain" aria-hidden="true"></div>
 
@@ -192,7 +168,7 @@
     <a href="/#build">Systems</a>
     <a href="/#method">Method</a>
     <a href="/#proof">Proof</a>
-    <a href="/login.html" class="nav__login" id="navClinicAuth">Log in</a>
+    <a href="/login.html" class="nav__login" id="navPortalAuth">Log in</a>
     <button type="button" class="theme-toggle" data-theme-toggle aria-label="Theme"></button>
     <a href="mailto:jack@serviceopera.to" class="nav__cta" title="jack@serviceopera.to">jack@serviceopera.to</a>
   </div>
@@ -201,80 +177,76 @@
 <div class="admin-gate">
   <div class="admin-gate__card">
     <div class="tf-portal">
-      <div class="tf-lang-pill" role="group" aria-label="Language">
-        <button type="button" class="tf-lang-pill__btn is-active" id="langEn" data-lang="en">EN</button>
-        <button type="button" class="tf-lang-pill__btn" id="langTh" data-lang="th">TH</button>
-      </div>
-      <p class="portal-caption portal-caption--accent tf-portal__eyebrow">— CLINIC REPORT ACCESS</p>
-      <h1 id="clinicGateTitle">Log in</h1>
+      <p class="portal-caption portal-caption--accent tf-portal__eyebrow">— USER ACCESS</p>
+      <h1 id="userGateTitle">Log in</h1>
       <p class="admin-gate__lede" id="loginLede">Sign in with password or a one-time email code (same pattern as ThaiFans).</p>
       <div id="bannerSession" class="tf-banner tf-banner--hint is-hidden" role="status"></div>
       <div id="bannerRegistered" class="tf-banner tf-banner--ok is-hidden" role="status"></div>
       <div id="bannerPasswordUpdated" class="tf-banner tf-banner--ok is-hidden" role="status"></div>
 
       <div class="tf-mode-toggle" role="group" aria-label="Sign-in method">
-        <button type="button" class="tf-mode-toggle__btn is-active" id="clinicModePassword" data-mode="password">Password</button>
-        <button type="button" class="tf-mode-toggle__btn" id="clinicModeOtp" data-mode="otp">Email code</button>
+        <button type="button" class="tf-mode-toggle__btn is-active" id="userModePassword" data-mode="password">Password</button>
+        <button type="button" class="tf-mode-toggle__btn" id="userModeOtp" data-mode="otp">Email code</button>
       </div>
 
-    <form id="clinicLoginForm" class="portal-form tf-portal-form" autocomplete="on">
+    <form id="userLoginForm" class="portal-form tf-portal-form" autocomplete="on">
       <label>
-        <span class="portal-caption" data-i18n="email">EMAIL</span>
-        <input type="email" name="email" id="clinicEmail" class="tf-input" required autocomplete="username" placeholder="you@example.com" />
+        <span class="portal-caption">EMAIL</span>
+        <input type="email" name="email" id="userEmail" class="tf-input" required autocomplete="username" placeholder="you@example.com" />
       </label>
-      <div id="clinicPasswordBlock">
-        <label id="clinicPasswordWrap">
-          <span class="portal-caption" data-i18n="password">PASSWORD</span>
-          <input type="password" name="password" id="clinicPassword" class="tf-input" required autocomplete="current-password" placeholder="••••••••" />
+      <div id="userPasswordBlock">
+        <label id="userPasswordWrap">
+          <span class="portal-caption">PASSWORD</span>
+          <input type="password" name="password" id="userPassword" class="tf-input" required autocomplete="current-password" placeholder="••••••••" />
         </label>
         <p class="tf-forgot-inline">
-          <button type="button" class="tf-linkish" id="clinicForgotToggle">Forgot password?</button>
+          <button type="button" class="tf-linkish" id="userForgotToggle">Forgot password?</button>
         </p>
       </div>
-      <div id="clinicOtpBlock" class="is-hidden">
+      <div id="userOtpBlock" class="is-hidden">
         <label>
-          <span class="portal-caption" data-i18n="code">ONE-TIME CODE</span>
-          <input type="text" name="otp" id="clinicOtpInput" class="tf-input" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="6-digit code" />
+          <span class="portal-caption">ONE-TIME CODE</span>
+          <input type="text" name="otp" id="userOtpInput" class="tf-input" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="6-digit code" />
         </label>
-        <button type="button" class="btn btn--ghost btn--block" id="clinicSendOtpBtn" style="margin-top:0.65rem">
+        <button type="button" class="btn btn--ghost btn--block" id="userSendOtpBtn" style="margin-top:0.65rem">
           Send code<span class="ico-arrow-r" aria-hidden="true"></span>
         </button>
       </div>
       <div id="loginErrBox" class="tf-error-box is-hidden" role="alert"></div>
-      <button type="submit" class="btn btn--primary btn--block tf-submit-btn" id="clinicLoginSubmit">
+      <button type="submit" class="btn btn--primary btn--block tf-submit-btn" id="userLoginSubmit">
         Log in<span class="ico-arrow-r" aria-hidden="true"></span>
       </button>
       <div class="tf-resend-block">
-        <p data-i18n="resendLead">Waiting on the confirmation email after sign-up?</p>
+        <p>Waiting on the confirmation email after sign-up?</p>
         <p>
-          <button type="button" class="tf-linkish" id="clinicResendConfirmBtn" data-i18n="resendBtn">Resend confirmation link</button>
+          <button type="button" class="tf-linkish" id="userResendConfirmBtn">Resend confirmation link</button>
         </p>
       </div>
       <div class="portal-form__actions" style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;justify-content:space-between;margin-top:1rem">
-        <a href="register.html" class="portal-form__linkbtn" style="text-decoration:none" data-i18n="create">Create account</a>
+        <a href="register.html" class="portal-form__linkbtn" style="text-decoration:none">Create account</a>
       </div>
       <p class="portal-form__hint" id="loginHint"></p>
     </form>
     </div>
 
-    <div id="clinicForgotPanel" class="portal-form is-hidden" aria-live="polite">
-      <p class="portal-form__muted" id="clinicForgotHelp">
-        Enter the email Jack registered for your report, then we will send a one-time link to set a new password.
+    <div id="userForgotPanel" class="portal-form is-hidden" aria-live="polite">
+      <p class="portal-form__muted" id="userForgotHelp">
+        Enter the email for your account, then we will send a one-time link to set a new password.
       </p>
-      <button type="button" class="btn btn--ghost btn--block" id="clinicSendReset">Send reset link</button>
-      <button type="button" class="portal-form__linkbtn portal-form__back" id="clinicForgotBack">Back to sign in</button>
+      <button type="button" class="btn btn--ghost btn--block" id="userSendReset">Send reset link</button>
+      <button type="button" class="portal-form__linkbtn portal-form__back" id="userForgotBack">Back to sign in</button>
     </div>
 
-    <form id="clinicResetForm" class="portal-form is-hidden" autocomplete="on">
+    <form id="userResetForm" class="portal-form is-hidden" autocomplete="on">
       <h2 style="font-size: 1.1rem; margin: 0 0 0.5rem; font-weight: 600; font-family: var(--font-display, Georgia, serif)">Set a new password</h2>
       <p class="portal-form__muted">Choose a password of at least 8 characters, then sign in as usual.</p>
       <label>
         <span class="portal-caption">NEW PASSWORD</span>
-        <input type="password" name="newPassword" id="clinicNewPw" required minlength="8" autocomplete="new-password" placeholder="min 8 characters" />
+        <input type="password" name="newPassword" id="userNewPw" required minlength="8" autocomplete="new-password" placeholder="min 8 characters" />
       </label>
       <label>
         <span class="portal-caption">CONFIRM</span>
-        <input type="password" name="confirmPassword" id="clinicConfirmPw" required minlength="8" autocomplete="new-password" placeholder="repeat password" />
+        <input type="password" name="confirmPassword" id="userConfirmPw" required minlength="8" autocomplete="new-password" placeholder="repeat password" />
       </label>
       <button type="submit" class="btn btn--primary btn--block">Save password<span class="ico-arrow-r" aria-hidden="true"></span></button>
       <p class="portal-form__hint" id="resetHint"></p>
@@ -284,73 +256,40 @@
   </div>
 </div>
 
-<script src="clinic-nav-session.js"></script>
+<script src="user-nav-session.js"></script>
 <script src="theme.js"></script>
 <script src="debug.js"></script>
 <script>
 (function () {
-  var form = document.getElementById('clinicLoginForm');
+  var form = document.getElementById('userLoginForm');
   var hint = document.getElementById('loginHint');
   var lede = document.getElementById('loginLede');
-  var forgotToggle = document.getElementById('clinicForgotToggle');
-  var forgotPanel = document.getElementById('clinicForgotPanel');
-  var forgotHelp = document.getElementById('clinicForgotHelp');
-  var forgotBack = document.getElementById('clinicForgotBack');
-  var sendReset = document.getElementById('clinicSendReset');
-  var passwordBlock = document.getElementById('clinicPasswordBlock');
-  var otpBlock = document.getElementById('clinicOtpBlock');
-  var modePwdBtn = document.getElementById('clinicModePassword');
-  var modeOtpBtn = document.getElementById('clinicModeOtp');
-  var sendOtpBtn = document.getElementById('clinicSendOtpBtn');
-  var otpInput = document.getElementById('clinicOtpInput');
+  var forgotToggle = document.getElementById('userForgotToggle');
+  var forgotPanel = document.getElementById('userForgotPanel');
+  var forgotHelp = document.getElementById('userForgotHelp');
+  var forgotBack = document.getElementById('userForgotBack');
+  var sendReset = document.getElementById('userSendReset');
+  var passwordBlock = document.getElementById('userPasswordBlock');
+  var otpBlock = document.getElementById('userOtpBlock');
+  var modePwdBtn = document.getElementById('userModePassword');
+  var modeOtpBtn = document.getElementById('userModeOtp');
+  var sendOtpBtn = document.getElementById('userSendOtpBtn');
+  var otpInput = document.getElementById('userOtpInput');
   var loginErrBox = document.getElementById('loginErrBox');
   var bannerSession = document.getElementById('bannerSession');
   var bannerRegistered = document.getElementById('bannerRegistered');
   var bannerPwUpdated = document.getElementById('bannerPasswordUpdated');
-  var resendConfirmBtn = document.getElementById('clinicResendConfirmBtn');
-  var uiLang = 'en';
-  try {
-    uiLang = localStorage.getItem('so_ui_lang') === 'th' ? 'th' : 'en';
-  } catch (e) {}
+  var resendConfirmBtn = document.getElementById('userResendConfirmBtn');
+  var resetForm = document.getElementById('userResetForm');
+  var resetHint = document.getElementById('resetHint');
   var loginMode = 'password';
 
-  var I18N = {
-    en: {
-      email: 'EMAIL',
-      password: 'PASSWORD',
-      code: 'ONE-TIME CODE',
-      resendLead: 'Waiting on the confirmation email after sign-up?',
-      resendBtn: 'Resend confirmation link',
-      create: 'Create account',
-      postRegister: 'Check your email to confirm your account, then sign in below.',
-      sessionExpired: 'Your session expired. Please sign in again.',
-      passwordUpdated: 'Password updated. You can sign in with your new password.',
-    },
-    th: {
-      email: 'อีเมล',
-      password: 'รหัสผ่าน',
-      code: 'รหัสครั้งเดียว',
-      resendLead: 'ยังไม่ได้รับอีเมลยืนยันหลังสมัคร?',
-      resendBtn: 'ส่งลิงก์ยืนยันอีกครั้ง',
-      create: 'สร้างบัญชี',
-      postRegister: 'ตรวจสอบอีเมลเพื่อยืนยันบัญชี แล้วเข้าสู่ระบบด้านล่าง',
-      sessionExpired: 'เซสชันหมดอายุ กรุณาเข้าสู่ระบบอีกครั้ง',
-      passwordUpdated: 'อัปเดตรหัสผ่านแล้ว เข้าสู่ระบบด้วยรหัสผ่านใหม่ได้',
-    },
+  /** English-only UI copy for banners and post-reset hint. */
+  var MSG = {
+    postRegister: 'Check your email to confirm your account, then sign in below.',
+    sessionExpired: 'Your session expired. Please sign in again.',
+    passwordUpdated: 'Password updated. You can sign in with your new password.',
   };
-
-  function applyI18n() {
-    var t = I18N[uiLang] || I18N.en;
-    document.querySelectorAll('[data-i18n]').forEach(function (el) {
-      var k = el.getAttribute('data-i18n');
-      if (k && t[k]) el.textContent = t[k];
-    });
-    var le = document.getElementById('langEn');
-    var lt = document.getElementById('langTh');
-    if (le) le.classList.toggle('is-active', uiLang === 'en');
-    if (lt) lt.classList.toggle('is-active', uiLang === 'th');
-  }
-  applyI18n();
 
   function setLoginErr(msg) {
     if (!loginErrBox) return;
@@ -369,11 +308,11 @@
   /** One-time email confirmation after self-registration (`?verify=`). Takes precedence over `reset`. */
   var verifyToken = (params.get('verify') || '').trim();
   var resetEmailEnabled = false;
-  /** HTTP status from /api/auth/clinic-capabilities (0 = network error). */
+  /** HTTP status from /api/auth/user-capabilities (0 = network error). */
   var capabilitiesStatus = 0;
   /** true only if JSON includes service marker from server.mjs (avoids CDN/static 200 + wrong body). */
-  var clinicApiFromOurServer = false;
-  var gateTitle = document.getElementById('clinicGateTitle');
+  var portalApiFromOurServer = false;
+  var gateTitle = document.getElementById('userGateTitle');
   var selfRegisterEnabled = false;
   var registrationConfirmOk = false;
   var resendTestSender = false;
@@ -392,9 +331,8 @@
       'You were sent here for report “' + slugHint + '”. After sign-in you will be taken to that page.';
   }
 
-  var T = I18N[uiLang] || I18N.en;
   if (params.get('registered') === '1' && bannerRegistered) {
-    bannerRegistered.textContent = T.postRegister;
+    bannerRegistered.textContent = MSG.postRegister;
     bannerRegistered.classList.remove('is-hidden');
     try {
       var ureg = new URL(window.location.href);
@@ -404,7 +342,7 @@
     } catch (err1) {}
   }
   if (params.get('password_updated') === '1' && bannerPwUpdated) {
-    bannerPwUpdated.textContent = T.passwordUpdated;
+    bannerPwUpdated.textContent = MSG.passwordUpdated;
     bannerPwUpdated.classList.remove('is-hidden');
     try {
       var upw = new URL(window.location.href);
@@ -414,7 +352,7 @@
     } catch (err2) {}
   }
   if (params.get('reason') === 'session_expired' && bannerSession) {
-    bannerSession.textContent = T.sessionExpired;
+    bannerSession.textContent = MSG.sessionExpired;
     bannerSession.classList.remove('is-hidden');
     try {
       var use = new URL(window.location.href);
@@ -452,10 +390,10 @@
         ? '0 (unreachable / fetch failed before HTTP status)'
         : String(capabilitiesStatus);
     return (
-      '[probe] GET /api/auth/clinic-capabilities → HTTP ' +
+      '[probe] GET /api/auth/user-capabilities → HTTP ' +
       st +
       ' · serviceOpera JSON marker: ' +
-      (clinicApiFromOurServer ? 'yes' : 'no')
+      (portalApiFromOurServer ? 'yes' : 'no')
     );
   }
 
@@ -494,7 +432,7 @@
       );
     }
     lines.push(
-      '▸ Next step: scroll to DEBUG · copy full report · check [BE] rows for POST ' + path + ' vs GET /api/auth/clinic-capabilities.'
+      '▸ Next step: scroll to DEBUG · copy full report · check [BE] rows for POST ' + path + ' vs GET /api/auth/user-capabilities.'
     );
     return lines.join('\n');
   }
@@ -509,7 +447,7 @@
     lines.push('▸ JSON.parse: ' + (parseMsg || 'failed'));
     lines.push('▸ Body preview: ' + safeBodyPreview(rawText));
     lines.push('▸ ' + summarizeApiProbeState());
-    var apiProbeOk = capabilitiesStatus === 200 && clinicApiFromOurServer;
+    var apiProbeOk = capabilitiesStatus === 200 && portalApiFromOurServer;
     if (status === 404) {
       lines.push(
         '▸ Likely cause: CDN/static bucket returned its own 404/HTML page — no Node route handled ' + path + '.'
@@ -520,7 +458,7 @@
           '▸ Likely cause: gateway/proxy (often Cloudflare Worker) could not get a valid response from origin for this POST — timeouts, cold Railway, wrong origin in Worker fetch, or upstream crash on write paths.'
         );
         lines.push(
-          '▸ Hint: GET clinic-capabilities succeeded from this browser; compare how the Worker forwards POST ' +
+          '▸ Hint: GET user-capabilities succeeded from this browser; compare how the Worker forwards POST ' +
             path +
             ' (same origin host, method, body) and raise subrequest timeouts / check Railway logs.'
         );
@@ -555,14 +493,14 @@
       lines.push(
         '▸ Fix: check Railway deploy logs and server.mjs for errors on ' +
           path +
-          '; ensure the reverse proxy routes all of /api/* to the same Node process that answered clinic-capabilities.'
+          '; ensure the reverse proxy routes all of /api/* to the same Node process that answered user-capabilities.'
       );
     }
     return lines.join('\n');
   }
 
-  /** Clinic auth API — always read body as text then JSON so HTML 404 does not collapse into “network error”. */
-  function requestClinicApi(method, path, bodyObj) {
+  /** Portal auth API — always read body as text then JSON so HTML 404 does not collapse into “network error”. */
+  function requestPortalApi(method, path, bodyObj) {
     var init = {
       method: method,
       credentials: 'same-origin',
@@ -608,7 +546,7 @@
       if (otpBlock) otpBlock.classList.add('is-hidden');
       if (modePwdBtn) modePwdBtn.classList.add('is-active');
       if (modeOtpBtn) modeOtpBtn.classList.remove('is-active');
-      var pwInput = document.getElementById('clinicPassword');
+      var pwInput = document.getElementById('userPassword');
       if (pwInput) pwInput.setAttribute('required', 'required');
       if (otpInput) {
         otpInput.removeAttribute('required');
@@ -619,7 +557,7 @@
       if (otpBlock) otpBlock.classList.remove('is-hidden');
       if (modePwdBtn) modePwdBtn.classList.remove('is-active');
       if (modeOtpBtn) modeOtpBtn.classList.add('is-active');
-      var pwInput2 = document.getElementById('clinicPassword');
+      var pwInput2 = document.getElementById('userPassword');
       if (pwInput2) {
         pwInput2.removeAttribute('required');
         pwInput2.value = '';
@@ -649,7 +587,7 @@
     if (form) form.classList.remove('is-hidden');
     if (forgotPanel) forgotPanel.classList.remove('is-hidden');
     if (resetForm) resetForm.classList.add('is-hidden');
-    var pwInput = document.getElementById('clinicPassword');
+    var pwInput = document.getElementById('userPassword');
     if (pwInput) {
       pwInput.removeAttribute('required');
       pwInput.value = '';
@@ -669,49 +607,49 @@
     var portalRoot = document.querySelector('.tf-portal');
     if (portalRoot) portalRoot.classList.add('is-hidden');
     if (resetForm) resetForm.classList.remove('is-hidden');
-    if (lede) lede.textContent = 'Use the form below to set a new password for your clinic report access.';
+    if (lede) lede.textContent = 'Use the form below to set a new password for your account.';
   }
 
   function forgotResetHelpText() {
     if (resetEmailEnabled) {
-      return 'Enter the email Jack registered for your report, then we will send a one-time link to set a new password (via Resend).';
+      return 'Enter the email for your account, then we will send a one-time link to set a new password (via Resend).';
     }
     if (!capabilitiesStatus) {
-      return 'Could not reach /api/auth/clinic-capabilities. Open the Railway URL that runs node server.mjs (or npm start locally), not a static-only host.';
+      return 'Could not reach /api/auth/user-capabilities. Open the Railway URL that runs node server.mjs (or npm start locally), not a static-only host.';
     }
     if (capabilitiesStatus === 404) {
-      return 'This host returned HTTP 404 for /api/auth/clinic-capabilities — HTML loads but the Node API is not running here. On Railway, deploy with the Dockerfile (or npm start → server.mjs), not a static publish of public/ alone. Until /api/* works, Jack can reset passwords in Admin → clinic users.';
+      return 'This host returned HTTP 404 for /api/auth/user-capabilities — HTML loads but the Node API is not running here. On Railway, deploy with the Dockerfile (or npm start → server.mjs), not a static publish of public/ alone. Until /api/* works, Jack can reset passwords in Admin → Users.';
     }
     if (capabilitiesStatus >= 500) {
       return 'The login API returned HTTP ' + capabilitiesStatus + '. Try again after the Railway service finishes deploying; if it persists, check deploy logs for server.mjs startup errors.';
     }
     if (capabilitiesStatus !== 200) {
-      return 'Automatic reset needs HTTP 200 from /api/auth/clinic-capabilities (got ' + capabilitiesStatus + '). Confirm this URL hits the ServiceOpera Node service, not a static mirror.';
+      return 'Automatic reset needs HTTP 200 from /api/auth/user-capabilities (got ' + capabilitiesStatus + '). Confirm this URL hits the ServiceOpera Node service, not a static mirror.';
     }
-    if (!clinicApiFromOurServer) {
-      return 'This URL answered HTTP 200 but not with the ServiceOpera Node API. If a CDN sits in front of Railway, route /api/* to the Node service (or open the Railway app URL). Until then Jack can reset passwords in Admin → clinic users.';
+    if (!portalApiFromOurServer) {
+      return 'This URL answered HTTP 200 but not with the ServiceOpera Node API. If a CDN sits in front of Railway, route /api/* to the Node service (or open the Railway app URL). Until then Jack can reset passwords in Admin → Users.';
     }
-    return 'Node API is live but RESEND_API_KEY is unset on this Railway service. Add it here (same service as server.mjs), redeploy, and confirm deploy logs show “Resend: RESEND_API_KEY is set”. RESEND_FROM must be a verified sender. Until then Jack can set a new password in Admin → clinic users.';
+    return 'Node API is live but RESEND_API_KEY is unset on this Railway service. Add it here (same service as server.mjs), redeploy, and confirm deploy logs show “Resend: RESEND_API_KEY is set”. RESEND_FROM must be a verified sender. Until then Jack can set a new password in Admin → Users.';
   }
 
   function forgotResetHintText() {
     if (resetEmailEnabled) return '';
     if (!capabilitiesStatus) {
-      return 'Automatic email reset is unavailable: could not reach /api/auth/clinic-capabilities. Use the Railway Node deploy (node server.mjs), not a static-only host.';
+      return 'Automatic email reset is unavailable: could not reach /api/auth/user-capabilities. Use the Railway Node deploy (node server.mjs), not a static-only host.';
     }
     if (capabilitiesStatus === 404) {
-      return 'Automatic email reset is unavailable: /api/auth/clinic-capabilities returned HTTP 404. Static files are being served without server.mjs — fix the Railway start command or Dockerfile, then reload.';
+      return 'Automatic email reset is unavailable: /api/auth/user-capabilities returned HTTP 404. Static files are being served without server.mjs — fix the Railway start command or Dockerfile, then reload.';
     }
     if (capabilitiesStatus !== 200) {
-      return 'Automatic email reset is unavailable: /api/auth/clinic-capabilities returned HTTP ' + capabilitiesStatus + '.';
+      return 'Automatic email reset is unavailable: /api/auth/user-capabilities returned HTTP ' + capabilitiesStatus + '.';
     }
-    if (!clinicApiFromOurServer) {
+    if (!portalApiFromOurServer) {
       return 'Forgot-password needs the ServiceOpera Node API. Your domain may be serving static files only: point /api/* to Railway or use the Railway hostname, then reload.';
     }
     return 'Resend is off for this Node process: RESEND_API_KEY is unset at runtime on this Railway service. Add the variable here, redeploy, and confirm logs show “Resend: RESEND_API_KEY is set”. RESEND_FROM should match a verified sender in Resend.';
   }
 
-  fetch('/api/auth/clinic-capabilities', { cache: 'no-store' })
+  fetch('/api/auth/user-capabilities', { cache: 'no-store' })
     .then(function (r) {
       capabilitiesStatus = r.status;
       return r.text().then(function (text) {
@@ -724,18 +662,18 @@
       });
     })
     .then(function (cap) {
-      clinicApiFromOurServer = Boolean(cap && cap.service === 'serviceopera');
-      resetEmailEnabled = clinicApiFromOurServer && Boolean(cap && cap.passwordResetEmail);
-      selfRegisterEnabled = clinicApiFromOurServer && Boolean(cap && cap.selfRegister);
-      registrationConfirmOk = clinicApiFromOurServer && Boolean(cap && cap.registrationConfirmEmail);
-      resendTestSender = clinicApiFromOurServer && Boolean(cap && cap.resendTestSender);
+      portalApiFromOurServer = Boolean(cap && cap.service === 'serviceopera');
+      resetEmailEnabled = portalApiFromOurServer && Boolean(cap && cap.passwordResetEmail);
+      selfRegisterEnabled = portalApiFromOurServer && Boolean(cap && cap.selfRegister);
+      registrationConfirmOk = portalApiFromOurServer && Boolean(cap && cap.registrationConfirmEmail);
+      resendTestSender = portalApiFromOurServer && Boolean(cap && cap.resendTestSender);
       if (forgotHelp) forgotHelp.textContent = forgotResetHelpText();
     })
     .catch(function (err) {
       capabilitiesStatus = 0;
-      clinicApiFromOurServer = false;
+      portalApiFromOurServer = false;
       try {
-        window.soClinicCapabilitiesProbeError = err;
+        window.soPortalCapabilitiesProbeError = err;
       } catch (e) {}
       if (forgotHelp) forgotHelp.textContent = forgotResetHelpText();
     });
@@ -743,14 +681,14 @@
   if (verifyToken) {
     setHint('Confirming your email…', '');
     var _vTok = verifyToken;
-    requestClinicApi('POST', '/api/auth/clinic-verify-email', { token: _vTok })
+    requestPortalApi('POST', '/api/auth/user-verify-email', { token: _vTok })
       .then(function (res) {
         verifyToken = '';
         stripVerifyQueryFromUrl();
         showLoginMode();
         if (res.__threw) {
           setHint(
-            'Email confirmation · transport failure\n\n' + detailFetchThrew('POST', '/api/auth/clinic-verify-email', res.err),
+            'Email confirmation · transport failure\n\n' + detailFetchThrew('POST', '/api/auth/user-verify-email', res.err),
             'error',
             true
           );
@@ -761,7 +699,7 @@
             'Email confirmation · bad response body\n\n' +
               detailNonJsonResponse(
                 'POST',
-                '/api/auth/clinic-verify-email',
+                '/api/auth/user-verify-email',
                 res.status,
                 res.statusText,
                 res.contentType,
@@ -781,7 +719,7 @@
         }
         var j = res.json || {};
         var em = j.email ? String(j.email) : '';
-        var loginEmail = document.getElementById('clinicEmail');
+        var loginEmail = document.getElementById('userEmail');
         if (loginEmail && em) loginEmail.value = em;
         setHint(j.message ? j.message : 'Email confirmed. Sign in below.', 'ok');
       })
@@ -790,7 +728,7 @@
         stripVerifyQueryFromUrl();
         showLoginMode();
         setHint(
-          'Email confirmation · unexpected fault\n\n' + detailFetchThrew('POST', '/api/auth/clinic-verify-email', err),
+          'Email confirmation · unexpected fault\n\n' + detailFetchThrew('POST', '/api/auth/user-verify-email', err),
           'error',
           true
         );
@@ -818,23 +756,23 @@
 
   if (sendReset) {
     sendReset.addEventListener('click', function () {
-      var emailEl = document.getElementById('clinicEmail');
+      var emailEl = document.getElementById('userEmail');
       var email = emailEl ? (emailEl.value || '').trim() : '';
       if (!email) {
         setHint('Enter your email above first.', 'error');
         return;
       }
       setHint('Sending…', '');
-      requestClinicApi('POST', '/api/auth/clinic-request-reset', { email: email }).then(function (res) {
+      requestPortalApi('POST', '/api/auth/user-request-reset', { email: email }).then(function (res) {
         if (res.__threw) {
-          setHint(detailFetchThrew('POST', '/api/auth/clinic-request-reset', res.err), 'error', true);
+          setHint(detailFetchThrew('POST', '/api/auth/user-request-reset', res.err), 'error', true);
           return;
         }
         if (res.parseErr) {
           setHint(
             detailNonJsonResponse(
               'POST',
-              '/api/auth/clinic-request-reset',
+              '/api/auth/user-request-reset',
               res.status,
               res.statusText,
               res.contentType,
@@ -874,16 +812,16 @@
         return;
       }
       setResetHint('Saving…', '');
-      requestClinicApi('POST', '/api/auth/clinic-reset-password', { token: resetToken, password: a }).then(function (res) {
+      requestPortalApi('POST', '/api/auth/user-reset-password', { token: resetToken, password: a }).then(function (res) {
         if (res.__threw) {
-          setResetHint(detailFetchThrew('POST', '/api/auth/clinic-reset-password', res.err), 'error', true);
+          setResetHint(detailFetchThrew('POST', '/api/auth/user-reset-password', res.err), 'error', true);
           return;
         }
         if (res.parseErr) {
           setResetHint(
             detailNonJsonResponse(
               'POST',
-              '/api/auth/clinic-reset-password',
+              '/api/auth/user-reset-password',
               res.status,
               res.statusText,
               res.contentType,
@@ -904,8 +842,7 @@
         var jr = res.json || {};
         setResetHint(jr.message ? jr.message : 'Password updated. Sign in below.', 'ok');
         if (bannerPwUpdated) {
-          var T2 = I18N[uiLang] || I18N.en;
-          bannerPwUpdated.textContent = T2.passwordUpdated;
+          bannerPwUpdated.textContent = MSG.passwordUpdated;
           bannerPwUpdated.classList.remove('is-hidden');
         }
         try {
@@ -934,12 +871,12 @@
         otpInput && loginMode === 'otp' ? (otpInput.value || '').toString().trim().replace(/\s/g, '') : '';
       setHint('Signing in…', '');
       setLoginErr('');
-      var path = loginMode === 'otp' ? '/api/auth/clinic-login-otp' : '/api/auth/clinic-login';
+      var path = loginMode === 'otp' ? '/api/auth/user-login-otp' : '/api/auth/user-login';
       var body =
         loginMode === 'otp'
           ? { email: email, otp: otp, code: otp }
           : { email: email, password: password };
-      requestClinicApi('POST', path, body).then(function (res) {
+      requestPortalApi('POST', path, body).then(function (res) {
         if (res.__threw) {
           setHint('', '');
           setLoginErr(detailFetchThrew('POST', path, res.err));
@@ -965,13 +902,13 @@
           var eLogin = (lj.error || 'Sign-in failed.') + '';
           setHint('', '');
           setLoginErr(eLogin);
-          var pwEl = document.getElementById('clinicPassword');
+          var pwEl = document.getElementById('userPassword');
           if (pwEl) pwEl.value = '';
           if (otpInput) otpInput.value = '';
           return;
         }
         try {
-          sessionStorage.setItem('so_clinic_jwt', lj.token);
+          sessionStorage.setItem('so_user_jwt', lj.token);
         } catch (err) {}
         setHint('Redirecting…', 'ok');
         setLoginErr('');
@@ -999,7 +936,7 @@
 
   if (sendOtpBtn) {
     sendOtpBtn.addEventListener('click', function () {
-      var emailEl = document.getElementById('clinicEmail');
+      var emailEl = document.getElementById('userEmail');
       var email = emailEl ? (emailEl.value || '').trim().toLowerCase() : '';
       if (!email) {
         setLoginErr('Enter your email first.');
@@ -1008,11 +945,11 @@
       setLoginErr('');
       setHint('Sending code…', '');
       sendOtpBtn.disabled = true;
-      requestClinicApi('POST', '/api/auth/clinic-otp/send', { email: email }).then(function (res) {
+      requestPortalApi('POST', '/api/auth/user-otp/send', { email: email }).then(function (res) {
         sendOtpBtn.disabled = false;
         if (res.__threw) {
           setHint('', '');
-          setLoginErr(detailFetchThrew('POST', '/api/auth/clinic-otp/send', res.err));
+          setLoginErr(detailFetchThrew('POST', '/api/auth/user-otp/send', res.err));
           return;
         }
         if (res.parseErr || !res.okHttp) {
@@ -1021,7 +958,7 @@
             res.parseErr
               ? detailNonJsonResponse(
                   'POST',
-                  '/api/auth/clinic-otp/send',
+                  '/api/auth/user-otp/send',
                   res.status,
                   res.statusText,
                   res.contentType,
@@ -1041,7 +978,7 @@
 
   if (resendConfirmBtn) {
     resendConfirmBtn.addEventListener('click', function () {
-      var emailEl = document.getElementById('clinicEmail');
+      var emailEl = document.getElementById('userEmail');
       var email = emailEl ? (emailEl.value || '').trim().toLowerCase() : '';
       if (!email) {
         setLoginErr('Enter your email above first.');
@@ -1049,10 +986,10 @@
       }
       setLoginErr('');
       setHint('Sending…', '');
-      requestClinicApi('POST', '/api/auth/clinic-resend-confirmation', { email: email }).then(function (res) {
+      requestPortalApi('POST', '/api/auth/user-resend-confirmation', { email: email }).then(function (res) {
         if (res.__threw) {
           setHint('', '');
-          setLoginErr(detailFetchThrew('POST', '/api/auth/clinic-resend-confirmation', res.err));
+          setLoginErr(detailFetchThrew('POST', '/api/auth/user-resend-confirmation', res.err));
           return;
         }
         if (!res.okHttp) {
@@ -1063,27 +1000,6 @@
         var j = res.json || {};
         setHint(j.message || 'If that address has a pending sign-up, a new link was sent.', 'ok');
       });
-    });
-  }
-
-  var langEn = document.getElementById('langEn');
-  var langTh = document.getElementById('langTh');
-  if (langEn) {
-    langEn.addEventListener('click', function () {
-      uiLang = 'en';
-      try {
-        localStorage.setItem('so_ui_lang', 'en');
-      } catch (e) {}
-      applyI18n();
-    });
-  }
-  if (langTh) {
-    langTh.addEventListener('click', function () {
-      uiLang = 'th';
-      try {
-        localStorage.setItem('so_ui_lang', 'th');
-      } catch (e) {}
-      applyI18n();
     });
   }
 

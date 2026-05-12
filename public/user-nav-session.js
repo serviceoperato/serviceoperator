@@ -1,6 +1,5 @@
 /**
  * Portal user JWT in sessionStorage. Prefer so_user_jwt; so_clinic_jwt is legacy.
- * (File name kept for older pages; behaviour matches user-nav-session.js.)
  */
 (function () {
   var USER_JWT_KEY = 'so_user_jwt';

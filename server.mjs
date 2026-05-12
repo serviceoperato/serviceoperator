@@ -1,12 +1,12 @@
 /**
- * Static site + admin email OTP (Resend) + clinic report users (JSON store in DATA_DIR).
+ * Static site + admin email OTP (Resend) + portal users (JSON store in DATA_DIR).
  */
 import crypto from 'crypto';
 import fs from 'fs';
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { assertReportSlug, createClinicStore, normalizeEmail } from './clinic-store.mjs';
+import { assertReportSlug, createUserStore, normalizeEmail } from './clinic-store.mjs';
 import { searchTextAllPages } from './lib/google-places-search.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -21,7 +21,7 @@ try {
 }
 const dataDir = process.env.DATA_DIR || path.join(__dirname, 'data');
 fs.mkdirSync(dataDir, { recursive: true });
-const clinicStore = createClinicStore(dataDir);
+const userStore = createUserStore(dataDir);
 
 const clinicDataDir = path.join(publicDir, 'clinics', 'data');
 
@@ -61,16 +61,16 @@ const MANAGED_PAGE_FILES = [
 ];
 
 function buildAdminWorkQueue() {
-  const pending = clinicStore
+  const pending = userStore
     .listPendingSummaries()
     .slice()
     .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
-  const clinicUsers = clinicStore
+  const users = userStore
     .listUsers()
     .slice()
     .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
   const takenSlugs = new Set([
-    ...clinicUsers.map((u) => u.reportSlug),
+    ...users.map((u) => u.reportSlug),
     ...pending.map((p) => p.reportSlug),
   ]);
   const clinicReportFiles = listClinicReportJsonFiles();
@@ -88,7 +88,9 @@ function buildAdminWorkQueue() {
 
   return {
     pendingRegistrations: pending,
-    clinicUsers,
+    users,
+    /** @deprecated use `users` */
+    clinicUsers: users,
     clinicReportFiles,
     orphanReportDataFiles,
     managedPages,
@@ -100,9 +102,9 @@ const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'jack@serviceopera.to').trim().t
 const RESEND_API_KEY = (process.env.RESEND_API_KEY || '').trim();
 const RESEND_FROM = (process.env.RESEND_FROM || 'ServiceOpera <onboarding@resend.dev>').trim();
 const RESEND_FROM_USES_TEST_SENDER = /@resend\.dev>/i.test(RESEND_FROM) || /onboarding@resend\.dev/i.test(RESEND_FROM);
-/** Public clinic sign-up is on by default; set CLINIC_SELF_REGISTER=false (or 0, no, off) for invite-only. */
-const CLINIC_SELF_REGISTER = (function () {
-  const raw = process.env.CLINIC_SELF_REGISTER;
+/** Public sign-up is on by default; set PORTAL_SELF_REGISTER=false or legacy CLINIC_SELF_REGISTER=false for invite-only. */
+const PORTAL_SELF_REGISTER = (function () {
+  const raw = process.env.PORTAL_SELF_REGISTER ?? process.env.CLINIC_SELF_REGISTER;
   if (raw === undefined || raw === '') return true;
   const s = String(raw).toLowerCase().trim();
   if (s === '0' || s === 'false' || s === 'no' || s === 'off') return false;
@@ -151,8 +153,27 @@ function allowPlacesSearchIp(ip) {
 
 /** @type {Map<string, { hash: string, exp: number }>} */
 const otpByEmail = new Map();
-/** Clinic user sign-in OTP (not admin). Key: normalized email */
-const clinicOtpByEmail = new Map();
+/** Portal user sign-in OTP (not admin). Key: normalized email */
+const portalOtpByEmail = new Map();
+
+function isPortalSessionRole(role) {
+  return role === 'user' || role === 'clinic';
+}
+function isPortalVerifyRole(role) {
+  return role === 'user_verify' || role === 'clinic_verify';
+}
+function isPortalResetRole(role) {
+  return role === 'user_reset' || role === 'clinic_reset';
+}
+
+function dualPost(pathNew, pathLegacy, handler) {
+  app.post(pathNew, handler);
+  app.post(pathLegacy, handler);
+}
+function dualGet(pathNew, pathLegacy, ...args) {
+  app.get(pathNew, ...args);
+  app.get(pathLegacy, ...args);
+}
 /** @type {Map<string, number[]>} */
 const sendTimestampsByIp = new Map();
 
@@ -319,25 +340,31 @@ app.get('/api/admin/capabilities', (_req, res) => {
     service: 'serviceopera',
     version: appVersion,
     otpEnabled: Boolean(RESEND_API_KEY),
+    userAccountsApi: true,
+    userPasswordResetEmail: Boolean(RESEND_API_KEY),
+    /** @deprecated */
     clinicUsersApi: true,
     clinicPasswordResetEmail: Boolean(RESEND_API_KEY),
   });
 });
 
-app.get('/api/auth/clinic-capabilities', (_req, res) => {
+function sendPortalCapabilities(_req, res) {
   res.setHeader('Cache-Control', 'no-store');
   res.json({
     service: 'serviceopera',
     version: appVersion,
     passwordResetEmail: Boolean(RESEND_API_KEY),
-    selfRegister: Boolean(CLINIC_SELF_REGISTER),
-    registrationConfirmEmail: Boolean(RESEND_API_KEY && CLINIC_SELF_REGISTER),
+    selfRegister: Boolean(PORTAL_SELF_REGISTER),
+    registrationConfirmEmail: Boolean(RESEND_API_KEY && PORTAL_SELF_REGISTER),
     resendTestSender: Boolean(RESEND_API_KEY && RESEND_FROM_USES_TEST_SENDER),
   });
-});
+}
 
-app.post('/api/auth/clinic-register', async (req, res) => {
-  if (!CLINIC_SELF_REGISTER) {
+app.get('/api/auth/user-capabilities', sendPortalCapabilities);
+app.get('/api/auth/clinic-capabilities', sendPortalCapabilities);
+
+async function handlePortalRegister(req, res) {
+  if (!PORTAL_SELF_REGISTER) {
     return res.status(403).json({ error: 'Self-registration is disabled. Contact jack@serviceopera.to for access.' });
   }
   if (!RESEND_API_KEY) {
@@ -355,14 +382,14 @@ app.post('/api/auth/clinic-register', async (req, res) => {
   }
   let pending;
   try {
-    pending = clinicStore.createPendingRegistration({ email, password });
+    pending = userStore.createPendingRegistration({ email, password });
   } catch (e) {
     const status = e.status || 400;
     return res.status(status).json({ error: e.message || 'Bad request' });
   }
   const verifyJwtToken = signJwt({
     v: 1,
-    role: 'clinic_verify',
+    role: 'user_verify',
     sub: pending.id,
     email: pending.email,
     exp: Date.now() + CLINIC_VERIFY_JWT_MS,
@@ -372,9 +399,9 @@ app.post('/api/auth/clinic-register', async (req, res) => {
   try {
     await sendResendEmail({
       to: pending.email,
-      subject: 'ServiceOpera — confirm your clinic report account',
+      subject: 'ServiceOpera — confirm your account',
       html:
-        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">Thanks for signing up for <strong>ServiceOpera.to</strong> clinic report access.</p>' +
+        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">Thanks for signing up for <strong>ServiceOpera.to</strong>.</p>' +
         '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111"><a href="' +
         String(link).replace(/"/g, '&quot;') +
         '" style="color:#1e3a5f;font-weight:600">Confirm your email</a> (link expires in 48 hours.)</p>' +
@@ -395,7 +422,10 @@ app.post('/api/auth/clinic-register', async (req, res) => {
     ok: true,
     message: 'Check your inbox for a confirmation link to activate your account.',
   });
-});
+}
+
+app.post('/api/auth/user-register', handlePortalRegister);
+app.post('/api/auth/clinic-register', handlePortalRegister);
 
 app.post('/api/admin/send-code', async (req, res) => {
   if (!RESEND_API_KEY) {
@@ -465,9 +495,11 @@ app.get('/api/admin/session', (req, res) => {
   return res.json({ ok: true, email: p.email });
 });
 
-app.get('/api/clinic-users', requireAdmin, (_req, res) => {
-  res.json({ users: clinicStore.listUsers() });
-});
+function listPortalUsersForAdmin(_req, res) {
+  res.json({ users: userStore.listUsers() });
+}
+app.get('/api/user-accounts', requireAdmin, listPortalUsersForAdmin);
+app.get('/api/clinic-users', requireAdmin, listPortalUsersForAdmin);
 
 app.get('/api/admin/work-queue', requireAdmin, (_req, res) => {
   try {
@@ -477,27 +509,29 @@ app.get('/api/admin/work-queue', requireAdmin, (_req, res) => {
   }
 });
 
-app.post('/api/clinic-users', requireAdmin, (req, res) => {
+function createPortalUserAdmin(req, res) {
   try {
     const email = req.body?.email;
     const password = req.body?.password;
     const reportSlug = req.body?.reportSlug;
-    const created = clinicStore.createUser({ email, password, reportSlug });
+    const created = userStore.createUser({ email, password, reportSlug });
     return res.status(201).json(created);
   } catch (e) {
     const status = e.status || 400;
     return res.status(status).json({ error: e.message || 'Bad request' });
   }
-});
+}
+app.post('/api/user-accounts', requireAdmin, createPortalUserAdmin);
+app.post('/api/clinic-users', requireAdmin, createPortalUserAdmin);
 
-app.post('/api/auth/clinic-login', (req, res) => {
+dualPost('/api/auth/user-login', '/api/auth/clinic-login', (req, res) => {
   const email = typeof req.body?.email === 'string' ? req.body.email : '';
   const password = typeof req.body?.password === 'string' ? req.body.password : '';
-  const user = clinicStore.verifyLogin(email, password);
+  const user = userStore.verifyLogin(email, password);
   if (!user) return res.status(401).json({ error: 'Invalid email or password.' });
   const token = signJwt({
     v: 1,
-    role: 'clinic',
+    role: 'user',
     email: user.email,
     reportSlug: user.reportSlug,
     sub: user.id,
@@ -507,7 +541,7 @@ app.post('/api/auth/clinic-login', (req, res) => {
   return res.json({ ok: true, token, reportSlug: user.reportSlug, reportUrl });
 });
 
-app.post('/api/auth/clinic-otp/send', async (req, res) => {
+dualPost('/api/auth/user-otp/send', '/api/auth/clinic-otp/send', async (req, res) => {
   if (!RESEND_API_KEY) {
     return res.status(503).json({ error: 'Email sign-in is not configured (missing RESEND_API_KEY).' });
   }
@@ -524,20 +558,20 @@ app.post('/api/auth/clinic-otp/send', async (req, res) => {
     return res.status(400).json({ error: 'Invalid email.' });
   }
 
-  const user = clinicStore.getUserByEmail(email);
+  const user = userStore.getUserByEmail(email);
   if (!user) {
     return res.json(generic);
   }
 
   const code = String(crypto.randomInt(0, 1_000_000)).padStart(6, '0');
-  clinicOtpByEmail.set(email, { hash: sha256hex(code), exp: Date.now() + OTP_TTL_MS });
+  portalOtpByEmail.set(email, { hash: sha256hex(code), exp: Date.now() + OTP_TTL_MS });
 
   try {
     await sendResendEmail({
       to: user.email,
-      subject: 'ServiceOpera — clinic report sign-in code',
+      subject: 'ServiceOpera — your sign-in code',
       html:
-        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">Your sign-in code for <strong>ServiceOpera.to</strong> clinic report access is:</p>' +
+        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">Your sign-in code for <strong>ServiceOpera.to</strong>:</p>' +
         '<p style="font-family:ui-monospace,monospace;font-size:28px;font-weight:700;letter-spacing:0.15em;color:#111">' +
         code +
         '</p>' +
@@ -546,7 +580,7 @@ app.post('/api/auth/clinic-otp/send', async (req, res) => {
     sends.push(Date.now());
     sendTimestampsByIp.set(ip, sends);
   } catch (e) {
-    clinicOtpByEmail.delete(email);
+    portalOtpByEmail.delete(email);
     const status = e.status || 502;
     return res.status(status).json({
       error: resendFailureMessage(e, 'Could not send sign-in email. Try again later.'),
@@ -556,7 +590,7 @@ app.post('/api/auth/clinic-otp/send', async (req, res) => {
   return res.json(generic);
 });
 
-app.post('/api/auth/clinic-login-otp', (req, res) => {
+dualPost('/api/auth/user-login-otp', '/api/auth/clinic-login-otp', (req, res) => {
   const email = typeof req.body?.email === 'string' ? normalizeEmail(req.body.email) : '';
   const otp =
     typeof req.body?.otp === 'string'
@@ -567,21 +601,21 @@ app.post('/api/auth/clinic-login-otp', (req, res) => {
   if (!email || !email.includes('@')) {
     return res.status(400).json({ error: 'Invalid email.' });
   }
-  const user = clinicStore.getUserByEmail(email);
+  const user = userStore.getUserByEmail(email);
   if (!user) {
     return res.status(401).json({ error: 'Invalid email or code.' });
   }
-  const row = clinicOtpByEmail.get(email);
+  const row = portalOtpByEmail.get(email);
   if (!row || row.exp < Date.now()) {
     return res.status(401).json({ error: 'Code expired or not found. Request a new code.' });
   }
   if (!/^\d{6}$/.test(otp) || row.hash !== sha256hex(otp)) {
     return res.status(401).json({ error: 'Invalid email or code.' });
   }
-  clinicOtpByEmail.delete(email);
+  portalOtpByEmail.delete(email);
   const token = signJwt({
     v: 1,
-    role: 'clinic',
+    role: 'user',
     email: user.email,
     reportSlug: user.reportSlug,
     sub: user.id,
@@ -591,8 +625,8 @@ app.post('/api/auth/clinic-login-otp', (req, res) => {
   return res.json({ ok: true, token, reportSlug: user.reportSlug, reportUrl });
 });
 
-app.post('/api/auth/clinic-resend-confirmation', async (req, res) => {
-  if (!CLINIC_SELF_REGISTER) {
+dualPost('/api/auth/user-resend-confirmation', '/api/auth/clinic-resend-confirmation', async (req, res) => {
+  if (!PORTAL_SELF_REGISTER) {
     return res.status(403).json({ error: 'Self-registration is disabled. Contact jack@serviceopera.to for access.' });
   }
   if (!RESEND_API_KEY) {
@@ -605,7 +639,7 @@ app.post('/api/auth/clinic-resend-confirmation', async (req, res) => {
   if (!email || !email.includes('@')) {
     return res.status(400).json({ error: 'Invalid email.' });
   }
-  const pending = clinicStore.findPendingByEmail(email);
+  const pending = userStore.findPendingByEmail(email);
   const generic = {
     ok: true,
     message: 'If that address has a pending sign-up, a new confirmation link was sent.',
@@ -621,7 +655,7 @@ app.post('/api/auth/clinic-resend-confirmation', async (req, res) => {
 
   const verifyJwtToken = signJwt({
     v: 1,
-    role: 'clinic_verify',
+    role: 'user_verify',
     sub: pending.id,
     email: pending.email,
     exp: Date.now() + CLINIC_VERIFY_JWT_MS,
@@ -631,9 +665,9 @@ app.post('/api/auth/clinic-resend-confirmation', async (req, res) => {
   try {
     await sendResendEmail({
       to: pending.email,
-      subject: 'ServiceOpera — confirm your clinic report account',
+      subject: 'ServiceOpera — confirm your account',
       html:
-        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">Thanks for signing up for <strong>ServiceOpera.to</strong> clinic report access.</p>' +
+        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">Thanks for signing up for <strong>ServiceOpera.to</strong>.</p>' +
         '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111"><a href="' +
         String(link).replace(/"/g, '&quot;') +
         '" style="color:#1e3a5f;font-weight:600">Confirm your email</a> (link expires in 48 hours.)</p>' +
@@ -650,10 +684,10 @@ app.post('/api/auth/clinic-resend-confirmation', async (req, res) => {
   return res.json(generic);
 });
 
-app.post('/api/auth/clinic-request-reset', async (req, res) => {
+dualPost('/api/auth/user-request-reset', '/api/auth/clinic-request-reset', async (req, res) => {
   const generic = {
     ok: true,
-    message: 'If that email is registered for a clinic report, we sent a link to reset your password. Check your inbox.',
+    message: 'If that email is registered, we sent a link to reset your password. Check your inbox.',
   };
   if (!RESEND_API_KEY) {
     return res.status(503).json({
@@ -668,14 +702,14 @@ app.post('/api/auth/clinic-request-reset', async (req, res) => {
     return res.status(429).json({ error: 'Too many requests. Try again later.' });
   }
 
-  const user = email && email.includes('@') ? clinicStore.getUserByEmail(email) : null;
+  const user = email && email.includes('@') ? userStore.getUserByEmail(email) : null;
   if (!user) {
     return res.json(generic);
   }
 
   const resetToken = signJwt({
     v: 1,
-    role: 'clinic_reset',
+    role: 'user_reset',
     sub: user.id,
     email: user.email,
     exp: Date.now() + CLINIC_RESET_JWT_MS,
@@ -686,9 +720,9 @@ app.post('/api/auth/clinic-request-reset', async (req, res) => {
   try {
     await sendResendEmail({
       to: user.email,
-      subject: 'ServiceOpera — reset your clinic report password',
+      subject: 'ServiceOpera — reset your password',
       html:
-        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">You asked to reset the password for your <strong>ServiceOpera.to</strong> clinic report access.</p>' +
+        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">You asked to reset the password for your <strong>ServiceOpera.to</strong> account.</p>' +
         '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111"><a href="' +
         String(link).replace(/"/g, '&quot;') +
         '" style="color:#1e3a5f;font-weight:600">Reset password</a> (link expires in one hour.)</p>' +
@@ -706,19 +740,19 @@ app.post('/api/auth/clinic-request-reset', async (req, res) => {
   return res.json(generic);
 });
 
-app.post('/api/auth/clinic-reset-password', (req, res) => {
+dualPost('/api/auth/user-reset-password', '/api/auth/clinic-reset-password', (req, res) => {
   const token = typeof req.body?.token === 'string' ? req.body.token.trim() : '';
   const password = typeof req.body?.password === 'string' ? req.body.password : '';
   const p = verifyJwt(token);
-  if (!p || p.role !== 'clinic_reset' || typeof p.sub !== 'string' || typeof p.email !== 'string') {
+  if (!p || !isPortalResetRole(p.role) || typeof p.sub !== 'string' || typeof p.email !== 'string') {
     return res.status(401).json({ error: 'Invalid or expired reset link. Request a new one from the login page.' });
   }
-  const row = clinicStore.getUserByEmail(p.email);
+  const row = userStore.getUserByEmail(p.email);
   if (!row || row.id !== p.sub) {
     return res.status(401).json({ error: 'Invalid or expired reset link. Request a new one from the login page.' });
   }
   try {
-    clinicStore.setPasswordForUser(p.sub, password);
+    userStore.setPasswordForUser(p.sub, password);
   } catch (e) {
     const status = e.status || 400;
     return res.status(status).json({ error: e.message || 'Bad request' });
@@ -726,16 +760,16 @@ app.post('/api/auth/clinic-reset-password', (req, res) => {
   return res.json({ ok: true, message: 'Password updated. You can sign in now.' });
 });
 
-app.post('/api/auth/clinic-verify-email', (req, res) => {
+dualPost('/api/auth/user-verify-email', '/api/auth/clinic-verify-email', (req, res) => {
   const token = typeof req.body?.token === 'string' ? req.body.token.trim() : '';
   const p = verifyJwt(token);
-  if (!p || p.role !== 'clinic_verify' || typeof p.sub !== 'string' || typeof p.email !== 'string') {
+  if (!p || !isPortalVerifyRole(p.role) || typeof p.sub !== 'string' || typeof p.email !== 'string') {
     return res
       .status(401)
       .json({ error: 'Invalid or expired confirmation link. Register again from the login page.' });
   }
   try {
-    const created = clinicStore.finalizePendingRegistration(p.sub, p.email);
+    const created = userStore.finalizePendingRegistration(p.sub, p.email);
     return res.status(201).json({
       ok: true,
       message: 'Email confirmed. You can sign in below.',
@@ -748,11 +782,16 @@ app.post('/api/auth/clinic-verify-email', (req, res) => {
   }
 });
 
-app.get('/api/auth/clinic-session', (req, res) => {
-  const p = verifyJwt(getBearer(req));
-  if (!p || p.role !== 'clinic' || typeof p.reportSlug !== 'string') return res.status(401).json({ ok: false });
-  return res.json({ ok: true, email: p.email, reportSlug: p.reportSlug });
-});
+dualGet(
+  '/api/auth/user-session',
+  '/api/auth/clinic-session',
+  (req, res) => {
+    const p = verifyJwt(getBearer(req));
+    if (!p || !isPortalSessionRole(p.role) || typeof p.reportSlug !== 'string')
+      return res.status(401).json({ ok: false });
+    return res.json({ ok: true, email: p.email, reportSlug: p.reportSlug });
+  }
+);
 
 /**
  * Google Places API (New) — Text Search lead collector (API key server-side only).
@@ -811,7 +850,7 @@ app.get('/api/clinics/report-data', (req, res) => {
     return res.status(400).json({ error: e.message });
   }
   const p = verifyJwt(getBearer(req));
-  if (!p || p.role !== 'clinic' || p.reportSlug !== slug) {
+  if (!p || !isPortalSessionRole(p.role) || p.reportSlug !== slug) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   const specific = path.join(publicDir, 'clinics', 'data', slug + '.json');
@@ -873,9 +912,9 @@ app.listen(port, '0.0.0.0', () => {
     );
   }
   console.log(
-    CLINIC_SELF_REGISTER
-      ? '[serviceopera] Clinic self-register: enabled (default; set CLINIC_SELF_REGISTER=false for invite-only).'
-      : '[serviceopera] Clinic self-register: off (invite-only; unset env or remove CLINIC_SELF_REGISTER=false to enable).'
+    PORTAL_SELF_REGISTER
+      ? '[serviceopera] Clinic self-register: enabled (default; set PORTAL_SELF_REGISTER=false for invite-only).'
+      : '[serviceopera] Clinic self-register: off (invite-only; unset env or remove PORTAL_SELF_REGISTER=false to enable).'
   );
   console.log(
     GOOGLE_MAPS_API_KEY
