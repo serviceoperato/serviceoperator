@@ -59,7 +59,8 @@
       title: 'Tools',
       links: [
         { href: '/places-leads.html', label: 'Places leads' },
-        { href: 'mailto:jack@serviceopera.to', label: 'Contact Jack', external: true },
+        { href: '/clinics/sea-clinic-audit/', label: 'Sample audit' },
+        { href: '/reports.html#inquiry', label: 'Contact Jack' },
       ],
     },
     {

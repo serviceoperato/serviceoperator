@@ -501,6 +501,22 @@ function resendFailureMessage(err, fallback) {
   return fallback;
 }
 
+function clipFreeText(value, max) {
+  if (typeof value !== 'string') return '';
+  return value
+    .replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, '')
+    .trim()
+    .slice(0, max);
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 async function sendResendEmail({ to, subject, html }) {
   const r = await fetch('https://api.resend.com/emails', {
     method: 'POST',
@@ -1153,6 +1169,70 @@ dualGet(
     return res.json({ ok: true, email: p.email, reportSlug: p.reportSlug });
   }
 );
+
+app.post('/api/marketing/inquiry', async (req, res) => {
+  if (!RESEND_API_KEY) {
+    return res.status(503).json({
+      error:
+        'Inquiry delivery is not configured on this server (missing RESEND_API_KEY). Try again after deploy or book a call from the site.',
+    });
+  }
+  const ip = clientIp(req);
+  const sends = pruneSends(ip);
+  if (sends.length >= MAX_SENDS_PER_WINDOW) {
+    return res.status(429).json({ error: 'Too many requests. Try again later.' });
+  }
+
+  const name = clipFreeText(req.body?.name, 120);
+  const business = clipFreeText(req.body?.business, 160);
+  const sector = clipFreeText(req.body?.sector, 120);
+  const improvement = clipFreeText(req.body?.improvement, 2000);
+  const topic = clipFreeText(req.body?.topic, 120);
+  const source = clipFreeText(req.body?.source, 200);
+
+  if (!name || !business || !sector || !improvement) {
+    return res.status(400).json({ error: 'Name, business, sector, and what you want to improve are required.' });
+  }
+
+  const subject = topic ? `ServiceOpera inquiry: ${topic}` : 'ServiceOpera inquiry';
+  const html =
+    '<div style="font-family:system-ui,sans-serif;font-size:15px;color:#111;line-height:1.55">' +
+    '<p><strong>New site inquiry</strong></p>' +
+    '<p><strong>Name:</strong> ' +
+    escapeHtml(name) +
+    '</p>' +
+    '<p><strong>Business:</strong> ' +
+    escapeHtml(business) +
+    '</p>' +
+    '<p><strong>Sector:</strong> ' +
+    escapeHtml(sector) +
+    '</p>' +
+    '<p><strong>What to improve:</strong><br>' +
+    escapeHtml(improvement).replace(/\n/g, '<br>') +
+    '</p>' +
+    (topic ? '<p><strong>Topic:</strong> ' + escapeHtml(topic) + '</p>' : '') +
+    (source ? '<p><strong>Source:</strong> ' + escapeHtml(source) + '</p>' : '') +
+    '<p style="font-size:13px;color:#444">IP: ' +
+    escapeHtml(ip) +
+    '</p>' +
+    '</div>';
+
+  try {
+    await sendResendEmail({ to: ADMIN_EMAIL, subject, html });
+    sends.push(Date.now());
+    sendTimestampsByIp.set(ip, sends);
+  } catch (e) {
+    const status = e.status || 502;
+    return res.status(status).json({
+      error: resendFailureMessage(e, 'Could not send your inquiry. Try again later or book a call from the site.'),
+    });
+  }
+
+  return res.json({
+    ok: true,
+    message: 'Thanks — your inquiry was sent. Jack will follow up shortly.',
+  });
+});
 
 /**
  * Google Places API (New) — Text Search lead collector (API key server-side only).

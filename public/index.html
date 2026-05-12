@@ -91,34 +91,69 @@
   [data-theme="dark"] .home-lp__cta .ico-arrow-r {
     color: #0a0a0a;
   }
-  .home-lp__metrics {
+  .home-lp__proof {
+    display: grid;
+    gap: 1.25rem;
+    padding: 0.25rem 0 0.5rem;
+  }
+  .home-lp__proof-lede {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--mute-2);
+    max-width: 42rem;
+    margin: 0;
+  }
+  .home-lp__proof-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
-    text-align: center;
-    padding: 0.25rem 0 0.5rem;
   }
-  @media (max-width: 640px) {
-    .home-lp__metrics {
+  @media (max-width: 900px) {
+    .home-lp__proof-grid {
       grid-template-columns: 1fr;
     }
   }
-  .home-lp__metric-val {
-    font-family: var(--font-body);
-    font-weight: 300;
-    font-size: clamp(1.85rem, 5vw, 2.35rem);
-    letter-spacing: -0.02em;
-    display: block;
-    margin-bottom: 0.35rem;
+  .home-lp__proof-card {
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1.25rem 1.15rem;
   }
-  .home-lp__metric-lbl {
-    font-family: var(--font-body);
-    font-weight: 400;
-    font-size: 0.78rem;
+  [data-theme="dark"] .home-lp__proof-card {
+    background: var(--ink-2);
+  }
+  .home-lp__proof-card h2 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0 0 0.45rem;
+    color: var(--paper);
+  }
+  .home-lp__proof-card p {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.5;
     color: var(--mute-2);
-    line-height: 1.35;
-    max-width: 12rem;
-    margin: 0 auto;
+  }
+  .home-lp__proof-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+  }
+  .home-lp__proof-note {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: var(--mute-2);
+    max-width: 44rem;
+  }
+  .home-lp__proof-note a {
+    color: var(--amber-2);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .home-lp__proof-note a:hover {
+    text-decoration: underline;
   }
   .home-lp__sectors {
     display: grid;
@@ -269,26 +304,35 @@
     I create free operational reports for hotels, clinics and property operators, then build practical AI systems that solve one urgent pain at a time.
   </p>
   <div class="cta-row">
-    <a class="btn btn-primary" href="/reports.html">Get your free report</a>
-    <a class="btn btn-secondary" href="https://cal.com/YOUR_CALENDAR" target="_blank" rel="noopener noreferrer">Book a 30-min call</a>
+      <a class="btn btn-primary" href="/reports.html#inquiry">Get your free report</a>
+    <a class="btn btn-secondary" href="https://cal.com/jack-serviceoperato-r9s5zj/30min" target="_blank" rel="noopener noreferrer">Book a 30-min call</a>
   </div>
 
   <hr class="home-lp__rule" />
 
-  <div class="home-lp__metrics">
-    <div>
-      <span class="home-lp__metric-val">98.4%</span>
-      <p class="home-lp__metric-lbl">Guest &amp; patient replies under 30s</p>
+  <section class="home-lp__proof" aria-labelledby="home-proof-heading">
+    <p class="home-lp__eyebrow" id="home-proof-heading">Report evidence</p>
+    <p class="home-lp__proof-lede">B2B operators vet vendors on usable proof and insight—not headline metrics with no source. Each report is built from public footprint data, market context, and operational assumptions you can challenge.</p>
+    <div class="home-lp__proof-grid">
+      <article class="home-lp__proof-card">
+        <h2>Public footprint summary</h2>
+        <p>Findings tied to visible channels, reviews, and service catalog—not generic AI claims.</p>
+      </article>
+      <article class="home-lp__proof-card">
+        <h2>Competitor &amp; price signals</h2>
+        <p>Benchmark tables and charts from public market snapshots, with sources noted.</p>
+      </article>
+      <article class="home-lp__proof-card">
+        <h2>Ranked automation opportunities</h2>
+        <p>Build blocks ordered by operational pain, upside, and what to pilot first.</p>
+      </article>
     </div>
-    <div>
-      <span class="home-lp__metric-val">3.7×</span>
-      <p class="home-lp__metric-lbl">Qualified pipeline</p>
+    <div class="home-lp__proof-actions">
+      <a class="btn btn-secondary" href="/clinics/sea-clinic-audit/">Preview sample audit</a>
+      <a class="btn btn-primary" href="/reports.html#inquiry">Request your free report</a>
     </div>
-    <div>
-      <span class="home-lp__metric-val">+1.2</span>
-      <p class="home-lp__metric-lbl">90-day review lift</p>
-    </div>
-  </div>
+    <p class="home-lp__proof-note">The sample is an uncommissioned Thailand clinic demonstration with SVG charts and cited public data. Same methodology for hotels, clinics, and property operators—usually shared as a private link, not a mass-market showcase.</p>
+  </section>
 
   <hr class="home-lp__rule" />
 
