@@ -1112,6 +1112,22 @@ a:hover { color: var(--amber-2); }
 }
 .portal-form__hint.is-error { color: var(--rust); }
 .portal-form__hint.is-ok { color: var(--amber-2); }
+.portal-form__hint.portal-form__hint--detail {
+  text-align: left;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-width: 100%;
+  margin-top: 0.65rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--rust) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--rust) 28%, transparent);
+  line-height: 1.45;
+}
+.page-clinic-access .portal-form__hint.portal-form__hint--detail {
+  font-family: var(--font-mono);
+  font-size: 0.65rem !important;
+}
 .portal-form__actions {
   display: flex;
   flex-direction: column;

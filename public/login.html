@@ -89,7 +89,7 @@
     <a href="/#method">Method</a>
     <a href="/#proof">Proof</a>
     <a href="/login.html" class="nav__login" id="navClinicAuth">Log in</a>
-    <button type="button" class="theme-toggle" data-theme-toggle aria-label="Tema"></button>
+    <button type="button" class="theme-toggle" data-theme-toggle aria-label="Theme"></button>
     <a href="mailto:jack@serviceopera.to" class="nav__cta" title="jack@serviceopera.to">jack@serviceopera.to</a>
   </div>
 </nav>
@@ -109,7 +109,7 @@
         <span class="portal-caption">PASSWORD</span>
         <input type="password" name="password" id="clinicPassword" required autocomplete="current-password" placeholder="••••••••" />
       </label>
-      <button type="submit" class="btn btn--primary btn--block">Open report<span class="ico-arrow-r" aria-hidden="true"></span></button>
+      <button type="submit" class="btn btn--primary btn--block">Log in<span class="ico-arrow-r" aria-hidden="true"></span></button>
       <div class="portal-form__actions" style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;justify-content:space-between">
         <button type="button" class="portal-form__linkbtn" id="clinicRegisterToggle">Create account</button>
         <button type="button" class="portal-form__linkbtn" id="clinicForgotToggle">Forgot password?</button>
@@ -197,6 +197,7 @@
   var registerHintEl = document.getElementById('registerHint');
   var selfRegisterEnabled = false;
   var registrationConfirmOk = false;
+  var resendTestSender = false;
 
   function stripVerifyQueryFromUrl() {
     try {
@@ -212,23 +213,183 @@
       'You were sent here for report “' + slugHint + '”. After sign-in you will be taken to that page.';
   }
 
-  function setHint(msg, kind) {
+  function hintClasses(kind, detail) {
+    var k = kind === 'error' ? ' is-error' : kind === 'ok' ? ' is-ok' : '';
+    return 'portal-form__hint' + k + (detail ? ' portal-form__hint--detail' : '');
+  }
+
+  function verboseErrorHint(msg) {
+    var s = String(msg || '');
+    return s.indexOf('\n') >= 0 || s.length > 260;
+  }
+
+  function setHint(msg, kind, detail) {
     if (!hint) return;
     hint.textContent = msg;
-    hint.className = 'portal-form__hint' + (kind === 'error' ? ' is-error' : kind === 'ok' ? ' is-ok' : '');
+    hint.className = hintClasses(kind, detail);
   }
 
-  function setResetHint(msg, kind) {
+  function setResetHint(msg, kind, detail) {
     if (!resetHint) return;
     resetHint.textContent = msg;
-    resetHint.className = 'portal-form__hint' + (kind === 'error' ? ' is-error' : kind === 'ok' ? ' is-ok' : '');
+    resetHint.className = hintClasses(kind, detail);
   }
 
-  function setRegisterHint(msg, kind) {
+  function setRegisterHint(msg, kind, detail) {
     if (!registerHintEl) return;
     registerHintEl.textContent = msg;
-    registerHintEl.className =
-      'portal-form__hint' + (kind === 'error' ? ' is-error' : kind === 'ok' ? ' is-ok' : '');
+    registerHintEl.className = hintClasses(kind, detail);
+  }
+
+  function summarizeApiProbeState() {
+    var st =
+      capabilitiesStatus === 0
+        ? '0 (unreachable / fetch failed before HTTP status)'
+        : String(capabilitiesStatus);
+    return (
+      '[probe] GET /api/auth/clinic-capabilities → HTTP ' +
+      st +
+      ' · serviceOpera JSON marker: ' +
+      (clinicApiFromOurServer ? 'yes' : 'no')
+    );
+  }
+
+  function safeBodyPreview(text, maxLen) {
+    maxLen = maxLen || 420;
+    if (text == null || String(text).length === 0) return '(empty body)';
+    var one = String(text).replace(/\s+/g, ' ').trim();
+    if (one.length > maxLen) return one.slice(0, maxLen) + ' …';
+    return one;
+  }
+
+  function detailFetchThrew(method, path, err) {
+    var e = err || {};
+    var lines = [];
+    lines.push('▸ Class: transport / fetch did not return a normal HTTP response');
+    lines.push('▸ Request: ' + method + ' ' + path + ' (same origin as this page)');
+    lines.push('▸ Client time (ISO): ' + new Date().toISOString());
+    lines.push('▸ Error name: ' + (e.name || '(none)'));
+    lines.push('▸ Error message: ' + (e.message || String(e)));
+    lines.push('▸ Page URL: ' + window.location.href);
+    lines.push('▸ Origin: ' + window.location.origin);
+    lines.push('▸ navigator.onLine: ' + String(navigator.onLine));
+    lines.push('▸ ' + summarizeApiProbeState());
+    if (capabilitiesStatus === 404) {
+      lines.push(
+        '▸ Likely cause: this host already returns HTTP 404 for /api/* — only static files are wired; Express (server.mjs) is not serving this origin.'
+      );
+    } else if (capabilitiesStatus === 0) {
+      lines.push(
+        '▸ Likely cause: DNS/SSL/offline/ad-blocker/extension, mixed content, corporate proxy, or browser blocked the request before a status code was readable.'
+      );
+    }
+    if (String(e.message || '').toLowerCase().indexOf('failed to fetch') !== -1) {
+      lines.push(
+        '▸ Note: Chrome “Failed to fetch” includes CORS failures, dropped TLS, unplugged network, or the server closing during handshake — compare with DEBUG [BE] rows.'
+      );
+    }
+    lines.push(
+      '▸ Next step: scroll to DEBUG · copy full report · check [BE] rows for POST ' + path + ' vs GET /api/auth/clinic-capabilities.'
+    );
+    return lines.join('\n');
+  }
+
+  function detailNonJsonResponse(method, path, status, statusText, contentType, parseMsg, rawText) {
+    var lines = [];
+    lines.push('▸ Class: HTTP reply was not JSON (cannot read server message)');
+    lines.push('▸ Client time (ISO): ' + new Date().toISOString());
+    lines.push('▸ Request: ' + method + ' ' + path);
+    lines.push('▸ HTTP: ' + status + ' ' + (statusText || ''));
+    lines.push('▸ Content-Type: ' + (contentType || '(none)'));
+    lines.push('▸ JSON.parse: ' + (parseMsg || 'failed'));
+    lines.push('▸ Body preview: ' + safeBodyPreview(rawText));
+    lines.push('▸ ' + summarizeApiProbeState());
+    var apiProbeOk = capabilitiesStatus === 200 && clinicApiFromOurServer;
+    if (status === 404) {
+      lines.push(
+        '▸ Likely cause: CDN/static bucket returned its own 404/HTML page — no Node route handled ' + path + '.'
+      );
+    } else if (status === 502 || status === 504) {
+      if (apiProbeOk) {
+        lines.push(
+          '▸ Likely cause: gateway/proxy (often Cloudflare Worker) could not get a valid response from origin for this POST — timeouts, cold Railway, wrong origin in Worker fetch, or upstream crash on write paths.'
+        );
+        lines.push(
+          '▸ Hint: GET clinic-capabilities succeeded from this browser; compare how the Worker forwards POST ' +
+            path +
+            ' (same origin host, method, body) and raise subrequest timeouts / check Railway logs.'
+        );
+        lines.push(
+          '▸ Note: this route often waits on Resend (outbound email) — total origin time can be several seconds; an edge timeout or cold Railway start can surface as HTML 502 before Express returns JSON.'
+        );
+      } else {
+        lines.push(
+          '▸ Likely cause: HTTP ' +
+            status +
+            ' — upstream unreachable, timed out, or overloaded; HTML error page from gateway instead of JSON.'
+        );
+      }
+    } else if (status >= 500) {
+      lines.push(
+        '▸ Likely cause: upstream crashed or timed out — HTML error page from proxy instead of JSON from server.mjs.'
+      );
+    } else if (/<html|<!doctype/i.test(rawText || '')) {
+      lines.push('▸ Likely cause: response is an HTML document (landing or error template), not the ServiceOpera API.');
+    }
+    if (status === 404) {
+      lines.push(
+        '▸ Fix: deploy backend with `node server.mjs`, map /api/* to that process (Railway Dockerfile + correct startCommand), not static `public/` only.'
+      );
+    } else if ((status === 502 || status === 504) && apiProbeOk) {
+      lines.push(
+        '▸ Fix: lightweight GET works but this POST failed at the edge — verify Cloudflare Worker (or proxy) forwards POST ' +
+          path +
+          ' to the Railway origin, matches headers/body, and uses an adequate subrequest timeout; tail Railway logs for crashes on write routes.'
+      );
+    } else {
+      lines.push(
+        '▸ Fix: check Railway deploy logs and server.mjs for errors on ' +
+          path +
+          '; ensure the reverse proxy routes all of /api/* to the same Node process that answered clinic-capabilities.'
+      );
+    }
+    return lines.join('\n');
+  }
+
+  /** Clinic auth API — always read body as text then JSON so HTML 404 does not collapse into “network error”. */
+  function requestClinicApi(method, path, bodyObj) {
+    var init = {
+      method: method,
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      cache: 'no-store',
+    };
+    if (bodyObj !== undefined) init.body = JSON.stringify(bodyObj);
+    return fetch(path, init)
+      .then(function (resp) {
+        return resp.text().then(function (text) {
+          var ctype = (resp.headers.get('content-type') || '').split(';')[0].trim();
+          var j = null;
+          var parseErr = null;
+          try {
+            j = text ? JSON.parse(text) : null;
+          } catch (e) {
+            parseErr = e && e.message ? e.message : 'JSON.parse failed';
+          }
+          return {
+            okHttp: resp.ok,
+            status: resp.status,
+            statusText: resp.statusText,
+            contentType: ctype,
+            text: text,
+            json: j,
+            parseErr: parseErr,
+          };
+        });
+      })
+      .catch(function (err) {
+        return { __threw: true, err: err, method: method, path: path };
+      });
   }
 
   function showLoginMode() {
@@ -317,16 +478,27 @@
   fetch('/api/auth/clinic-capabilities', { cache: 'no-store' })
     .then(function (r) {
       capabilitiesStatus = r.status;
-      return r.ok ? r.json() : null;
+      return r.text().then(function (text) {
+        if (!r.ok) return null;
+        try {
+          return text ? JSON.parse(text) : null;
+        } catch (e) {
+          return null;
+        }
+      });
     })
     .then(function (cap) {
       clinicApiFromOurServer = Boolean(cap && cap.service === 'serviceopera');
       resetEmailEnabled = clinicApiFromOurServer && Boolean(cap && cap.passwordResetEmail);
       selfRegisterEnabled = clinicApiFromOurServer && Boolean(cap && cap.selfRegister);
       registrationConfirmOk = clinicApiFromOurServer && Boolean(cap && cap.registrationConfirmEmail);
+      resendTestSender = clinicApiFromOurServer && Boolean(cap && cap.resendTestSender);
       var regNote = document.getElementById('clinicRegisterHelpNote');
       if (regNote) {
-        if (selfRegisterEnabled && registrationConfirmOk) {
+        if (selfRegisterEnabled && registrationConfirmOk && resendTestSender) {
+          regNote.textContent =
+            'We will email you a confirmation link. Resend is still on the test sender, so only the Resend account mailbox can receive it until RESEND_FROM uses a verified domain on Railway. Password: min 8 characters.';
+        } else if (selfRegisterEnabled && registrationConfirmOk) {
           regNote.textContent =
             'We will email you a confirmation link. After you confirm, you can sign in. Password: min 8 characters.';
         } else if (selfRegisterEnabled && clinicApiFromOurServer && !registrationConfirmOk) {
@@ -342,9 +514,12 @@
       }
       if (forgotHelp) forgotHelp.textContent = forgotResetHelpText();
     })
-    .catch(function () {
+    .catch(function (err) {
       capabilitiesStatus = 0;
       clinicApiFromOurServer = false;
+      try {
+        window.soClinicCapabilitiesProbeError = err;
+      } catch (e) {}
       var regNote = document.getElementById('clinicRegisterHelpNote');
       if (regNote) {
         regNote.textContent =
@@ -355,35 +530,58 @@
 
   if (verifyToken) {
     setHint('Confirming your email…', '');
-    fetch('/api/auth/clinic-verify-email', {
-      method: 'POST',
-      credentials: 'same-origin',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: verifyToken }),
-    })
-      .then(function (r) {
-        return r.json().then(function (j) {
-          return { ok: r.ok, j: j };
-        });
-      })
-      .then(function (x) {
+    var _vTok = verifyToken;
+    requestClinicApi('POST', '/api/auth/clinic-verify-email', { token: _vTok })
+      .then(function (res) {
         verifyToken = '';
         stripVerifyQueryFromUrl();
         showLoginMode();
-        if (!x.ok) {
-          setHint((x.j && x.j.error) || 'Confirmation failed.', 'error');
+        if (res.__threw) {
+          setHint(
+            'Email confirmation · transport failure\n\n' + detailFetchThrew('POST', '/api/auth/clinic-verify-email', res.err),
+            'error',
+            true
+          );
           return;
         }
-        var em = x.j && x.j.email ? String(x.j.email) : '';
+        if (res.parseErr) {
+          setHint(
+            'Email confirmation · bad response body\n\n' +
+              detailNonJsonResponse(
+                'POST',
+                '/api/auth/clinic-verify-email',
+                res.status,
+                res.statusText,
+                res.contentType,
+                res.parseErr,
+                res.text
+              ),
+            'error',
+            true
+          );
+          return;
+        }
+        if (!res.okHttp) {
+          var jfail = res.json || {};
+          var eConf = (jfail.error || 'Confirmation failed.') + '';
+          setHint(eConf, 'error', verboseErrorHint(eConf));
+          return;
+        }
+        var j = res.json || {};
+        var em = j.email ? String(j.email) : '';
         var loginEmail = document.getElementById('clinicEmail');
         if (loginEmail && em) loginEmail.value = em;
-        setHint(x.j && x.j.message ? x.j.message : 'Email confirmed. Sign in below.', 'ok');
+        setHint(j.message ? j.message : 'Email confirmed. Sign in below.', 'ok');
       })
-      .catch(function () {
+      .catch(function (err) {
         verifyToken = '';
         stripVerifyQueryFromUrl();
         showLoginMode();
-        setHint('Network error while confirming. Open the link again from your email.', 'error');
+        setHint(
+          'Email confirmation · unexpected fault\n\n' + detailFetchThrew('POST', '/api/auth/clinic-verify-email', err),
+          'error',
+          true
+        );
       });
   } else if (resetToken && resetForm) {
     showResetMode();
@@ -423,34 +621,43 @@
         return;
       }
       setRegisterHint('Sending confirmation email…', '');
-      fetch('/api/auth/clinic-register', {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email, password: pw }),
-      })
-        .then(function (r) {
-          return r.json().then(function (j) {
-            return { ok: r.ok, j: j };
-          });
-        })
-        .then(function (x) {
-          if (!x.ok) {
-            setRegisterHint((x.j && x.j.error) || 'Could not start registration.', 'error');
-            return;
-          }
-          registerForm.reset();
-          showLoginMode();
-          var loginEmail = document.getElementById('clinicEmail');
-          if (loginEmail && email) loginEmail.value = email;
-          setHint(
-            x.j && x.j.message ? x.j.message : 'Check your inbox for a confirmation link, then sign in below.',
-            'ok'
+      requestClinicApi('POST', '/api/auth/clinic-register', { email: email, password: pw }).then(function (res) {
+        if (res.__threw) {
+          setRegisterHint(detailFetchThrew('POST', '/api/auth/clinic-register', res.err), 'error', true);
+          return;
+        }
+        if (res.parseErr) {
+          setRegisterHint(
+            detailNonJsonResponse(
+              'POST',
+              '/api/auth/clinic-register',
+              res.status,
+              res.statusText,
+              res.contentType,
+              res.parseErr,
+              res.text
+            ),
+            'error',
+            true
           );
-        })
-        .catch(function () {
-          setRegisterHint('Network error or server unavailable.', 'error');
-        });
+          return;
+        }
+        if (!res.okHttp) {
+          var ej = res.json || {};
+          var eReg = (ej.error || 'Could not start registration.') + '';
+          setRegisterHint(eReg, 'error', verboseErrorHint(eReg));
+          return;
+        }
+        var jr = res.json || {};
+        registerForm.reset();
+        showLoginMode();
+        var loginEmail = document.getElementById('clinicEmail');
+        if (loginEmail && email) loginEmail.value = email;
+        setHint(
+          jr.message ? jr.message : 'Check your inbox for a confirmation link, then sign in below.',
+          'ok'
+        );
+      });
     });
   }
 
@@ -470,28 +677,37 @@
         return;
       }
       setHint('Sending…', '');
-      fetch('/api/auth/clinic-request-reset', {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email }),
-      })
-        .then(function (r) {
-          return r.json().then(function (j) {
-            return { ok: r.ok, j: j };
-          });
-        })
-        .then(function (x) {
-          if (!x.ok) {
-            setHint((x.j && x.j.error) || 'Could not send reset email.', 'error');
-            return;
-          }
-          setHint(x.j && x.j.message ? x.j.message : 'Check your inbox for the reset link.', 'ok');
-          showLoginMode();
-        })
-        .catch(function () {
-          setHint('Network error or server unavailable.', 'error');
-        });
+      requestClinicApi('POST', '/api/auth/clinic-request-reset', { email: email }).then(function (res) {
+        if (res.__threw) {
+          setHint(detailFetchThrew('POST', '/api/auth/clinic-request-reset', res.err), 'error', true);
+          return;
+        }
+        if (res.parseErr) {
+          setHint(
+            detailNonJsonResponse(
+              'POST',
+              '/api/auth/clinic-request-reset',
+              res.status,
+              res.statusText,
+              res.contentType,
+              res.parseErr,
+              res.text
+            ),
+            'error',
+            true
+          );
+          return;
+        }
+        if (!res.okHttp) {
+          var er = res.json || {};
+          var eReset = (er.error || 'Could not send reset email.') + '';
+          setHint(eReset, 'error', verboseErrorHint(eReset));
+          return;
+        }
+        var jr = res.json || {};
+        setHint(jr.message ? jr.message : 'Check your inbox for the reset link.', 'ok');
+        showLoginMode();
+      });
     });
   }
 
@@ -510,38 +726,47 @@
         return;
       }
       setResetHint('Saving…', '');
-      fetch('/api/auth/clinic-reset-password', {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: resetToken, password: a }),
-      })
-        .then(function (r) {
-          return r.json().then(function (j) {
-            return { ok: r.ok, j: j };
-          });
-        })
-        .then(function (x) {
-          if (!x.ok) {
-            setResetHint((x.j && x.j.error) || 'Reset failed.', 'error');
-            return;
-          }
-          setResetHint(x.j && x.j.message ? x.j.message : 'Password updated. Sign in below.', 'ok');
-          try {
-            history.replaceState({}, '', '/login.html' + (slugHint ? '?slug=' + encodeURIComponent(slugHint) : ''));
-          } catch (err) {}
-          resetToken = '';
-          showLoginMode();
-          if (lede && slugHint) {
-            lede.textContent =
-              'You were sent here for report “' + slugHint + '”. After sign-in you will be taken to that page.';
-          } else if (lede) {
-            lede.textContent = 'Use the email and password Jack set up for your private report.';
-          }
-        })
-        .catch(function () {
-          setResetHint('Network error or server unavailable.', 'error');
-        });
+      requestClinicApi('POST', '/api/auth/clinic-reset-password', { token: resetToken, password: a }).then(function (res) {
+        if (res.__threw) {
+          setResetHint(detailFetchThrew('POST', '/api/auth/clinic-reset-password', res.err), 'error', true);
+          return;
+        }
+        if (res.parseErr) {
+          setResetHint(
+            detailNonJsonResponse(
+              'POST',
+              '/api/auth/clinic-reset-password',
+              res.status,
+              res.statusText,
+              res.contentType,
+              res.parseErr,
+              res.text
+            ),
+            'error',
+            true
+          );
+          return;
+        }
+        if (!res.okHttp) {
+          var jx = res.json || {};
+          var ePw = (jx.error || 'Reset failed.') + '';
+          setResetHint(ePw, 'error', verboseErrorHint(ePw));
+          return;
+        }
+        var jr = res.json || {};
+        setResetHint(jr.message ? jr.message : 'Password updated. Sign in below.', 'ok');
+        try {
+          history.replaceState({}, '', '/login.html' + (slugHint ? '?slug=' + encodeURIComponent(slugHint) : ''));
+        } catch (err) {}
+        resetToken = '';
+        showLoginMode();
+        if (lede && slugHint) {
+          lede.textContent =
+            'You were sent here for report “' + slugHint + '”. After sign-in you will be taken to that page.';
+        } else if (lede) {
+          lede.textContent = 'Use the email and password Jack set up for your private report.';
+        }
+      });
     });
   }
 
@@ -552,35 +777,43 @@
       var email = (fd.get('email') || '').toString().trim();
       var password = (fd.get('password') || '').toString();
       setHint('Signing in…', '');
-      fetch('/api/auth/clinic-login', {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email, password: password }),
-      })
-        .then(function (r) {
-          return r.json().then(function (j) {
-            return { ok: r.ok, j: j };
-          });
-        })
-        .then(function (x) {
-          if (!x.ok || !x.j || !x.j.token) {
-            setHint((x.j && x.j.error) || 'Invalid email or password.', 'error');
-            var pw = document.getElementById('clinicPassword');
-            if (pw) pw.value = '';
-            return;
-          }
-          try {
-            sessionStorage.setItem('so_clinic_jwt', x.j.token);
-          } catch (err) {}
-          setHint('Redirecting…', 'ok');
-          var dest = x.j.reportUrl || '/clinics/report.html?slug=' + encodeURIComponent(x.j.reportSlug);
-          if (dest.charAt(0) !== '/') dest = '/' + dest;
-          window.location.href = dest;
-        })
-        .catch(function () {
-          setHint('Network error or server unavailable (this page needs the live ServiceOpera host).', 'error');
-        });
+      requestClinicApi('POST', '/api/auth/clinic-login', { email: email, password: password }).then(function (res) {
+        if (res.__threw) {
+          setHint(detailFetchThrew('POST', '/api/auth/clinic-login', res.err), 'error', true);
+          return;
+        }
+        if (res.parseErr) {
+          setHint(
+            detailNonJsonResponse(
+              'POST',
+              '/api/auth/clinic-login',
+              res.status,
+              res.statusText,
+              res.contentType,
+              res.parseErr,
+              res.text
+            ),
+            'error',
+            true
+          );
+          return;
+        }
+        var lj = res.json || {};
+        if (!res.okHttp || !lj.token) {
+          var eLogin = (lj.error || 'Invalid email or password.') + '';
+          setHint(eLogin, 'error', verboseErrorHint(eLogin));
+          var pwEl = document.getElementById('clinicPassword');
+          if (pwEl) pwEl.value = '';
+          return;
+        }
+        try {
+          sessionStorage.setItem('so_clinic_jwt', lj.token);
+        } catch (err) {}
+        setHint('Redirecting…', 'ok');
+        var dest = lj.reportUrl || '/clinics/report.html?slug=' + encodeURIComponent(lj.reportSlug);
+        if (dest.charAt(0) !== '/') dest = '/' + dest;
+        window.location.href = dest;
+      });
     });
   }
 })();

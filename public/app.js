@@ -38,7 +38,7 @@
   });
 
   // Demo credentials map.
-  // Per ogni prospect Jack genera una entry qui (o serve da backend).
+  // For each prospect Jack adds an entry here (or serves it from the backend).
   // username -> { password, slug, business }
   const CREDENTIALS = {
     'amari-resort':   { password: 'demo2026', slug: 'amari-resort',   business: 'Amari Resort · Thailand' },

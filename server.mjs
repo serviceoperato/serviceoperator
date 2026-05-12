@@ -92,6 +92,7 @@ function buildAdminWorkQueue() {
 const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'jack@serviceopera.to').trim().toLowerCase();
 const RESEND_API_KEY = (process.env.RESEND_API_KEY || '').trim();
 const RESEND_FROM = (process.env.RESEND_FROM || 'ServiceOpera <onboarding@resend.dev>').trim();
+const RESEND_FROM_USES_TEST_SENDER = /@resend\.dev>/i.test(RESEND_FROM) || /onboarding@resend\.dev/i.test(RESEND_FROM);
 /** Public clinic sign-up is on by default; set CLINIC_SELF_REGISTER=false (or 0, no, off) for invite-only. */
 const CLINIC_SELF_REGISTER = (function () {
   const raw = process.env.CLINIC_SELF_REGISTER;
@@ -212,6 +213,43 @@ function pruneSends(ip) {
   return fresh;
 }
 
+function resendFailureMessage(err, fallback) {
+  const detailRaw = String(err?.resendDetail || err?.message || '');
+  const detail = detailRaw.toLowerCase();
+  const docDomains = 'https://resend.com/docs/dashboard/domains/introduction';
+  if (
+    detail.includes('only send') ||
+    detail.includes('testing emails') ||
+    detail.includes('test emails') ||
+    detail.includes('sandbox')
+  ) {
+    return (
+      'Resend blocked this send: RESEND_FROM is still using the sandbox / test sender (e.g. onboarding@resend.dev).\n\n' +
+      '▸ Meaning · In test mode Resend delivers only to the mailbox tied to your Resend account—not arbitrary addresses.\n\n' +
+      '▸ Fix · Add & verify your real domain under Resend (Domains → DNS records), then set RESEND_FROM on Railway to e.g. "ServiceOpera <noreply@yourdomain.com>" and redeploy.\n\n' +
+      '▸ Docs · ' +
+      docDomains
+    );
+  }
+  if (detail.includes('domain') && (detail.includes('verify') || detail.includes('verified'))) {
+    return (
+      'Resend blocked this send: the domain (or mailbox) used in RESEND_FROM is not verified in your Resend project.\n\n' +
+      '▸ Fix · Open Resend → Domains, add `yourdomain`, add the SPF/DKIM/verification DNS records until status is verified.\n\n' +
+      '▸ Then · Set Railway `RESEND_FROM` to an address @ that domain (matching a verified sender in Resend), save, redeploy this service.\n\n' +
+      '▸ Check · Deploy logs still show `[serviceopera] Resend: RESEND_FROM=…`; if the variable isn’t picked up, trigger a redeploy.\n\n' +
+      '▸ Docs · ' +
+      docDomains
+    );
+  }
+  if (detail.includes('invalid api key') || detail.includes('unauthorized') || detail.includes('api key')) {
+    return (
+      'Resend rejected this request: invalid or unauthorised API credential.\n\n' +
+      '▸ Fix · In Railway open the Node service → Variables → regenerate or paste a fresh RESEND_API_KEY from Resend (API Keys), redeploy.'
+    );
+  }
+  return fallback;
+}
+
 async function sendResendEmail({ to, subject, html }) {
   const r = await fetch('https://api.resend.com/emails', {
     method: 'POST',
@@ -223,8 +261,17 @@ async function sendResendEmail({ to, subject, html }) {
   });
   const text = await r.text();
   if (!r.ok) {
-    const err = new Error('Resend HTTP ' + r.status + ': ' + text.slice(0, 400));
+    let resendDetail = text.slice(0, 400);
+    try {
+      const parsed = JSON.parse(text);
+      if (parsed && typeof parsed.message === 'string') resendDetail = parsed.message;
+    } catch {
+      /* keep raw body */
+    }
+    const err = new Error('Resend HTTP ' + r.status + ': ' + resendDetail);
     err.status = r.status >= 500 ? 503 : 502;
+    err.resendDetail = resendDetail;
+    console.error('[serviceopera] Resend failed:', r.status, resendDetail);
     throw err;
   }
 }
@@ -276,6 +323,7 @@ app.get('/api/auth/clinic-capabilities', (_req, res) => {
     passwordResetEmail: Boolean(RESEND_API_KEY),
     selfRegister: Boolean(CLINIC_SELF_REGISTER),
     registrationConfirmEmail: Boolean(RESEND_API_KEY && CLINIC_SELF_REGISTER),
+    resendTestSender: Boolean(RESEND_API_KEY && RESEND_FROM_USES_TEST_SENDER),
   });
 });
 
@@ -327,7 +375,12 @@ app.post('/api/auth/clinic-register', async (req, res) => {
     sendTimestampsByIp.set(ip, sends);
   } catch (e) {
     const status = e.status || 502;
-    return res.status(status).json({ error: 'Could not send confirmation email. Try again later or contact support.' });
+    return res.status(status).json({
+      error: resendFailureMessage(
+        e,
+        'Could not send confirmation email. Try again later or contact jack@serviceopera.to.'
+      ),
+    });
   }
   return res.status(201).json({
     ok: true,
@@ -371,7 +424,9 @@ app.post('/api/admin/send-code', async (req, res) => {
   } catch (e) {
     otpByEmail.delete(ADMIN_EMAIL);
     const status = e.status || 502;
-    return res.status(status).json({ error: 'Could not send email. Check RESEND_FROM / domain and API key.' });
+    return res.status(status).json({
+      error: resendFailureMessage(e, 'Could not send email. Check RESEND_FROM / domain and API key.'),
+    });
   }
 
   return res.json(generic);
@@ -491,7 +546,9 @@ app.post('/api/auth/clinic-request-reset', async (req, res) => {
     sendTimestampsByIp.set(ip, sends);
   } catch (e) {
     const status = e.status || 502;
-    return res.status(status).json({ error: 'Could not send email. Try again later or contact support.' });
+    return res.status(status).json({
+      error: resendFailureMessage(e, 'Could not send email. Try again later or contact jack@serviceopera.to.'),
+    });
   }
 
   return res.json(generic);
@@ -656,6 +713,13 @@ app.listen(port, '0.0.0.0', () => {
       ? '[serviceopera] Resend: RESEND_API_KEY is set (admin OTP + clinic forgot-password).'
       : '[serviceopera] Resend: RESEND_API_KEY missing — set it on this Railway service and redeploy.'
   );
+  if (RESEND_API_KEY) {
+    console.log(
+      RESEND_FROM_USES_TEST_SENDER
+        ? '[serviceopera] Resend: RESEND_FROM uses the test sender — only the Resend account mailbox can receive mail until you verify a domain.'
+        : '[serviceopera] Resend: RESEND_FROM=' + RESEND_FROM
+    );
+  }
   console.log(
     CLINIC_SELF_REGISTER
       ? '[serviceopera] Clinic self-register: enabled (default; set CLINIC_SELF_REGISTER=false for invite-only).'

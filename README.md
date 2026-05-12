@@ -137,6 +137,7 @@ The `Dockerfile` runs **Node**: `server.mjs` serves **`public/`** and sets the s
 
 - `RESEND_API_KEY` must be on **the same Railway service that runs `node server.mjs`** (the Docker deploy from this repo). A separate static-only service or a CDN in front of the site will not see those variables unless `/api/*` is routed to Node.
 - In **Deploy logs** after startup, look for `[serviceopera] v…` and either `Resend: RESEND_API_KEY is set` or `missing`. If the dashboard shows the variable but logs say `missing`, confirm you edited **this** service, then **Redeploy** so a new container starts with the env.
+- **Cloudflare Worker in front:** if `GET /api/auth/clinic-capabilities` succeeds but **`POST`** (login, Create account) returns Cloudflare HTML **502**, forward method + body to origin (`workers/cloudflare-reverse-proxy.example.js`); **`clinic-register` waits on Resend** — slow routes combined with timeouts or Railway cold-start often show as edge 502 rather than Express JSON errors.
 
 **Collegare questo repo a Railway (GitHub → deploy automatico):**
 
