@@ -25,9 +25,14 @@ const clinicStore = createClinicStore(dataDir);
 const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'jack@serviceopera.to').trim().toLowerCase();
 const RESEND_API_KEY = (process.env.RESEND_API_KEY || '').trim();
 const RESEND_FROM = (process.env.RESEND_FROM || 'ServiceOpera <onboarding@resend.dev>').trim();
-const CLINIC_SELF_REGISTER =
-  process.env.CLINIC_SELF_REGISTER === '1' ||
-  String(process.env.CLINIC_SELF_REGISTER || '').toLowerCase() === 'true';
+/** Public clinic sign-up is on by default; set CLINIC_SELF_REGISTER=false (or 0, no, off) for invite-only. */
+const CLINIC_SELF_REGISTER = (function () {
+  const raw = process.env.CLINIC_SELF_REGISTER;
+  if (raw === undefined || raw === '') return true;
+  const s = String(raw).toLowerCase().trim();
+  if (s === '0' || s === 'false' || s === 'no' || s === 'off') return false;
+  return true;
+})();
 const JWT_SECRET = (process.env.ADMIN_JWT_SECRET || '').trim() || crypto.randomBytes(32).toString('hex');
 
 const OTP_TTL_MS = 10 * 60 * 1000;
@@ -442,7 +447,7 @@ app.listen(port, '0.0.0.0', () => {
   );
   console.log(
     CLINIC_SELF_REGISTER
-      ? '[serviceopera] Clinic self-register: enabled (CLINIC_SELF_REGISTER=true).'
-      : '[serviceopera] Clinic self-register: off (set CLINIC_SELF_REGISTER=true to allow public sign-up).'
+      ? '[serviceopera] Clinic self-register: enabled (default; set CLINIC_SELF_REGISTER=false for invite-only).'
+      : '[serviceopera] Clinic self-register: off (invite-only; unset env or remove CLINIC_SELF_REGISTER=false to enable).'
   );
 });
