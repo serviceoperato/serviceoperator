@@ -314,6 +314,9 @@
             path +
             ' (same origin host, method, body) and raise subrequest timeouts / check Railway logs.'
         );
+        lines.push(
+          '▸ Note: this route often waits on Resend (outbound email) — total origin time can be several seconds; an edge timeout or cold Railway start can surface as HTML 502 before Express returns JSON.'
+        );
       } else {
         lines.push(
           '▸ Likely cause: HTTP ' +
