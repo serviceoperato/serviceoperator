@@ -2113,3 +2113,86 @@ a:hover { color: var(--amber-2); }
   font-size: 0.65rem !important;
   padding: 0.45rem 0.85rem;
 }
+
+/* ThaiFans-style admin shell (ServiceOpera) — #adminWorkspace already gets nav offset via .page-admin--with-nav */
+.admin-workspace--tf {
+  box-sizing: border-box;
+}
+.tf-admin-version {
+  flex-shrink: 0;
+  padding: 0.5rem 1.25rem;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  color: var(--mute-2);
+  font-size: 0.8rem;
+  background: var(--ink-2);
+}
+.tf-admin-version strong { color: var(--paper); font-weight: 600; margin-left: 0.35rem; }
+.tf-admin-nav {
+  position: sticky;
+  top: var(--site-nav-offset);
+  z-index: 38;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--line);
+  background: var(--ink);
+  padding: 0.55rem 1.25rem;
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--line) 80%, transparent);
+}
+.tf-admin-nav__row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.45rem; margin-bottom: 0.35rem; }
+.tf-admin-nav__row:last-child { margin-bottom: 0; }
+.tf-admin-nav__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  text-decoration: none;
+  color: var(--bone);
+  background: var(--ink-2);
+  border: 1px solid var(--line-strong);
+  cursor: pointer;
+  font-family: inherit;
+}
+.tf-admin-nav__pill:hover { border-color: var(--amber); color: var(--paper); }
+.tf-admin-nav__pill.is-active { background: var(--amber-2); border-color: var(--amber-2); color: #fff; font-weight: 600; }
+.tf-admin-nav__label {
+  width: 100%;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--mute-2);
+  margin: 0.25rem 0 0.15rem 0.35rem;
+}
+.admin-main--wide { max-width: 1400px; }
+.tf-admin-table-card, .tf-admin-payout-card {
+  margin-bottom: 2rem;
+  padding: 1.25rem 1rem 1.5rem;
+  background: var(--ink-2);
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+}
+.tf-admin-section-title { font-size: 0.85rem; color: var(--amber-2); margin: 0 0 0.75rem; }
+.tf-admin-muted { color: var(--mute-2); font-size: 0.78rem; margin: 0; }
+.tf-users-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.68rem;
+}
+.tf-users-table th, .tf-users-table td {
+  padding: 0.5rem 0.65rem;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+.tf-users-table th {
+  color: var(--amber-2);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.tf-users-table tbody tr:hover { background: color-mix(in srgb, var(--amber) 6%, transparent); }
+.tf-users-table a { color: var(--amber); }

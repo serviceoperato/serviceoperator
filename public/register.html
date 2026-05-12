@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
+<title>Create account · ServiceOpera.to</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" href="favicon.png" type="image/png" sizes="any" />
+<link rel="apple-touch-icon" href="favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+<style>
+  .page-clinic-access { font-family: var(--font-body); min-height: 100vh; }
+  .tf-reg-wrap { max-width: 420px; margin: 0 auto; padding: 2rem 1.5rem; position: relative; }
+  .tf-lang-pill {
+    position: absolute; top: 0; right: 0;
+    display: inline-flex; border: 1px solid var(--line-strong); border-radius: 9999px; overflow: hidden; background: var(--ink);
+  }
+  .tf-lang-pill__btn { border: none; background: transparent; color: var(--mute-2); font-weight: 700; font-size: 0.72rem; padding: 0.35rem 0.55rem; cursor: pointer; font-family: var(--font-body); }
+  .tf-lang-pill__btn.is-active { background: color-mix(in srgb, var(--amber) 18%, transparent); color: var(--paper); }
+  .tf-account-pick { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 1.1rem; }
+  .tf-account-card {
+    flex: 1; min-width: 160px; padding: 0.9rem 1rem; border-radius: 16px; cursor: pointer; text-align: left;
+    border: 1px solid var(--line-strong); background: var(--ink-2); color: var(--bone);
+    display: flex; align-items: center; gap: 12px; font-family: var(--font-body);
+  }
+  .tf-account-card.is-active { border: 2px solid var(--amber-2); background: color-mix(in srgb, var(--amber) 10%, var(--ink-2)); }
+  .tf-account-card__icon { width: 44px; height: 44px; border-radius: 14px; border: 1px solid var(--line); background: var(--ink); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.1rem; }
+  .tf-account-card__body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .tf-account-card__title { font-weight: 800; }
+  .tf-account-card__sub { font-size: 0.82rem; color: var(--mute-2); line-height: 1.35; }
+  .tf-input { width: 100%; padding: 0.85rem 0.9rem; border-radius: 12px; border: 1px solid var(--line-strong); background: var(--ink); color: var(--paper); font-size: 1rem; box-sizing: border-box; font-family: var(--font-body); }
+  .tf-cap { display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--mute-2); }
+  .tf-success-icon { width: 92px; height: 92px; border-radius: 24px; border: 1px solid var(--line); background: var(--ink-2); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.1rem; font-size: 2rem; }
+  .page-clinic-access .nav__login { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; }
+  .page-clinic-access .portal-caption {
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mute-2);
+  }
+  .page-clinic-access .portal-caption--accent { color: var(--amber-2); }
+</style>
+</head>
+<body class="page-admin page-admin--with-nav page-clinic-access">
+
+<div class="grain" aria-hidden="true"></div>
+
+<nav class="nav" aria-label="Primary">
+  <a href="/" class="nav__logo">
+    <img class="nav__logo-img brand-logo" src="logo.png" width="220" height="90" alt="ServiceOpera.to — home" decoding="async" />
+  </a>
+  <div class="nav__links">
+    <a href="/#build">Systems</a>
+    <a href="/#method">Method</a>
+    <a href="/#proof">Proof</a>
+    <a href="/login.html" class="nav__login">Log in</a>
+    <button type="button" class="theme-toggle" data-theme-toggle aria-label="Theme"></button>
+    <a href="mailto:jack@serviceopera.to" class="nav__cta" title="jack@serviceopera.to">jack@serviceopera.to</a>
+  </div>
+</nav>
+
+<div class="admin-gate">
+  <div class="admin-gate__card" style="max-width: 460px">
+    <div id="regStepForm">
+      <div class="tf-reg-wrap">
+        <div class="tf-lang-pill" role="group" aria-label="Language">
+          <button type="button" class="tf-lang-pill__btn is-active" id="langEn">EN</button>
+          <button type="button" class="tf-lang-pill__btn" id="langTh">TH</button>
+        </div>
+        <p class="portal-caption portal-caption--accent" style="margin-bottom:1rem">— CLINIC REPORT ACCESS</p>
+        <h1 id="regTitle" style="font-size:1.65rem;font-weight:900;margin:0;font-family:var(--font-display)">Create account</h1>
+        <p id="regSub" class="admin-gate__lede" style="margin-top:0.45rem">Private report login — same flow shape as ThaiFans register (account type → email → password → confirm email).</p>
+
+        <div class="tf-account-pick" role="group" aria-label="Account type">
+          <button type="button" class="tf-account-card is-active" id="accPerson" data-type="real_person">
+            <span class="tf-account-card__icon" aria-hidden="true">👤</span>
+            <span class="tf-account-card__body">
+              <span class="tf-account-card__title" id="lblPersonTitle">Individual</span>
+              <span class="tf-account-card__sub" id="lblPersonSub">Personal clinic or provider access.</span>
+            </span>
+            <span aria-hidden="true" style="font-weight:900">✓</span>
+          </button>
+          <button type="button" class="tf-account-card" id="accBiz" data-type="business">
+            <span class="tf-account-card__icon" aria-hidden="true">🏢</span>
+            <span class="tf-account-card__body">
+              <span class="tf-account-card__title" id="lblBizTitle">Business</span>
+              <span class="tf-account-card__sub" id="lblBizSub">Team or organisation managing a report.</span>
+            </span>
+            <span aria-hidden="true" style="opacity:0.25;font-weight:900">✓</span>
+          </button>
+        </div>
+
+        <form id="regForm" class="portal-form" style="margin-top:1.15rem" autocomplete="on">
+          <label>
+            <span class="tf-cap" id="capEmail">EMAIL</span>
+            <input type="email" name="email" id="regEmail" class="tf-input" required autocomplete="email" />
+          </label>
+          <label style="margin-top:12px;display:block">
+            <span class="tf-cap" id="capPw">PASSWORD</span>
+            <input type="password" name="password" id="regPw" class="tf-input" required minlength="8" autocomplete="new-password" placeholder="min 8 characters" />
+          </label>
+          <p class="portal-form__hint" id="regHint"></p>
+          <button type="submit" class="btn btn--primary btn--block" id="regSubmit">Create account<span class="ico-arrow-r" aria-hidden="true"></span></button>
+        </form>
+        <p style="margin-top:14px;text-align:center;color:var(--mute-2);font-size:0.9rem">
+          <span id="haveAcct">Already have an account?</span> <a href="login.html" id="lnkLogin">Log in</a>
+        </p>
+        <p class="modal__footnote" style="margin-top:1.5rem"><a href="/"><span class="ico-arrow-l" aria-hidden="true"></span>Back to site</a></p>
+      </div>
+    </div>
+
+    <div id="regStepSent" class="is-hidden">
+      <div class="tf-reg-wrap" style="text-align:center;padding-top:2rem">
+        <div class="tf-success-icon" aria-hidden="true">✉️</div>
+        <h1 id="sentTitle" style="font-size:1.35rem;font-weight:900;margin:0">Check your email</h1>
+        <p id="sentBody" class="admin-gate__lede" style="text-align:center;margin-top:0.65rem">We sent a confirmation link. Open it to activate your account, then return to log in.</p>
+        <p style="margin-top:1.25rem;font-size:0.9rem"><a href="login.html?registered=1" id="lnkAfter">Go to log in</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="theme.js"></script>
+<script>
+(function () {
+  var accountType = 'real_person';
+  var uiLang = 'en';
+  try { uiLang = localStorage.getItem('so_ui_lang') === 'th' ? 'th' : 'en'; } catch (e) {}
+  var STR = {
+    en: {
+      title: 'Create account',
+      sub: 'Private report login — same flow shape as ThaiFans register (account type → email → password → confirm email).',
+      email: 'EMAIL', pw: 'PASSWORD', submit: 'Create account',
+      personT: 'Individual', personS: 'Personal clinic or provider access.',
+      bizT: 'Business', bizS: 'Team or organisation managing a report.',
+      have: 'Already have an account?', login: 'Log in',
+      sentT: 'Check your email',
+      sentB: 'We sent a confirmation link. Open it to activate your account, then return to log in.',
+      goLogin: 'Go to log in',
+      errEmail: 'Enter a valid email.',
+      errPw: 'Password must be at least 8 characters.',
+    },
+    th: {
+      title: 'สร้างบัญชี',
+      sub: 'เข้าถึงรายงานส่วนตัว — ขั้นตอนแบบเดียวกับ ThaiFans',
+      email: 'อีเมล', pw: 'รหัสผ่าน', submit: 'สร้างบัญชี',
+      personT: 'บุคคล', personS: 'คลินิกหรือผู้ให้บริการ',
+      bizT: 'ธุรกิจ', bizS: 'ทีมหรือองค์กร',
+      have: 'มีบัญชีแล้ว?', login: 'เข้าสู่ระบบ',
+      sentT: 'ตรวจสอบอีเมล',
+      sentB: 'เราส่งลิงก์ยืนยันแล้ว เปิดลิงก์เพื่อเปิดใช้งาน แล้วกลับมาเข้าสู่ระบบ',
+      goLogin: 'ไปหน้าเข้าสู่ระบบ',
+      errEmail: 'อีเมลไม่ถูกต้อง',
+      errPw: 'รหัสผ่านอย่างน้อย 8 ตัว',
+    },
+  };
+
+  function applyLang() {
+    var t = STR[uiLang] || STR.en;
+    document.getElementById('regTitle').textContent = t.title;
+    document.getElementById('regSub').textContent = t.sub;
+    document.getElementById('capEmail').textContent = t.email;
+    document.getElementById('capPw').textContent = t.pw;
+    document.getElementById('regSubmit').innerHTML = t.submit + '<span class="ico-arrow-r" aria-hidden="true"></span>';
+    document.getElementById('lblPersonTitle').textContent = t.personT;
+    document.getElementById('lblPersonSub').textContent = t.personS;
+    document.getElementById('lblBizTitle').textContent = t.bizT;
+    document.getElementById('lblBizSub').textContent = t.bizS;
+    document.getElementById('haveAcct').textContent = t.have;
+    document.getElementById('lnkLogin').textContent = t.login;
+    document.getElementById('sentTitle').textContent = t.sentT;
+    document.getElementById('sentBody').textContent = t.sentB;
+    document.getElementById('lnkAfter').textContent = t.goLogin;
+    document.getElementById('langEn').classList.toggle('is-active', uiLang === 'en');
+    document.getElementById('langTh').classList.toggle('is-active', uiLang === 'th');
+  }
+  applyLang();
+
+  document.getElementById('langEn').addEventListener('click', function () {
+    uiLang = 'en';
+    try { localStorage.setItem('so_ui_lang', 'en'); } catch (e) {}
+    applyLang();
+  });
+  document.getElementById('langTh').addEventListener('click', function () {
+    uiLang = 'th';
+    try { localStorage.setItem('so_ui_lang', 'th'); } catch (e) {}
+    applyLang();
+  });
+
+  function pickType(type, btn) {
+    accountType = type;
+    document.querySelectorAll('.tf-account-card').forEach(function (b) {
+      b.classList.toggle('is-active', b === btn);
+      var check = b.querySelector('span:last-child');
+      if (check) check.style.opacity = b === btn ? '1' : '0.25';
+    });
+  }
+  document.getElementById('accPerson').addEventListener('click', function () { pickType('real_person', this); });
+  document.getElementById('accBiz').addEventListener('click', function () { pickType('business', this); });
+
+  function req(method, path, body) {
+    return fetch(path, {
+      method: method,
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      cache: 'no-store',
+    }).then(function (r) {
+      return r.text().then(function (text) {
+        var j = null;
+        try { j = text ? JSON.parse(text) : null; } catch (e) {}
+        return { ok: r.ok, status: r.status, json: j, text: text };
+      });
+    });
+  }
+
+  document.getElementById('regForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var t = STR[uiLang] || STR.en;
+    var email = (document.getElementById('regEmail').value || '').trim();
+    var pw = (document.getElementById('regPw').value || '').trim();
+    var hint = document.getElementById('regHint');
+    hint.textContent = '';
+    hint.className = 'portal-form__hint';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      hint.textContent = t.errEmail;
+      hint.className = 'portal-form__hint is-error';
+      return;
+    }
+    if (pw.length < 8) {
+      hint.textContent = t.errPw;
+      hint.className = 'portal-form__hint is-error';
+      return;
+    }
+    hint.textContent = '…';
+    req('POST', '/api/auth/clinic-register', { email: email, password: pw, account_type: accountType }).then(function (r) {
+      if (!r.ok) {
+        hint.textContent = (r.json && r.json.error) || 'Request failed.';
+        hint.className = 'portal-form__hint is-error';
+        return;
+      }
+      document.getElementById('regStepForm').classList.add('is-hidden');
+      document.getElementById('regStepSent').classList.remove('is-hidden');
+    }).catch(function () {
+      hint.textContent = 'Network error.';
+      hint.className = 'portal-form__hint is-error';
+    });
+  });
+})();
+</script>
+</body>
+</html>

@@ -17,7 +17,8 @@
   var form = document.getElementById('adminGateForm');
   var hint = document.getElementById('adminGateHint');
   var logoutBtn = document.getElementById('adminLogout');
-  var tilesEl = document.getElementById('adminTiles');
+  var tfNav = document.getElementById('tfAdminNav');
+  var tfVerNum = document.getElementById('tfAdminVersionNum');
   var panel = document.getElementById('adminPanel');
   var panelTitle = document.getElementById('adminPanelTitle');
   var panelBody = document.getElementById('adminPanelBody');
@@ -30,27 +31,209 @@
   var codeInput = document.getElementById('adminCodeInput');
   var submitBtn = document.getElementById('adminSubmitBtn');
 
-  var TILES = [
-    { id: 'clinic-reports', label: 'Clinic report access' },
-    { id: 'monitor', label: 'Monitor' },
-    { id: 'users-payouts', label: 'Users & payouts' },
-    { id: 'user-profiling', label: 'User profiling' },
-    { id: 'db-console', label: 'DB console' },
-    { id: 'activity-log', label: 'Activity log' },
-    { id: 'deploy-log', label: 'Deploy log' },
-    { id: 'site-appearance', label: 'Site appearance' },
-    { id: 'dashboard', label: 'Dashboard' },
-    { id: 'media-moderation', label: 'Media moderation' },
-    { id: 'photo-approvals', label: 'Photo approvals' },
-    { id: 'photos-chat', label: 'Photos chat' },
-    { id: 'photo-stories', label: 'Photo stories' },
-    { id: 'messages', label: 'Messages' },
-    { id: 'chat', label: 'Chat' },
-  ];
+  function loadTfVersion() {
+    if (!tfVerNum) return;
+    fetch('/api/version', { cache: 'no-store' })
+      .then(function (r) {
+        return r.json();
+      })
+      .then(function (j) {
+        if (j && j.version) tfVerNum.textContent = j.version;
+      })
+      .catch(function () {
+        tfVerNum.textContent = '(n/a)';
+      });
+  }
+
+  function shortDisplayId(raw) {
+    var s = String(raw || '');
+    if (/^\d+$/.test(s)) return s;
+    var hex = s.replace(/-/g, '');
+    if (hex.length >= 8) {
+      var n = parseInt(hex.slice(0, 8), 16);
+      if (isFinite(n)) return String(100000 + (n % 900000));
+    }
+    return s.slice(0, 8) || '—';
+  }
+
+  function renderTfUsersTable(data) {
+    var tb = document.getElementById('tfUsersTbody');
+    var uh = document.getElementById('usersTableHint');
+    var paging = document.getElementById('usersPaging');
+    var pendEl = document.getElementById('pendingRegBody');
+    if (!tb) return;
+    var users = (data && data.clinicUsers) || [];
+    var pending = (data && data.pendingRegistrations) || [];
+    if (uh) {
+      uh.textContent =
+        users.length === 0
+          ? 'No confirmed clinic users in the JSON store yet.'
+          : 'Confirmed clinic users (newest first in inbox; full list here).';
+    }
+    if (paging) paging.textContent = users.length + ' users · page 1 / 1';
+    if (!users.length) {
+      tb.innerHTML =
+        '<tr><td colspan="13" style="opacity:0.85">No users yet. Use <strong>Clinic reports</strong> in the nav to add one.</td></tr>';
+    } else {
+      tb.innerHTML = users
+        .map(function (u) {
+          var idDisp = shortDisplayId(u.id);
+          var reportUrl = '/clinics/report.html?slug=' + encodeURIComponent(u.reportSlug);
+          return (
+            '<tr>' +
+            '<td>' +
+            escapeHtml(idDisp) +
+            '</td>' +
+            '<td>' +
+            escapeHtml(u.email) +
+            '</td>' +
+            '<td>' +
+            escapeHtml(u.reportSlug) +
+            '</td>' +
+            '<td>—</td>' +
+            '<td>Yes</td>' +
+            '<td>—</td>' +
+            '<td>—</td>' +
+            '<td>— / —</td>' +
+            '<td>—</td>' +
+            '<td>—</td>' +
+            '<td>—</td>' +
+            '<td>' +
+            escapeHtml(formatAdminTs(u.createdAt)) +
+            '</td>' +
+            '<td><a href="' +
+            reportUrl +
+            '">Open report</a></td>' +
+            '</tr>'
+          );
+        })
+        .join('');
+    }
+    if (pendEl) {
+      if (!pending.length) {
+        pendEl.innerHTML = '<p class="tf-admin-muted">No pending confirmations.</p>';
+      } else {
+        pendEl.innerHTML =
+          '<ul style="margin:0;padding-left:1.1rem;line-height:1.65;font-size:0.78rem">' +
+          pending
+            .map(function (p) {
+              return (
+                '<li><strong>' +
+                escapeHtml(p.email) +
+                '</strong> · slug <span style="color:var(--amber)">' +
+                escapeHtml(p.reportSlug) +
+                '</span> · ' +
+                escapeHtml(formatAdminTs(p.createdAt)) +
+                '</li>'
+              );
+            })
+            .join('') +
+          '</ul>';
+      }
+    }
+  }
+
+  function escapeHtml(s) {
+    return String(s || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function openStubPanel(title, stubId) {
+    if (!panel || !panelTitle || !panelBody) return;
+    if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.add('is-hidden');
+    panelTitle.textContent = title;
+    panelBody.innerHTML =
+      '<p class="admin-panel__stub">ThaiFans-style admin section. <strong>' +
+      escapeHtml(stubId) +
+      '</strong> is not wired on ServiceOpera — hook your stack when you add Postgres, media, or chat.</p>' +
+      '<p class="admin-panel__stub"><button type="button" class="btn btn--ghost mono" id="stubBackToUsers">← Back to users</button></p>';
+    var back = document.getElementById('stubBackToUsers');
+    if (back) {
+      back.addEventListener('click', function () {
+        panel.classList.add('is-hidden');
+        if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.remove('is-hidden');
+        var u = document.getElementById('usersSection');
+        if (u) u.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+    panel.classList.remove('is-hidden');
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function makeNavPill(label, onClick) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'tf-admin-nav__pill';
+    b.textContent = label;
+    b.addEventListener('click', onClick);
+    return b;
+  }
+
+  function buildTfNav() {
+    if (!tfNav) return;
+    tfNav.innerHTML = '';
+    var row1 = document.createElement('div');
+    row1.className = 'tf-admin-nav__row';
+    row1.appendChild(
+      makeNavPill('Monitor ▾', function () {
+        var m = document.getElementById('adminInbox');
+        if (m) m.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      })
+    );
+    [
+      ['Users & payouts', 'users'],
+      ['User profiling', 'profiling'],
+      ['DB console', 'db'],
+      ['Activity log', 'activity'],
+      ['Deploy log', 'deploy'],
+      ['Site appearance', 'branding'],
+    ].forEach(function (pair) {
+      row1.appendChild(
+        makeNavPill(pair[0], function () {
+          if (pair[1] === 'users') {
+            if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.remove('is-hidden');
+            if (panel) panel.classList.add('is-hidden');
+            var el = document.getElementById('usersSection');
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          } else openStubPanel(pair[0], pair[1]);
+        })
+      );
+    });
+    tfNav.appendChild(row1);
+    var lab = document.createElement('div');
+    lab.className = 'tf-admin-nav__label';
+    lab.textContent = 'Media moderation';
+    tfNav.appendChild(lab);
+    var row2 = document.createElement('div');
+    row2.className = 'tf-admin-nav__row';
+    [
+      ['Dashboard', 'dashboard'],
+      ['Media moderation', 'media'],
+      ['Photo approvals', 'photos'],
+      ['Photos chat', 'chatimg'],
+      ['Photo stories', 'stories'],
+      ['Messages', 'messages'],
+      ['Chat', 'chat'],
+    ].forEach(function (pair) {
+      row2.appendChild(makeNavPill(pair[0], function () { openStubPanel(pair[0], pair[1]); }));
+    });
+    row2.appendChild(
+      makeNavPill('Clinic reports', function () {
+        if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.remove('is-hidden');
+        openClinicReportsPanel({ id: 'clinic-reports', label: 'Clinic report access' });
+      })
+    );
+    tfNav.appendChild(row2);
+  }
 
   function showWorkspace() {
     if (gate) gate.classList.add('is-hidden');
     if (workspace) workspace.classList.remove('is-hidden');
+    loadTfVersion();
+    buildTfNav();
     loadWorkQueue();
   }
 
@@ -454,6 +637,7 @@
       }
       body.innerHTML =
         '<p class="admin-inbox__empty">Operations inbox requires an admin JWT from the server.</p>';
+      renderTfUsersTable({ clinicUsers: [], pendingRegistrations: [] });
       return;
     }
     if (hint) {
@@ -484,6 +668,7 @@
           hint.className = 'admin-inbox__hint mono is-ok';
         }
         renderWorkQueue(x.j);
+        renderTfUsersTable(x.j);
       })
       .catch(function () {
         if (hint) {
@@ -514,14 +699,6 @@
         );
       })
       .join('');
-  }
-
-  function escapeHtml(s) {
-    return String(s || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
   }
 
   function loadClinicUsersList() {
@@ -630,42 +807,6 @@
     loadClinicUsersList();
     panel.classList.remove('is-hidden');
     panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
-
-  function openPanel(tile) {
-    if (!panel || !panelTitle || !panelBody) return;
-    if (tile.id === 'clinic-reports') {
-      openClinicReportsPanel(tile);
-      return;
-    }
-    panelTitle.textContent = tile.label;
-    panelBody.innerHTML =
-      '<p class="admin-panel__stub">This control is a UI shell. Hook <strong>' +
-      tile.id +
-      '</strong> to your API, database, or deployment pipeline when you add a backend.</p>';
-    panel.classList.remove('is-hidden');
-    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
-
-  if (tilesEl) {
-    TILES.forEach(function (tile) {
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'admin-tile';
-      btn.setAttribute('data-id', tile.id);
-      var span = document.createElement('span');
-      span.className = 'admin-tile__label mono';
-      span.textContent = tile.label;
-      btn.appendChild(span);
-      btn.addEventListener('click', function () {
-        document.querySelectorAll('.admin-tile.is-active').forEach(function (b) {
-          b.classList.remove('is-active');
-        });
-        btn.classList.add('is-active');
-        openPanel(tile);
-      });
-      tilesEl.appendChild(btn);
-    });
   }
 
   var inboxRefresh = document.getElementById('adminInboxRefresh');

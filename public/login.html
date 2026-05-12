@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
-<title>Log in · Clinic report · ServiceOpera.to</title>
+<title>Log in · ServiceOpera.to</title>
 <meta name="robots" content="noindex, nofollow" />
 <link rel="icon" href="favicon.png" type="image/png" sizes="any" />
 <link rel="apple-touch-icon" href="favicon.png" />
@@ -74,6 +74,110 @@
     letter-spacing: 0.12em;
     text-transform: uppercase;
   }
+  .tf-portal { position: relative; }
+  .tf-lang-pill {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: inline-flex;
+    border: 1px solid var(--line-strong);
+    border-radius: 9999px;
+    overflow: hidden;
+    background: var(--ink);
+  }
+  .tf-lang-pill__btn {
+    border: none;
+    background: transparent;
+    color: var(--mute-2);
+    font-weight: 700;
+    font-size: 0.72rem;
+    padding: 0.35rem 0.55rem;
+    cursor: pointer;
+    font-family: var(--font-body);
+  }
+  .tf-lang-pill__btn.is-active {
+    background: color-mix(in srgb, var(--amber) 18%, transparent);
+    color: var(--paper);
+  }
+  .tf-mode-toggle {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+  }
+  .tf-mode-toggle__btn {
+    flex: 1;
+    min-width: 88px;
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1.5px solid color-mix(in srgb, var(--amber) 35%, var(--line-strong));
+    background: transparent;
+    color: var(--bone);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-family: var(--font-body);
+  }
+  .tf-mode-toggle__btn.is-active {
+    background: var(--ink-2);
+    border-color: var(--amber-2);
+  }
+  .tf-input, .page-clinic-access .tf-input {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1.5px solid color-mix(in srgb, var(--amber) 30%, var(--line-strong));
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--font-body);
+    box-sizing: border-box;
+  }
+  .tf-forgot-inline { margin-top: 0.5rem; margin-bottom: 0; font-size: 0.85rem; }
+  .tf-linkish {
+    display: inline;
+    background: none;
+    border: none;
+    color: var(--mute-2);
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+    font: inherit;
+  }
+  .tf-linkish:hover { color: var(--amber-2); }
+  .tf-error-box {
+    margin-top: 1rem;
+    padding: 0.75rem 0.85rem;
+    border-radius: 8px;
+    border: 1px solid color-mix(in srgb, #f87171 55%, transparent);
+    background: color-mix(in srgb, #f87171 12%, transparent);
+    color: var(--bone);
+    font-size: 0.88rem;
+    line-height: 1.45;
+    white-space: pre-wrap;
+  }
+  .tf-banner {
+    margin-bottom: 1.25rem;
+    padding: 0.9rem 1rem;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+  .tf-banner--ok {
+    border: 1px solid color-mix(in srgb, #22c55e 45%, transparent);
+    background: color-mix(in srgb, #22c55e 12%, transparent);
+    color: var(--bone);
+  }
+  .tf-banner--hint {
+    border: 1px solid color-mix(in srgb, #eab308 55%, transparent);
+    background: color-mix(in srgb, #eab308 10%, transparent);
+    color: var(--bone);
+  }
+  .tf-resend-block {
+    margin-top: 1.15rem;
+    font-size: 0.875rem;
+    color: var(--mute-2);
+    line-height: 1.5;
+  }
+  .tf-resend-block p { margin: 0 0 0.35rem; }
 </style>
 </head>
 <body class="page-admin page-admin--with-nav page-clinic-access">
@@ -96,46 +200,62 @@
 
 <div class="admin-gate">
   <div class="admin-gate__card">
-    <p class="portal-caption portal-caption--accent">— CLINIC REPORT ACCESS</p>
-    <h1 id="clinicGateTitle">Log in</h1>
-    <p class="admin-gate__lede" id="loginLede">Use the email and password Jack set up for your private report.</p>
+    <div class="tf-portal">
+      <div class="tf-lang-pill" role="group" aria-label="Language">
+        <button type="button" class="tf-lang-pill__btn is-active" id="langEn" data-lang="en">EN</button>
+        <button type="button" class="tf-lang-pill__btn" id="langTh" data-lang="th">TH</button>
+      </div>
+      <p class="portal-caption portal-caption--accent tf-portal__eyebrow">— CLINIC REPORT ACCESS</p>
+      <h1 id="clinicGateTitle">Log in</h1>
+      <p class="admin-gate__lede" id="loginLede">Sign in with password or a one-time email code (same pattern as ThaiFans).</p>
+      <div id="bannerSession" class="tf-banner tf-banner--hint is-hidden" role="status"></div>
+      <div id="bannerRegistered" class="tf-banner tf-banner--ok is-hidden" role="status"></div>
+      <div id="bannerPasswordUpdated" class="tf-banner tf-banner--ok is-hidden" role="status"></div>
 
-    <form id="clinicLoginForm" class="portal-form" autocomplete="on">
+      <div class="tf-mode-toggle" role="group" aria-label="Sign-in method">
+        <button type="button" class="tf-mode-toggle__btn is-active" id="clinicModePassword" data-mode="password">Password</button>
+        <button type="button" class="tf-mode-toggle__btn" id="clinicModeOtp" data-mode="otp">Email code</button>
+      </div>
+
+    <form id="clinicLoginForm" class="portal-form tf-portal-form" autocomplete="on">
       <label>
-        <span class="portal-caption">EMAIL</span>
-        <input type="email" name="email" id="clinicEmail" required autocomplete="username" placeholder="you@example.com" />
+        <span class="portal-caption" data-i18n="email">EMAIL</span>
+        <input type="email" name="email" id="clinicEmail" class="tf-input" required autocomplete="username" placeholder="you@example.com" />
       </label>
-      <label id="clinicPasswordWrap">
-        <span class="portal-caption">PASSWORD</span>
-        <input type="password" name="password" id="clinicPassword" required autocomplete="current-password" placeholder="••••••••" />
-      </label>
-      <button type="submit" class="btn btn--primary btn--block">Log in<span class="ico-arrow-r" aria-hidden="true"></span></button>
-      <div class="portal-form__actions" style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;justify-content:space-between">
-        <button type="button" class="portal-form__linkbtn" id="clinicRegisterToggle">Create account</button>
-        <button type="button" class="portal-form__linkbtn" id="clinicForgotToggle">Forgot password?</button>
+      <div id="clinicPasswordBlock">
+        <label id="clinicPasswordWrap">
+          <span class="portal-caption" data-i18n="password">PASSWORD</span>
+          <input type="password" name="password" id="clinicPassword" class="tf-input" required autocomplete="current-password" placeholder="••••••••" />
+        </label>
+        <p class="tf-forgot-inline">
+          <button type="button" class="tf-linkish" id="clinicForgotToggle">Forgot password?</button>
+        </p>
+      </div>
+      <div id="clinicOtpBlock" class="is-hidden">
+        <label>
+          <span class="portal-caption" data-i18n="code">ONE-TIME CODE</span>
+          <input type="text" name="otp" id="clinicOtpInput" class="tf-input" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="6-digit code" />
+        </label>
+        <button type="button" class="btn btn--ghost btn--block" id="clinicSendOtpBtn" style="margin-top:0.65rem">
+          Send code<span class="ico-arrow-r" aria-hidden="true"></span>
+        </button>
+      </div>
+      <div id="loginErrBox" class="tf-error-box is-hidden" role="alert"></div>
+      <button type="submit" class="btn btn--primary btn--block tf-submit-btn" id="clinicLoginSubmit">
+        Log in<span class="ico-arrow-r" aria-hidden="true"></span>
+      </button>
+      <div class="tf-resend-block">
+        <p data-i18n="resendLead">Waiting on the confirmation email after sign-up?</p>
+        <p>
+          <button type="button" class="tf-linkish" id="clinicResendConfirmBtn" data-i18n="resendBtn">Resend confirmation link</button>
+        </p>
+      </div>
+      <div class="portal-form__actions" style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;justify-content:space-between;margin-top:1rem">
+        <a href="register.html" class="portal-form__linkbtn" style="text-decoration:none" data-i18n="create">Create account</a>
       </div>
       <p class="portal-form__hint" id="loginHint"></p>
     </form>
-
-    <form id="clinicRegisterForm" class="portal-form is-hidden" autocomplete="on" aria-live="polite">
-      <div class="portal-form__muted" id="clinicRegisterHelpBlock" style="margin-bottom: 1rem">
-        <p style="margin: 0 0 0.65rem 0">Use the email and password Jack set up for your private report.</p>
-        <p style="margin: 0" id="clinicRegisterHelpNote">
-          If account creation is rejected, the server may have self-registration disabled — email jack@serviceopera.to or ask Jack to set CLINIC_SELF_REGISTER on Railway.
-        </p>
-      </div>
-      <label>
-        <span class="portal-caption">EMAIL</span>
-        <input type="email" name="email" id="clinicRegEmail" required autocomplete="email" placeholder="you@example.com" />
-      </label>
-      <label>
-        <span class="portal-caption">PASSWORD</span>
-        <input type="password" name="password" id="clinicRegPassword" required minlength="8" autocomplete="new-password" placeholder="min 8 characters" />
-      </label>
-      <button type="submit" class="btn btn--primary btn--block">Create account<span class="ico-arrow-r" aria-hidden="true"></span></button>
-      <button type="button" class="portal-form__linkbtn portal-form__back" id="clinicRegisterBack">Back to sign in</button>
-      <p class="portal-form__hint" id="registerHint"></p>
-    </form>
+    </div>
 
     <div id="clinicForgotPanel" class="portal-form is-hidden" aria-live="polite">
       <p class="portal-form__muted" id="clinicForgotHelp">
@@ -177,9 +297,72 @@
   var forgotHelp = document.getElementById('clinicForgotHelp');
   var forgotBack = document.getElementById('clinicForgotBack');
   var sendReset = document.getElementById('clinicSendReset');
-  var passwordWrap = document.getElementById('clinicPasswordWrap');
-  var resetForm = document.getElementById('clinicResetForm');
-  var resetHint = document.getElementById('resetHint');
+  var passwordBlock = document.getElementById('clinicPasswordBlock');
+  var otpBlock = document.getElementById('clinicOtpBlock');
+  var modePwdBtn = document.getElementById('clinicModePassword');
+  var modeOtpBtn = document.getElementById('clinicModeOtp');
+  var sendOtpBtn = document.getElementById('clinicSendOtpBtn');
+  var otpInput = document.getElementById('clinicOtpInput');
+  var loginErrBox = document.getElementById('loginErrBox');
+  var bannerSession = document.getElementById('bannerSession');
+  var bannerRegistered = document.getElementById('bannerRegistered');
+  var bannerPwUpdated = document.getElementById('bannerPasswordUpdated');
+  var resendConfirmBtn = document.getElementById('clinicResendConfirmBtn');
+  var uiLang = 'en';
+  try {
+    uiLang = localStorage.getItem('so_ui_lang') === 'th' ? 'th' : 'en';
+  } catch (e) {}
+  var loginMode = 'password';
+
+  var I18N = {
+    en: {
+      email: 'EMAIL',
+      password: 'PASSWORD',
+      code: 'ONE-TIME CODE',
+      resendLead: 'Waiting on the confirmation email after sign-up?',
+      resendBtn: 'Resend confirmation link',
+      create: 'Create account',
+      postRegister: 'Check your email to confirm your account, then sign in below.',
+      sessionExpired: 'Your session expired. Please sign in again.',
+      passwordUpdated: 'Password updated. You can sign in with your new password.',
+    },
+    th: {
+      email: 'อีเมล',
+      password: 'รหัสผ่าน',
+      code: 'รหัสครั้งเดียว',
+      resendLead: 'ยังไม่ได้รับอีเมลยืนยันหลังสมัคร?',
+      resendBtn: 'ส่งลิงก์ยืนยันอีกครั้ง',
+      create: 'สร้างบัญชี',
+      postRegister: 'ตรวจสอบอีเมลเพื่อยืนยันบัญชี แล้วเข้าสู่ระบบด้านล่าง',
+      sessionExpired: 'เซสชันหมดอายุ กรุณาเข้าสู่ระบบอีกครั้ง',
+      passwordUpdated: 'อัปเดตรหัสผ่านแล้ว เข้าสู่ระบบด้วยรหัสผ่านใหม่ได้',
+    },
+  };
+
+  function applyI18n() {
+    var t = I18N[uiLang] || I18N.en;
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      var k = el.getAttribute('data-i18n');
+      if (k && t[k]) el.textContent = t[k];
+    });
+    var le = document.getElementById('langEn');
+    var lt = document.getElementById('langTh');
+    if (le) le.classList.toggle('is-active', uiLang === 'en');
+    if (lt) lt.classList.toggle('is-active', uiLang === 'th');
+  }
+  applyI18n();
+
+  function setLoginErr(msg) {
+    if (!loginErrBox) return;
+    if (!msg) {
+      loginErrBox.textContent = '';
+      loginErrBox.classList.add('is-hidden');
+      return;
+    }
+    loginErrBox.textContent = msg;
+    loginErrBox.classList.remove('is-hidden');
+  }
+
   var params = new URLSearchParams(window.location.search);
   var slugHint = (params.get('slug') || '').trim();
   var resetToken = (params.get('reset') || '').trim();
@@ -191,10 +374,6 @@
   /** true only if JSON includes service marker from server.mjs (avoids CDN/static 200 + wrong body). */
   var clinicApiFromOurServer = false;
   var gateTitle = document.getElementById('clinicGateTitle');
-  var registerForm = document.getElementById('clinicRegisterForm');
-  var registerToggle = document.getElementById('clinicRegisterToggle');
-  var registerBack = document.getElementById('clinicRegisterBack');
-  var registerHintEl = document.getElementById('registerHint');
   var selfRegisterEnabled = false;
   var registrationConfirmOk = false;
   var resendTestSender = false;
@@ -211,6 +390,38 @@
   if (slugHint && lede) {
     lede.textContent =
       'You were sent here for report “' + slugHint + '”. After sign-in you will be taken to that page.';
+  }
+
+  var T = I18N[uiLang] || I18N.en;
+  if (params.get('registered') === '1' && bannerRegistered) {
+    bannerRegistered.textContent = T.postRegister;
+    bannerRegistered.classList.remove('is-hidden');
+    try {
+      var ureg = new URL(window.location.href);
+      ureg.searchParams.delete('registered');
+      var qreg = ureg.searchParams.toString();
+      history.replaceState({}, '', ureg.pathname + (qreg ? '?' + qreg : '') + ureg.hash);
+    } catch (err1) {}
+  }
+  if (params.get('password_updated') === '1' && bannerPwUpdated) {
+    bannerPwUpdated.textContent = T.passwordUpdated;
+    bannerPwUpdated.classList.remove('is-hidden');
+    try {
+      var upw = new URL(window.location.href);
+      upw.searchParams.delete('password_updated');
+      var qpw = upw.searchParams.toString();
+      history.replaceState({}, '', upw.pathname + (qpw ? '?' + qpw : '') + upw.hash);
+    } catch (err2) {}
+  }
+  if (params.get('reason') === 'session_expired' && bannerSession) {
+    bannerSession.textContent = T.sessionExpired;
+    bannerSession.classList.remove('is-hidden');
+    try {
+      var use = new URL(window.location.href);
+      use.searchParams.delete('reason');
+      var qse = use.searchParams.toString();
+      history.replaceState({}, '', use.pathname + (qse ? '?' + qse : '') + use.hash);
+    } catch (err3) {}
   }
 
   function hintClasses(kind, detail) {
@@ -233,12 +444,6 @@
     if (!resetHint) return;
     resetHint.textContent = msg;
     resetHint.className = hintClasses(kind, detail);
-  }
-
-  function setRegisterHint(msg, kind, detail) {
-    if (!registerHintEl) return;
-    registerHintEl.textContent = msg;
-    registerHintEl.className = hintClasses(kind, detail);
   }
 
   function summarizeApiProbeState() {
@@ -392,46 +597,77 @@
       });
   }
 
+  var modeToggleEl = document.querySelector('.tf-mode-toggle');
+
+  function applyLoginFieldMode() {
+    if (!forgotPanel || forgotPanel.classList.contains('is-hidden')) {
+      if (modeToggleEl) modeToggleEl.classList.remove('is-hidden');
+    }
+    if (loginMode === 'password') {
+      if (passwordBlock) passwordBlock.classList.remove('is-hidden');
+      if (otpBlock) otpBlock.classList.add('is-hidden');
+      if (modePwdBtn) modePwdBtn.classList.add('is-active');
+      if (modeOtpBtn) modeOtpBtn.classList.remove('is-active');
+      var pwInput = document.getElementById('clinicPassword');
+      if (pwInput) pwInput.setAttribute('required', 'required');
+      if (otpInput) {
+        otpInput.removeAttribute('required');
+        otpInput.value = '';
+      }
+    } else {
+      if (passwordBlock) passwordBlock.classList.add('is-hidden');
+      if (otpBlock) otpBlock.classList.remove('is-hidden');
+      if (modePwdBtn) modePwdBtn.classList.remove('is-active');
+      if (modeOtpBtn) modeOtpBtn.classList.add('is-active');
+      var pwInput2 = document.getElementById('clinicPassword');
+      if (pwInput2) {
+        pwInput2.removeAttribute('required');
+        pwInput2.value = '';
+      }
+      if (otpInput) otpInput.setAttribute('required', 'required');
+    }
+  }
+
   function showLoginMode() {
     if (gateTitle) gateTitle.textContent = 'Log in';
     if (form) form.classList.remove('is-hidden');
     if (forgotPanel) forgotPanel.classList.add('is-hidden');
     if (resetForm) resetForm.classList.add('is-hidden');
-    if (registerForm) registerForm.classList.add('is-hidden');
-    if (passwordWrap) passwordWrap.classList.remove('is-hidden');
-    var pwInput = document.getElementById('clinicPassword');
-    if (pwInput) pwInput.setAttribute('required', 'required');
-  }
-
-  function showRegisterMode() {
-    if (gateTitle) gateTitle.textContent = 'Create account';
-    if (form) form.classList.add('is-hidden');
-    if (forgotPanel) forgotPanel.classList.add('is-hidden');
-    if (resetForm) resetForm.classList.add('is-hidden');
-    if (registerForm) registerForm.classList.remove('is-hidden');
-    setHint('', '');
-    setRegisterHint('', '');
+    var portalRoot = document.querySelector('.tf-portal');
+    if (portalRoot) portalRoot.classList.remove('is-hidden');
+    if (modeToggleEl) modeToggleEl.classList.remove('is-hidden');
+    applyLoginFieldMode();
+    setHint('');
+    setLoginErr('');
   }
 
   function showForgotMode() {
+    loginMode = 'password';
+    if (modeToggleEl) modeToggleEl.classList.add('is-hidden');
+    if (passwordBlock) passwordBlock.classList.add('is-hidden');
+    if (otpBlock) otpBlock.classList.add('is-hidden');
     if (form) form.classList.remove('is-hidden');
     if (forgotPanel) forgotPanel.classList.remove('is-hidden');
     if (resetForm) resetForm.classList.add('is-hidden');
-    if (registerForm) registerForm.classList.add('is-hidden');
-    if (passwordWrap) passwordWrap.classList.add('is-hidden');
     var pwInput = document.getElementById('clinicPassword');
     if (pwInput) {
       pwInput.removeAttribute('required');
       pwInput.value = '';
     }
-    setHint('', '');
+    if (otpInput) {
+      otpInput.removeAttribute('required');
+      otpInput.value = '';
+    }
+    setHint('');
+    setLoginErr('');
   }
 
   function showResetMode() {
     if (gateTitle) gateTitle.textContent = 'Reset password';
     if (form) form.classList.add('is-hidden');
     if (forgotPanel) forgotPanel.classList.add('is-hidden');
-    if (registerForm) registerForm.classList.add('is-hidden');
+    var portalRoot = document.querySelector('.tf-portal');
+    if (portalRoot) portalRoot.classList.add('is-hidden');
     if (resetForm) resetForm.classList.remove('is-hidden');
     if (lede) lede.textContent = 'Use the form below to set a new password for your clinic report access.';
   }
@@ -493,25 +729,6 @@
       selfRegisterEnabled = clinicApiFromOurServer && Boolean(cap && cap.selfRegister);
       registrationConfirmOk = clinicApiFromOurServer && Boolean(cap && cap.registrationConfirmEmail);
       resendTestSender = clinicApiFromOurServer && Boolean(cap && cap.resendTestSender);
-      var regNote = document.getElementById('clinicRegisterHelpNote');
-      if (regNote) {
-        if (selfRegisterEnabled && registrationConfirmOk && resendTestSender) {
-          regNote.textContent =
-            'We will email you a confirmation link. Resend is still on the test sender, so only the Resend account mailbox can receive it until RESEND_FROM uses a verified domain on Railway. Password: min 8 characters.';
-        } else if (selfRegisterEnabled && registrationConfirmOk) {
-          regNote.textContent =
-            'We will email you a confirmation link. After you confirm, you can sign in. Password: min 8 characters.';
-        } else if (selfRegisterEnabled && clinicApiFromOurServer && !registrationConfirmOk) {
-          regNote.textContent =
-            'Sign-up needs RESEND_API_KEY on this server to send the confirmation email. Contact jack@serviceopera.to.';
-        } else if (!clinicApiFromOurServer) {
-          regNote.textContent =
-            'This page must be served by the ServiceOpera Node host (not static files only) to complete sign-up. If submit fails, write to jack@serviceopera.to.';
-        } else {
-          regNote.textContent =
-            'If account creation is rejected, the server may have self-registration disabled — email jack@serviceopera.to or ask Jack to set CLINIC_SELF_REGISTER on Railway.';
-        }
-      }
       if (forgotHelp) forgotHelp.textContent = forgotResetHelpText();
     })
     .catch(function (err) {
@@ -520,11 +737,6 @@
       try {
         window.soClinicCapabilitiesProbeError = err;
       } catch (e) {}
-      var regNote = document.getElementById('clinicRegisterHelpNote');
-      if (regNote) {
-        regNote.textContent =
-          'Could not reach the server API. Sign-up needs the live Node deploy. If it keeps failing, write to jack@serviceopera.to.';
-      }
       if (forgotHelp) forgotHelp.textContent = forgotResetHelpText();
     });
 
@@ -594,70 +806,6 @@
         return;
       }
       showForgotMode();
-    });
-  }
-
-  if (registerToggle) {
-    registerToggle.addEventListener('click', function () {
-      showRegisterMode();
-    });
-  }
-
-  if (registerBack) {
-    registerBack.addEventListener('click', function () {
-      showLoginMode();
-      setRegisterHint('', '');
-    });
-  }
-
-  if (registerForm) {
-    registerForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var fd = new FormData(registerForm);
-      var email = (fd.get('email') || '').toString().trim();
-      var pw = (fd.get('password') || '').toString();
-      if (pw.length < 8) {
-        setRegisterHint('Password must be at least 8 characters.', 'error');
-        return;
-      }
-      setRegisterHint('Sending confirmation email…', '');
-      requestClinicApi('POST', '/api/auth/clinic-register', { email: email, password: pw }).then(function (res) {
-        if (res.__threw) {
-          setRegisterHint(detailFetchThrew('POST', '/api/auth/clinic-register', res.err), 'error', true);
-          return;
-        }
-        if (res.parseErr) {
-          setRegisterHint(
-            detailNonJsonResponse(
-              'POST',
-              '/api/auth/clinic-register',
-              res.status,
-              res.statusText,
-              res.contentType,
-              res.parseErr,
-              res.text
-            ),
-            'error',
-            true
-          );
-          return;
-        }
-        if (!res.okHttp) {
-          var ej = res.json || {};
-          var eReg = (ej.error || 'Could not start registration.') + '';
-          setRegisterHint(eReg, 'error', verboseErrorHint(eReg));
-          return;
-        }
-        var jr = res.json || {};
-        registerForm.reset();
-        showLoginMode();
-        var loginEmail = document.getElementById('clinicEmail');
-        if (loginEmail && email) loginEmail.value = email;
-        setHint(
-          jr.message ? jr.message : 'Check your inbox for a confirmation link, then sign in below.',
-          'ok'
-        );
-      });
     });
   }
 
@@ -755,6 +903,11 @@
         }
         var jr = res.json || {};
         setResetHint(jr.message ? jr.message : 'Password updated. Sign in below.', 'ok');
+        if (bannerPwUpdated) {
+          var T2 = I18N[uiLang] || I18N.en;
+          bannerPwUpdated.textContent = T2.passwordUpdated;
+          bannerPwUpdated.classList.remove('is-hidden');
+        }
         try {
           history.replaceState({}, '', '/login.html' + (slugHint ? '?slug=' + encodeURIComponent(slugHint) : ''));
         } catch (err) {}
@@ -764,7 +917,8 @@
           lede.textContent =
             'You were sent here for report “' + slugHint + '”. After sign-in you will be taken to that page.';
         } else if (lede) {
-          lede.textContent = 'Use the email and password Jack set up for your private report.';
+          lede.textContent =
+            'Sign in with password or a one-time email code (same pattern as ThaiFans).';
         }
       });
     });
@@ -776,46 +930,164 @@
       var fd = new FormData(form);
       var email = (fd.get('email') || '').toString().trim();
       var password = (fd.get('password') || '').toString();
+      var otp =
+        otpInput && loginMode === 'otp' ? (otpInput.value || '').toString().trim().replace(/\s/g, '') : '';
       setHint('Signing in…', '');
-      requestClinicApi('POST', '/api/auth/clinic-login', { email: email, password: password }).then(function (res) {
+      setLoginErr('');
+      var path = loginMode === 'otp' ? '/api/auth/clinic-login-otp' : '/api/auth/clinic-login';
+      var body =
+        loginMode === 'otp'
+          ? { email: email, otp: otp, code: otp }
+          : { email: email, password: password };
+      requestClinicApi('POST', path, body).then(function (res) {
         if (res.__threw) {
-          setHint(detailFetchThrew('POST', '/api/auth/clinic-login', res.err), 'error', true);
+          setHint('', '');
+          setLoginErr(detailFetchThrew('POST', path, res.err));
           return;
         }
         if (res.parseErr) {
-          setHint(
+          setHint('', '');
+          setLoginErr(
             detailNonJsonResponse(
               'POST',
-              '/api/auth/clinic-login',
+              path,
               res.status,
               res.statusText,
               res.contentType,
               res.parseErr,
               res.text
-            ),
-            'error',
-            true
+            )
           );
           return;
         }
         var lj = res.json || {};
         if (!res.okHttp || !lj.token) {
-          var eLogin = (lj.error || 'Invalid email or password.') + '';
-          setHint(eLogin, 'error', verboseErrorHint(eLogin));
+          var eLogin = (lj.error || 'Sign-in failed.') + '';
+          setHint('', '');
+          setLoginErr(eLogin);
           var pwEl = document.getElementById('clinicPassword');
           if (pwEl) pwEl.value = '';
+          if (otpInput) otpInput.value = '';
           return;
         }
         try {
           sessionStorage.setItem('so_clinic_jwt', lj.token);
         } catch (err) {}
         setHint('Redirecting…', 'ok');
+        setLoginErr('');
         var dest = lj.reportUrl || '/clinics/report.html?slug=' + encodeURIComponent(lj.reportSlug);
         if (dest.charAt(0) !== '/') dest = '/' + dest;
         window.location.href = dest;
       });
     });
   }
+
+  if (modePwdBtn) {
+    modePwdBtn.addEventListener('click', function () {
+      loginMode = 'password';
+      applyLoginFieldMode();
+      setLoginErr('');
+    });
+  }
+  if (modeOtpBtn) {
+    modeOtpBtn.addEventListener('click', function () {
+      loginMode = 'otp';
+      applyLoginFieldMode();
+      setLoginErr('');
+    });
+  }
+
+  if (sendOtpBtn) {
+    sendOtpBtn.addEventListener('click', function () {
+      var emailEl = document.getElementById('clinicEmail');
+      var email = emailEl ? (emailEl.value || '').trim().toLowerCase() : '';
+      if (!email) {
+        setLoginErr('Enter your email first.');
+        return;
+      }
+      setLoginErr('');
+      setHint('Sending code…', '');
+      sendOtpBtn.disabled = true;
+      requestClinicApi('POST', '/api/auth/clinic-otp/send', { email: email }).then(function (res) {
+        sendOtpBtn.disabled = false;
+        if (res.__threw) {
+          setHint('', '');
+          setLoginErr(detailFetchThrew('POST', '/api/auth/clinic-otp/send', res.err));
+          return;
+        }
+        if (res.parseErr || !res.okHttp) {
+          setHint('', '');
+          var msg =
+            res.parseErr
+              ? detailNonJsonResponse(
+                  'POST',
+                  '/api/auth/clinic-otp/send',
+                  res.status,
+                  res.statusText,
+                  res.contentType,
+                  res.parseErr,
+                  res.text
+                )
+              : (res.json && res.json.error) || 'Could not send code.';
+          setLoginErr(msg);
+          return;
+        }
+        var j = res.json || {};
+        setHint(j.message || 'Check your inbox for the code.', 'ok');
+        if (otpInput) otpInput.focus();
+      });
+    });
+  }
+
+  if (resendConfirmBtn) {
+    resendConfirmBtn.addEventListener('click', function () {
+      var emailEl = document.getElementById('clinicEmail');
+      var email = emailEl ? (emailEl.value || '').trim().toLowerCase() : '';
+      if (!email) {
+        setLoginErr('Enter your email above first.');
+        return;
+      }
+      setLoginErr('');
+      setHint('Sending…', '');
+      requestClinicApi('POST', '/api/auth/clinic-resend-confirmation', { email: email }).then(function (res) {
+        if (res.__threw) {
+          setHint('', '');
+          setLoginErr(detailFetchThrew('POST', '/api/auth/clinic-resend-confirmation', res.err));
+          return;
+        }
+        if (!res.okHttp) {
+          setHint('', '');
+          setLoginErr((res.json && res.json.error) || 'Could not resend.');
+          return;
+        }
+        var j = res.json || {};
+        setHint(j.message || 'If that address has a pending sign-up, a new link was sent.', 'ok');
+      });
+    });
+  }
+
+  var langEn = document.getElementById('langEn');
+  var langTh = document.getElementById('langTh');
+  if (langEn) {
+    langEn.addEventListener('click', function () {
+      uiLang = 'en';
+      try {
+        localStorage.setItem('so_ui_lang', 'en');
+      } catch (e) {}
+      applyI18n();
+    });
+  }
+  if (langTh) {
+    langTh.addEventListener('click', function () {
+      uiLang = 'th';
+      try {
+        localStorage.setItem('so_ui_lang', 'th');
+      } catch (e) {}
+      applyI18n();
+    });
+  }
+
+  applyLoginFieldMode();
 })();
 </script>
 </body>

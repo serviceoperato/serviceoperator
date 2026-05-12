@@ -1,5 +1,7 @@
 /**
- * Clinic report users — JSON file on disk (see DATA_DIR). Replace with Postgres when needed.
+ * Portal users (generic accounts) — JSON on disk (see DATA_DIR).
+ * Primary files: user_accounts.json, user_pending.json.
+ * Legacy: clinic_users.json, clinic_pending.json (read if missing primary).
  */
 import crypto from 'crypto';
 import fs from 'fs';
@@ -60,12 +62,28 @@ function writeJson(file, data) {
   fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf8');
 }
 
-export function createClinicStore(dataDir) {
-  const file = path.join(dataDir, 'clinic_users.json');
-  const pendingFile = path.join(dataDir, 'clinic_pending.json');
+function readPendingFile(pf) {
+  if (!fs.existsSync(pf)) return { pending: [] };
+  try {
+    const raw = fs.readFileSync(pf, 'utf8');
+    const o = JSON.parse(raw);
+    if (!o || !Array.isArray(o.pending)) return { pending: [] };
+    return { pending: o.pending };
+  } catch {
+    return { pending: [] };
+  }
+}
+
+export function createUserStore(dataDir) {
+  const file = path.join(dataDir, 'user_accounts.json');
+  const legacyUsersFile = path.join(dataDir, 'clinic_users.json');
+  const pendingFile = path.join(dataDir, 'user_pending.json');
+  const legacyPendingFile = path.join(dataDir, 'clinic_pending.json');
 
   function load() {
-    return readJson(file);
+    if (fs.existsSync(file)) return readJson(file);
+    if (fs.existsSync(legacyUsersFile)) return readJson(legacyUsersFile);
+    return { users: [] };
   }
 
   function save(data) {
@@ -73,15 +91,9 @@ export function createClinicStore(dataDir) {
   }
 
   function loadPending() {
-    if (!fs.existsSync(pendingFile)) return { pending: [] };
-    try {
-      const raw = fs.readFileSync(pendingFile, 'utf8');
-      const o = JSON.parse(raw);
-      if (!o || !Array.isArray(o.pending)) return { pending: [] };
-      return { pending: o.pending };
-    } catch {
-      return { pending: [] };
-    }
+    if (fs.existsSync(pendingFile)) return readPendingFile(pendingFile);
+    if (fs.existsSync(legacyPendingFile)) return readPendingFile(legacyPendingFile);
+    return { pending: [] };
   }
 
   function savePending(pdata) {
@@ -143,6 +155,15 @@ export function createClinicStore(dataDir) {
         reportSlug: p.reportSlug,
         createdAt: p.createdAt,
       }));
+    },
+
+    /** @returns {{ id: string, email: string, reportSlug: string } | null} */
+    findPendingByEmail(email) {
+      const em = normalizeEmail(email);
+      const pdata = loadPending();
+      const p = pdata.pending.find((x) => x.email === em);
+      if (!p) return null;
+      return { id: p.id, email: p.email, reportSlug: p.reportSlug };
     },
 
     createUser({ email, password, reportSlug }) {
@@ -331,3 +352,6 @@ export function createClinicStore(dataDir) {
     },
   };
 }
+
+/** @deprecated Use createUserStore */
+export const createClinicStore = createUserStore;

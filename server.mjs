@@ -6,7 +6,7 @@ import fs from 'fs';
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { assertReportSlug, createClinicStore } from './clinic-store.mjs';
+import { assertReportSlug, createClinicStore, normalizeEmail } from './clinic-store.mjs';
 import { searchTextAllPages } from './lib/google-places-search.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -51,7 +51,14 @@ function listClinicReportJsonFiles() {
 }
 
 /** Site pages Jack commonly edits or ships — presence + last modified. */
-const MANAGED_PAGE_FILES = ['index.html', 'login.html', 'places-leads.html', 'clinics/report.html', 'admin.html'];
+const MANAGED_PAGE_FILES = [
+  'index.html',
+  'login.html',
+  'register.html',
+  'places-leads.html',
+  'clinics/report.html',
+  'admin.html',
+];
 
 function buildAdminWorkQueue() {
   const pending = clinicStore
@@ -144,6 +151,8 @@ function allowPlacesSearchIp(ip) {
 
 /** @type {Map<string, { hash: string, exp: number }>} */
 const otpByEmail = new Map();
+/** Clinic user sign-in OTP (not admin). Key: normalized email */
+const clinicOtpByEmail = new Map();
 /** @type {Map<string, number[]>} */
 const sendTimestampsByIp = new Map();
 
@@ -496,6 +505,149 @@ app.post('/api/auth/clinic-login', (req, res) => {
   });
   const reportUrl = '/clinics/report.html?slug=' + encodeURIComponent(user.reportSlug);
   return res.json({ ok: true, token, reportSlug: user.reportSlug, reportUrl });
+});
+
+app.post('/api/auth/clinic-otp/send', async (req, res) => {
+  if (!RESEND_API_KEY) {
+    return res.status(503).json({ error: 'Email sign-in is not configured (missing RESEND_API_KEY).' });
+  }
+  const email = typeof req.body?.email === 'string' ? normalizeEmail(req.body.email) : '';
+  const ip = clientIp(req);
+  const sends = pruneSends(ip);
+  if (sends.length >= MAX_SENDS_PER_WINDOW) {
+    return res.status(429).json({ error: 'Too many requests. Try again later.' });
+  }
+
+  const generic = { ok: true, message: 'If that email is registered, a sign-in code was sent.' };
+
+  if (!email || !email.includes('@')) {
+    return res.status(400).json({ error: 'Invalid email.' });
+  }
+
+  const user = clinicStore.getUserByEmail(email);
+  if (!user) {
+    return res.json(generic);
+  }
+
+  const code = String(crypto.randomInt(0, 1_000_000)).padStart(6, '0');
+  clinicOtpByEmail.set(email, { hash: sha256hex(code), exp: Date.now() + OTP_TTL_MS });
+
+  try {
+    await sendResendEmail({
+      to: user.email,
+      subject: 'ServiceOpera — clinic report sign-in code',
+      html:
+        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">Your sign-in code for <strong>ServiceOpera.to</strong> clinic report access is:</p>' +
+        '<p style="font-family:ui-monospace,monospace;font-size:28px;font-weight:700;letter-spacing:0.15em;color:#111">' +
+        code +
+        '</p>' +
+        '<p style="font-family:system-ui,sans-serif;font-size:13px;color:#444">This code expires in 10 minutes. If you did not request it, you can ignore this email.</p>',
+    });
+    sends.push(Date.now());
+    sendTimestampsByIp.set(ip, sends);
+  } catch (e) {
+    clinicOtpByEmail.delete(email);
+    const status = e.status || 502;
+    return res.status(status).json({
+      error: resendFailureMessage(e, 'Could not send sign-in email. Try again later.'),
+    });
+  }
+
+  return res.json(generic);
+});
+
+app.post('/api/auth/clinic-login-otp', (req, res) => {
+  const email = typeof req.body?.email === 'string' ? normalizeEmail(req.body.email) : '';
+  const otp =
+    typeof req.body?.otp === 'string'
+      ? req.body.otp.trim().replace(/\s/g, '')
+      : typeof req.body?.code === 'string'
+        ? req.body.code.trim().replace(/\s/g, '')
+        : '';
+  if (!email || !email.includes('@')) {
+    return res.status(400).json({ error: 'Invalid email.' });
+  }
+  const user = clinicStore.getUserByEmail(email);
+  if (!user) {
+    return res.status(401).json({ error: 'Invalid email or code.' });
+  }
+  const row = clinicOtpByEmail.get(email);
+  if (!row || row.exp < Date.now()) {
+    return res.status(401).json({ error: 'Code expired or not found. Request a new code.' });
+  }
+  if (!/^\d{6}$/.test(otp) || row.hash !== sha256hex(otp)) {
+    return res.status(401).json({ error: 'Invalid email or code.' });
+  }
+  clinicOtpByEmail.delete(email);
+  const token = signJwt({
+    v: 1,
+    role: 'clinic',
+    email: user.email,
+    reportSlug: user.reportSlug,
+    sub: user.id,
+    exp: Date.now() + CLINIC_JWT_TTL_MS,
+  });
+  const reportUrl = '/clinics/report.html?slug=' + encodeURIComponent(user.reportSlug);
+  return res.json({ ok: true, token, reportSlug: user.reportSlug, reportUrl });
+});
+
+app.post('/api/auth/clinic-resend-confirmation', async (req, res) => {
+  if (!CLINIC_SELF_REGISTER) {
+    return res.status(403).json({ error: 'Self-registration is disabled. Contact jack@serviceopera.to for access.' });
+  }
+  if (!RESEND_API_KEY) {
+    return res.status(503).json({
+      error:
+        'Email confirmation requires RESEND_API_KEY on this server. Contact jack@serviceopera.to or ask your administrator to configure Resend.',
+    });
+  }
+  const email = typeof req.body?.email === 'string' ? normalizeEmail(req.body.email) : '';
+  if (!email || !email.includes('@')) {
+    return res.status(400).json({ error: 'Invalid email.' });
+  }
+  const pending = clinicStore.findPendingByEmail(email);
+  const generic = {
+    ok: true,
+    message: 'If that address has a pending sign-up, a new confirmation link was sent.',
+  };
+  if (!pending) {
+    return res.json(generic);
+  }
+  const ip = clientIp(req);
+  const sends = pruneSends(ip);
+  if (sends.length >= MAX_SENDS_PER_WINDOW) {
+    return res.status(429).json({ error: 'Too many requests. Try again later.' });
+  }
+
+  const verifyJwtToken = signJwt({
+    v: 1,
+    role: 'clinic_verify',
+    sub: pending.id,
+    email: pending.email,
+    exp: Date.now() + CLINIC_VERIFY_JWT_MS,
+  });
+  const origin = publicOrigin(req);
+  const link = `${origin}/login.html?verify=${encodeURIComponent(verifyJwtToken)}`;
+  try {
+    await sendResendEmail({
+      to: pending.email,
+      subject: 'ServiceOpera — confirm your clinic report account',
+      html:
+        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">Thanks for signing up for <strong>ServiceOpera.to</strong> clinic report access.</p>' +
+        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111"><a href="' +
+        String(link).replace(/"/g, '&quot;') +
+        '" style="color:#1e3a5f;font-weight:600">Confirm your email</a> (link expires in 48 hours.)</p>' +
+        '<p style="font-family:system-ui,sans-serif;font-size:13px;color:#444">If you did not register, ignore this email.</p>',
+    });
+    sends.push(Date.now());
+    sendTimestampsByIp.set(ip, sends);
+  } catch (e) {
+    const status = e.status || 502;
+    return res.status(status).json({
+      error: resendFailureMessage(e, 'Could not send confirmation email. Try again later or contact jack@serviceopera.to.'),
+    });
+  }
+  return res.json(generic);
 });
 
 app.post('/api/auth/clinic-request-reset', async (req, res) => {
