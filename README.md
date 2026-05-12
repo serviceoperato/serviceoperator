@@ -1,7 +1,6 @@
 # Service Opera — operating manual
 
-AI service operations and automation for operators across Thailand.
-Owner: **Jack** · `jack@serviceopera.to`
+AI service operations for **Thailand** hotels, clinics and property businesses — owner **Jack** · `jack@serviceopera.to` · **www.serviceopera.to**
 
 ---
 
@@ -11,7 +10,7 @@ A complete, deployable site under **`serviceopera.to`**. All static assets live 
 
 | Path | What it is |
 |---|---|
-| `public/index.html` | Public landing page. Sells you as a premium automation freelancer for hospitality, medical and property businesses across Thailand. |
+| `public/index.html` | Public landing page. **Jack — Service Operator** (`www.serviceopera.to`): AI operations for Thailand hotels, clinics and property businesses. |
 | `public/client.html` | **The "secret page".** Demo workspace behind a **browser-only** username/password (see `public/app.js`). For real data, replace with server-side auth. |
 | `public/styles.css` | Shared black / white / indigo design system. |
 | `public/app.js` | Landing-page modal + demo credential check. |
@@ -28,11 +27,11 @@ The client and admin pages are marked `noindex, nofollow` and disallowed in `rob
 
 ## 2. The 3 sectors I targeted (and why)
 
-Based on real Thailand market data:
+Thailand-wide service operators (not a single-city play):
 
-1. **Hospitality** — boutique hotels, serviced apartments, pool villas. High ticket, recurring need, multilingual guest volume.
-2. **Medical & Wellness** — dental, aesthetic, IVF, wellness retreats. Thailand is Asia's #1 medical tourism destination, growing 4–6% annually, with patients spending big and needing intake in RU/ZH/AR/EN.
-3. **Property Management** — rental management, brokerage, relocation. Constant lead flow, owner reporting, tenant comms — all heavily automatable.
+1. **Hotels & serviced apartments** — independent and boutique operators with multilingual guest volume and distributed channel management.
+2. **Clinics, dental, beauty & wellness** — mixed local and international demand; intake, reviews and competitor signals often sit in too many places.
+3. **Property managers, agencies & serviced rental operators** — lead velocity, pipeline hygiene and owner reporting without linear headcount growth.
 
 I deliberately **skipped bar/nightlife**: lower per-client value, harder to sell automation, more transient ownership.
 

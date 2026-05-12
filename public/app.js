@@ -83,47 +83,48 @@
   var heroCopy = document.getElementById('heroCopy');
   var titleEl = document.getElementById('heroTitleEl');
   var ledeEl = document.getElementById('heroLedeEl');
-  var mailBtn = document.getElementById('heroVerticalMail');
-  if (!pills.length || !heroCopy || !titleEl || !ledeEl || !mailBtn) return;
+  var primaryCta = document.getElementById('heroPrimaryCta');
+  var secondaryCta = document.getElementById('heroSecondaryCta');
+  if (!pills.length || !heroCopy || !titleEl || !ledeEl || !primaryCta || !secondaryCta) return;
+
+  var MAIL_REPORT =
+    'mailto:jack@serviceopera.to?subject=' +
+    encodeURIComponent('Request: Private AI Operations Report') +
+    '&body=' +
+    encodeURIComponent(
+      'Hi Jack,\n\nBusiness name:\nCity / area in Thailand:\nWebsite:\nWhat I want the report to focus on:\n\nThanks.'
+    );
+  var MAIL_AUDIT =
+    'mailto:jack@serviceopera.to?subject=' +
+    encodeURIComponent('Request: Automation Audit') +
+    '&body=' +
+    encodeURIComponent(
+      'Hi Jack,\n\nBusiness name:\nSector (hotel / clinic / property):\nWhat feels broken in operations today:\n\nThanks.'
+    );
+
+  var TITLE_HTML =
+    '<span class="line">AI Operations for Thailand</span>' +
+    '<span class="line line--soft">Hotels, Clinics &amp; Property Businesses</span>';
+  var LEDE =
+    'I analyze public business data, reviews, competitors and lead flows, then build practical AI systems that help Thailand service businesses capture more inquiries, reply faster and automate repetitive work.';
 
   var COPY = {
-    clinics: {
-      title: "I know which patients you're losing — and why.",
-      lede:
-        "Every clinic in Thailand leaks revenue in the same three places. I find yours, fix them quietly, and show you the money you didn't know was walking out the door.",
-      cta: 'Show me the leak',
-      subject: 'Clinics — show me the leak',
-    },
-    hotels: {
-      title: "Your competitors are charging more. You don't know it yet.",
-      lede:
-        'I watch every rate, every review, every booking signal in Thailand — and turn it into one number that tells you exactly when to move. While your team sleeps.',
-      cta: "Show me tonight's number",
-      subject: "Hotels — tonight's number",
-    },
-    properties: {
-      title: "Every lead you didn't call back is still out there.",
-      lede:
-        'Most property leads in Thailand die in an inbox within 48 hours. I bring them back, score them, and book the viewing — before your competitor does.',
-      cta: 'Show me the lost leads',
-      subject: 'Real Estate — lost leads',
-    },
+    clinics: { lede: LEDE },
+    hotels: { lede: LEDE },
+    properties: { lede: LEDE },
   };
 
   function applyCopy(key) {
     var c = COPY[key];
     if (!c) return;
-    titleEl.innerHTML = '<span class="line line--italic"></span>';
-    titleEl.querySelector('.line').textContent = c.title;
+    titleEl.className = 'hero__title hero__title--lead';
+    titleEl.innerHTML = TITLE_HTML;
     ledeEl.textContent = c.lede;
-    mailBtn.innerHTML = c.cta + '<span class="ico-arrow-r" aria-hidden="true"></span>';
-    if (key === 'clinics') {
-      mailBtn.setAttribute('href', 'clinics/demo.html');
-      heroCopy.classList.add('has-clinic-pitch');
-    } else {
-      mailBtn.setAttribute('href', 'mailto:jack@serviceopera.to?subject=' + encodeURIComponent(c.subject));
-      heroCopy.classList.remove('has-clinic-pitch');
-    }
+    primaryCta.setAttribute('href', MAIL_REPORT);
+    primaryCta.innerHTML = 'View your private AI Operations Report<span class="ico-arrow-r" aria-hidden="true"></span>';
+    secondaryCta.setAttribute('href', MAIL_AUDIT);
+    secondaryCta.textContent = 'Request an Automation Audit';
+    heroCopy.classList.add('has-hero-sample');
   }
 
   function setActive(key) {

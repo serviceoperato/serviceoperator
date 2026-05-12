@@ -491,6 +491,43 @@ a:hover { color: var(--amber-2); }
   transform: none;
   animation: none;
 }
+
+/* Thailand-wide headline: multi-line, calm B2B (no heavy italic) */
+.hero__title--lead {
+  font-size: clamp(2rem, 4.6vw, 3.65rem);
+  line-height: 1.08;
+  letter-spacing: -0.032em;
+  margin-bottom: 1.75rem;
+}
+.hero__title--lead .line {
+  display: block;
+  padding-left: 0;
+  font-style: normal;
+  font-weight: 400;
+  color: var(--paper);
+}
+.hero__title--lead .line--soft {
+  font-size: 0.92em;
+  font-weight: 300;
+  color: var(--bone);
+  margin-top: 0.2em;
+}
+
+.hero__byline {
+  margin: -0.75rem 0 1.5rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  color: var(--mute-2);
+}
+.hero__byline a {
+  color: var(--amber-2);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(251, 191, 36, 0.35);
+}
+.hero__byline a:hover {
+  color: var(--amber);
+  border-bottom-color: var(--amber);
+}
 .dot {
   width: 8px; height: 8px;
   border-radius: 50%;
@@ -562,7 +599,7 @@ a:hover { color: var(--amber-2); }
   animation: rise .8s ease .75s forwards;
 }
 
-.hero-copy.has-clinic-pitch .hero__actions {
+.hero-copy.has-hero-sample .hero__actions {
   margin-bottom: 0.85rem;
 }
 
@@ -576,7 +613,7 @@ a:hover { color: var(--amber-2); }
   animation: rise .8s ease .82s forwards;
 }
 
-.hero-copy.has-clinic-pitch .hero__clinic-pitch {
+.hero-copy.has-hero-sample .hero__clinic-pitch {
   display: block;
 }
 
@@ -972,6 +1009,15 @@ a:hover { color: var(--amber-2); }
 }
 .footer__logo-text { color: var(--paper); }
 .footer__tag { color: var(--mute-2); font-size: .9rem; max-width: 30em; }
+.footer__site-link {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--paper) 22%, transparent);
+}
+.footer__site-link:hover {
+  color: var(--amber-2);
+  border-bottom-color: var(--amber);
+}
 .footer__label {
   color: var(--amber-2);
   margin-bottom: .6rem;
