@@ -397,6 +397,43 @@
       ' · body background: ' +
       bodyCs.backgroundColor,
   });
+  lines.push({ cat: 'FE', text: '64 · secure context: ' + (window.isSecureContext ? 'yes' : 'no') });
+  lines.push({ cat: 'FE', text: '65 · document.hasFocus: ' + (document.hasFocus() ? 'yes' : 'no') });
+  lines.push({
+    cat: 'FE',
+    text:
+      '66 · document.fonts: status=' +
+      (document.fonts ? document.fonts.status : 'n/a') +
+      ' · count=' +
+      (document.fonts ? document.fonts.size : 'n/a'),
+  });
+  var storageEstimate = 'n/a';
+  try {
+    if (navigator.storage && navigator.storage.estimate) {
+      var est = await navigator.storage.estimate();
+      var usageMb = est && est.usage != null ? Math.round(est.usage / 1048576) : null;
+      var quotaMb = est && est.quota != null ? Math.round(est.quota / 1048576) : null;
+      storageEstimate =
+        'usage≈' +
+        (usageMb != null ? usageMb + ' MB' : 'n/a') +
+        ' · quota≈' +
+        (quotaMb != null ? quotaMb + ' MB' : 'n/a');
+    }
+  } catch (e4) {
+    storageEstimate = 'n/a (' + (e4 && e4.message ? e4.message : String(e4)) + ')';
+  }
+  lines.push({ cat: 'DB', text: '67 · storage estimate: ' + storageEstimate });
+  var swController = 'n/a';
+  try {
+    if ('serviceWorker' in navigator) {
+      swController = navigator.serviceWorker.controller ? 'active' : 'none';
+    } else {
+      swController = 'unsupported';
+    }
+  } catch (e5) {
+    swController = 'n/a';
+  }
+  lines.push({ cat: 'FE', text: '68 · service worker controller: ' + swController });
 
   function apiProbeNote(status, json, serviceKey) {
     if (status === 404) {
@@ -547,7 +584,7 @@
       '<span class="mono debug-panel__title" id="soDebugTitle">— DEBUG · … checks</span>' +
       '<button type="button" class="debug-panel__close mono" data-debug-close aria-label="Close panel"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg></button>' +
       '</div>' +
-      '<p class="debug-panel__sub mono">DB = local storage · FE = browser · BE = HTTP to this host. Rows 51–53: <code>img.brand-logo</code>. Rows 54–60: layout, viewport, safe-area, theme. Rows 61–63: <code>/api/version</code> and capabilities (Resend / login). On <code>login.html</code>, <strong>[PW]</strong> rows (password-reset diagnostics) appear too. Select the text below and copy (Ctrl+C), or use the button.</p>' +
+      '<p class="debug-panel__sub mono">DB = local storage · FE = browser · BE = HTTP to this host. Rows 51–53: <code>img.brand-logo</code>. Rows 54–60: layout, viewport, safe-area, theme. Rows 61–63: <code>/api/version</code> and capabilities (Resend / login). Rows 64–68: secure context, focus, fonts, storage estimate, service worker. On <code>login.html</code>, <strong>[PW]</strong> rows (password-reset diagnostics) appear too. Select the text below and copy (Ctrl+C), or use the button.</p>' +
       '<div class="debug-panel__status mono" id="soDebugStatus">Running…</div>' +
       '<pre class="debug-panel__out mono" id="soDebugOut" tabindex="0"></pre>' +
       '<div class="debug-panel__actions">' +
