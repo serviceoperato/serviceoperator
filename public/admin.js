@@ -102,16 +102,22 @@
     var q = usersSearch.trim().toLowerCase();
     if (q) {
       users = users.filter(function (u) {
-        var blob = [u.email, u.reportSlug, u.id].join(' ').toLowerCase();
+        var blob = [u.email, u.reportSlug, u.id, u.displayName, u.country, u.lastLoginIp]
+          .join(' ')
+          .toLowerCase();
         return blob.indexOf(q) >= 0;
       });
     }
-    if (usersFilter === 'pending') {
+    if (usersFilter === 'active') {
+      users = users.filter(function (u) {
+        return u.active !== false;
+      });
+    } else if (usersFilter === 'pending') {
       users = [];
     }
     if (usersSort === 'name') {
       users.sort(function (a, b) {
-        return displayNameFromEmail(a.email).localeCompare(displayNameFromEmail(b.email));
+        return userDisplayName(a).localeCompare(userDisplayName(b));
       });
     } else {
       users.sort(function (a, b) {
@@ -119,6 +125,21 @@
       });
     }
     return users;
+  }
+
+  function userDisplayName(user) {
+    if (user && user.displayName) return String(user.displayName);
+    return displayNameFromEmail(user && user.email);
+  }
+
+  function yesNoLabel(value) {
+    return value ? 'Yes' : 'No';
+  }
+
+  function formatSpendEarned(user) {
+    var spend = Number(user && user.spend) || 0;
+    var earned = Number(user && user.earned) || 0;
+    return spend + ' / ' + earned;
   }
 
   function openUserEditProfile(user) {
@@ -131,13 +152,101 @@
       '</strong> · report slug <code>' +
       escapeHtml(user.reportSlug) +
       '</code>.</p>' +
-      '<p class="admin-panel__stub">Full profile editing (gender, spend, admin flags) is not wired on ServiceOpera yet — use <strong>User reports</strong> to rotate passwords and slugs.</p>' +
+      '<form id="adminUserProfileForm" class="portal-form" style="max-width: 32rem; margin-top: 1rem;">' +
+      '<label><span class="mono">DISPLAY NAME</span><input type="text" name="displayName" required value="' +
+      escapeHtml(userDisplayName(user)) +
+      '" /></label>' +
+      '<label><span class="mono">GENDER</span><input type="text" name="gender" placeholder="Optional" value="' +
+      escapeHtml(user.gender || '') +
+      '" /></label>' +
+      '<label><span class="mono">COUNTRY</span><input type="text" name="country" maxlength="2" placeholder="e.g. US" value="' +
+      escapeHtml(user.country || '') +
+      '" /></label>' +
+      '<label><span class="mono">ACTIVE</span><select name="active"><option value="true"' +
+      (user.active !== false ? ' selected' : '') +
+      '>Yes</option><option value="false"' +
+      (user.active === false ? ' selected' : '') +
+      '>No</option></select></label>' +
+      '<label><span class="mono">ADMIN</span><select name="admin"><option value="false"' +
+      (!user.admin ? ' selected' : '') +
+      '>No</option><option value="true"' +
+      (user.admin ? ' selected' : '') +
+      '>Yes</option></select></label>' +
+      '<label><span class="mono">PLUS</span><select name="plus"><option value="false"' +
+      (!user.plus ? ' selected' : '') +
+      '>No</option><option value="true"' +
+      (user.plus ? ' selected' : '') +
+      '>Yes</option></select></label>' +
+      '<label><span class="mono">SPEND</span><input type="number" name="spend" min="0" step="1" value="' +
+      escapeHtml(String(Number(user.spend) || 0)) +
+      '" /></label>' +
+      '<label><span class="mono">EARNED</span><input type="number" name="earned" min="0" step="1" value="' +
+      escapeHtml(String(Number(user.earned) || 0)) +
+      '" /></label>' +
+      '<button type="submit" class="btn btn--primary">Save profile</button>' +
+      '<p class="portal-form__hint mono" id="adminUserProfileHint"></p></form>' +
       '<p class="admin-panel__stub"><button type="button" class="btn btn--ghost mono" id="stubBackToUsers">← Back to users</button></p>';
     var back = document.getElementById('stubBackToUsers');
     if (back) {
       back.addEventListener('click', function () {
         panel.classList.add('is-hidden');
         if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.remove('is-hidden');
+      });
+    }
+    var profileForm = document.getElementById('adminUserProfileForm');
+    var profileHint = document.getElementById('adminUserProfileHint');
+    if (profileForm) {
+      profileForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (profileHint) {
+          profileHint.textContent = 'Saving…';
+          profileHint.className = 'portal-form__hint mono';
+        }
+        var fd = new FormData(profileForm);
+        var body = {
+          displayName: (fd.get('displayName') || '').toString().trim(),
+          gender: (fd.get('gender') || '').toString().trim() || null,
+          country: (fd.get('country') || '').toString().trim(),
+          active: (fd.get('active') || 'true') === 'true',
+          admin: (fd.get('admin') || 'false') === 'true',
+          plus: (fd.get('plus') || 'false') === 'true',
+          spend: Number(fd.get('spend') || 0),
+          earned: Number(fd.get('earned') || 0),
+        };
+        fetch('/api/user-accounts/' + encodeURIComponent(user.id), {
+          method: 'PATCH',
+          credentials: 'same-origin',
+          headers: {
+            Authorization: 'Bearer ' + getAdminBearer(),
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(body),
+        })
+          .then(function (r) {
+            return r.json().then(function (j) {
+              return { ok: r.ok, j: j };
+            });
+          })
+          .then(function (x) {
+            if (!x.ok) {
+              if (profileHint) {
+                profileHint.textContent = (x.j && x.j.error) || 'Could not save profile.';
+                profileHint.className = 'portal-form__hint mono is-error';
+              }
+              return;
+            }
+            if (profileHint) {
+              profileHint.textContent = 'Profile saved.';
+              profileHint.className = 'portal-form__hint mono is-ok';
+            }
+            loadWorkQueue();
+          })
+          .catch(function () {
+            if (profileHint) {
+              profileHint.textContent = 'Network error.';
+              profileHint.className = 'portal-form__hint mono is-error';
+            }
+          });
       });
     }
     panel.classList.remove('is-hidden');
@@ -160,8 +269,8 @@
         users.length === 0
           ? usersFilter === 'pending'
             ? 'Use the pending confirmations section below.'
-            : 'No confirmed users in the JSON store yet.'
-          : 'Confirmed users (newest first in inbox; full list here).';
+            : 'No confirmed portal users yet.'
+          : 'Confirmed portal users.';
     }
     if (paging) paging.textContent = users.length + ' users · page 1 / 1';
     if (!users.length) {
@@ -172,7 +281,7 @@
         .map(function (u) {
           var idDisp = shortDisplayId(u.id);
           var reportUrl = '/clinics/report.html?slug=' + encodeURIComponent(u.reportSlug);
-          var name = displayNameFromEmail(u.email);
+          var name = userDisplayName(u);
           return (
             '<tr>' +
             '<td>' +
@@ -184,14 +293,30 @@
             '<td>' +
             escapeHtml(name) +
             '</td>' +
-            '<td>—</td>' +
-            '<td>Yes</td>' +
-            '<td>—</td>' +
-            '<td>—</td>' +
-            '<td>0 / 0</td>' +
-            '<td>—</td>' +
-            '<td>—</td>' +
-            '<td>—</td>' +
+            '<td>' +
+            escapeHtml(u.gender || '—') +
+            '</td>' +
+            '<td>' +
+            escapeHtml(yesNoLabel(u.active !== false)) +
+            '</td>' +
+            '<td>' +
+            escapeHtml(yesNoLabel(!!u.admin)) +
+            '</td>' +
+            '<td>' +
+            escapeHtml(yesNoLabel(!!u.plus)) +
+            '</td>' +
+            '<td>' +
+            escapeHtml(formatSpendEarned(u)) +
+            '</td>' +
+            '<td>' +
+            escapeHtml(formatAdminTs(u.lastLoginAt) || '—') +
+            '</td>' +
+            '<td>' +
+            escapeHtml(u.lastLoginIp || '—') +
+            '</td>' +
+            '<td>' +
+            escapeHtml(u.country || '—') +
+            '</td>' +
             '<td>' +
             escapeHtml(formatAdminTs(u.createdAt)) +
             '</td>' +
@@ -1041,13 +1166,22 @@
     usersCsvBtn.addEventListener('click', function () {
       var rows = applyUsersView();
       var lines = [
-        'id,email,name,report_slug,created_at',
+        'id,email,name,gender,active,admin,plus,spend,earned,last_login_at,last_login_ip,country,report_slug,created_at',
       ].concat(
         rows.map(function (u) {
           return [
             shortDisplayId(u.id),
             u.email,
-            displayNameFromEmail(u.email),
+            userDisplayName(u),
+            u.gender || '',
+            u.active !== false ? 'yes' : 'no',
+            u.admin ? 'yes' : 'no',
+            u.plus ? 'yes' : 'no',
+            Number(u.spend) || 0,
+            Number(u.earned) || 0,
+            u.lastLoginAt || '',
+            u.lastLoginIp || '',
+            u.country || '',
             u.reportSlug,
             u.createdAt || '',
           ]

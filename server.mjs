@@ -7,6 +7,7 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { assertReportSlug, createUserStore, normalizeEmail } from './clinic-store.mjs';
+import { createPostgresUserStore, ensurePostgresUserSchema } from './postgres-user-store.mjs';
 import { searchTextAllPages } from './lib/google-places-search.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -21,7 +22,26 @@ try {
 }
 const dataDir = process.env.DATA_DIR || path.join(__dirname, 'data');
 fs.mkdirSync(dataDir, { recursive: true });
-const userStore = createUserStore(dataDir);
+
+async function initUserStore() {
+  const adminEmail = (process.env.ADMIN_EMAIL || 'jack@serviceopera.to').trim().toLowerCase();
+  const databaseUrl = (process.env.DATABASE_URL || '').trim();
+  if (databaseUrl) {
+    const { Pool } = await import('pg');
+    const pool = new Pool({
+      connectionString: databaseUrl,
+      ssl:
+        /sslmode=require/i.test(databaseUrl) || /railway/i.test(databaseUrl)
+          ? { rejectUnauthorized: false }
+          : undefined,
+    });
+    await ensurePostgresUserSchema(pool, adminEmail);
+    return createPostgresUserStore(pool);
+  }
+  return createUserStore(dataDir, adminEmail);
+}
+
+const userStore = await initUserStore();
 
 const clinicDataDir = path.join(publicDir, 'clinics', 'data');
 
@@ -60,13 +80,11 @@ const MANAGED_PAGE_FILES = [
   'admin.html',
 ];
 
-function buildAdminWorkQueue() {
-  const pending = userStore
-    .listPendingSummaries()
+async function buildAdminWorkQueue() {
+  const pending = (await userStore.listPendingSummaries())
     .slice()
     .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
-  const users = userStore
-    .listUsers()
+  const users = (await userStore.listUsers())
     .slice()
     .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
   const takenSlugs = new Set([
@@ -235,6 +253,30 @@ function clientIp(req) {
   return req.socket.remoteAddress || 'unknown';
 }
 
+function clientCountry(req) {
+  const candidates = [
+    req.headers['cf-ipcountry'],
+    req.headers['x-vercel-ip-country'],
+    req.headers['cloudfront-viewer-country'],
+  ];
+  for (const value of candidates) {
+    if (typeof value === 'string' && value.trim() && value.trim() !== 'XX') {
+      return value.trim().toUpperCase();
+    }
+  }
+  return null;
+}
+
+async function recordPortalLogin(req, user) {
+  if (!user || typeof user.id !== 'string' || !user.id) return;
+  if (typeof userStore.recordLogin !== 'function') return;
+  try {
+    await userStore.recordLogin(user.id, { ip: clientIp(req), country: clientCountry(req) });
+  } catch {
+    /* login should still succeed if audit write fails */
+  }
+}
+
 function pruneSends(ip) {
   const now = Date.now();
   const arr = sendTimestampsByIp.get(ip) || [];
@@ -334,10 +376,10 @@ app.get('/api/version', (_req, res) => {
   res.json({ version: appVersion });
 });
 
-app.get('/api/debug/user-store', (_req, res) => {
+app.get('/api/debug/user-store', async (_req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   try {
-    const storage = userStore.getStorageSummary();
+    const storage = await userStore.getStorageSummary();
     return res.json({ ok: true, service: 'serviceopera', version: appVersion, storage });
   } catch (e) {
     return res.status(500).json({
@@ -396,7 +438,7 @@ async function handlePortalRegister(req, res) {
   }
   let pending;
   try {
-    pending = userStore.createPendingRegistration({ email, password });
+    pending = await userStore.createPendingRegistration({ email, password });
   } catch (e) {
     const status = e.status || 400;
     return res.status(status).json({ error: e.message || 'Bad request' });
@@ -521,26 +563,26 @@ app.post('/api/admin/bootstrap-from-portal', (req, res) => {
   return res.json({ ok: true, token, expiresInMs: JWT_TTL_MS });
 });
 
-function listPortalUsersForAdmin(_req, res) {
-  res.json({ users: userStore.listUsers() });
+async function listPortalUsersForAdmin(_req, res) {
+  res.json({ users: await userStore.listUsers() });
 }
 app.get('/api/user-accounts', requireAdmin, listPortalUsersForAdmin);
 app.get('/api/clinic-users', requireAdmin, listPortalUsersForAdmin);
 
-app.get('/api/admin/work-queue', requireAdmin, (_req, res) => {
+app.get('/api/admin/work-queue', requireAdmin, async (_req, res) => {
   try {
-    res.json(buildAdminWorkQueue());
+    res.json(await buildAdminWorkQueue());
   } catch (e) {
     res.status(500).json({ error: e.message || 'Failed to build work queue' });
   }
 });
 
-function createPortalUserAdmin(req, res) {
+async function createPortalUserAdmin(req, res) {
   try {
     const email = req.body?.email;
     const password = req.body?.password;
     const reportSlug = req.body?.reportSlug;
-    const created = userStore.createUser({ email, password, reportSlug });
+    const created = await userStore.createUser({ email, password, reportSlug });
     return res.status(201).json(created);
   } catch (e) {
     const status = e.status || 400;
@@ -550,12 +592,27 @@ function createPortalUserAdmin(req, res) {
 app.post('/api/user-accounts', requireAdmin, createPortalUserAdmin);
 app.post('/api/clinic-users', requireAdmin, createPortalUserAdmin);
 
-dualPost('/api/auth/user-login', '/api/auth/clinic-login', (req, res) => {
+async function updatePortalUserAdmin(req, res) {
+  if (typeof userStore.updateUserProfile !== 'function') {
+    return res.status(501).json({ error: 'Profile updates are not available on this server.' });
+  }
+  try {
+    const updated = await userStore.updateUserProfile(req.params.id, req.body || {});
+    return res.json(updated);
+  } catch (e) {
+    const status = e.status || 400;
+    return res.status(status).json({ error: e.message || 'Bad request' });
+  }
+}
+app.patch('/api/user-accounts/:id', requireAdmin, updatePortalUserAdmin);
+app.patch('/api/clinic-users/:id', requireAdmin, updatePortalUserAdmin);
+
+dualPost('/api/auth/user-login', '/api/auth/clinic-login', async (req, res) => {
   const email = typeof req.body?.email === 'string' ? req.body.email : '';
   const password = typeof req.body?.password === 'string' ? req.body.password : '';
-  const user = userStore.verifyLogin(email, password);
+  const user = await userStore.verifyLogin(email, password);
   if (!user) {
-    const pending = userStore.findPendingByEmail(email);
+    const pending = await userStore.findPendingByEmail(email);
     if (pending) {
       return res.status(403).json({
         error:
@@ -564,6 +621,7 @@ dualPost('/api/auth/user-login', '/api/auth/clinic-login', (req, res) => {
     }
     return res.status(401).json({ error: 'Invalid email or password.' });
   }
+  await recordPortalLogin(req, user);
   const token = signJwt({
     v: 1,
     role: 'user',
@@ -593,7 +651,7 @@ dualPost('/api/auth/user-otp/send', '/api/auth/clinic-otp/send', async (req, res
     return res.status(400).json({ error: 'Invalid email.' });
   }
 
-  const user = userStore.getUserByEmail(email);
+  const user = await userStore.getUserByEmail(email);
   if (!user) {
     return res.json(generic);
   }
@@ -625,7 +683,7 @@ dualPost('/api/auth/user-otp/send', '/api/auth/clinic-otp/send', async (req, res
   return res.json(generic);
 });
 
-dualPost('/api/auth/user-login-otp', '/api/auth/clinic-login-otp', (req, res) => {
+dualPost('/api/auth/user-login-otp', '/api/auth/clinic-login-otp', async (req, res) => {
   const email = typeof req.body?.email === 'string' ? normalizeEmail(req.body.email) : '';
   const otp =
     typeof req.body?.otp === 'string'
@@ -636,8 +694,8 @@ dualPost('/api/auth/user-login-otp', '/api/auth/clinic-login-otp', (req, res) =>
   if (!email || !email.includes('@')) {
     return res.status(400).json({ error: 'Invalid email.' });
   }
-  const user = userStore.getUserByEmail(email);
-  if (!user) {
+  const user = await userStore.getUserByEmail(email);
+  if (!user || user.active === false) {
     return res.status(401).json({ error: 'Invalid email or code.' });
   }
   const row = portalOtpByEmail.get(email);
@@ -648,6 +706,7 @@ dualPost('/api/auth/user-login-otp', '/api/auth/clinic-login-otp', (req, res) =>
     return res.status(401).json({ error: 'Invalid email or code.' });
   }
   portalOtpByEmail.delete(email);
+  await recordPortalLogin(req, user);
   const token = signJwt({
     v: 1,
     role: 'user',
@@ -674,7 +733,7 @@ dualPost('/api/auth/user-resend-confirmation', '/api/auth/clinic-resend-confirma
   if (!email || !email.includes('@')) {
     return res.status(400).json({ error: 'Invalid email.' });
   }
-  const pending = userStore.findPendingByEmail(email);
+  const pending = await userStore.findPendingByEmail(email);
   const generic = {
     ok: true,
     message: 'If that address has a pending sign-up, a new confirmation link was sent.',
@@ -737,7 +796,7 @@ dualPost('/api/auth/user-request-reset', '/api/auth/clinic-request-reset', async
     return res.status(429).json({ error: 'Too many requests. Try again later.' });
   }
 
-  const user = email && email.includes('@') ? userStore.getUserByEmail(email) : null;
+  const user = email && email.includes('@') ? await userStore.getUserByEmail(email) : null;
   if (!user) {
     return res.json(generic);
   }
@@ -775,19 +834,19 @@ dualPost('/api/auth/user-request-reset', '/api/auth/clinic-request-reset', async
   return res.json(generic);
 });
 
-dualPost('/api/auth/user-reset-password', '/api/auth/clinic-reset-password', (req, res) => {
+dualPost('/api/auth/user-reset-password', '/api/auth/clinic-reset-password', async (req, res) => {
   const token = typeof req.body?.token === 'string' ? req.body.token.trim() : '';
   const password = typeof req.body?.password === 'string' ? req.body.password : '';
   const p = verifyJwt(token);
   if (!p || !isPortalResetRole(p.role) || typeof p.sub !== 'string' || typeof p.email !== 'string') {
     return res.status(401).json({ error: 'Invalid or expired reset link. Request a new one from the login page.' });
   }
-  const row = userStore.getUserByEmail(p.email);
+  const row = await userStore.getUserByEmail(p.email);
   if (!row || row.id !== p.sub) {
     return res.status(401).json({ error: 'Invalid or expired reset link. Request a new one from the login page.' });
   }
   try {
-    userStore.setPasswordForUser(p.sub, password);
+    await userStore.setPasswordForUser(p.sub, password);
   } catch (e) {
     const status = e.status || 400;
     return res.status(status).json({ error: e.message || 'Bad request' });
@@ -795,7 +854,7 @@ dualPost('/api/auth/user-reset-password', '/api/auth/clinic-reset-password', (re
   return res.json({ ok: true, message: 'Password updated. You can sign in now.' });
 });
 
-dualPost('/api/auth/user-verify-email', '/api/auth/clinic-verify-email', (req, res) => {
+dualPost('/api/auth/user-verify-email', '/api/auth/clinic-verify-email', async (req, res) => {
   const token = typeof req.body?.token === 'string' ? req.body.token.trim() : '';
   const p = verifyJwt(token);
   if (!p || !isPortalVerifyRole(p.role) || typeof p.sub !== 'string' || typeof p.email !== 'string') {
@@ -804,7 +863,7 @@ dualPost('/api/auth/user-verify-email', '/api/auth/clinic-verify-email', (req, r
       .json({ error: 'Invalid or expired confirmation link. Register again from the login page.' });
   }
   try {
-    const created = userStore.finalizePendingRegistration(p.sub, p.email);
+    const created = await userStore.finalizePendingRegistration(p.sub, p.email);
     return res.status(201).json({
       ok: true,
       message: 'Email confirmed. You can sign in below.',
@@ -940,6 +999,9 @@ app.use((req, res) => {
 const port = Number(process.env.PORT) || 8080;
 app.listen(port, '0.0.0.0', () => {
   console.log(`[serviceopera] v${appVersion} listening on ${port} · public=${publicDir} · data=${dataDir}`);
+  console.log(
+    `[serviceopera] User store: ${(process.env.DATABASE_URL || '').trim() ? 'PostgreSQL (DATABASE_URL)' : `JSON files (${dataDir})`}`
+  );
   console.log(
     RESEND_API_KEY
       ? '[serviceopera] Resend: RESEND_API_KEY is set (admin OTP + clinic forgot-password).'

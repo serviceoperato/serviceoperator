@@ -30,6 +30,8 @@ function hashPassword(password) {
   return salt + ':' + hash;
 }
 
+export { hashPassword };
+
 export function verifyPassword(password, stored) {
   if (!stored || typeof stored !== 'string') return false;
   const parts = stored.split(':');
@@ -74,7 +76,52 @@ function readPendingFile(pf) {
   }
 }
 
-export function createUserStore(dataDir) {
+function displayNameFromEmail(email) {
+  const e = String(email || '').trim();
+  const at = e.indexOf('@');
+  return at > 0 ? e.slice(0, at) : e || '';
+}
+
+function withProfileDefaults(user) {
+  const createdAt = user.createdAt || new Date().toISOString();
+  return {
+    id: user.id,
+    email: user.email,
+    reportSlug: user.reportSlug,
+    displayName: user.displayName || displayNameFromEmail(user.email),
+    gender: user.gender || null,
+    active: user.active !== false,
+    admin: user.admin === true,
+    plus: user.plus === true,
+    spend: Number(user.spend) || 0,
+    earned: Number(user.earned) || 0,
+    lastLoginAt: user.lastLoginAt || null,
+    lastLoginIp: user.lastLoginIp || null,
+    country: user.country || null,
+    createdAt,
+    updatedAt: user.updatedAt || createdAt,
+  };
+}
+
+function newUserProfileFields(email) {
+  const createdAt = new Date().toISOString();
+  return {
+    displayName: displayNameFromEmail(email),
+    gender: null,
+    active: true,
+    admin: false,
+    plus: false,
+    spend: 0,
+    earned: 0,
+    lastLoginAt: null,
+    lastLoginIp: null,
+    country: null,
+    createdAt,
+    updatedAt: createdAt,
+  };
+}
+
+export function createUserStore(dataDir, adminEmail) {
   const file = path.join(dataDir, 'user_accounts.json');
   const legacyUsersFile = path.join(dataDir, 'clinic_users.json');
   const pendingFile = path.join(dataDir, 'user_pending.json');
@@ -88,6 +135,20 @@ export function createUserStore(dataDir) {
 
   function save(data) {
     writeJson(file, data);
+  }
+
+  function ensureBootstrapAdmin(data) {
+    const em = normalizeEmail(adminEmail);
+    if (!em) return;
+    let changed = false;
+    for (const user of data.users) {
+      if (normalizeEmail(user.email) === em && user.admin !== true) {
+        user.admin = true;
+        user.updatedAt = new Date().toISOString();
+        changed = true;
+      }
+    }
+    if (changed) save(data);
   }
 
   function loadPending() {
@@ -138,12 +199,9 @@ export function createUserStore(dataDir) {
   return {
     file,
     listUsers() {
-      return load().users.map((u) => ({
-        id: u.id,
-        email: u.email,
-        reportSlug: u.reportSlug,
-        createdAt: u.createdAt,
-      }));
+      const data = load();
+      ensureBootstrapAdmin(data);
+      return data.users.map((u) => withProfileDefaults(u));
     },
 
     /** Pending email confirmations (no password hashes). */
@@ -209,16 +267,17 @@ export function createUserStore(dataDir) {
         throw err;
       }
       const id = crypto.randomUUID();
+      const profile = newUserProfileFields(em);
       const row = {
         id,
         email: em,
         passwordHash: hashPassword(password),
         reportSlug: slug,
-        createdAt: new Date().toISOString(),
+        ...profile,
       };
       data.users.push(row);
       save(data);
-      return { id, email: em, reportSlug: slug, createdAt: row.createdAt };
+      return withProfileDefaults(row);
     },
 
     /**
@@ -296,18 +355,19 @@ export function createUserStore(dataDir) {
         throw err;
       }
       const uid = crypto.randomUUID();
+      const profile = newUserProfileFields(pen.email);
       const userRow = {
         id: uid,
         email: pen.email,
         passwordHash: pen.passwordHash,
         reportSlug: pen.reportSlug,
-        createdAt: new Date().toISOString(),
+        ...profile,
       };
       data.users.push(userRow);
       pdata.pending.splice(idx, 1);
       save(data);
       savePending(pdata);
-      return { id: uid, email: pen.email, reportSlug: pen.reportSlug, createdAt: userRow.createdAt };
+      return withProfileDefaults(userRow);
     },
 
     verifyLogin(email, password) {
@@ -316,6 +376,7 @@ export function createUserStore(dataDir) {
       const u = data.users.find((x) => x.email === em);
       if (!u) return null;
       if (!verifyPassword(password, u.passwordHash)) return null;
+      if (u.active === false) return null;
       return { id: u.id, email: u.email, reportSlug: u.reportSlug };
     },
 
@@ -325,7 +386,7 @@ export function createUserStore(dataDir) {
       const data = load();
       const u = data.users.find((x) => x.email === em);
       if (!u) return null;
-      return { id: u.id, email: u.email, reportSlug: u.reportSlug };
+      return { id: u.id, email: u.email, reportSlug: u.reportSlug, active: u.active !== false };
     },
 
     setPasswordForUser(userId, newPassword) {
@@ -347,8 +408,97 @@ export function createUserStore(dataDir) {
         throw err;
       }
       u.passwordHash = hashPassword(newPassword);
+      u.updatedAt = new Date().toISOString();
       save(data);
       return { id: u.id, email: u.email, reportSlug: u.reportSlug };
+    },
+
+    recordLogin(userId, { ip, country } = {}) {
+      if (typeof userId !== 'string' || !userId) return null;
+      const data = load();
+      const u = data.users.find((x) => x.id === userId);
+      if (!u) return null;
+      const now = new Date().toISOString();
+      u.lastLoginAt = now;
+      if (typeof ip === 'string' && ip.trim()) u.lastLoginIp = ip.trim();
+      if (typeof country === 'string' && country.trim()) u.country = country.trim().toUpperCase();
+      u.updatedAt = now;
+      save(data);
+      return withProfileDefaults(u);
+    },
+
+    updateUserProfile(userId, patch = {}) {
+      if (typeof userId !== 'string' || !userId) {
+        const err = new Error('Invalid user.');
+        err.status = 400;
+        throw err;
+      }
+      const data = load();
+      const u = data.users.find((x) => x.id === userId);
+      if (!u) {
+        const err = new Error('User not found.');
+        err.status = 404;
+        throw err;
+      }
+      let changed = false;
+      if (typeof patch.displayName === 'string') {
+        const name = patch.displayName.trim();
+        if (!name) {
+          const err = new Error('Display name cannot be empty.');
+          err.status = 400;
+          throw err;
+        }
+        u.displayName = name;
+        changed = true;
+      }
+      if (patch.gender === null || typeof patch.gender === 'string') {
+        u.gender = typeof patch.gender === 'string' ? patch.gender.trim() || null : null;
+        changed = true;
+      }
+      if (typeof patch.active === 'boolean') {
+        u.active = patch.active;
+        changed = true;
+      }
+      if (typeof patch.admin === 'boolean') {
+        u.admin = patch.admin;
+        changed = true;
+      }
+      if (typeof patch.plus === 'boolean') {
+        u.plus = patch.plus;
+        changed = true;
+      }
+      if (patch.spend != null) {
+        const spend = Number(patch.spend);
+        if (!Number.isFinite(spend) || spend < 0) {
+          const err = new Error('Spend must be a non-negative number.');
+          err.status = 400;
+          throw err;
+        }
+        u.spend = Math.round(spend);
+        changed = true;
+      }
+      if (patch.earned != null) {
+        const earned = Number(patch.earned);
+        if (!Number.isFinite(earned) || earned < 0) {
+          const err = new Error('Earned must be a non-negative number.');
+          err.status = 400;
+          throw err;
+        }
+        u.earned = Math.round(earned);
+        changed = true;
+      }
+      if (typeof patch.country === 'string') {
+        u.country = patch.country.trim().toUpperCase() || null;
+        changed = true;
+      }
+      if (!changed) {
+        const err = new Error('No profile fields to update.');
+        err.status = 400;
+        throw err;
+      }
+      u.updatedAt = new Date().toISOString();
+      save(data);
+      return withProfileDefaults(u);
     },
 
     getStorageSummary() {
