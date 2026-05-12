@@ -7,6 +7,7 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { assertReportSlug, createClinicStore } from './clinic-store.mjs';
+import { searchTextAllPages } from './lib/google-places-search.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(__dirname, 'public');
@@ -43,6 +44,35 @@ const CLINIC_RESET_JWT_MS = 60 * 60 * 1000;
 const CLINIC_VERIFY_JWT_MS = 48 * 60 * 60 * 1000;
 const SEND_WINDOW_MS = 15 * 60 * 1000;
 const MAX_SENDS_PER_WINDOW = 4;
+
+const GOOGLE_MAPS_API_KEY = (process.env.GOGLE_MAPS_API_KEY || '').trim();
+const PLACES_API_MIN_GAP_MS = Number(process.env.PLACES_API_MIN_GAP_MS || 400);
+
+/** Minimum spacing between outbound Google Places HTTP calls (same process). */
+let lastPlacesOutboundAt = 0;
+async function throttlePlacesOutbound() {
+  const gap = Number.isFinite(PLACES_API_MIN_GAP_MS) && PLACES_API_MIN_GAP_MS >= 0 ? PLACES_API_MIN_GAP_MS : 400;
+  const now = Date.now();
+  const elapsed = now - lastPlacesOutboundAt;
+  if (elapsed < gap) {
+    await new Promise((r) => setTimeout(r, gap - elapsed));
+  }
+  lastPlacesOutboundAt = Date.now();
+}
+
+const PLACES_IP_WINDOW_MS = 15 * 60 * 1000;
+const PLACES_IP_MAX = 60;
+/** @type {Map<string, number[]>} */
+const placesIpHits = new Map();
+
+function allowPlacesSearchIp(ip) {
+  const now = Date.now();
+  const arr = (placesIpHits.get(ip) || []).filter((t) => now - t < PLACES_IP_WINDOW_MS);
+  if (arr.length >= PLACES_IP_MAX) return false;
+  arr.push(now);
+  placesIpHits.set(ip, arr);
+  return true;
+}
 
 /** @type {Map<string, { hash: string, exp: number }>} */
 const otpByEmail = new Map();
@@ -440,6 +470,55 @@ app.get('/api/auth/clinic-session', (req, res) => {
   return res.json({ ok: true, email: p.email, reportSlug: p.reportSlug });
 });
 
+/**
+ * Google Places API (New) — Text Search lead collector (API key server-side only).
+ * POST /api/places/search { "query": "...", "category": "clinic" | "hotel" | "real_estate" }
+ */
+app.post('/api/places/search', async (req, res) => {
+  if (!GOOGLE_MAPS_API_KEY) {
+    return res.status(503).json({
+      error:
+        'GOOGLE_MAPS_API_KEY is not set on this server. Add it to .env and restart (key must never ship to the browser).',
+    });
+  }
+  const ip = clientIp(req);
+  if (!allowPlacesSearchIp(ip)) {
+    return res.status(429).json({ error: 'Too many Places searches from this IP. Try again in a few minutes.' });
+  }
+
+  const query = typeof req.body?.query === 'string' ? req.body.query.trim() : '';
+  const category = typeof req.body?.category === 'string' ? req.body.category.trim() : '';
+  if (!query || query.length > 500) {
+    return res.status(400).json({ error: 'Invalid or missing "query" (required, max 500 characters).' });
+  }
+  if (!category || category.length > 64) {
+    return res.status(400).json({ error: 'Invalid or missing "category".' });
+  }
+
+  try {
+    const { rows, collectedAt } = await searchTextAllPages({
+      apiKey: GOOGLE_MAPS_API_KEY,
+      textQuery: query,
+      category,
+      onBeforeRequest: throttlePlacesOutbound,
+    });
+    res.setHeader('Cache-Control', 'no-store');
+    return res.json({
+      ok: true,
+      query,
+      category,
+      count: rows.length,
+      collected_at: collectedAt,
+      rows,
+    });
+  } catch (e) {
+    const status = Number(e.status) >= 400 && Number(e.status) < 600 ? Number(e.status) : 502;
+    return res.status(status).json({
+      error: typeof e.message === 'string' ? e.message : 'Places API request failed',
+    });
+  }
+});
+
 app.get('/api/clinics/report-data', (req, res) => {
   const slug = typeof req.query.slug === 'string' ? req.query.slug.trim() : '';
   try {
@@ -473,6 +552,7 @@ app.use(
       if (
         filePath.endsWith('client.html') ||
         filePath.endsWith('login.html') ||
+        filePath.endsWith('places-leads.html') ||
         norm.includes('/clinics/report.html')
       ) {
         res.setHeader('Cache-Control', 'no-store');
@@ -505,5 +585,10 @@ app.listen(port, '0.0.0.0', () => {
     CLINIC_SELF_REGISTER
       ? '[serviceopera] Clinic self-register: enabled (default; set CLINIC_SELF_REGISTER=false for invite-only).'
       : '[serviceopera] Clinic self-register: off (invite-only; unset env or remove CLINIC_SELF_REGISTER=false to enable).'
+  );
+  console.log(
+    GOOGLE_MAPS_API_KEY
+      ? '[serviceopera] Google Places: GOOGLE_MAPS_API_KEY is set (POST /api/places/search).'
+      : '[serviceopera] Google Places: GOOGLE_MAPS_API_KEY missing — /api/places/search will return 503 until set.'
   );
 });

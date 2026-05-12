@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pattaya lead collector · Google Places · ServiceOpera</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" href="favicon.png" type="image/png" sizes="any" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+  .places-tool { max-width: 1100px; margin: 0 auto; padding: 5rem var(--gutter) 3rem; }
+  .places-tool h1 { font-family: var(--font-display, Georgia, serif); font-weight: 500; margin: 0 0 0.5rem; }
+  .places-tool__sub { color: var(--mute-2); margin: 0 0 1.5rem; max-width: 52rem; line-height: 1.55; }
+  .places-tool label span { display: block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mute-2); margin-bottom: 0.35rem; }
+  .places-tool textarea {
+    width: 100%; min-height: 220px; padding: 0.75rem 1rem; font-family: inherit; font-size: 0.95rem;
+    border: 1px solid var(--line-strong); border-radius: 4px; background: var(--paper-2); color: var(--paper);
+    resize: vertical;
+  }
+  .places-tool__row { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end; margin-bottom: 1rem; }
+  .places-tool__row > div { flex: 1; min-width: 200px; }
+  .places-tool select {
+    width: 100%; padding: 0.55rem 0.75rem; border-radius: 4px; border: 1px solid var(--line-strong);
+    background: var(--paper-2); color: var(--paper); font-family: inherit;
+  }
+  .places-tool__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 1rem 0 1.25rem; }
+  .places-tool__hint { font-size: 0.85rem; color: var(--mute-2); margin: 0 0 1rem; max-width: 52rem; }
+  .places-tool__stats { font-size: 0.95rem; margin: 0 0 1rem; }
+  .places-tool__stats strong { color: var(--amber-2); }
+  .places-tool__errors {
+    background: rgba(220, 38, 38, 0.08); border: 1px solid rgba(220, 38, 38, 0.35); color: var(--paper);
+    padding: 0.85rem 1rem; border-radius: 4px; margin-bottom: 1rem; white-space: pre-wrap; font-size: 0.88rem;
+    display: none;
+  }
+  .places-tool__errors.is-visible { display: block; }
+  .places-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 4px; margin-top: 1rem; }
+  .places-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+  .places-table th, .places-table td { padding: 0.45rem 0.55rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  .places-table th { background: var(--ink-2); font-weight: 600; position: sticky; top: 0; z-index: 1; }
+  .places-table tr:hover td { background: rgba(99, 102, 241, 0.06); }
+  .places-table a { color: var(--amber-2); word-break: break-all; }
+  .places-tool__progress { font-size: 0.88rem; color: var(--mute-2); margin-bottom: 0.75rem; min-height: 1.25em; }
+</style>
+</head>
+<body class="page-admin page-admin--with-nav">
+
+<div class="grain" aria-hidden="true"></div>
+
+<nav class="nav" aria-label="Primary">
+  <a href="/" class="nav__logo">
+    <img class="nav__logo-img brand-logo" src="logo.png" width="220" height="90" alt="ServiceOpera.to — home" decoding="async" />
+  </a>
+  <div class="nav__links">
+    <a href="/">Home</a>
+    <a href="mailto:jack@serviceopera.to" class="nav__cta" title="jack@serviceopera.to">jack@serviceopera.to</a>
+  </div>
+</nav>
+
+<main class="places-tool">
+  <h1>Pattaya leads (Google Places API)</h1>
+  <p class="places-tool__sub">
+    Text Search runs on the server only — your Google API key is never sent to the browser.
+    Open this page from the same origin as the Node server (e.g. <code>http://localhost:8080/places-leads.html</code>).
+    Each line runs <code>POST /api/places/search</code>. Optional per-line override: <code>clinic|your query here</code>,
+    <code>hotel|…</code>, or <code>real_estate|…</code>.
+  </p>
+
+  <div class="places-tool__row">
+    <div>
+      <label>
+        <span>Default category</span>
+        <select id="defaultCategory" aria-label="Default category">
+          <option value="clinic">Clinics</option>
+          <option value="hotel">Hotels / serviced apartments</option>
+          <option value="real_estate">Real estate / property management</option>
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <label>
+    <span>Queries (one per line)</span>
+    <textarea id="queries" spellcheck="false" aria-label="Search queries">dental clinic in Pattaya Thailand
+aesthetic clinic in Pattaya Thailand
+medical clinic in Pattaya Thailand
+boutique hotel in Pattaya Thailand
+serviced apartment in Pattaya Thailand
+real estate agency in Pattaya Thailand
+property management Pattaya Thailand</textarea>
+  </label>
+
+  <p class="places-tool__hint">
+    Results are biased toward <strong>Pattaya / Thailand</strong> on the server (region + map circle). Up to 60 places per query (paginated server-side).
+  </p>
+
+  <div class="places-tool__actions">
+    <button type="button" class="btn btn--primary" id="btnCollect">Collect leads</button>
+    <button type="button" class="btn btn--ghost" id="btnCsv" disabled>Download CSV</button>
+  </div>
+
+  <div class="places-tool__progress" id="progress" aria-live="polite"></div>
+  <div class="places-tool__stats" id="stats"></div>
+  <div class="places-tool__errors" id="errors"></div>
+
+  <div class="places-table-wrap">
+    <table class="places-table" id="preview">
+      <thead>
+        <tr>
+          <th>category</th>
+          <th>query</th>
+          <th>name</th>
+          <th>address</th>
+          <th>phone</th>
+          <th>rating</th>
+          <th>reviews</th>
+          <th>maps</th>
+        </tr>
+      </thead>
+      <tbody id="previewBody"></tbody>
+    </table>
+  </div>
+  <p class="places-tool__hint" id="previewNote" style="margin-top: 0.75rem;"></p>
+</main>
+
+<script src="theme.js"></script>
+<script>
+(function () {
+  var queriesEl = document.getElementById('queries');
+  var defaultCatEl = document.getElementById('defaultCategory');
+  var btnCollect = document.getElementById('btnCollect');
+  var btnCsv = document.getElementById('btnCsv');
+  var progressEl = document.getElementById('progress');
+  var statsEl = document.getElementById('stats');
+  var errorsEl = document.getElementById('errors');
+  var tbody = document.getElementById('previewBody');
+  var previewNote = document.getElementById('previewNote');
+
+  var allRows = [];
+  var CATEGORY_LINE = /^(clinic|hotel|real_estate)\|\s*(.+)$/i;
+
+  function parseLine(line) {
+    var raw = (line || '').trim();
+    if (!raw) return null;
+    var m = raw.match(CATEGORY_LINE);
+    if (m) {
+      return { category: m[1].toLowerCase(), query: m[2].trim() };
+    }
+    return { category: defaultCatEl.value, query: raw };
+  }
+
+  function showErrors(lines) {
+    if (!lines || !lines.length) {
+      errorsEl.textContent = '';
+      errorsEl.classList.remove('is-visible');
+      return;
+    }
+    errorsEl.textContent = lines.join('\n');
+    errorsEl.classList.add('is-visible');
+  }
+
+  function csvEscape(val) {
+    var s = val == null ? '' : String(val);
+    if (/[",\n\r]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  }
+
+  function rowsToCsv(rows) {
+    var headers = [
+      'category', 'query', 'place_id', 'name', 'address', 'phone', 'website', 'google_maps_url',
+      'rating', 'review_count', 'latitude', 'longitude', 'business_status', 'types', 'collected_at',
+    ];
+    var lines = [headers.join(',')];
+    rows.forEach(function (row) {
+      lines.push(headers.map(function (h) { return csvEscape(row[h]); }).join(','));
+    });
+    return lines.join('\r\n');
+  }
+
+  function dedupeRows(rows) {
+    var seen = Object.create(null);
+    var out = [];
+    rows.forEach(function (r) {
+      var id = r.place_id || r.name + '|' + r.address;
+      if (seen[id]) return;
+      seen[id] = true;
+      out.push(r);
+    });
+    return out;
+  }
+
+  function renderTable(rows) {
+    tbody.innerHTML = '';
+    if (previewNote) {
+      previewNote.textContent =
+        rows.length > 500 ? 'Preview shows first 500 rows. CSV download includes all ' + rows.length + ' rows.' : '';
+    }
+    rows.slice(0, 500).forEach(function (r) {
+      var tr = document.createElement('tr');
+      var maps = r.google_maps_url
+        ? '<a href="' + String(r.google_maps_url).replace(/"/g, '&quot;') + '" target="_blank" rel="noopener">Maps</a>'
+        : '';
+      tr.innerHTML =
+        '<td>' + escapeHtml(r.category) + '</td>' +
+        '<td>' + escapeHtml(truncate(r.query, 40)) + '</td>' +
+        '<td>' + escapeHtml(truncate(r.name, 48)) + '</td>' +
+        '<td>' + escapeHtml(truncate(r.address, 48)) + '</td>' +
+        '<td>' + escapeHtml(r.phone) + '</td>' +
+        '<td>' + escapeHtml(String(r.rating)) + '</td>' +
+        '<td>' + escapeHtml(String(r.review_count)) + '</td>' +
+        '<td>' + maps + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function truncate(s, n) {
+    var t = String(s || '');
+    return t.length <= n ? t : t.slice(0, n - 1) + '…';
+  }
+
+  btnCsv.addEventListener('click', function () {
+    if (!allRows.length) return;
+    var blob = new Blob(['\ufeff' + rowsToCsv(allRows)], { type: 'text/csv;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'pattaya-places-leads-' + new Date().toISOString().slice(0, 10) + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  btnCollect.addEventListener('click', async function () {
+    var lines = queriesEl.value.split(/\r?\n/).map(parseLine).filter(Boolean);
+    if (!lines.length) {
+      showErrors(['Enter at least one query line.']);
+      return;
+    }
+
+    btnCollect.disabled = true;
+    btnCsv.disabled = true;
+    allRows = [];
+    tbody.innerHTML = '';
+    statsEl.innerHTML = '';
+    showErrors([]);
+    progressEl.textContent = '';
+
+    var errLines = [];
+    var done = 0;
+
+    for (var i = 0; i < lines.length; i++) {
+      var item = lines[i];
+      progressEl.textContent = 'Query ' + (i + 1) + ' / ' + lines.length + ': ' + item.query.slice(0, 72) + (item.query.length > 72 ? '…' : '');
+
+      try {
+        var res = await fetch('/api/places/search', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: item.query, category: item.category }),
+        });
+        var json = await res.json().catch(function () { return {}; });
+        if (!res.ok) {
+          errLines.push('Line ' + (i + 1) + ' · HTTP ' + res.status + ' · ' + (json.error || res.statusText));
+          continue;
+        }
+        if (!json.ok || !Array.isArray(json.rows)) {
+          errLines.push('Line ' + (i + 1) + ' · Unexpected response');
+          continue;
+        }
+        allRows = allRows.concat(json.rows);
+        done += json.rows.length;
+      } catch (e) {
+        errLines.push('Line ' + (i + 1) + ' · ' + (e && e.message ? e.message : 'Network error'));
+      }
+    }
+
+    allRows = dedupeRows(allRows);
+    statsEl.innerHTML = 'Total unique leads collected: <strong>' + allRows.length + '</strong> (raw rows before dedupe: ' + done + ').';
+    showErrors(errLines);
+    renderTable(allRows);
+    btnCsv.disabled = !allRows.length;
+    progressEl.textContent = errLines.length ? 'Finished with errors.' : 'Done.';
+    btnCollect.disabled = false;
+  });
+})();
+</script>
+</body>
+</html>
