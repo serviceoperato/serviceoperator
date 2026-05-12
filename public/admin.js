@@ -7,6 +7,7 @@
 
   var SESSION_KEY = 'so_admin_session';
   var JWT_KEY = 'so_admin_jwt';
+  var PORTAL_ADMIN_SESSION = 'portal-admin';
   var PORTAL_JWT_KEYS = ['so_user_jwt', 'so_clinic_jwt'];
 
   var otpEnabled = false;
@@ -66,6 +67,34 @@
     var e = String(email || '').trim();
     var at = e.indexOf('@');
     return at > 0 ? e.slice(0, at) : e || '—';
+  }
+
+  function decodeJwtEmail(token) {
+    try {
+      var parts = String(token || '').split('.');
+      if (parts.length < 2) return '';
+      var payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      while (payload.length % 4) payload += '=';
+      var json = JSON.parse(atob(payload));
+      return typeof json.email === 'string' ? json.email : '';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function portalAdminEmailFromJwt() {
+    return decodeJwtEmail(getPortalJwt()).trim().toLowerCase();
+  }
+
+  function isPortalAdminSignedIn() {
+    return portalAdminEmailFromJwt() === ADMIN_EMAIL.toLowerCase();
+  }
+
+  function tryRestorePortalAdminWorkspace() {
+    if (!isPortalAdminSignedIn()) return false;
+    sessionStorage.setItem(SESSION_KEY, PORTAL_ADMIN_SESSION);
+    showWorkspace();
+    return true;
   }
 
   function applyUsersView() {
@@ -445,7 +474,7 @@
 
   function tryRestoreJwtSession() {
     var token = sessionStorage.getItem(JWT_KEY);
-    if (!token || !otpEnabled) return Promise.resolve(false);
+    if (!token) return Promise.resolve(false);
     return fetch('/api/admin/session', {
       method: 'GET',
       credentials: 'same-origin',
@@ -480,17 +509,27 @@
         });
       })
       .then(function (x) {
-        if (!x.ok || !x.j || !x.j.token) return false;
-        sessionStorage.setItem(JWT_KEY, x.j.token);
-        showWorkspace();
-        return true;
+        if (x.ok && x.j && x.j.token) {
+          sessionStorage.setItem(JWT_KEY, x.j.token);
+          showWorkspace();
+          return true;
+        }
+        return tryRestorePortalAdminWorkspace();
       })
       .catch(function () {
-        return false;
+        return tryRestorePortalAdminWorkspace();
       });
   }
 
   function tryRestoreLegacySession() {
+    if (sessionStorage.getItem(SESSION_KEY) === PORTAL_ADMIN_SESSION) {
+      if (isPortalAdminSignedIn()) {
+        showWorkspace();
+        return true;
+      }
+      sessionStorage.removeItem(SESSION_KEY);
+      return false;
+    }
     if (otpEnabled) return false;
     if (sessionStorage.getItem(SESSION_KEY) === '1' && ADMIN_PASSWORD) {
       showWorkspace();

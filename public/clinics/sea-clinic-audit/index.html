@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=JetBrains+Mono:wght@300;400;500;700&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../styles.css" />
+<script src="/page-skeleton.js"></script>
 <style>
   .page-sea-audit .sea-hero__title { font-family: var(--font-display); font-weight: 400; font-size: clamp(1.85rem, 4.2vw, 3.1rem); line-height: 1.08; letter-spacing: -0.03em; margin-bottom: 1rem; max-width: 52rem; }
   .page-sea-audit .sea-hero__title .line { display: block; opacity: 0; transform: translateY(12px); animation: rise .75s cubic-bezier(.2,.7,.2,1) forwards; }
@@ -47,7 +48,7 @@
   .sea-skel__b { height: 64px; background: var(--ink-2); border: 1px solid var(--line); border-radius: 4px; animation: pulse 2s ease-in-out infinite; }
 </style>
 </head>
-<body class="page-client page-sea-audit">
+<body class="page-client page-sea-audit" data-page-skeleton="native">
 
 <div class="grain" aria-hidden="true"></div>
 
@@ -297,6 +298,7 @@
     });
 })();
 </script>
+<script src="/sw-register.js"></script>
 <script src="/site-nav-drawer.js"></script>
 <script src="/user-account-menu.js"></script>
 <script src="../../theme.js"></script>

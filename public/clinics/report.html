@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../styles.css" />
+<script src="/page-skeleton.js"></script>
 <style>
   /* Clinic report: Fraunces for hero titles only; sans labels (no monospace) */
   .page-clinic-report-access .report-caption {
@@ -92,7 +93,7 @@
   .clinics-fallback { text-align: center; padding: 4rem var(--gutter); color: var(--bone); }
 </style>
 </head>
-<body class="page-client page-clinics-demo page-clinic-report-access">
+<body class="page-client page-clinics-demo page-clinic-report-access" data-page-skeleton="native">
 
 <div class="grain" aria-hidden="true"></div>
 
@@ -410,6 +411,7 @@
   }
 })();
 </script>
+<script src="/sw-register.js"></script>
 <script src="/site-nav-drawer.js"></script>
 <script src="/user-account-menu.js"></script>
 <script src="../theme.js"></script>

@@ -884,9 +884,15 @@ app.use(
     index: ['index.html'],
     setHeaders(res, filePath) {
       const norm = filePath.split(path.sep).join('/');
+      if (filePath.endsWith('sw.js') || filePath.endsWith('sw-register.js')) {
+        res.setHeader('Cache-Control', 'no-store');
+        return;
+      }
       if (
         filePath.endsWith('client.html') ||
         filePath.endsWith('login.html') ||
+        filePath.endsWith('register.html') ||
+        filePath.endsWith('admin.html') ||
         filePath.endsWith('places-leads.html') ||
         norm.includes('/clinics/report.html')
       ) {

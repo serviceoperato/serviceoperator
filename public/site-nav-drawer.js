@@ -10,6 +10,30 @@
 
   var SECTIONS = [
     {
+      id: 'verticals',
+      title: 'Verticals',
+      items: [
+        {
+          title: 'Hotels & serviced apartments',
+          description:
+            'Concierge, reviews and rate intelligence for teams running keys across Thailand without a full revenue desk.',
+          href: '/',
+        },
+        {
+          title: 'Clinics, dental & wellness',
+          description:
+            'Intake, follow-up and review workflows for clinics serving mixed local and international demand.',
+          href: '/clinics/demo.html',
+        },
+        {
+          title: 'Property & rental operators',
+          description:
+            'Lead capture, owner updates and tenant comms so you grow doors without linear back-office growth.',
+          href: '/client.html',
+        },
+      ],
+    },
+    {
       id: 'discovery',
       title: 'Discovery',
       links: [
@@ -146,7 +170,26 @@
       body.id = sectionId;
       body.className = 'so-site-nav-section-body';
 
-      section.links.forEach(function (link) {
+      if (section.items && section.items.length) {
+        section.items.forEach(function (item) {
+          var card = document.createElement('a');
+          card.className = 'so-site-nav-vertical';
+          if (isActive(item.href)) card.classList.add('so-site-nav-vertical--active');
+          card.href = item.href || '#';
+          var cardTitle = document.createElement('span');
+          cardTitle.className = 'so-site-nav-vertical__title';
+          cardTitle.textContent = item.title;
+          var cardDesc = document.createElement('span');
+          cardDesc.className = 'so-site-nav-vertical__desc';
+          cardDesc.textContent = item.description;
+          card.appendChild(cardTitle);
+          card.appendChild(cardDesc);
+          card.addEventListener('click', closeMenu);
+          body.appendChild(card);
+        });
+      }
+
+      (section.links || []).forEach(function (link) {
         var a = document.createElement('a');
         a.className = 'so-site-nav-link';
         if (isActive(link.href)) a.classList.add('so-site-nav-link--active');
@@ -159,6 +202,8 @@
         a.addEventListener('click', closeMenu);
         body.appendChild(a);
       });
+
+      if (!section.items && (!section.links || !section.links.length)) return;
 
       toggle.addEventListener('click', function () {
         var open = body.classList.toggle('is-collapsed');
