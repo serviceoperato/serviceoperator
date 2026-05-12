@@ -97,7 +97,7 @@
       </div>
       <div class="client-stat">
         <div class="client-stat__label mono">AVG MONTHLY LEAKAGE</div>
-        <div class="client-stat__value">€<span id="statAvgLeak">11.4</span><span>k</span></div>
+        <div class="client-stat__value">฿<span id="statAvgLeak">445</span><span id="statAvgLeakUnit">k</span></div>
         <div class="client-stat__delta up"><span class="ico-tri ico-tri--up" aria-hidden="true"></span>conservative estimate</div>
       </div>
       <div class="client-stat">
@@ -129,12 +129,12 @@
   <section class="section section--method" style="margin-top: 2rem;">
     <div class="section__header">
       <span class="eyebrow mono">— 02 · THE NUMBER NOBODY LOOKS AT</span>
-      <h2 class="section__title"><span id="totalLeakTitle">€537k</span> walking out the door every month.</h2>
+      <h2 class="section__title"><span id="totalLeakTitle">฿21.0M</span> walking out the door every month.</h2>
       <p class="section__sub" id="leakSub">Across the clinics audited. Distributed like this:</p>
     </div>
     <div id="leakChart" class="clinics-chart"></div>
     <p class="mono" style="margin-top: 1.25rem; font-size: .65rem !important; color: var(--mute-2); max-width: 760px; margin-left: auto; margin-right: auto; line-height: 1.5;">
-      Formula: monthly patients (review-derived) × avg ticket per vertical × sum of present leakage factors. Capped at €30k/clinic to stay conservative. Full method available on request.
+      Formula: monthly patients (review-derived) × avg ticket per vertical × sum of present leakage factors. Capped at ฿1.2M/clinic to stay conservative. Full method available on request.
     </p>
   </section>
 
@@ -197,11 +197,23 @@
   var skel = document.getElementById('demoSkeleton');
   var root = document.getElementById('demoRoot');
   var fb = document.getElementById('demoFallback');
+  var FX_EUR_THB = 39; // display-only conversion (EUR → Thai baht)
 
   function fmtK(n) {
     if (n === 0) return '0';
     if (n >= 1000) return (n / 1000).toFixed(n % 1000 === 0 ? 0 : 1) + 'k';
     return String(n);
+  }
+
+  function fmtThbCompact(thb) {
+    var n = Math.max(0, Number(thb) || 0);
+    if (n >= 1000000) return { value: (n / 1000000).toFixed(n % 1000000 === 0 ? 0 : 1), unit: 'M' };
+    if (n >= 1000) return { value: String(Math.round(n / 1000)), unit: 'k' };
+    return { value: String(Math.round(n)), unit: '' };
+  }
+
+  function eurToThb(eur) {
+    return (Number(eur) || 0) * FX_EUR_THB;
   }
 
   function fmtDate(iso) {
@@ -212,10 +224,15 @@
   }
 
   function bucketLabel(i, buckets) {
-    if (i >= buckets.length - 1) return '€' + fmtK(buckets[buckets.length - 1]) + '+';
+    if (i >= buckets.length - 1) {
+      var tail = fmtThbCompact(eurToThb(buckets[buckets.length - 1]));
+      return '฿' + tail.value + tail.unit + '+';
+    }
     var a = buckets[i];
     var b = buckets[i + 1];
-    return '€' + fmtK(a) + '–€' + fmtK(b);
+    var fa = fmtThbCompact(eurToThb(a));
+    var fb2 = fmtThbCompact(eurToThb(b));
+    return '฿' + fa.value + fa.unit + '–฿' + fb2.value + fb2.unit;
   }
 
   function hydrate(d) {
@@ -224,11 +241,14 @@
     document.getElementById('demoEyebrow').textContent = '— THAILAND · MEDICAL VERTICAL · UPDATED ' + fmtDate(d.generated_at);
     document.getElementById('sampleSizeHero').textContent = n;
     document.getElementById('statSample').textContent = n;
-    document.getElementById('statAvgLeak').textContent = (h.avg_monthly_leakage_eur / 1000).toFixed(1);
+    var avg = fmtThbCompact(eurToThb(h.avg_monthly_leakage_eur));
+    document.getElementById('statAvgLeak').textContent = avg.value;
+    var avgUnit = document.getElementById('statAvgLeakUnit');
+    if (avgUnit) avgUnit.textContent = avg.unit;
     document.getElementById('statNoBook').textContent = h.clinics_without_booking_form_pct;
     document.getElementById('statNoLang').textContent = h.clinics_without_lang_switcher_pct;
-    var totalK = fmtK(h.total_monthly_leakage_eur_sample);
-    document.getElementById('totalLeakTitle').textContent = '€' + totalK + ' walking out the door every month.';
+    var total = fmtThbCompact(eurToThb(h.total_monthly_leakage_eur_sample));
+    document.getElementById('totalLeakTitle').textContent = '฿' + total.value + total.unit;
     document.getElementById('leakSub').textContent = 'Across the ' + n + ' clinics I audited. Distributed like this:';
     var neg = d.negative_review_snippets_total || 0;
     document.getElementById('painSub').textContent = 'Drawn from ' + neg + ' negative reviews across the sample. Translated where needed. Clustered by theme, not by clinic.';
