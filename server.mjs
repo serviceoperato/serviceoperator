@@ -26,6 +26,7 @@ const clinicStore = createClinicStore(dataDir);
 const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'jack@serviceopera.to').trim().toLowerCase();
 const RESEND_API_KEY = (process.env.RESEND_API_KEY || '').trim();
 const RESEND_FROM = (process.env.RESEND_FROM || 'ServiceOpera <onboarding@resend.dev>').trim();
+const RESEND_FROM_USES_TEST_SENDER = /@resend\.dev>/i.test(RESEND_FROM) || /onboarding@resend\.dev/i.test(RESEND_FROM);
 /** Public clinic sign-up is on by default; set CLINIC_SELF_REGISTER=false (or 0, no, off) for invite-only. */
 const CLINIC_SELF_REGISTER = (function () {
   const raw = process.env.CLINIC_SELF_REGISTER;
@@ -146,6 +147,25 @@ function pruneSends(ip) {
   return fresh;
 }
 
+function resendFailureMessage(err, fallback) {
+  const detail = String(err?.resendDetail || err?.message || '').toLowerCase();
+  if (
+    detail.includes('only send') ||
+    detail.includes('testing emails') ||
+    detail.includes('test emails') ||
+    detail.includes('sandbox')
+  ) {
+    return 'Resend is still using the test sender. Set RESEND_FROM on Railway to a verified domain address (not onboarding@resend.dev), redeploy, then try again.';
+  }
+  if (detail.includes('domain') && (detail.includes('verify') || detail.includes('verified'))) {
+    return 'The sender domain is not verified in Resend. Update RESEND_FROM on Railway to a verified address, redeploy, and try again.';
+  }
+  if (detail.includes('invalid api key') || detail.includes('unauthorized') || detail.includes('api key')) {
+    return 'Resend rejected the API key on this server. Check RESEND_API_KEY on Railway, redeploy, and try again.';
+  }
+  return fallback;
+}
+
 async function sendResendEmail({ to, subject, html }) {
   const r = await fetch('https://api.resend.com/emails', {
     method: 'POST',
@@ -157,8 +177,17 @@ async function sendResendEmail({ to, subject, html }) {
   });
   const text = await r.text();
   if (!r.ok) {
-    const err = new Error('Resend HTTP ' + r.status + ': ' + text.slice(0, 400));
+    let resendDetail = text.slice(0, 400);
+    try {
+      const parsed = JSON.parse(text);
+      if (parsed && typeof parsed.message === 'string') resendDetail = parsed.message;
+    } catch {
+      /* keep raw body */
+    }
+    const err = new Error('Resend HTTP ' + r.status + ': ' + resendDetail);
     err.status = r.status >= 500 ? 503 : 502;
+    err.resendDetail = resendDetail;
+    console.error('[serviceopera] Resend failed:', r.status, resendDetail);
     throw err;
   }
 }
@@ -210,6 +239,7 @@ app.get('/api/auth/clinic-capabilities', (_req, res) => {
     passwordResetEmail: Boolean(RESEND_API_KEY),
     selfRegister: Boolean(CLINIC_SELF_REGISTER),
     registrationConfirmEmail: Boolean(RESEND_API_KEY && CLINIC_SELF_REGISTER),
+    resendTestSender: Boolean(RESEND_API_KEY && RESEND_FROM_USES_TEST_SENDER),
   });
 });
 
@@ -261,7 +291,12 @@ app.post('/api/auth/clinic-register', async (req, res) => {
     sendTimestampsByIp.set(ip, sends);
   } catch (e) {
     const status = e.status || 502;
-    return res.status(status).json({ error: 'Could not send confirmation email. Try again later or contact support.' });
+    return res.status(status).json({
+      error: resendFailureMessage(
+        e,
+        'Could not send confirmation email. Try again later or contact jack@serviceopera.to.'
+      ),
+    });
   }
   return res.status(201).json({
     ok: true,
@@ -305,7 +340,9 @@ app.post('/api/admin/send-code', async (req, res) => {
   } catch (e) {
     otpByEmail.delete(ADMIN_EMAIL);
     const status = e.status || 502;
-    return res.status(status).json({ error: 'Could not send email. Check RESEND_FROM / domain and API key.' });
+    return res.status(status).json({
+      error: resendFailureMessage(e, 'Could not send email. Check RESEND_FROM / domain and API key.'),
+    });
   }
 
   return res.json(generic);
@@ -417,7 +454,9 @@ app.post('/api/auth/clinic-request-reset', async (req, res) => {
     sendTimestampsByIp.set(ip, sends);
   } catch (e) {
     const status = e.status || 502;
-    return res.status(status).json({ error: 'Could not send email. Try again later or contact support.' });
+    return res.status(status).json({
+      error: resendFailureMessage(e, 'Could not send email. Try again later or contact jack@serviceopera.to.'),
+    });
   }
 
   return res.json(generic);
@@ -582,6 +621,13 @@ app.listen(port, '0.0.0.0', () => {
       ? '[serviceopera] Resend: RESEND_API_KEY is set (admin OTP + clinic forgot-password).'
       : '[serviceopera] Resend: RESEND_API_KEY missing — set it on this Railway service and redeploy.'
   );
+  if (RESEND_API_KEY) {
+    console.log(
+      RESEND_FROM_USES_TEST_SENDER
+        ? '[serviceopera] Resend: RESEND_FROM uses the test sender — only the Resend account mailbox can receive mail until you verify a domain.'
+        : '[serviceopera] Resend: RESEND_FROM=' + RESEND_FROM
+    );
+  }
   console.log(
     CLINIC_SELF_REGISTER
       ? '[serviceopera] Clinic self-register: enabled (default; set CLINIC_SELF_REGISTER=false for invite-only).'

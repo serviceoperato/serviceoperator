@@ -197,6 +197,7 @@
   var registerHintEl = document.getElementById('registerHint');
   var selfRegisterEnabled = false;
   var registrationConfirmOk = false;
+  var resendTestSender = false;
 
   function stripVerifyQueryFromUrl() {
     try {
@@ -324,9 +325,13 @@
       resetEmailEnabled = clinicApiFromOurServer && Boolean(cap && cap.passwordResetEmail);
       selfRegisterEnabled = clinicApiFromOurServer && Boolean(cap && cap.selfRegister);
       registrationConfirmOk = clinicApiFromOurServer && Boolean(cap && cap.registrationConfirmEmail);
+      resendTestSender = clinicApiFromOurServer && Boolean(cap && cap.resendTestSender);
       var regNote = document.getElementById('clinicRegisterHelpNote');
       if (regNote) {
-        if (selfRegisterEnabled && registrationConfirmOk) {
+        if (selfRegisterEnabled && registrationConfirmOk && resendTestSender) {
+          regNote.textContent =
+            'We will email you a confirmation link. Resend is still on the test sender, so only the Resend account mailbox can receive it until RESEND_FROM uses a verified domain on Railway. Password: min 8 characters.';
+        } else if (selfRegisterEnabled && registrationConfirmOk) {
           regNote.textContent =
             'We will email you a confirmation link. After you confirm, you can sign in. Password: min 8 characters.';
         } else if (selfRegisterEnabled && clinicApiFromOurServer && !registrationConfirmOk) {
