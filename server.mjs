@@ -214,18 +214,20 @@ async function buildAdminWorkQueue() {
 
 const siteAppearancePath = path.join(dataDir, 'site-appearance.json');
 const defaultSiteAppearance = {
-  propertyPageImageUrl: '/images/property-page-hero.png',
+  propertyPageImageUrl: '/assets/property-page-hero.png',
   propertyPageImageAlt:
     'Dashboard preview: AI-assisted lead response, viewing bookings, and property operations for rental operators.',
-  clinicPageImageUrl: '/images/clinics-page-hero.png',
+  clinicPageImageUrl: '/assets/clinics-page-hero.png',
   clinicPageImageAlt:
     'Dashboard preview: multi-channel clinic inbox, AI suggested replies, follow-ups and reviews for wellness operators.',
-  hotelPageImageUrl: '/images/hotels-page-hero.png',
+  hotelPageImageUrl: '/assets/hotels-page-hero.png',
   hotelPageImageAlt:
     'Dashboard preview: AI hotel operations inbox, booking recovery, guest replies and demand insights.',
-  homePageImageUrl: '/images/home-page-hero.png',
+  homePageImageUrl: '/assets/home-page-hero.png',
   homePageImageAlt:
     'Dashboard preview: ServiceOpera AI inbox across hotels, clinics and property with regional market context.',
+  navLogoUrl: '/assets/logo.png',
+  navLogoAlt: 'ServiceOpera.to',
 };
 
 function readSiteAppearanceRaw() {
@@ -236,39 +238,66 @@ function readSiteAppearanceRaw() {
   }
 }
 
+/** Map legacy `/images/*` hero paths to `/assets/*` after the static folder consolidation. */
+function rewriteLegacyImagesUrl(url) {
+  if (typeof url !== 'string') return url;
+  const t = url.trim();
+  if (t.startsWith('/images/')) return '/assets/' + t.slice('/images/'.length);
+  return t;
+}
+
+function normalizeNavLogoUrl(url) {
+  const u = rewriteLegacyImagesUrl(typeof url === 'string' ? url.trim() : '');
+  if (u === '/logo.png') return '/assets/logo.png';
+  return u;
+}
+
 function mergeSiteAppearance(raw) {
-  const propUrl =
+  const propUrl = rewriteLegacyImagesUrl(
     typeof raw.propertyPageImageUrl === 'string' && raw.propertyPageImageUrl.trim()
       ? raw.propertyPageImageUrl.trim()
-      : defaultSiteAppearance.propertyPageImageUrl;
+      : defaultSiteAppearance.propertyPageImageUrl
+  );
   const propAltRaw = typeof raw.propertyPageImageAlt === 'string' ? raw.propertyPageImageAlt.trim() : '';
   const propAlt = propAltRaw
     ? propAltRaw.slice(0, 500).replace(/[\u0000-\u001f\u007f]/g, '')
     : defaultSiteAppearance.propertyPageImageAlt;
-  const clinicUrl =
+  const clinicUrl = rewriteLegacyImagesUrl(
     typeof raw.clinicPageImageUrl === 'string' && raw.clinicPageImageUrl.trim()
       ? raw.clinicPageImageUrl.trim()
-      : defaultSiteAppearance.clinicPageImageUrl;
+      : defaultSiteAppearance.clinicPageImageUrl
+  );
   const clinicAltRaw = typeof raw.clinicPageImageAlt === 'string' ? raw.clinicPageImageAlt.trim() : '';
   const clinicAlt = clinicAltRaw
     ? clinicAltRaw.slice(0, 500).replace(/[\u0000-\u001f\u007f]/g, '')
     : defaultSiteAppearance.clinicPageImageAlt;
-  const hotelUrl =
+  const hotelUrl = rewriteLegacyImagesUrl(
     typeof raw.hotelPageImageUrl === 'string' && raw.hotelPageImageUrl.trim()
       ? raw.hotelPageImageUrl.trim()
-      : defaultSiteAppearance.hotelPageImageUrl;
+      : defaultSiteAppearance.hotelPageImageUrl
+  );
   const hotelAltRaw = typeof raw.hotelPageImageAlt === 'string' ? raw.hotelPageImageAlt.trim() : '';
   const hotelAlt = hotelAltRaw
     ? hotelAltRaw.slice(0, 500).replace(/[\u0000-\u001f\u007f]/g, '')
     : defaultSiteAppearance.hotelPageImageAlt;
-  const homeUrl =
+  const homeUrl = rewriteLegacyImagesUrl(
     typeof raw.homePageImageUrl === 'string' && raw.homePageImageUrl.trim()
       ? raw.homePageImageUrl.trim()
-      : defaultSiteAppearance.homePageImageUrl;
+      : defaultSiteAppearance.homePageImageUrl
+  );
   const homeAltRaw = typeof raw.homePageImageAlt === 'string' ? raw.homePageImageAlt.trim() : '';
   const homeAlt = homeAltRaw
     ? homeAltRaw.slice(0, 500).replace(/[\u0000-\u001f\u007f]/g, '')
     : defaultSiteAppearance.homePageImageAlt;
+  const navLogoUrl = normalizeNavLogoUrl(
+    typeof raw.navLogoUrl === 'string' && raw.navLogoUrl.trim()
+      ? raw.navLogoUrl.trim()
+      : defaultSiteAppearance.navLogoUrl
+  );
+  const navLogoAltRaw = typeof raw.navLogoAlt === 'string' ? raw.navLogoAlt.trim() : '';
+  const navLogoAlt = navLogoAltRaw
+    ? navLogoAltRaw.slice(0, 180).replace(/[\u0000-\u001f\u007f]/g, '')
+    : defaultSiteAppearance.navLogoAlt;
   return {
     propertyPageImageUrl: propUrl,
     propertyPageImageAlt: propAlt,
@@ -278,6 +307,8 @@ function mergeSiteAppearance(raw) {
     hotelPageImageAlt: hotelAlt,
     homePageImageUrl: homeUrl,
     homePageImageAlt: homeAlt,
+    navLogoUrl,
+    navLogoAlt,
   };
 }
 
@@ -648,10 +679,55 @@ function publicOrigin(req) {
   return `${proto}://${host}`.replace(/\/$/, '');
 }
 
+/** Comma-separated absolute origins allowed to call this API from a browser (CORS + email links). */
+const PORTAL_CORS_ORIGINS = (process.env.PORTAL_CORS_ORIGINS || process.env.PORTAL_FRONTEND_ORIGINS || '')
+  .split(/[,;\s]+/)
+  .map((s) => s.trim().replace(/\/$/, ''))
+  .filter(Boolean);
+
+function isAllowedPortalCorsOrigin(origin) {
+  if (!origin || typeof origin !== 'string') return false;
+  const o = origin.trim().replace(/\/$/, '');
+  if (!o) return false;
+  if (PORTAL_CORS_ORIGINS.includes(o)) return true;
+  try {
+    const u = new URL(o);
+    if (/\.up\.railway\.app$/i.test(u.hostname)) return true;
+  } catch {
+    return false;
+  }
+  return false;
+}
+
+/** Links in outbound email (verify / reset) should open the public site, not the API host, when API is split. */
+function publicOriginForEmail(req) {
+  const fromEnv = (process.env.PUBLIC_ORIGIN || '').trim().replace(/\/$/, '');
+  if (fromEnv) return fromEnv;
+  const originHeader = (req.get('origin') || '').trim().replace(/\/$/, '');
+  if (originHeader && isAllowedPortalCorsOrigin(originHeader)) return originHeader;
+  return publicOrigin(req);
+}
+
 const app = express();
 app.set('trust proxy', 1);
 app.disable('x-powered-by');
 app.use(express.json({ limit: '48kb' }));
+
+app.use((req, res, next) => {
+  if (!req.path.startsWith('/api/')) return next();
+  const origin = req.get('origin');
+  if (origin && isAllowedPortalCorsOrigin(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Max-Age', '7200');
+  }
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end();
+  }
+  next();
+});
 
 app.use((req, res, next) => {
   res.setHeader('X-Frame-Options', 'DENY');
@@ -777,7 +853,7 @@ async function handlePortalRegister(req, res) {
     email: pending.email,
     exp: Date.now() + CLINIC_VERIFY_JWT_MS,
   });
-  const origin = publicOrigin(req);
+  const origin = publicOriginForEmail(req);
   const link = `${origin}/login.html?verify=${encodeURIComponent(verifyJwtToken)}`;
   try {
     await sendResendEmail({
@@ -957,6 +1033,15 @@ app.put('/api/admin/site-appearance', requireAdmin, (req, res) => {
     });
   }
 
+  const navLogoUrlIn =
+    'navLogoUrl' in body && typeof body.navLogoUrl === 'string' ? body.navLogoUrl.trim() : cur.navLogoUrl;
+  let navLogoUrl = normalizeNavLogoUrl(navLogoUrlIn || defaultSiteAppearance.navLogoUrl);
+  if (!isSafePropertyPageImageUrl(navLogoUrl)) {
+    return res.status(400).json({
+      error: 'Invalid navLogoUrl. Use a path on this site (starting with /) or an https:// image URL.',
+    });
+  }
+
   const propAlt =
     'propertyPageImageAlt' in body
       ? normalizePageImageAlt(body.propertyPageImageAlt, defaultSiteAppearance.propertyPageImageAlt)
@@ -973,6 +1058,10 @@ app.put('/api/admin/site-appearance', requireAdmin, (req, res) => {
     'homePageImageAlt' in body
       ? normalizePageImageAlt(body.homePageImageAlt, defaultSiteAppearance.homePageImageAlt)
       : cur.homePageImageAlt;
+  const navLogoAlt =
+    'navLogoAlt' in body
+      ? normalizePageImageAlt(body.navLogoAlt, defaultSiteAppearance.navLogoAlt).slice(0, 180)
+      : cur.navLogoAlt;
 
   const next = {
     propertyPageImageUrl: propUrl,
@@ -983,6 +1072,8 @@ app.put('/api/admin/site-appearance', requireAdmin, (req, res) => {
     hotelPageImageAlt: hotelAlt,
     homePageImageUrl: homeUrl,
     homePageImageAlt: homeAlt,
+    navLogoUrl,
+    navLogoAlt,
   };
   try {
     fs.writeFileSync(siteAppearancePath, JSON.stringify(next, null, 2) + '\n', 'utf8');
@@ -1225,7 +1316,7 @@ dualPost('/api/auth/user-resend-confirmation', '/api/auth/clinic-resend-confirma
     email: pending.email,
     exp: Date.now() + CLINIC_VERIFY_JWT_MS,
   });
-  const origin = publicOrigin(req);
+  const origin = publicOriginForEmail(req);
   const link = `${origin}/login.html?verify=${encodeURIComponent(verifyJwtToken)}`;
   try {
     await sendResendEmail({
@@ -1279,7 +1370,7 @@ dualPost('/api/auth/user-request-reset', '/api/auth/clinic-request-reset', async
     email: user.email,
     exp: Date.now() + CLINIC_RESET_JWT_MS,
   });
-  const origin = publicOrigin(req);
+  const origin = publicOriginForEmail(req);
   const link = `${origin}/login.html?reset=${encodeURIComponent(resetToken)}`;
 
   try {
@@ -1494,6 +1585,23 @@ app.get('/api/clinics/report-data', (req, res) => {
   } catch {
     return res.status(500).json({ error: 'Invalid report JSON on server.' });
   }
+});
+
+app.get('/logo.png', (_req, res) => {
+  try {
+    const merged = mergeSiteAppearance(readSiteAppearanceRaw());
+    const rawTarget = String(merged.navLogoUrl || '').trim() || defaultSiteAppearance.navLogoUrl;
+    const target = normalizeNavLogoUrl(rawTarget);
+    if (/^https:/i.test(target)) {
+      return res.redirect(302, target);
+    }
+    if (target.startsWith('/')) {
+      return res.redirect(302, target);
+    }
+  } catch {
+    /* fall through */
+  }
+  return res.redirect(302, '/assets/logo.png');
 });
 
 app.use(

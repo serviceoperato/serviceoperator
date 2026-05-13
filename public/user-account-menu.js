@@ -93,7 +93,9 @@
   function fetchJson(path, token) {
     var headers = {};
     if (token) headers.Authorization = 'Bearer ' + token;
-    return fetch(path, { credentials: 'same-origin', headers: headers, cache: 'no-store' })
+    var url = typeof soApiUrl === 'function' ? soApiUrl(path) : path;
+    var cred = typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin';
+    return fetch(url, { credentials: cred, headers: headers, cache: 'no-store' })
       .then(function (r) {
         return r.json().then(function (j) {
           return { ok: r.ok, status: r.status, json: j };

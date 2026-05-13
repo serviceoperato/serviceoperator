@@ -7,7 +7,7 @@ Files available:
 - components/SeaClinicAuditSection.tsx
 - components/seaClinicAuditData.ts
 - data/*.json
-- visuals/*.svg
+- public/assets/*.svg (audit charts)
 - content/*.md
 
 Implementation instructions:
@@ -27,9 +27,9 @@ Implementation instructions:
    - no medical claims beyond public positioning
 
 4. Add the SVG visuals:
-   - visuals/audit_lines.svg
-   - visuals/automation_funnel.svg
-   - visuals/competitor_radar.svg
+   - /assets/audit_lines.svg
+   - /assets/automation_funnel.svg
+   - /assets/competitor_radar.svg
 
 5. Add a disclaimer near the bottom:
    "This audit is based only on public information. Ratings, review counts and prices should be refreshed before client delivery."

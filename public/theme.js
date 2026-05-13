@@ -56,3 +56,26 @@
     boot();
   }
 })();
+
+/* Nav lockup from site appearance (admin-configurable via GET /api/site-appearance). */
+(function () {
+  function applyNav(j) {
+    if (!j || typeof j.navLogoUrl !== 'string') return;
+    var u = j.navLogoUrl.trim();
+    if (!u) return;
+    var alt = typeof j.navLogoAlt === 'string' && j.navLogoAlt.trim() ? j.navLogoAlt.trim() : '';
+    document.querySelectorAll('img.brand-logo').forEach(function (img) {
+      img.src = u;
+      if (alt) img.alt = alt;
+    });
+  }
+  fetch(typeof soApiUrl === 'function' ? soApiUrl('/api/site-appearance') : '/api/site-appearance', {
+    credentials: typeof soApiCredentials === 'function' ? soApiCredentials() : 'omit',
+    cache: 'no-store',
+  })
+    .then(function (r) {
+      return r.ok ? r.json() : null;
+    })
+    .then(applyNav)
+    .catch(function () {});
+})();

@@ -40,9 +40,16 @@
   var reportCatalog = null;
   var reportCatalogVertical = 'clinics';
 
+  function api(path) {
+    return typeof soApiUrl === 'function' ? soApiUrl(path) : path;
+  }
+  function apiCred() {
+    return typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin';
+  }
+
   function loadTfVersion() {
     if (!tfVerNum) return;
-    fetch('/api/version', { cache: 'no-store' })
+    fetch(api('/api/version'), { cache: 'no-store', credentials: apiCred() })
       .then(function (r) {
         return r.json();
       })
@@ -215,9 +222,9 @@
     var mount = document.getElementById('adminUserTelemetry');
     if (!mount || !user || !user.id) return;
     mount.innerHTML = '<p class="tf-admin-muted mono">Loading activity…</p>';
-    fetch('/api/user-accounts/' + encodeURIComponent(user.id) + '/telemetry', {
+    fetch(api('/api/user-accounts/' + encodeURIComponent(user.id) + '/telemetry'), {
       method: 'GET',
-      credentials: 'same-origin',
+      credentials: apiCred(),
       headers: { Authorization: 'Bearer ' + getAdminBearer() },
     })
       .then(function (r) {
@@ -338,9 +345,9 @@
           spend: Number(fd.get('spend') || 0),
           earned: Number(fd.get('earned') || 0),
         };
-        fetch('/api/user-accounts/' + encodeURIComponent(user.id), {
+        fetch(api('/api/user-accounts/' + encodeURIComponent(user.id)), {
           method: 'PATCH',
-          credentials: 'same-origin',
+          credentials: apiCred(),
           headers: {
             Authorization: 'Bearer ' + getAdminBearer(),
             'Content-Type': 'application/json',
@@ -532,18 +539,19 @@
     }
 
     Promise.all([
-      fetch('/api/version', { cache: 'no-store' }).then(function (r) {
+      fetch(api('/api/version'), { cache: 'no-store', credentials: apiCred() }).then(function (r) {
         return r.json().then(function (j) {
           return { ok: r.ok, status: r.status, json: j };
         });
       }),
-      fetch('/api/debug/user-store', { cache: 'no-store' }).then(function (r) {
+      fetch(api('/api/debug/user-store'), { cache: 'no-store', credentials: apiCred() }).then(function (r) {
         return r.json().then(function (j) {
           return { ok: r.ok, status: r.status, json: j };
         });
       }),
-      fetch('/api/admin/work-queue', {
+      fetch(api('/api/admin/work-queue'), {
         cache: 'no-store',
+        credentials: apiCred(),
         headers: { Authorization: 'Bearer ' + getAdminBearer() },
       }).then(function (r) {
         return r.json().then(function (j) {
@@ -625,32 +633,158 @@
     if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.add('is-hidden');
     panelTitle.textContent = 'Site appearance';
     panelBody.innerHTML =
-      '<p class="tf-admin-muted">Hero images on the homepage (before <em>Private operational audits</em>), plus <code>property.html</code>, <code>clinics.html</code>, and <code>hotels.html</code>. Use a path under <code>/images/…</code> after you add the file to the deploy, or any public <strong>https</strong> image URL. Visitors load values from <code>GET /api/site-appearance</code>.</p>' +
-      '<div class="admin-panel__form">' +
-      '<label class="portal-form__label" for="soSiteHomeImgUrl">Homepage hero image URL</label>' +
+      '<div class="so-site-appearance">' +
+      '<p class="tf-admin-muted so-site-appearance__lede">Square previews update as you type. Use <code>/assets/…</code> or a public <strong>https</strong> URL. <code>/logo.png</code> redirects to the nav logo below. Public: <code>GET /api/site-appearance</code>.</p>' +
+      '<div class="so-site-appearance__grid">' +
+      '<article class="so-site-appearance__card">' +
+      '<div class="so-site-appearance__preview">' +
+      '<img id="soSiteNavLogoPreview" class="so-site-appearance__preview-img is-hidden" alt="" decoding="async" />' +
+      '<div id="soSiteNavLogoPreviewEmpty" class="so-site-appearance__preview-empty">No preview</div>' +
+      '</div>' +
+      '<div class="so-site-appearance__card-fields">' +
+      '<h3 class="so-site-appearance__card-title">Nav logo</h3>' +
+      '<p class="so-site-appearance__card-meta mono">Header · <code>img.brand-logo</code></p>' +
+      '<label class="portal-form__label" for="soSiteNavLogoUrl">Image URL</label>' +
+      '<input class="portal-form__input mono" type="text" id="soSiteNavLogoUrl" autocomplete="off" />' +
+      '<label class="portal-form__label" for="soSiteNavLogoAlt">Alt text</label>' +
+      '<input class="portal-form__input" type="text" id="soSiteNavLogoAlt" maxlength="180" autocomplete="off" />' +
+      '</div></article>' +
+      '<article class="so-site-appearance__card">' +
+      '<div class="so-site-appearance__preview">' +
+      '<img id="soSiteHomeImgPreview" class="so-site-appearance__preview-img is-hidden" alt="" decoding="async" />' +
+      '<div id="soSiteHomeImgPreviewEmpty" class="so-site-appearance__preview-empty">No preview</div>' +
+      '</div>' +
+      '<div class="so-site-appearance__card-fields">' +
+      '<h3 class="so-site-appearance__card-title">Homepage hero</h3>' +
+      '<p class="so-site-appearance__card-meta mono">index.html hero</p>' +
+      '<label class="portal-form__label" for="soSiteHomeImgUrl">Image URL</label>' +
       '<input class="portal-form__input mono" type="text" id="soSiteHomeImgUrl" autocomplete="off" />' +
-      '<label class="portal-form__label" for="soSiteHomeImgAlt" style="margin-top:1rem">Homepage hero alt text</label>' +
+      '<label class="portal-form__label" for="soSiteHomeImgAlt">Alt text</label>' +
       '<input class="portal-form__input" type="text" id="soSiteHomeImgAlt" maxlength="500" autocomplete="off" />' +
-      '<label class="portal-form__label" for="soSitePropImgUrl" style="margin-top:1.25rem">Property page image URL</label>' +
+      '</div></article>' +
+      '<article class="so-site-appearance__card">' +
+      '<div class="so-site-appearance__preview">' +
+      '<img id="soSitePropImgPreview" class="so-site-appearance__preview-img is-hidden" alt="" decoding="async" />' +
+      '<div id="soSitePropImgPreviewEmpty" class="so-site-appearance__preview-empty">No preview</div>' +
+      '</div>' +
+      '<div class="so-site-appearance__card-fields">' +
+      '<h3 class="so-site-appearance__card-title">Property</h3>' +
+      '<p class="so-site-appearance__card-meta mono">property.html hero</p>' +
+      '<label class="portal-form__label" for="soSitePropImgUrl">Image URL</label>' +
       '<input class="portal-form__input mono" type="text" id="soSitePropImgUrl" autocomplete="off" />' +
-      '<label class="portal-form__label" for="soSitePropImgAlt" style="margin-top:1rem">Property image alt text</label>' +
+      '<label class="portal-form__label" for="soSitePropImgAlt">Alt text</label>' +
       '<input class="portal-form__input" type="text" id="soSitePropImgAlt" maxlength="500" autocomplete="off" />' +
-      '<label class="portal-form__label" for="soSiteClinicImgUrl" style="margin-top:1.25rem">Clinics page image URL</label>' +
+      '</div></article>' +
+      '<article class="so-site-appearance__card">' +
+      '<div class="so-site-appearance__preview">' +
+      '<img id="soSiteClinicImgPreview" class="so-site-appearance__preview-img is-hidden" alt="" decoding="async" />' +
+      '<div id="soSiteClinicImgPreviewEmpty" class="so-site-appearance__preview-empty">No preview</div>' +
+      '</div>' +
+      '<div class="so-site-appearance__card-fields">' +
+      '<h3 class="so-site-appearance__card-title">Clinics</h3>' +
+      '<p class="so-site-appearance__card-meta mono">clinics.html hero</p>' +
+      '<label class="portal-form__label" for="soSiteClinicImgUrl">Image URL</label>' +
       '<input class="portal-form__input mono" type="text" id="soSiteClinicImgUrl" autocomplete="off" />' +
-      '<label class="portal-form__label" for="soSiteClinicImgAlt" style="margin-top:1rem">Clinics image alt text</label>' +
+      '<label class="portal-form__label" for="soSiteClinicImgAlt">Alt text</label>' +
       '<input class="portal-form__input" type="text" id="soSiteClinicImgAlt" maxlength="500" autocomplete="off" />' +
-      '<label class="portal-form__label" for="soSiteHotelImgUrl" style="margin-top:1.25rem">Hotels page image URL</label>' +
+      '</div></article>' +
+      '<article class="so-site-appearance__card">' +
+      '<div class="so-site-appearance__preview">' +
+      '<img id="soSiteHotelImgPreview" class="so-site-appearance__preview-img is-hidden" alt="" decoding="async" />' +
+      '<div id="soSiteHotelImgPreviewEmpty" class="so-site-appearance__preview-empty">No preview</div>' +
+      '</div>' +
+      '<div class="so-site-appearance__card-fields">' +
+      '<h3 class="so-site-appearance__card-title">Hotels</h3>' +
+      '<p class="so-site-appearance__card-meta mono">hotels.html hero</p>' +
+      '<label class="portal-form__label" for="soSiteHotelImgUrl">Image URL</label>' +
       '<input class="portal-form__input mono" type="text" id="soSiteHotelImgUrl" autocomplete="off" />' +
-      '<label class="portal-form__label" for="soSiteHotelImgAlt" style="margin-top:1rem">Hotels image alt text</label>' +
+      '<label class="portal-form__label" for="soSiteHotelImgAlt">Alt text</label>' +
       '<input class="portal-form__input" type="text" id="soSiteHotelImgAlt" maxlength="500" autocomplete="off" />' +
-      '<p class="portal-form__hint mono" id="soSiteAppearanceHint"></p>' +
-      '<p class="admin-panel__actions" style="margin-top:1rem">' +
-      '<button type="button" class="btn btn-primary" id="soSiteAppearanceSave">Save</button> ' +
+      '</div></article>' +
+      '</div>' +
+      '<div class="so-site-appearance__footer">' +
+      '<p class="portal-form__hint mono" id="soSiteAppearanceHint" style="margin:0;flex:1;min-width:12rem"></p>' +
+      '<div class="admin-panel__actions" style="margin:0">' +
+      '<button type="button" class="btn btn-primary" id="soSiteAppearanceSave">Save all</button> ' +
       '<button type="button" class="btn btn--ghost mono" id="soSiteAppearanceBack">← Back to users</button>' +
-      '</p></div>';
+      '</div></div></div>';
     panel.classList.remove('is-hidden');
     panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
+    function siteAppearanceResolveUrl(raw) {
+      var u = String(raw || '').trim();
+      if (!u) return '';
+      if (/^https?:\/\//i.test(u)) return u;
+      if (u.charAt(0) === '/') return window.location.origin + u;
+      return u;
+    }
+
+    function wireSitePreview(urlInput, imgEl, emptyEl) {
+      if (!urlInput || !imgEl) return;
+      function sync() {
+        var src = siteAppearanceResolveUrl(urlInput.value);
+        if (!src) {
+          imgEl.removeAttribute('src');
+          imgEl.classList.add('is-hidden');
+          if (emptyEl) {
+            emptyEl.textContent = 'No preview';
+            emptyEl.classList.remove('is-hidden');
+          }
+          return;
+        }
+        if (emptyEl) {
+          emptyEl.textContent = 'Loading…';
+          emptyEl.classList.remove('is-hidden');
+        }
+        imgEl.classList.add('is-hidden');
+        imgEl.src = src;
+      }
+      imgEl.addEventListener('load', function () {
+        if (!siteAppearanceResolveUrl(urlInput.value)) return;
+        if (!imgEl.naturalWidth) return;
+        imgEl.classList.remove('is-hidden');
+        if (emptyEl) emptyEl.classList.add('is-hidden');
+      });
+      imgEl.addEventListener('error', function () {
+        imgEl.classList.add('is-hidden');
+        if (emptyEl) {
+          emptyEl.textContent = 'Could not load';
+          emptyEl.classList.remove('is-hidden');
+        }
+      });
+      urlInput.addEventListener('input', sync);
+      urlInput.addEventListener('change', sync);
+      sync();
+    }
+
+    wireSitePreview(
+      document.getElementById('soSiteNavLogoUrl'),
+      document.getElementById('soSiteNavLogoPreview'),
+      document.getElementById('soSiteNavLogoPreviewEmpty')
+    );
+    wireSitePreview(
+      document.getElementById('soSiteHomeImgUrl'),
+      document.getElementById('soSiteHomeImgPreview'),
+      document.getElementById('soSiteHomeImgPreviewEmpty')
+    );
+    wireSitePreview(
+      document.getElementById('soSitePropImgUrl'),
+      document.getElementById('soSitePropImgPreview'),
+      document.getElementById('soSitePropImgPreviewEmpty')
+    );
+    wireSitePreview(
+      document.getElementById('soSiteClinicImgUrl'),
+      document.getElementById('soSiteClinicImgPreview'),
+      document.getElementById('soSiteClinicImgPreviewEmpty')
+    );
+    wireSitePreview(
+      document.getElementById('soSiteHotelImgUrl'),
+      document.getElementById('soSiteHotelImgPreview'),
+      document.getElementById('soSiteHotelImgPreviewEmpty')
+    );
+
+    var navLogoUrlEl = document.getElementById('soSiteNavLogoUrl');
+    var navLogoAltEl = document.getElementById('soSiteNavLogoAlt');
     var homeUrlEl = document.getElementById('soSiteHomeImgUrl');
     var homeAltEl = document.getElementById('soSiteHomeImgAlt');
     var urlEl = document.getElementById('soSitePropImgUrl');
@@ -660,54 +794,102 @@
     var hotelUrlEl = document.getElementById('soSiteHotelImgUrl');
     var hotelAltEl = document.getElementById('soSiteHotelImgAlt');
     var hintEl = document.getElementById('soSiteAppearanceHint');
+    var SITE_APPEARANCE_DEFAULTS = {
+      navLogoUrl: '/assets/logo.png',
+      navLogoAlt: 'ServiceOpera.to — home',
+      homePageImageUrl: '/assets/home-page-hero.png',
+      homePageImageAlt: 'ServiceOpera — home',
+      propertyPageImageUrl: '/assets/property-page-hero.png',
+      propertyPageImageAlt: 'Property — ServiceOpera',
+      clinicPageImageUrl: '/assets/clinics-page-hero.png',
+      clinicPageImageAlt: 'Clinics — ServiceOpera',
+      hotelPageImageUrl: '/assets/hotels-page-hero.png',
+      hotelPageImageAlt: 'Hotels — ServiceOpera',
+    };
+    function applySiteAppearanceMerge(apiJson) {
+      var o = apiJson && typeof apiJson === 'object' ? apiJson : {};
+      function pick(k) {
+        var v = o[k];
+        var t = v != null && String(v).trim() ? String(v).trim() : '';
+        return t || (SITE_APPEARANCE_DEFAULTS[k] != null ? SITE_APPEARANCE_DEFAULTS[k] : '');
+      }
+      if (navLogoUrlEl) navLogoUrlEl.value = pick('navLogoUrl');
+      if (navLogoAltEl) navLogoAltEl.value = pick('navLogoAlt');
+      if (homeUrlEl) homeUrlEl.value = pick('homePageImageUrl');
+      if (homeAltEl) homeAltEl.value = pick('homePageImageAlt');
+      if (urlEl) urlEl.value = pick('propertyPageImageUrl');
+      if (altEl) altEl.value = pick('propertyPageImageAlt');
+      if (clinicUrlEl) clinicUrlEl.value = pick('clinicPageImageUrl');
+      if (clinicAltEl) clinicAltEl.value = pick('clinicPageImageAlt');
+      if (hotelUrlEl) hotelUrlEl.value = pick('hotelPageImageUrl');
+      if (hotelAltEl) hotelAltEl.value = pick('hotelPageImageAlt');
+    }
+    function bumpSiteAppearanceUrlPreviews() {
+      [navLogoUrlEl, homeUrlEl, urlEl, clinicUrlEl, hotelUrlEl].forEach(function (el) {
+        if (el) el.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+    }
     var token = getAdminBearer();
     if (!token) {
-      if (hintEl) hintEl.textContent = 'Sign in as admin first.';
+      applySiteAppearanceMerge({});
+      bumpSiteAppearanceUrlPreviews();
+      if (hintEl) {
+        hintEl.textContent =
+          'Sign in as admin (email OTP) to load saved URLs from the server and save. Below: suggested paths from /assets/ on this host.';
+      }
       return;
     }
-    fetch('/api/admin/site-appearance', {
+    fetch(api('/api/admin/site-appearance'), {
       method: 'GET',
-      credentials: 'same-origin',
+      credentials: apiCred(),
       cache: 'no-store',
       headers: { Authorization: 'Bearer ' + token },
     })
       .then(function (r) {
         return r.json().then(function (j) {
-          return { ok: r.ok, j: j };
+          return { ok: r.ok, status: r.status, j: j };
         });
       })
       .then(function (x) {
         if (!x.ok || !x.j) {
-          if (hintEl) hintEl.textContent = 'Could not load settings (HTTP ' + (x.j && x.j.error ? 'error' : 'failed') + ').';
+          applySiteAppearanceMerge({});
+          if (hintEl) {
+            hintEl.textContent =
+              'Could not load saved settings (HTTP ' +
+              (x.status != null ? x.status : '?') +
+              '). Showing defaults under /assets/… on this origin. Save still needs the Node API (so-api.js → backend).';
+          }
+          bumpSiteAppearanceUrlPreviews();
           return;
         }
-        if (homeUrlEl) homeUrlEl.value = x.j.homePageImageUrl || '';
-        if (homeAltEl) homeAltEl.value = x.j.homePageImageAlt || '';
-        if (urlEl) urlEl.value = x.j.propertyPageImageUrl || '';
-        if (altEl) altEl.value = x.j.propertyPageImageAlt || '';
-        if (clinicUrlEl) clinicUrlEl.value = x.j.clinicPageImageUrl || '';
-        if (clinicAltEl) clinicAltEl.value = x.j.clinicPageImageAlt || '';
-        if (hotelUrlEl) hotelUrlEl.value = x.j.hotelPageImageUrl || '';
-        if (hotelAltEl) hotelAltEl.value = x.j.hotelPageImageAlt || '';
-        if (hintEl) hintEl.textContent = 'Loaded. Public endpoint: GET /api/site-appearance';
+        applySiteAppearanceMerge(x.j);
+        if (hintEl) hintEl.textContent = 'Loaded from API. Public: GET /api/site-appearance';
+        bumpSiteAppearanceUrlPreviews();
       })
       .catch(function () {
-        if (hintEl) hintEl.textContent = 'Network error loading settings.';
+        applySiteAppearanceMerge({});
+        if (hintEl) {
+          hintEl.textContent =
+            'Network error calling the API. Showing /assets/… defaults. Deploy frontend with so-api.js so admin requests reach the backend.';
+        }
+        bumpSiteAppearanceUrlPreviews();
       });
 
     var save = document.getElementById('soSiteAppearanceSave');
     if (save) {
       save.addEventListener('click', function () {
         if (hintEl) hintEl.textContent = 'Saving…';
-        fetch('/api/admin/site-appearance', {
+        fetch(api('/api/admin/site-appearance'), {
           method: 'PUT',
-          credentials: 'same-origin',
+          credentials: apiCred(),
           cache: 'no-store',
           headers: {
             Authorization: 'Bearer ' + getAdminBearer(),
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
+            navLogoUrl: navLogoUrlEl ? navLogoUrlEl.value : '',
+            navLogoAlt: navLogoAltEl ? navLogoAltEl.value : '',
             homePageImageUrl: homeUrlEl ? homeUrlEl.value : '',
             homePageImageAlt: homeAltEl ? homeAltEl.value : '',
             propertyPageImageUrl: urlEl ? urlEl.value : '',
@@ -729,6 +911,8 @@
               return;
             }
             if (hintEl) hintEl.textContent = 'Saved. Visitors will see the new images on the next page load.';
+            if (navLogoUrlEl && x.j.navLogoUrl) navLogoUrlEl.value = x.j.navLogoUrl;
+            if (navLogoAltEl && x.j.navLogoAlt) navLogoAltEl.value = x.j.navLogoAlt;
             if (homeUrlEl && x.j.homePageImageUrl) homeUrlEl.value = x.j.homePageImageUrl;
             if (homeAltEl && x.j.homePageImageAlt) homeAltEl.value = x.j.homePageImageAlt;
             if (urlEl && x.j.propertyPageImageUrl) urlEl.value = x.j.propertyPageImageUrl;
@@ -737,6 +921,7 @@
             if (clinicAltEl && x.j.clinicPageImageAlt) clinicAltEl.value = x.j.clinicPageImageAlt;
             if (hotelUrlEl && x.j.hotelPageImageUrl) hotelUrlEl.value = x.j.hotelPageImageUrl;
             if (hotelAltEl && x.j.hotelPageImageAlt) hotelAltEl.value = x.j.hotelPageImageAlt;
+            bumpSiteAppearanceUrlPreviews();
           })
           .catch(function () {
             if (hintEl) hintEl.textContent = 'Network error on save.';
@@ -881,9 +1066,9 @@
   function loadReportCatalog() {
     var token = getAdminBearer();
     var request = token
-      ? fetch('/api/admin/report-catalog', {
+      ? fetch(api('/api/admin/report-catalog'), {
           method: 'GET',
-          credentials: 'same-origin',
+          credentials: apiCred(),
           headers: { Authorization: 'Bearer ' + token },
         })
       : fetch('/reports/index.json', { cache: 'no-store' });
@@ -919,6 +1104,11 @@
     buildTfNav();
     loadReportCatalog();
     loadWorkQueue();
+    if (typeof window.soRebuildSiteNavDrawer === 'function') {
+      try {
+        window.soRebuildSiteNavDrawer();
+      } catch (eNav) {}
+    }
   }
 
   function hideWorkspace() {
@@ -983,7 +1173,7 @@
   }
 
   function fetchCapabilities() {
-    return fetch('/api/admin/capabilities', { method: 'GET', credentials: 'same-origin', cache: 'no-store' })
+    return fetch(api('/api/admin/capabilities'), { method: 'GET', credentials: apiCred(), cache: 'no-store' })
       .then(function (r) {
         capabilitiesHttpOk = r.ok;
         if (!r.ok) throw new Error('bad');
@@ -1016,9 +1206,9 @@
   function tryRestoreJwtSession() {
     var token = sessionStorage.getItem(JWT_KEY);
     if (!token) return Promise.resolve(false);
-    return fetch('/api/admin/session', {
+    return fetch(api('/api/admin/session'), {
       method: 'GET',
-      credentials: 'same-origin',
+      credentials: apiCred(),
       headers: { Authorization: 'Bearer ' + token },
     })
       .then(function (r) {
@@ -1038,9 +1228,9 @@
   function tryRestorePortalAdminSession() {
     var portalJwt = getPortalJwt();
     if (!portalJwt) return Promise.resolve(false);
-    return fetch('/api/admin/bootstrap-from-portal', {
+    return fetch(api('/api/admin/bootstrap-from-portal'), {
       method: 'POST',
-      credentials: 'same-origin',
+      credentials: apiCred(),
       headers: { Authorization: 'Bearer ' + portalJwt },
       cache: 'no-store',
     })
@@ -1082,8 +1272,16 @@
     return false;
   }
 
-  function redirectToPortalLogin() {
-    window.location.replace('/login.html?next=' + encodeURIComponent('/admin.html'));
+  function showAdminLoginGate() {
+    if (workspace) workspace.classList.add('is-hidden');
+    if (gate) gate.classList.remove('is-hidden');
+    if (hint) {
+      hint.textContent = '';
+      hint.className = 'portal-form__hint mono';
+    }
+    try {
+      window.scrollTo(0, 0);
+    } catch (eScroll) {}
   }
 
   fetchCapabilities().then(function () {
@@ -1095,7 +1293,7 @@
     if (restored) return true;
     return !!tryRestoreLegacySession();
   }).then(function (restored) {
-    if (!restored) redirectToPortalLogin();
+    if (!restored) showAdminLoginGate();
   });
 
   if (sendCodeBtn) {
@@ -1109,9 +1307,9 @@
       }
       setHint('Sending…', '');
       sendCodeBtn.disabled = true;
-      fetch('/api/admin/send-code', {
+      fetch(api('/api/admin/send-code'), {
         method: 'POST',
-        credentials: 'same-origin',
+        credentials: apiCred(),
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email }),
       })
@@ -1151,9 +1349,9 @@
           return;
         }
         setHint('Checking…', '');
-        fetch('/api/admin/verify-code', {
+        fetch(api('/api/admin/verify-code'), {
           method: 'POST',
-          credentials: 'same-origin',
+          credentials: apiCred(),
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: email, code: code }),
         })
@@ -1384,9 +1582,9 @@
       hint.textContent = 'Loading…';
       hint.className = 'admin-inbox__hint mono';
     }
-    fetch('/api/admin/work-queue', {
+    fetch(api('/api/admin/work-queue'), {
       method: 'GET',
-      credentials: 'same-origin',
+      credentials: apiCred(),
       headers: { Authorization: 'Bearer ' + token },
     })
       .then(function (r) {
@@ -1445,9 +1643,9 @@
     var listEl = document.getElementById('portalUserList');
     if (!listEl) return;
     var token = getAdminBearer();
-    fetch('/api/user-accounts', {
+    fetch(api('/api/user-accounts'), {
       method: 'GET',
-      credentials: 'same-origin',
+      credentials: apiCred(),
       headers: { Authorization: 'Bearer ' + token },
     })
       .then(function (r) {
@@ -1506,9 +1704,9 @@
           password: (fd.get('password') || '').toString(),
           reportSlug: (fd.get('reportSlug') || '').toString().trim().toLowerCase(),
         };
-        fetch('/api/user-accounts', {
+        fetch(api('/api/user-accounts'), {
           method: 'POST',
-          credentials: 'same-origin',
+          credentials: apiCred(),
           headers: {
             Authorization: 'Bearer ' + getAdminBearer(),
             'Content-Type': 'application/json',

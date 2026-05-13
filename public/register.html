@@ -6,27 +6,17 @@
 <script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
 <title>Create account · ServiceOpera.to</title>
 <meta name="robots" content="noindex, nofollow" />
-<link rel="icon" href="favicon.png" type="image/png" sizes="any" />
-<link rel="apple-touch-icon" href="favicon.png" />
+<link rel="icon" href="/assets/favicon.png" type="image/png" sizes="any" />
+<link rel="apple-touch-icon" href="/assets/favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css" />
 <script src="/page-skeleton.js"></script>
+<script src="/so-api.js"></script>
 <style>
   .page-user-portal { font-family: var(--font-body); min-height: 100vh; }
   .tf-reg-wrap { max-width: 420px; margin: 0 auto; padding: 2rem 1.5rem; }
-  .tf-account-pick { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 1.1rem; }
-  .tf-account-card {
-    flex: 1; min-width: 160px; padding: 0.9rem 1rem; border-radius: 16px; cursor: pointer; text-align: left;
-    border: 1px solid var(--line-strong); background: var(--ink-2); color: var(--bone);
-    display: flex; align-items: center; gap: 12px; font-family: var(--font-body);
-  }
-  .tf-account-card.is-active { border: 2px solid var(--amber-2); background: color-mix(in srgb, var(--amber) 10%, var(--ink-2)); }
-  .tf-account-card__icon { width: 44px; height: 44px; border-radius: 14px; border: 1px solid var(--line); background: var(--ink); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.1rem; }
-  .tf-account-card__body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
-  .tf-account-card__title { font-weight: 800; }
-  .tf-account-card__sub { font-size: 0.82rem; color: var(--mute-2); line-height: 1.35; }
   .tf-input { width: 100%; padding: 0.85rem 0.9rem; border-radius: 12px; border: 1px solid var(--line-strong); background: var(--ink); color: var(--paper); font-size: 1rem; box-sizing: border-box; font-family: var(--font-body); }
   .tf-cap { display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--mute-2); }
   .tf-success-icon { width: 92px; height: 92px; border-radius: 24px; border: 1px solid var(--line); background: var(--ink-2); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.1rem; font-size: 2rem; }
@@ -43,12 +33,12 @@
 
 <nav class="nav" aria-label="Primary">
   <a href="/" class="nav__logo">
-    <img class="nav__logo-img brand-logo" src="logo.png" width="220" height="90" alt="ServiceOpera.to — home" decoding="async" />
+    <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="ServiceOpera.to — home" decoding="async" />
   </a>
   <div class="nav__links">
     <a href="/login.html" class="nav__login" id="navPortalAuth">Log in</a>
     <button type="button" class="theme-toggle" data-theme-toggle aria-label="Theme"></button>
-    <a href="mailto:jack@serviceopera.to" class="nav__cta" title="jack@serviceopera.to">jack@serviceopera.to</a>
+
   </div>
 </nav>
 
@@ -58,26 +48,6 @@
       <div class="tf-reg-wrap">
         <p class="portal-caption portal-caption--accent" style="margin-bottom:1rem">— USER ACCESS</p>
         <h1 id="regTitle" style="font-size:1.65rem;font-weight:700;margin:0;font-family:var(--font-body)">Create account</h1>
-        <p id="regSub" class="admin-gate__lede" style="margin-top:0.45rem">Choose account type, then email and password. Confirm your address from the link we send.</p>
-
-        <div class="tf-account-pick" role="group" aria-label="Account type">
-          <button type="button" class="tf-account-card is-active" id="accPerson" data-type="real_person">
-            <span class="tf-account-card__icon" aria-hidden="true">👤</span>
-            <span class="tf-account-card__body">
-              <span class="tf-account-card__title" id="lblPersonTitle">Individual</span>
-              <span class="tf-account-card__sub" id="lblPersonSub">Personal account — access your private report.</span>
-            </span>
-            <span aria-hidden="true" style="font-weight:900">✓</span>
-          </button>
-          <button type="button" class="tf-account-card" id="accBiz" data-type="business">
-            <span class="tf-account-card__icon" aria-hidden="true">🏢</span>
-            <span class="tf-account-card__body">
-              <span class="tf-account-card__title" id="lblBizTitle">Business</span>
-              <span class="tf-account-card__sub" id="lblBizSub">Team or organisation managing a report.</span>
-            </span>
-            <span aria-hidden="true" style="opacity:0.25;font-weight:900">✓</span>
-          </button>
-        </div>
 
         <form id="regForm" class="portal-form" style="margin-top:1.15rem" autocomplete="on">
           <label>
@@ -115,27 +85,15 @@
 <script src="debug.js"></script>
 <script>
 (function () {
-  var accountType = 'real_person';
   var ERR = {
     email: 'Enter a valid email.',
     pw: 'Password must be at least 8 characters.',
   };
 
-  function pickType(type, btn) {
-    accountType = type;
-    document.querySelectorAll('.tf-account-card').forEach(function (b) {
-      b.classList.toggle('is-active', b === btn);
-      var check = b.querySelector('span:last-child');
-      if (check) check.style.opacity = b === btn ? '1' : '0.25';
-    });
-  }
-  document.getElementById('accPerson').addEventListener('click', function () { pickType('real_person', this); });
-  document.getElementById('accBiz').addEventListener('click', function () { pickType('business', this); });
-
   function req(method, path, body) {
-    return fetch(path, {
+    return fetch((typeof soApiUrl === 'function' ? soApiUrl(path) : path), {
       method: method,
-      credentials: 'same-origin',
+      credentials: typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
       cache: 'no-store',
@@ -166,7 +124,7 @@
       return;
     }
     hint.textContent = '…';
-    req('POST', '/api/auth/user-register', { email: email, password: pw, account_type: accountType }).then(function (r) {
+    req('POST', '/api/auth/user-register', { email: email, password: pw }).then(function (r) {
       if (!r.ok) {
         hint.textContent = (r.json && r.json.error) || 'Request failed.';
         hint.className = 'portal-form__hint is-error';

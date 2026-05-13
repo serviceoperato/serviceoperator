@@ -196,7 +196,7 @@ Single-file HTML. Structure below; **live copy is defined in `index.html` in the
 <meta name="description" content="Jack — AI service operator. I design and run automation systems for hospitality, medical and property businesses across Thailand.">
 ```
 
-Preconnect to Google Fonts. Link `styles.css`. Link `favicon.png` (and optional `apple-touch-icon` to the same asset).
+Preconnect to Google Fonts. Link `styles.css`. Link `/assets/favicon.png` (and optional `apple-touch-icon` to the same asset).
 
 ### Section order
 

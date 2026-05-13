@@ -2022,6 +2022,9 @@ html.so-site-nav-open {
   backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--line);
 }
+.admin-topbar__site-nav {
+  flex-shrink: 0;
+}
 .admin-topbar__actions {
   display: flex;
   align-items: center;
@@ -2626,6 +2629,103 @@ html.so-site-nav-open {
   overflow-x: auto;
   font-size: 0.78rem;
   line-height: 1.55;
+}
+
+/* Admin · Site appearance (image grid) */
+.so-site-appearance__lede {
+  margin: 0 0 0.25rem;
+  max-width: 72rem;
+}
+.so-site-appearance__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+@media (max-width: 1100px) {
+  .so-site-appearance__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 780px) {
+  .so-site-appearance__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 460px) {
+  .so-site-appearance__grid {
+    grid-template-columns: 1fr;
+  }
+}
+.so-site-appearance__card {
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  padding: 0.85rem;
+  background: color-mix(in srgb, var(--ink-2) 92%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  min-width: 0;
+}
+.so-site-appearance__preview {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  background: color-mix(in srgb, var(--paper) 4%, var(--ink-2));
+}
+.so-site-appearance__preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.so-site-appearance__preview-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--mute-2);
+  padding: 0.65rem;
+  pointer-events: none;
+}
+.so-site-appearance__card-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  flex: 1;
+  min-width: 0;
+}
+.so-site-appearance__card-fields .portal-form__label {
+  margin-top: 0;
+}
+.so-site-appearance__card-title {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--amber-2);
+}
+.so-site-appearance__card-meta {
+  margin: -0.15rem 0 0;
+  font-size: 0.68rem;
+  color: var(--mute-2);
+  line-height: 1.35;
+}
+.so-site-appearance__footer {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line-strong);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+  justify-content: space-between;
 }
 
 /* Marketing / landing pages (home + verticals) */

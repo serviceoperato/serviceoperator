@@ -6,13 +6,14 @@
 <script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
 <title>Property &amp; rental operators — Service Opera</title>
 <meta name="description" content="Lead capture, tenant communication, owner updates, and reporting automation for Thailand property and rental operators." />
-<link rel="icon" href="favicon.png" type="image/png" sizes="any" />
-<link rel="apple-touch-icon" href="favicon.png" />
+<link rel="icon" href="/assets/favicon.png" type="image/png" sizes="any" />
+<link rel="apple-touch-icon" href="/assets/favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css" />
 <script src="/page-skeleton.js"></script>
+<script src="/so-api.js"></script>
 </head>
 <body class="page-mkt">
 
@@ -21,13 +22,13 @@
 <nav class="nav">
   <div class="nav__start">
     <a href="/" class="nav__logo">
-      <img class="nav__logo-img brand-logo" src="logo.png" width="220" height="90" alt="ServiceOpera.to" decoding="async" />
+      <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="ServiceOpera.to" decoding="async" />
     </a>
   </div>
   <div class="nav__links">
     <a href="/login.html" class="nav__login mono" id="navPortalAuth">Log in</a>
     <button type="button" class="theme-toggle" data-theme-toggle aria-label="Theme"></button>
-    <a href="mailto:jack@serviceopera.to" class="nav__cta" title="jack@serviceopera.to">jack@serviceopera.to</a>
+
   </div>
 </nav>
 
@@ -47,7 +48,7 @@
       <img
         id="soPropertyPageHero"
         class="mkt-page-visual__img"
-        src="/images/property-page-hero.png"
+        src="/assets/property-page-hero.png"
         width="1280"
         height="720"
         alt="Dashboard preview: AI-assisted lead response, viewing bookings, and property operations for rental operators."

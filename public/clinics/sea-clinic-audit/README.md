@@ -14,7 +14,7 @@ This ZIP contains a public-data audit pack for a demo page on ServiceOpera.to.
 - `data/automation_opportunities.json` — suggested AI systems
 - `components/SeaClinicAuditSection.tsx` — ready React/Tailwind component
 - `components/seaClinicAuditData.ts` — TypeScript data import
-- `visuals/*.svg` — ready visuals for the website
+- Chart SVGs live in `public/assets/` (`audit_lines.svg`, `automation_funnel.svg`, `competitor_radar.svg`) and are referenced from this page.
 - `content/*.md` — report copy and landing page copy
 - `cursor_prompt.md` — prompt to paste into Cursor
 

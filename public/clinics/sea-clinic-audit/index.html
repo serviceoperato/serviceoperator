@@ -6,13 +6,14 @@
 <script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
 <meta name="robots" content="noindex, nofollow" />
 <title>Thailand public-footprint audit sample · Jack · Service Operator</title>
-<link rel="icon" href="../../favicon.png" type="image/png" sizes="any" />
-<link rel="apple-touch-icon" href="../../favicon.png" />
+<link rel="icon" href="/assets/favicon.png" type="image/png" sizes="any" />
+<link rel="apple-touch-icon" href="/assets/favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../styles.css" />
 <script src="/page-skeleton.js"></script>
+<script src="/so-api.js"></script>
 <style>
   .page-sea-audit .sea-hero__title { font-family: var(--font-body); font-weight: 700; font-size: clamp(1.85rem, 4.2vw, 3.1rem); line-height: 1.08; letter-spacing: -0.03em; margin-bottom: 1rem; max-width: 52rem; }
   .page-sea-audit .sea-hero__title .line { display: block; opacity: 0; transform: translateY(12px); animation: rise .75s cubic-bezier(.2,.7,.2,1) forwards; }
@@ -55,13 +56,13 @@
 <nav class="nav" aria-label="Primary">
   <div class="nav__start">
     <a href="/" class="nav__logo">
-      <img class="nav__logo-img brand-logo" src="../../logo.png" width="220" height="90" alt="ServiceOpera.to — home" decoding="async" />
+      <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="ServiceOpera.to — home" decoding="async" />
     </a>
   </div>
   <div class="nav__links">
     <a href="/login.html" class="nav__login mono" id="navPortalAuth" data-login-href="/login.html" data-admin-href="/admin.html">Log in</a>
     <button type="button" class="theme-toggle" data-theme-toggle aria-label="Theme"></button>
-    <a href="mailto:jack@serviceopera.to" class="nav__cta" title="jack@serviceopera.to">jack@serviceopera.to</a>
+
   </div>
 </nav>
 
@@ -106,16 +107,16 @@
     </div>
     <div class="sea-visual">
       <p class="mono" style="font-size:0.65rem;color:var(--mute-2);margin-bottom:0.75rem;">Public footprint vs pressure vs upside</p>
-      <img src="./visuals/audit_lines.svg" width="920" height="360" alt="Multi-series line chart across patient journey stages" decoding="async" />
+      <img src="/assets/audit_lines.svg" width="920" height="360" alt="Multi-series line chart across patient journey stages" decoding="async" />
     </div>
     <div class="sea-visual-grid">
       <div class="sea-visual">
         <p class="mono" style="font-size:0.65rem;color:var(--mute-2);margin-bottom:0.75rem;">Funnel</p>
-        <img src="./visuals/automation_funnel.svg" alt="Automation funnel diagram" decoding="async" />
+        <img src="/assets/automation_funnel.svg" alt="Automation funnel diagram" decoding="async" />
       </div>
       <div class="sea-visual">
         <p class="mono" style="font-size:0.65rem;color:var(--mute-2);margin-bottom:0.75rem;">Competitor radar</p>
-        <img src="./visuals/competitor_radar.svg" alt="Competitor radar chart" decoding="async" />
+        <img src="/assets/competitor_radar.svg" alt="Competitor radar chart" decoding="async" />
       </div>
     </div>
     <p class="mono" id="seaScoreMethod" style="margin-top:1.25rem;font-size:0.65rem !important;color:var(--mute-2);max-width:52rem;line-height:1.55;"></p>

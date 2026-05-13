@@ -100,6 +100,11 @@
     root.setAttribute('aria-hidden', open ? 'false' : 'true');
     document.documentElement.classList.toggle('so-site-nav-open', open);
     if (trigger) trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    try {
+      document.querySelectorAll('[data-so-open-site-nav]').forEach(function (b) {
+        b.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    } catch (eSync) {}
     if (open) {
       var panel = document.getElementById('soSiteNavPanel');
       if (panel) panel.focus();
@@ -110,8 +115,39 @@
     setOpen(false);
   }
 
+  var escapeCloseInstalled = false;
+  function installEscapeClose() {
+    if (escapeCloseInstalled) return;
+    escapeCloseInstalled = true;
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeMenu();
+    });
+  }
+
+  var delegatedOpenInstalled = false;
+  function installDelegatedOpenNav() {
+    if (delegatedOpenInstalled) return;
+    delegatedOpenInstalled = true;
+    document.addEventListener(
+      'click',
+      function (e) {
+        var btn = e.target && e.target.closest && e.target.closest('[data-so-open-site-nav]');
+        if (!btn) return;
+        e.preventDefault();
+        var root = document.getElementById('soSiteNavRoot');
+        if (!root) return;
+        setOpen(!root.classList.contains('is-open'));
+      },
+      true
+    );
+  }
+
   function buildDrawer() {
-    if (document.getElementById('soSiteNavRoot')) return;
+    var prev = document.getElementById('soSiteNavRoot');
+    if (prev) {
+      setOpen(false);
+      prev.remove();
+    }
 
     var root = document.createElement('div');
     root.id = 'soSiteNavRoot';
@@ -226,10 +262,6 @@
     root.appendChild(backdrop);
     root.appendChild(panel);
     document.body.appendChild(root);
-
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') closeMenu();
-    });
   }
 
   function ensureTrigger(nav) {
@@ -271,8 +303,14 @@
     var nav = document.querySelector('nav.nav');
     if (!nav) return;
     ensureTrigger(nav);
+    installEscapeClose();
+    installDelegatedOpenNav();
     buildDrawer();
   }
+
+  window.soRebuildSiteNavDrawer = function () {
+    buildDrawer();
+  };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

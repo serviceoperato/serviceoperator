@@ -30,9 +30,9 @@
     var sessionId = getSessionId();
     if (!jwt || !sessionId || !events || !events.length) return;
     var payload = JSON.stringify({ sessionId: sessionId, events: events });
-    fetch('/api/auth/user-activity', {
+    fetch(typeof soApiUrl === 'function' ? soApiUrl('/api/auth/user-activity') : '/api/auth/user-activity', {
       method: 'POST',
-      credentials: 'same-origin',
+      credentials: typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin',
       headers: {
         Authorization: 'Bearer ' + jwt,
         'Content-Type': 'application/json',

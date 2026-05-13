@@ -4,15 +4,16 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
-<title>Jack — Remote AI Service Operator · ServiceOpera.to</title>
-<meta name="description" content="Remote AI automation for service operators with Thailand market experience. Private operational audits and practical systems for hotels, clinics, wellness and property operators." />
-<link rel="icon" href="favicon.png" type="image/png" sizes="any" />
-<link rel="apple-touch-icon" href="favicon.png" />
+<title>ServiceOpera.to · Private operational audits</title>
+<meta name="description" content="Private 48-hour operational audits for hotels, clinics and property operators. Three gaps, three automations, one pilot—delivered as a concise report." />
+<link rel="icon" href="/assets/favicon.png" type="image/png" sizes="any" />
+<link rel="apple-touch-icon" href="/assets/favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css" />
 <script src="/page-skeleton.js"></script>
+<script src="/so-api.js"></script>
 <style>
   /* Homepage layout only — does not change shared components */
   .home-lp {
@@ -42,87 +43,10 @@
   .home-lp__h1 span {
     display: block;
   }
-  .home-lp__h1-italic {
-    font-style: italic;
-  }
-  .home-lp__sub {
-    font-family: var(--font-body);
-    font-weight: 400;
-    font-size: 1rem;
-    line-height: 1.55;
-    color: var(--mute-2);
-    max-width: 36em;
-    margin: 0 0 1.75rem;
-  }
-  .home-lp__header-sub {
-    font-family: var(--font-body);
-    font-weight: 400;
-    font-size: 0.95rem;
-    line-height: 1.5;
-    color: var(--mute-2);
-    max-width: 40em;
-    margin: -0.5rem 0 1.5rem;
-    letter-spacing: 0.01em;
-  }
-  .home-lp__bio {
-    margin: 2.5rem 0 0;
-    padding: 1.25rem 1.15rem;
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    background: var(--paper-2);
-    max-width: 42rem;
-  }
-  [data-theme="dark"] .home-lp__bio {
-    background: var(--ink-2);
-  }
-  .home-lp__bio p {
-    margin: 0;
-    font-size: 0.92rem;
-    line-height: 1.55;
-    color: var(--mute-2);
-    font-weight: 300;
-  }
-  .home-lp__bio p + p {
-    margin-top: 0.5rem;
-    font-size: 0.88rem;
-    color: var(--mute-2);
-  }
   .home-lp__rule {
     border: none;
     border-top: 1px solid var(--line);
     margin: 2.25rem 0;
-  }
-  .home-lp__cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
-    background: #0a0a0a;
-    color: #fff;
-    font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 500;
-    text-decoration: none;
-    padding: 0.72rem 1.15rem;
-    border-radius: 2px;
-    border: 1px solid #0a0a0a;
-  }
-  .home-lp__cta:hover {
-    opacity: 0.92;
-  }
-  .home-lp__cta svg {
-    flex-shrink: 0;
-  }
-  .home-lp__cta .ico-arrow-r {
-    margin-left: 0.15em;
-    color: #fff;
-  }
-  [data-theme="dark"] .home-lp__cta {
-    background: #f5f5f5;
-    color: #0a0a0a;
-    border-color: #f5f5f5;
-  }
-  [data-theme="dark"] .home-lp__cta .ico-arrow-r {
-    color: #0a0a0a;
   }
   .home-lp__cta-note {
     margin: 0.85rem 0 0;
@@ -153,37 +77,6 @@
     max-width: 42rem;
     margin: 0;
   }
-  .home-lp__proof-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-  }
-  @media (max-width: 900px) {
-    .home-lp__proof-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-  .home-lp__proof-card {
-    background: var(--paper-2);
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    padding: 1.25rem 1.15rem;
-  }
-  [data-theme="dark"] .home-lp__proof-card {
-    background: var(--ink-2);
-  }
-  .home-lp__proof-card h2 {
-    font-size: 0.95rem;
-    font-weight: 600;
-    margin: 0 0 0.45rem;
-    color: var(--paper);
-  }
-  .home-lp__proof-card p {
-    margin: 0;
-    font-size: 0.88rem;
-    line-height: 1.5;
-    color: var(--mute-2);
-  }
   .home-lp__proof-actions {
     display: flex;
     flex-wrap: wrap;
@@ -202,10 +95,68 @@
     text-decoration: none;
     font-weight: 500;
   }
-  .home-lp__proof-note a:hover {
-    text-decoration: underline;
+  .home-lp__audit-cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
   }
-  .home-lp__sectors {
+  @media (max-width: 900px) {
+    .home-lp__audit-cols {
+      grid-template-columns: 1fr;
+    }
+  }
+  .home-lp__audit-col {
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1.25rem 1.15rem;
+  }
+  [data-theme="dark"] .home-lp__audit-col {
+    background: var(--ink-2);
+  }
+  .home-lp__audit-col h2 {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--amber-2);
+    margin: 0 0 0.65rem;
+  }
+  .home-lp__audit-col ul {
+    margin: 0;
+    padding-left: 1.1rem;
+    font-size: 0.88rem;
+    line-height: 1.45;
+    color: var(--mute-2);
+    font-weight: 300;
+  }
+  .home-lp__audit-col li + li {
+    margin-top: 0.4rem;
+  }
+  .home-lp__audit-pilot {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--mute-2);
+    font-weight: 300;
+  }
+  .home-lp__audit-pilot strong {
+    color: var(--paper);
+    font-weight: 500;
+  }
+  .home-lp__text-link {
+    font-family: var(--font-body);
+    font-size: 0.86rem;
+    font-weight: 500;
+    color: var(--amber-2);
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--amber-2) 45%, transparent);
+    padding-bottom: 0.1em;
+  }
+  .home-lp__text-link:hover {
+    color: var(--paper);
+    border-bottom-color: var(--paper);
+  }
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
@@ -336,35 +287,26 @@
 <nav class="nav">
   <div class="nav__start">
     <a href="/" class="nav__logo">
-      <img class="nav__logo-img brand-logo" src="logo.png" width="220" height="90" alt="ServiceOpera.to" decoding="async" />
+      <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="ServiceOpera.to" decoding="async" />
     </a>
   </div>
   <div class="nav__links">
     <a href="/login.html" class="nav__login mono" id="navPortalAuth">Log in</a>
     <button type="button" class="theme-toggle" data-theme-toggle aria-label="Theme"></button>
-    <a href="mailto:jack@serviceopera.to" class="nav__cta" title="jack@serviceopera.to">jack@serviceopera.to</a>
+
   </div>
 </nav>
 
 <main class="home-lp">
-  <p class="home-lp__eyebrow">Jack — Remote AI Service Operator</p>
-  <p class="home-lp__header-sub">International service businesses · Thailand market experience</p>
+  <p class="home-lp__eyebrow">ServiceOpera · Remote operator</p>
   <h1 class="home-lp__h1">
-    <span>Remote AI automation for service operators with Thailand market experience.</span>
+    <span>Operational slack shows up as slow replies, leaky follow-up and blind spots in pricing and reputation.</span>
+    <span>A 48-hour private audit isolates three gaps, three automations, and one pilot worth running first.</span>
   </h1>
-  <p class="home-lp__sub" style="margin-bottom: 0.75rem">
-    I help hotels, clinics, wellness brands and property operators improve customer replies, lead follow-up, review workflows and operational visibility through practical AI systems.
-  </p>
-  <p class="home-lp__sub">
-    Built for international-facing businesses that need faster operations, clearer follow-up and better use of public market signals.
-  </p>
   <div class="cta-row">
-      <a class="btn btn-primary" href="/reports.html#inquiry">Get a 48-hour private audit</a>
-    <a class="btn btn-secondary" href="https://cal.com/jack-serviceoperato-r9s5zj/30min" target="_blank" rel="noopener noreferrer">Discuss a remote project</a>
+    <a class="btn btn-primary" href="/reports.html#inquiry">Get a 48-hour private audit</a>
   </div>
-  <p class="home-lp__cta-note">
-    Receive a short private report showing <strong>3 visible operational gaps</strong>, <strong>3 automation opportunities</strong>, and <strong>one practical pilot idea</strong> for your hotel, clinic or property business.
-  </p>
+  <p class="home-lp__cta-note">Delivered as a private link—concise, sourced, ready for your leadership call.</p>
 
   <hr class="home-lp__rule" />
 
@@ -373,10 +315,10 @@
       <img
         id="soHomePageHero"
         class="mkt-page-visual__img"
-        src="/images/home-page-hero.png"
+        src="/assets/home-page-hero.png"
         width="1280"
         height="720"
-        alt="Dashboard preview: ServiceOpera AI inbox across hotels, clinics and property with regional market context."
+        alt="Inbox and operations view for multi-channel service businesses."
         loading="lazy"
         decoding="async"
         data-so-site-appearance="home-hero"
@@ -385,27 +327,33 @@
   </div>
 
   <section class="home-lp__proof" aria-labelledby="home-proof-heading">
-    <p class="home-lp__eyebrow" id="home-proof-heading">Private operational audits</p>
-    <p class="home-lp__proof-lede">Each audit is built from public footprint data, market signals and operational assumptions. The goal is simple: identify one practical automation opportunity that can reduce manual work, improve follow-up or recover missed demand.</p>
-    <div class="home-lp__proof-grid">
-      <article class="home-lp__proof-card">
-        <h2>Public footprint summary</h2>
-        <p>Findings tied to visible channels, reviews, and service catalog—not generic AI claims.</p>
+    <p class="home-lp__eyebrow" id="home-proof-heading">Private audit</p>
+    <p class="home-lp__proof-lede">Public footprint, reviews and market signals—compressed into decisions you can act on this quarter.</p>
+    <div class="home-lp__audit-cols">
+      <article class="home-lp__audit-col">
+        <h2>Operational gaps</h2>
+        <ul>
+          <li>Inquiries stall after the first touchpoint.</li>
+          <li>Pricing and reputation signals are not visible to the team that sets tactics.</li>
+          <li>Handoffs between sales, front office and ops lack a single audit trail.</li>
+        </ul>
       </article>
-      <article class="home-lp__proof-card">
-        <h2>Competitor &amp; price signals</h2>
-        <p>Benchmark tables and charts from public market snapshots, with sources noted.</p>
+      <article class="home-lp__audit-col">
+        <h2>Automation opportunities</h2>
+        <ul>
+          <li>Inbox triage with SLAs, templates and escalation rules.</li>
+          <li>Triggered review requests with owner-approved copy variants.</li>
+          <li>One executive view: rates, sentiment and competitor moves.</li>
+        </ul>
       </article>
-      <article class="home-lp__proof-card">
-        <h2>Ranked automation opportunities</h2>
-        <p>Build blocks ordered by operational pain, upside, and what to pilot first.</p>
+      <article class="home-lp__audit-col">
+        <h2>Practical pilot</h2>
+        <p class="home-lp__audit-pilot"><strong>One workflow live in two weeks</strong>—for example inquiry → owned task → daily digest to leadership, with human approval on outbound messages.</p>
       </article>
     </div>
     <div class="home-lp__proof-actions">
-      <a class="btn btn-secondary" href="/clinics/sea-clinic-audit/">Preview sample audit</a>
-      <a class="btn btn-primary" href="/reports.html#inquiry">Get a 48-hour private audit</a>
+      <a class="home-lp__text-link" href="/clinics/sea-clinic-audit/">Preview sample audit →</a>
     </div>
-    <p class="home-lp__proof-note">The sample is an uncommissioned Thailand clinic demonstration with SVG charts and cited public data. Same methodology for hotels, clinics, and property operators—usually shared as a private link, not a mass-market showcase.</p>
   </section>
 
   <hr class="home-lp__rule" />
@@ -416,7 +364,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 5l9 6.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9.5z"/></svg>
       </div>
       <h3><a href="/hotels.html">Hotels &amp; serviced apartments</a></h3>
-      <p>Concierge, reviews and rate intelligence for hotels and serviced apartments serving international guests.</p>
+      <p>Faster first replies on direct and OTA leads; clearer rate and parity moves without another dashboard project.</p>
       <p><a href="/hotels.html">Explore hotels →</a></p>
     </article>
     <article class="home-lp__card">
@@ -424,7 +372,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="3"/></svg>
       </div>
       <h3><a href="/clinics.html">Clinics, dental &amp; wellness</a></h3>
-      <p>Intake, follow-up and review workflows for clinics, dental and wellness operators serving local and international patients.</p>
+      <p>Intake-to-chair flow with fewer dropped follow-ups; review cadence you can delegate without losing voice.</p>
       <p><a href="/clinics.html">Explore clinics →</a></p>
     </article>
     <article class="home-lp__card">
@@ -432,7 +380,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="12" rx="1"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M8 21v-2M16 21v-2"/></svg>
       </div>
       <h3><a href="/property.html">Property &amp; rental operators</a></h3>
-      <p>Lead capture, owner updates and tenant communication systems for rental and property operators managing international demand.</p>
+      <p>Lead routing and owner-ready reporting; one thread per unit so handovers stop living in chat screenshots.</p>
       <p><a href="/property.html">Explore property →</a></p>
     </article>
   </div>
@@ -441,34 +389,31 @@
     <li class="home-lp__step">
       <span class="home-lp__step-num">01</span>
       <div class="home-lp__step-body">
-        <strong>Private audit</strong>
-        <p>I review public signals, customer journey gaps and visible operational bottlenecks.</p>
+        <strong>Audit</strong>
+        <p>Signals, bottlenecks, ranked moves—48 hours.</p>
       </div>
     </li>
     <li class="home-lp__step">
       <span class="home-lp__step-num">02</span>
       <div class="home-lp__step-body">
-        <strong>One pain → one pilot</strong>
-        <p>One urgent bottleneck becomes a small working automation before expanding scope.</p>
+        <strong>Pilot</strong>
+        <p>One workflow, measurable outcome, tight scope.</p>
       </div>
     </li>
     <li class="home-lp__step">
       <span class="home-lp__step-num">03</span>
       <div class="home-lp__step-body">
-        <strong>Remote operator cadence</strong>
-        <p>I support the system remotely, improve what performs and avoid unnecessary complexity.</p>
+        <strong>Run</strong>
+        <p>Remote cadence; double down on what performs, cut what does not.</p>
       </div>
     </li>
   </ol>
 
-  <div class="home-lp__bio">
-    <p>ServiceOpera.to is a remote AI operations project led by Jack, built around practical automation, customer workflows and field experience in Thailand’s service markets.</p>
-    <p>Remote-first. International-facing. Thailand-aware.</p>
-  </div>
+  <p class="home-lp__proof-note" style="margin-top:2rem;margin-bottom:0">Private engagements. Deliverables by link. Pilots scoped before retainers.</p>
 </main>
 
 <footer class="home-lp-footer">
-  <span>© 2026 Service Opera · Remote AI operations · <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a></span>
+  <span>© 2026 www.ServiceOpera.to · Remote AI operations · <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a></span>
 </footer>
 
 <!-- Client portal modal -->

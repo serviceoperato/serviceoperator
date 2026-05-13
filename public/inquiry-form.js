@@ -97,8 +97,9 @@
       submit.disabled = true;
       submit.textContent = 'Sending…';
 
-      fetch('/api/marketing/inquiry', {
+      fetch(typeof soApiUrl === 'function' ? soApiUrl('/api/marketing/inquiry') : '/api/marketing/inquiry', {
         method: 'POST',
+        credentials: typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })

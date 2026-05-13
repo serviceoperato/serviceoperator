@@ -6,13 +6,14 @@
 <script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
 <title>Admin · ServiceOpera.to</title>
 <meta name="robots" content="noindex, nofollow" />
-<link rel="icon" href="favicon.png" type="image/png" sizes="any" />
-<link rel="apple-touch-icon" href="favicon.png" />
+<link rel="icon" href="/assets/favicon.png" type="image/png" sizes="any" />
+<link rel="apple-touch-icon" href="/assets/favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css" />
 <script src="/page-skeleton.js"></script>
+<script src="/so-api.js"></script>
 </head>
 <body class="page-admin page-admin--with-nav">
 
@@ -20,12 +21,12 @@
 
 <nav class="nav" aria-label="Primary">
   <a href="/" class="nav__logo">
-    <img class="nav__logo-img brand-logo" src="logo.png" width="220" height="90" alt="ServiceOpera.to — home" decoding="async" />
+    <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="ServiceOpera.to — home" decoding="async" />
   </a>
   <div class="nav__links">
     <a href="/login.html" class="nav__login mono" id="navPortalAuth" data-so-nav-account data-login-href="/login.html" data-admin-href="/admin.html">Log in</a>
     <button type="button" class="theme-toggle" data-theme-toggle aria-label="Theme"></button>
-    <a href="mailto:jack@serviceopera.to" class="nav__cta" title="jack@serviceopera.to">jack@serviceopera.to</a>
+
   </div>
 </nav>
 
@@ -73,6 +74,11 @@
   <nav class="tf-admin-nav mono" id="tfAdminNav" aria-label="Admin sections"></nav>
 
   <header class="admin-topbar">
+    <button type="button" class="so-hamburger-btn admin-topbar__site-nav" data-so-open-site-nav aria-label="Open site menu" aria-expanded="false" aria-controls="soSiteNavPanel">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </button>
     <div class="admin-topbar__meta mono" id="adminTopMeta">ADMIN · jack@serviceopera.to</div>
     <div class="admin-topbar__actions">
       <button type="button" class="admin-topbar__logout" id="adminLogout">Sign out</button>
@@ -168,6 +174,7 @@
 </div>
 
 <script src="/sw-register.js"></script>
+<script src="/site-nav-drawer.js"></script>
 <script src="user-account-menu.js"></script>
 <script src="theme.js"></script>
 <script src="debug.js"></script>

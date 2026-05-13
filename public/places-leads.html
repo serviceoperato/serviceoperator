@@ -5,12 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Pattaya lead collector · Google Places · ServiceOpera</title>
 <meta name="robots" content="noindex, nofollow" />
-<link rel="icon" href="favicon.png" type="image/png" sizes="any" />
+<link rel="icon" href="/assets/favicon.png" type="image/png" sizes="any" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css" />
 <script src="/page-skeleton.js"></script>
+<script src="/so-api.js"></script>
 <style>
   .places-tool { max-width: 1100px; margin: 0 auto; padding: 5rem var(--gutter) 3rem; }
   .places-tool h1 { font-family: var(--font-body); font-weight: 700; margin: 0 0 0.5rem; }
@@ -52,11 +53,11 @@
 
 <nav class="nav" aria-label="Primary">
   <a href="/" class="nav__logo">
-    <img class="nav__logo-img brand-logo" src="logo.png" width="220" height="90" alt="ServiceOpera.to — home" decoding="async" />
+    <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="ServiceOpera.to — home" decoding="async" />
   </a>
   <div class="nav__links">
     <a href="/">Home</a>
-    <a href="mailto:jack@serviceopera.to" class="nav__cta" title="jack@serviceopera.to">jack@serviceopera.to</a>
+
   </div>
 </nav>
 
@@ -263,9 +264,9 @@ property management Pattaya Thailand</textarea>
       progressEl.textContent = 'Query ' + (i + 1) + ' / ' + lines.length + ': ' + item.query.slice(0, 72) + (item.query.length > 72 ? '…' : '');
 
       try {
-        var res = await fetch('/api/places/search', {
+        var res = await fetch(typeof soApiUrl === 'function' ? soApiUrl('/api/places/search') : '/api/places/search', {
           method: 'POST',
-          credentials: 'same-origin',
+          credentials: typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ query: item.query, category: item.category }),
         });

@@ -59,10 +59,12 @@
     return { line: name + ': HTTP ' + r.status + ' · ' + ms + ' ms' + (r.ok ? ' · ok' : ' · fail') + tail };
   }
 
-  async function timedJson(name, url) {
+  async function timedJson(path) {
     var t0 = performance.now();
+    var url = typeof soApiUrl === 'function' ? soApiUrl(path) : path;
+    var cred = typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin';
     try {
-      var r = await fetch(url, { method: 'GET', cache: 'no-store', credentials: 'same-origin' });
+      var r = await fetch(url, { method: 'GET', cache: 'no-store', credentials: cred });
       var ms = Math.round(performance.now() - t0);
       var j = null;
       try {
@@ -115,11 +117,13 @@
     }
   }
 
-  async function timedJsonAuth(url, token) {
+  async function timedJsonAuth(urlPath, token) {
     var t0 = performance.now();
+    var url = typeof soApiUrl === 'function' ? soApiUrl(urlPath) : urlPath;
+    var cred = typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin';
     try {
       var headers = token ? { Authorization: 'Bearer ' + token } : {};
-      var r = await fetch(url, { method: 'GET', cache: 'no-store', credentials: 'same-origin', headers: headers });
+      var r = await fetch(url, { method: 'GET', cache: 'no-store', credentials: cred, headers: headers });
       var ms = Math.round(performance.now() - t0);
       var j = null;
       try {
@@ -863,7 +867,7 @@
   lines.push({
     cat: 'OPS',
     text:
-      '82 · admin access: sign in on /login.html (portal JWT) then /admin.html bootstraps admin JWT when ADMIN_EMAIL matches; no standalone /admin.html gate.',
+      '82 · admin access: open /admin.html — email OTP or password on the same page; with portal JWT in session, bootstrap-from-portal can mint admin JWT when ADMIN_EMAIL matches.',
   });
   if (store && store.backend === 'postgres') {
     lines.push({
@@ -1021,7 +1025,9 @@
       fab.setAttribute('aria-label', 'Show or hide debug information (version ' + v + ')');
     }
 
-    fetch(new URL('/api/version', window.location.origin), { cache: 'no-store' })
+    var verUrl =
+      typeof soApiUrl === 'function' ? soApiUrl('/api/version') : new URL('/api/version', window.location.origin).href;
+    fetch(verUrl, { cache: 'no-store', credentials: typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin' })
       .then(function (r) {
         return r.ok ? r.json() : null;
       })

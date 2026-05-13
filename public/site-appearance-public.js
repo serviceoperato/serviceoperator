@@ -12,7 +12,10 @@
     }
   }
 
-  fetch('/api/site-appearance', { credentials: 'omit', cache: 'no-store' })
+  fetch(typeof soApiUrl === 'function' ? soApiUrl('/api/site-appearance') : '/api/site-appearance', {
+    credentials: typeof soApiCredentials === 'function' ? soApiCredentials() : 'omit',
+    cache: 'no-store',
+  })
     .then(function (r) {
       if (!r.ok) return null;
       return r.json();

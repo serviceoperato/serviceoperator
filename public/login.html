@@ -6,13 +6,14 @@
 <script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
 <title>Log in · ServiceOpera.to</title>
 <meta name="robots" content="noindex, nofollow" />
-<link rel="icon" href="favicon.png" type="image/png" sizes="any" />
-<link rel="apple-touch-icon" href="favicon.png" />
+<link rel="icon" href="/assets/favicon.png" type="image/png" sizes="any" />
+<link rel="apple-touch-icon" href="/assets/favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css" />
 <script src="/page-skeleton.js"></script>
+<script src="/so-api.js"></script>
 <style>
   /* Portal login — serif title + sans UI (no monospace) */
   .page-user-portal {
@@ -163,12 +164,12 @@
 
 <nav class="nav" aria-label="Primary">
   <a href="/" class="nav__logo">
-    <img class="nav__logo-img brand-logo" src="logo.png" width="220" height="90" alt="ServiceOpera.to — home" decoding="async" />
+    <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="ServiceOpera.to — home" decoding="async" />
   </a>
   <div class="nav__links">
     <a href="/login.html" class="nav__login" id="navPortalAuth">Log in</a>
     <button type="button" class="theme-toggle" data-theme-toggle aria-label="Theme"></button>
-    <a href="mailto:jack@serviceopera.to" class="nav__cta" title="jack@serviceopera.to">jack@serviceopera.to</a>
+
   </div>
 </nav>
 
@@ -505,12 +506,13 @@
   function requestPortalApi(method, path, bodyObj) {
     var init = {
       method: method,
-      credentials: 'same-origin',
+      credentials: typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin',
       headers: { 'Content-Type': 'application/json' },
       cache: 'no-store',
     };
     if (bodyObj !== undefined) init.body = JSON.stringify(bodyObj);
-    return fetch(path, init)
+    var url = typeof soApiUrl === 'function' ? soApiUrl(path) : path;
+    return fetch(url, init)
       .then(function (resp) {
         return resp.text().then(function (text) {
           var ctype = (resp.headers.get('content-type') || '').split(';')[0].trim();
@@ -651,7 +653,10 @@
     return 'Resend is off for this Node process: RESEND_API_KEY is unset at runtime on this Railway service. Add the variable here, redeploy, and confirm logs show “Resend: RESEND_API_KEY is set”. RESEND_FROM should match a verified sender in Resend.';
   }
 
-  fetch('/api/auth/user-capabilities', { cache: 'no-store' })
+  fetch(typeof soApiUrl === 'function' ? soApiUrl('/api/auth/user-capabilities') : '/api/auth/user-capabilities', {
+    cache: 'no-store',
+    credentials: typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin',
+  })
     .then(function (r) {
       capabilitiesStatus = r.status;
       return r.text().then(function (text) {
