@@ -1,0 +1,50 @@
+---
+description: Mappatura "git bump patch" → `npm version patch` (comando alias usato dall'utente)
+alwaysApply: true
+---
+
+# `git bump patch` — alias di progetto
+
+In questo repository **`git bump` non esiste come comando reale**. Quando l'utente dice
+"git bump patch", "bump patch", "bumpa la patch" o simili, eseguire SEMPRE il comando
+canonico equivalente in PowerShell dalla root del repo:
+
+```powershell
+npm version patch -m "chore: release v%s"
+```
+
+Questo comando:
+
+- Aggiorna `package.json` e `package-lock.json` al numero patch successivo.
+- Crea un commit `chore: release vX.Y.Z`.
+- Crea un tag annotato `vX.Y.Z` sul commit.
+
+## Sequenze composte frequenti
+
+L'utente spesso richiede sequenze del tipo
+"git pull, git bump patch, git push" o "git pull, git commit, git bump patch, git push".
+Tradurle così:
+
+```powershell
+git pull
+# se ci sono modifiche da pubblicare: git add <files>; git commit -m "..."
+npm version patch -m "chore: release v%s"
+git push
+git push --tags
+```
+
+## Pre-condizioni
+
+- **Working tree pulito** prima di `npm version patch`: eventuali modifiche vanno
+  committate o scartate prima del bump (`npm version` rifiuta di girare con tree dirty).
+- Se non c'è nulla da committare, **non creare commit vuoti**: saltare lo step `git commit`
+  ed eseguire direttamente pull → bump → push.
+
+## Cosa NON fare
+
+- Non installare plugin/extension `git-bump`.
+- Non usare `git tag` manualmente o `npm version --no-git-tag-version`: serve il commit
+  + tag standard prodotti da `npm version patch`.
+- Non eseguire `git push` senza `git push --tags`: il tag `vX.Y.Z` deve arrivare su origin.
+
+Regola correlata: `post-request-version-bump.mdc` (quando bumpare a fine richiesta).
