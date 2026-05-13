@@ -17,11 +17,27 @@
     return '';
   }
 
+  /** Production Node API (Railway). Marketing static/custom domains must point /api here or use meta / __SO_API_ORIGIN__. */
+  var SO_PRODUCTION_API_ORIGIN = 'https://serviceoperato-backend-production.up.railway.app';
+
   function inferRailwaySplit() {
     try {
-      var h = g.location && g.location.hostname ? String(g.location.hostname) : '';
-      if (/^serviceoperato-frontend-production\.up\.railway\.app$/i.test(h)) {
-        return 'https://serviceoperato-backend-production.up.railway.app';
+      var h = g.location && g.location.hostname ? String(g.location.hostname).toLowerCase() : '';
+      if (!h) return '';
+      if (h === 'serviceoperato-frontend-production.up.railway.app') {
+        return SO_PRODUCTION_API_ORIGIN;
+      }
+      /*
+       * Any Railway frontend service on *.up.railway.app matching *-frontend*… → sibling *-backend*…
+       * (e.g. preview deploys or renamed services; production pair still matched above).
+       */
+      var split = /^([\w-]+)-frontend([\w.-]*)\.up\.railway\.app$/.exec(h);
+      if (split) {
+        return 'https://' + split[1] + '-backend' + (split[2] || '') + '.up.railway.app';
+      }
+      /* Custom domain in front of static/marketing — same backend as Railway split (see README deploy). */
+      if (h === 'www.serviceopera.to' || h === 'serviceopera.to') {
+        return SO_PRODUCTION_API_ORIGIN;
       }
     } catch (e2) {}
     return '';

@@ -44,6 +44,7 @@
 
   var gate = document.getElementById('adminGate');
   var workspace = document.getElementById('adminWorkspace');
+  var bootEl = document.getElementById('adminBoot');
   var form = document.getElementById('adminGateForm');
   var hint = document.getElementById('adminGateHint');
   var logoutBtn = document.getElementById('adminLogout');
@@ -63,6 +64,10 @@
   var usersSearch = '';
   var reportCatalog = null;
   var reportCatalogVertical = 'clinics';
+  /** Grouped rows from GET /api/admin/audit-reports (preferred for catalog UI when signed in). */
+  var auditReportsByVertical = null;
+  /** idle | ok | error | skipped */
+  var auditReportsLoadState = 'idle';
 
   function api(path) {
     return typeof soApiUrl === 'function' ? soApiUrl(path) : path;
@@ -1148,6 +1153,7 @@
     if (path === '/admin/activity') return 'activity';
     if (path === '/admin/deploy-log') return 'deploy-log';
     if (path === '/admin/site-appearance') return 'site-appearance';
+    if (path === '/admin/report-catalog') return 'report-catalog';
     if (path === '/admin/user-reports') return 'user-reports';
     if (path === '/admin/users' || path === '/admin') return 'users';
     if (/\/admin\.html$/i.test(path)) return 'users';
@@ -1186,7 +1192,7 @@
     var main = document.getElementById('adminMainDefault');
     var usersEl = document.getElementById('usersSection');
     var inboxEl = document.getElementById('adminInbox');
-    var reportsEl = document.getElementById('adminReportsSection');
+    var reportsEl = document.getElementById('reportCatalogSection');
 
     if (routeId === 'deploy-log') {
       if (main) main.classList.add('is-hidden');
@@ -1214,22 +1220,74 @@
     if (panel) panel.classList.add('is-hidden');
     if (usersEl) usersEl.classList.toggle('is-hidden', routeId !== 'users');
     if (inboxEl) inboxEl.classList.toggle('is-hidden', routeId !== 'activity');
-    if (reportsEl) reportsEl.classList.toggle('is-hidden', routeId !== 'users');
+    if (reportsEl) reportsEl.classList.toggle('is-hidden', routeId !== 'users' && routeId !== 'report-catalog');
 
     buildTfNav(routeId);
     window.scrollTo(0, 0);
+  }
+
+  function groupAuditReports(reports) {
+    var out = { clinics: [], hotels: [], properties: [] };
+    (reports || []).forEach(function (r) {
+      var v = r.vertical;
+      if (out[v]) out[v].push(r);
+    });
+    return out;
   }
 
   function renderAdminReports() {
     var listEl = document.getElementById('adminReportsList');
     var hintEl = document.getElementById('adminReportsHint');
     if (!listEl) return;
-    var items = (reportCatalog && reportCatalog[reportCatalogVertical]) || [];
+    var useAudit = auditReportsLoadState === 'ok' && auditReportsByVertical;
+    var items = useAudit
+      ? auditReportsByVertical[reportCatalogVertical] || []
+      : (reportCatalog && reportCatalog[reportCatalogVertical]) || [];
+
     if (!items.length) {
       listEl.innerHTML =
         '<p class="tf-admin-muted">No ' +
         escapeHtml(reportCatalogVertical) +
         ' reports listed yet. Add links in <code>public/reports/index.json</code> or slug JSON under <code>public/clinics/data/</code>.</p>';
+    } else if (useAudit) {
+      listEl.innerHTML =
+        '<ul class="tf-admin-reports__links">' +
+        items
+          .map(function (row) {
+            var href = row.primaryHref || '#';
+            var title = row.title || href;
+            var slug = row.slug ? ' <span class="tf-admin-reports__slug">(' + escapeHtml(row.slug) + ')</span>' : '';
+            var showSubject =
+              row.subject &&
+              row.subject !== '—' &&
+              String(title).indexOf(String(row.subject)) < 0;
+            var subjectPart = showSubject
+              ? ' <span class="tf-admin-muted">— ' + escapeHtml(row.subject) + '</span>'
+              : '';
+            var statusPart = row.status
+              ? ' <span class="tf-admin-muted mono">' + escapeHtml(row.status) + '</span>'
+              : '';
+            var arts = (row.artifacts || [])
+              .map(function (a) {
+                return '<a class="mono" href="' + escapeHtml(a.href) + '">' + escapeHtml(a.label) + '</a>';
+              })
+              .join(' · ');
+            var artsPart = arts ? ' · ' + arts : '';
+            return (
+              '<li><a href="' +
+              escapeHtml(href) +
+              '">' +
+              escapeHtml(title) +
+              '</a>' +
+              slug +
+              subjectPart +
+              statusPart +
+              artsPart +
+              '</li>'
+            );
+          })
+          .join('') +
+        '</ul>';
     } else {
       listEl.innerHTML =
         '<ul class="tf-admin-reports__links">' +
@@ -1269,14 +1327,15 @@
 
   function loadReportCatalog() {
     var token = getAdminBearer();
-    var request = token
+    var manifestReq = token
       ? fetch(api('/api/admin/report-catalog'), {
           method: 'GET',
           credentials: apiCred(),
           headers: { Authorization: 'Bearer ' + token },
         })
       : fetch('/reports/index.json', { cache: 'no-store' });
-    return request
+
+    var manifestChain = manifestReq
       .then(function (r) {
         return r.json().then(function (j) {
           return { ok: r.ok, j: j };
@@ -1285,7 +1344,6 @@
       .then(function (x) {
         if (!x.ok || !x.j) {
           reportCatalog = { clinics: [], hotels: [], properties: [] };
-          renderAdminReports();
           return;
         }
         reportCatalog = {
@@ -1293,12 +1351,43 @@
           hotels: x.j.hotels || [],
           properties: x.j.properties || [],
         };
-        renderAdminReports();
       })
       .catch(function () {
         reportCatalog = { clinics: [], hotels: [], properties: [] };
-        renderAdminReports();
       });
+
+    var auditChain = token
+      ? fetch(api('/api/admin/audit-reports'), {
+          method: 'GET',
+          credentials: apiCred(),
+          headers: { Authorization: 'Bearer ' + token },
+        })
+          .then(function (r) {
+            return r.json().then(function (j) {
+              return { ok: r.ok, j: j };
+            });
+          })
+          .then(function (x) {
+            if (x.ok && x.j && x.j.ok && Array.isArray(x.j.reports)) {
+              auditReportsByVertical = groupAuditReports(x.j.reports);
+              auditReportsLoadState = 'ok';
+            } else {
+              auditReportsByVertical = null;
+              auditReportsLoadState = 'error';
+            }
+          })
+          .catch(function () {
+            auditReportsByVertical = null;
+            auditReportsLoadState = 'error';
+          })
+      : Promise.resolve().then(function () {
+          auditReportsByVertical = null;
+          auditReportsLoadState = 'skipped';
+        });
+
+    return Promise.all([manifestChain, auditChain]).then(function () {
+      renderAdminReports();
+    });
   }
 
   function showWorkspace() {
@@ -1361,7 +1450,8 @@
     }
   }
 
-  function fetchCapabilities() {
+  /** Load admin capabilities (no UI); paired with version probe before applyCapabilities. */
+  function fetchCapabilitiesData() {
     return fetch(api('/api/admin/capabilities'), { method: 'GET', credentials: apiCred(), cache: 'no-store' })
       .then(function (r) {
         capabilitiesHttpOk = r.ok;
@@ -1371,14 +1461,20 @@
       .then(function (j) {
         capabilitiesFromOurServer = Boolean(j && j.service === 'serviceopera');
         serverPasswordAuth = Boolean(j && j.adminPasswordConfigured);
-        applyCapabilities();
       })
       .catch(function () {
         serverPasswordAuth = false;
         capabilitiesHttpOk = false;
         capabilitiesFromOurServer = false;
-        applyCapabilities();
       });
+  }
+
+  /** Settle GET /api/version so gate copy (e.g. ADMIN_PASSWORD_HASH) never flashes before API reachability is known. */
+  function fetchAdminVersionProbe() {
+    return fetch(api('/api/version'), { cache: 'no-store', credentials: apiCred() }).then(
+      function () {},
+      function () {}
+    );
   }
 
   function getPortalJwt() {
@@ -1474,17 +1570,51 @@
     } catch (eScroll) {}
   }
 
-  fetchCapabilities().then(function () {
-    return tryRestoreJwtSession();
-  }).then(function (restored) {
-    if (restored) return true;
-    return tryRestorePortalAdminSession();
-  }).then(function (restored) {
-    if (restored) return true;
-    return !!tryRestoreLegacySession();
-  }).then(function (restored) {
-    if (!restored) showAdminLoginGate();
-  });
+  function hideAdminBoot() {
+    if (bootEl) {
+      bootEl.classList.add('is-hidden');
+      bootEl.setAttribute('aria-busy', 'false');
+    }
+  }
+
+  /** Defer one frame past layout/paint so the workspace shell is not revealed mid-paint. */
+  function revealAdminBootAfterPaint() {
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        hideAdminBoot();
+      });
+    });
+  }
+
+  Promise.all([fetchCapabilitiesData(), fetchAdminVersionProbe()])
+    .then(function () {
+      applyCapabilities();
+    })
+    .then(function () {
+      return tryRestoreJwtSession();
+    })
+    .then(function (restored) {
+      if (restored) return true;
+      return tryRestorePortalAdminSession();
+    })
+    .then(function (restored) {
+      if (restored) return true;
+      return !!tryRestoreLegacySession();
+    })
+    .then(function (restored) {
+      if (restored) {
+        revealAdminBootAfterPaint();
+        return;
+      }
+      showAdminLoginGate();
+      revealAdminBootAfterPaint();
+    })
+    .catch(function () {
+      try {
+        showAdminLoginGate();
+      } catch (e) {}
+      revealAdminBootAfterPaint();
+    });
 
   if (form) {
     form.addEventListener('submit', function (e) {

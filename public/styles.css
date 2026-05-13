@@ -1931,6 +1931,36 @@ html.so-site-nav-open {
    ============================================ */
 .page-admin { background: var(--ink); min-height: 100vh; }
 
+/* Full-viewport boot gate: hides nav + gate + workspace until auth + API probes settle */
+.admin-boot {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--gutter);
+  box-sizing: border-box;
+  background: var(--ink);
+  text-align: center;
+}
+.admin-boot.is-hidden {
+  display: none !important;
+}
+.admin-boot__inner {
+  max-width: 22rem;
+}
+.admin-boot__eyebrow {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.admin-boot__msg {
+  margin: 0.5rem 0 0;
+  font-size: 0.78rem;
+}
+
 /* Gate pages (login, etc.): fixed top nav + centered card — avoid overlap under .nav */
 .page-admin--with-nav .admin-gate {
   padding-top: var(--site-nav-offset);

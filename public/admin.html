@@ -32,30 +32,19 @@
   </div>
 </nav>
 
-<script>
-(function () {
-  /** Only unhide the console shell when an admin JWT hint exists (portal JWT alone still needs bootstrap). */
-  function hasStoredSessionHint() {
-    try {
-      if (sessionStorage.getItem('so_admin_jwt')) return true;
-      if (localStorage.getItem('so_admin_jwt')) return true;
-    } catch (e) {}
-    return false;
-  }
-  if (!hasStoredSessionHint()) return;
-  var g = document.getElementById('adminGate');
-  var w = document.getElementById('adminWorkspace');
-  if (g) g.classList.add('is-hidden');
-  if (w) w.classList.remove('is-hidden');
-})();
-</script>
+<div id="adminBoot" class="admin-boot" role="status" aria-live="polite" aria-busy="true">
+  <div class="admin-boot__inner">
+    <p class="mono tf-admin-muted admin-boot__eyebrow">Operator console</p>
+    <p class="mono tf-admin-muted admin-boot__msg">Loading…</p>
+  </div>
+</div>
 
 <div id="adminGate" class="admin-gate">
   <div class="admin-gate__card">
     <div class="admin-gate__brand">www.serviceopera.to</div>
     <p class="mono tf-admin-muted" style="margin-bottom:0.75rem;font-size:0.75rem;letter-spacing:0.08em;text-transform:uppercase">Operator console</p>
     <h1>Sign in</h1>
-    <p id="adminGateLede" class="admin-gate__lede">Checking sign-in options…</p>
+    <p id="adminGateLede" class="admin-gate__lede"></p>
     <div id="adminConfigBanner" class="admin-config-banner is-hidden" role="status"></div>
     <form id="adminGateForm" class="portal-form" autocomplete="on">
       <label>
@@ -144,7 +133,7 @@
       <div id="adminInboxBody" class="admin-inbox__body"></div>
     </section>
 
-    <section id="adminReportsSection" class="tf-admin-reports" aria-label="Report catalog">
+    <section id="reportCatalogSection" class="tf-admin-reports" aria-label="Report catalog">
       <h2 class="tf-admin-section-title">Report catalog</h2>
       <div class="tf-admin-reports__tabs" role="tablist">
         <button type="button" class="tf-admin-reports__tab is-active" data-report-vertical="clinics" role="tab" aria-selected="true">Clinics</button>

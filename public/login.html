@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="so-api-origin" content="https://serviceoperato-backend-production.up.railway.app" />
 <script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
 <title>Log in · www.serviceopera.to</title>
 <meta name="robots" content="noindex, nofollow" />
@@ -694,6 +695,10 @@
       dest = lj.reportUrl || '/clinics/report.html?slug=' + encodeURIComponent(lj.reportSlug);
     }
     if (dest.charAt(0) !== '/') dest = '/' + dest;
+    var slugM = /[?&]slug=([^&]+)/.exec(dest);
+    if (dest.indexOf('/clinics/report.html') === 0 && (!slugM || !String(slugM[1] || '').trim() || slugM[1] === 'undefined')) {
+      dest = '/client.html';
+    }
     window.location.href = dest;
   }
 
@@ -823,6 +828,22 @@
     }
   }
 
+  function getAdminJwtLogin() {
+    try {
+      return localStorage.getItem('so_admin_jwt') || sessionStorage.getItem('so_admin_jwt') || '';
+    } catch (eAdm) {
+      return '';
+    }
+  }
+
+  /** Avoid treating random strings as Bearer tokens. */
+  function looksLikeJwt(tok) {
+    var s = String(tok || '').trim();
+    if (!s) return false;
+    var parts = s.split('.');
+    return parts.length === 3 && parts[0].length > 0 && parts[1].length > 0 && parts[2].length > 0;
+  }
+
   function clearPortalJwtLogin() {
     try {
       sessionStorage.removeItem('so_user_jwt');
@@ -860,6 +881,61 @@
     }
   }
 
+  /** Same email as `ADMIN_EMAIL` in user-account-menu.js — operator menu / admin entry. */
+  var PORTAL_ADMIN_EMAIL_LOGIN = 'jack@serviceopera.to';
+
+  function decodeJwtPayloadLogin(token) {
+    try {
+      var parts = String(token || '').split('.');
+      if (parts.length < 2) return null;
+      var payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      while (payload.length % 4) payload += '=';
+      return JSON.parse(atob(payload));
+    } catch (ePl) {
+      return null;
+    }
+  }
+
+  /**
+   * Same rule as user-account-menu.js `showAdmin` before async `/api/admin/session`:
+   * jack’s portal email, or a stored admin JWT whose payload is a non-expired `role: 'admin'` token.
+   */
+  function isAdminCapableAccountSettingsLogin() {
+    var portalTok = getPortalJwtLogin();
+    if (portalTok) {
+      var em = String(decodeJwtEmailLogin(portalTok) || '').toLowerCase();
+      if (em === PORTAL_ADMIN_EMAIL_LOGIN) return true;
+    }
+    var adm = getAdminJwtLogin();
+    if (!adm) return false;
+    var pl = decodeJwtPayloadLogin(adm);
+    if (!pl || pl.role !== 'admin') return false;
+    if (typeof pl.exp === 'number' && pl.exp < Date.now()) return false;
+    return true;
+  }
+
+  /** For `?next=` when leaving account settings as admin: same-origin path, admin/operator only, never back to login/settings. */
+  function resolveAdminBypassFromSettingsUrl() {
+    if (nextPath && nextPath.charAt(0) === '/' && nextPath.indexOf('//') !== 0) {
+      var nl = nextPath.toLowerCase();
+      if (/^\/login(\.html)?(\/|$)/.test(nl)) return '/admin/users';
+      if (/^\/(admin|operator)(\/|$)/i.test(nextPath)) return nextPath;
+    }
+    return '/admin/users';
+  }
+
+  /** If admin-capable user opens account settings URL, skip account shell (no infinite loop: no JWT → not capable). */
+  function redirectAdminAwayFromAccountSettingsIfNeeded() {
+    if (!accountSettingsMode) return false;
+    if (!isAdminCapableAccountSettingsLogin()) return false;
+    try {
+      window.location.replace(resolveAdminBypassFromSettingsUrl());
+    } catch (eRp) {
+      window.location.href = resolveAdminBypassFromSettingsUrl();
+    }
+    return true;
+  }
+
   function setAccountPanelErr(msg) {
     if (!accountPanelErr) return;
     if (!msg) {
@@ -893,13 +969,95 @@
       cache: 'no-store',
     })
       .then(function (r) {
-        return r.json().then(function (j) {
-          return { ok: r.ok, status: r.status, json: j };
+        var status = r.status;
+        return r.text().then(function (text) {
+          var j = null;
+          try {
+            j = text ? JSON.parse(text) : null;
+          } catch (eParse) {
+            j = null;
+          }
+          return { ok: r.ok, status: status, json: j };
         });
       })
       .catch(function () {
         return { ok: false, status: 0, json: null };
       });
+  }
+
+  function fetchAdminUserSession(bearer) {
+    var url = typeof soApiUrl === 'function' ? soApiUrl('/api/admin/session') : '/api/admin/session';
+    var cred = typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin';
+    return fetch(url, {
+      method: 'GET',
+      credentials: cred,
+      headers: { Authorization: 'Bearer ' + bearer },
+      cache: 'no-store',
+    })
+      .then(function (r) {
+        var status = r.status;
+        return r.text().then(function (text) {
+          var j = null;
+          try {
+            j = text ? JSON.parse(text) : null;
+          } catch (eAp) {
+            j = null;
+          }
+          return { ok: r.ok, status: status, json: j };
+        });
+      })
+      .catch(function () {
+        return { ok: false, status: 0, json: null };
+      });
+  }
+
+  /**
+   * Valid tokens in storage → skip the login form (verify / reset / account settings URLs excluded).
+   * Does not clear JWT when the session probe fails or returns 401 (stale token stays until explicit sign-out or successful login).
+   */
+  function maybeRedirectIfAlreadySignedIn() {
+    if (verifyToken) return;
+    if (resetToken && resetForm) return;
+    if (accountSettingsMode) return;
+
+    var adminTok = getAdminJwtLogin();
+    var portalTok = getPortalJwtLogin();
+    var adminP =
+      adminTok && looksLikeJwt(adminTok)
+        ? fetchAdminUserSession(adminTok)
+        : Promise.resolve({ ok: false, status: 0, json: null });
+
+    adminP.then(function (adm) {
+      if (adm && adm.ok && adm.json && adm.json.ok) {
+        var emAd = String(adm.json.email || '').trim().toLowerCase();
+        if (emAd === PORTAL_ADMIN_EMAIL_LOGIN) {
+          try {
+            window.location.replace('/admin/users');
+          } catch (eRp) {
+            window.location.href = '/admin/users';
+          }
+          return;
+        }
+      }
+      if (!portalTok || !looksLikeJwt(portalTok)) return;
+      return fetchPortalUserSession(portalTok).then(function (x) {
+        if (x.status === 401) return;
+        if (!x.ok || !x.json || !x.json.ok) return;
+        if (x.json.passwordMustChange) {
+          showMustChangePasswordMode(portalTok);
+          return;
+        }
+        var slug =
+          (x.json.reportSlug ? String(x.json.reportSlug).trim() : '') ||
+          decodeJwtReportSlugLogin(portalTok) ||
+          slugHint;
+        var lj = {
+          reportSlug: slug,
+          reportUrl: slug ? '/clinics/report.html?slug=' + encodeURIComponent(slug) : '',
+        };
+        redirectAfterPortalLogin(lj);
+      });
+    });
   }
 
   function populateAccountPanelFromSession(sess, fallbackEmail) {
@@ -950,6 +1108,7 @@
     if (verifyToken) return;
     if (resetToken && resetForm) return;
     if (!accountSettingsMode) return;
+    if (redirectAdminAwayFromAccountSettingsIfNeeded()) return;
     var tok = getPortalJwtLogin();
     if (!tok) return;
     showAccountSettingsLayout();
@@ -964,7 +1123,8 @@
     fetchPortalUserSession(tok).then(function (x) {
       if (!userAccountPanel || userAccountPanel.classList.contains('is-hidden')) return;
       if (!getPortalJwtLogin()) return;
-      if (x.status === 401) {
+      /* Match user-account-menu.js: only clear JWT on explicit portal rejection (server.mjs user-session 401 JSON). */
+      if (x.status === 401 && x.json && x.json.ok === false) {
         clearPortalJwtLogin();
         exitAccountSettingsToLoginForm();
         showLoginMode();
@@ -1500,6 +1660,7 @@
   }
 
   applyLoginFieldMode();
+  maybeRedirectIfAlreadySignedIn();
   maybeEnterAccountSettings();
 })();
 </script>

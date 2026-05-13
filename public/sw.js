@@ -1,7 +1,7 @@
 /* global self, caches, fetch, clients */
 
-var PAGE_CACHE = 'so-pages-v5';
-var ASSET_CACHE = 'so-assets-v2';
+var PAGE_CACHE = 'so-pages-v6';
+var ASSET_CACHE = 'so-assets-v3';
 
 function isSameOrigin(url) {
   return url.origin === self.location.origin;

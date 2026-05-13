@@ -985,11 +985,15 @@ const PORTAL_CORS_ORIGINS = (process.env.PORTAL_CORS_ORIGINS || process.env.PORT
   .map((s) => s.trim().replace(/\/$/, ''))
   .filter(Boolean);
 
+/** Public site origins when marketing is on a custom domain and API is on Railway (so-api.js cross-origin). */
+const DEFAULT_MARKETING_CORS_ORIGINS = ['https://www.serviceopera.to', 'https://serviceopera.to'];
+
 function isAllowedPortalCorsOrigin(origin) {
   if (!origin || typeof origin !== 'string') return false;
   const o = origin.trim().replace(/\/$/, '');
   if (!o) return false;
   if (PORTAL_CORS_ORIGINS.includes(o)) return true;
+  if (DEFAULT_MARKETING_CORS_ORIGINS.includes(o)) return true;
   try {
     const u = new URL(o);
     if (/\.up\.railway\.app$/i.test(u.hostname)) return true;
@@ -2327,6 +2331,8 @@ app.get(
     '/admin/site-appearance/',
     '/admin/user-reports',
     '/admin/user-reports/',
+    '/admin/report-catalog',
+    '/admin/report-catalog/',
   ],
   sendAdminHtml
 );

@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- When this HTML is served from a static host, point API calls at the Node service (override in deploy if URL changes). -->
+<meta name="so-api-origin" content="https://serviceoperato-backend-production.up.railway.app" />
 <script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
 <title>www.serviceopera.to · Private operational audits</title>
 <meta name="description" content="Private 48-hour operational audits for hotels, clinics and property operators. Three gaps, three automations, one pilot—delivered as a concise report." />

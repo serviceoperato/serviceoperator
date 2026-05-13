@@ -118,6 +118,7 @@
     return '/admin/users';
   }
 
+  /** Read body as text then JSON so HTML/502 pages keep HTTP status and never look like { ok: false }. */
   function fetchJson(path, token) {
     var headers = {};
     if (token) headers.Authorization = 'Bearer ' + token;
@@ -125,8 +126,15 @@
     var cred = typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin';
     return fetch(url, { credentials: cred, headers: headers, cache: 'no-store' })
       .then(function (r) {
-        return r.json().then(function (j) {
-          return { ok: r.ok, status: r.status, json: j };
+        var status = r.status;
+        return r.text().then(function (text) {
+          var j = null;
+          try {
+            j = text ? JSON.parse(text) : null;
+          } catch (eParse) {
+            j = null;
+          }
+          return { ok: r.ok, status: status, json: j };
         });
       })
       .catch(function () {
