@@ -3,7 +3,7 @@
     "business": "The Dental Design Center (DDC)",
     "location": "Pattaya, Thailand",
     "audit_by": "www.serviceopera.to",
-    "operator": "Jack — Service Operator · Thailand",
+    "operator": "Jack — Service Operator · www.serviceopera.to",
     "date": "May 2026",
     "audit_score": 9.2,
     "audit_score_label": "Audit Potential",
@@ -92,7 +92,7 @@
     },
     "branding": {
       "brand": "www.serviceopera.to",
-      "tagline_brand": "AI systems for Thailand service businesses. No fluff. Just results.",
+      "tagline_brand": "AI systems for service businesses. No fluff. Just results.",
       "contact": "serviceOpera.to"
     }
   }

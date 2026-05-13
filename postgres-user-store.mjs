@@ -437,7 +437,7 @@ export function createPostgresUserStore(pool) {
         err.status = 400;
         throw err;
       }
-      const allowed = new Set(['hotels', 'clinics', 'properties', 'wellness']);
+      const allowed = new Set(['hotels', 'clinics', 'properties', 'wellness', 'other']);
       const v = typeof signupVertical === 'string' ? signupVertical.trim().toLowerCase() : '';
       if (!allowed.has(v)) {
         const err = new Error('Choose a valid business type.');

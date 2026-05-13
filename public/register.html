@@ -18,7 +18,6 @@
   .page-user-portal { font-family: var(--font-body); min-height: 100vh; }
   .tf-reg-wrap { max-width: 420px; margin: 0 auto; padding: 2rem 1.5rem; }
   .tf-input { width: 100%; padding: 0.85rem 0.9rem; border-radius: 12px; border: 1px solid var(--line-strong); background: var(--ink); color: var(--paper); font-size: 1rem; box-sizing: border-box; font-family: var(--font-body); }
-  .tf-input--select { cursor: pointer; appearance: auto; }
   .tf-cap { display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--mute-2); }
   .tf-success-icon { width: 92px; height: 92px; border-radius: 24px; border: 1px solid var(--line); background: var(--ink-2); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.1rem; font-size: 2rem; }
   .page-user-portal .nav__login { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; }
@@ -92,16 +91,27 @@
             <span class="tf-cap">Confirm password</span>
             <input type="password" name="confirmPassword" id="onboardPw2" class="tf-input" required minlength="8" autocomplete="new-password" />
           </label>
-          <label style="margin-top:12px;display:block">
-            <span class="tf-cap">Business type</span>
-            <select id="onboardVertical" class="tf-input tf-input--select" required>
-              <option value="" disabled selected>Select one…</option>
-              <option value="hotels">Hotels &amp; serviced apartments</option>
-              <option value="clinics">Clinics &amp; medical</option>
-              <option value="properties">Property &amp; rentals</option>
-              <option value="wellness">Wellness &amp; spa</option>
-            </select>
-          </label>
+          <fieldset class="so-sector-choice" style="margin-top:12px">
+            <legend class="tf-cap">Sector</legend>
+            <div class="so-sector-choice__grid" role="presentation">
+              <label class="so-sector-choice__opt">
+                <input type="radio" name="onboard-vertical" value="hotels" class="so-sector-choice__input" required />
+                Hotels
+              </label>
+              <label class="so-sector-choice__opt">
+                <input type="radio" name="onboard-vertical" value="clinics" class="so-sector-choice__input" />
+                Clinics
+              </label>
+              <label class="so-sector-choice__opt">
+                <input type="radio" name="onboard-vertical" value="properties" class="so-sector-choice__input" />
+                Property
+              </label>
+              <label class="so-sector-choice__opt">
+                <input type="radio" name="onboard-vertical" value="other" class="so-sector-choice__input" />
+                Other
+              </label>
+            </div>
+          </fieldset>
           <p class="portal-form__hint" id="onboardHint"></p>
           <button type="submit" class="btn btn--primary btn--block" id="onboardSubmit">Create account &amp; continue<span class="ico-arrow-r" aria-hidden="true"></span></button>
         </form>
@@ -215,8 +225,8 @@
       var tok = (document.getElementById('onboardToken').value || '').trim();
       var pw1 = (document.getElementById('onboardPw1').value || '').trim();
       var pw2 = (document.getElementById('onboardPw2').value || '').trim();
-      var vertEl = document.getElementById('onboardVertical');
-      var vertical = vertEl ? String(vertEl.value || '').trim() : '';
+      var vertInput = document.querySelector('#onboardForm input[name="onboard-vertical"]:checked');
+      var vertical = vertInput ? String(vertInput.value || '').trim() : '';
       var hint = document.getElementById('onboardHint');
       hint.textContent = '';
       hint.className = 'portal-form__hint';

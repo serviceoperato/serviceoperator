@@ -92,7 +92,7 @@
     encodeURIComponent('Request: Private AI Operations Report') +
     '&body=' +
     encodeURIComponent(
-      'Hi Jack,\n\nBusiness name:\nCity / area in Thailand:\nWebsite:\nWhat I want the report to focus on:\n\nThanks.'
+      'Hi Jack,\n\nBusiness name:\nCity / region:\nWebsite:\nWhat I want the report to focus on:\n\nThanks.'
     );
   var MAIL_AUDIT =
     'mailto:jack@serviceopera.to?subject=' +
@@ -103,10 +103,10 @@
     );
 
   var TITLE_HTML =
-    '<span class="line">AI Operations for Thailand</span>' +
-    '<span class="line line--soft">Hotels, Clinics &amp; Property Businesses</span>';
+    '<span class="line">AI Operations for Service Businesses</span>' +
+    '<span class="line line--soft">Hotels, Clinics &amp; Property · Worldwide</span>';
   var LEDE =
-    'I analyze public business data, reviews, competitors and lead flows, then build practical AI systems that help Thailand service businesses capture more inquiries, reply faster and automate repetitive work.';
+    'I analyze public business data, reviews, competitors and lead flows, then build practical AI systems that help international-facing operators capture more inquiries, reply faster and automate repetitive work.';
 
   var COPY = {
     clinics: { lede: LEDE },

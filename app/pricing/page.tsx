@@ -10,7 +10,7 @@ const subtitle =
   "Remote AI operations for hotels, clinics and property operators serving international customers. Start free, scale when it works.";
 
 const credibility =
-  "Thailand and Southeast Asia operating experience anchors our studio — we run remote AI operations for international hotels, clinics, wellness brands, and property portfolios worldwide.";
+  "International and Southeast Asia market experience anchors our studio — we run remote AI operations for hotels, clinics, wellness brands, and property portfolios worldwide.";
 
 const freeDescription =
   "You receive a private audit report within 48 hours covering your public footprint, 3 visible operational gaps and one pilot idea — built from public data, not assumptions.";

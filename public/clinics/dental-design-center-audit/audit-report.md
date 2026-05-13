@@ -3,7 +3,7 @@
 
 ---
 
-**Prepared by:** www.serviceopera.to · Jack — Service Operator · Thailand  
+**Prepared by:** www.serviceopera.to · Jack — Service Operator  
 **Audit Date:** May 2026  
 **Audit Type:** Public Data AI Readiness Audit  
 **Category:** Dental Clinic / International Patient Focus  
@@ -348,5 +348,5 @@ All sources are public. No patient data, proprietary records, or confidential in
 
 ---
 
-*Report prepared by www.serviceopera.to · AI systems for Thailand service businesses. No fluff. Just results.*  
-*Jack — Service Operator · Thailand · serviceOpera.to*
+*Report prepared by www.serviceopera.to · AI systems for service businesses. No fluff. Just results.*  
+*Jack — Service Operator · www.serviceopera.to*

@@ -1,0 +1,1169 @@
+/* Public sample clinic audit — light-first, deep indigo. Scoped to body.sample-clinic-audit only. */
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Mono:wght@400;500&display=swap');
+
+html:has(body.sample-clinic-audit) {
+  background-color: #ffffff;
+}
+
+body.sample-clinic-audit {
+  --color-bg: #ffffff;
+  --color-bg-card: #fafbfc;
+  --color-bg-elevated: #f4f6f9;
+  --color-border: #e2e8f0;
+  --color-border-light: #eef2f7;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748b;
+  --color-indigo: #312e81;
+  --color-indigo-light: #4338ca;
+  --color-indigo-bg: rgba(49, 46, 129, 0.08);
+  --color-green: #0f766e;
+  --color-green-light: #0d9488;
+  --color-green-bg: rgba(15, 118, 110, 0.1);
+  --color-orange: #c2410c;
+  --color-orange-light: #ea580c;
+  --color-orange-bg: rgba(234, 88, 12, 0.1);
+  --color-red: #b91c1c;
+  --color-red-light: #dc2626;
+  --color-red-bg: rgba(220, 38, 38, 0.08);
+  --color-blue: #1d4ed8;
+  --color-blue-light: #2563eb;
+  --color-blue-bg: rgba(37, 99, 235, 0.08);
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'DM Mono', ui-monospace, monospace;
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.06), 0 4px 14px rgba(15, 23, 42, 0.05);
+  --shadow-elevated: 0 8px 30px rgba(30, 27, 75, 0.08);
+  --so-chart-surface: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  --so-kpi-hover-border: #94a3b8;
+  --so-review-bg: linear-gradient(180deg, #fef2f2 0%, #ffffff 100%);
+  --so-review-bg-warn: linear-gradient(180deg, #fff7ed 0%, #ffffff 100%);
+  --so-star-off: #cbd5e1;
+  --so-priority-head-bg: rgba(15, 23, 42, 0.04);
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.65;
+  min-height: 100vh;
+}
+
+body.sample-clinic-audit.page-client {
+  padding-top: var(--site-nav-offset);
+}
+
+body.sample-clinic-audit .two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+@media (max-width: 640px) {
+  body.sample-clinic-audit .two-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+body.sample-clinic-audit p {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 0 0 0.75rem;
+}
+body.sample-clinic-audit h3 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--color-text-primary);
+  margin: 0 0 0.5rem;
+}
+body.sample-clinic-audit h4 {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin: 1rem 0 0.5rem;
+}
+body.sample-clinic-audit strong {
+  color: var(--color-text-primary);
+}
+
+/* Header */
+body.sample-clinic-audit .report-header {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 45%, #eef2ff 100%);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-3xl) var(--space-xl);
+  position: relative;
+  overflow: hidden;
+}
+body.sample-clinic-audit .report-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #1e1b4b, #312e81, #0f766e);
+}
+body.sample-clinic-audit .report-header::after {
+  content: '';
+  position: absolute;
+  top: -60px;
+  right: -40px;
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle, rgba(49, 46, 129, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+body.sample-clinic-audit .brand-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: var(--color-indigo-bg);
+  border: 1px solid rgba(49, 46, 129, 0.2);
+  border-radius: 100px;
+  padding: 4px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-indigo);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-lg);
+}
+body.sample-clinic-audit .brand-badge .dot {
+  width: 6px;
+  height: 6px;
+  background: var(--color-indigo);
+  border-radius: 50%;
+}
+body.sample-clinic-audit .report-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.85rem, 4.5vw, 3rem);
+  line-height: 1.12;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-md);
+}
+body.sample-clinic-audit .report-title em {
+  font-style: italic;
+  color: var(--color-indigo);
+}
+body.sample-clinic-audit .report-subtitle {
+  font-size: 1.05rem;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-xl);
+  max-width: 38rem;
+}
+body.sample-clinic-audit .report-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-lg);
+}
+body.sample-clinic-audit .meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+body.sample-clinic-audit .meta-item .label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+body.sample-clinic-audit .meta-item .value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+body.sample-clinic-audit .audit-score-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: var(--color-indigo-bg);
+  border: 1px solid rgba(49, 46, 129, 0.22);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  font-size: 13px;
+  color: var(--color-indigo);
+  font-weight: 600;
+}
+body.sample-clinic-audit .audit-score-badge .score {
+  font-size: 1.35rem;
+  font-family: var(--font-display);
+}
+
+body.sample-clinic-audit .audit-hero-rating {
+  margin: 0.65rem 0 1.1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+body.sample-clinic-audit .audit-hero-rating__row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+body.sample-clinic-audit .audit-hero-rating__stars {
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  color: #b8860b;
+}
+body.sample-clinic-audit .audit-hero-rating__score {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+body.sample-clinic-audit .audit-hero-rating__caption {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  max-width: 28rem;
+}
+
+/* TOC */
+body.sample-clinic-audit .report-toc {
+  background: var(--color-bg-card);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-md) var(--space-xl);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  overflow-x: auto;
+}
+body.sample-clinic-audit .toc-inner {
+  display: flex;
+  gap: var(--space-md);
+  white-space: nowrap;
+}
+body.sample-clinic-audit .toc-link {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  letter-spacing: 0.03em;
+  padding: 4px 0;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+body.sample-clinic-audit .toc-link:hover {
+  color: var(--color-text-secondary);
+  border-bottom-color: var(--color-border);
+}
+
+/* Body sections */
+body.sample-clinic-audit .report-body {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--space-xl);
+}
+body.sample-clinic-audit .report-section {
+  margin-bottom: var(--space-3xl);
+}
+body.sample-clinic-audit .section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--color-border-light);
+}
+body.sample-clinic-audit .section-number {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  min-width: 28px;
+}
+body.sample-clinic-audit .section-title {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  color: var(--color-text-primary);
+  line-height: 1.2;
+}
+
+body.sample-clinic-audit .insight-line {
+  display: flex;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-md);
+  border-left: 3px solid;
+  align-items: flex-start;
+}
+body.sample-clinic-audit .insight-line--indigo {
+  background: var(--color-indigo-bg);
+  border-color: var(--color-indigo);
+}
+body.sample-clinic-audit .insight-line--green {
+  background: var(--color-green-bg);
+  border-color: var(--color-green);
+}
+body.sample-clinic-audit .insight-line--orange {
+  background: var(--color-orange-bg);
+  border-color: var(--color-orange);
+}
+body.sample-clinic-audit .insight-line--red {
+  background: var(--color-red-bg);
+  border-color: var(--color-red);
+}
+body.sample-clinic-audit .insight-line--blue {
+  background: var(--color-blue-bg);
+  border-color: var(--color-blue);
+}
+body.sample-clinic-audit .insight-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+body.sample-clinic-audit .insight-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+body.sample-clinic-audit .insight-line--indigo .insight-label {
+  color: var(--color-indigo);
+}
+body.sample-clinic-audit .insight-line--green .insight-label {
+  color: var(--color-green-light);
+}
+body.sample-clinic-audit .insight-line--orange .insight-label {
+  color: var(--color-orange-light);
+}
+body.sample-clinic-audit .insight-line--red .insight-label {
+  color: var(--color-red-light);
+}
+body.sample-clinic-audit .insight-line--blue .insight-label {
+  color: var(--color-blue-light);
+}
+body.sample-clinic-audit .insight-text {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+body.sample-clinic-audit .card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-card);
+}
+body.sample-clinic-audit .card--elevated {
+  background: var(--color-bg-elevated);
+  box-shadow: var(--shadow-elevated);
+}
+body.sample-clinic-audit .card__label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-sm);
+}
+body.sample-clinic-audit .card__value {
+  font-size: 1.75rem;
+  font-family: var(--font-display);
+  color: var(--color-text-primary);
+  line-height: 1;
+  margin-bottom: var(--space-xs);
+}
+body.sample-clinic-audit .card__sub {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+body.sample-clinic-audit .audit-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin: var(--space-md) 0;
+}
+body.sample-clinic-audit .audit-table th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+}
+body.sample-clinic-audit .audit-table td {
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--color-border-light);
+  color: var(--color-text-secondary);
+  vertical-align: top;
+}
+body.sample-clinic-audit .audit-table td:first-child {
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+body.sample-clinic-audit .audit-table tr:last-child td {
+  border-bottom: none;
+}
+body.sample-clinic-audit .audit-table tr:hover td {
+  background: rgba(49, 46, 129, 0.04);
+}
+
+body.sample-clinic-audit .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 2px 10px;
+  border-radius: 100px;
+}
+body.sample-clinic-audit .badge--critical {
+  background: var(--color-red-bg);
+  color: var(--color-red-light);
+  border: 1px solid rgba(220, 38, 38, 0.25);
+}
+body.sample-clinic-audit .badge--high {
+  background: var(--color-orange-bg);
+  color: var(--color-orange-light);
+  border: 1px solid rgba(234, 88, 12, 0.25);
+}
+body.sample-clinic-audit .badge--medium {
+  background: rgba(250, 204, 21, 0.2);
+  color: #a16207;
+  border: 1px solid rgba(161, 98, 7, 0.28);
+}
+body.sample-clinic-audit .badge--low {
+  background: var(--color-green-bg);
+  color: var(--color-green-light);
+  border: 1px solid rgba(15, 118, 110, 0.25);
+}
+body.sample-clinic-audit .badge--blue {
+  background: var(--color-blue-bg);
+  color: var(--color-blue-light);
+  border: 1px solid rgba(37, 99, 235, 0.22);
+}
+
+body.sample-clinic-audit .priority-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 80px;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--color-border-light);
+  align-items: center;
+}
+body.sample-clinic-audit .priority-row:last-child {
+  border-bottom: none;
+}
+body.sample-clinic-audit .priority-row .opp-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+/* Journey */
+body.sample-clinic-audit .journey-timeline {
+  position: relative;
+  padding-left: var(--space-xl);
+}
+body.sample-clinic-audit .journey-timeline::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: linear-gradient(to bottom, #312e81, #1d4ed8, #b91c1c);
+}
+body.sample-clinic-audit .journey-stage {
+  position: relative;
+  padding: var(--space-md) var(--space-md) var(--space-md) var(--space-lg);
+  margin-bottom: var(--space-md);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+body.sample-clinic-audit .journey-stage::before {
+  content: '';
+  position: absolute;
+  left: -28px;
+  top: 18px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--color-indigo);
+  background: var(--color-bg);
+}
+body.sample-clinic-audit .journey-stage--friction {
+  border-left: 3px solid var(--color-orange);
+}
+body.sample-clinic-audit .journey-stage--gap {
+  border-left: 3px solid var(--color-red);
+}
+body.sample-clinic-audit .journey-stage--ok {
+  border-left: 3px solid var(--color-green);
+}
+body.sample-clinic-audit .stage-name {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-xs);
+}
+body.sample-clinic-audit .stage-status {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-sm);
+}
+body.sample-clinic-audit .stage-gaps {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+body.sample-clinic-audit .stage-gaps li {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+body.sample-clinic-audit .stage-gaps li::before {
+  content: '→';
+  color: var(--color-orange-light);
+  flex-shrink: 0;
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+body.sample-clinic-audit .check-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+body.sample-clinic-audit .check-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+body.sample-clinic-audit .check-list li .check-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+body.sample-clinic-audit .check-list--green li .check-icon {
+  color: var(--color-green);
+}
+body.sample-clinic-audit .check-list--red li .check-icon {
+  color: var(--color-red);
+}
+
+/* Impact */
+body.sample-clinic-audit .impact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-md);
+}
+body.sample-clinic-audit .impact-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md) var(--space-lg);
+}
+body.sample-clinic-audit .impact-card__metric {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-sm);
+}
+body.sample-clinic-audit .impact-card__before {
+  font-size: 13px;
+  color: var(--color-red-light);
+  margin-bottom: 2px;
+}
+body.sample-clinic-audit .impact-card__arrow {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin-bottom: 2px;
+}
+body.sample-clinic-audit .impact-card__after {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-green-light);
+}
+
+/* Offer */
+body.sample-clinic-audit .offer-box {
+  background: linear-gradient(135deg, rgba(49, 46, 129, 0.06), rgba(15, 118, 110, 0.06));
+  border: 1px solid rgba(49, 46, 129, 0.22);
+  border-radius: var(--radius-xl);
+  padding: var(--space-2xl);
+  position: relative;
+  overflow: hidden;
+}
+body.sample-clinic-audit .offer-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #1e1b4b, #312e81);
+}
+body.sample-clinic-audit .offer-title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-sm);
+}
+body.sample-clinic-audit .offer-pitch {
+  font-size: 1rem;
+  font-style: italic;
+  color: var(--color-indigo);
+  margin-bottom: var(--space-lg);
+  line-height: 1.6;
+}
+body.sample-clinic-audit .offer-components {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+body.sample-clinic-audit .offer-components li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+body.sample-clinic-audit .offer-components li::before {
+  content: '✦';
+  color: var(--color-indigo);
+  font-size: 10px;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+/* Sources */
+body.sample-clinic-audit .sources-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+body.sample-clinic-audit .source-item {
+  display: flex;
+  gap: var(--space-md);
+  align-items: flex-start;
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--color-border-light);
+  font-size: 13px;
+}
+body.sample-clinic-audit .source-item:last-child {
+  border-bottom: none;
+}
+body.sample-clinic-audit .source-id {
+  min-width: 28px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  padding-top: 2px;
+}
+body.sample-clinic-audit .source-name {
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: 2px;
+}
+body.sample-clinic-audit .source-url a {
+  color: var(--color-blue-light);
+  text-decoration: none;
+  word-break: break-all;
+}
+body.sample-clinic-audit .source-url a:hover {
+  text-decoration: underline;
+}
+
+body.sample-clinic-audit .report-footer {
+  background: var(--color-bg-card);
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-xl);
+  text-align: center;
+}
+body.sample-clinic-audit .footer-brand {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-xs);
+}
+body.sample-clinic-audit .footer-tagline {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+/* Executive dashboard (sample) */
+body.sample-clinic-audit .so-dashboard {
+  max-width: 1100px;
+  margin: 2rem auto 1.5rem;
+  padding: 0 1rem;
+}
+body.sample-clinic-audit .so-dashboard__title {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  color: var(--color-text-primary);
+  margin: 0 0 0.25rem;
+}
+body.sample-clinic-audit .so-dashboard__sub {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin: 0 0 1.25rem;
+}
+body.sample-clinic-audit .so-chart-card {
+  background: var(--so-chart-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 1.25rem 1.25rem 0.75rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-elevated);
+}
+body.sample-clinic-audit .so-chart-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+body.sample-clinic-audit .so-chart-card__title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+}
+body.sample-clinic-audit .so-chart-card__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+body.sample-clinic-audit .so-legend-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+body.sample-clinic-audit .so-legend-pill::before {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  background: currentColor;
+}
+body.sample-clinic-audit .so-chart-wrap {
+  position: relative;
+  height: 280px;
+}
+@media (max-width: 640px) {
+  body.sample-clinic-audit .so-chart-wrap {
+    height: 220px;
+  }
+}
+
+body.sample-clinic-audit .so-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+@media (max-width: 900px) {
+  body.sample-clinic-audit .so-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 480px) {
+  body.sample-clinic-audit .so-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}
+body.sample-clinic-audit .so-kpi {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 1.25rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+body.sample-clinic-audit .so-kpi:hover {
+  transform: translateY(-2px);
+  border-color: var(--so-kpi-hover-border);
+}
+body.sample-clinic-audit .so-kpi__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.85rem;
+  box-shadow: 0 4px 16px rgba(30, 27, 75, 0.12);
+}
+body.sample-clinic-audit .so-kpi__icon svg {
+  width: 28px;
+  height: 28px;
+  color: #fff;
+  stroke: #fff;
+}
+body.sample-clinic-audit .so-kpi__value {
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  color: var(--color-text-primary);
+  line-height: 1;
+  margin-bottom: 0.35rem;
+}
+body.sample-clinic-audit .so-kpi__label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+body.sample-clinic-audit .so-kpi__sub {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-top: 0.5rem;
+}
+body.sample-clinic-audit .so-kpi--accent .so-kpi__icon {
+  background: linear-gradient(135deg, #312e81, #1e1b4b);
+}
+body.sample-clinic-audit .so-kpi--teal .so-kpi__icon {
+  background: linear-gradient(135deg, #0f766e, #115e59);
+}
+body.sample-clinic-audit .so-kpi--amber .so-kpi__icon {
+  background: linear-gradient(135deg, #c2410c, #9a3412);
+}
+body.sample-clinic-audit .so-kpi--slate .so-kpi__icon {
+  background: linear-gradient(135deg, #334155, #1e293b);
+}
+
+body.sample-clinic-audit .so-friction-icons {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.75rem;
+  margin: 1.25rem 0 1rem;
+}
+@media (max-width: 760px) {
+  body.sample-clinic-audit .so-friction-icons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+body.sample-clinic-audit .so-friction-icon {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+}
+body.sample-clinic-audit .so-friction-icon__circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  margin: 0 auto 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(30, 27, 75, 0.1);
+}
+body.sample-clinic-audit .so-friction-icon__circle svg {
+  width: 24px;
+  height: 24px;
+  color: #fff;
+  stroke: #fff;
+}
+body.sample-clinic-audit .so-friction-icon__label {
+  font-size: 12px;
+  color: var(--color-text-primary);
+  font-weight: 600;
+  line-height: 1.3;
+}
+body.sample-clinic-audit .so-friction-icon__tag {
+  font-size: 10px;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 0.25rem;
+}
+
+body.sample-clinic-audit .so-critical-reviews {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+@media (max-width: 760px) {
+  body.sample-clinic-audit .so-critical-reviews {
+    grid-template-columns: 1fr;
+  }
+}
+body.sample-clinic-audit .so-review-card {
+  background: var(--so-review-bg);
+  border: 1px solid rgba(220, 38, 38, 0.28);
+  border-left: 4px solid #dc2626;
+  border-radius: 12px;
+  padding: 1.1rem 1.25rem;
+}
+body.sample-clinic-audit .so-review-card--warn {
+  background: var(--so-review-bg-warn);
+  border-color: rgba(234, 88, 12, 0.3);
+  border-left-color: #ea580c;
+}
+body.sample-clinic-audit .so-review-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+body.sample-clinic-audit .so-stars {
+  display: inline-flex;
+  gap: 2px;
+}
+body.sample-clinic-audit .so-stars svg {
+  width: 16px;
+  height: 16px;
+}
+body.sample-clinic-audit .so-star-on {
+  color: #fbbf24;
+  fill: #fbbf24;
+}
+body.sample-clinic-audit .so-star-off {
+  color: var(--so-star-off);
+  fill: var(--so-star-off);
+}
+body.sample-clinic-audit .so-review-card__source {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+body.sample-clinic-audit .so-review-card__quote {
+  font-size: 14px;
+  color: var(--color-text-primary);
+  font-style: italic;
+  line-height: 1.55;
+  margin: 0 0 0.6rem;
+}
+body.sample-clinic-audit .so-review-card__meta {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+body.sample-clinic-audit .so-review-card__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: rgba(254, 226, 226, 0.9);
+  color: #b91c1c;
+  border: 1px solid rgba(185, 28, 28, 0.35);
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+body.sample-clinic-audit .so-review-card--warn .so-review-card__badge {
+  background: rgba(255, 237, 213, 0.95);
+  color: #c2410c;
+  border-color: rgba(194, 65, 12, 0.35);
+}
+
+body.sample-clinic-audit .so-heatmap {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 1.25rem;
+  margin-top: 1.25rem;
+}
+body.sample-clinic-audit .so-heatmap__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+body.sample-clinic-audit .so-heatmap__title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+}
+body.sample-clinic-audit .so-heatmap__scale {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 10px;
+  color: var(--color-text-secondary);
+}
+body.sample-clinic-audit .so-heatmap__scale-grad {
+  width: 80px;
+  height: 10px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #e2e8f0, #fdba74, #ef4444);
+}
+body.sample-clinic-audit .so-heatmap__grid {
+  display: grid;
+  grid-template-columns: 160px repeat(4, 1fr);
+  gap: 4px;
+  font-size: 11px;
+}
+@media (max-width: 760px) {
+  body.sample-clinic-audit .so-heatmap__grid {
+    grid-template-columns: 100px repeat(4, 1fr);
+    font-size: 10px;
+  }
+}
+body.sample-clinic-audit .so-heatmap__head-cell {
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.5rem;
+  text-align: center;
+  font-size: 10px;
+}
+body.sample-clinic-audit .so-heatmap__row-label {
+  background: rgba(49, 46, 129, 0.05);
+  color: var(--color-text-primary);
+  padding: 0.7rem 0.6rem;
+  border-radius: 6px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+body.sample-clinic-audit .so-heatmap__cell {
+  padding: 0.7rem 0.5rem;
+  border-radius: 6px;
+  text-align: center;
+  color: #fff;
+  font-weight: 700;
+}
+body.sample-clinic-audit .so-heat-0 {
+  background: #e2e8f0;
+  color: #64748b;
+}
+body.sample-clinic-audit .so-heat-1 {
+  background: #92400e;
+}
+body.sample-clinic-audit .so-heat-2 {
+  background: #b45309;
+}
+body.sample-clinic-audit .so-heat-3 {
+  background: #dc2626;
+}
+body.sample-clinic-audit .so-heat-4 {
+  background: #ef4444;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.35);
+}
+body.sample-clinic-audit .so-heatmap__footnote {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin-top: 0.85rem;
+  font-style: italic;
+}
+
+body.sample-clinic-audit .sample-disclosure {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  background: rgba(49, 46, 129, 0.06);
+  border: 1px solid rgba(49, 46, 129, 0.12);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.55;
+}
+
+@media (max-width: 768px) {
+  body.sample-clinic-audit .report-header {
+    padding: var(--space-xl) var(--space-md);
+  }
+  body.sample-clinic-audit .report-body {
+    padding: var(--space-xl) var(--space-md);
+  }
+  body.sample-clinic-audit .impact-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  body.sample-clinic-audit .priority-row {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+  }
+}
+@media (max-width: 480px) {
+  body.sample-clinic-audit .impact-grid {
+    grid-template-columns: 1fr;
+  }
+  body.sample-clinic-audit .priority-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Optional dark theme (theme toggle) — keeps indigo accent, readable contrast */
+[data-theme='dark'] body.sample-clinic-audit {
+  --color-bg: #0c0f14;
+  --color-bg-card: #13171f;
+  --color-bg-elevated: #1a1f2b;
+  --color-border: #252b38;
+  --color-border-light: #1e2432;
+  --color-text-primary: #e8edf5;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
+  --color-indigo-bg: rgba(129, 140, 248, 0.12);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.35), 0 4px 16px rgba(0, 0, 0, 0.25);
+  --shadow-elevated: 0 4px 24px rgba(0, 0, 0, 0.45);
+  --so-chart-surface: linear-gradient(180deg, #13171f 0%, #0f1219 100%);
+  --so-kpi-hover-border: #3a4357;
+  --so-review-bg: linear-gradient(180deg, #1a1010 0%, #13171f 100%);
+  --so-review-bg-warn: linear-gradient(180deg, #1d1810 0%, #13171f 100%);
+  --so-star-off: #353d4f;
+  --so-priority-head-bg: rgba(255, 255, 255, 0.04);
+}
+[data-theme='dark'] html:has(body.sample-clinic-audit) {
+  background-color: #0c0f14;
+}
+[data-theme='dark'] body.sample-clinic-audit .report-header {
+  background: linear-gradient(135deg, #0c0f14 0%, #13171f 50%, #1e1b4b 100%);
+}
+[data-theme='dark'] body.sample-clinic-audit .audit-table tr:hover td {
+  background: rgba(255, 255, 255, 0.03);
+}
+[data-theme='dark'] body.sample-clinic-audit .so-heatmap__row-label {
+  background: rgba(255, 255, 255, 0.04);
+}
+[data-theme='dark'] body.sample-clinic-audit .sample-disclosure {
+  background: rgba(129, 140, 248, 0.08);
+  border-color: rgba(165, 180, 252, 0.2);
+}

@@ -1,11 +1,24 @@
 (function () {
   'use strict';
 
+  var SECTOR_VALUES = ['hotels', 'clinics', 'properties', 'other'];
+
   function el(tag, className, text) {
     var node = document.createElement(tag);
     if (className) node.className = className;
     if (text != null) node.textContent = text;
     return node;
+  }
+
+  /** @param {string} sectorDefault */
+  function inferSectorSlug(sectorDefault) {
+    var s = (sectorDefault || '').toLowerCase();
+    if (!s) return null;
+    if (s.indexOf('cross-vertical') !== -1 || s.indexOf('cross vertical') !== -1) return null;
+    if (s.indexOf('property') !== -1 || s.indexOf('rental') !== -1) return 'properties';
+    if (s.indexOf('hotel') !== -1) return 'hotels';
+    if (s.indexOf('clinic') !== -1 || s.indexOf('dental') !== -1) return 'clinics';
+    return null;
   }
 
   function mount(root) {
@@ -51,10 +64,31 @@
 
     var nameField = field('inquiry-name', 'Name', { autocomplete: 'name' });
     var businessField = field('inquiry-business', 'Business', { autocomplete: 'organization' });
-    var sectorField = field('inquiry-sector', 'Sector', {
-      placeholder: 'Hotels, clinics, property, other',
-      value: sectorDefault,
-    });
+
+    var sectorFieldset = el('fieldset', 'inquiry-form__field so-sector-choice');
+    sectorFieldset.appendChild(el('legend', 'inquiry-form__label', 'Sector'));
+    var sectorGrid = el('div', 'so-sector-choice__grid');
+    sectorGrid.setAttribute('role', 'presentation');
+    var sectorInputs = [];
+    var initialSlug = inferSectorSlug(sectorDefault);
+    for (var si = 0; si < SECTOR_VALUES.length; si++) {
+      var val = SECTOR_VALUES[si];
+      var lab = el('label', 'so-sector-choice__opt');
+      var inp = document.createElement('input');
+      inp.type = 'radio';
+      inp.name = 'sector';
+      inp.value = val;
+      inp.className = 'so-sector-choice__input';
+      if (si === 0) inp.required = true;
+      if (initialSlug && val === initialSlug) inp.checked = true;
+      sectorInputs.push(inp);
+      var labelText = val === 'properties' ? 'Property' : val === 'other' ? 'Other' : val.charAt(0).toUpperCase() + val.slice(1);
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(labelText));
+      sectorGrid.appendChild(lab);
+    }
+    sectorFieldset.appendChild(sectorGrid);
+
     var improvementField = field('inquiry-improvement', 'What do you want to improve?', {
       name: 'improvement',
       multiline: true,
@@ -63,7 +97,7 @@
 
     form.appendChild(nameField.wrap);
     form.appendChild(businessField.wrap);
-    form.appendChild(sectorField.wrap);
+    form.appendChild(sectorFieldset);
     form.appendChild(improvementField.wrap);
 
     var actions = el('div', 'inquiry-form__actions');
@@ -73,15 +107,30 @@
     form.appendChild(actions);
     form.appendChild(status);
 
+    function getSectorValue() {
+      for (var i = 0; i < sectorInputs.length; i++) {
+        if (sectorInputs[i].checked) return sectorInputs[i].value;
+      }
+      return '';
+    }
+
+    function applySectorDefault() {
+      var slug = inferSectorSlug(sectorDefault);
+      for (var i = 0; i < sectorInputs.length; i++) {
+        sectorInputs[i].checked = Boolean(slug && sectorInputs[i].value === slug);
+      }
+    }
+
     form.addEventListener('submit', function (event) {
       event.preventDefault();
       status.hidden = true;
       status.classList.remove('is-error', 'is-success');
 
+      var sector = getSectorValue();
       var payload = {
         name: nameField.control.value.trim(),
         business: businessField.control.value.trim(),
-        sector: sectorField.control.value.trim(),
+        sector: sector,
         improvement: improvementField.control.value.trim(),
         topic: topic,
         source: source,
@@ -125,7 +174,7 @@
           status.classList.add('is-success');
           status.hidden = false;
           form.reset();
-          if (sectorDefault) sectorField.control.value = sectorDefault;
+          applySectorDefault();
           submit.textContent = 'Sent';
         })
         .catch(function (error) {

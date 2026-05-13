@@ -123,18 +123,9 @@ export function PricingInquiryClient() {
     <>
       <header className="so-pricing-header">
         <h1 className="so-pricing-title">Request · {tierTitle}</h1>
-        <p className="so-pricing-subtitle">
-          Create or sign in to your portal account for this tier. You will be redirected to your private report after submit.
-        </p>
       </header>
 
       <form className="inquiry-form so-pricing-inquiry__form" onSubmit={onSubmit} noValidate>
-        <p className="so-pricing-inquiry__privacy">
-          We collect your IP address, pages visited, and timestamps to deliver the audit or plan you requested and to protect the
-          service. Questions:{" "}
-          <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a>.
-        </p>
-
         <label className="inquiry-form__field" htmlFor="field-email">
           <span className="inquiry-form__label">Work email</span>
           <input className="inquiry-form__control" id="field-email" name="email" type="email" autoComplete="email" required maxLength={254} />
@@ -159,17 +150,27 @@ export function PricingInquiryClient() {
           <span className="inquiry-form__label">Business</span>
           <input className="inquiry-form__control" id="field-business" name="business" type="text" autoComplete="organization" required />
         </label>
-        <label className="inquiry-form__field" htmlFor="field-sector">
-          <span className="inquiry-form__label">Sector</span>
-          <input
-            className="inquiry-form__control"
-            id="field-sector"
-            name="sector"
-            type="text"
-            placeholder="Hotels, clinics, property, other"
-            required
-          />
-        </label>
+        <fieldset className="inquiry-form__field so-sector-choice">
+          <legend className="inquiry-form__label">Sector</legend>
+          <div className="so-sector-choice__grid" role="presentation">
+            <label className="so-sector-choice__opt">
+              <input type="radio" name="sector" value="hotels" className="so-sector-choice__input" required />
+              Hotels
+            </label>
+            <label className="so-sector-choice__opt">
+              <input type="radio" name="sector" value="clinics" className="so-sector-choice__input" />
+              Clinics
+            </label>
+            <label className="so-sector-choice__opt">
+              <input type="radio" name="sector" value="properties" className="so-sector-choice__input" />
+              Property
+            </label>
+            <label className="so-sector-choice__opt">
+              <input type="radio" name="sector" value="other" className="so-sector-choice__input" />
+              Other
+            </label>
+          </div>
+        </fieldset>
         <label className="inquiry-form__field" htmlFor="field-improvement">
           <span className="inquiry-form__label">What do you want to improve?</span>
           <textarea

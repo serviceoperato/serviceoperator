@@ -429,7 +429,7 @@ export function createUserStore(dataDir, adminEmail) {
 
     /**
      * Finish email-first registration: set password, business vertical, promote pending → user.
-     * @param {string} signupVertical one of hotels | clinics | properties | wellness
+     * @param {string} signupVertical one of hotels | clinics | properties | wellness | other
      */
     completePendingOnboarding(pendingId, jwtEmail, password, signupVertical) {
       if (typeof pendingId !== 'string' || !pendingId) {
@@ -442,7 +442,7 @@ export function createUserStore(dataDir, adminEmail) {
         err.status = 400;
         throw err;
       }
-      const allowed = new Set(['hotels', 'clinics', 'properties', 'wellness']);
+      const allowed = new Set(['hotels', 'clinics', 'properties', 'wellness', 'other']);
       const v = typeof signupVertical === 'string' ? signupVertical.trim().toLowerCase() : '';
       if (!allowed.has(v)) {
         const err = new Error('Choose a valid business type.');

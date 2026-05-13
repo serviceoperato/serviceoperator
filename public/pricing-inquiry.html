@@ -36,14 +36,10 @@
 <main class="mkt-page so-pricing-fadeIn so-pricing-inquiry">
   <header class="so-pricing-header">
     <h1 class="so-pricing-title" id="inq-title">Pricing inquiry</h1>
-    <p class="so-pricing-subtitle" id="inq-sub">Complete the form to open your portal workspace and notify the studio.</p>
   </header>
 
   <form id="pricing-inquiry-form" class="inquiry-form so-pricing-inquiry__form" novalidate>
     <input type="hidden" name="plan" id="field-plan" value="free" />
-    <p class="so-pricing-inquiry__privacy" id="inq-privacy">
-      We collect your IP address, pages visited, and timestamps to deliver the audit or plan you requested and to protect the service. Questions: <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a>.
-    </p>
 
     <label class="inquiry-form__field" for="field-email">
       <span class="inquiry-form__label">Work email</span>
@@ -61,10 +57,27 @@
       <span class="inquiry-form__label">Business</span>
       <input class="inquiry-form__control" id="field-business" name="business" type="text" autocomplete="organization" required />
     </label>
-    <label class="inquiry-form__field" for="field-sector">
-      <span class="inquiry-form__label">Sector</span>
-      <input class="inquiry-form__control" id="field-sector" name="sector" type="text" placeholder="Hotels, clinics, property, other" required />
-    </label>
+    <fieldset class="inquiry-form__field so-sector-choice">
+      <legend class="inquiry-form__label">Sector</legend>
+      <div class="so-sector-choice__grid" role="presentation">
+        <label class="so-sector-choice__opt">
+          <input type="radio" name="sector" value="hotels" class="so-sector-choice__input" required />
+          Hotels
+        </label>
+        <label class="so-sector-choice__opt">
+          <input type="radio" name="sector" value="clinics" class="so-sector-choice__input" />
+          Clinics
+        </label>
+        <label class="so-sector-choice__opt">
+          <input type="radio" name="sector" value="properties" class="so-sector-choice__input" />
+          Property
+        </label>
+        <label class="so-sector-choice__opt">
+          <input type="radio" name="sector" value="other" class="so-sector-choice__input" />
+          Other
+        </label>
+      </div>
+    </fieldset>
     <label class="inquiry-form__field" for="field-improvement">
       <span class="inquiry-form__label">What do you want to improve?</span>
       <textarea class="inquiry-form__control" id="field-improvement" name="improvement" rows="4" required placeholder="One urgent operational pain, bottleneck, or goal."></textarea>
@@ -80,8 +93,8 @@
 <script src="/sw-register.js"></script>
 <script src="/site-nav-drawer.js"></script>
 <script src="/user-account-menu.js"></script>
-<script src="theme.js"></script>
-<script src="debug.js"></script>
+<script src="/theme.js"></script>
+<script src="/debug.js"></script>
 <script>
 (function () {
   'use strict';
@@ -111,13 +124,8 @@
   var plan = parsePlan();
   var planInput = document.getElementById('field-plan');
   var titleEl = document.getElementById('inq-title');
-  var subEl = document.getElementById('inq-sub');
   if (planInput) planInput.value = plan;
   if (titleEl) titleEl.textContent = 'Request · ' + (TIER_LABEL[plan] || 'Free Audit');
-  if (subEl) {
-    subEl.textContent =
-      'Create or sign in to your portal account for this tier. You will be redirected to your private report after submit.';
-  }
 
   function postLeadView() {
     fetch(api('/api/marketing/lead-event'), {
@@ -153,7 +161,8 @@
       var password = document.getElementById('field-password').value || '';
       var name = (document.getElementById('field-name').value || '').trim();
       var business = (document.getElementById('field-business').value || '').trim();
-      var sector = (document.getElementById('field-sector').value || '').trim();
+      var sectorInput = document.querySelector('#pricing-inquiry-form input[name="sector"]:checked');
+      var sector = sectorInput ? String(sectorInput.value || '').trim() : '';
       var improvement = (document.getElementById('field-improvement').value || '').trim();
       if (!email || !password || password.length < 8 || !name || !business || !sector || !improvement) {
         setStatus('Please fill all fields. Password must be at least 8 characters.', 'error');

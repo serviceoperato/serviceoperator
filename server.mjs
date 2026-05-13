@@ -663,6 +663,35 @@ function parsePricingTier(raw) {
   return null;
 }
 
+/** Marketing / pricing request forms: canonical sector slug. */
+function normalizeInquirySector(raw) {
+  const s = String(raw || '')
+    .toLowerCase()
+    .trim();
+  if (s === 'hotels' || s === 'hotel') return 'hotels';
+  if (s === 'clinics' || s === 'clinic') return 'clinics';
+  if (s === 'property' || s === 'properties' || s === 'real_estate' || s === 'real-estate') return 'property';
+  if (s === 'other') return 'other';
+  return null;
+}
+
+function inquirySectorLabel(slug) {
+  if (slug === 'hotels') return 'Hotels';
+  if (slug === 'clinics') return 'Clinics';
+  if (slug === 'property') return 'Property';
+  if (slug === 'other') return 'Other';
+  return slug || '';
+}
+
+function inquiryHoneypotTripped(body) {
+  const v = typeof body?.company_url === 'string' ? body.company_url.trim() : '';
+  return Boolean(v);
+}
+
+function clipImproveFirst(body) {
+  return clipFreeText(body?.improveFirst ?? body?.improvement, 2000);
+}
+
 function sha256hex(s) {
   return crypto.createHash('sha256').update(s, 'utf8').digest('hex');
 }

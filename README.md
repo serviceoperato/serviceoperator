@@ -1,6 +1,6 @@
 # Service Opera — operating manual
 
-AI service operations for **Thailand** hotels, clinics and property businesses — owner **Jack** · `jack@serviceopera.to` · **www.serviceopera.to**
+AI service operations for **hotels, clinics, and property businesses worldwide** — owner **Jack** · `jack@serviceopera.to` · **www.serviceopera.to**
 
 ---
 
@@ -10,7 +10,7 @@ A complete, deployable site under **`serviceopera.to`**. All static assets live 
 
 | Path | What it is |
 |---|---|
-| `public/index.html` | Public landing page. **Jack — Service Operator** (`www.serviceopera.to`): AI operations for Thailand hotels, clinics and property businesses. |
+| `public/index.html` | Public landing page. **Jack — Service Operator** (`www.serviceopera.to`): AI operations for international hotels, clinics, and property businesses. |
 | `public/client.html` | **The "secret page".** Demo workspace behind a **browser-only** username/password (see `public/app.js`). For real data, replace with server-side auth. |
 | `public/styles.css` | Shared black / white / indigo design system. |
 | `public/app.js` | Landing-page modal + demo credential check. |
@@ -27,7 +27,7 @@ The client page is marked `noindex, nofollow` and disallowed in `robots.txt` whe
 
 ## 2. The 3 sectors I targeted (and why)
 
-Thailand-wide service operators (not a single-city play):
+Service operators in strong travel, medical-tourism, and mixed-channel markets (not a single-city play):
 
 1. **Hotels & serviced apartments** — independent and boutique operators with multilingual guest volume and distributed channel management.
 2. **Clinics, dental, beauty & wellness** — mixed local and international demand; intake, reviews and competitor signals often sit in too many places.
@@ -69,7 +69,7 @@ Convention I used: `slug-of-business` as username, an 8-char password.
 
 ### Step 3 — *(Optional but recommended)* personalize the demo
 Open `public/client.html` and swap a few details so it feels truly built for them:
-- The 3 competitors in the **Pricing Radar** module → put their *actual* 3 closest competitors in their market (anywhere in Thailand).
+- The 3 competitors in the **Pricing Radar** module → put their *actual* 3 closest competitors in their market (wherever they compete).
 - The chat module top bubble → change "Anna" to a realistic guest name and the room type to match their property.
 - The "Revenue Opportunity" paragraph → if you can find a real event in their window, drop it in.
 
@@ -83,7 +83,7 @@ Body template:
 
 > Hi {First name},
 >
-> I'm Jack — I design and run AI automation systems for hospitality and medical operators across Thailand. Rather than send another cold pitch, I spent an afternoon and built you a private demo workspace showing what a dialed-in week of service operations could look like once a few workflows are automated.
+> I'm Jack — I design and run AI automation systems for hospitality and medical operators worldwide. Rather than send another cold pitch, I spent an afternoon and built you a private demo workspace showing what a dialed-in week of service operations could look like once a few workflows are automated.
 >
 > It's a real working page, not a PDF. Have a look when you have 5 minutes:
 >

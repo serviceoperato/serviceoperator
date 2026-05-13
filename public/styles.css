@@ -711,7 +711,7 @@ html.so-site-nav-open {
   animation: none;
 }
 
-/* Thailand-wide headline: multi-line, calm B2B (no heavy italic) */
+/* Multi-market headline: multi-line, calm B2B (no heavy italic) */
 .hero__title--lead {
   font-size: clamp(2rem, 4.6vw, 3.65rem);
   line-height: 1.08;
@@ -3092,4 +3092,51 @@ a.admin-topbar__logout {
 }
 .inquiry-form__status.is-error {
   color: #fca5a5;
+}
+
+/* Sector / vertical: four slugs as native radios in a 2×2 card grid (pricing inquiry, embedded inquiry, register). */
+.so-sector-choice {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+.so-sector-choice__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+.so-sector-choice__opt {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.55rem 0.5rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--ink-2) 92%, transparent);
+  color: var(--paper);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  user-select: none;
+}
+.so-sector-choice__opt:has(:checked) {
+  border-color: var(--amber-2);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--amber-2) 35%, transparent);
+}
+.so-sector-choice__opt:has(:focus-visible) {
+  outline: 2px solid color-mix(in srgb, var(--amber) 55%, transparent);
+  outline-offset: 2px;
+}
+.so-sector-choice__input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
 }

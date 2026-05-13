@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
 <meta name="robots" content="noindex, nofollow" />
-<title>Thailand clinics — sector research · Jack · Service Operator</title>
+<title>Clinic sector research · Jack · Service Operator</title>
 <link rel="icon" href="/assets/favicon.png" type="image/png" sizes="any" />
 <link rel="apple-touch-icon" href="/assets/favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -76,12 +76,12 @@
   <header class="client-hero" style="border-bottom: 1px solid var(--line);">
     <div class="client-hero__eyebrow">
       <span class="dot dot--live"></span>
-      <span class="mono" id="demoEyebrow">— THAILAND · MEDICAL VERTICAL · UPDATED</span>
+      <span class="mono" id="demoEyebrow">— SEA · MEDICAL VERTICAL · UPDATED</span>
     </div>
     <h1 class="clinics-hero__title">
       <span class="line">I looked at</span>
       <span class="line"><span class="line--accent"><span id="sampleSizeHero">47</span> clinics</span></span>
-      <span class="line">in Thailand.</span>
+      <span class="line">in one dense regional sample.</span>
       <span class="line line--italic">Here's what they're losing.</span>
     </h1>
     <p class="client-hero__lede" style="max-width: 40em;">
@@ -110,7 +110,7 @@
       </div>
     </div>
     <p class="mono" style="margin-top:1.75rem;font-size:0.72rem;color:var(--mute-2);max-width:48rem;line-height:1.5;">
-      <a href="sea-clinic-audit/" style="color:var(--amber-2);text-decoration:underline;text-underline-offset:3px;">Public-footprint audit sample (Thailand)</a>
+      <a href="sea-clinic-audit/" style="color:var(--amber-2);text-decoration:underline;text-underline-offset:3px;">Public-footprint audit sample (single market)</a>
       — same style of work on a single clinic from public signals only; not commissioned by the clinic.
     </p>
   </header>
@@ -236,7 +236,7 @@
   function hydrate(d) {
     var h = d.headline_stats;
     var n = d.sample_size;
-    document.getElementById('demoEyebrow').textContent = '— THAILAND · MEDICAL VERTICAL · UPDATED ' + fmtDate(d.generated_at);
+    document.getElementById('demoEyebrow').textContent = '— SEA · MEDICAL VERTICAL · UPDATED ' + fmtDate(d.generated_at);
     document.getElementById('sampleSizeHero').textContent = n;
     document.getElementById('statSample').textContent = n;
     var avg = fmtThbCompact(eurToThb(h.avg_monthly_leakage_eur));
