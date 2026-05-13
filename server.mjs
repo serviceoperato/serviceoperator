@@ -54,10 +54,13 @@ async function initUserStore() {
   const adminEmail = (process.env.ADMIN_EMAIL || 'jack@serviceopera.to').trim().toLowerCase();
   const databaseUrl = (process.env.DATABASE_URL || '').trim();
   if (databaseUrl) {
+    let pool = null;
     try {
       const { Pool } = await import('pg');
-      const pool = new Pool({
+      const pgConnMs = Number(process.env.PG_CONNECTION_TIMEOUT_MS || 8000);
+      pool = new Pool({
         connectionString: databaseUrl,
+        connectionTimeoutMillis: Number.isFinite(pgConnMs) && pgConnMs > 0 ? pgConnMs : 8000,
         ssl:
           /sslmode=require/i.test(databaseUrl) || /railway/i.test(databaseUrl)
             ? { rejectUnauthorized: false }
@@ -77,6 +80,11 @@ async function initUserStore() {
         '[serviceopera] PostgreSQL init failed; falling back to JSON files under DATA_DIR. Fix DATABASE_URL or networking. Error:',
         msg
       );
+      try {
+        if (pool && typeof pool.end === 'function') await pool.end();
+      } catch {
+        /* ignore */
+      }
     }
   }
   return {
