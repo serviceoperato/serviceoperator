@@ -620,6 +620,140 @@
     panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
+  function openBrandingPanel() {
+    if (!panel || !panelTitle || !panelBody) return;
+    if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.add('is-hidden');
+    panelTitle.textContent = 'Site appearance';
+    panelBody.innerHTML =
+      '<p class="tf-admin-muted">Hero images on the homepage (before <em>Private operational audits</em>), plus <code>property.html</code>, <code>clinics.html</code>, and <code>hotels.html</code>. Use a path under <code>/images/…</code> after you add the file to the deploy, or any public <strong>https</strong> image URL. Visitors load values from <code>GET /api/site-appearance</code>.</p>' +
+      '<div class="admin-panel__form">' +
+      '<label class="portal-form__label" for="soSiteHomeImgUrl">Homepage hero image URL</label>' +
+      '<input class="portal-form__input mono" type="text" id="soSiteHomeImgUrl" autocomplete="off" />' +
+      '<label class="portal-form__label" for="soSiteHomeImgAlt" style="margin-top:1rem">Homepage hero alt text</label>' +
+      '<input class="portal-form__input" type="text" id="soSiteHomeImgAlt" maxlength="500" autocomplete="off" />' +
+      '<label class="portal-form__label" for="soSitePropImgUrl" style="margin-top:1.25rem">Property page image URL</label>' +
+      '<input class="portal-form__input mono" type="text" id="soSitePropImgUrl" autocomplete="off" />' +
+      '<label class="portal-form__label" for="soSitePropImgAlt" style="margin-top:1rem">Property image alt text</label>' +
+      '<input class="portal-form__input" type="text" id="soSitePropImgAlt" maxlength="500" autocomplete="off" />' +
+      '<label class="portal-form__label" for="soSiteClinicImgUrl" style="margin-top:1.25rem">Clinics page image URL</label>' +
+      '<input class="portal-form__input mono" type="text" id="soSiteClinicImgUrl" autocomplete="off" />' +
+      '<label class="portal-form__label" for="soSiteClinicImgAlt" style="margin-top:1rem">Clinics image alt text</label>' +
+      '<input class="portal-form__input" type="text" id="soSiteClinicImgAlt" maxlength="500" autocomplete="off" />' +
+      '<label class="portal-form__label" for="soSiteHotelImgUrl" style="margin-top:1.25rem">Hotels page image URL</label>' +
+      '<input class="portal-form__input mono" type="text" id="soSiteHotelImgUrl" autocomplete="off" />' +
+      '<label class="portal-form__label" for="soSiteHotelImgAlt" style="margin-top:1rem">Hotels image alt text</label>' +
+      '<input class="portal-form__input" type="text" id="soSiteHotelImgAlt" maxlength="500" autocomplete="off" />' +
+      '<p class="portal-form__hint mono" id="soSiteAppearanceHint"></p>' +
+      '<p class="admin-panel__actions" style="margin-top:1rem">' +
+      '<button type="button" class="btn btn-primary" id="soSiteAppearanceSave">Save</button> ' +
+      '<button type="button" class="btn btn--ghost mono" id="soSiteAppearanceBack">← Back to users</button>' +
+      '</p></div>';
+    panel.classList.remove('is-hidden');
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    var homeUrlEl = document.getElementById('soSiteHomeImgUrl');
+    var homeAltEl = document.getElementById('soSiteHomeImgAlt');
+    var urlEl = document.getElementById('soSitePropImgUrl');
+    var altEl = document.getElementById('soSitePropImgAlt');
+    var clinicUrlEl = document.getElementById('soSiteClinicImgUrl');
+    var clinicAltEl = document.getElementById('soSiteClinicImgAlt');
+    var hotelUrlEl = document.getElementById('soSiteHotelImgUrl');
+    var hotelAltEl = document.getElementById('soSiteHotelImgAlt');
+    var hintEl = document.getElementById('soSiteAppearanceHint');
+    var token = getAdminBearer();
+    if (!token) {
+      if (hintEl) hintEl.textContent = 'Sign in as admin first.';
+      return;
+    }
+    fetch('/api/admin/site-appearance', {
+      method: 'GET',
+      credentials: 'same-origin',
+      cache: 'no-store',
+      headers: { Authorization: 'Bearer ' + token },
+    })
+      .then(function (r) {
+        return r.json().then(function (j) {
+          return { ok: r.ok, j: j };
+        });
+      })
+      .then(function (x) {
+        if (!x.ok || !x.j) {
+          if (hintEl) hintEl.textContent = 'Could not load settings (HTTP ' + (x.j && x.j.error ? 'error' : 'failed') + ').';
+          return;
+        }
+        if (homeUrlEl) homeUrlEl.value = x.j.homePageImageUrl || '';
+        if (homeAltEl) homeAltEl.value = x.j.homePageImageAlt || '';
+        if (urlEl) urlEl.value = x.j.propertyPageImageUrl || '';
+        if (altEl) altEl.value = x.j.propertyPageImageAlt || '';
+        if (clinicUrlEl) clinicUrlEl.value = x.j.clinicPageImageUrl || '';
+        if (clinicAltEl) clinicAltEl.value = x.j.clinicPageImageAlt || '';
+        if (hotelUrlEl) hotelUrlEl.value = x.j.hotelPageImageUrl || '';
+        if (hotelAltEl) hotelAltEl.value = x.j.hotelPageImageAlt || '';
+        if (hintEl) hintEl.textContent = 'Loaded. Public endpoint: GET /api/site-appearance';
+      })
+      .catch(function () {
+        if (hintEl) hintEl.textContent = 'Network error loading settings.';
+      });
+
+    var save = document.getElementById('soSiteAppearanceSave');
+    if (save) {
+      save.addEventListener('click', function () {
+        if (hintEl) hintEl.textContent = 'Saving…';
+        fetch('/api/admin/site-appearance', {
+          method: 'PUT',
+          credentials: 'same-origin',
+          cache: 'no-store',
+          headers: {
+            Authorization: 'Bearer ' + getAdminBearer(),
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            homePageImageUrl: homeUrlEl ? homeUrlEl.value : '',
+            homePageImageAlt: homeAltEl ? homeAltEl.value : '',
+            propertyPageImageUrl: urlEl ? urlEl.value : '',
+            propertyPageImageAlt: altEl ? altEl.value : '',
+            clinicPageImageUrl: clinicUrlEl ? clinicUrlEl.value : '',
+            clinicPageImageAlt: clinicAltEl ? clinicAltEl.value : '',
+            hotelPageImageUrl: hotelUrlEl ? hotelUrlEl.value : '',
+            hotelPageImageAlt: hotelAltEl ? hotelAltEl.value : '',
+          }),
+        })
+          .then(function (r) {
+            return r.json().then(function (j) {
+              return { ok: r.ok, j: j };
+            });
+          })
+          .then(function (x) {
+            if (!x.ok) {
+              if (hintEl) hintEl.textContent = (x.j && x.j.error) || 'Save failed.';
+              return;
+            }
+            if (hintEl) hintEl.textContent = 'Saved. Visitors will see the new images on the next page load.';
+            if (homeUrlEl && x.j.homePageImageUrl) homeUrlEl.value = x.j.homePageImageUrl;
+            if (homeAltEl && x.j.homePageImageAlt) homeAltEl.value = x.j.homePageImageAlt;
+            if (urlEl && x.j.propertyPageImageUrl) urlEl.value = x.j.propertyPageImageUrl;
+            if (altEl && x.j.propertyPageImageAlt) altEl.value = x.j.propertyPageImageAlt;
+            if (clinicUrlEl && x.j.clinicPageImageUrl) clinicUrlEl.value = x.j.clinicPageImageUrl;
+            if (clinicAltEl && x.j.clinicPageImageAlt) clinicAltEl.value = x.j.clinicPageImageAlt;
+            if (hotelUrlEl && x.j.hotelPageImageUrl) hotelUrlEl.value = x.j.hotelPageImageUrl;
+            if (hotelAltEl && x.j.hotelPageImageAlt) hotelAltEl.value = x.j.hotelPageImageAlt;
+          })
+          .catch(function () {
+            if (hintEl) hintEl.textContent = 'Network error on save.';
+          });
+      });
+    }
+    var back = document.getElementById('soSiteAppearanceBack');
+    if (back) {
+      back.addEventListener('click', function () {
+        panel.classList.add('is-hidden');
+        if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.remove('is-hidden');
+        var u = document.getElementById('usersSection');
+        if (u) u.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+  }
+
   function makeNavPill(label, onClick) {
     var b = document.createElement('button');
     b.type = 'button';
@@ -656,6 +790,8 @@
             if (panel) panel.classList.add('is-hidden');
             var inbox = document.getElementById('adminInbox');
             if (inbox) inbox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          } else if (pair[1] === 'branding') {
+            openBrandingPanel();
           } else openStubPanel(pair[0], pair[1]);
         })
       );

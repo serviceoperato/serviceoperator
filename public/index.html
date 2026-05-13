@@ -137,6 +137,10 @@
     font-weight: 500;
     color: var(--paper);
   }
+  .home-lp__visual {
+    margin: 1.5rem 0 0;
+    max-width: 100%;
+  }
   .home-lp__proof {
     display: grid;
     gap: 1.25rem;
@@ -364,6 +368,22 @@
 
   <hr class="home-lp__rule" />
 
+  <div class="home-lp__visual" aria-label="Product preview">
+    <figure class="mkt-page-visual">
+      <img
+        id="soHomePageHero"
+        class="mkt-page-visual__img"
+        src="/images/home-page-hero.png"
+        width="1280"
+        height="720"
+        alt="Dashboard preview: ServiceOpera AI inbox across hotels, clinics and property with regional market context."
+        loading="lazy"
+        decoding="async"
+        data-so-site-appearance="home-hero"
+      />
+    </figure>
+  </div>
+
   <section class="home-lp__proof" aria-labelledby="home-proof-heading">
     <p class="home-lp__eyebrow" id="home-proof-heading">Private operational audits</p>
     <p class="home-lp__proof-lede">Each audit is built from public footprint data, market signals and operational assumptions. The goal is simple: identify one practical automation opportunity that can reduce manual work, improve follow-up or recover missed demand.</p>
@@ -477,6 +497,7 @@
   </div>
 </div>
 
+<script src="/site-appearance-public.js" defer></script>
 <script src="/sw-register.js"></script>
 <script src="/site-nav-drawer.js"></script>
 <script src="/user-account-menu.js"></script>

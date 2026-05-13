@@ -853,7 +853,7 @@
   lines.push({
     cat: 'AUTH',
     text:
-      '80 · admin routes: GET /api/admin/capabilities · POST /api/admin/bootstrap-from-portal · GET /api/admin/work-queue · PATCH /api/user-accounts/:id',
+      '80 · admin routes: GET /api/admin/capabilities · POST /api/admin/bootstrap-from-portal · GET /api/admin/work-queue · GET/PUT /api/admin/site-appearance · PATCH /api/user-accounts/:id',
   });
   lines.push({
     cat: 'OPS',

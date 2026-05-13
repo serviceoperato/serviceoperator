@@ -171,6 +171,9 @@ const MANAGED_PAGE_FILES = [
   'places-leads.html',
   'clinics/report.html',
   'admin.html',
+  'property.html',
+  'clinics.html',
+  'hotels.html',
 ];
 
 async function buildAdminWorkQueue() {
@@ -207,6 +210,98 @@ async function buildAdminWorkQueue() {
     managedPages,
     generatedAt: new Date().toISOString(),
   };
+}
+
+const siteAppearancePath = path.join(dataDir, 'site-appearance.json');
+const defaultSiteAppearance = {
+  propertyPageImageUrl: '/images/property-page-hero.png',
+  propertyPageImageAlt:
+    'Dashboard preview: AI-assisted lead response, viewing bookings, and property operations for rental operators.',
+  clinicPageImageUrl: '/images/clinics-page-hero.png',
+  clinicPageImageAlt:
+    'Dashboard preview: multi-channel clinic inbox, AI suggested replies, follow-ups and reviews for wellness operators.',
+  hotelPageImageUrl: '/images/hotels-page-hero.png',
+  hotelPageImageAlt:
+    'Dashboard preview: AI hotel operations inbox, booking recovery, guest replies and demand insights.',
+  homePageImageUrl: '/images/home-page-hero.png',
+  homePageImageAlt:
+    'Dashboard preview: ServiceOpera AI inbox across hotels, clinics and property with regional market context.',
+};
+
+function readSiteAppearanceRaw() {
+  try {
+    return JSON.parse(fs.readFileSync(siteAppearancePath, 'utf8'));
+  } catch {
+    return {};
+  }
+}
+
+function mergeSiteAppearance(raw) {
+  const propUrl =
+    typeof raw.propertyPageImageUrl === 'string' && raw.propertyPageImageUrl.trim()
+      ? raw.propertyPageImageUrl.trim()
+      : defaultSiteAppearance.propertyPageImageUrl;
+  const propAltRaw = typeof raw.propertyPageImageAlt === 'string' ? raw.propertyPageImageAlt.trim() : '';
+  const propAlt = propAltRaw
+    ? propAltRaw.slice(0, 500).replace(/[\u0000-\u001f\u007f]/g, '')
+    : defaultSiteAppearance.propertyPageImageAlt;
+  const clinicUrl =
+    typeof raw.clinicPageImageUrl === 'string' && raw.clinicPageImageUrl.trim()
+      ? raw.clinicPageImageUrl.trim()
+      : defaultSiteAppearance.clinicPageImageUrl;
+  const clinicAltRaw = typeof raw.clinicPageImageAlt === 'string' ? raw.clinicPageImageAlt.trim() : '';
+  const clinicAlt = clinicAltRaw
+    ? clinicAltRaw.slice(0, 500).replace(/[\u0000-\u001f\u007f]/g, '')
+    : defaultSiteAppearance.clinicPageImageAlt;
+  const hotelUrl =
+    typeof raw.hotelPageImageUrl === 'string' && raw.hotelPageImageUrl.trim()
+      ? raw.hotelPageImageUrl.trim()
+      : defaultSiteAppearance.hotelPageImageUrl;
+  const hotelAltRaw = typeof raw.hotelPageImageAlt === 'string' ? raw.hotelPageImageAlt.trim() : '';
+  const hotelAlt = hotelAltRaw
+    ? hotelAltRaw.slice(0, 500).replace(/[\u0000-\u001f\u007f]/g, '')
+    : defaultSiteAppearance.hotelPageImageAlt;
+  const homeUrl =
+    typeof raw.homePageImageUrl === 'string' && raw.homePageImageUrl.trim()
+      ? raw.homePageImageUrl.trim()
+      : defaultSiteAppearance.homePageImageUrl;
+  const homeAltRaw = typeof raw.homePageImageAlt === 'string' ? raw.homePageImageAlt.trim() : '';
+  const homeAlt = homeAltRaw
+    ? homeAltRaw.slice(0, 500).replace(/[\u0000-\u001f\u007f]/g, '')
+    : defaultSiteAppearance.homePageImageAlt;
+  return {
+    propertyPageImageUrl: propUrl,
+    propertyPageImageAlt: propAlt,
+    clinicPageImageUrl: clinicUrl,
+    clinicPageImageAlt: clinicAlt,
+    hotelPageImageUrl: hotelUrl,
+    hotelPageImageAlt: hotelAlt,
+    homePageImageUrl: homeUrl,
+    homePageImageAlt: homeAlt,
+  };
+}
+
+function isSafePropertyPageImageUrl(candidate) {
+  const s = String(candidate || '').trim();
+  if (!s || s.length > 2048) return false;
+  if (/[\u0000-\u001f\u007f\s<>"]/.test(s)) return false;
+  if (s.includes('..')) return false;
+  if (s.startsWith('/')) {
+    if (s.startsWith('//')) return false;
+    return /^\/[\w./~$%-]+$/i.test(s);
+  }
+  try {
+    const u = new URL(s);
+    if (u.protocol !== 'https:') return false;
+    return Boolean(u.hostname && u.hostname.length <= 253);
+  } catch {
+    return false;
+  }
+}
+
+function normalizePageImageAlt(s, fallback) {
+  const t = String(s ?? '').trim().slice(0, 500).replace(/[\u0000-\u001f\u007f]/g, '');
+  return t || fallback;
 }
 
 const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'jack@serviceopera.to').trim().toLowerCase();
@@ -586,6 +681,11 @@ app.get('/api/version', (req, res) => {
   res.json({ version: appVersion });
 });
 
+app.get('/api/site-appearance', (_req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  res.json(mergeSiteAppearance(readSiteAppearanceRaw()));
+});
+
 app.get('/api/debug/user-store', async (req, res) => {
   allowDebugCors(req, res);
   res.setHeader('Cache-Control', 'no-store');
@@ -801,6 +901,94 @@ app.get('/api/admin/work-queue', requireAdmin, async (_req, res) => {
     res.json(await buildAdminWorkQueue());
   } catch (e) {
     res.status(500).json({ error: e.message || 'Failed to build work queue' });
+  }
+});
+
+app.get('/api/admin/site-appearance', requireAdmin, (_req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  res.json({ ok: true, ...mergeSiteAppearance(readSiteAppearanceRaw()) });
+});
+
+app.put('/api/admin/site-appearance', requireAdmin, (req, res) => {
+  const body = req.body || {};
+  const cur = mergeSiteAppearance(readSiteAppearanceRaw());
+
+  const propUrlIn =
+    'propertyPageImageUrl' in body && typeof body.propertyPageImageUrl === 'string'
+      ? body.propertyPageImageUrl.trim()
+      : cur.propertyPageImageUrl;
+  let propUrl = propUrlIn || defaultSiteAppearance.propertyPageImageUrl;
+  if (!isSafePropertyPageImageUrl(propUrl)) {
+    return res.status(400).json({
+      error: 'Invalid propertyPageImageUrl. Use a path on this site (starting with /) or an https:// image URL.',
+    });
+  }
+
+  const clinicUrlIn =
+    'clinicPageImageUrl' in body && typeof body.clinicPageImageUrl === 'string'
+      ? body.clinicPageImageUrl.trim()
+      : cur.clinicPageImageUrl;
+  let clinicUrl = clinicUrlIn || defaultSiteAppearance.clinicPageImageUrl;
+  if (!isSafePropertyPageImageUrl(clinicUrl)) {
+    return res.status(400).json({
+      error: 'Invalid clinicPageImageUrl. Use a path on this site (starting with /) or an https:// image URL.',
+    });
+  }
+
+  const hotelUrlIn =
+    'hotelPageImageUrl' in body && typeof body.hotelPageImageUrl === 'string'
+      ? body.hotelPageImageUrl.trim()
+      : cur.hotelPageImageUrl;
+  let hotelUrl = hotelUrlIn || defaultSiteAppearance.hotelPageImageUrl;
+  if (!isSafePropertyPageImageUrl(hotelUrl)) {
+    return res.status(400).json({
+      error: 'Invalid hotelPageImageUrl. Use a path on this site (starting with /) or an https:// image URL.',
+    });
+  }
+
+  const homeUrlIn =
+    'homePageImageUrl' in body && typeof body.homePageImageUrl === 'string'
+      ? body.homePageImageUrl.trim()
+      : cur.homePageImageUrl;
+  let homeUrl = homeUrlIn || defaultSiteAppearance.homePageImageUrl;
+  if (!isSafePropertyPageImageUrl(homeUrl)) {
+    return res.status(400).json({
+      error: 'Invalid homePageImageUrl. Use a path on this site (starting with /) or an https:// image URL.',
+    });
+  }
+
+  const propAlt =
+    'propertyPageImageAlt' in body
+      ? normalizePageImageAlt(body.propertyPageImageAlt, defaultSiteAppearance.propertyPageImageAlt)
+      : cur.propertyPageImageAlt;
+  const clinicAlt =
+    'clinicPageImageAlt' in body
+      ? normalizePageImageAlt(body.clinicPageImageAlt, defaultSiteAppearance.clinicPageImageAlt)
+      : cur.clinicPageImageAlt;
+  const hotelAlt =
+    'hotelPageImageAlt' in body
+      ? normalizePageImageAlt(body.hotelPageImageAlt, defaultSiteAppearance.hotelPageImageAlt)
+      : cur.hotelPageImageAlt;
+  const homeAlt =
+    'homePageImageAlt' in body
+      ? normalizePageImageAlt(body.homePageImageAlt, defaultSiteAppearance.homePageImageAlt)
+      : cur.homePageImageAlt;
+
+  const next = {
+    propertyPageImageUrl: propUrl,
+    propertyPageImageAlt: propAlt,
+    clinicPageImageUrl: clinicUrl,
+    clinicPageImageAlt: clinicAlt,
+    hotelPageImageUrl: hotelUrl,
+    hotelPageImageAlt: hotelAlt,
+    homePageImageUrl: homeUrl,
+    homePageImageAlt: homeAlt,
+  };
+  try {
+    fs.writeFileSync(siteAppearancePath, JSON.stringify(next, null, 2) + '\n', 'utf8');
+    return res.json({ ok: true, ...next });
+  } catch (e) {
+    return res.status(500).json({ error: e.message || 'Could not save site appearance.' });
   }
 });
 

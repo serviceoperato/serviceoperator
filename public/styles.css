@@ -2701,6 +2701,25 @@ html.so-site-nav-open {
   border-color: var(--amber-2);
   color: var(--amber-2);
 }
+.mkt-section--visual {
+  padding-top: 2rem;
+}
+.mkt-page-visual {
+  margin: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: 0 16px 48px color-mix(in srgb, var(--ink) 18%, transparent);
+}
+.mkt-page-visual__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  vertical-align: middle;
+}
+[data-theme="light"] .mkt-page-visual {
+  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.08);
+}
 .mkt-section {
   margin-top: 2.75rem;
   padding-top: 2.75rem;
