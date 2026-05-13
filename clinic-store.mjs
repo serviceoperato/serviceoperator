@@ -234,6 +234,36 @@ export function createUserStore(dataDir, adminEmail) {
       return { id: p.id, email: p.email, reportSlug: p.reportSlug };
     },
 
+    /** @returns {{ id: string, email: string } | null} */
+    findPendingByVerificationToken(token) {
+      const t = typeof token === 'string' ? token.trim() : '';
+      if (!t || t.length > 200 || /[\s<>"']/.test(t)) return null;
+      const pdata = loadPending();
+      const p = pdata.pending.find((x) => x.verificationToken === t);
+      if (!p) return null;
+      return { id: p.id, email: p.email };
+    },
+
+    /** @returns {string} */
+    issuePendingVerificationToken(pendingId) {
+      if (typeof pendingId !== 'string' || !pendingId) {
+        const err = new Error('Invalid registration.');
+        err.status = 400;
+        throw err;
+      }
+      const tok = crypto.randomBytes(32).toString('hex');
+      const pdata = loadPending();
+      const p = pdata.pending.find((x) => x.id === pendingId);
+      if (!p) {
+        const err = new Error('Registration not found.');
+        err.status = 404;
+        throw err;
+      }
+      p.verificationToken = tok;
+      savePending(pdata);
+      return tok;
+    },
+
     createUser({ email, password, reportSlug }) {
       const em = normalizeEmail(email);
       if (!em || !em.includes('@')) {
@@ -323,10 +353,11 @@ export function createUserStore(dataDir, adminEmail) {
         passwordHash: hashPassword(password),
         reportSlug: slug,
         createdAt: new Date().toISOString(),
+        verificationToken: crypto.randomBytes(32).toString('hex'),
       };
       pdata.pending.push(row);
       savePending(pdata);
-      return { id, email: em, reportSlug: slug, createdAt: row.createdAt };
+      return { id, email: em, reportSlug: slug, createdAt: row.createdAt, verificationToken: row.verificationToken };
     },
 
     /** Promote a pending row to a confirmed user (after email verification). */

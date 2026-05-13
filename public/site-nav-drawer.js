@@ -32,6 +32,7 @@
       title: 'Site',
       links: [
         { href: '/', label: 'Home' },
+        { href: '/pricing', label: 'Pricing' },
         { href: '/about.html', label: 'About' },
         { href: '/reports.html', label: 'Reports' },
         { href: '/hotels.html', label: 'Hotels' },

@@ -23,6 +23,11 @@ CREATE TABLE IF NOT EXISTS portal_pending_registrations (
 );
 `;
 
+const PENDING_VERIFICATION_MIGRATIONS = [
+  'ALTER TABLE portal_pending_registrations ADD COLUMN IF NOT EXISTS verification_token TEXT',
+  'CREATE UNIQUE INDEX IF NOT EXISTS portal_pending_verification_token_uq ON portal_pending_registrations (verification_token) WHERE verification_token IS NOT NULL',
+];
+
 const PROFILE_COLUMN_MIGRATIONS = [
   'ALTER TABLE portal_users ADD COLUMN IF NOT EXISTS display_name TEXT',
   'ALTER TABLE portal_users ADD COLUMN IF NOT EXISTS gender TEXT',
@@ -147,6 +152,9 @@ async function uniqueReportSlug(pool, base) {
 
 export async function ensurePostgresUserSchema(pool, adminEmail) {
   await pool.query(SCHEMA_SQL);
+  for (const sql of PENDING_VERIFICATION_MIGRATIONS) {
+    await pool.query(sql);
+  }
   for (const sql of PROFILE_COLUMN_MIGRATIONS) {
     await pool.query(sql);
   }
@@ -186,6 +194,39 @@ export function createPostgresUserStore(pool) {
       const row = result.rows[0];
       if (!row) return null;
       return { id: row.id, email: row.email, reportSlug: row.report_slug };
+    },
+
+    /** @returns {{ id: string, email: string } | null} */
+    async findPendingByVerificationToken(token) {
+      const t = typeof token === 'string' ? token.trim() : '';
+      if (!t || t.length > 200 || /[\s<>"']/.test(t)) return null;
+      const result = await pool.query(
+        'SELECT id, email FROM portal_pending_registrations WHERE verification_token = $1 LIMIT 1',
+        [t]
+      );
+      const row = result.rows[0];
+      if (!row) return null;
+      return { id: row.id, email: row.email };
+    },
+
+    /** Issue a new opaque confirmation token (invalidates any previous link). @returns {Promise<string>} */
+    async issuePendingVerificationToken(pendingId) {
+      if (typeof pendingId !== 'string' || !pendingId) {
+        const err = new Error('Invalid registration.');
+        err.status = 400;
+        throw err;
+      }
+      const tok = crypto.randomBytes(32).toString('hex');
+      const result = await pool.query(
+        'UPDATE portal_pending_registrations SET verification_token = $1 WHERE id = $2 RETURNING id',
+        [tok, pendingId]
+      );
+      if (!result.rowCount) {
+        const err = new Error('Registration not found.');
+        err.status = 404;
+        throw err;
+      }
+      return tok;
     },
 
     async createUser({ email, password, reportSlug }) {
@@ -274,14 +315,16 @@ export function createPostgresUserStore(pool) {
       const id = crypto.randomUUID();
       const createdAt = new Date().toISOString();
       const displayName = displayNameFromEmail(em);
+      const verificationToken = crypto.randomBytes(32).toString('hex');
       await pool.query(
-        'INSERT INTO portal_pending_registrations (id, email, password_hash, report_slug, created_at) VALUES ($1, $2, $3, $4, $5)',
-        [id, em, hashPassword(password), slug, createdAt]
+        'INSERT INTO portal_pending_registrations (id, email, password_hash, report_slug, created_at, verification_token) VALUES ($1, $2, $3, $4, $5, $6)',
+        [id, em, hashPassword(password), slug, createdAt, verificationToken]
       );
       return {
         id,
         email: em,
         reportSlug: slug,
+        verificationToken,
         displayName,
         gender: null,
         active: true,

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function PricingPage() {
   return (
-    <main className={styles.page}>
+    <main className={`mkt-page ${styles.fadeIn}`}>
       <section aria-labelledby="pricing-heading">
         <header className={styles.header}>
           <h1 id="pricing-heading" className={styles.title}>
@@ -49,7 +49,7 @@ built from public data, not assumptions.`}
             <span id="operator-recommended" className="sr-only">
               Recommended tier.
             </span>
-            <span className={styles.badge} aria-hidden="true">
+            <span className={`${styles.badge} ${styles.badgeAccent}`} aria-hidden="true">
               Most popular
             </span>
             <p id="tier-operator-heading" className={styles.label}>
@@ -73,7 +73,7 @@ built from public data, not assumptions.`}
           </article>
 
           <article className={styles.card} aria-labelledby="tier-white-heading">
-            <span className={`${styles.badge} ${styles.badgeMuted}`} aria-hidden="true">
+            <span className={styles.badge} aria-hidden="true">
               Limited
             </span>
             <p id="tier-white-heading" className={styles.label}>

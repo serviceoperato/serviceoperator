@@ -348,6 +348,13 @@ const PORTAL_SELF_REGISTER = (function () {
   return true;
 })();
 const JWT_SECRET = (process.env.ADMIN_JWT_SECRET || '').trim() || crypto.randomBytes(32).toString('hex');
+if (!(process.env.ADMIN_JWT_SECRET || '').trim()) {
+  console.warn(
+    '[serviceopera] ADMIN_JWT_SECRET is unset — using an ephemeral per-process JWT secret. ' +
+      'Email confirmation links that still use JWT will fail after a restart or on a different Railway instance. ' +
+      'New sign-ups use a short database token in the link; set ADMIN_JWT_SECRET anyway for stable admin/session JWTs.'
+  );
+}
 
 const OTP_TTL_MS = 10 * 60 * 1000;
 const JWT_TTL_MS = 8 * 60 * 60 * 1000;
@@ -846,15 +853,18 @@ async function handlePortalRegister(req, res) {
     const status = e.status || 400;
     return res.status(status).json({ error: e.message || 'Bad request' });
   }
-  const verifyJwtToken = signJwt({
-    v: 1,
-    role: 'user_verify',
-    sub: pending.id,
-    email: pending.email,
-    exp: Date.now() + CLINIC_VERIFY_JWT_MS,
-  });
+  const verifyLinkValue =
+    pending.verificationToken && typeof pending.verificationToken === 'string'
+      ? pending.verificationToken
+      : signJwt({
+          v: 1,
+          role: 'user_verify',
+          sub: pending.id,
+          email: pending.email,
+          exp: Date.now() + CLINIC_VERIFY_JWT_MS,
+        });
   const origin = publicOriginForEmail(req);
-  const link = `${origin}/login.html?verify=${encodeURIComponent(verifyJwtToken)}`;
+  const link = `${origin}/login.html?verify=${encodeURIComponent(verifyLinkValue)}`;
   try {
     await sendResendEmail({
       to: pending.email,
@@ -1309,15 +1319,18 @@ dualPost('/api/auth/user-resend-confirmation', '/api/auth/clinic-resend-confirma
     return res.status(429).json({ error: 'Too many requests. Try again later.' });
   }
 
-  const verifyJwtToken = signJwt({
-    v: 1,
-    role: 'user_verify',
-    sub: pending.id,
-    email: pending.email,
-    exp: Date.now() + CLINIC_VERIFY_JWT_MS,
-  });
+  const verifyLinkValue =
+    typeof userStore.issuePendingVerificationToken === 'function'
+      ? await userStore.issuePendingVerificationToken(pending.id)
+      : signJwt({
+          v: 1,
+          role: 'user_verify',
+          sub: pending.id,
+          email: pending.email,
+          exp: Date.now() + CLINIC_VERIFY_JWT_MS,
+        });
   const origin = publicOriginForEmail(req);
-  const link = `${origin}/login.html?verify=${encodeURIComponent(verifyJwtToken)}`;
+  const link = `${origin}/login.html?verify=${encodeURIComponent(verifyLinkValue)}`;
   try {
     await sendResendEmail({
       to: pending.email,
@@ -1417,15 +1430,33 @@ dualPost('/api/auth/user-reset-password', '/api/auth/clinic-reset-password', asy
 });
 
 dualPost('/api/auth/user-verify-email', '/api/auth/clinic-verify-email', async (req, res) => {
-  const token = typeof req.body?.token === 'string' ? req.body.token.trim() : '';
-  const p = verifyJwt(token);
-  if (!p || !isPortalVerifyRole(p.role) || typeof p.sub !== 'string' || typeof p.email !== 'string') {
+  const tokenRaw = typeof req.body?.token === 'string' ? req.body.token.trim() : '';
+  let pendingId = null;
+  let jwtEmail = null;
+
+  if (tokenRaw && tokenRaw.includes('.')) {
+    const p = verifyJwt(tokenRaw);
+    if (p && isPortalVerifyRole(p.role) && typeof p.sub === 'string' && typeof p.email === 'string') {
+      pendingId = p.sub;
+      jwtEmail = p.email;
+    }
+  }
+
+  if (!pendingId && tokenRaw && typeof userStore.findPendingByVerificationToken === 'function') {
+    const row = await userStore.findPendingByVerificationToken(tokenRaw);
+    if (row && typeof row.id === 'string' && typeof row.email === 'string') {
+      pendingId = row.id;
+      jwtEmail = row.email;
+    }
+  }
+
+  if (!pendingId || typeof jwtEmail !== 'string' || !jwtEmail) {
     return res
       .status(401)
       .json({ error: 'Invalid or expired confirmation link. Register again from the login page.' });
   }
   try {
-    const created = await userStore.finalizePendingRegistration(p.sub, p.email);
+    const created = await userStore.finalizePendingRegistration(pendingId, jwtEmail);
     return res.status(201).json({
       ok: true,
       message: 'Email confirmed. You can sign in below.',

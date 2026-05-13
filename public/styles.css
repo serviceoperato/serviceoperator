@@ -356,6 +356,14 @@ html.so-site-nav-open {
 }
 .nav__links a { font-size: .9rem; color: var(--bone); }
 .nav__links a:not(.nav__cta):hover { color: var(--paper); }
+.nav__links .nav__text {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--bone);
+}
+.nav__links .nav__text:hover {
+  color: var(--paper);
+}
 .nav__login {
   font-size: .72rem !important;
   letter-spacing: 0.1em;
@@ -558,7 +566,9 @@ html.so-site-nav-open {
 }
 
 @media (max-width: 720px) {
-  .nav__links a:not(.nav__cta):not(.nav__login) { display: none; }
+  .nav__links a:not(.nav__cta):not(.nav__login):not(.nav__text) {
+    display: none;
+  }
 }
 
 @media (max-width: 560px) {
