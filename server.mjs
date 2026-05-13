@@ -1,12 +1,12 @@
 /**
- * Static site + admin email OTP (Resend) + portal users (JSON store in DATA_DIR).
+ * Static site + admin password sign-in + portal users (JSON store in DATA_DIR).
  */
 import crypto from 'crypto';
 import fs from 'fs';
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { assertReportSlug, createUserStore, normalizeEmail } from './clinic-store.mjs';
+import { assertReportSlug, createUserStore, normalizeEmail, verifyPassword } from './clinic-store.mjs';
 import { createPostgresUserStore, ensurePostgresUserSchema } from './postgres-user-store.mjs';
 import { createUserTelemetryStore, ensureUserTelemetrySchema } from './user-telemetry.mjs';
 import { searchTextAllPages } from './lib/google-places-search.mjs';
@@ -14,7 +14,11 @@ import { searchTextAllPages } from './lib/google-places-search.mjs';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(__dirname, 'public');
 const siteUploadsDir = path.join(publicDir, 'assets', 'site-uploads');
-fs.mkdirSync(siteUploadsDir, { recursive: true });
+try {
+  fs.mkdirSync(siteUploadsDir, { recursive: true });
+} catch (e) {
+  console.warn('[serviceopera] Could not create site-uploads directory:', e && e.message ? e.message : e);
+}
 
 let appVersion = '0.0.0';
 try {
@@ -182,6 +186,133 @@ async function buildReportCatalog() {
   };
 }
 
+function extractSlugFromReportHref(href) {
+  if (typeof href !== 'string') return null;
+  const m = /[?&]slug=([^&]+)/.exec(href);
+  if (!m) return null;
+  try {
+    const s = decodeURIComponent(m[1]).trim();
+    return s || null;
+  } catch {
+    return null;
+  }
+}
+
+/** Best-effort mtime for a published static path (e.g. /clinics/foo/ or /hotels/bar/). */
+function publicArtifactMtimeMs(href) {
+  if (typeof href !== 'string' || !href.startsWith('/')) return null;
+  const q = href.indexOf('?');
+  const pathOnly = (q >= 0 ? href.slice(0, q) : href).replace(/\/+$/, '');
+  const rel = pathOnly.replace(/^\/+/, '');
+  const segments = rel.split('/').filter(Boolean);
+  if (!segments.length) return null;
+  const asDir = path.join(publicDir, ...segments);
+  const directFile = statMtimeMs(asDir);
+  if (directFile != null) return directFile;
+  const indexUnder = statMtimeMs(path.join(asDir, 'index.html'));
+  if (indexUnder != null) return indexUnder;
+  return null;
+}
+
+/**
+ * Flat list of audit/report entries for operator management UI.
+ * Sources: public/reports/index.json, public/clinics/data/*.json, portal users with reportSlug.
+ */
+async function buildAuditReportsIndex() {
+  const catalog = await buildReportCatalog();
+  let users = [];
+  try {
+    users = await userStore.listUsers();
+  } catch {
+    users = [];
+  }
+  const slugToPortalUser = new Map();
+  for (const u of users) {
+    const slug = typeof u.reportSlug === 'string' ? u.reportSlug.trim() : '';
+    if (!slug || slugToPortalUser.has(slug)) continue;
+    slugToPortalUser.set(slug, u);
+  }
+
+  const rows = [];
+  const seenHref = new Set();
+
+  for (const vertical of ['clinics', 'hotels', 'properties']) {
+    const items = catalog[vertical] || [];
+    for (const item of items) {
+      const href = item.href;
+      if (!href || seenHref.has(href)) continue;
+      seenHref.add(href);
+
+      const slug = item.slug || extractSlugFromReportHref(href);
+      const jsonPath = slug ? path.join(clinicDataDir, `${slug}.json`) : null;
+      const jsonExists = Boolean(jsonPath && fs.existsSync(jsonPath));
+
+      const meta = slug ? readSlugReportMeta(slug) : { title: item.title, vertical };
+
+      const mtimeFromJson = jsonExists ? statMtimeMs(jsonPath) : null;
+      const mtimeFromPublic = publicArtifactMtimeMs(href);
+      const updatedMs = Math.max(mtimeFromJson || 0, mtimeFromPublic || 0) || null;
+
+      const user = slug ? slugToPortalUser.get(slug) : undefined;
+      let subject = '—';
+      if (user) {
+        subject =
+          (typeof user.displayName === 'string' && user.displayName.trim()) ||
+          (typeof user.email === 'string' && user.email.trim()) ||
+          slug;
+      } else {
+        const t = String(item.title || '').trim();
+        const parts = t.split('·').map((s) => s.trim()).filter(Boolean);
+        if (parts.length >= 2) subject = parts[0];
+        else if (slug && meta.title && meta.title !== slug) subject = String(meta.title);
+      }
+
+      let status = 'Listed';
+      if (href.includes('report.html') && href.includes('slug=')) {
+        status = jsonExists ? 'Portal report · JSON' : 'Portal report';
+      } else if (/^\/(clinics|hotels|properties)\//i.test(href.split('?')[0])) {
+        status = 'Published static page';
+      }
+
+      const artifacts = [];
+      if (jsonExists && slug) {
+        artifacts.push({ label: 'JSON', href: `/clinics/data/${slug}.json` });
+      }
+      const pathOnly = href.split('?')[0].replace(/\/+$/, '');
+      if (pathOnly.startsWith('/') && !href.includes('report.html')) {
+        const segs = pathOnly.split('/').filter(Boolean);
+        if (segs.length) {
+          const mdPath = path.join(publicDir, ...segs, 'audit-report.md');
+          if (fs.existsSync(mdPath)) {
+            artifacts.push({ label: 'Markdown', href: `${pathOnly}/audit-report.md` });
+          }
+        }
+      }
+
+      rows.push({
+        id: `${vertical}:${href}`,
+        vertical,
+        title: item.title || href,
+        subject,
+        slug: slug || null,
+        status,
+        primaryHref: href,
+        updatedAt: updatedMs ? new Date(updatedMs).toISOString() : null,
+        artifacts,
+      });
+    }
+  }
+
+  rows.sort((a, b) => {
+    const ta = a.updatedAt ? Date.parse(a.updatedAt) : 0;
+    const tb = b.updatedAt ? Date.parse(b.updatedAt) : 0;
+    if (tb !== ta) return tb - ta;
+    return String(a.title).localeCompare(String(b.title));
+  });
+
+  return rows;
+}
+
 /** Site pages Jack commonly edits or ships — presence + last modified. */
 const MANAGED_PAGE_FILES = [
   'index.html',
@@ -247,7 +378,7 @@ const defaultSiteAppearance = {
   homePageImageAlt:
     'Dashboard preview: ServiceOpera AI inbox across hotels, clinics and property with regional market context.',
   navLogoUrl: '/assets/logo.png',
-  navLogoAlt: 'ServiceOpera.to',
+  navLogoAlt: 'www.serviceopera.to',
 };
 
 function readSiteAppearanceRaw() {
@@ -367,6 +498,8 @@ function normalizePageImageAlt(s, fallback) {
 }
 
 const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'jack@serviceopera.to').trim().toLowerCase();
+/** scrypt hash in the same `salt:hex` format as portal passwords (`clinic-store.mjs` / `scripts/hash-admin-password.mjs`). */
+const ADMIN_PASSWORD_HASH = (process.env.ADMIN_PASSWORD_HASH || '').trim();
 const RESEND_API_KEY = (process.env.RESEND_API_KEY || '').trim();
 const RESEND_FROM = (process.env.RESEND_FROM || 'ServiceOpera <onboarding@resend.dev>').trim();
 const RESEND_FROM_USES_TEST_SENDER = /@resend\.dev>/i.test(RESEND_FROM) || /onboarding@resend\.dev/i.test(RESEND_FROM);
@@ -426,9 +559,7 @@ function allowPlacesSearchIp(ip) {
   return true;
 }
 
-/** @type {Map<string, { hash: string, exp: number }>} */
-const otpByEmail = new Map();
-/** Portal user sign-in OTP (not admin). Key: normalized email */
+/** Portal user sign-in OTP. Key: normalized email */
 const portalOtpByEmail = new Map();
 
 function isPortalSessionRole(role) {
@@ -640,6 +771,35 @@ function pruneSends(ip) {
   return fresh;
 }
 
+const ADMIN_LOGIN_WINDOW_MS = SEND_WINDOW_MS;
+const ADMIN_LOGIN_MAX_ATTEMPTS = 15;
+/** @type {Map<string, number[]>} */
+const adminLoginFailTimestampsByIp = new Map();
+
+function pruneAdminLoginFails(ip) {
+  const now = Date.now();
+  const arr = (adminLoginFailTimestampsByIp.get(ip) || []).filter((t) => now - t < ADMIN_LOGIN_WINDOW_MS);
+  adminLoginFailTimestampsByIp.set(ip, arr);
+  return arr;
+}
+
+function recordAdminLoginFailure(ip) {
+  const arr = pruneAdminLoginFails(ip);
+  arr.push(Date.now());
+  adminLoginFailTimestampsByIp.set(ip, arr);
+}
+
+function emailsEqualTiming(a, b) {
+  const x = normalizeEmail(a);
+  const y = normalizeEmail(b);
+  if (x.length !== y.length) return false;
+  try {
+    return crypto.timingSafeEqual(Buffer.from(x, 'utf8'), Buffer.from(y, 'utf8'));
+  } catch {
+    return false;
+  }
+}
+
 function resendFailureMessage(err, fallback) {
   const detailRaw = String(err?.resendDetail || err?.message || '');
   const detail = detailRaw.toLowerCase();
@@ -816,6 +976,38 @@ app.get('/api/site-appearance', (_req, res) => {
   res.json(mergeSiteAppearance(readSiteAppearanceRaw()));
 });
 
+/**
+ * First-time audit portal handoff (Dental Design Center). Values from env only; when the
+ * portal user exists and no longer has passwordMustChange, credentials are omitted so the
+ * temporary password is not served after first-time setup.
+ */
+app.get('/api/public/audit-ddc-first-access', async (_req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  const reportPath = '/clinics/dental-design-center-audit/';
+  const rawEmail = (process.env.AUDIT_DDC_EMAIL || '').trim();
+  const tempPassword = (process.env.AUDIT_DDC_TEMP_PASSWORD || '').trim();
+  if (!rawEmail || !rawEmail.includes('@') || !tempPassword) {
+    return res.json({ ok: true, state: 'unconfigured', reportPath });
+  }
+  const email = normalizeEmail(rawEmail);
+  try {
+    const user = await userStore.getUserByEmail(email);
+    if (user && user.passwordMustChange !== true) {
+      return res.json({ ok: true, state: 'completed', reportPath });
+    }
+  } catch {
+    /* If the store is unavailable, avoid returning secrets. */
+    return res.json({ ok: true, state: 'unconfigured', reportPath });
+  }
+  return res.json({
+    ok: true,
+    state: 'credentials',
+    reportPath,
+    email,
+    tempPassword,
+  });
+});
+
 app.get('/api/debug/user-store', async (req, res) => {
   allowDebugCors(req, res);
   res.setHeader('Cache-Control', 'no-store');
@@ -852,7 +1044,9 @@ app.get('/api/admin/capabilities', (_req, res) => {
   res.json({
     service: 'serviceopera',
     version: appVersion,
-    otpEnabled: Boolean(RESEND_API_KEY),
+    /** @deprecated Admin email OTP removed; always false. */
+    otpEnabled: false,
+    adminPasswordConfigured: Boolean(ADMIN_PASSWORD_HASH),
     userAccountsApi: true,
     userPasswordResetEmail: Boolean(RESEND_API_KEY),
     /** @deprecated */
@@ -917,7 +1111,7 @@ async function handlePortalRegister(req, res) {
       to: pending.email,
       subject: 'ServiceOpera — confirm your account',
       html:
-        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">Thanks for signing up for <strong>ServiceOpera.to</strong>.</p>' +
+        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">Thanks for signing up for <strong>www.serviceopera.to</strong>.</p>' +
         '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111"><a href="' +
         String(link).replace(/"/g, '&quot;') +
         '" style="color:#1e3a5f;font-weight:600">Confirm your email</a> (link expires in 48 hours.)</p>' +
@@ -943,64 +1137,27 @@ async function handlePortalRegister(req, res) {
 app.post('/api/auth/user-register', handlePortalRegister);
 app.post('/api/auth/clinic-register', handlePortalRegister);
 
-app.post('/api/admin/send-code', async (req, res) => {
-  if (!RESEND_API_KEY) {
-    return res.status(503).json({ error: 'Email sign-in is not configured (missing RESEND_API_KEY).' });
-  }
-  const email = typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+app.post('/api/admin/login', (req, res) => {
   const ip = clientIp(req);
-  const sends = pruneSends(ip);
-  if (sends.length >= MAX_SENDS_PER_WINDOW) {
-    return res.status(429).json({ error: 'Too many requests. Try again later.' });
+  const fails = pruneAdminLoginFails(ip);
+  if (fails.length >= ADMIN_LOGIN_MAX_ATTEMPTS) {
+    return res.status(429).json({ error: 'Too many sign-in attempts. Try again later.' });
   }
-
-  const generic = { ok: true, message: 'If that address is authorised, an email with a sign-in code was sent.' };
-
-  if (email !== ADMIN_EMAIL) {
-    return res.json(generic);
-  }
-
-  const code = String(crypto.randomInt(0, 1_000_000)).padStart(6, '0');
-  otpByEmail.set(ADMIN_EMAIL, { hash: sha256hex(code), exp: Date.now() + OTP_TTL_MS });
-
-  try {
-    await sendResendEmail({
-      to: ADMIN_EMAIL,
-      subject: 'ServiceOpera — admin sign-in code',
-      html:
-        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">Your admin sign-in code is:</p>' +
-        '<p style="font-family:ui-monospace,monospace;font-size:28px;font-weight:700;letter-spacing:0.15em;color:#111">' +
-        code +
-        '</p>' +
-        '<p style="font-family:system-ui,sans-serif;font-size:13px;color:#444">This code expires in 10 minutes. If you did not request it, ignore this email.</p>',
-    });
-    sends.push(Date.now());
-    sendTimestampsByIp.set(ip, sends);
-  } catch (e) {
-    otpByEmail.delete(ADMIN_EMAIL);
-    const status = e.status || 502;
-    return res.status(status).json({
-      error: resendFailureMessage(e, 'Could not send email. Check RESEND_FROM / domain and API key.'),
+  if (!ADMIN_PASSWORD_HASH) {
+    return res.status(503).json({
+      error:
+        'Admin password sign-in is not configured (missing ADMIN_PASSWORD_HASH). See README: generate a hash with `node scripts/hash-admin-password.mjs` and set the env var on this service.',
     });
   }
-
-  return res.json(generic);
-});
-
-app.post('/api/admin/verify-code', (req, res) => {
-  const email = typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : '';
-  const code = typeof req.body?.code === 'string' ? req.body.code.trim().replace(/\s/g, '') : '';
-  if (email !== ADMIN_EMAIL) {
-    return res.status(401).json({ error: 'Invalid email or code.' });
+  const email = typeof req.body?.email === 'string' ? req.body.email : '';
+  const password = typeof req.body?.password === 'string' ? req.body.password : '';
+  const passOk = verifyPassword(password, ADMIN_PASSWORD_HASH);
+  const emailOk = emailsEqualTiming(email, ADMIN_EMAIL);
+  if (!emailOk || !passOk) {
+    recordAdminLoginFailure(ip);
+    return res.status(401).json({ error: 'Invalid email or password.' });
   }
-  const row = otpByEmail.get(ADMIN_EMAIL);
-  if (!row || row.exp < Date.now()) {
-    return res.status(401).json({ error: 'Code expired or not found. Request a new code.' });
-  }
-  if (!/^\d{6}$/.test(code) || row.hash !== sha256hex(code)) {
-    return res.status(401).json({ error: 'Invalid email or code.' });
-  }
-  otpByEmail.delete(ADMIN_EMAIL);
+  adminLoginFailTimestampsByIp.delete(ip);
   const token = signJwt({ v: 1, role: 'admin', email: ADMIN_EMAIL, exp: Date.now() + JWT_TTL_MS });
   return res.json({ ok: true, token, expiresInMs: JWT_TTL_MS });
 });
@@ -1168,6 +1325,7 @@ app.post('/api/admin/site-appearance/upload', requireAdmin, (req, res) => {
   const base = `su-${stamp}-${rand}.${sniffed.ext}`;
   const full = path.join(siteUploadsDir, base);
   try {
+    fs.mkdirSync(siteUploadsDir, { recursive: true });
     fs.writeFileSync(full, buf);
   } catch (e) {
     return res.status(500).json({ error: e.message || 'Could not save uploaded file.' });
@@ -1181,6 +1339,16 @@ app.get('/api/admin/report-catalog', requireAdmin, async (_req, res) => {
     res.json({ ok: true, ...catalog });
   } catch (e) {
     res.status(500).json({ error: e.message || 'Failed to load report catalog.' });
+  }
+});
+
+app.get('/api/admin/audit-reports', requireAdmin, async (_req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  try {
+    const reports = await buildAuditReportsIndex();
+    res.json({ ok: true, reports, generatedAt: new Date().toISOString() });
+  } catch (e) {
+    res.status(500).json({ error: e.message || 'Failed to load audit reports.' });
   }
 });
 
@@ -1319,7 +1487,7 @@ dualPost('/api/auth/user-otp/send', '/api/auth/clinic-otp/send', async (req, res
       to: user.email,
       subject: 'ServiceOpera — your sign-in code',
       html:
-        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">Your sign-in code for <strong>ServiceOpera.to</strong>:</p>' +
+        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">Your sign-in code for <strong>www.serviceopera.to</strong>:</p>' +
         '<p style="font-family:ui-monospace,monospace;font-size:28px;font-weight:700;letter-spacing:0.15em;color:#111">' +
         code +
         '</p>' +
@@ -1419,7 +1587,7 @@ dualPost('/api/auth/user-resend-confirmation', '/api/auth/clinic-resend-confirma
       to: pending.email,
       subject: 'ServiceOpera — confirm your account',
       html:
-        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">Thanks for signing up for <strong>ServiceOpera.to</strong>.</p>' +
+        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">Thanks for signing up for <strong>www.serviceopera.to</strong>.</p>' +
         '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111"><a href="' +
         String(link).replace(/"/g, '&quot;') +
         '" style="color:#1e3a5f;font-weight:600">Confirm your email</a> (link expires in 48 hours.)</p>' +
@@ -1474,7 +1642,7 @@ dualPost('/api/auth/user-request-reset', '/api/auth/clinic-request-reset', async
       to: user.email,
       subject: 'ServiceOpera — reset your password',
       html:
-        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">You asked to reset the password for your <strong>ServiceOpera.to</strong> account.</p>' +
+        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">You asked to reset the password for your <strong>www.serviceopera.to</strong> account.</p>' +
         '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111"><a href="' +
         String(link).replace(/"/g, '&quot;') +
         '" style="color:#1e3a5f;font-weight:600">Reset password</a> (link expires in one hour.)</p>' +
@@ -1608,7 +1776,12 @@ dualGet(
     if (!p || !isPortalSessionRole(p.role) || typeof p.email !== 'string')
       return res.status(401).json({ ok: false });
     const slug = typeof p.reportSlug === 'string' ? p.reportSlug : '';
-    return res.json({ ok: true, email: p.email, reportSlug: slug });
+    return res.json({
+      ok: true,
+      email: p.email,
+      reportSlug: slug,
+      passwordMustChange: Boolean(p.passwordMustChange),
+    });
   }
 );
 
@@ -1772,6 +1945,44 @@ app.get(['/pricing', '/pricing/'], (_req, res) => {
   res.sendFile(path.join(publicDir, 'pricing.html'));
 });
 
+/** Retired marketing page — bookmarks and external links go to canonical pricing. */
+app.get(['/engagement.html', '/engagement', '/engagement/'], (_req, res) => {
+  res.redirect(301, '/pricing');
+});
+
+/** Operator console: path-based sections (same document as admin.html; see public/admin.js). */
+const adminHtmlPath = path.join(publicDir, 'admin.html');
+function sendAdminHtml(_req, res) {
+  res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+  res.sendFile(adminHtmlPath);
+}
+app.get(['/admin', '/admin/'], (_req, res) => {
+  res.redirect(302, '/admin/users');
+});
+app.get(
+  [
+    '/admin/users',
+    '/admin/users/',
+    '/admin/activity',
+    '/admin/activity/',
+    '/admin/deploy-log',
+    '/admin/deploy-log/',
+    '/admin/site-appearance',
+    '/admin/site-appearance/',
+    '/admin/user-reports',
+    '/admin/user-reports/',
+  ],
+  sendAdminHtml
+);
+
+const operatorReportsHtmlPath = path.join(publicDir, 'operator', 'reports.html');
+app.get(['/operator/reports', '/operator/reports/'], (_req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+  res.sendFile(operatorReportsHtmlPath);
+});
+
 app.use(
   express.static(publicDir, {
     index: ['index.html'],
@@ -1822,7 +2033,7 @@ app.listen(port, '0.0.0.0', () => {
   );
   console.log(
     RESEND_API_KEY
-      ? '[serviceopera] Resend: RESEND_API_KEY is set (admin OTP + clinic forgot-password).'
+      ? '[serviceopera] Resend: RESEND_API_KEY is set (portal email: sign-up / forgot-password / optional login OTP).'
       : '[serviceopera] Resend: RESEND_API_KEY missing — set it on this Railway service and redeploy.'
   );
   if (RESEND_API_KEY) {

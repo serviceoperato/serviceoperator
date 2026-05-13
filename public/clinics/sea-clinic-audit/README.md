@@ -2,7 +2,7 @@
 
 Generated: 2026-05-11
 
-This ZIP contains a public-data audit pack for a demo page on ServiceOpera.to.
+This ZIP contains a public-data audit pack for a demo page on www.serviceopera.to.
 
 ## What is inside
 

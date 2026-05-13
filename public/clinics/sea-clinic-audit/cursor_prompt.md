@@ -1,4 +1,4 @@
-You are working on the ServiceOpera.to website.
+You are working on the www.serviceopera.to website.
 
 Task:
 Integrate the SEA Clinic Pattaya public-data automation audit pack into the website as a polished case-study / demo audit section.
@@ -19,7 +19,7 @@ Implementation instructions:
    "Public data automation audit for Pattaya clinics"
    Do not imply SEA Clinic commissioned the audit.
 
-3. Use the design language of ServiceOpera.to:
+3. Use the design language of www.serviceopera.to:
    - premium B2B
    - deep indigo / black / white
    - calm, sharp, operational

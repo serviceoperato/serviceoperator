@@ -3,7 +3,7 @@
 
 ---
 
-**Prepared by:** ServiceOpera.to · Jack — Service Operator · Thailand  
+**Prepared by:** www.serviceopera.to · Jack — Service Operator · Thailand  
 **Audit Date:** May 2026  
 **Audit Type:** Public Data AI Readiness Audit  
 **Category:** Dental Clinic / International Patient Focus  
@@ -312,7 +312,7 @@ If automation captures 3–5 additional high-value cases per month (implants: ~4
 - 30-Day Onboarding & Setup
 - Monthly Performance Report
 
-**Investment:** Proposal-based (contact ServiceOpera.to)
+**Investment:** Proposal-based (contact www.serviceopera.to)
 
 **Why DDC is the Ideal First Client for This Package:**
 - Strong existing brand with documented credibility gap in reviews
@@ -321,7 +321,7 @@ If automation captures 3–5 additional high-value cases per month (implants: ~4
 - Owner/operator-led clinic (single decision-maker, faster implementation)
 - Pattaya dental tourism market is growing — first-mover advantage in AI automation
 
-**Entry Point Pitch (Jack, ServiceOpera.to):**  
+**Entry Point Pitch (Jack, www.serviceopera.to):**  
 *"DDC has world-class dentists and technology. The service is there. The automation isn't. Right now, you're losing bookings every night to clinics with WhatsApp bots and instant replies. Let's fix that in 14 days."*
 
 ---
@@ -348,5 +348,5 @@ All sources are public. No patient data, proprietary records, or confidential in
 
 ---
 
-*Report prepared by ServiceOpera.to · AI systems for Thailand service businesses. No fluff. Just results.*  
+*Report prepared by www.serviceopera.to · AI systems for Thailand service businesses. No fluff. Just results.*  
 *Jack — Service Operator · Thailand · serviceOpera.to*

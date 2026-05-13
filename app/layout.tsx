@@ -6,8 +6,8 @@ import { SiteNav } from "./components/SiteNav";
 
 export const metadata: Metadata = {
   title: {
-    default: "ServiceOpera",
-    template: "%s · ServiceOpera",
+    default: "www.serviceopera.to",
+    template: "%s · www.serviceopera.to",
   },
   icons: {
     icon: "/assets/favicon.png",

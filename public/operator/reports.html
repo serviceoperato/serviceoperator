@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
+<title>Reports · Operator · www.serviceopera.to</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" href="/assets/favicon.png" type="image/png" sizes="any" />
+<link rel="apple-touch-icon" href="/assets/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css" />
+<script src="/page-skeleton.js"></script>
+<script src="/so-api.js"></script>
+</head>
+<body class="page-admin page-admin--with-nav" data-page-skeleton="native">
+
+<div class="grain" aria-hidden="true"></div>
+
+<nav class="nav" aria-label="Primary">
+  <div class="nav__start">
+    <a href="/" class="nav__logo">
+      <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="www.serviceopera.to — home" decoding="async" />
+    </a>
+  </div>
+  <div class="nav__links">
+    <a href="/pricing" class="nav__text">Pricing</a>
+    <a href="/login.html" class="nav__login mono" id="navPortalAuth" data-login-href="/login.html" data-admin-href="/admin/users">Log in</a>
+    <button type="button" class="theme-toggle" data-theme-toggle aria-label="Theme"></button>
+  </div>
+</nav>
+
+<main class="tf-admin-table-card" style="max-width:1200px;margin:1.25rem auto 3rem;padding:0 1rem">
+  <nav class="tf-admin-nav" aria-label="Operator sections" style="margin-bottom:1rem">
+    <div class="tf-admin-nav__row">
+      <a class="tf-admin-nav__pill" href="/admin/users">Users &amp; payouts</a>
+      <a class="tf-admin-nav__pill" href="/admin/activity">Activity log</a>
+      <a class="tf-admin-nav__pill" href="/admin/deploy-log">Deploy log</a>
+      <a class="tf-admin-nav__pill" href="/admin/site-appearance">Site appearance</a>
+      <a class="tf-admin-nav__pill is-active" href="/operator/reports" aria-current="page">Reports</a>
+      <a class="tf-admin-nav__pill" href="/admin/user-reports">User reports</a>
+    </div>
+  </nav>
+
+  <h1 class="tf-admin-section-title" style="font-size:1.1rem;margin-bottom:0.35rem">Audit reports</h1>
+  <p class="tf-admin-muted" style="margin:0 0 1rem">
+    Historical audit and report links the server knows about (manifest, slug JSON under <code class="mono">public/clinics/data/</code>, and portal users with a <code class="mono">reportSlug</code>).
+  </p>
+
+  <p id="orGate" class="tf-admin-muted" hidden></p>
+  <p id="orErr" class="tf-admin-muted" style="color:var(--danger,#c44)" hidden></p>
+
+  <div style="overflow-x:auto">
+    <table class="tf-users-table" id="orTable" hidden>
+      <thead>
+        <tr>
+          <th scope="col">Updated</th>
+          <th scope="col">Vertical</th>
+          <th scope="col">Title</th>
+          <th scope="col">Subject</th>
+          <th scope="col">Status</th>
+          <th scope="col">View</th>
+          <th scope="col">Artifacts</th>
+        </tr>
+      </thead>
+      <tbody id="orTbody"></tbody>
+    </table>
+  </div>
+  <p id="orEmpty" class="tf-admin-muted" hidden>No reports in the catalog yet. Add entries to <code class="mono">public/reports/index.json</code> or drop JSON under <code class="mono">public/clinics/data/</code>, then assign slugs to portal users from the operator console.</p>
+</main>
+
+<script src="/theme.js"></script>
+<script src="/user-account-menu.js"></script>
+<script src="/site-nav-drawer.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  function api(p) {
+    return typeof soApiUrl === 'function' ? soApiUrl(p) : p;
+  }
+  function cred() {
+    return typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin';
+  }
+  function jwt() {
+    try {
+      return localStorage.getItem('so_admin_jwt') || sessionStorage.getItem('so_admin_jwt') || '';
+    } catch (e) {
+      return '';
+    }
+  }
+  function esc(s) {
+    return String(s || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  var gate = document.getElementById('orGate');
+  var err = document.getElementById('orErr');
+  var table = document.getElementById('orTable');
+  var tbody = document.getElementById('orTbody');
+  var empty = document.getElementById('orEmpty');
+
+  var token = jwt();
+  if (!token) {
+    gate.hidden = false;
+    gate.innerHTML =
+      'Sign in to the <a href="/admin/users">operator console</a> first. This page uses the same admin token stored in your browser.';
+    return;
+  }
+
+  fetch(api('/api/admin/audit-reports'), {
+    method: 'GET',
+    credentials: cred(),
+    headers: { Authorization: 'Bearer ' + token },
+  })
+    .then(function (r) {
+      return r.json().then(function (j) {
+        return { ok: r.ok, status: r.status, j: j };
+      });
+    })
+    .then(function (x) {
+      if (x.status === 401) {
+        gate.hidden = false;
+        gate.innerHTML =
+          'Session expired or not authorized. <a href="/admin/users">Open the operator console</a> to sign in again.';
+        return;
+      }
+      if (!x.ok || !x.j || !x.j.ok) {
+        err.hidden = false;
+        err.textContent = (x.j && x.j.error) || 'Could not load reports.';
+        return;
+      }
+      var rows = Array.isArray(x.j.reports) ? x.j.reports : [];
+      if (!rows.length) {
+        empty.hidden = false;
+        return;
+      }
+      table.hidden = false;
+      tbody.innerHTML = rows
+        .map(function (row) {
+          var when = row.updatedAt ? new Date(row.updatedAt).toLocaleString() : '—';
+          var arts = (row.artifacts || [])
+            .map(function (a) {
+              return '<a href="' + esc(a.href) + '">' + esc(a.label) + '</a>';
+            })
+            .join(' · ');
+          return (
+            '<tr>' +
+            '<td class="mono">' +
+            esc(when) +
+            '</td>' +
+            '<td>' +
+            esc(row.vertical) +
+            '</td>' +
+            '<td>' +
+            esc(row.title) +
+            '</td>' +
+            '<td>' +
+            esc(row.subject) +
+            '</td>' +
+            '<td>' +
+            esc(row.status) +
+            '</td>' +
+            '<td><a href="' +
+            esc(row.primaryHref) +
+            '">Open</a></td>' +
+            '<td>' +
+            (arts || '—') +
+            '</td>' +
+            '</tr>'
+          );
+        })
+        .join('');
+    })
+    .catch(function () {
+      err.hidden = false;
+      err.textContent = 'Network error loading reports.';
+    });
+})();
+</script>
+</body>
+</html>

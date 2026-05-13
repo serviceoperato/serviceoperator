@@ -1,5 +1,5 @@
 // =============================================
-// ServiceOpera.to — landing page interactions
+// www.serviceopera.to — landing page interactions
 // =============================================
 
 (function () {

@@ -1,7 +1,8 @@
 /**
  * Create or refresh a portal user for the Dental Design Center audit flow.
- * Email, slug, login redirect path, and temporary password must match
- * `public/clinics/dental-design-center-audit/demo-portal.json` (shown on the audit page).
+ * First-visit credentials on the audit page are served only from the Node host via
+ * GET /api/public/audit-ddc-first-access using AUDIT_DDC_EMAIL + AUDIT_DDC_TEMP_PASSWORD
+ * (see .env.example). This script reads the same env vars (and legacy AUDIT_DEMO_*).
  *
  * Usage (Postgres / Railway):
  *   DATABASE_URL="postgresql://..." node scripts/create-audit-demo-user.mjs
@@ -9,12 +10,13 @@
  * Local JSON store (no DATABASE_URL):
  *   node scripts/create-audit-demo-user.mjs
  *
- * Credentials shown on the audit page come from:
+ * Env (preferred):
+ *   AUDIT_DDC_EMAIL, AUDIT_DDC_TEMP_PASSWORD, AUDIT_DDC_REPORT_SLUG (optional)
+ * Legacy aliases: AUDIT_DEMO_EMAIL, AUDIT_DEMO_TEMP_PASSWORD, AUDIT_DEMO_REPORT_SLUG
+ *
+ * Public paths for the report are still listed in:
  *   public/clinics/dental-design-center-audit/demo-portal.json
- * Env overrides (optional):
- *   AUDIT_DEMO_EMAIL, AUDIT_DEMO_REPORT_SLUG, AUDIT_DEMO_TEMP_PASSWORD (password only; JSON unchanged)
- *   ADMIN_EMAIL — for Postgres bootstrap admin flag (default jack@serviceopera.to)
- *   DATA_DIR — when not using DATABASE_URL (default <repo>/data)
+ * (no temporary password is stored in that file).
  *
  * Passwords use the same scrypt format as server.mjs (`hashPassword` in clinic-store.mjs).
  *
@@ -53,14 +55,25 @@ function loadDemoPortalFile() {
 }
 
 /**
- * Single source of truth with the audit page (`demo-portal.json`).
- * Override password only: AUDIT_DEMO_TEMP_PASSWORD (does not update the JSON file).
+ * Resolve email / slug / password from env (AUDIT_DDC_* preferred) and demo-portal.json paths.
  */
 function resolveDemoCredentials() {
   const file = loadDemoPortalFile();
-  const envEmail = (process.env.AUDIT_DEMO_EMAIL || '').trim();
-  const envSlug = (process.env.AUDIT_DEMO_REPORT_SLUG || '').trim();
-  const envPw = (process.env.AUDIT_DEMO_TEMP_PASSWORD || '').trim();
+  const envEmail = (
+    process.env.AUDIT_DDC_EMAIL ||
+    process.env.AUDIT_DEMO_EMAIL ||
+    ''
+  ).trim();
+  const envSlug = (
+    process.env.AUDIT_DDC_REPORT_SLUG ||
+    process.env.AUDIT_DEMO_REPORT_SLUG ||
+    ''
+  ).trim();
+  const envPw = (
+    process.env.AUDIT_DDC_TEMP_PASSWORD ||
+    process.env.AUDIT_DEMO_TEMP_PASSWORD ||
+    ''
+  ).trim();
 
   const email = normalizeEmail(
     envEmail ||
@@ -74,7 +87,7 @@ function resolveDemoCredentials() {
   if (!tempPassword) {
     tempPassword = randomTempPassword();
     console.warn(
-      '[create-audit-demo-user] No password in demo-portal.json or AUDIT_DEMO_TEMP_PASSWORD; generated random. Copy it into demo-portal.json so the audit page shows the same value.'
+      '[create-audit-demo-user] No AUDIT_DDC_TEMP_PASSWORD (or legacy AUDIT_DEMO_TEMP_PASSWORD / demo-portal tempPassword); generated random. Set AUDIT_DDC_TEMP_PASSWORD on Railway and re-run.'
     );
   }
   const loginNextPath =

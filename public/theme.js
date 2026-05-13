@@ -1,4 +1,4 @@
-/* ServiceOpera.to — light / dark theme toggle (icone monocrome SVG, currentColor) */
+/* www.serviceopera.to — light / dark theme toggle (icone monocrome SVG, currentColor) */
 (function () {
   var KEY = 'so-theme';
 

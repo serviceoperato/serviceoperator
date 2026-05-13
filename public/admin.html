@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
-<title>Admin · ServiceOpera.to</title>
+<title>Admin · www.serviceopera.to</title>
 <meta name="robots" content="noindex, nofollow" />
 <link rel="icon" href="/assets/favicon.png" type="image/png" sizes="any" />
 <link rel="apple-touch-icon" href="/assets/favicon.png" />
@@ -22,19 +22,19 @@
 <nav class="nav" aria-label="Primary">
   <div class="nav__start">
     <a href="/" class="nav__logo">
-      <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="ServiceOpera.to — home" decoding="async" />
+      <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="www.serviceopera.to — home" decoding="async" />
     </a>
   </div>
   <div class="nav__links">
     <a href="/pricing" class="nav__text">Pricing</a>
-    <a href="/login.html" class="nav__login mono" id="navPortalAuth" data-login-href="/login.html" data-admin-href="/admin.html">Log in</a>
+    <a href="/login.html" class="nav__login mono" id="navPortalAuth" data-login-href="/login.html" data-admin-href="/admin/users">Log in</a>
     <button type="button" class="theme-toggle" data-theme-toggle aria-label="Theme"></button>
   </div>
 </nav>
 
 <script>
 (function () {
-  /** Only unhide the console shell when an admin JWT hint exists (portal JWT alone still needs OTP or bootstrap). */
+  /** Only unhide the console shell when an admin JWT hint exists (portal JWT alone still needs bootstrap). */
   function hasStoredSessionHint() {
     try {
       if (sessionStorage.getItem('so_admin_jwt')) return true;
@@ -52,9 +52,9 @@
 
 <div id="adminGate" class="admin-gate">
   <div class="admin-gate__card">
-    <div class="admin-gate__brand">ServiceOpera.to</div>
-    <p class="mono" style="margin-bottom:0.75rem;color:var(--amber-2);font-size:0.72rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase">— ADMIN</p>
-    <h1>Operator console</h1>
+    <div class="admin-gate__brand">www.serviceopera.to</div>
+    <p class="mono tf-admin-muted" style="margin-bottom:0.75rem;font-size:0.75rem;letter-spacing:0.08em;text-transform:uppercase">Operator console</p>
+    <h1>Sign in</h1>
     <p id="adminGateLede" class="admin-gate__lede">Checking sign-in options…</p>
     <div id="adminConfigBanner" class="admin-config-banner is-hidden" role="status"></div>
     <form id="adminGateForm" class="portal-form" autocomplete="on">
@@ -62,20 +62,10 @@
         <span class="mono">EMAIL</span>
         <input type="email" name="email" id="adminEmailInput" required autocomplete="username" />
       </label>
-      <div id="adminOtpWrap" class="is-hidden">
-        <p class="tf-admin-muted" style="margin:0 0 0.75rem">We email a 6-digit code to this address.</p>
-        <button type="button" class="btn btn--ghost mono" id="adminSendCodeBtn" style="margin-bottom:1rem">Send sign-in code</button>
-        <label>
-          <span class="mono">CODE</span>
-          <input type="text" name="code" id="adminCodeInput" inputmode="numeric" maxlength="8" autocomplete="one-time-code" placeholder="000000" />
-        </label>
-      </div>
-      <div id="adminPasswordWrap">
-        <label>
-          <span class="mono">PASSWORD</span>
-          <input type="password" name="password" id="adminPasswordInput" autocomplete="current-password" />
-        </label>
-      </div>
+      <label>
+        <span class="mono">PASSWORD</span>
+        <input type="password" name="password" id="adminPasswordInput" required autocomplete="current-password" />
+      </label>
       <button type="submit" class="btn btn--primary btn--block" id="adminSubmitBtn">Sign in<span class="ico-arrow-r" aria-hidden="true"></span></button>
       <p id="adminGateHint" class="portal-form__hint mono"></p>
     </form>
@@ -100,7 +90,7 @@
 
   <main class="admin-main admin-main--wide" id="adminMainDefault">
     <section id="usersSection" class="tf-admin-table-card">
-      <h2 class="tf-admin-section-title">Portal users</h2>
+      <h2 class="tf-admin-section-title" id="portal-users">Portal users</h2>
       <div class="tf-admin-toolbar">
         <input type="search" id="adminUsersSearch" placeholder="Search email, slug, id…" autocomplete="off" />
         <select id="adminUsersFilter" aria-label="Filter users">
@@ -139,7 +129,7 @@
           <tbody id="tfUsersTbody"></tbody>
         </table>
       </div>
-      <div class="tf-admin-payout-card" style="margin-top:1.5rem">
+      <div class="tf-admin-payout-card" id="admin-users-payouts" style="margin-top:1.5rem">
         <h3 class="tf-admin-section-title">Pending email confirmations</h3>
         <div id="pendingRegBody"></div>
       </div>
@@ -154,7 +144,7 @@
       <div id="adminInboxBody" class="admin-inbox__body"></div>
     </section>
 
-    <section class="tf-admin-reports" aria-label="Report catalog">
+    <section id="adminReportsSection" class="tf-admin-reports" aria-label="Report catalog">
       <h2 class="tf-admin-section-title">Report catalog</h2>
       <div class="tf-admin-reports__tabs" role="tablist">
         <button type="button" class="tf-admin-reports__tab is-active" data-report-vertical="clinics" role="tab" aria-selected="true">Clinics</button>

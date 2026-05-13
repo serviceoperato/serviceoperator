@@ -1,5 +1,5 @@
-# Node serves /app/public + admin email OTP (Resend).
-# Railway: RESEND_API_KEY, RESEND_FROM, ADMIN_JWT_SECRET (optional ADMIN_EMAIL, DATA_DIR).
+# Node serves /app/public + ServiceOpera API (operator console password JWT, portal email via Resend when configured).
+# Railway: ADMIN_PASSWORD_HASH, ADMIN_JWT_SECRET, RESEND_API_KEY (optional ADMIN_EMAIL, DATA_DIR).
 
 FROM node:20-alpine
 

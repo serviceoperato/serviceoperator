@@ -10,7 +10,7 @@
   var PORTAL_ADMIN_SESSION = 'portal-admin';
   var PORTAL_JWT_KEYS = ['so_user_jwt', 'so_clinic_jwt'];
 
-  /** Admin bearer: mirror portal JWT storage (local + session) so OTP is not re-prompted on new tabs until expiry. */
+  /** Admin bearer: mirror portal JWT storage (local + session) so sign-in is not re-prompted on new tabs until expiry. */
   function readStoredAdminJwt() {
     try {
       return localStorage.getItem(JWT_KEY) || sessionStorage.getItem(JWT_KEY) || '';
@@ -38,7 +38,7 @@
     writeStoredAdminJwt('');
   }
 
-  var otpEnabled = false;
+  var serverPasswordAuth = false;
   var capabilitiesHttpOk = false;
   var capabilitiesFromOurServer = false;
 
@@ -54,11 +54,7 @@
   var panelBody = document.getElementById('adminPanelBody');
   var configBanner = document.getElementById('adminConfigBanner');
   var gateLede = document.getElementById('adminGateLede');
-  var otpWrap = document.getElementById('adminOtpWrap');
-  var passwordWrap = document.getElementById('adminPasswordWrap');
-  var sendCodeBtn = document.getElementById('adminSendCodeBtn');
   var passwordInput = document.getElementById('adminPasswordInput');
-  var codeInput = document.getElementById('adminCodeInput');
   var submitBtn = document.getElementById('adminSubmitBtn');
   var cachedUsers = [];
   var cachedPending = [];
@@ -332,7 +328,7 @@
     panelBody.innerHTML =
       (adminToken
         ? ''
-        : '<p class="admin-panel__body mono is-error">Sign in with admin email OTP on the Node host to save profile changes.</p>') +
+        : '<p class="admin-panel__body mono is-error">Sign in on the Node host (email + password) to save profile changes.</p>') +
       '<p class="admin-panel__body mono">Portal user <strong>' +
       escapeHtml(user.email) +
       '</strong> · report slug <code>' +
@@ -396,6 +392,7 @@
       back.addEventListener('click', function () {
         panel.classList.add('is-hidden');
         if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.remove('is-hidden');
+        window.scrollTo(0, 0);
       });
     }
     var profileForm = document.getElementById('adminUserProfileForm');
@@ -461,7 +458,7 @@
     }
     loadUserTelemetrySection(user);
     panel.classList.remove('is-hidden');
-    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    window.scrollTo(0, 0);
   }
 
   function renderTfUsersTable(data) {
@@ -592,18 +589,9 @@
     panelBody.innerHTML =
       '<p class="admin-panel__body mono" id="deployLogStatus">Loading deployment status…</p>' +
       '<pre class="mono tf-admin-deploy-log" id="deployLogOut"></pre>' +
-      '<p class="admin-panel__actions"><button type="button" class="btn btn--ghost mono" id="deployLogBack">← Back to users</button></p>';
-    var back = document.getElementById('deployLogBack');
-    if (back) {
-      back.addEventListener('click', function () {
-        panel.classList.add('is-hidden');
-        if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.remove('is-hidden');
-        var usersSection = document.getElementById('usersSection');
-        if (usersSection) usersSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-    }
+      '<p class="admin-panel__actions"><a href="/admin/users" class="btn btn--ghost mono">← Users & payouts</a></p>';
     panel.classList.remove('is-hidden');
-    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    window.scrollTo(0, 0);
 
     var statusEl = document.getElementById('deployLogStatus');
     var outEl = document.getElementById('deployLogOut');
@@ -676,7 +664,7 @@
             );
           });
         } else if (queue.status === 401) {
-          lines.push('Admin work queue requires an admin OTP session on this host.');
+          lines.push('Admin work queue requires a server-issued admin JWT (sign in with operator password on this host).');
         }
         finish();
       })
@@ -800,10 +788,10 @@
       '<p class="portal-form__hint mono" id="soSiteAppearanceHint" style="margin:0;flex:1;min-width:12rem"></p>' +
       '<div class="admin-panel__actions" style="margin:0">' +
       '<button type="button" class="btn btn--primary" id="soSiteAppearanceSave">Save all</button> ' +
-      '<button type="button" class="btn btn--ghost mono" id="soSiteAppearanceBack">← Back to users</button>' +
+      '<a href="/admin/users" class="btn btn--ghost mono" id="soSiteAppearanceBack">← Users & payouts</a>' +
       '</div></div></div>';
     panel.classList.remove('is-hidden');
-    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    window.scrollTo(0, 0);
 
     function siteAppearanceResolveUrl(raw) {
       var u = String(raw || '').trim();
@@ -890,15 +878,15 @@
     var hintEl = document.getElementById('soSiteAppearanceHint');
     var SITE_APPEARANCE_DEFAULTS = {
       navLogoUrl: '/assets/logo.png',
-      navLogoAlt: 'ServiceOpera.to — home',
+      navLogoAlt: 'www.serviceopera.to — home',
       homePageImageUrl: '/assets/home-page-hero.png',
-      homePageImageAlt: 'ServiceOpera — home',
+      homePageImageAlt: 'www.serviceopera.to — home',
       propertyPageImageUrl: '/assets/property-page-hero.png',
-      propertyPageImageAlt: 'Property — ServiceOpera',
+      propertyPageImageAlt: 'Property — www.serviceopera.to',
       clinicPageImageUrl: '/assets/clinics-page-hero.png',
-      clinicPageImageAlt: 'Clinics — ServiceOpera',
+      clinicPageImageAlt: 'Clinics — www.serviceopera.to',
       hotelPageImageUrl: '/assets/hotels-page-hero.png',
-      hotelPageImageAlt: 'Hotels — ServiceOpera',
+      hotelPageImageAlt: 'Hotels — www.serviceopera.to',
     };
     function applySiteAppearanceMerge(apiJson) {
       var o = apiJson && typeof apiJson === 'object' ? apiJson : {};
@@ -1059,7 +1047,7 @@
       bumpSiteAppearanceUrlPreviews();
       if (hintEl) {
         hintEl.textContent =
-          'Sign in as admin (email OTP) to load saved URLs from the server and save. Below: suggested paths from /assets/ on this host.';
+          'Sign in as admin on the Node host to load saved URLs from the server and save. Below: suggested paths from /assets/ on this host.';
       }
       return;
     }
@@ -1152,66 +1140,84 @@
           });
       });
     }
-    var back = document.getElementById('soSiteAppearanceBack');
-    if (back) {
-      back.addEventListener('click', function () {
-        panel.classList.add('is-hidden');
-        if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.remove('is-hidden');
-        var u = document.getElementById('usersSection');
-        if (u) u.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
+  }
+
+  function getAdminRouteFromLocation() {
+    var raw = window.location.pathname || '';
+    var path = raw.replace(/\/+$/, '') || '/';
+    if (path === '/admin/activity') return 'activity';
+    if (path === '/admin/deploy-log') return 'deploy-log';
+    if (path === '/admin/site-appearance') return 'site-appearance';
+    if (path === '/admin/user-reports') return 'user-reports';
+    if (path === '/admin/users' || path === '/admin') return 'users';
+    if (/\/admin\.html$/i.test(path)) return 'users';
+    return 'users';
+  }
+
+  function makeNavLink(label, href, routeKey, activeRouteId) {
+    var a = document.createElement('a');
+    a.href = href;
+    a.className = 'tf-admin-nav__pill';
+    a.textContent = label;
+    if (activeRouteId === routeKey) {
+      a.classList.add('is-active');
+      a.setAttribute('aria-current', 'page');
     }
+    return a;
   }
 
-  function makeNavPill(label, onClick) {
-    var b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'tf-admin-nav__pill';
-    b.textContent = label;
-    b.addEventListener('click', onClick);
-    return b;
-  }
-
-  function buildTfNav() {
+  function buildTfNav(activeRouteId) {
     if (!tfNav) return;
+    var id = activeRouteId != null ? activeRouteId : getAdminRouteFromLocation();
     tfNav.innerHTML = '';
     var row = document.createElement('div');
     row.className = 'tf-admin-nav__row';
-    function showMainHidePanel() {
-      if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.remove('is-hidden');
-      if (panel) panel.classList.add('is-hidden');
-    }
-    row.appendChild(
-      makeNavPill('Users & payouts', function () {
-        showMainHidePanel();
-        var el = document.getElementById('usersSection');
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      })
-    );
-    row.appendChild(
-      makeNavPill('Activity log', function () {
-        showMainHidePanel();
-        var inbox = document.getElementById('adminInbox');
-        if (inbox) inbox.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      })
-    );
-    row.appendChild(
-      makeNavPill('Deploy log', function () {
-        openDeployLogPanel();
-      })
-    );
-    row.appendChild(
-      makeNavPill('Site appearance', function () {
-        openBrandingPanel();
-      })
-    );
-    row.appendChild(
-      makeNavPill('User reports', function () {
-        showMainHidePanel();
-        openUserReportsPanel({ id: 'user-reports', label: 'User report access' });
-      })
-    );
+    row.appendChild(makeNavLink('Users & payouts', '/admin/users', 'users', id));
+    row.appendChild(makeNavLink('Activity log', '/admin/activity', 'activity', id));
+    row.appendChild(makeNavLink('Deploy log', '/admin/deploy-log', 'deploy-log', id));
+    row.appendChild(makeNavLink('Site appearance', '/admin/site-appearance', 'site-appearance', id));
+    row.appendChild(makeNavLink('Reports', '/operator/reports', 'reports', id));
+    row.appendChild(makeNavLink('User reports', '/admin/user-reports', 'user-reports', id));
     tfNav.appendChild(row);
+  }
+
+  function syncAdminRouteFromLocation() {
+    var routeId = getAdminRouteFromLocation();
+    var main = document.getElementById('adminMainDefault');
+    var usersEl = document.getElementById('usersSection');
+    var inboxEl = document.getElementById('adminInbox');
+    var reportsEl = document.getElementById('adminReportsSection');
+
+    if (routeId === 'deploy-log') {
+      if (main) main.classList.add('is-hidden');
+      openDeployLogPanel();
+      buildTfNav(routeId);
+      window.scrollTo(0, 0);
+      return;
+    }
+    if (routeId === 'site-appearance') {
+      if (main) main.classList.add('is-hidden');
+      openBrandingPanel();
+      buildTfNav(routeId);
+      window.scrollTo(0, 0);
+      return;
+    }
+    if (routeId === 'user-reports') {
+      if (main) main.classList.add('is-hidden');
+      openUserReportsPanel({ id: 'user-reports', label: 'User report access' });
+      buildTfNav(routeId);
+      window.scrollTo(0, 0);
+      return;
+    }
+
+    if (main) main.classList.remove('is-hidden');
+    if (panel) panel.classList.add('is-hidden');
+    if (usersEl) usersEl.classList.toggle('is-hidden', routeId !== 'users');
+    if (inboxEl) inboxEl.classList.toggle('is-hidden', routeId !== 'activity');
+    if (reportsEl) reportsEl.classList.toggle('is-hidden', routeId !== 'users');
+
+    buildTfNav(routeId);
+    window.scrollTo(0, 0);
   }
 
   function renderAdminReports() {
@@ -1299,7 +1305,7 @@
     if (gate) gate.classList.add('is-hidden');
     if (workspace) workspace.classList.remove('is-hidden');
     loadTfVersion();
-    buildTfNav();
+    syncAdminRouteFromLocation();
     loadReportCatalog();
     loadWorkQueue();
     if (typeof window.soRebuildSiteNavDrawer === 'function') {
@@ -1327,46 +1333,31 @@
   }
 
   function applyCapabilities() {
-    if (otpEnabled) {
-      sessionStorage.removeItem(SESSION_KEY);
-      if (otpWrap) otpWrap.classList.remove('is-hidden');
-      if (passwordWrap) passwordWrap.classList.add('is-hidden');
-      if (sendCodeBtn) sendCodeBtn.classList.remove('is-hidden');
-      if (passwordInput) {
-        passwordInput.removeAttribute('required');
-        passwordInput.value = '';
-      }
-      if (gateLede) {
+    if (passwordInput) passwordInput.setAttribute('required', 'required');
+    if (gateLede) {
+      if (capabilitiesFromOurServer && capabilitiesHttpOk) {
+        gateLede.textContent = serverPasswordAuth
+          ? 'Sign in with the operator email and password configured on the server (hashed; never sent by email).'
+          : 'The API is running, but admin password sign-in is not configured yet. Set ADMIN_PASSWORD_HASH on this service (see README), redeploy, then reload.';
+      } else if (ADMIN_PASSWORD) {
         gateLede.textContent =
-          'Enter the admin email, tap “Send sign-in code”, then enter the 6-digit code from your inbox. The server validates your session.';
-      }
-      if (submitBtn) submitBtn.innerHTML = 'Sign in with code<span class="ico-arrow-r" aria-hidden="true"></span>';
-      if (configBanner) configBanner.classList.add('is-hidden');
-    } else {
-      if (otpWrap) otpWrap.classList.add('is-hidden');
-      if (passwordWrap) passwordWrap.classList.remove('is-hidden');
-      if (sendCodeBtn) sendCodeBtn.classList.add('is-hidden');
-      if (passwordInput) passwordInput.setAttribute('required', 'required');
-      if (gateLede) {
+          'Local preview: use the email and password from admin-config.js. Full admin APIs need the Node server with ADMIN_PASSWORD_HASH set.';
+      } else {
         gateLede.textContent =
-          'Use your admin email and password. This gate runs in the browser only unless the host exposes email sign-in (RESEND_API_KEY).';
+          'Sign in with the operator email and password. Use the Node host, or add admin-config.js for a static-only preview password.';
       }
-      if (submitBtn) submitBtn.innerHTML = 'Enter admin<span class="ico-arrow-r" aria-hidden="true"></span>';
-      if (configBanner) {
-        if (capabilitiesFromOurServer) {
-          configBanner.innerHTML =
-            'This host runs the ServiceOpera Node API, but <strong>RESEND_API_KEY</strong> is empty at runtime. Add it on the <strong>same Railway service</strong> that runs <code>server.mjs</code>, redeploy, then confirm deploy logs show “Resend: RESEND_API_KEY is set”. Until then, set <strong>admin-config.js</strong> for a local password only.';
-          configBanner.classList.remove('is-hidden');
-        } else if (!capabilitiesHttpOk) {
-          configBanner.innerHTML =
-            'Email sign-in needs the live Node API (<code>/api/admin/capabilities</code>). Open this site from Railway or <code>npm start</code>, not a static-only host.';
-          configBanner.classList.remove('is-hidden');
-        } else if (!ADMIN_PASSWORD) {
-          configBanner.innerHTML =
-            'For local static preview: add <strong>admin-config.js</strong> (copy from <strong>admin-config.example.js</strong>) and set <strong>window.__ADMIN_PASSWORD__</strong>. On production (Node + Resend), use email codes instead.';
-          configBanner.classList.remove('is-hidden');
-        } else configBanner.classList.add('is-hidden');
-      }
+    }
+    if (submitBtn) submitBtn.innerHTML = 'Sign in<span class="ico-arrow-r" aria-hidden="true"></span>';
+    if (configBanner) {
+      if (capabilitiesFromOurServer && capabilitiesHttpOk && !serverPasswordAuth) {
+        configBanner.innerHTML =
+          'Set <strong>ADMIN_PASSWORD_HASH</strong> on this Railway service. Generate it locally: <code>node scripts/hash-admin-password.mjs</code> — then paste the line into variables, redeploy, reload.';
+        configBanner.classList.remove('is-hidden');
+      } else if (!capabilitiesHttpOk && !ADMIN_PASSWORD) {
+        configBanner.innerHTML =
+          'Could not reach <code>/api/admin/capabilities</code>. For a browser-only gate, copy <strong>admin-config.example.js</strong> to <strong>admin-config.js</strong> and set <strong>window.__ADMIN_PASSWORD__</strong>.';
+        configBanner.classList.remove('is-hidden');
+      } else configBanner.classList.add('is-hidden');
     }
   }
 
@@ -1379,11 +1370,11 @@
       })
       .then(function (j) {
         capabilitiesFromOurServer = Boolean(j && j.service === 'serviceopera');
-        otpEnabled = Boolean(j && j.otpEnabled);
+        serverPasswordAuth = Boolean(j && j.adminPasswordConfigured);
         applyCapabilities();
       })
       .catch(function () {
-        otpEnabled = false;
+        serverPasswordAuth = false;
         capabilitiesHttpOk = false;
         capabilitiesFromOurServer = false;
         applyCapabilities();
@@ -1461,7 +1452,6 @@
       sessionStorage.removeItem(SESSION_KEY);
       return false;
     }
-    if (otpEnabled) return false;
     if (sessionStorage.getItem(SESSION_KEY) === '1' && ADMIN_PASSWORD) {
       showWorkspace();
       return true;
@@ -1496,64 +1486,20 @@
     if (!restored) showAdminLoginGate();
   });
 
-  if (sendCodeBtn) {
-    sendCodeBtn.addEventListener('click', function () {
-      if (!otpEnabled) return;
-      var email = (document.getElementById('adminEmailInput') && document.getElementById('adminEmailInput').value) || '';
-      email = String(email).trim().toLowerCase();
-      if (!email) {
-        setHint('Enter your email first.', 'error');
-        return;
-      }
-      setHint('Sending…', '');
-      sendCodeBtn.disabled = true;
-      fetch(api('/api/admin/send-code'), {
-        method: 'POST',
-        credentials: apiCred(),
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email }),
-      })
-        .then(function (r) {
-          return r.json().then(function (j) {
-            return { ok: r.ok, status: r.status, j: j };
-          });
-        })
-        .then(function (x) {
-          if (!x.ok) {
-            setHint((x.j && x.j.error) || 'Could not send code.', 'error');
-            return;
-          }
-          setHint((x.j && x.j.message) || 'Check your inbox for the code.', 'ok');
-          if (codeInput) codeInput.focus();
-        })
-        .catch(function () {
-          setHint('Network error. Try again.', 'error');
-        })
-        .then(function () {
-          sendCodeBtn.disabled = false;
-        });
-    });
-  }
-
   if (form) {
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var fd = new FormData(form);
       var email = (fd.get('email') || '').toString().trim().toLowerCase();
       var password = (fd.get('password') || '').toString();
-      var code = (fd.get('code') || '').toString().trim().replace(/\s/g, '');
 
-      if (otpEnabled) {
-        if (!/^\d{6}$/.test(code)) {
-          setHint('Enter the 6-digit code from your email (after requesting it).', 'error');
-          return;
-        }
-        setHint('Checking…', '');
-        fetch(api('/api/admin/verify-code'), {
+      if (capabilitiesFromOurServer && capabilitiesHttpOk) {
+        setHint('Signing in…', '');
+        fetch(api('/api/admin/login'), {
           method: 'POST',
           credentials: apiCred(),
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: email, code: code }),
+          body: JSON.stringify({ email: email, password: password }),
         })
           .then(function (r) {
             return r.json().then(function (j) {
@@ -1562,8 +1508,8 @@
           })
           .then(function (x) {
             if (!x.ok || !x.j || !x.j.token) {
-              setHint((x.j && x.j.error) || 'Invalid email or code.', 'error');
-              if (codeInput) codeInput.value = '';
+              setHint((x.j && x.j.error) || 'Invalid email or password.', 'error');
+              if (passwordInput) passwordInput.value = '';
               return;
             }
             writeStoredAdminJwt(x.j.token);
@@ -1577,19 +1523,14 @@
       }
 
       if (!ADMIN_PASSWORD) {
-        if (capabilitiesFromOurServer) {
+        if (!capabilitiesHttpOk) {
           setHint(
-            'Email sign-in is off: RESEND_API_KEY is unset on this Railway service. Add it to the service running server.mjs, redeploy, and confirm deploy logs show “Resend: RESEND_API_KEY is set”.',
-            'error'
-          );
-        } else if (!capabilitiesHttpOk) {
-          setHint(
-            'Cannot reach /api/admin/capabilities. Use the Railway Node deploy (or npm start), not a static-only host.',
+            'Cannot reach the Node API from this host. Run npm start / deploy server.mjs, or add admin-config.js with window.__ADMIN_PASSWORD__ for a static preview only.',
             'error'
           );
         } else {
           setHint(
-            'Password not configured. Copy admin-config.example.js to admin-config.js and set window.__ADMIN_PASSWORD__, or deploy with RESEND_API_KEY for email codes.',
+            'Password not configured. Copy admin-config.example.js to admin-config.js and set window.__ADMIN_PASSWORD__, or deploy the Node API with ADMIN_PASSWORD_HASH set.',
             'error'
           );
         }
@@ -1770,7 +1711,7 @@
     if (!token) {
       if (hint) {
         hint.textContent =
-          'Sign in with email OTP on the live server to load pending registrations, report files, and page timestamps. Browser-only admin password cannot call this API.';
+          'Sign in on the live Node server (operator password) to load pending registrations, report files, and page timestamps. Browser-only admin-config password cannot call this API.';
         hint.className = 'admin-inbox__hint mono';
       }
       body.innerHTML =
@@ -1871,10 +1812,10 @@
     var token = getAdminBearer();
     if (!token) {
       panelBody.innerHTML =
-        '<p class="admin-panel__stub">After you sign in with <strong>email OTP</strong> on the live server, you can register user emails and passwords here. They appear in the on-disk user store and can open <strong>/clinics/report.html?slug=…</strong> after using <strong>Log in</strong> in the site header.</p>' +
+        '<p class="admin-panel__stub">After you sign in on the <strong>live Node server</strong> (operator password), you can register user emails and passwords here. They appear in the on-disk user store and can open <strong>/clinics/report.html?slug=…</strong> after using <strong>Log in</strong> in the site header.</p>' +
         '<p class="admin-panel__stub">Browser-only admin password (local <code>admin-config.js</code>) cannot call this API.</p>';
       panel.classList.remove('is-hidden');
-      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      window.scrollTo(0, 0);
       return;
     }
 
@@ -1944,7 +1885,7 @@
     }
     loadPortalUsersList();
     panel.classList.remove('is-hidden');
-    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    window.scrollTo(0, 0);
   }
 
   var inboxRefresh = document.getElementById('adminInboxRefresh');

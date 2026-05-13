@@ -1,5 +1,5 @@
 /**
- * Left site menu (hamburger + slide-in drawer) for ServiceOpera.to.
+ * Left site menu (hamburger + slide-in drawer) for www.serviceopera.to.
  */
 (function () {
   'use strict';
@@ -37,7 +37,6 @@
         { href: '/hotels.html', label: 'Hotels' },
         { href: '/clinics.html', label: 'Clinics' },
         { href: '/property.html', label: 'Property' },
-        { href: '/engagement.html', label: 'Engagement' },
       ],
     },
     {

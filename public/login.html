@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
-<title>Log in · ServiceOpera.to</title>
+<title>Log in · www.serviceopera.to</title>
 <meta name="robots" content="noindex, nofollow" />
 <link rel="icon" href="/assets/favicon.png" type="image/png" sizes="any" />
 <link rel="apple-touch-icon" href="/assets/favicon.png" />
@@ -166,7 +166,7 @@
 
 <nav class="nav" aria-label="Primary">
   <a href="/" class="nav__logo">
-    <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="ServiceOpera.to — home" decoding="async" />
+    <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="www.serviceopera.to — home" decoding="async" />
   </a>
   <div class="nav__links">
     <a href="/pricing" class="nav__text">Pricing</a>
@@ -185,6 +185,13 @@
       <div id="bannerSession" class="tf-banner tf-banner--hint is-hidden" role="status"></div>
       <div id="bannerRegistered" class="tf-banner tf-banner--ok is-hidden" role="status"></div>
       <div id="bannerPasswordUpdated" class="tf-banner tf-banner--ok is-hidden" role="status"></div>
+      <div id="ddcAuditFirstAccessBanner" class="tf-banner tf-banner--hint is-hidden" role="region" aria-labelledby="ddcAuditBannerTitle">
+        <p id="ddcAuditBannerTitle" style="margin:0 0 0.5rem;font-weight:600">Dental Design Center audit — first sign-in</p>
+        <p style="margin:0 0 0.5rem;font-size:0.9rem;line-height:1.55;color:var(--mute-2)">
+          Use <strong>Log in</strong> below with the email and temporary password shown on the
+          <a href="/clinics/dental-design-center-audit/">audit report page</a>. After you sign in you must choose your own password; the credential reminder is then removed from that page.
+        </p>
+      </div>
 
       <div class="tf-mode-toggle" role="group" aria-label="Sign-in method">
         <button type="button" class="tf-mode-toggle__btn is-active" id="userModePassword" data-mode="password">Password</button>
@@ -424,6 +431,32 @@
     } catch (err3) {}
   }
 
+  var ddcAuditBanner = document.getElementById('ddcAuditFirstAccessBanner');
+  if (ddcAuditBanner) {
+    var openAudit =
+      (nextPath && nextPath.indexOf('dental-design-center-audit') >= 0) ||
+      slugHint === 'dental-design-center-audit';
+    if (openAudit) {
+      ddcAuditBanner.classList.remove('is-hidden');
+      var ddcUrl =
+        typeof soApiUrl === 'function' ? soApiUrl('/api/public/audit-ddc-first-access') : '/api/public/audit-ddc-first-access';
+      fetch(ddcUrl, {
+        method: 'GET',
+        credentials: typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin',
+        cache: 'no-store',
+      })
+        .then(function (r) {
+          return r.ok ? r.json() : {};
+        })
+        .then(function (j) {
+          if (j && j.state === 'completed') {
+            ddcAuditBanner.classList.add('is-hidden');
+          }
+        })
+        .catch(function () {});
+    }
+  }
+
   function hintClasses(kind, detail) {
     var k = kind === 'error' ? ' is-error' : kind === 'ok' ? ' is-ok' : '';
     return 'portal-form__hint' + k + (detail ? ' portal-form__hint--detail' : '');
@@ -652,7 +685,7 @@
   function redirectAfterPortalLogin(lj) {
     var dest = '';
     if (nextPath && nextPath.charAt(0) === '/' && nextPath.indexOf('//') !== 0) {
-      if (/^\/admin\.html$/i.test(nextPath)) {
+      if (/^\/admin\.html$/i.test(nextPath) || /^\/admin(\/|$)/i.test(nextPath)) {
         dest = lj.reportUrl || '/clinics/report.html?slug=' + encodeURIComponent(lj.reportSlug);
       } else {
         dest = nextPath;

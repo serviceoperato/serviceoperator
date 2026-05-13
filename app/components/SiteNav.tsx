@@ -8,7 +8,7 @@ export function SiteNav() {
             src="/assets/logo.png"
             width={220}
             height={90}
-            alt="ServiceOpera.to"
+            alt="www.serviceopera.to"
             decoding="async"
           />
         </a>

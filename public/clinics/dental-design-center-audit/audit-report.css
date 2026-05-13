@@ -1,5 +1,5 @@
 /* ================================================================
-   ServiceOpera.to — AI Automation Audit Report
+   www.serviceopera.to — AI Automation Audit Report
    audit-report.css
    Premium B2B styling for Next.js / Cursor AI integration
    ================================================================ */
@@ -794,3 +794,102 @@ body.audit-report {
 .mb-md { margin-bottom: var(--space-md); }
 .mb-lg { margin-bottom: var(--space-lg); }
 .divider { height: 1px; background: var(--color-border); margin: var(--space-xl) 0; }
+
+/* ---- Clinic audit + site shell (dental page = body.audit-report.page-client + global nav) ---- */
+html:has(body.audit-report) {
+  background-color: var(--color-bg);
+}
+
+body.audit-report.page-client {
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+}
+
+/* Portal access (same credentials as scripts/create-audit-demo-user.mjs + demo-portal.json) */
+.audit-portal-access {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0.75rem 1rem 0;
+}
+
+.audit-portal-access__card {
+  background: var(--so-portal-card);
+  border: 1px solid rgba(99, 102, 241, 0.45);
+  border-radius: 14px;
+  padding: 1rem 1.25rem 1.15rem;
+  font-size: 13px;
+  color: var(--so-portal-card-text);
+  line-height: 1.55;
+}
+
+[data-theme="light"] .audit-portal-access__card {
+  border-color: rgba(79, 70, 229, 0.28);
+}
+
+.audit-portal-access__row {
+  margin: 0.35rem 0;
+  word-break: break-word;
+}
+
+.audit-portal-access__row strong {
+  color: var(--color-text-primary);
+  margin-right: 0.35rem;
+}
+
+.audit-portal-access code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--so-code-bg);
+  padding: 0.2rem 0.45rem;
+  border-radius: 6px;
+  color: var(--so-code-fg);
+}
+
+.audit-portal-access a {
+  color: var(--color-blue-light);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.audit-portal-access a:hover {
+  color: var(--color-indigo-light);
+}
+
+[data-theme="light"] .audit-portal-access a {
+  color: var(--color-indigo);
+}
+
+[data-theme="light"] .audit-portal-access a:hover {
+  color: var(--color-indigo-light);
+}
+
+[data-theme="light"] .audit-table tr:hover td {
+  background: rgba(15, 23, 42, 0.04);
+}
+
+[data-theme="light"] .badge--medium {
+  background: rgba(250, 204, 21, 0.18);
+  color: #a16207;
+  border-color: rgba(161, 98, 7, 0.28);
+}
+
+[data-theme="light"] .so-kpi__icon,
+[data-theme="light"] .so-friction-icon__circle {
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.1);
+}
+
+[data-theme="light"] .so-review-card__badge {
+  color: #b91c1c;
+  border-color: rgba(185, 28, 28, 0.35);
+  background: rgba(254, 226, 226, 0.9);
+}
+
+[data-theme="light"] .so-review-card--warn .so-review-card__badge {
+  color: #c2410c;
+  border-color: rgba(194, 65, 12, 0.35);
+  background: rgba(255, 237, 213, 0.95);
+}
+
+[data-theme="light"] .so-heatmap__scale-grad {
+  background: linear-gradient(90deg, #e2e8f0, #fdba74, #ef4444);
+}

@@ -6,7 +6,7 @@ AI service operations for **Thailand** hotels, clinics and property businesses �
 
 ## 1. What you have
 
-A complete, deployable site under **`serviceopera.to`**. All static assets live in **`public/`** (HTML, CSS, JS, logos, `clinics/`). **`server.mjs`** is a small Node (Express) server: it serves `public/` and, when configured, sends **admin sign-in codes by email** (Resend).
+A complete, deployable site under **`serviceopera.to`**. All static assets live in **`public/`** (HTML, CSS, JS, logos, `clinics/`). **`server.mjs`** is a small Node (Express) server: it serves `public/` and, when configured, sends **portal** email (sign-up confirmation, forgot password, optional login OTP) via Resend.
 
 | Path | What it is |
 |---|---|
@@ -14,9 +14,9 @@ A complete, deployable site under **`serviceopera.to`**. All static assets live 
 | `public/client.html` | **The "secret page".** Demo workspace behind a **browser-only** username/password (see `public/app.js`). For real data, replace with server-side auth. |
 | `public/styles.css` | Shared black / white / indigo design system. |
 | `public/app.js` | Landing-page modal + demo credential check. |
-| `public/admin.html` | **Jack admin console** — OTP or local `admin-config.js` password; loads `admin.js`. |
-| `public/admin.js` | Admin gate + users table, inbox, report catalog, site appearance. With **`RESEND_API_KEY`**, sign-in is **email OTP + server session**; without it, optional `admin-config.js` password for local preview only. |
-| `public/admin-config.js` | Optional: `window.__ADMIN_PASSWORD__` for local preview when the server has no Resend key. **Do not rely on this in production.** |
+| `public/admin.html` | **Jack admin console** — email + password (server-verified hash) or local `admin-config.js` preview; loads `admin.js`. |
+| `public/admin.js` | Admin gate + users table, inbox, report catalog, site appearance. With **`ADMIN_PASSWORD_HASH`** on the Node host, sign-in uses **POST /api/admin/login** and a server-signed JWT; without the API, optional `admin-config.js` unlocks the UI only. |
+| `public/admin-config.js` | Optional: `window.__ADMIN_PASSWORD__` when the browser **cannot** reach the Node API — unlocks the admin **shell** only (no `/api/admin/*` calls). **Do not rely on this in production.** |
 | `server.mjs` | Static file host + `/api/admin/*` + **clinic users** (`/api/clinic-users`, `/api/auth/clinic-login`, `/api/clinics/report-data`). User rows live in **`DATA_DIR`/clinic_users.json** (default `./data`, Docker `/app/data`). |
 | `public/login.html` | Clinic log-in; stores `so_clinic_jwt` and redirects to `/clinics/report.html?slug=…`. |
 | `public/clinics/report.html` | Private report view (same layout as the public demo); needs a valid clinic session and slug-specific or fallback `_data.json`. |
@@ -111,27 +111,36 @@ You bought the domain. To put the site online (free):
 2. Sign in at netlify.com → "Add new site" → "Import from Git" → pick the repo.
 3. Build command: *(empty)* · Publish directory: **`public`** (see `netlify.toml`).
 4. Add custom domain `serviceopera.to`. Netlify gives you DNS records — paste them into your domain registrar.
-5. SSL is automatic. **Note:** Netlify static deploys do **not** run `server.mjs`; admin email codes require Railway (or another Node host), not Netlify static alone.
+5. SSL is automatic. **Note:** Netlify static deploys do **not** run `server.mjs`; operator console APIs and portal email features require Railway (or another Node host), not Netlify static alone.
 
 **Option B — Cloudflare Pages (also free, faster):**
 Same flow at pages.cloudflare.com. If you bought the domain via a registrar that supports Cloudflare DNS, even faster.
 
 **Option C — pure static (cheapest, you handle):**
-Any static host (Vercel, GitHub Pages, S3). Publish the **`public/`** folder. No build step. Admin email OTP will **not** be available unless you add a separate API.
+Any static host (Vercel, GitHub Pages, S3). Publish the **`public/`** folder. No build step. **Operator console APIs** (`/api/admin/*`) will **not** be available unless requests route to a Node host running `server.mjs`.
 
 **Option D — Railway (Dockerfile recommended):**
 The `Dockerfile` runs **Node**: `server.mjs` serves **`public/`** and sets the same style of security headers as `netlify.toml` (including `Cache-Control` / `X-Robots-Tag` on `client.html`). Railway sets `PORT` automatically.
 
-**Railway — variables for admin sign-in by email**
+**Railway — variables for operator console + email**
 
 | Variable | Required | Purpose |
 |---|---|---|
-| `RESEND_API_KEY` | Yes, for automatic email | [Resend](https://resend.com) API key. When set on **`server.mjs`**: **Jack admin** email OTP (`/api/admin/*`), **and** automatic clinic **“Forgot password?”** on `/login.html` (reset link email — no extra code paths). If unset, clinic users see a message to configure Resend or use admin to change passwords. |
+| `ADMIN_PASSWORD_HASH` | **Yes** for server-backed admin | scrypt password hash (`salt:hex`, same format as portal users). Generate locally: `node scripts/hash-admin-password.mjs "your-strong-password"` — set the printed `ADMIN_PASSWORD_HASH=…` on the Node service (never commit the hash). |
+| `ADMIN_EMAIL` | Optional | Defaults to `jack@serviceopera.to`. Only this address can obtain an admin JWT via password login or portal bootstrap. |
+| `ADMIN_JWT_SECRET` | Strongly recommended | Long random string; signs admin session JWTs. If omitted, a random secret is generated at **each process start** (sessions break on redeploy). |
+| `RESEND_API_KEY` | Recommended for portal email | [Resend](https://resend.com) API key. When set on **`server.mjs`**: **Create account** confirmation, **Forgot password?**, and optional **login OTP** on `/login.html`. Not used for operator console sign-in. |
 | `RESEND_FROM` | Recommended | Verified sender, e.g. `ServiceOpera <noreply@yourdomain.com>`. Resend’s test domain only delivers to your own mailbox. |
 | `CLINIC_SELF_REGISTER` | Optional | **On by default** for **`server.mjs`**: **Create account** on `/login.html` stages a pending sign-up and sends a **confirmation email** (needs **`RESEND_API_KEY`**); the account is created only after the user opens the link. Set to `false`, `0`, `no`, or `off` for invite-only accounts (admin creates users). |
 | `PUBLIC_ORIGIN` | Optional | Full public URL of the site (e.g. `https://serviceopera.to`), no trailing slash. Used in reset links if the reverse proxy does not pass a reliable host/proto. |
-| `ADMIN_JWT_SECRET` | Strongly recommended | Long random string; signs session tokens. If omitted, a random secret is generated at **each process start** (sessions break on redeploy). |
-| `ADMIN_EMAIL` | Optional | Defaults to `jack@serviceopera.to`. Only this address receives codes. |
+
+**Migration — admin email OTP removed (deploy checklist)**
+
+1. On your laptop (or any Node 20+ environment with this repo): run `node scripts/hash-admin-password.mjs "YourNewStrongPassword"` and copy the printed `ADMIN_PASSWORD_HASH=…` line.
+2. In Railway (or your host), add variable **`ADMIN_PASSWORD_HASH`** with that value. Keep **`ADMIN_EMAIL`** and **`ADMIN_JWT_SECRET`** as they are.
+3. Redeploy the Node service. **`RESEND_API_KEY`** is still used for portal sign-up / forgot-password / login OTP — it is **not** required for operator console sign-in anymore.
+4. Remove any obsolete automation that called **`POST /api/admin/send-code`** or **`POST /api/admin/verify-code`** (those routes are gone).
+5. Open `/admin.html`, sign in with **email + password**. The UI stores the same **`so_admin_jwt`** (Bearer + local/session storage) as before.
 
 **Troubleshooting — “Forgot password?” / Resend**
 
@@ -157,7 +166,7 @@ The `Dockerfile` runs **Node**: `server.mjs` serves **`public/`** and sets the s
 
 The **client** demo (`public/client.html`) still uses **client-side** `CREDENTIALS` in `public/app.js` — fine for fake data; anyone can read it in DevTools.
 
-**Admin** on a Railway (or other) Node deploy with **`RESEND_API_KEY`** uses a **one-time email code** and a **server-signed session** (no password in the browser). That is appropriate for a UI shell; wire a real identity provider before storing sensitive data.
+**Admin** on a Railway (or other) Node deploy with **`ADMIN_PASSWORD_HASH`** uses **email + password** and a **server-signed JWT** (same TTL and cookie-free Bearer pattern as before). `RESEND_API_KEY` is unrelated to operator sign-in.
 
 When you start handling real client data (e.g. a live competitor scrape for an actual paying client), switch to:
 
@@ -178,7 +187,7 @@ npm install
 npm start
 ```
 
-Then open `http://localhost:8080` (or whatever `PORT` is). This runs **`server.mjs`** so `/api/admin/capabilities` exists; without `RESEND_API_KEY`, admin still allows a password via `public/admin-config.js`.
+Then open `http://localhost:8080` (or whatever `PORT` is). This runs **`server.mjs`** so `/api/admin/capabilities` exists; set **`ADMIN_PASSWORD_HASH`** in `.env` (see `.env.example`) for password sign-in, or use **`public/admin-config.js`** for a **UI-only** gate when testing static export.
 
 For a zero-dependency static check only (no admin API):
 
@@ -193,7 +202,7 @@ Try the client demo with username `demo` and password `demo` — it'll show the 
 ## 8. Brand notes
 
 - **Name:** Service Opera — reads as *Service Operator*. Jack is an AI service operator: systems, pipelines, and runbooks for real service businesses — not a creative studio pitch.
-- **Mark:** `public/assets/logo.png` — official ServiceOpera.to lockup (emblem + wordmark), also used as **`public/assets/favicon.png`**.
+- **Mark:** `public/assets/logo.png` — official www.serviceopera.to lockup (emblem + wordmark), also used as **`public/assets/favicon.png`**.
 - **Tone:** confident, dry, restrained. Never "supercharge", "revolutionize", "synergize". The pitch is: *engineered automation, observable results, honest pricing.*
 - **Colors:** black (`#000000`), white (`#ffffff`), indigo accent (`#6366f1` and lighter `#a5b4fc`). Accents stay sparse — mostly monochrome surfaces with indigo for focus states, links, and CTAs.
 - **Typography:** Fraunces (display) + Inter Tight (body) + JetBrains Mono (technical labels).

@@ -1,5 +1,5 @@
 /**
- * Admin gate password (client-side only — not production-grade security).
- * Set your password before use. For public repos, rotate after tests or move to backend auth.
+ * Optional browser-only gate when /api/admin/* is unreachable (static preview).
+ * Production operator sign-in uses ADMIN_PASSWORD_HASH on the Node server — see README.
  */
 window.__ADMIN_PASSWORD__ = '';

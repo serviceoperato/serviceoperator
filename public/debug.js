@@ -88,7 +88,7 @@
     var keys = [
       { key: 'so_user_jwt', label: 'portal user' },
       { key: 'so_clinic_jwt', label: 'legacy clinic' },
-      { key: 'so_admin_jwt', label: 'admin OTP' },
+      { key: 'so_admin_jwt', label: 'admin JWT' },
     ];
     var parts = [];
     for (var i = 0; i < keys.length; i++) {
@@ -610,7 +610,9 @@
       adminCap.status +
       ' · ' +
       adminCap.ms +
-      ' ms · otpEnabled=' +
+      ' ms · adminPasswordConfigured=' +
+      (ac.adminPasswordConfigured != null ? String(ac.adminPasswordConfigured) : 'n/a') +
+      ' · otpEnabled(deprecated)=' +
       (ac.otpEnabled != null ? String(ac.otpEnabled) : 'n/a') +
       ' · userPasswordResetEmail=' +
       (ac.userPasswordResetEmail != null
@@ -619,8 +621,8 @@
           ? String(ac.clinicPasswordResetEmail)
           : 'n/a') +
       apiProbeNote(adminCap.status, ac, 'service') +
-      (adminCap.status === 200 && ac.service === 'serviceopera' && ac.otpEnabled === false
-        ? ' · resend=RESEND_API_KEY unset on Node service'
+      (adminCap.status === 200 && ac.service === 'serviceopera' && ac.adminPasswordConfigured === false
+        ? ' · note=set ADMIN_PASSWORD_HASH on Node (see README)'
         : ''),
   });
 
@@ -857,7 +859,7 @@
   lines.push({
     cat: 'AUTH',
     text:
-      '80 · admin routes: GET /api/admin/capabilities · POST /api/admin/bootstrap-from-portal · GET /api/admin/work-queue · GET/PUT /api/admin/site-appearance · POST /api/admin/site-appearance/upload · PATCH /api/user-accounts/:id',
+      '80 · admin routes: GET /api/admin/capabilities · POST /api/admin/login · POST /api/admin/bootstrap-from-portal · GET /api/admin/work-queue · GET/PUT /api/admin/site-appearance · POST /api/admin/site-appearance/upload · PATCH /api/user-accounts/:id',
   });
   lines.push({
     cat: 'OPS',
@@ -867,7 +869,7 @@
   lines.push({
     cat: 'OPS',
     text:
-      '82 · Admin APIs: POST /api/admin/send-code + verify-code (email OTP when RESEND_API_KEY is set); bootstrap-from-portal can mint admin JWT when ADMIN_EMAIL matches. Operator UI: /admin.html.',
+      '82 · Admin APIs: POST /api/admin/login (operator password, hashed env); bootstrap-from-portal mints admin JWT when ADMIN_EMAIL matches a portal session. Operator UI: /admin/users (and /admin/activity, …).',
   });
   if (store && store.backend === 'postgres') {
     lines.push({

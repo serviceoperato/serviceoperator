@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
 <meta name="robots" content="noindex, nofollow"/>
-<title>AI Automation Audit — The Dental Design Center Pattaya | ServiceOpera.to</title>
+<title>AI Automation Audit — The Dental Design Center Pattaya | www.serviceopera.to</title>
 <link rel="icon" href="/assets/favicon.png" type="image/png" sizes="any"/>
 <link rel="apple-touch-icon" href="/assets/favicon.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -208,7 +208,7 @@ strong { color: var(--color-text-primary); }
 .so-heat-4 { background: #ef4444; box-shadow: 0 0 12px rgba(239,68,68,0.45); }
 .so-heatmap__footnote { font-size: 11px; color: var(--color-text-muted); margin-top: 0.85rem; font-style: italic; }
 
-/* Portal access (same credentials as scripts/create-audit-demo-user.mjs + demo-portal.json) */
+/* Portal first-visit callout — credentials from GET /api/public/audit-ddc-first-access (env on server) */
 .audit-portal-access {
   max-width: 1100px;
   margin: 0 auto;
@@ -223,8 +223,6 @@ strong { color: var(--color-text-primary); }
   color: var(--so-portal-card-text);
   line-height: 1.55;
 }
-.audit-portal-access__row { margin: 0.35rem 0; word-break: break-word; }
-.audit-portal-access__row strong { color: var(--color-text-primary); margin-right: 0.35rem; }
 .audit-portal-access code {
   font-family: 'DM Mono', ui-monospace, monospace;
   font-size: 12px;
@@ -239,6 +237,74 @@ strong { color: var(--color-text-primary); }
   text-underline-offset: 3px;
 }
 .audit-portal-access a:hover { color: #e0e7ff; }
+.audit-portal-access__title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.15rem;
+  color: var(--color-text-primary);
+  margin: 0 0 0.5rem;
+}
+.audit-portal-access__lede {
+  margin: 0 0 1rem;
+  font-size: 13px;
+  color: var(--so-portal-card-text);
+  line-height: 1.6;
+}
+.audit-portal-access__dl { margin: 0; }
+.audit-portal-access__dl > div {
+  margin: 0.5rem 0;
+  display: grid;
+  grid-template-columns: 10rem 1fr;
+  gap: 0.35rem 0.75rem;
+  align-items: baseline;
+}
+@media(max-width:520px) {
+  .audit-portal-access__dl > div { grid-template-columns: 1fr; }
+}
+.audit-portal-access__dl dt {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+.audit-portal-access__dl dd { margin: 0; word-break: break-word; }
+.audit-portal-access__pw-hint {
+  display: block;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin-top: 0.35rem;
+}
+.audit-portal-access__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+.audit-portal-access__btn {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0.45rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(165, 180, 252, 0.45);
+  background: rgba(67, 56, 202, 0.35);
+  color: #e0e7ff;
+  cursor: pointer;
+}
+.audit-portal-access__btn:hover { border-color: #a5b4fc; background: rgba(67, 56, 202, 0.55); }
+.audit-portal-access__btn:focus-visible {
+  outline: 2px solid #a5b4fc;
+  outline-offset: 2px;
+}
+.audit-portal-access__status { font-size: 12px; color: var(--color-text-muted); }
+[data-theme="light"] .audit-portal-access a { color: #3730a3; }
+[data-theme="light"] .audit-portal-access a:hover { color: #1e1b4b; }
+[data-theme="light"] .audit-portal-access__btn {
+  border-color: rgba(79, 70, 229, 0.45);
+  background: rgba(79, 70, 229, 0.12);
+  color: #312e81;
+}
 </style>
 </head>
 <body class="audit-report page-client" data-page-skeleton="native">
@@ -248,34 +314,54 @@ strong { color: var(--color-text-primary); }
 <nav class="nav" aria-label="Primary">
   <div class="nav__start">
     <a href="/" class="nav__logo">
-      <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="ServiceOpera.to — home" decoding="async"/>
+      <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="www.serviceopera.to — home" decoding="async"/>
     </a>
   </div>
   <div class="nav__links">
     <a href="/pricing" class="nav__text">Pricing</a>
-    <a href="/login.html" class="nav__login mono" id="navPortalAuth" data-login-href="/login.html">Log in</a>
+    <a href="/login.html?next=/clinics/dental-design-center-audit/" class="nav__login mono" id="navPortalAuth" data-login-href="/login.html?next=/clinics/dental-design-center-audit/">Log in</a>
     <button type="button" class="theme-toggle" data-theme-toggle aria-label="Theme"></button>
   </div>
 </nav>
 
-<section class="audit-portal-access" id="auditPortalAccess" hidden aria-label="Link report e credenziali">
+<section class="audit-portal-access" id="auditPortalAccess" hidden lang="en" aria-labelledby="auditPortalAccessTitle">
   <div class="audit-portal-access__card">
-    <p class="audit-portal-access__row"><strong>Link</strong> <a id="auditPortalReportLink" href="#">…</a></p>
-    <p class="audit-portal-access__row"><strong>Nome utente</strong> <code id="auditPortalUsername">…</code></p>
-    <p class="audit-portal-access__row"><strong>Password</strong> <code id="auditPortalTempPw">…</code></p>
+    <h2 class="audit-portal-access__title" id="auditPortalAccessTitle">Portal access (first visit)</h2>
+    <p class="audit-portal-access__lede">Please use <strong>Log in</strong> in the header, then enter the <strong>email</strong> and <strong>temporary password</strong> below. After you sign in, you will be asked to <strong>choose your own password</strong>. Once that step is finished, this notice is removed automatically.</p>
+    <dl class="audit-portal-access__dl">
+      <div>
+        <dt>Report page</dt>
+        <dd><a id="auditPortalReportLink" href="/clinics/dental-design-center-audit/">…</a></dd>
+      </div>
+      <div>
+        <dt>Username / email</dt>
+        <dd><code id="auditPortalUsername" translate="no">…</code></dd>
+      </div>
+      <div>
+        <dt>Temporary password</dt>
+        <dd>
+          <code id="auditPortalTempPw" translate="no">…</code>
+          <span class="audit-portal-access__pw-hint" id="auditPortalPwHint">For security, copy the password by selecting it (no copy-to-clipboard button).</span>
+        </dd>
+      </div>
+    </dl>
+    <div class="audit-portal-access__actions">
+      <button type="button" class="audit-portal-access__btn" id="auditPortalCopyEmail">Copy email</button>
+      <span class="audit-portal-access__status" id="auditPortalCopyStatus" role="status" aria-live="polite"></span>
+    </div>
   </div>
 </section>
 
 <!-- ===== HEADER ===== -->
 <header class="report-header">
   <div style="max-width:1100px;margin:0 auto;">
-    <div class="brand-badge"><span class="dot"></span>ServiceOpera.to · AI Automation Audit</div>
+    <div class="brand-badge"><span class="dot"></span>www.serviceopera.to · AI Automation Audit</div>
     <h1 class="report-title">The Dental Design Center<br/><em style="font-style:italic;color:#6366f1;">Pattaya, Thailand</em></h1>
     <p class="report-subtitle">A full AI readiness audit based exclusively on public data. 14 sections. One clear outcome: revenue is leaking every night through gaps that automation closes in 14 days.</p>
     <div class="report-meta">
       <div class="meta-item">
         <span class="label">Prepared by</span>
-        <span class="value">Jack — ServiceOpera.to</span>
+        <span class="value">Jack — www.serviceopera.to</span>
       </div>
       <div class="meta-item">
         <span class="label">Audit Date</span>
@@ -990,7 +1076,7 @@ strong { color: var(--color-text-primary); }
   <section class="report-section" id="s13">
     <div class="section-header">
       <span class="section-number">13</span>
-      <h2 class="section-title">Suggested ServiceOpera.to Offer</h2>
+      <h2 class="section-title">Suggested www.serviceopera.to Offer</h2>
     </div>
     <div class="offer-box">
       <h3 class="offer-title">DDC Growth Stack — AI Automation System</h3>
@@ -1041,7 +1127,7 @@ strong { color: var(--color-text-primary); }
 
 <!-- ===== FOOTER ===== -->
 <footer class="report-footer">
-  <div class="footer-brand">ServiceOpera.to</div>
+  <div class="footer-brand">www.serviceopera.to</div>
   <div class="footer-tagline">AI systems for Thailand service businesses. No fluff. Just results.<br/>Jack — Service Operator · Thailand · serviceOpera.to</div>
   <div style="margin-top:1rem;font-size:11px;color:var(--color-text-muted);">Public data only. No medical claims made. No patient data accessed. All impact figures are estimates from public signals and industry benchmarks.</div>
 </footer>
@@ -1055,30 +1141,175 @@ strong { color: var(--color-text-primary); }
 (function () {
   var root = document.getElementById('auditPortalAccess');
   if (!root) return;
-  fetch('demo-portal.json', { credentials: 'same-origin', cache: 'no-store' })
-    .then(function (r) {
-      return r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status));
+  var linkEl = document.getElementById('auditPortalReportLink');
+  var userEl = document.getElementById('auditPortalUsername');
+  var pwEl = document.getElementById('auditPortalTempPw');
+  var pwHint = document.getElementById('auditPortalPwHint');
+  var copyBtn = document.getElementById('auditPortalCopyEmail');
+  var copyStatus = document.getElementById('auditPortalCopyStatus');
+
+  function api(path) {
+    return typeof soApiUrl === 'function' ? soApiUrl(path) : path;
+  }
+  function credMode() {
+    return typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin';
+  }
+  function getPortalJwt() {
+    try {
+      return (
+        localStorage.getItem('so_user_jwt') ||
+        localStorage.getItem('so_clinic_jwt') ||
+        sessionStorage.getItem('so_user_jwt') ||
+        sessionStorage.getItem('so_clinic_jwt') ||
+        ''
+      );
+    } catch (e) {
+      return '';
+    }
+  }
+  function normEmail(s) {
+    return String(s || '').trim().toLowerCase();
+  }
+  function hideRoot() {
+    root.hidden = true;
+    root.setAttribute('aria-hidden', 'true');
+  }
+  function showRoot() {
+    root.hidden = false;
+    root.removeAttribute('aria-hidden');
+  }
+  function loadDemoPortalJson() {
+    return fetch('demo-portal.json', { credentials: 'same-origin', cache: 'no-store' })
+      .then(function (r) {
+        return r.ok ? r.json() : null;
+      })
+      .catch(function () {
+        return null;
+      });
+  }
+  function fetchPublicAccess() {
+    return fetch(api('/api/public/audit-ddc-first-access'), {
+      method: 'GET',
+      credentials: credMode(),
+      cache: 'no-store',
     })
-    .then(function (cfg) {
+      .then(function (r) {
+        return r.ok ? r.json() : { ok: false };
+      })
+      .catch(function () {
+        return { ok: false };
+      });
+  }
+  function fetchSession(jwt) {
+    return fetch(api('/api/auth/user-session'), {
+      method: 'GET',
+      credentials: credMode(),
+      headers: { Authorization: 'Bearer ' + jwt },
+      cache: 'no-store',
+    })
+      .then(function (r) {
+        return r.json().then(function (j) {
+          return { ok: r.ok, json: j };
+        });
+      })
+      .catch(function () {
+        return { ok: false, json: null };
+      });
+  }
+  function applyReportLink(reportPath) {
+    var p =
+      reportPath && String(reportPath).trim()
+        ? String(reportPath).trim()
+        : '/clinics/dental-design-center-audit/';
+    if (linkEl) {
+      linkEl.href = p;
+      linkEl.textContent = (window.location.origin || '') + p;
+    }
+    return p;
+  }
+  function maybeHideFromSession(expectedAuditEmail) {
+    var exp = normEmail(expectedAuditEmail);
+    if (!exp) return;
+    var jwt = getPortalJwt();
+    if (!jwt) return;
+    fetchSession(jwt).then(function (x) {
+      var j = x.json || {};
+      if (!x.ok || !j.ok) return;
+      if (normEmail(j.email) === exp && j.passwordMustChange === false) {
+        hideRoot();
+      }
+    });
+  }
+
+  Promise.all([fetchPublicAccess(), loadDemoPortalJson()]).then(function (results) {
+    var pub = results[0] || {};
+    var cfg = results[1] || {};
+    var reportPathDefault = '/clinics/dental-design-center-audit/';
+
+    function fillFromDemo() {
       var reportPath =
         (cfg && String(cfg.reportPath || '').trim()) ||
         (cfg && String(cfg.loginNextPath || '').trim()) ||
-        '/clinics/dental-design-center-audit/';
-      var reportAbs = (window.location.origin || '') + reportPath;
-      var linkEl = document.getElementById('auditPortalReportLink');
-      var userEl = document.getElementById('auditPortalUsername');
-      var pwEl = document.getElementById('auditPortalTempPw');
-      if (linkEl) {
-        linkEl.href = reportPath;
-        linkEl.textContent = reportAbs;
-      }
+        reportPathDefault;
+      applyReportLink(reportPath);
       var user = (cfg && (cfg.username || cfg.email)) || '';
-      var pw = (cfg && cfg.tempPassword) || '';
+      var pw = (cfg && String(cfg.tempPassword || '').trim()) || '';
       if (userEl) userEl.textContent = user;
-      if (pwEl) pwEl.textContent = pw;
-      if (reportPath && user && pw) root.hidden = false;
-    })
-    .catch(function () {});
+      if (pwEl) {
+        pwEl.textContent =
+          pw ||
+          'Configure AUDIT_DDC_EMAIL and AUDIT_DDC_TEMP_PASSWORD on the server (see .env.example).';
+      }
+      if (pwHint) {
+        pwHint.textContent = pw
+          ? 'For security, copy the password by selecting it (no copy-to-clipboard button).'
+          : 'The temporary password is not stored in the repository; it is injected at deploy time.';
+      }
+      return { user: user, pw: pw, reportPath: reportPath };
+    }
+
+    if (pub.ok && pub.state === 'completed') {
+      hideRoot();
+      return;
+    }
+
+    var expectedEmail = '';
+    if (pub.ok && pub.state === 'credentials' && pub.email && pub.tempPassword) {
+      expectedEmail = normEmail(pub.email);
+      applyReportLink(pub.reportPath || reportPathDefault);
+      if (userEl) userEl.textContent = pub.email;
+      if (pwEl) pwEl.textContent = pub.tempPassword;
+      if (pwHint) {
+        pwHint.textContent =
+          'For security, copy the password by selecting it (no copy-to-clipboard button).';
+      }
+    } else {
+      fillFromDemo();
+      expectedEmail = normEmail((cfg && (cfg.username || cfg.email)) || '');
+    }
+
+    showRoot();
+    if (!expectedEmail && userEl) expectedEmail = normEmail(userEl.textContent);
+    maybeHideFromSession(expectedEmail);
+  });
+
+  if (copyBtn && copyStatus && userEl) {
+    copyBtn.addEventListener('click', function () {
+      var text = (userEl.textContent || '').trim();
+      if (!text) return;
+      function ok() {
+        copyStatus.textContent = 'Email copied to clipboard.';
+      }
+      function manual() {
+        copyStatus.textContent = 'Select the email above and copy manually (Ctrl+C).';
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(ok).catch(manual);
+      } else {
+        manual();
+      }
+    });
+  }
 })();
 </script>
 

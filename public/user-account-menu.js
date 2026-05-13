@@ -114,8 +114,8 @@
     var href = root && root.getAttribute('data-admin-href');
     if (href) return href;
     var path = window.location.pathname || '/';
-    if (/\/clinics\//.test(path)) return '../admin.html';
-    return '/admin.html';
+    if (/\/clinics\//.test(path)) return '../admin/users';
+    return '/admin/users';
   }
 
   function fetchJson(path, token) {

@@ -513,7 +513,7 @@ html.so-site-nav-open {
   filter: var(--logo-filter);
 }
 
-/* Official ServiceOpera.to lockup — transparent PNG; never apply --logo-filter here. */
+/* Official www.serviceopera.to lockup — transparent PNG; never apply --logo-filter here. */
 .brand-logo {
   width: auto;
   height: auto;
@@ -2409,6 +2409,8 @@ html.so-site-nav-open {
   font-family: inherit;
 }
 .tf-admin-nav__pill:hover { border-color: var(--amber); color: var(--paper); }
+.tf-admin-nav__pill:visited { color: var(--bone); }
+.tf-admin-nav__pill.is-active:visited { color: #fff; }
 .tf-admin-nav__pill.is-active { background: var(--amber-2); border-color: var(--amber-2); color: #fff; font-weight: 600; }
 .tf-admin-nav__label {
   width: 100%;
