@@ -9,16 +9,16 @@
 
 /* ---- CSS Variables ---- */
 :root {
-  --color-bg: #0c0f14;
-  --color-bg-card: #13171f;
-  --color-bg-elevated: #1a1f2b;
-  --color-border: #252b38;
-  --color-border-light: #1e2432;
+  --color-bg: #0f172a;
+  --color-bg-card: #1e293b;
+  --color-bg-elevated: #273548;
+  --color-border: #334155;
+  --color-border-light: #2a3d56;
 
   --color-text-primary: #e8edf5;
   --color-text-secondary: #8892a4;
   --color-text-muted: #505a6e;
-  --color-text-inverse: #0c0f14;
+  --color-text-inverse: #0f172a;
 
   /* Semantic line colors */
   --color-indigo: #6366f1;
@@ -62,18 +62,18 @@
   --radius-xl: 16px;
 
   /* Shadows */
-  --shadow-card: 0 1px 3px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.3);
-  --shadow-elevated: 0 4px 24px rgba(0,0,0,0.5), 0 1px 4px rgba(0,0,0,0.3);
+  --shadow-card: 0 1px 3px rgba(2, 6, 23, 0.4), 0 4px 16px rgba(15, 23, 42, 0.35);
+  --shadow-elevated: 0 4px 24px rgba(2, 6, 23, 0.45), 0 1px 4px rgba(15, 23, 42, 0.35);
 
   /* Dashboard / clinic audit page (inline components in index.html) */
-  --so-chart-surface: linear-gradient(180deg, #13171f 0%, #0f1219 100%);
-  --so-kpi-hover-border: #3a4357;
-  --so-review-bg: linear-gradient(180deg, #1a1010 0%, #13171f 100%);
-  --so-review-bg-warn: linear-gradient(180deg, #1d1810 0%, #13171f 100%);
-  --so-portal-card: linear-gradient(135deg, #1e1b4b 0%, #13171f 100%);
+  --so-chart-surface: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  --so-kpi-hover-border: #475569;
+  --so-review-bg: linear-gradient(180deg, #231c28 0%, #1e293b 100%);
+  --so-review-bg-warn: linear-gradient(180deg, #29221a 0%, #1e293b 100%);
+  --so-portal-card: linear-gradient(135deg, #1e1b4b 0%, #1e293b 100%);
   --so-portal-card-text: #c7d2fe;
   --so-star-off: #353d4f;
-  --so-code-bg: rgba(0, 0, 0, 0.35);
+  --so-code-bg: rgba(15, 23, 42, 0.55);
   --so-code-fg: #f5f5ff;
   --so-priority-head-bg: rgba(255, 255, 255, 0.04);
 }
@@ -136,7 +136,7 @@ body.audit-report {
 
 /* ---- Report Header ---- */
 .report-header {
-  background: linear-gradient(135deg, #0c0f14 0%, #13171f 50%, #0f1319 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #1e1b4b 100%);
   border-bottom: 1px solid var(--color-border);
   padding: var(--space-3xl) var(--space-xl);
   position: relative;

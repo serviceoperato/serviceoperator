@@ -3,9 +3,10 @@
    ============================================ */
 
 :root {
-  --ink: #000000;
-  --ink-2: #0a0a0f;
-  --ink-3: #12121a;
+  /* Twilight slate dark canvas — avoid pure #000 OLED black */
+  --ink: #0f172a;
+  --ink-2: #1e293b;
+  --ink-3: #273548;
   --paper: #ffffff;
   --paper-2: #f4f4f5;
   --bone: rgba(255, 255, 255, 0.78);
@@ -19,9 +20,9 @@
   --line: rgba(255, 255, 255, 0.12);
   --line-strong: rgba(255, 255, 255, 0.22);
 
-  --nav-bar-bg: rgba(0, 0, 0, 0.72);
-  --nav-sticky-bg: rgba(0, 0, 0, 0.86);
-  --modal-backdrop: rgba(0, 0, 0, 0.86);
+  --nav-bar-bg: rgba(15, 23, 42, 0.78);
+  --nav-sticky-bg: rgba(15, 23, 42, 0.9);
+  --modal-backdrop: rgba(15, 23, 42, 0.82);
   --score-cold-bg: rgba(255, 255, 255, 0.08);
   --delta-muted-bg: rgba(255, 255, 255, 0.06);
   /* Text / icons on solid indigo (--amber) surfaces */

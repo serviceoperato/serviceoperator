@@ -1368,6 +1368,7 @@
     row.appendChild(makeNavLink('Deploy log', '/admin/deploy-log', 'deploy-log', id));
     row.appendChild(makeNavLink('Site appearance', '/admin/site-appearance', 'site-appearance', id));
     row.appendChild(makeNavLink('Reports', '/operator/reports', 'reports', id));
+    row.appendChild(makeNavLink('Report catalog', '/reports/catalog.html', 'report-catalog', id));
     row.appendChild(makeNavLink('User reports', '/admin/user-reports', 'user-reports', id));
     tfNav.appendChild(row);
   }

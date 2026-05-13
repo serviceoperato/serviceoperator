@@ -1133,29 +1133,29 @@ body.sample-clinic-audit .sample-disclosure {
 
 /* Optional dark theme (theme toggle) — keeps indigo accent, readable contrast */
 [data-theme='dark'] body.sample-clinic-audit {
-  --color-bg: #0c0f14;
-  --color-bg-card: #13171f;
-  --color-bg-elevated: #1a1f2b;
-  --color-border: #252b38;
-  --color-border-light: #1e2432;
+  --color-bg: #0f172a;
+  --color-bg-card: #1e293b;
+  --color-bg-elevated: #273548;
+  --color-border: #334155;
+  --color-border-light: #2a3d56;
   --color-text-primary: #e8edf5;
   --color-text-secondary: #94a3b8;
   --color-text-muted: #64748b;
   --color-indigo-bg: rgba(129, 140, 248, 0.12);
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.35), 0 4px 16px rgba(0, 0, 0, 0.25);
-  --shadow-elevated: 0 4px 24px rgba(0, 0, 0, 0.45);
-  --so-chart-surface: linear-gradient(180deg, #13171f 0%, #0f1219 100%);
-  --so-kpi-hover-border: #3a4357;
-  --so-review-bg: linear-gradient(180deg, #1a1010 0%, #13171f 100%);
-  --so-review-bg-warn: linear-gradient(180deg, #1d1810 0%, #13171f 100%);
-  --so-star-off: #353d4f;
+  --shadow-card: 0 1px 3px rgba(2, 6, 23, 0.35), 0 4px 16px rgba(15, 23, 42, 0.28);
+  --shadow-elevated: 0 4px 24px rgba(2, 6, 23, 0.42);
+  --so-chart-surface: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  --so-kpi-hover-border: #475569;
+  --so-review-bg: linear-gradient(180deg, #231c28 0%, #1e293b 100%);
+  --so-review-bg-warn: linear-gradient(180deg, #29221a 0%, #1e293b 100%);
+  --so-star-off: #475569;
   --so-priority-head-bg: rgba(255, 255, 255, 0.04);
 }
 [data-theme='dark'] html:has(body.sample-clinic-audit) {
-  background-color: #0c0f14;
+  background-color: #0f172a;
 }
 [data-theme='dark'] body.sample-clinic-audit .report-header {
-  background: linear-gradient(135deg, #0c0f14 0%, #13171f 50%, #1e1b4b 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #1e1b4b 100%);
 }
 [data-theme='dark'] body.sample-clinic-audit .audit-table tr:hover td {
   background: rgba(255, 255, 255, 0.03);
