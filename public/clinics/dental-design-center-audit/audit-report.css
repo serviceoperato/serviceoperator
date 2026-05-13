@@ -71,9 +71,11 @@
   --so-review-bg: linear-gradient(180deg, #1a1010 0%, #13171f 100%);
   --so-review-bg-warn: linear-gradient(180deg, #1d1810 0%, #13171f 100%);
   --so-portal-card: linear-gradient(135deg, #1e1b4b 0%, #13171f 100%);
+  --so-portal-card-text: #c7d2fe;
   --so-star-off: #353d4f;
   --so-code-bg: rgba(0, 0, 0, 0.35);
   --so-code-fg: #f5f5ff;
+  --so-priority-head-bg: rgba(255, 255, 255, 0.04);
 }
 
 [data-theme="light"] {
@@ -102,9 +104,11 @@
   --so-review-bg: linear-gradient(180deg, #fef2f2 0%, #ffffff 100%);
   --so-review-bg-warn: linear-gradient(180deg, #fff7ed 0%, #ffffff 100%);
   --so-portal-card: linear-gradient(135deg, #eef2ff 0%, #ffffff 100%);
+  --so-portal-card-text: #334155;
   --so-star-off: #cbd5e1;
   --so-code-bg: rgba(15, 23, 42, 0.08);
   --so-code-fg: #1e293b;
+  --so-priority-head-bg: rgba(15, 23, 42, 0.05);
 }
 
 [data-theme="light"] .report-header {

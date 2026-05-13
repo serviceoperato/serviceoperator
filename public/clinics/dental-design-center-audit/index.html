@@ -215,23 +215,23 @@ strong { color: var(--color-text-primary); }
   padding: 0.75rem 1rem 0;
 }
 .audit-portal-access__card {
-  background: linear-gradient(135deg, #1e1b4b 0%, #13171f 100%);
+  background: var(--so-portal-card);
   border: 1px solid #4338ca;
   border-radius: 14px;
   padding: 1rem 1.25rem 1.15rem;
   font-size: 13px;
-  color: #c7d2fe;
+  color: var(--so-portal-card-text);
   line-height: 1.55;
 }
 .audit-portal-access__row { margin: 0.35rem 0; word-break: break-word; }
-.audit-portal-access__row strong { color: #e8edf5; margin-right: 0.35rem; }
+.audit-portal-access__row strong { color: var(--color-text-primary); margin-right: 0.35rem; }
 .audit-portal-access code {
   font-family: 'DM Mono', ui-monospace, monospace;
   font-size: 12px;
-  background: rgba(0, 0, 0, 0.35);
+  background: var(--so-code-bg);
   padding: 0.2rem 0.45rem;
   border-radius: 6px;
-  color: #f5f5ff;
+  color: var(--so-code-fg);
 }
 .audit-portal-access a {
   color: #a5b4fc;
@@ -322,7 +322,7 @@ strong { color: var(--color-text-primary); }
           <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
         </svg>
       </div>
-      <div class="so-kpi__value">9.2<span style="font-size:.9rem;color:#8892a4;"> / 10</span></div>
+      <div class="so-kpi__value">9.2<span style="font-size:.9rem;color:var(--color-text-secondary);"> / 10</span></div>
       <div class="so-kpi__label">Audit Potential</div>
       <div class="so-kpi__sub">High-leverage automation gap</div>
     </div>
@@ -334,7 +334,7 @@ strong { color: var(--color-text-primary); }
           <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/>
         </svg>
       </div>
-      <div class="so-kpi__value">1–3<span style="font-size:.9rem;color:#8892a4;"> /mo</span></div>
+      <div class="so-kpi__value">1–3<span style="font-size:.9rem;color:var(--color-text-secondary);"> /mo</span></div>
       <div class="so-kpi__label">Review Velocity</div>
       <div class="so-kpi__sub">Target post-automation: 8–15</div>
     </div>
@@ -857,16 +857,16 @@ strong { color: var(--color-text-primary); }
     <div style="margin-top:1.5rem;">
       <div style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1.5rem;">
         <!-- Priority header -->
-        <div class="priority-row" style="background:rgba(255,255,255,0.02);border-radius:8px 8px 0 0;padding:0.5rem 1rem;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#505a6e;border-bottom:1px solid #252b38;">
+        <div class="priority-row" style="background:var(--so-priority-head-bg);border-radius:8px 8px 0 0;padding:0.5rem 1rem;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-text-muted);border-bottom:1px solid var(--color-border);">
           <span>Opportunity</span><span>Impact</span><span>Effort</span><span>Priority</span>
         </div>
-        <div class="priority-row" style="background:#13171f;border:1px solid #252b38;border-radius:0 0 0 0;"><span class="opp-name">AI Patient Receptionist (LINE + WhatsApp + Email)</span><span><span class="badge badge--critical">Critical</span></span><span style="font-size:13px;color:#8892a4;">Low</span><span><span class="badge badge--blue">P1</span></span></div>
-        <div class="priority-row" style="background:#13171f;border:1px solid #252b38;"><span class="opp-name">Post-treatment review request sequence</span><span><span class="badge badge--critical">Critical</span></span><span style="font-size:13px;color:#8892a4;">Very Low</span><span><span class="badge badge--blue">P1</span></span></div>
-        <div class="priority-row" style="background:#13171f;border:1px solid #252b38;"><span class="opp-name">Instant booking confirmation auto-reply</span><span><span class="badge badge--critical">Critical</span></span><span style="font-size:13px;color:#8892a4;">Low</span><span><span class="badge badge--blue">P1</span></span></div>
-        <div class="priority-row" style="background:#13171f;border:1px solid #252b38;"><span class="opp-name">Automated appointment reminders (3-touch)</span><span><span class="badge badge--high">High</span></span><span style="font-size:13px;color:#8892a4;">Low</span><span><span class="badge badge--medium">P2</span></span></div>
-        <div class="priority-row" style="background:#13171f;border:1px solid #252b38;"><span class="opp-name">Abandoned consultation re-engagement drip</span><span><span class="badge badge--high">High</span></span><span style="font-size:13px;color:#8892a4;">Medium</span><span><span class="badge badge--medium">P2</span></span></div>
-        <div class="priority-row" style="background:#13171f;border:1px solid #252b38;"><span class="opp-name">Multilingual AI chatbot (EN/TH/ZH)</span><span><span class="badge badge--medium">Medium</span></span><span style="font-size:13px;color:#8892a4;">Medium</span><span style="font-size:13px;color:#505a6e;">P3</span></div>
-        <div class="priority-row" style="background:#13171f;border:1px solid #252b38;border-radius:0 0 8px 8px;"><span class="opp-name">Before/after content automation pipeline</span><span><span class="badge badge--medium">Medium</span></span><span style="font-size:13px;color:#8892a4;">Medium</span><span style="font-size:13px;color:#505a6e;">P3</span></div>
+        <div class="priority-row" style="background:var(--color-bg-card);border:1px solid var(--color-border);border-radius:0 0 0 0;"><span class="opp-name">AI Patient Receptionist (LINE + WhatsApp + Email)</span><span><span class="badge badge--critical">Critical</span></span><span style="font-size:13px;color:var(--color-text-secondary);">Low</span><span><span class="badge badge--blue">P1</span></span></div>
+        <div class="priority-row" style="background:var(--color-bg-card);border:1px solid var(--color-border);"><span class="opp-name">Post-treatment review request sequence</span><span><span class="badge badge--critical">Critical</span></span><span style="font-size:13px;color:var(--color-text-secondary);">Very Low</span><span><span class="badge badge--blue">P1</span></span></div>
+        <div class="priority-row" style="background:var(--color-bg-card);border:1px solid var(--color-border);"><span class="opp-name">Instant booking confirmation auto-reply</span><span><span class="badge badge--critical">Critical</span></span><span style="font-size:13px;color:var(--color-text-secondary);">Low</span><span><span class="badge badge--blue">P1</span></span></div>
+        <div class="priority-row" style="background:var(--color-bg-card);border:1px solid var(--color-border);"><span class="opp-name">Automated appointment reminders (3-touch)</span><span><span class="badge badge--high">High</span></span><span style="font-size:13px;color:var(--color-text-secondary);">Low</span><span><span class="badge badge--medium">P2</span></span></div>
+        <div class="priority-row" style="background:var(--color-bg-card);border:1px solid var(--color-border);"><span class="opp-name">Abandoned consultation re-engagement drip</span><span><span class="badge badge--high">High</span></span><span style="font-size:13px;color:var(--color-text-secondary);">Medium</span><span><span class="badge badge--medium">P2</span></span></div>
+        <div class="priority-row" style="background:var(--color-bg-card);border:1px solid var(--color-border);"><span class="opp-name">Multilingual AI chatbot (EN/TH/ZH)</span><span><span class="badge badge--medium">Medium</span></span><span style="font-size:13px;color:var(--color-text-secondary);">Medium</span><span style="font-size:13px;color:var(--color-text-muted);">P3</span></div>
+        <div class="priority-row" style="background:var(--color-bg-card);border:1px solid var(--color-border);border-radius:0 0 8px 8px;"><span class="opp-name">Before/after content automation pipeline</span><span><span class="badge badge--medium">Medium</span></span><span style="font-size:13px;color:var(--color-text-secondary);">Medium</span><span style="font-size:13px;color:var(--color-text-muted);">P3</span></div>
       </div>
     </div>
   </section>

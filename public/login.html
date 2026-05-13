@@ -665,6 +665,7 @@
   }
 
   function showMustChangePasswordMode(bearer) {
+    hideUserAccountPanel();
     pendingBearerForPwChange = bearer;
     setMustChangePwErr('');
     setMustChangePwHint('', '');
@@ -716,6 +717,7 @@
 
   function showLoginMode() {
     pendingBearerForPwChange = null;
+    hideUserAccountPanel();
     if (gateTitle) gateTitle.textContent = 'Log in';
     if (form) form.classList.remove('is-hidden');
     if (forgotPanel) forgotPanel.classList.add('is-hidden');
@@ -730,6 +732,7 @@
   }
 
   function showForgotMode() {
+    exitAccountSettingsToLoginForm();
     loginMode = 'password';
     if (modeToggleEl) modeToggleEl.classList.add('is-hidden');
     if (passwordBlock) passwordBlock.classList.add('is-hidden');
@@ -752,6 +755,7 @@
   }
 
   function showResetMode() {
+    hideUserAccountPanel();
     if (gateTitle) gateTitle.textContent = 'Reset password';
     if (form) form.classList.add('is-hidden');
     if (forgotPanel) forgotPanel.classList.add('is-hidden');
@@ -760,6 +764,183 @@
     if (portalRoot) portalRoot.classList.add('is-hidden');
     if (resetForm) resetForm.classList.remove('is-hidden');
     if (lede) lede.textContent = 'Use the form below to set a new password for your account.';
+  }
+
+  function hideUserAccountPanel() {
+    if (userAccountPanel) userAccountPanel.classList.add('is-hidden');
+  }
+
+  function exitAccountSettingsToLoginForm() {
+    hideUserAccountPanel();
+    var portalRootEx = document.querySelector('.tf-portal');
+    if (portalRootEx) portalRootEx.classList.remove('is-hidden');
+  }
+
+  function getPortalJwtLogin() {
+    try {
+      return (
+        localStorage.getItem('so_user_jwt') ||
+        localStorage.getItem('so_clinic_jwt') ||
+        sessionStorage.getItem('so_user_jwt') ||
+        sessionStorage.getItem('so_clinic_jwt') ||
+        ''
+      );
+    } catch (eJwt) {
+      return '';
+    }
+  }
+
+  function clearPortalJwtLogin() {
+    try {
+      sessionStorage.removeItem('so_user_jwt');
+      sessionStorage.removeItem('so_clinic_jwt');
+      sessionStorage.removeItem('so_user_session_id');
+      localStorage.removeItem('so_user_jwt');
+      localStorage.removeItem('so_clinic_jwt');
+      localStorage.removeItem('so_user_session_id');
+    } catch (eClr) {}
+  }
+
+  function decodeJwtEmailLogin(token) {
+    try {
+      var parts = String(token || '').split('.');
+      if (parts.length < 2) return '';
+      var payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      while (payload.length % 4) payload += '=';
+      var json = JSON.parse(atob(payload));
+      return typeof json.email === 'string' ? json.email : '';
+    } catch (eDec) {
+      return '';
+    }
+  }
+
+  function setAccountPanelErr(msg) {
+    if (!accountPanelErr) return;
+    if (!msg) {
+      accountPanelErr.textContent = '';
+      accountPanelErr.classList.add('is-hidden');
+      return;
+    }
+    accountPanelErr.textContent = msg;
+    accountPanelErr.classList.remove('is-hidden');
+  }
+
+  function showAccountSettingsLayout() {
+    setAccountPanelErr('');
+    if (userAccountPanel) userAccountPanel.classList.remove('is-hidden');
+    var portalRootAc = document.querySelector('.tf-portal');
+    if (portalRootAc) portalRootAc.classList.add('is-hidden');
+    if (forgotPanel) forgotPanel.classList.add('is-hidden');
+    if (resetForm) resetForm.classList.add('is-hidden');
+    if (mustChangePwForm) mustChangePwForm.classList.add('is-hidden');
+    if (bannerSession) bannerSession.classList.add('is-hidden');
+    if (bannerRegistered) bannerRegistered.classList.add('is-hidden');
+    if (bannerPwUpdated) bannerPwUpdated.classList.add('is-hidden');
+  }
+
+  function fetchPortalUserSession(bearer) {
+    var url = typeof soApiUrl === 'function' ? soApiUrl('/api/auth/user-session') : '/api/auth/user-session';
+    return fetch(url, {
+      method: 'GET',
+      credentials: typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin',
+      headers: { Authorization: 'Bearer ' + bearer },
+      cache: 'no-store',
+    })
+      .then(function (r) {
+        return r.json().then(function (j) {
+          return { ok: r.ok, status: r.status, json: j };
+        });
+      })
+      .catch(function () {
+        return { ok: false, status: 0, json: null };
+      });
+  }
+
+  function populateAccountPanelFromSession(sess, fallbackEmail) {
+    var email = (sess && sess.email) || fallbackEmail || '';
+    var slug = sess && sess.reportSlug ? String(sess.reportSlug) : '';
+    if (userAccountHeading) userAccountHeading.textContent = 'Account';
+    if (accountPanelLede) {
+      accountPanelLede.textContent = slug
+        ? 'Manage access to your clinic report from here.'
+        : 'You are signed in. Your report link appears when your clinic assigns it to your account.';
+    }
+    if (accountPanelMeta) {
+      accountPanelMeta.textContent = '';
+      var p1 = document.createElement('p');
+      var cap1 = document.createElement('span');
+      cap1.className = 'portal-caption';
+      cap1.textContent = 'EMAIL';
+      p1.appendChild(cap1);
+      p1.appendChild(document.createTextNode(' '));
+      p1.appendChild(document.createTextNode(email || '(signed in)'));
+      accountPanelMeta.appendChild(p1);
+      if (slug) {
+        var p2 = document.createElement('p');
+        var cap2 = document.createElement('span');
+        cap2.className = 'portal-caption';
+        cap2.textContent = 'REPORT SLUG';
+        p2.appendChild(cap2);
+        p2.appendChild(document.createTextNode(' '));
+        p2.appendChild(document.createTextNode(slug));
+        accountPanelMeta.appendChild(p2);
+      }
+    }
+    if (accountOpenReport) {
+      accountOpenReport.onclick = null;
+      if (slug) {
+        accountOpenReport.href = '/clinics/report.html?slug=' + encodeURIComponent(slug);
+      } else {
+        accountOpenReport.href = '#';
+        accountOpenReport.onclick = function (e) {
+          e.preventDefault();
+          setAccountPanelErr('No report has been linked to this account yet.');
+        };
+      }
+    }
+  }
+
+  function maybeEnterAccountSettings() {
+    if (verifyToken) return;
+    if (resetToken && resetForm) return;
+    if (!accountSettingsMode) return;
+    var tok = getPortalJwtLogin();
+    if (!tok) return;
+    showAccountSettingsLayout();
+    if (accountPanelMeta) {
+      accountPanelMeta.textContent = '';
+      var loading = document.createElement('p');
+      loading.className = 'portal-form__muted';
+      loading.textContent = 'Loading…';
+      accountPanelMeta.appendChild(loading);
+    }
+    var emailFb = decodeJwtEmailLogin(tok);
+    fetchPortalUserSession(tok).then(function (x) {
+      if (!userAccountPanel || userAccountPanel.classList.contains('is-hidden')) return;
+      if (!getPortalJwtLogin()) return;
+      if (x.status === 401) {
+        clearPortalJwtLogin();
+        exitAccountSettingsToLoginForm();
+        showLoginMode();
+        if (bannerSession) {
+          bannerSession.textContent = MSG.sessionExpired;
+          bannerSession.classList.remove('is-hidden');
+        }
+        try {
+          var uCl = new URL(window.location.href);
+          uCl.searchParams.delete('settings');
+          if (uCl.hash.toLowerCase() === '#account') uCl.hash = '';
+          var qCl = uCl.searchParams.toString();
+          history.replaceState({}, '', uCl.pathname + (qCl ? '?' + qCl : '') + uCl.hash);
+        } catch (eH1) {}
+        return;
+      }
+      if (x.ok && x.json && x.json.ok) {
+        populateAccountPanelFromSession(x.json, emailFb);
+        return;
+      }
+      populateAccountPanelFromSession({ email: emailFb, reportSlug: '' }, emailFb);
+    });
   }
 
   function forgotResetHelpText() {
@@ -1224,7 +1405,51 @@
     });
   }
 
+  if (accountForgotPw) {
+    accountForgotPw.addEventListener('click', function () {
+      setAccountPanelErr('');
+      if (!resetEmailEnabled) {
+        exitAccountSettingsToLoginForm();
+        showLoginMode();
+        setHint(forgotResetHintText(), 'error');
+        return;
+      }
+      exitAccountSettingsToLoginForm();
+      showLoginMode();
+      showForgotMode();
+      setHint('', '');
+      setLoginErr('');
+    });
+  }
+  if (accountSignOut) {
+    accountSignOut.addEventListener('click', function () {
+      clearPortalJwtLogin();
+      try {
+        sessionStorage.removeItem('so_admin_jwt');
+      } catch (eSo) {}
+      window.location.href = '/login.html';
+    });
+  }
+  if (accountUseOther) {
+    accountUseOther.addEventListener('click', function () {
+      clearPortalJwtLogin();
+      try {
+        sessionStorage.removeItem('so_admin_jwt');
+      } catch (eSo2) {}
+      try {
+        var uo = new URL(window.location.href);
+        uo.searchParams.delete('settings');
+        uo.hash = '';
+        var qs = uo.searchParams.toString();
+        window.location.replace(uo.pathname + (qs ? '?' + qs : ''));
+      } catch (eRp) {
+        window.location.href = '/login.html';
+      }
+    });
+  }
+
   applyLoginFieldMode();
+  maybeEnterAccountSettings();
 })();
 </script>
 </body>
