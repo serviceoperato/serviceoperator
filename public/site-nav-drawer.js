@@ -9,42 +9,29 @@
 
   var SECTIONS = [
     {
-      id: 'verticals',
-      title: 'Verticals',
-      items: [
-        {
-          title: 'Hotels & serviced apartments',
-          href: '/hotels.html',
-        },
-        {
-          title: 'Clinics, dental & wellness',
-          href: '/clinics.html',
-        },
-        {
-          title: 'Property & rental operators',
-          href: '/property.html',
-        },
-      ],
-    },
-    {
-      id: 'discovery',
-      title: 'Site',
+      id: 'overview',
+      title: 'Overview',
       links: [
         { href: '/', label: 'Home' },
         { href: '/pricing', label: 'Pricing' },
-        { href: '/about.html', label: 'About' },
-        { href: '/reports.html', label: 'Reports' },
-        { href: '/hotels.html', label: 'Hotels' },
-        { href: '/clinics.html', label: 'Clinics' },
-        { href: '/property.html', label: 'Property' },
+        { href: '/clinics/sea-clinic-audit/', label: 'Sample audit' },
       ],
     },
     {
-      id: 'access',
-      title: 'Access',
+      id: 'industries',
+      title: 'Industries',
+      items: [
+        { title: 'Hotels & serviced apartments', href: '/hotels.html' },
+        { title: 'Clinics, dental & wellness', href: '/clinics.html' },
+        { title: 'Property & rental operators', href: '/property.html' },
+      ],
+    },
+    {
+      id: 'reports',
+      title: 'Reports',
       links: [
-        { href: '/login.html', label: 'Log in' },
-        { href: '/register.html', label: 'Create account' },
+        { href: '/reports.html', label: 'My reports' },
+        { href: '/login.html#account', label: 'Account & reports' },
       ],
     },
     {
@@ -52,8 +39,16 @@
       title: 'Tools',
       links: [
         { href: '/places-leads.html', label: 'Places leads' },
-        { href: '/clinics/sea-clinic-audit/', label: 'Sample audit' },
         { href: '/reports.html#inquiry', label: 'Contact Jack' },
+      ],
+    },
+    {
+      id: 'account',
+      title: 'Account',
+      links: [
+        { href: '/login.html', label: 'Log in' },
+        { href: '/register.html', label: 'Create account' },
+        { href: '/login.html#account', label: 'Signed in', onlyIfSignedIn: true },
       ],
     },
   ];
@@ -75,8 +70,20 @@
     if (!href || href.indexOf('mailto:') === 0) return false;
     try {
       var path = window.location.pathname || '/';
-      if (href === '/') return path === '/' || path === '/index.html';
-      return path === href || path.endsWith(href);
+      var hash = (window.location.hash || '').toLowerCase();
+      var hashIdx = href.indexOf('#');
+      var pathPart = hashIdx >= 0 ? href.slice(0, hashIdx) : href;
+      var wantHash = hashIdx >= 0 ? href.slice(hashIdx).toLowerCase() : '';
+      if (pathPart === '/') return (path === '/' || path === '/index.html') && !wantHash;
+      var pathMatch = path === pathPart || path.endsWith(pathPart);
+      if (!pathMatch) return false;
+      if (wantHash) return hash === wantHash;
+      var onLogin =
+        pathPart === '/login.html' ||
+        pathPart.endsWith('/login.html') ||
+        pathPart === 'login.html';
+      if (onLogin && hash) return false;
+      return true;
     } catch (e) {
       return false;
     }
@@ -161,12 +168,18 @@
 
     var header = document.createElement('div');
     header.className = 'so-site-nav-panel__header';
+    var brand = document.createElement('a');
+    brand.className = 'so-site-nav-panel__brand';
+    brand.href = '/';
+    brand.textContent = 'ServiceOpera.to';
+    brand.addEventListener('click', closeMenu);
     var closeBtn = document.createElement('button');
     closeBtn.type = 'button';
     closeBtn.className = 'so-site-nav-panel__close';
     closeBtn.setAttribute('aria-label', 'Close menu');
     closeBtn.textContent = '✕';
     closeBtn.addEventListener('click', closeMenu);
+    header.appendChild(brand);
     header.appendChild(closeBtn);
     inner.appendChild(header);
 
@@ -208,6 +221,7 @@
       }
 
       (section.links || []).forEach(function (link) {
+        if (link.onlyIfSignedIn && !hasPortalJwt()) return;
         var a = document.createElement('a');
         a.className = 'so-site-nav-link';
         if (isActive(link.href)) a.classList.add('so-site-nav-link--active');
@@ -232,19 +246,6 @@
       inner.appendChild(toggle);
       inner.appendChild(body);
     });
-
-    if (hasPortalJwt()) {
-      var utilLabel = document.createElement('p');
-      utilLabel.className = 'so-site-nav-section-label';
-      utilLabel.textContent = 'Signed in';
-      inner.appendChild(utilLabel);
-      var account = document.createElement('a');
-      account.className = 'so-site-nav-link';
-      account.href = '/login.html';
-      account.textContent = 'Account & reports';
-      account.addEventListener('click', closeMenu);
-      inner.appendChild(account);
-    }
 
     panel.appendChild(inner);
     root.appendChild(backdrop);

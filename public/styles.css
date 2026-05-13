@@ -214,13 +214,29 @@ html.so-site-nav-open {
 }
 .so-site-nav-panel__header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
+  gap: 0.75rem;
   padding: 10px 10px 6px;
   position: sticky;
   top: 0;
   z-index: 2;
   background: linear-gradient(180deg, var(--ink-3) 85%, transparent);
+}
+.so-site-nav-panel__brand {
+  flex: 1;
+  min-width: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--paper);
+  text-decoration: none;
+  padding: 0.35rem 0.25rem;
+  border-radius: 8px;
+}
+.so-site-nav-panel__brand:hover {
+  color: var(--amber-2);
+  background: color-mix(in srgb, var(--amber) 8%, transparent);
 }
 .so-site-nav-panel__close {
   width: 40px;

@@ -347,6 +347,8 @@
     postRegister: 'Check your email to confirm your account, then sign in below.',
     sessionExpired: 'Your session expired. Please sign in again.',
     passwordUpdated: 'Password updated. You can sign in with your new password.',
+    accountNoJwt:
+      'Account settings need a clinic sign-in saved in this browser. If you signed in on another hostname (for example www.serviceopera.to), open Account from that same address—or sign in below.',
   };
 
   function setLoginErr(msg) {
@@ -1041,8 +1043,30 @@
       }
       if (!portalTok || !looksLikeJwt(portalTok)) return;
       return fetchPortalUserSession(portalTok).then(function (x) {
+        if (x.status === 401 && x.json && x.json.ok === false) {
+          clearPortalJwtLogin();
+          if (bannerSession) {
+            bannerSession.textContent = MSG.sessionExpired;
+            bannerSession.classList.remove('is-hidden');
+          }
+          return;
+        }
         if (x.status === 401) return;
-        if (!x.ok || !x.json || !x.json.ok) return;
+        if (!x.ok || !x.json || !x.json.ok) {
+          try {
+            var uNav = new URL(window.location.href);
+            var hNav = (uNav.hash || '').toLowerCase();
+            if (hNav !== '#account' && hNav.indexOf('#account') !== 0) {
+              uNav.hash = '#account';
+              window.location.replace(uNav.pathname + uNav.search + uNav.hash);
+            }
+          } catch (eNav) {
+            try {
+              window.location.replace('/login.html#account');
+            } catch (eNav2) {}
+          }
+          return;
+        }
         if (x.json.passwordMustChange) {
           showMustChangePasswordMode(portalTok);
           return;
@@ -1110,7 +1134,13 @@
     if (!accountSettingsMode) return;
     if (redirectAdminAwayFromAccountSettingsIfNeeded()) return;
     var tok = getPortalJwtLogin();
-    if (!tok) return;
+    if (!tok) {
+      if (bannerSession) {
+        bannerSession.textContent = MSG.accountNoJwt;
+        bannerSession.classList.remove('is-hidden');
+      }
+      return;
+    }
     showAccountSettingsLayout();
     if (accountPanelMeta) {
       accountPanelMeta.textContent = '';
@@ -1139,6 +1169,10 @@
           var qCl = uCl.searchParams.toString();
           history.replaceState({}, '', uCl.pathname + (qCl ? '?' + qCl : '') + uCl.hash);
         } catch (eH1) {}
+        return;
+      }
+      if (x.ok && x.json && x.json.ok && x.json.passwordMustChange) {
+        showMustChangePasswordMode(tok);
         return;
       }
       if (x.ok && x.json && x.json.ok) {
