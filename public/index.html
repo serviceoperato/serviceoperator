@@ -6,8 +6,8 @@
 <!-- When this HTML is served from a static host, point API calls at the Node service (override in deploy if URL changes). -->
 <meta name="so-api-origin" content="https://serviceoperato-backend-production.up.railway.app" />
 <script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
-<title>www.serviceopera.to · Private operational audits</title>
-<meta name="description" content="Private 48-hour operational audits for hotels, clinics and property operators. Three gaps, three automations, one pilot—delivered as a concise report." />
+<title>www.serviceopera.to · AI automations that operate</title>
+<meta name="description" content="Done-for-you AI operations: private demo with real data, then pilot or monthly managed service for hotels, clinics, wellness and property operators." />
 <link rel="icon" href="/assets/favicon.png" type="image/png" sizes="any" />
 <link rel="apple-touch-icon" href="/assets/favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,342 +18,434 @@
 <script src="/page-skeleton.js"></script>
 <script src="/so-api.js"></script>
 <style>
-  /* Homepage layout only — does not change shared components */
-  .home-lp {
-    font-family: var(--font-body);
-    font-weight: 300;
-    max-width: var(--max);
+  /* Homepage B2B landing — scoped to .so-b2b */
+  .so-b2b {
+    --so-ink: #0a0a0f;
+    --so-muted: #475569;
+    --so-line: rgba(15, 23, 42, 0.1);
+    --so-indigo: #3730a3;
+    --so-indigo-deep: #1e1b4b;
+    --so-surface: #ffffff;
+    --so-subtle: #f8fafc;
+    --so-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 32px rgba(15, 23, 42, 0.06);
+    font-family: var(--font-body), system-ui, sans-serif;
+    color: var(--so-muted);
+    background: var(--so-surface);
+    max-width: 68rem;
     margin: 0 auto;
-    padding: 5.5rem var(--gutter) 3.5rem;
-    color: var(--paper);
-  }
-  .home-lp__eyebrow {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--mute-2);
-    margin: 0 0 1.25rem;
-  }
-  .home-lp__rule {
-    border: none;
-    border-top: 1px solid var(--line);
-    margin: 2.25rem 0;
-  }
-  .home-lp__cta-note {
-    margin: 0.85rem 0 0;
-    font-family: var(--font-body);
-    font-size: 0.86rem;
+    padding: calc(var(--site-nav-offset) + 1rem) var(--gutter) 3.5rem;
     font-weight: 400;
-    line-height: 1.55;
-    color: var(--mute-2);
-    max-width: 42rem;
+    -webkit-font-smoothing: antialiased;
   }
-  .home-lp__cta-note strong {
-    font-weight: 500;
-    color: var(--paper);
+  [data-theme="dark"] .so-b2b {
+    --so-ink: #f1f5f9;
+    --so-muted: #94a3b8;
+    --so-line: rgba(148, 163, 184, 0.18);
+    --so-indigo: #a5b4fc;
+    --so-indigo-deep: #312e81;
+    --so-surface: #0f1117;
+    --so-subtle: #141824;
+    --so-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 12px 40px rgba(0, 0, 0, 0.45);
   }
-  .home-lp__visual {
-    margin: 1.5rem 0 0;
-    max-width: 100%;
-  }
-  .home-lp__proof {
-    display: grid;
-    gap: 1.25rem;
-    padding: 0.25rem 0 0.5rem;
-  }
-  .home-lp__proof-lede {
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: var(--mute-2);
-    max-width: 42rem;
-    margin: 0;
-  }
-  .home-lp__proof-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    align-items: center;
-  }
-  .home-lp__proof-note {
-    margin: 0;
-    font-size: 0.82rem;
-    line-height: 1.55;
-    color: var(--mute-2);
-    max-width: 44rem;
-  }
-  .home-lp__proof-note a {
-    color: var(--amber-2);
-    text-decoration: none;
-    font-weight: 500;
-  }
-  .home-lp__audit-cols {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-  }
-  @media (max-width: 900px) {
-    .home-lp__audit-cols {
-      grid-template-columns: 1fr;
-    }
-  }
-  .home-lp__audit-col {
-    background: var(--paper-2);
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    padding: 1.25rem 1.15rem;
-  }
-  [data-theme="dark"] .home-lp__audit-col {
-    background: var(--ink-2);
-  }
-  .home-lp__audit-col h2 {
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--amber-2);
-    margin: 0 0 0.65rem;
-  }
-  .home-lp__audit-col ul {
-    margin: 0;
-    padding-left: 1.1rem;
-    font-size: 0.88rem;
-    line-height: 1.45;
-    color: var(--mute-2);
-    font-weight: 300;
-  }
-  .home-lp__audit-col li + li {
-    margin-top: 0.4rem;
-  }
-  .home-lp__audit-pilot {
-    margin: 0;
-    font-size: 0.88rem;
-    line-height: 1.5;
-    color: var(--mute-2);
-    font-weight: 300;
-  }
-  .home-lp__audit-pilot strong {
-    color: var(--paper);
-    font-weight: 500;
-  }
-  .home-lp__text-link {
-    font-family: var(--font-body);
-    font-size: 0.86rem;
-    font-weight: 500;
-    color: var(--amber-2);
-    text-decoration: none;
-    border-bottom: 1px solid color-mix(in srgb, var(--amber-2) 45%, transparent);
-    padding-bottom: 0.1em;
-  }
-  .home-lp__text-link:hover {
-    color: var(--paper);
-    border-bottom-color: var(--paper);
-  }
-  .home-lp__sectors {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
-    margin-top: 0.25rem;
-  }
-  @media (max-width: 900px) {
-    .home-lp__sectors {
-      grid-template-columns: 1fr;
-    }
-  }
-  .home-lp__card.home-lp__card--sector {
+  .so-b2b__wrap {
     display: flex;
     flex-direction: column;
-    background: #ffffff;
-    border: 0.5px solid rgba(12, 14, 24, 0.12);
+    gap: 3.25rem;
+  }
+  @media (min-width: 900px) {
+    .so-b2b__wrap {
+      gap: 4rem;
+    }
+  }
+  .so-b2b__hero {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .so-b2b__brand {
+    margin: 0;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--so-ink);
+  }
+  .so-b2b__eyebrow {
+    margin: 0;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--so-indigo);
+  }
+  .so-b2b__title {
+    margin: 0.25rem 0 0;
+    font-size: clamp(1.625rem, 5vw, 2.625rem);
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+    color: var(--so-ink);
+  }
+  .so-b2b__hl {
+    color: var(--so-indigo);
+    font-weight: 600;
+  }
+  .so-b2b__lede {
+    margin: 0.35rem 0 0;
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--so-muted);
+    max-width: 36rem;
+  }
+  .so-b2b__segments {
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+  }
+  @media (min-width: 560px) {
+    .so-b2b__segments {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+  }
+  .so-b2b__seg {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    border-radius: 14px;
+    border: 1px solid var(--so-line);
+    background: var(--so-subtle);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--so-ink);
+  }
+  [data-theme="dark"] .so-b2b__seg {
+    background: var(--so-subtle);
+    box-shadow: none;
+  }
+  .so-b2b__seg svg {
+    width: 1.375rem;
+    height: 1.375rem;
+    flex-shrink: 0;
+    color: var(--so-indigo);
+    opacity: 0.92;
+  }
+  .so-b2b__cta-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    margin-top: 0.5rem;
+  }
+  @media (min-width: 480px) {
+    .so-b2b__cta-row {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+  }
+  .so-b2b__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0.9rem 1.35rem;
     border-radius: 12px;
-    padding: 20px;
-    box-sizing: border-box;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
   }
-  [data-theme="dark"] .home-lp__card.home-lp__card--sector {
-    background: #ffffff;
-    border-color: rgba(12, 14, 24, 0.14);
+  .so-b2b__btn--primary {
+    background: var(--so-indigo-deep);
+    color: #f8fafc;
+    border-color: transparent;
+    box-shadow: 0 1px 2px rgba(30, 27, 75, 0.12);
   }
-  .home-lp__card-icon-wrap {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
+  .so-b2b__btn--primary:hover {
+    filter: brightness(1.06);
+    box-shadow: 0 4px 20px rgba(30, 27, 75, 0.2);
+  }
+  [data-theme="dark"] .so-b2b__btn--primary {
+    background: #4338ca;
+    color: #fff;
+  }
+  .so-b2b__btn--ghost {
+    background: transparent;
+    color: var(--so-ink);
+    border-color: var(--so-line);
+  }
+  .so-b2b__btn--ghost:hover {
+    border-color: var(--so-indigo);
+    color: var(--so-indigo);
+  }
+  .so-b2b__markets {
+    margin: 0.15rem 0 0;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--so-muted);
+  }
+  .so-b2b__visual {
+    margin: 1.25rem 0 0;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--so-line);
+    box-shadow: var(--so-shadow);
+    background: var(--so-subtle);
+  }
+  .so-b2b__visual img {
+    display: block;
+    width: 100%;
+    height: auto;
+    vertical-align: middle;
+  }
+  .so-b2b__section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .so-b2b__section#process {
+    scroll-margin-top: calc(var(--site-nav-offset) + 0.75rem);
+  }
+  .so-b2b__h2 {
+    margin: 0;
+    font-size: clamp(1.25rem, 3.5vw, 1.5rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--so-ink);
+  }
+  .so-b2b__problem-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  @media (min-width: 640px) {
+    .so-b2b__problem-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 960px) {
+    .so-b2b__problem-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .so-b2b__pcard {
+    margin: 0;
+    padding: 1.1rem 1.15rem;
+    border-radius: 14px;
+    border: 1px solid var(--so-line);
+    background: var(--so-surface);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+  }
+  .so-b2b__pcard h3 {
+    margin: 0 0 0.4rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--so-ink);
+  }
+  .so-b2b__pcard p {
+    margin: 0;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--so-muted);
+  }
+  .so-b2b__feat-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-radius: 14px;
+    border: 1px solid var(--so-line);
+    overflow: hidden;
+    background: var(--so-surface);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+  }
+  .so-b2b__feat {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 0.85rem 1rem;
+    align-items: center;
+    padding: 1rem 1.1rem;
+    border-bottom: 1px solid var(--so-line);
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.12s ease;
+  }
+  .so-b2b__feat-list li:last-child .so-b2b__feat {
+    border-bottom: none;
+  }
+  .so-b2b__feat:hover {
+    background: var(--so-subtle);
+  }
+  .so-b2b__feat-ico {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: rgba(55, 48, 163, 0.08);
+    color: var(--so-indigo-deep);
     flex-shrink: 0;
-    margin-bottom: 14px;
   }
-  .home-lp__card-icon-wrap .ti {
-    font-size: 20px;
-    font-weight: 400;
-    line-height: 1;
+  [data-theme="dark"] .so-b2b__feat-ico {
+    background: rgba(165, 180, 252, 0.12);
+    color: var(--so-indigo);
   }
-  .home-lp__card--sector-hotels .home-lp__card-icon-wrap {
-    background: #b5d4f4;
-    color: #185fa5;
+  .so-b2b__feat-ico svg {
+    width: 1.125rem;
+    height: 1.125rem;
   }
-  .home-lp__card--sector-clinics .home-lp__card-icon-wrap {
-    background: #9fe1cb;
-    color: #0f6e56;
+  .so-b2b__feat-body {
+    min-width: 0;
   }
-  .home-lp__card--sector-property .home-lp__card-icon-wrap {
-    background: #fac775;
-    color: #854f0b;
-  }
-  .home-lp__card-label {
-    margin: 0 0 8px;
-    font-family: var(--font-body);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    line-height: 1.25;
-  }
-  .home-lp__card-label a {
-    color: inherit;
-    text-decoration: none;
-  }
-  .home-lp__card-label a:hover {
-    text-decoration: underline;
-  }
-  .home-lp__card--sector-hotels .home-lp__card-label {
-    color: #378add;
-  }
-  .home-lp__card--sector-clinics .home-lp__card-label {
-    color: #1d9e75;
-  }
-  .home-lp__card--sector-property .home-lp__card-label {
-    color: #ba7517;
-  }
-  .home-lp__card-stat {
-    margin: 0 0 10px;
-    font-family: var(--font-body);
-    font-size: 36px;
-    font-weight: 500;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-  }
-  .home-lp__card--sector-hotels .home-lp__card-stat {
-    color: #185fa5;
-  }
-  .home-lp__card--sector-clinics .home-lp__card-stat {
-    color: #0f6e56;
-  }
-  .home-lp__card--sector-property .home-lp__card-stat {
-    color: #854f0b;
-  }
-  .home-lp__card-desc {
-    margin: 0 0 14px;
-    font-family: var(--font-body);
-    font-size: 13px;
-    font-weight: 400;
-    line-height: 1.6;
-    color: rgba(12, 14, 24, 0.62);
-    flex: 1 1 auto;
-  }
-  .home-lp__card-source {
-    margin: 0 0 12px;
-    font-family: var(--font-body);
-    font-size: 12px;
-    font-weight: 400;
-    line-height: 1.45;
-    color: rgba(12, 14, 24, 0.52);
-  }
-  .home-lp__card-source a {
-    color: inherit;
-    text-decoration: none;
-    border-bottom: 1px solid rgba(12, 14, 24, 0.2);
-    padding-bottom: 0.06em;
-    transition: border-color 0.15s ease, color 0.15s ease;
-  }
-  .home-lp__card-source a:hover {
-    color: rgba(12, 14, 24, 0.72);
-    border-bottom-color: rgba(12, 14, 24, 0.38);
-  }
-  .home-lp__card-cta {
-    margin: 0;
-    font-family: var(--font-body);
-    font-size: 12px;
-    font-weight: 500;
-    line-height: 1.4;
-  }
-  .home-lp__card-cta a {
-    color: #378add;
-    text-decoration: none;
-  }
-  .home-lp__card--sector-clinics .home-lp__card-cta a {
-    color: #1d9e75;
-  }
-  .home-lp__card--sector-property .home-lp__card-cta a {
-    color: #ba7517;
-  }
-  .home-lp__card-cta a:hover {
-    text-decoration: underline;
-  }
-  .home-lp__steps {
-    list-style: none;
-    margin: 2rem 0 0;
-    padding: 0;
-    max-width: 42rem;
-  }
-  .home-lp__step {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 1rem 1.25rem;
-    padding: 1.15rem 0;
-    border-top: 1px solid var(--line);
-    font-family: var(--font-body);
-  }
-  .home-lp__step:first-child {
-    border-top: none;
-    padding-top: 0;
-  }
-  .home-lp__step-num {
-    font-weight: 500;
-    font-size: 0.85rem;
-    color: var(--mute-2);
-    letter-spacing: 0.04em;
-  }
-  .home-lp__step-body strong {
-    font-weight: 500;
-    color: var(--paper);
+  .so-b2b__feat-title {
     display: block;
-    margin-bottom: 0.35rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--so-ink);
+    margin-bottom: 0.2rem;
   }
-  .home-lp__step-body p {
+  .so-b2b__feat-desc {
+    display: block;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: var(--so-muted);
+  }
+  .so-b2b__feat-arrow {
+    color: var(--so-indigo);
+    font-size: 1.125rem;
+    font-weight: 400;
+    opacity: 0.75;
+  }
+  .so-b2b__process {
+    list-style: none;
     margin: 0;
-    font-weight: 300;
-    font-size: 0.92rem;
-    line-height: 1.5;
-    color: var(--mute-2);
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
   }
-  .home-lp-footer {
-    max-width: var(--max);
+  @media (min-width: 900px) {
+    .so-b2b__process {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+  }
+  .so-b2b__step {
+    position: relative;
+    padding: 1.15rem 1.1rem;
+    border-radius: 14px;
+    border: 1px solid var(--so-line);
+    background: var(--so-subtle);
+  }
+  .so-b2b__step-num {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--so-indigo);
+    margin-bottom: 0.45rem;
+  }
+  .so-b2b__step-title {
+    margin: 0 0 0.35rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--so-ink);
+  }
+  .so-b2b__step p {
+    margin: 0;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--so-muted);
+  }
+  .so-b2b__jack {
+    margin-top: 0.5rem;
+    padding: 1.75rem 1.5rem;
+    border-radius: 18px;
+    background: linear-gradient(145deg, #1e1b4b 0%, #312e81 55%, #1e1b4b 100%);
+    color: #e0e7ff;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: var(--so-shadow);
+  }
+  .so-b2b__jack-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: #fff;
+  }
+  .so-b2b__jack-sub {
+    margin: 0.35rem 0 1.25rem;
+    font-size: 0.9375rem;
+    line-height: 1.45;
+    color: rgba(224, 231, 255, 0.88);
+    max-width: 28rem;
+  }
+  .so-b2b__jack-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.65rem;
+  }
+  @media (min-width: 560px) {
+    .so-b2b__jack-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  .so-b2b__jack-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #f8fafc;
+  }
+  .so-b2b__jack-list svg {
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+    color: #a5b4fc;
+  }
+  .so-b2b-footer {
+    max-width: 68rem;
     margin: 0 auto;
-    padding: 2rem var(--gutter) 3rem;
+    padding: 2rem var(--gutter) 2.5rem;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
     text-align: center;
-    gap: 1rem;
-    font-family: var(--font-body);
-    font-size: 0.85rem;
-    font-weight: 400;
-    color: var(--mute-2);
-    border-top: 1px solid var(--line);
+    gap: 0.75rem;
+    font-size: 0.8125rem;
+    color: #64748b;
+    border-top: 1px solid rgba(15, 23, 42, 0.1);
+    background: #ffffff;
   }
-  .home-lp-footer a {
-    color: var(--paper);
+  [data-theme="dark"] .so-b2b-footer {
+    color: #94a3b8;
+    border-top-color: rgba(148, 163, 184, 0.18);
+    background: #0f1117;
+  }
+  .so-b2b-footer a {
+    color: #1e1b4b;
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
   }
-  .home-lp-footer a:hover {
+  [data-theme="dark"] .so-b2b-footer a {
+    color: #a5b4fc;
+  }
+  .so-b2b-footer a:hover {
     text-decoration: underline;
   }
 </style>
 </head>
-<body class="page-home" data-page-skeleton="native">
+<body class="page-home page-home--with-nav" data-page-skeleton="native">
 
 <div class="grain" aria-hidden="true"></div>
 
@@ -383,133 +475,178 @@
 </div>
 
 <div id="homeMain" class="is-hidden">
-<main class="home-lp">
-  <p class="home-lp__eyebrow">ServiceOperator</p>
-  <h1 class="clinics-hero__title">
-    <span class="line"><span class="line--accent-plain">48%</span> of Thai hotel operators lose revenue at least once a week</span>
-    <span class="line">by reacting too slowly to competitor pricing -</span>
-    <span class="line">despite 96% agreeing speed is critical.</span>
-  </h1>
-  <div class="cta-row">
-    <a class="btn btn-primary" href="/reports.html#inquiry">Get a 48-hour private audit</a>
+<main class="so-b2b">
+  <div class="so-b2b__wrap">
+    <header class="so-b2b__hero">
+      <p class="so-b2b__brand">www.serviceopera.to</p>
+      <p class="so-b2b__eyebrow">AI AUTOMATIONS THAT OPERATE</p>
+      <h1 class="so-b2b__title">We build AI automations that <span class="so-b2b__hl">save time</span>, win more <span class="so-b2b__hl">leads</span> and increase <span class="so-b2b__hl">revenue</span>.</h1>
+      <p class="so-b2b__lede">We analyze your business, create a private demo with real data and show exactly where you lose time, leads or revenue — then automate what matters.</p>
+
+      <ul class="so-b2b__segments" aria-label="Who we serve">
+        <li class="so-b2b__seg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V7l7-4v18"/><path d="M19 21V11l-5-3"/><path d="M9 9v.01"/><path d="M9 12v.01"/><path d="M9 15v.01"/><path d="M9 18v.01"/></svg>
+          Hotels
+        </li>
+        <li class="so-b2b__seg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.5 12.572l-7.5 6.429-7.5-6.429a5 5 0 1 1 7.5-6.572 5 5 0 1 1 7.5 6.572Z"/></svg>
+          Clinics &amp; Wellness
+        </li>
+        <li class="so-b2b__seg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a9 9 0 0 1 18 0v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2Z"/><path d="M10 6V3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3"/></svg>
+          Property Managers
+        </li>
+      </ul>
+
+      <div class="so-b2b__cta-row">
+        <a class="so-b2b__btn so-b2b__btn--primary" href="/reports.html#inquiry">Get Your Private Demo</a>
+        <a class="so-b2b__btn so-b2b__btn--ghost" href="#process">See How It Works</a>
+      </div>
+      <p class="so-b2b__markets">Thailand &amp; International Markets</p>
+
+      <figure class="so-b2b__visual" aria-label="Operations preview">
+        <img
+          id="soHomePageHero"
+          src="/assets/home-page-hero.png"
+          width="1280"
+          height="720"
+          alt="Private demo and operations view for multi-channel businesses."
+          loading="lazy"
+          decoding="async"
+          data-so-site-appearance="home-hero"
+        />
+      </figure>
+    </header>
+
+    <section class="so-b2b__section" aria-labelledby="hold-back">
+      <h2 class="so-b2b__h2" id="hold-back">We show you what&apos;s holding you back.</h2>
+      <div class="so-b2b__problem-grid">
+        <article class="so-b2b__pcard">
+          <h3>Wasted Time</h3>
+          <p>Slow replies, manual tasks, scattered processes.</p>
+        </article>
+        <article class="so-b2b__pcard">
+          <h3>Lost Leads</h3>
+          <p>No follow-up, missed opportunities, no CRM.</p>
+        </article>
+        <article class="so-b2b__pcard">
+          <h3>Poor Reputation</h3>
+          <p>Unmanaged reviews, slow responses, lost trust.</p>
+        </article>
+        <article class="so-b2b__pcard">
+          <h3>Lost Revenue</h3>
+          <p>Weak pricing strategy, competitor blind spots.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="so-b2b__section" aria-labelledby="auto-drive">
+      <h2 class="so-b2b__h2" id="auto-drive">Automations that drive results.</h2>
+      <ul class="so-b2b__feat-list">
+        <li>
+          <a class="so-b2b__feat" href="/reports.html#inquiry">
+            <span class="so-b2b__feat-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </span>
+            <span class="so-b2b__feat-body">
+              <span class="so-b2b__feat-title">Faster WhatsApp &amp; Chat Replies</span>
+              <span class="so-b2b__feat-desc">Instant, accurate and 24/7 — never miss a guest.</span>
+            </span>
+            <span class="so-b2b__feat-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="so-b2b__feat" href="/reports.html#inquiry">
+            <span class="so-b2b__feat-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </span>
+            <span class="so-b2b__feat-body">
+              <span class="so-b2b__feat-title">Review Management</span>
+              <span class="so-b2b__feat-desc">Monitor, respond and turn reviews into reputation.</span>
+            </span>
+            <span class="so-b2b__feat-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="so-b2b__feat" href="/reports.html#inquiry">
+            <span class="so-b2b__feat-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </span>
+            <span class="so-b2b__feat-body">
+              <span class="so-b2b__feat-title">Lead Follow-up &amp; CRM</span>
+              <span class="so-b2b__feat-desc">Capture, nurture and convert more leads automatically.</span>
+            </span>
+            <span class="so-b2b__feat-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="so-b2b__feat" href="/reports.html#inquiry">
+            <span class="so-b2b__feat-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 12l4-4 4 4 6-6"/><path d="M21 16V9"/></svg>
+            </span>
+            <span class="so-b2b__feat-body">
+              <span class="so-b2b__feat-title">Competitor &amp; Pricing Monitoring</span>
+              <span class="so-b2b__feat-desc">Track competitors, rates and market shifts in real-time.</span>
+            </span>
+            <span class="so-b2b__feat-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <section class="so-b2b__section" id="process" aria-labelledby="process-h">
+      <h2 class="so-b2b__h2" id="process-h">Our 4-Step Process</h2>
+      <ol class="so-b2b__process">
+        <li class="so-b2b__step">
+          <span class="so-b2b__step-num">01</span>
+          <h3 class="so-b2b__step-title">Analyze</h3>
+          <p>We analyze your business and operations.</p>
+        </li>
+        <li class="so-b2b__step">
+          <span class="so-b2b__step-num">02</span>
+          <h3 class="so-b2b__step-title">Private Demo</h3>
+          <p>We build a custom demo with your data and real scenarios.</p>
+        </li>
+        <li class="so-b2b__step">
+          <span class="so-b2b__step-num">03</span>
+          <h3 class="so-b2b__step-title">Plan &amp; Automate</h3>
+          <p>We propose the right automations and execution plan.</p>
+        </li>
+        <li class="so-b2b__step">
+          <span class="so-b2b__step-num">04</span>
+          <h3 class="so-b2b__step-title">Pilot or Monthly Service</h3>
+          <p>Start a pilot or let Jack manage it for you.</p>
+        </li>
+      </ol>
+    </section>
+
+    <aside class="so-b2b__jack" aria-labelledby="jack-h">
+      <h2 class="so-b2b__jack-title" id="jack-h">Built &amp; Managed by Jack</h2>
+      <p class="so-b2b__jack-sub">AI automation expert for hospitality &amp; wellness</p>
+      <ul class="so-b2b__jack-list">
+        <li>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+          Done-for-you
+        </li>
+        <li>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+          Clear results
+        </li>
+        <li>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+          Ongoing optimization
+        </li>
+        <li>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+          Real business impact
+        </li>
+      </ul>
+    </aside>
   </div>
-
-  <div class="home-lp__visual" aria-label="Product preview">
-    <figure class="mkt-page-visual">
-      <img
-        id="soHomePageHero"
-        class="mkt-page-visual__img"
-        src="/assets/home-page-hero.png"
-        width="1280"
-        height="720"
-        alt="Inbox and operations view for multi-channel service businesses."
-        loading="lazy"
-        decoding="async"
-        data-so-site-appearance="home-hero"
-      />
-    </figure>
-  </div>
-
-  <p class="home-lp__cta-note">Delivered as a private link—concise, sourced, ready for your leadership call.</p>
-
-  <hr class="home-lp__rule" />
-
-  <div class="home-lp__sectors">
-    <article class="home-lp__card home-lp__card--sector home-lp__card--sector-hotels">
-      <div class="home-lp__card-icon-wrap" aria-hidden="true">
-        <i class="ti ti-building"></i>
-      </div>
-      <p class="home-lp__card-label"><a href="/hotels.html">Hotels &amp; serviced apartments</a></p>
-      <p class="home-lp__card-stat">48%</p>
-      <p class="home-lp__card-desc">of Thai hotel operators lose revenue at least once a week by reacting too slowly to competitor pricing — despite 96% agreeing speed is critical.</p>
-      <p class="home-lp__card-source"><a href="https://www.siteminder.com/news/dynamic-revenue-plus-global-release/" target="_blank" rel="noopener noreferrer">SiteMinder, Aug 2025 →</a></p>
-      <p class="home-lp__card-cta"><a href="/hotels.html">Explore hotels →</a></p>
-    </article>
-    <article class="home-lp__card home-lp__card--sector home-lp__card--sector-clinics">
-      <div class="home-lp__card-icon-wrap" aria-hidden="true">
-        <i class="ti ti-stethoscope"></i>
-      </div>
-      <p class="home-lp__card-label"><a href="/clinics.html">Clinics, dental &amp; wellness</a></p>
-      <p class="home-lp__card-stat">3M</p>
-      <p class="home-lp__card-desc">international patients visited Thailand in 2024 — including 900,000+ for dental care. Treatments cost 50–70% less than in the West, but inquiries still drop with slow follow-up.</p>
-      <p class="home-lp__card-source"><a href="https://us-uk.bookimed.com/article/thailand-dental-holiday/" target="_blank" rel="noopener noreferrer">Bookimed / TAT, 2024 →</a></p>
-      <p class="home-lp__card-cta"><a href="/clinics.html">Explore clinics →</a></p>
-    </article>
-    <article class="home-lp__card home-lp__card--sector home-lp__card--sector-property">
-      <div class="home-lp__card-icon-wrap" aria-hidden="true">
-        <i class="ti ti-home"></i>
-      </div>
-      <p class="home-lp__card-label"><a href="/property.html">Property &amp; rental operators</a></p>
-      <p class="home-lp__card-stat">7–10%</p>
-      <p class="home-lp__card-desc">gross rental yield in Phuket and Pattaya tourist areas — but fragmented handovers and manual reporting are leaving money on the table for most operators.</p>
-      <p class="home-lp__card-source"><a href="https://www.globalpropertyguide.com/asia/thailand/rental-yields" target="_blank" rel="noopener noreferrer">Bangkok Post / Global Property Guide, 2025 →</a></p>
-      <p class="home-lp__card-cta"><a href="/property.html">Explore property →</a></p>
-    </article>
-  </div>
-
-  <hr class="home-lp__rule" />
-
-  <section class="home-lp__proof" aria-labelledby="home-proof-heading">
-    <p class="home-lp__eyebrow" id="home-proof-heading">Private audit</p>
-    <p class="home-lp__proof-lede">Public footprint, reviews and market signals—compressed into decisions you can act on this quarter.</p>
-    <div class="home-lp__audit-cols">
-      <article class="home-lp__audit-col">
-        <h2>Operational gaps</h2>
-        <ul>
-          <li>Inquiries stall after the first touchpoint.</li>
-          <li>Pricing and reputation signals are not visible to the team that sets tactics.</li>
-          <li>Handoffs between sales, front office and ops lack a single audit trail.</li>
-        </ul>
-      </article>
-      <article class="home-lp__audit-col">
-        <h2>Automation opportunities</h2>
-        <ul>
-          <li>Inbox triage with SLAs, templates and escalation rules.</li>
-          <li>Triggered review requests with owner-approved copy variants.</li>
-          <li>One executive view: rates, sentiment and competitor moves.</li>
-        </ul>
-      </article>
-      <article class="home-lp__audit-col">
-        <h2>Practical pilot</h2>
-        <p class="home-lp__audit-pilot"><strong>One workflow live in two weeks</strong>—for example inquiry → owned task → daily digest to leadership, with human approval on outbound messages.</p>
-      </article>
-    </div>
-    <div class="home-lp__proof-actions">
-      <a class="home-lp__text-link" href="/clinics/sea-clinic-audit/">Preview sample audit →</a>
-    </div>
-  </section>
-
-  <hr class="home-lp__rule" />
-
-  <ol class="home-lp__steps">
-    <li class="home-lp__step">
-      <span class="home-lp__step-num">01</span>
-      <div class="home-lp__step-body">
-        <strong>Audit</strong>
-        <p>Signals, bottlenecks, ranked moves—48 hours.</p>
-      </div>
-    </li>
-    <li class="home-lp__step">
-      <span class="home-lp__step-num">02</span>
-      <div class="home-lp__step-body">
-        <strong>Pilot</strong>
-        <p>One workflow, measurable outcome, tight scope.</p>
-      </div>
-    </li>
-    <li class="home-lp__step">
-      <span class="home-lp__step-num">03</span>
-      <div class="home-lp__step-body">
-        <strong>Run</strong>
-        <p>Remote cadence; double down on what performs, cut what does not.</p>
-      </div>
-    </li>
-  </ol>
-
-  <p class="home-lp__proof-note" style="margin-top:2rem;margin-bottom:0">Private engagements. Deliverables by link. Pilots scoped before retainers.</p>
 </main>
 
-<footer class="home-lp-footer">
-  <span>© 2026 www.serviceopera.to · Remote AI operations · <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a></span>
+<footer class="so-b2b-footer">
+  <span>© 2026 www.serviceopera.to · Done-for-you AI operations · <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a></span>
 </footer>
 </div>
 
