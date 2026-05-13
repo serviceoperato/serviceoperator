@@ -6,13 +6,25 @@
   "description": "Static site served by Node (Express); admin OTP via Resend when RESEND_API_KEY is set. Includes POST /api/places/search (Google Places API New) for Pattaya lead collection — see PLACES_LEADS.md.",
   "scripts": {
     "start": "node server.mjs",
-    "preview:static": "npx --yes serve@14 . -l tcp://0.0.0.0:3000"
+    "preview:static": "npx --yes serve@14 . -l tcp://0.0.0.0:3000",
+    "dev:next": "next dev",
+    "build:next": "next build",
+    "start:next": "next start"
   },
   "engines": {
     "node": ">=20"
   },
   "dependencies": {
     "express": "^4.21.2",
-    "pg": "^8.16.0"
+    "next": "^15.3.2",
+    "pg": "^8.16.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.21",
+    "@types/react": "^19.1.6",
+    "@types/react-dom": "^19.1.5",
+    "typescript": "^5.8.3"
   }
 }
