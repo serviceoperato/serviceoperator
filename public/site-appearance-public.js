@@ -12,6 +12,14 @@
     }
   }
 
+  function dismissHomePageSkeleton() {
+    var sk = document.getElementById('homeSkeleton');
+    var main = document.getElementById('homeMain');
+    if (!sk || !main) return;
+    sk.classList.add('is-hidden');
+    main.classList.remove('is-hidden');
+  }
+
   fetch(typeof soApiUrl === 'function' ? soApiUrl('/api/site-appearance') : '/api/site-appearance', {
     credentials: typeof soApiCredentials === 'function' ? soApiCredentials() : 'omit',
     cache: 'no-store',
@@ -29,5 +37,6 @@
     })
     .catch(function () {
       /* keep static src from HTML */
-    });
+    })
+    .finally(dismissHomePageSkeleton);
 })();

@@ -106,10 +106,11 @@ function withProfileDefaults(user) {
     createdAt,
     updatedAt: user.updatedAt || createdAt,
     passwordMustChange: user.passwordMustChange === true,
+    signupVertical: typeof user.signupVertical === 'string' ? user.signupVertical : null,
   };
 }
 
-function newUserProfileFields(email) {
+function newUserProfileFields(email, extra = {}) {
   const createdAt = new Date().toISOString();
   return {
     displayName: displayNameFromEmail(email),
@@ -129,6 +130,7 @@ function newUserProfileFields(email) {
     lastSeenAt: null,
     createdAt,
     updatedAt: createdAt,
+    ...extra,
   };
 }
 
@@ -324,8 +326,9 @@ export function createUserStore(dataDir, adminEmail) {
     },
 
     /**
-     * Stage a self-service sign-up (password stored hashed until email is confirmed).
-     * @returns {{ id: string, email: string, reportSlug: string }}
+     * Stage a self-service sign-up (email-first: no password until onboarding completes).
+     * Optional password hashes legacy flows that still confirm via login.html?verify=.
+     * @returns {{ id: string, email: string, reportSlug: string, createdAt: string, verificationToken: string }}
      */
     createPendingRegistration({ email, password }) {
       const em = normalizeEmail(email);
@@ -334,7 +337,8 @@ export function createUserStore(dataDir, adminEmail) {
         err.status = 400;
         throw err;
       }
-      if (typeof password !== 'string' || password.length < 8) {
+      const hasPw = typeof password === 'string' && password.length > 0;
+      if (hasPw && password.length < 8) {
         const err = new Error('Password must be at least 8 characters.');
         err.status = 400;
         throw err;
@@ -353,11 +357,13 @@ export function createUserStore(dataDir, adminEmail) {
       const row = {
         id,
         email: em,
-        passwordHash: hashPassword(password),
         reportSlug: slug,
         createdAt: new Date().toISOString(),
         verificationToken: crypto.randomBytes(32).toString('hex'),
       };
+      if (hasPw) {
+        row.passwordHash = hashPassword(password);
+      }
       pdata.pending.push(row);
       savePending(pdata);
       return { id, email: em, reportSlug: slug, createdAt: row.createdAt, verificationToken: row.verificationToken };
@@ -383,6 +389,13 @@ export function createUserStore(dataDir, adminEmail) {
         err.status = 401;
         throw err;
       }
+      if (!pen.passwordHash || typeof pen.passwordHash !== 'string') {
+        const err = new Error(
+          'This sign-up uses the email-first flow. Open the latest email from ServiceOpera and use “Continue registration” to choose your password.'
+        );
+        err.status = 400;
+        throw err;
+      }
       const data = load();
       if (data.users.some((u) => u.email === pen.email)) {
         pdata.pending.splice(idx, 1);
@@ -404,6 +417,73 @@ export function createUserStore(dataDir, adminEmail) {
         id: uid,
         email: pen.email,
         passwordHash: pen.passwordHash,
+        reportSlug: pen.reportSlug,
+        ...profile,
+      };
+      data.users.push(userRow);
+      pdata.pending.splice(idx, 1);
+      save(data);
+      savePending(pdata);
+      return withProfileDefaults(userRow);
+    },
+
+    /**
+     * Finish email-first registration: set password, business vertical, promote pending → user.
+     * @param {string} signupVertical one of hotels | clinics | properties | wellness
+     */
+    completePendingOnboarding(pendingId, jwtEmail, password, signupVertical) {
+      if (typeof pendingId !== 'string' || !pendingId) {
+        const err = new Error('Invalid registration.');
+        err.status = 400;
+        throw err;
+      }
+      if (typeof password !== 'string' || password.length < 8) {
+        const err = new Error('Password must be at least 8 characters.');
+        err.status = 400;
+        throw err;
+      }
+      const allowed = new Set(['hotels', 'clinics', 'properties', 'wellness']);
+      const v = typeof signupVertical === 'string' ? signupVertical.trim().toLowerCase() : '';
+      if (!allowed.has(v)) {
+        const err = new Error('Choose a valid business type.');
+        err.status = 400;
+        throw err;
+      }
+      const em = normalizeEmail(jwtEmail);
+      const pdata = loadPending();
+      const idx = pdata.pending.findIndex((p) => p.id === pendingId);
+      if (idx < 0) {
+        const err = new Error('Registration not found or already completed.');
+        err.status = 404;
+        throw err;
+      }
+      const pen = pdata.pending[idx];
+      if (!em || normalizeEmail(pen.email) !== em) {
+        const err = new Error('Invalid registration link.');
+        err.status = 401;
+        throw err;
+      }
+      const data = load();
+      if (data.users.some((u) => u.email === pen.email)) {
+        pdata.pending.splice(idx, 1);
+        savePending(pdata);
+        const err = new Error('That email is already registered.');
+        err.status = 409;
+        throw err;
+      }
+      if (data.users.some((u) => u.reportSlug === pen.reportSlug)) {
+        pdata.pending.splice(idx, 1);
+        savePending(pdata);
+        const err = new Error('That report ID is no longer available. Start registration again.');
+        err.status = 409;
+        throw err;
+      }
+      const uid = crypto.randomUUID();
+      const profile = newUserProfileFields(pen.email, { signupVertical: v });
+      const userRow = {
+        id: uid,
+        email: pen.email,
+        passwordHash: hashPassword(password),
         reportSlug: pen.reportSlug,
         ...profile,
       };

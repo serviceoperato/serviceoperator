@@ -1,0 +1,24 @@
+import type { Metadata } from "next";
+import { Suspense } from "react";
+import { PricingInquiryClient } from "./PricingInquiryClient";
+
+export const metadata: Metadata = {
+  title: "Pricing inquiry",
+  description: "Request Free Audit, Operator, or White-Glove — ServiceOpera portal signup.",
+};
+
+export default function PricingInquiryPage() {
+  return (
+    <main className="mkt-page so-pricing-fadeIn so-pricing-inquiry">
+      <Suspense
+        fallback={
+          <p className="so-pricing-subtitle" style={{ textAlign: "center", marginTop: "2rem" }}>
+            Loading…
+          </p>
+        }
+      >
+        <PricingInquiryClient />
+      </Suspense>
+    </main>
+  );
+}

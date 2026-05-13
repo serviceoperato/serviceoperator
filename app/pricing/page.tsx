@@ -3,17 +3,20 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "Remote AI operations for hotels, clinics and property operators in Pattaya and Thailand.",
+    "International remote AI operations for hotels, clinics, wellness and property operators. Start free; pricing in THB with USD/EUR quotes on request.",
 };
 
 const subtitle =
-  "Remote AI operations for hotels, clinics and property operators in Pattaya and Thailand. Start free, scale when it works.";
+  "Remote AI operations for hotels, clinics and property operators serving international customers. Start free, scale when it works.";
+
+const credibility =
+  "Thailand and Southeast Asia operating experience anchors our studio — we run remote AI operations for international hotels, clinics, wellness brands, and property portfolios worldwide.";
 
 const freeDescription =
   "You receive a private audit report within 48 hours covering your public footprint, 3 visible operational gaps and one pilot idea — built from public data, not assumptions.";
 
 const footerNote =
-  "Prices in Thai Baht (THB). Custom build fees may apply for complex integrations on White-Glove. Month-to-month, no annual lock-in. All tiers negotiable for multi-location operators.";
+  "International clients welcome. Pricing shown in Thai Baht (THB); USD/EUR quotes available on request. Custom build fees may apply for complex integrations on White-Glove. Month-to-month, no annual lock-in. All tiers negotiable for multi-location operators.";
 
 export default function PricingPage() {
   return (
@@ -24,6 +27,7 @@ export default function PricingPage() {
             Pricing
           </h1>
           <p className="so-pricing-subtitle">{subtitle}</p>
+          <p className="so-pricing-credibility">{credibility}</p>
         </header>
 
         <div className="so-pricing-grid">
@@ -36,7 +40,7 @@ export default function PricingPage() {
             <p className="so-pricing-description">{freeDescription}</p>
             <a
               className="so-pricing-cta so-pricing-cta--primary"
-              href="/reports.html#inquiry"
+              href="/pricing/inquiry?plan=free"
               aria-label="Request your free audit"
             >
               Request your free audit
@@ -64,7 +68,7 @@ export default function PricingPage() {
             </ul>
             <a
               className="so-pricing-cta so-pricing-cta--primary"
-              href="mailto:jack@serviceopera.to?subject=Operator%20Plan"
+              href="/pricing/inquiry?plan=operator"
               aria-label="Start Operator"
             >
               Start Operator
@@ -87,7 +91,7 @@ export default function PricingPage() {
             </ul>
             <a
               className="so-pricing-cta so-pricing-cta--secondary"
-              href="mailto:jack@serviceopera.to?subject=White-Glove"
+              href="/pricing/inquiry?plan=white"
               aria-label="Apply for White-Glove"
             >
               Apply for White-Glove

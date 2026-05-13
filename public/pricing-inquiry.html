@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
+<title>Pricing inquiry · www.serviceopera.to</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" href="/assets/favicon.png" type="image/png" sizes="any" />
+<link rel="apple-touch-icon" href="/assets/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css" />
+<link rel="stylesheet" href="/pricing-mkt.css" />
+<script src="/page-skeleton.js"></script>
+<script src="/so-api.js"></script>
+</head>
+<body class="page-mkt">
+
+<div class="grain" aria-hidden="true"></div>
+
+<nav class="nav" aria-label="Primary">
+  <div class="nav__start">
+    <a href="/" class="nav__logo">
+      <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="www.serviceopera.to" decoding="async" />
+    </a>
+  </div>
+  <div class="nav__links">
+    <a href="/pricing" class="nav__text">Pricing</a>
+    <a href="/login.html" class="nav__login mono" id="navPortalAuth">Log in</a>
+    <button type="button" class="theme-toggle" data-theme-toggle aria-label="Theme"></button>
+  </div>
+</nav>
+
+<main class="mkt-page so-pricing-fadeIn so-pricing-inquiry">
+  <header class="so-pricing-header">
+    <h1 class="so-pricing-title" id="inq-title">Pricing inquiry</h1>
+    <p class="so-pricing-subtitle" id="inq-sub">Complete the form to open your portal workspace and notify the studio.</p>
+  </header>
+
+  <form id="pricing-inquiry-form" class="inquiry-form so-pricing-inquiry__form" novalidate>
+    <input type="hidden" name="plan" id="field-plan" value="free" />
+    <p class="so-pricing-inquiry__privacy" id="inq-privacy">
+      We collect your IP address, pages visited, and timestamps to deliver the audit or plan you requested and to protect the service. Questions: <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a>.
+    </p>
+
+    <label class="inquiry-form__field" for="field-email">
+      <span class="inquiry-form__label">Work email</span>
+      <input class="inquiry-form__control" id="field-email" name="email" type="email" autocomplete="email" required maxlength="254" />
+    </label>
+    <label class="inquiry-form__field" for="field-password">
+      <span class="inquiry-form__label">Password (min 8 characters)</span>
+      <input class="inquiry-form__control" id="field-password" name="password" type="password" autocomplete="new-password" required minlength="8" />
+    </label>
+    <label class="inquiry-form__field" for="field-name">
+      <span class="inquiry-form__label">Name</span>
+      <input class="inquiry-form__control" id="field-name" name="name" type="text" autocomplete="name" required />
+    </label>
+    <label class="inquiry-form__field" for="field-business">
+      <span class="inquiry-form__label">Business</span>
+      <input class="inquiry-form__control" id="field-business" name="business" type="text" autocomplete="organization" required />
+    </label>
+    <label class="inquiry-form__field" for="field-sector">
+      <span class="inquiry-form__label">Sector</span>
+      <input class="inquiry-form__control" id="field-sector" name="sector" type="text" placeholder="Hotels, clinics, property, other" required />
+    </label>
+    <label class="inquiry-form__field" for="field-improvement">
+      <span class="inquiry-form__label">What do you want to improve?</span>
+      <textarea class="inquiry-form__control" id="field-improvement" name="improvement" rows="4" required placeholder="One urgent operational pain, bottleneck, or goal."></textarea>
+    </label>
+
+    <div class="inquiry-form__actions">
+      <button type="submit" class="btn btn-primary inquiry-form__submit" id="inq-submit">Submit and open workspace</button>
+    </div>
+    <p class="inquiry-form__status" id="inq-status" role="status" aria-live="polite" hidden></p>
+  </form>
+</main>
+
+<script src="/sw-register.js"></script>
+<script src="/site-nav-drawer.js"></script>
+<script src="/user-account-menu.js"></script>
+<script src="theme.js"></script>
+<script src="debug.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var TIER_LABEL = { free: 'Free Audit', operator: 'Operator', white: 'White-Glove' };
+
+  function parsePlan() {
+    try {
+      var q = new URLSearchParams(window.location.search).get('plan');
+      var p = (q || 'free').toLowerCase().trim();
+      if (p === 'operator') return 'operator';
+      if (p === 'white' || p === 'white-glove' || p === 'white_glove') return 'white';
+      return 'free';
+    } catch (e) {
+      return 'free';
+    }
+  }
+
+  function api(path) {
+    return typeof soApiUrl === 'function' ? soApiUrl(path) : path;
+  }
+
+  function cred() {
+    return typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin';
+  }
+
+  var plan = parsePlan();
+  var planInput = document.getElementById('field-plan');
+  var titleEl = document.getElementById('inq-title');
+  var subEl = document.getElementById('inq-sub');
+  if (planInput) planInput.value = plan;
+  if (titleEl) titleEl.textContent = 'Request · ' + (TIER_LABEL[plan] || 'Free Audit');
+  if (subEl) {
+    subEl.textContent =
+      'Create or sign in to your portal account for this tier. You will be redirected to your private report after submit.';
+  }
+
+  function postLeadView() {
+    fetch(api('/api/marketing/lead-event'), {
+      method: 'POST',
+      credentials: cred(),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        eventType: 'pricing_form_view',
+        tier: plan,
+        path: window.location.pathname + window.location.search,
+        referrer: document.referrer || '',
+      }),
+    }).catch(function () {});
+  }
+  postLeadView();
+
+  var form = document.getElementById('pricing-inquiry-form');
+  var status = document.getElementById('inq-status');
+  var submitBtn = document.getElementById('inq-submit');
+
+  function setStatus(msg, kind) {
+    if (!status) return;
+    status.hidden = !msg;
+    status.textContent = msg || '';
+    status.className = 'inquiry-form__status' + (kind === 'error' ? ' is-error' : kind === 'ok' ? ' is-success' : '');
+  }
+
+  if (form) {
+    form.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      setStatus('', '');
+      var email = (document.getElementById('field-email').value || '').trim();
+      var password = document.getElementById('field-password').value || '';
+      var name = (document.getElementById('field-name').value || '').trim();
+      var business = (document.getElementById('field-business').value || '').trim();
+      var sector = (document.getElementById('field-sector').value || '').trim();
+      var improvement = (document.getElementById('field-improvement').value || '').trim();
+      if (!email || !password || password.length < 8 || !name || !business || !sector || !improvement) {
+        setStatus('Please fill all fields. Password must be at least 8 characters.', 'error');
+        return;
+      }
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending…';
+      fetch(api('/api/marketing/pricing-inquiry'), {
+        method: 'POST',
+        credentials: cred(),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          plan: plan,
+          email: email,
+          password: password,
+          name: name,
+          business: business,
+          sector: sector,
+          improvement: improvement,
+          source: window.location.pathname + window.location.search,
+        }),
+      })
+        .then(function (r) {
+          return r
+            .json()
+            .catch(function () {
+              return {};
+            })
+            .then(function (j) {
+              return { ok: r.ok, status: r.status, json: j };
+            });
+        })
+        .then(function (x) {
+          if (!x.ok || !x.json || !x.json.token) {
+            throw new Error((x.json && x.json.error) || 'Request failed.');
+          }
+          try {
+            localStorage.setItem('so_user_jwt', x.json.token);
+            if (x.json.sessionId) {
+              localStorage.setItem('so_user_session_id', x.json.sessionId);
+              sessionStorage.setItem('so_user_session_id', x.json.sessionId);
+            }
+          } catch (e2) {}
+          setStatus(x.json.message || 'Signed in. Redirecting…', 'ok');
+          var dest = x.json.reportUrl || '/clinics/report.html';
+          setTimeout(function () {
+            window.location.href = dest;
+          }, 400);
+        })
+        .catch(function (err) {
+          setStatus(err.message || 'Something went wrong.', 'error');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit and open workspace';
+        });
+    });
+  }
+})();
+</script>
+</body>
+</html>

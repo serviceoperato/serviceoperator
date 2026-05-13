@@ -153,7 +153,10 @@
             };
             return;
           }
-          if (x.status === 401) {
+          /* Only clear stored JWT on explicit portal rejection from our API (see server.mjs
+             dualGet user-session). A bare HTTP 401 from a proxy/static host often has no
+             { ok: false } and must not wipe localStorage (e.g. cached / + wrong /api route). */
+          if (x.status === 401 && x.json && x.json.ok === false) {
             sessionCache = null;
             clearPortalJwt();
             return;

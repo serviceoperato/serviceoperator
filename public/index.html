@@ -362,7 +362,7 @@
   }
 </style>
 </head>
-<body class="page-home">
+<body class="page-home" data-page-skeleton="native">
 
 <div class="grain" aria-hidden="true"></div>
 
@@ -381,6 +381,17 @@
   </div>
 </nav>
 
+<noscript>
+<style>#homeSkeleton{display:none!important}#homeMain{display:block!important}</style>
+</noscript>
+
+<div id="homeSkeleton" class="clinics-skel clinics-skel--home" aria-hidden="true">
+  <div class="clinics-skel__b"></div>
+  <div class="clinics-skel__b"></div>
+  <div class="clinics-skel__b"></div>
+</div>
+
+<div id="homeMain" class="is-hidden">
 <main class="home-lp">
   <p class="home-lp__eyebrow">ServiceOperator</p>
   <h1 class="home-lp__h1">
@@ -507,6 +518,7 @@
 <footer class="home-lp-footer">
   <span>© 2026 www.serviceopera.to · Remote AI operations · <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a></span>
 </footer>
+</div>
 
 <!-- Client portal modal -->
 <div class="modal" id="portalModal" aria-hidden="true">

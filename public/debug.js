@@ -864,7 +864,7 @@
   lines.push({
     cat: 'OPS',
     text:
-      '81 · register flow: POST /api/auth/user-register → row in portal_pending_registrations → email link POST /api/auth/user-verify-email → row in portal_users → login POST /api/auth/user-login',
+      '81 · register flow: POST /api/auth/user-register (email only) → portal_pending_registrations → email link register.html?onboard=… → POST /api/auth/user-complete-onboarding → portal_users + portal JWT → report',
   });
   lines.push({
     cat: 'OPS',

@@ -18,6 +18,7 @@
   .page-user-portal { font-family: var(--font-body); min-height: 100vh; }
   .tf-reg-wrap { max-width: 420px; margin: 0 auto; padding: 2rem 1.5rem; }
   .tf-input { width: 100%; padding: 0.85rem 0.9rem; border-radius: 12px; border: 1px solid var(--line-strong); background: var(--ink); color: var(--paper); font-size: 1rem; box-sizing: border-box; font-family: var(--font-body); }
+  .tf-input--select { cursor: pointer; appearance: auto; }
   .tf-cap { display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--mute-2); }
   .tf-success-icon { width: 92px; height: 92px; border-radius: 24px; border: 1px solid var(--line); background: var(--ink-2); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.1rem; font-size: 2rem; }
   .page-user-portal .nav__login { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; }
@@ -45,22 +46,19 @@
 
 <div class="admin-gate">
   <div class="admin-gate__card" style="max-width: 460px">
-    <div id="regStepForm">
+    <div id="regStepForm" class="is-hidden">
       <div class="tf-reg-wrap">
         <p class="portal-caption portal-caption--accent" style="margin-bottom:1rem">— USER ACCESS</p>
         <h1 id="regTitle" style="font-size:1.65rem;font-weight:700;margin:0;font-family:var(--font-body)">Create account</h1>
+        <p class="admin-gate__lede" style="margin-top:0.65rem;font-size:0.95rem;color:var(--mute-2)">Enter your work email. We will send you a secure link — no password on this step.</p>
 
         <form id="regForm" class="portal-form" style="margin-top:1.15rem" autocomplete="on">
           <label>
-            <span class="tf-cap" id="capEmail">EMAIL</span>
+            <span class="tf-cap" id="capEmail">Email</span>
             <input type="email" name="email" id="regEmail" class="tf-input" required autocomplete="email" />
           </label>
-          <label style="margin-top:12px;display:block">
-            <span class="tf-cap" id="capPw">PASSWORD</span>
-            <input type="password" name="password" id="regPw" class="tf-input" required minlength="8" autocomplete="new-password" placeholder="min 8 characters" />
-          </label>
           <p class="portal-form__hint" id="regHint"></p>
-          <button type="submit" class="btn btn--primary btn--block" id="regSubmit">Create account<span class="ico-arrow-r" aria-hidden="true"></span></button>
+          <button type="submit" class="btn btn--primary btn--block" id="regSubmit">Send sign-up link<span class="ico-arrow-r" aria-hidden="true"></span></button>
         </form>
         <p style="margin-top:14px;text-align:center;color:var(--mute-2);font-size:0.9rem">
           <span id="haveAcct">Already have an account?</span> <a href="login.html" id="lnkLogin">Log in</a>
@@ -73,8 +71,41 @@
       <div class="tf-reg-wrap" style="text-align:center;padding-top:2rem">
         <div class="tf-success-icon" aria-hidden="true">✉️</div>
         <h1 id="sentTitle" style="font-size:1.35rem;font-weight:900;margin:0">Check your email</h1>
-        <p id="sentBody" class="admin-gate__lede" style="text-align:center;margin-top:0.65rem">We sent a confirmation link. Open it to activate your account, then return to log in.</p>
+        <p id="sentBody" class="admin-gate__lede" style="text-align:center;margin-top:0.65rem">We sent a secure link. Open it on this device to choose your password and business type.</p>
         <p style="margin-top:1.25rem;font-size:0.9rem"><a href="login.html?registered=1" id="lnkAfter">Go to log in</a></p>
+      </div>
+    </div>
+
+    <div id="regStepOnboard" class="is-hidden">
+      <div class="tf-reg-wrap">
+        <p class="portal-caption portal-caption--accent" style="margin-bottom:1rem">— USER ACCESS</p>
+        <h1 style="font-size:1.65rem;font-weight:700;margin:0;font-family:var(--font-body)">Finish registration</h1>
+        <p class="admin-gate__lede" style="margin-top:0.65rem;font-size:0.95rem;color:var(--mute-2)">Choose a password and the sector that best matches your business.</p>
+
+        <form id="onboardForm" class="portal-form" style="margin-top:1.15rem" autocomplete="off">
+          <input type="hidden" id="onboardToken" value="" />
+          <label>
+            <span class="tf-cap">Password</span>
+            <input type="password" name="password" id="onboardPw1" class="tf-input" required minlength="8" autocomplete="new-password" placeholder="At least 8 characters" />
+          </label>
+          <label style="margin-top:12px;display:block">
+            <span class="tf-cap">Confirm password</span>
+            <input type="password" name="confirmPassword" id="onboardPw2" class="tf-input" required minlength="8" autocomplete="new-password" />
+          </label>
+          <label style="margin-top:12px;display:block">
+            <span class="tf-cap">Business type</span>
+            <select id="onboardVertical" class="tf-input tf-input--select" required>
+              <option value="" disabled selected>Select one…</option>
+              <option value="hotels">Hotels &amp; serviced apartments</option>
+              <option value="clinics">Clinics &amp; medical</option>
+              <option value="properties">Property &amp; rentals</option>
+              <option value="wellness">Wellness &amp; spa</option>
+            </select>
+          </label>
+          <p class="portal-form__hint" id="onboardHint"></p>
+          <button type="submit" class="btn btn--primary btn--block" id="onboardSubmit">Create account &amp; continue<span class="ico-arrow-r" aria-hidden="true"></span></button>
+        </form>
+        <p class="modal__footnote" style="margin-top:1.5rem"><a href="/register.html"><span class="ico-arrow-l" aria-hidden="true"></span>Wrong email? Start over</a></p>
       </div>
     </div>
   </div>
@@ -89,6 +120,8 @@
   var ERR = {
     email: 'Enter a valid email.',
     pw: 'Password must be at least 8 characters.',
+    match: 'Passwords do not match.',
+    vertical: 'Choose a business type.',
   };
 
   function req(method, path, body) {
@@ -107,37 +140,125 @@
     });
   }
 
-  document.getElementById('regForm').addEventListener('submit', function (e) {
-    e.preventDefault();
-    var email = (document.getElementById('regEmail').value || '').trim();
-    var pw = (document.getElementById('regPw').value || '').trim();
-    var hint = document.getElementById('regHint');
-    hint.textContent = '';
-    hint.className = 'portal-form__hint';
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      hint.textContent = ERR.email;
-      hint.className = 'portal-form__hint is-error';
-      return;
-    }
-    if (pw.length < 8) {
-      hint.textContent = ERR.pw;
-      hint.className = 'portal-form__hint is-error';
-      return;
-    }
-    hint.textContent = '…';
-    req('POST', '/api/auth/user-register', { email: email, password: pw }).then(function (r) {
-      if (!r.ok) {
-        hint.textContent = (r.json && r.json.error) || 'Request failed.';
+  function applyPortalSession(lj) {
+    try {
+      sessionStorage.setItem('so_user_jwt', lj.token);
+      try {
+        localStorage.setItem('so_user_jwt', lj.token);
+      } catch (eLs) {}
+      if (lj.sessionId) {
+        sessionStorage.setItem('so_user_session_id', lj.sessionId);
+        try {
+          localStorage.setItem('so_user_session_id', lj.sessionId);
+        } catch (eLs2) {}
+      }
+    } catch (err) {}
+    var dest = lj.reportUrl || '/clinics/report.html?slug=' + encodeURIComponent(lj.reportSlug || '');
+    if (dest.charAt(0) !== '/') dest = '/' + dest;
+    window.location.href = dest;
+  }
+
+  function showStep(id) {
+    ['regStepForm', 'regStepSent', 'regStepOnboard'].forEach(function (sid) {
+      var el = document.getElementById(sid);
+      if (!el) return;
+      el.classList.toggle('is-hidden', sid !== id);
+    });
+  }
+
+  var params = new URLSearchParams(window.location.search || '');
+  var onboardTok = (params.get('onboard') || '').trim();
+  if (onboardTok) {
+    document.getElementById('onboardToken').value = onboardTok;
+    showStep('regStepOnboard');
+    try {
+      var u = new URL(window.location.href);
+      u.searchParams.delete('onboard');
+      window.history.replaceState({}, '', u.pathname + (u.search ? u.search : '') + u.hash);
+    } catch (eHist) {}
+  } else {
+    showStep('regStepForm');
+  }
+
+  var regForm = document.getElementById('regForm');
+  if (regForm) {
+    regForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var email = (document.getElementById('regEmail').value || '').trim();
+      var hint = document.getElementById('regHint');
+      hint.textContent = '';
+      hint.className = 'portal-form__hint';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        hint.textContent = ERR.email;
         hint.className = 'portal-form__hint is-error';
         return;
       }
-      document.getElementById('regStepForm').classList.add('is-hidden');
-      document.getElementById('regStepSent').classList.remove('is-hidden');
-    }).catch(function () {
-      hint.textContent = 'Network error.';
-      hint.className = 'portal-form__hint is-error';
+      hint.textContent = '…';
+      req('POST', '/api/auth/user-register', { email: email }).then(function (r) {
+        if (!r.ok) {
+          hint.textContent = (r.json && r.json.error) || 'Request failed.';
+          hint.className = 'portal-form__hint is-error';
+          return;
+        }
+        showStep('regStepSent');
+      }).catch(function () {
+        hint.textContent = 'Network error.';
+        hint.className = 'portal-form__hint is-error';
+      });
     });
-  });
+  }
+
+  var obForm = document.getElementById('onboardForm');
+  if (obForm) {
+    obForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var tok = (document.getElementById('onboardToken').value || '').trim();
+      var pw1 = (document.getElementById('onboardPw1').value || '').trim();
+      var pw2 = (document.getElementById('onboardPw2').value || '').trim();
+      var vertEl = document.getElementById('onboardVertical');
+      var vertical = vertEl ? String(vertEl.value || '').trim() : '';
+      var hint = document.getElementById('onboardHint');
+      hint.textContent = '';
+      hint.className = 'portal-form__hint';
+      if (!tok) {
+        hint.textContent = 'Missing registration link. Open the link from your email.';
+        hint.className = 'portal-form__hint is-error';
+        return;
+      }
+      if (pw1.length < 8) {
+        hint.textContent = ERR.pw;
+        hint.className = 'portal-form__hint is-error';
+        return;
+      }
+      if (pw1 !== pw2) {
+        hint.textContent = ERR.match;
+        hint.className = 'portal-form__hint is-error';
+        return;
+      }
+      if (!vertical) {
+        hint.textContent = ERR.vertical;
+        hint.className = 'portal-form__hint is-error';
+        return;
+      }
+      hint.textContent = '…';
+      req('POST', '/api/auth/user-complete-onboarding', {
+        token: tok,
+        password: pw1,
+        confirmPassword: pw2,
+        businessVertical: vertical,
+      }).then(function (r) {
+        if (!r.ok || !r.json || !r.json.ok) {
+          hint.textContent = (r.json && r.json.error) || 'Request failed.';
+          hint.className = 'portal-form__hint is-error';
+          return;
+        }
+        applyPortalSession(r.json);
+      }).catch(function () {
+        hint.textContent = 'Network error.';
+        hint.className = 'portal-form__hint is-error';
+      });
+    });
+  }
 })();
 </script>
 </body>

@@ -48,6 +48,12 @@ const PROFILE_COLUMN_MIGRATIONS = [
   'ALTER TABLE portal_users ADD COLUMN IF NOT EXISTS password_must_change BOOLEAN NOT NULL DEFAULT false',
 ];
 
+/** Email-first self-register: nullable pending password; optional signup vertical on users. */
+const ONBOARDING_MIGRATIONS = [
+  'ALTER TABLE portal_pending_registrations ALTER COLUMN password_hash DROP NOT NULL',
+  'ALTER TABLE portal_users ADD COLUMN IF NOT EXISTS signup_vertical TEXT',
+];
+
 function displayNameFromEmail(email) {
   const e = String(email || '').trim();
   const at = e.indexOf('@');
@@ -84,6 +90,7 @@ function mapPortalUserRow(row) {
     createdAt: isoTimestamp(row.created_at),
     updatedAt: isoTimestamp(row.updated_at) || isoTimestamp(row.created_at),
     passwordMustChange: row.password_must_change === true,
+    signupVertical: row.signup_vertical || null,
   };
 }
 
@@ -109,7 +116,8 @@ SELECT
   last_seen_at,
   created_at,
   updated_at,
-  password_must_change
+  password_must_change,
+  signup_vertical
 FROM portal_users
 ORDER BY created_at DESC
 `;
@@ -159,6 +167,9 @@ export async function ensurePostgresUserSchema(pool, adminEmail) {
     await pool.query(sql);
   }
   for (const sql of PROFILE_COLUMN_MIGRATIONS) {
+    await pool.query(sql);
+  }
+  for (const sql of ONBOARDING_MIGRATIONS) {
     await pool.query(sql);
   }
   const em = typeof adminEmail === 'string' ? normalizeEmail(adminEmail) : '';
@@ -304,7 +315,8 @@ export function createPostgresUserStore(pool) {
         err.status = 400;
         throw err;
       }
-      if (typeof password !== 'string' || password.length < 8) {
+      const hasPw = typeof password === 'string' && password.length > 0;
+      if (hasPw && password.length < 8) {
         const err = new Error('Password must be at least 8 characters.');
         err.status = 400;
         throw err;
@@ -321,9 +333,10 @@ export function createPostgresUserStore(pool) {
       const createdAt = new Date().toISOString();
       const displayName = displayNameFromEmail(em);
       const verificationToken = crypto.randomBytes(32).toString('hex');
+      const passwordHash = hasPw ? hashPassword(password) : null;
       await pool.query(
         'INSERT INTO portal_pending_registrations (id, email, password_hash, report_slug, created_at, verification_token) VALUES ($1, $2, $3, $4, $5, $6)',
-        [id, em, hashPassword(password), slug, createdAt, verificationToken]
+        [id, em, passwordHash, slug, createdAt, verificationToken]
       );
       return {
         id,
@@ -366,14 +379,21 @@ export function createPostgresUserStore(pool) {
         err.status = 401;
         throw err;
       }
+      if (!pen.password_hash) {
+        const err = new Error(
+          'This sign-up uses the email-first flow. Open the latest email from ServiceOpera and use “Continue registration” to choose your password.'
+        );
+        err.status = 400;
+        throw err;
+      }
       const uid = crypto.randomUUID();
       const createdAt = new Date().toISOString();
       const displayName = displayNameFromEmail(pen.email);
       try {
         await pool.query(
           `INSERT INTO portal_users (
-            id, email, password_hash, report_slug, display_name, created_at, updated_at, password_must_change
-          ) VALUES ($1, $2, $3, $4, $5, $6, $6, false)`,
+            id, email, password_hash, report_slug, display_name, created_at, updated_at, password_must_change, signup_vertical
+          ) VALUES ($1, $2, $3, $4, $5, $6, $6, false, NULL)`,
           [uid, pen.email, pen.password_hash, pen.report_slug, displayName, createdAt]
         );
         await pool.query('DELETE FROM portal_pending_registrations WHERE id = $1', [pendingId]);
@@ -404,6 +424,88 @@ export function createPostgresUserStore(pool) {
         updatedAt: createdAt,
         passwordMustChange: false,
       };
+    },
+
+    async completePendingOnboarding(pendingId, jwtEmail, password, signupVertical) {
+      if (typeof pendingId !== 'string' || !pendingId) {
+        const err = new Error('Invalid registration.');
+        err.status = 400;
+        throw err;
+      }
+      if (typeof password !== 'string' || password.length < 8) {
+        const err = new Error('Password must be at least 8 characters.');
+        err.status = 400;
+        throw err;
+      }
+      const allowed = new Set(['hotels', 'clinics', 'properties', 'wellness']);
+      const v = typeof signupVertical === 'string' ? signupVertical.trim().toLowerCase() : '';
+      if (!allowed.has(v)) {
+        const err = new Error('Choose a valid business type.');
+        err.status = 400;
+        throw err;
+      }
+      const em = normalizeEmail(jwtEmail);
+      const client = await pool.connect();
+      try {
+        await client.query('BEGIN');
+        const pr = await client.query(
+          `DELETE FROM portal_pending_registrations
+           WHERE id = $1 AND lower(trim(email)) = lower(trim($2::text))
+           RETURNING email, report_slug`,
+          [pendingId, em]
+        );
+        if (!pr.rowCount) {
+          await client.query('ROLLBACK');
+          const err = new Error('Registration not found or already completed.');
+          err.status = 404;
+          throw err;
+        }
+        const pen = pr.rows[0];
+        const uid = crypto.randomUUID();
+        const createdAt = new Date().toISOString();
+        const displayName = displayNameFromEmail(pen.email);
+        await client.query(
+          `INSERT INTO portal_users (
+            id, email, password_hash, report_slug, display_name, created_at, updated_at, password_must_change, signup_vertical
+          ) VALUES ($1, $2, $3, $4, $5, $6, $6, false, $7)`,
+          [uid, pen.email, hashPassword(password), pen.report_slug, displayName, createdAt, v]
+        );
+        await client.query('COMMIT');
+        return {
+          id: uid,
+          email: pen.email,
+          reportSlug: pen.report_slug,
+          displayName,
+          gender: null,
+          active: true,
+          admin: false,
+          plus: false,
+          spend: 0,
+          earned: 0,
+          lastLoginAt: null,
+          lastLoginIp: null,
+          country: null,
+          createdAt,
+          updatedAt: createdAt,
+          passwordMustChange: false,
+          signupVertical: v,
+        };
+      } catch (e) {
+        try {
+          await client.query('ROLLBACK');
+        } catch {
+          /* ignore */
+        }
+        if (e && e.status) throw e;
+        if (e && e.code === '23505') {
+          const err = new Error('That email is already registered.');
+          err.status = 409;
+          throw err;
+        }
+        throw e;
+      } finally {
+        client.release();
+      }
     },
 
     async verifyLogin(email, password) {
@@ -705,6 +807,7 @@ export function createPostgresUserStore(pool) {
           'country',
           'updated_at',
           'password_must_change',
+          'signup_vertical',
         ],
       };
     },

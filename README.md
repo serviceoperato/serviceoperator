@@ -128,7 +128,7 @@ The `Dockerfile` runs **Node**: `server.mjs` serves **`public/`** and sets the s
 |---|---|---|
 | `ADMIN_PASSWORD_HASH` | **Yes** for server-backed admin | scrypt password hash (`salt:hex`, same format as portal users). Generate locally: `node scripts/hash-admin-password.mjs "your-strong-password"` — set the printed `ADMIN_PASSWORD_HASH=…` on the Node service (never commit the hash). |
 | `ADMIN_EMAIL` | Optional | Defaults to `jack@serviceopera.to`. Only this address can obtain an admin JWT via password login or portal bootstrap. |
-| `ADMIN_JWT_SECRET` | Strongly recommended | Long random string; signs admin session JWTs. If omitted, a random secret is generated at **each process start** (sessions break on redeploy). |
+| `PORTAL_JWT_SECRET` or `ADMIN_JWT_SECRET` | **Required on Railway** | One long random string (either variable name works; same key for admin and **portal** `/login.html` users). If omitted locally, a random secret is generated at each process start — on **Railway** the server **exits** until you set one of these, so sessions survive deploys and all replicas agree. |
 | `RESEND_API_KEY` | Recommended for portal email | [Resend](https://resend.com) API key. When set on **`server.mjs`**: **Create account** confirmation, **Forgot password?**, and optional **login OTP** on `/login.html`. Not used for operator console sign-in. |
 | `RESEND_FROM` | Recommended | Verified sender, e.g. `ServiceOpera <noreply@yourdomain.com>`. Resend’s test domain only delivers to your own mailbox. |
 | `CLINIC_SELF_REGISTER` | Optional | **On by default** for **`server.mjs`**: **Create account** on `/login.html` stages a pending sign-up and sends a **confirmation email** (needs **`RESEND_API_KEY`**); the account is created only after the user opens the link. Set to `false`, `0`, `no`, or `off` for invite-only accounts (admin creates users). |
@@ -137,7 +137,7 @@ The `Dockerfile` runs **Node**: `server.mjs` serves **`public/`** and sets the s
 **Migration — admin email OTP removed (deploy checklist)**
 
 1. On your laptop (or any Node 20+ environment with this repo): run `node scripts/hash-admin-password.mjs "YourNewStrongPassword"` and copy the printed `ADMIN_PASSWORD_HASH=…` line.
-2. In Railway (or your host), add variable **`ADMIN_PASSWORD_HASH`** with that value. Keep **`ADMIN_EMAIL`** and **`ADMIN_JWT_SECRET`** as they are.
+2. In Railway (or your host), add variable **`ADMIN_PASSWORD_HASH`** with that value. Keep **`ADMIN_EMAIL`** and **`PORTAL_JWT_SECRET`** / **`ADMIN_JWT_SECRET`** as they are.
 3. Redeploy the Node service. **`RESEND_API_KEY`** is still used for portal sign-up / forgot-password / login OTP — it is **not** required for operator console sign-in anymore.
 4. Remove any obsolete automation that called **`POST /api/admin/send-code`** or **`POST /api/admin/verify-code`** (those routes are gone).
 5. Open `/admin.html`, sign in with **email + password**. The UI stores the same **`so_admin_jwt`** (Bearer + local/session storage) as before.

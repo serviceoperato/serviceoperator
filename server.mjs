@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url';
 import { assertReportSlug, createUserStore, normalizeEmail, verifyPassword } from './clinic-store.mjs';
 import { createPostgresUserStore, ensurePostgresUserSchema } from './postgres-user-store.mjs';
 import { createUserTelemetryStore, ensureUserTelemetrySchema } from './user-telemetry.mjs';
+import { createLeadEventsStore, ensureLeadEventsSchema } from './lead-events.mjs';
 import { searchTextAllPages } from './lib/google-places-search.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -44,18 +45,21 @@ async function initUserStore() {
     });
     await ensurePostgresUserSchema(pool, adminEmail);
     await ensureUserTelemetrySchema(pool);
+    await ensureLeadEventsSchema(pool);
     return {
       userStore: createPostgresUserStore(pool),
       telemetryStore: createUserTelemetryStore({ pool }),
+      leadEventsStore: createLeadEventsStore({ pool }),
     };
   }
   return {
     userStore: createUserStore(dataDir, adminEmail),
     telemetryStore: createUserTelemetryStore({ dataDir }),
+    leadEventsStore: createLeadEventsStore({ dataDir }),
   };
 }
 
-const { userStore, telemetryStore } = await initUserStore();
+const { userStore, telemetryStore, leadEventsStore } = await initUserStore();
 
 const clinicDataDir = path.join(publicDir, 'clinics', 'data');
 
@@ -325,6 +329,7 @@ const MANAGED_PAGE_FILES = [
   'clinics.html',
   'hotels.html',
   'pricing.html',
+  'pricing-inquiry.html',
 ];
 
 async function buildAdminWorkQueue() {
@@ -511,21 +516,36 @@ const PORTAL_SELF_REGISTER = (function () {
   if (s === '0' || s === 'false' || s === 'no' || s === 'off') return false;
   return true;
 })();
-const JWT_SECRET = (process.env.ADMIN_JWT_SECRET || '').trim() || crypto.randomBytes(32).toString('hex');
-if (!(process.env.ADMIN_JWT_SECRET || '').trim()) {
+/** One HMAC secret for admin + portal user Bearer JWTs (same signer). Prefer PORTAL_JWT_SECRET on Railway for clarity. */
+const JWT_SECRET_FROM_ENV = (process.env.PORTAL_JWT_SECRET || process.env.ADMIN_JWT_SECRET || '').trim();
+const JWT_SECRET = JWT_SECRET_FROM_ENV || crypto.randomBytes(32).toString('hex');
+if (!JWT_SECRET_FROM_ENV) {
   console.warn(
-    '[serviceopera] ADMIN_JWT_SECRET is unset — using an ephemeral per-process JWT secret. ' +
-      'Email confirmation links that still use JWT will fail after a restart or on a different Railway instance. ' +
-      'New sign-ups use a short database token in the link; set ADMIN_JWT_SECRET anyway for stable admin/session JWTs.'
+    '[serviceopera] PORTAL_JWT_SECRET / ADMIN_JWT_SECRET is unset — using an ephemeral per-process JWT secret. ' +
+      'Portal and admin sessions break after every deploy/restart; multiple replicas would disagree on signatures. ' +
+      'Email confirmation links that still use JWT also fail across restarts. ' +
+      'Set PORTAL_JWT_SECRET (or ADMIN_JWT_SECRET) to one long random string shared by all instances.'
   );
+  if (String(process.env.RAILWAY_ENVIRONMENT || '').trim()) {
+    console.error(
+      '[serviceopera] Refusing to start on Railway without PORTAL_JWT_SECRET or ADMIN_JWT_SECRET. ' +
+        'Railway → your Node service → Variables → add one secret (e.g. openssl rand -hex 32), redeploy.'
+    );
+    process.exit(1);
+  }
 }
 
 const OTP_TTL_MS = 10 * 60 * 1000;
 const JWT_TTL_MS = 8 * 60 * 60 * 1000;
 const CLINIC_JWT_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const CLINIC_RESET_JWT_MS = 60 * 60 * 1000;
-/** Email confirmation link after self-registration (pending row finalized on click). */
+/** Email confirmation / onboarding link after self-registration (pending row consumed on completion). */
 const CLINIC_VERIFY_JWT_MS = 48 * 60 * 60 * 1000;
+const PORTAL_REGISTER_OK_RESPONSE = {
+  ok: true,
+  message:
+    'If this address can be used with ServiceOpera, check your inbox (and spam) for a link to continue registration. The link expires in 48 hours.',
+};
 const SEND_WINDOW_MS = 15 * 60 * 1000;
 const MAX_SENDS_PER_WINDOW = 4;
 
@@ -571,6 +591,9 @@ function isPortalVerifyRole(role) {
 function isPortalResetRole(role) {
   return role === 'user_reset' || role === 'clinic_reset';
 }
+function isPortalOnboardRole(role) {
+  return role === 'user_onboard' || role === 'clinic_onboard';
+}
 
 function dualPost(pathNew, pathLegacy, handler) {
   app.post(pathNew, handler);
@@ -582,6 +605,47 @@ function dualGet(pathNew, pathLegacy, ...args) {
 }
 /** @type {Map<string, number[]>} */
 const sendTimestampsByIp = new Map();
+
+/** Anonymous funnel / navigation beacons (IP + path + tier intent). */
+const LEAD_EVENT_TRACKING_WINDOW_MS = SEND_WINDOW_MS;
+const LEAD_EVENT_MAX_PER_IP = 90;
+/** @type {Map<string, number[]>} */
+const leadEventHitsByIp = new Map();
+
+function pruneLeadEventHits(ip) {
+  const now = Date.now();
+  const arr = (leadEventHitsByIp.get(ip) || []).filter((t) => now - t < LEAD_EVENT_TRACKING_WINDOW_MS);
+  leadEventHitsByIp.set(ip, arr);
+  return arr;
+}
+
+const PRICING_INQUIRY_WINDOW_MS = SEND_WINDOW_MS;
+const PRICING_INQUIRY_MAX_PER_IP = 12;
+/** @type {Map<string, number[]>} */
+const pricingInquiryHitsByIp = new Map();
+
+function prunePricingInquiryHits(ip) {
+  const now = Date.now();
+  const arr = (pricingInquiryHitsByIp.get(ip) || []).filter((t) => now - t < PRICING_INQUIRY_WINDOW_MS);
+  pricingInquiryHitsByIp.set(ip, arr);
+  return arr;
+}
+
+function isValidInquiryEmail(email) {
+  const em = normalizeEmail(email);
+  if (!em || em.length > 254) return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em);
+}
+
+function parsePricingTier(raw) {
+  const s = String(raw || '')
+    .toLowerCase()
+    .trim();
+  if (s === 'free' || s === 'free_audit' || s === 'audit') return 'free';
+  if (s === 'operator') return 'operator';
+  if (s === 'white' || s === 'white-glove' || s === 'white_glove') return 'white';
+  return null;
+}
 
 function sha256hex(s) {
   return crypto.createHash('sha256').update(s, 'utf8').digest('hex');
@@ -769,6 +833,16 @@ function pruneSends(ip) {
   const fresh = arr.filter((t) => now - t < SEND_WINDOW_MS);
   sendTimestampsByIp.set(ip, fresh);
   return fresh;
+}
+
+/** Rate-limit POST /api/auth/user-complete-onboarding by IP (token brute-force / abuse). */
+const onboardingPostTimestampsByIp = new Map();
+const MAX_ONBOARDING_POSTS_PER_WINDOW = 12;
+function pruneOnboardingPosts(ip) {
+  const now = Date.now();
+  const arr = (onboardingPostTimestampsByIp.get(ip) || []).filter((t) => now - t < SEND_WINDOW_MS);
+  onboardingPostTimestampsByIp.set(ip, arr);
+  return arr;
 }
 
 const ADMIN_LOGIN_WINDOW_MS = SEND_WINDOW_MS;
@@ -1080,42 +1154,51 @@ async function handlePortalRegister(req, res) {
         'Email confirmation requires RESEND_API_KEY on this server. Contact jack@serviceopera.to or ask your administrator to configure Resend.',
     });
   }
-  const email = typeof req.body?.email === 'string' ? req.body.email : '';
-  const password = typeof req.body?.password === 'string' ? req.body.password : '';
+  const email = typeof req.body?.email === 'string' ? normalizeEmail(req.body.email) : '';
+  if (!email || !email.includes('@')) {
+    return res.status(400).json({ error: 'Enter a valid email address.' });
+  }
   const ip = clientIp(req);
   const sends = pruneSends(ip);
   if (sends.length >= MAX_SENDS_PER_WINDOW) {
     return res.status(429).json({ error: 'Too many requests. Try again later.' });
   }
+
+  const existingUser = await userStore.getUserByEmail(email);
+  if (existingUser) {
+    return res.status(201).json(PORTAL_REGISTER_OK_RESPONSE);
+  }
+
   let pending;
   try {
-    pending = await userStore.createPendingRegistration({ email, password });
+    pending = await userStore.createPendingRegistration({ email });
   } catch (e) {
+    if (e.status === 409 && /already registered/i.test(String(e.message || ''))) {
+      return res.status(201).json(PORTAL_REGISTER_OK_RESPONSE);
+    }
     const status = e.status || 400;
     return res.status(status).json({ error: e.message || 'Bad request' });
   }
-  const verifyLinkValue =
-    pending.verificationToken && typeof pending.verificationToken === 'string'
-      ? pending.verificationToken
-      : signJwt({
-          v: 1,
-          role: 'user_verify',
-          sub: pending.id,
-          email: pending.email,
-          exp: Date.now() + CLINIC_VERIFY_JWT_MS,
-        });
+
+  const onboardJwt = signJwt({
+    v: 1,
+    role: 'user_onboard',
+    sub: pending.id,
+    email: pending.email,
+    exp: Date.now() + CLINIC_VERIFY_JWT_MS,
+  });
   const origin = publicOriginForEmail(req);
-  const link = `${origin}/login.html?verify=${encodeURIComponent(verifyLinkValue)}`;
+  const link = `${origin}/register.html?onboard=${encodeURIComponent(onboardJwt)}`;
   try {
     await sendResendEmail({
       to: pending.email,
-      subject: 'ServiceOpera — confirm your account',
+      subject: 'ServiceOpera — continue your registration',
       html:
-        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">Thanks for signing up for <strong>www.serviceopera.to</strong>.</p>' +
+        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">Thanks for starting an account on <strong>www.serviceopera.to</strong>.</p>' +
         '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111"><a href="' +
         String(link).replace(/"/g, '&quot;') +
-        '" style="color:#1e3a5f;font-weight:600">Confirm your email</a> (link expires in 48 hours.)</p>' +
-        '<p style="font-family:system-ui,sans-serif;font-size:13px;color:#444">If you did not register, ignore this email.</p>',
+        '" style="color:#1e3a5f;font-weight:600">Continue registration</a> — choose your password and business type (link expires in 48 hours).</p>' +
+        '<p style="font-family:system-ui,sans-serif;font-size:13px;color:#444">If you did not request this, you can ignore this email.</p>',
     });
     sends.push(Date.now());
     sendTimestampsByIp.set(ip, sends);
@@ -1130,7 +1213,8 @@ async function handlePortalRegister(req, res) {
   }
   return res.status(201).json({
     ok: true,
-    message: 'Check your inbox for a confirmation link to activate your account.',
+    message:
+      'Check your inbox for a secure link. Open it to choose your password and business type, then you will be signed in.',
   });
 }
 
@@ -1439,7 +1523,7 @@ dualPost('/api/auth/user-login', '/api/auth/clinic-login', async (req, res) => {
     if (pending) {
       return res.status(403).json({
         error:
-          'This email is waiting for confirmation. Open the link from your signup email, then sign in. You can also use “Resend confirmation link” below.',
+          'This email has a registration in progress. Open the latest link from ServiceOpera in your inbox to finish choosing your password, or use “Resend registration link” on the registration page.',
       });
     }
     return res.status(401).json({ error: 'Invalid email or password.' });
@@ -1559,7 +1643,7 @@ dualPost('/api/auth/user-resend-confirmation', '/api/auth/clinic-resend-confirma
   const pending = await userStore.findPendingByEmail(email);
   const generic = {
     ok: true,
-    message: 'If that address has a pending sign-up, a new confirmation link was sent.',
+    message: 'If that address has a pending registration, we sent a fresh link.',
   };
   if (!pending) {
     return res.json(generic);
@@ -1570,27 +1654,27 @@ dualPost('/api/auth/user-resend-confirmation', '/api/auth/clinic-resend-confirma
     return res.status(429).json({ error: 'Too many requests. Try again later.' });
   }
 
-  const verifyLinkValue =
-    typeof userStore.issuePendingVerificationToken === 'function'
-      ? await userStore.issuePendingVerificationToken(pending.id)
-      : signJwt({
-          v: 1,
-          role: 'user_verify',
-          sub: pending.id,
-          email: pending.email,
-          exp: Date.now() + CLINIC_VERIFY_JWT_MS,
-        });
+  if (typeof userStore.issuePendingVerificationToken === 'function') {
+    await userStore.issuePendingVerificationToken(pending.id);
+  }
+  const onboardJwt = signJwt({
+    v: 1,
+    role: 'user_onboard',
+    sub: pending.id,
+    email: pending.email,
+    exp: Date.now() + CLINIC_VERIFY_JWT_MS,
+  });
   const origin = publicOriginForEmail(req);
-  const link = `${origin}/login.html?verify=${encodeURIComponent(verifyLinkValue)}`;
+  const link = `${origin}/register.html?onboard=${encodeURIComponent(onboardJwt)}`;
   try {
     await sendResendEmail({
       to: pending.email,
-      subject: 'ServiceOpera — confirm your account',
+      subject: 'ServiceOpera — continue your registration',
       html:
-        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">Thanks for signing up for <strong>www.serviceopera.to</strong>.</p>' +
+        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">Here is a fresh link to continue your <strong>www.serviceopera.to</strong> registration.</p>' +
         '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111"><a href="' +
         String(link).replace(/"/g, '&quot;') +
-        '" style="color:#1e3a5f;font-weight:600">Confirm your email</a> (link expires in 48 hours.)</p>' +
+        '" style="color:#1e3a5f;font-weight:600">Continue registration</a> (link expires in 48 hours.)</p>' +
         '<p style="font-family:system-ui,sans-serif;font-size:13px;color:#444">If you did not register, ignore this email.</p>',
     });
     sends.push(Date.now());
@@ -1768,6 +1852,74 @@ dualPost('/api/auth/user-verify-email', '/api/auth/clinic-verify-email', async (
   }
 });
 
+dualPost('/api/auth/user-complete-onboarding', '/api/auth/clinic-complete-onboarding', async (req, res) => {
+  const token = typeof req.body?.token === 'string' ? req.body.token.trim() : '';
+  const password = typeof req.body?.password === 'string' ? req.body.password : '';
+  const confirm =
+    typeof req.body?.confirmPassword === 'string'
+      ? req.body.confirmPassword
+      : typeof req.body?.confirm === 'string'
+        ? req.body.confirm
+        : '';
+  const businessVertical =
+    typeof req.body?.businessVertical === 'string'
+      ? req.body.businessVertical
+      : typeof req.body?.businessType === 'string'
+        ? req.body.businessType
+        : typeof req.body?.vertical === 'string'
+          ? req.body.vertical
+          : '';
+
+  const p = verifyJwt(token);
+  if (!p || !isPortalOnboardRole(p.role) || typeof p.sub !== 'string' || typeof p.email !== 'string') {
+    return res.status(401).json({
+      error: 'Invalid or expired registration link. Request a new link from the registration page.',
+    });
+  }
+
+  const ip = clientIp(req);
+  const posts = pruneOnboardingPosts(ip);
+  if (posts.length >= MAX_ONBOARDING_POSTS_PER_WINDOW) {
+    return res.status(429).json({ error: 'Too many requests. Try again later.' });
+  }
+  posts.push(Date.now());
+  onboardingPostTimestampsByIp.set(ip, posts);
+
+  if (password.length < 8) {
+    return res.status(400).json({ error: 'Password must be at least 8 characters.' });
+  }
+  if (confirm && password !== confirm) {
+    return res.status(400).json({ error: 'Passwords do not match.' });
+  }
+  if (typeof userStore.completePendingOnboarding !== 'function') {
+    return res.status(501).json({ error: 'Registration onboarding is not available on this server.' });
+  }
+  try {
+    const created = await userStore.completePendingOnboarding(p.sub, p.email, password, businessVertical);
+    const sessionUser = {
+      id: created.id,
+      email: created.email,
+      reportSlug: created.reportSlug,
+      passwordMustChange: Boolean(created.passwordMustChange),
+    };
+    const sessionId = await recordPortalLogin(req, sessionUser);
+    const portalToken = signPortalUserJwt(sessionUser);
+    const reportUrl = '/clinics/report.html?slug=' + encodeURIComponent(sessionUser.reportSlug);
+    return res.status(201).json({
+      ok: true,
+      token: portalToken,
+      reportSlug: sessionUser.reportSlug,
+      reportUrl,
+      sessionId,
+      passwordMustChange: false,
+      message: 'Welcome — your account is ready.',
+    });
+  } catch (e) {
+    const status = e.status || 400;
+    return res.status(status).json({ error: e.message || 'Bad request' });
+  }
+});
+
 dualGet(
   '/api/auth/user-session',
   '/api/auth/clinic-session',
@@ -1784,6 +1936,187 @@ dualGet(
     });
   }
 );
+
+/**
+ * TODO(global-nav): optional access log for every anonymous HTML hit (today: POST
+ * /api/marketing/lead-event for pricing funnel views, POST /api/auth/user-activity after portal login).
+ */
+/** Anonymous funnel beacon (pricing form views, etc.). Rate-limited per IP. */
+app.post('/api/marketing/lead-event', async (req, res) => {
+  const ip = clientIp(req);
+  const hits = pruneLeadEventHits(ip);
+  if (hits.length >= LEAD_EVENT_MAX_PER_IP) {
+    return res.status(429).json({ error: 'Too many requests. Try again later.' });
+  }
+  const eventType = clipFreeText(req.body?.eventType, 120);
+  const tier = clipFreeText(req.body?.tier, 40);
+  const pagePath = clipFreeText(req.body?.path, 500);
+  if (!eventType) {
+    return res.status(400).json({ error: 'Missing eventType.' });
+  }
+  hits.push(Date.now());
+  leadEventHitsByIp.set(ip, hits);
+  try {
+    await leadEventsStore.appendEvent({
+      eventType,
+      ip,
+      pagePath: pagePath || null,
+      tier: tier || null,
+      userId: null,
+      userAgent: clientUserAgent(req),
+      detail: { ref: clipFreeText(req.body?.referrer, 500) },
+    });
+  } catch (e) {
+    console.warn('[serviceopera] lead-event:', e && e.message ? e.message : e);
+  }
+  return res.json({ ok: true });
+});
+
+/**
+ * Pricing tier inquiry: creates or verifies a portal account, emails ops, logs lead_events,
+ * issues the same Bearer JWT + telemetry session as POST /api/auth/user-login.
+ * POST /api/marketing/pricing-inquiry
+ * Body: { plan, email, password, name, business, sector, improvement, source? }
+ */
+app.post('/api/marketing/pricing-inquiry', async (req, res) => {
+  const ip = clientIp(req);
+  const piHits = prunePricingInquiryHits(ip);
+  if (piHits.length >= PRICING_INQUIRY_MAX_PER_IP) {
+    return res.status(429).json({ error: 'Too many pricing requests from this network. Try again later.' });
+  }
+  piHits.push(Date.now());
+  pricingInquiryHitsByIp.set(ip, piHits);
+
+  const tier = parsePricingTier(req.body?.plan);
+  if (!tier) {
+    return res.status(400).json({ error: 'Invalid or missing plan (use free, operator, or white).' });
+  }
+
+  const emailRaw = typeof req.body?.email === 'string' ? req.body.email : '';
+  const password = typeof req.body?.password === 'string' ? req.body.password : '';
+  if (!isValidInquiryEmail(emailRaw)) {
+    return res.status(400).json({ error: 'Enter a valid email address.' });
+  }
+  if (typeof password !== 'string' || password.length < 8) {
+    return res.status(400).json({ error: 'Password must be at least 8 characters.' });
+  }
+
+  const name = clipFreeText(req.body?.name, 120);
+  const business = clipFreeText(req.body?.business, 160);
+  const sector = clipFreeText(req.body?.sector, 120);
+  const improvement = clipFreeText(req.body?.improvement, 2000);
+  const source = clipFreeText(req.body?.source, 200);
+  if (!name || !business || !sector || !improvement) {
+    return res.status(400).json({ error: 'Name, business, sector, and what you want to improve are required.' });
+  }
+
+  const email = normalizeEmail(emailRaw);
+
+  const pending = await userStore.findPendingByEmail(email);
+  if (pending) {
+    return res.status(403).json({
+      error:
+        'This email has a pending registration. Confirm the link in your inbox first, or use a different email.',
+    });
+  }
+
+  let user = await userStore.verifyLogin(email, password);
+  if (!user) {
+    const existing = await userStore.getUserByEmail(email);
+    if (existing) {
+      return res.status(401).json({ error: 'Invalid email or password for this account.' });
+    }
+    try {
+      user = await userStore.createUser({ email, password, passwordMustChange: false });
+    } catch (e) {
+      const status = e.status || 400;
+      return res.status(status).json({ error: e.message || 'Could not create account.' });
+    }
+  }
+
+  const tierLabel =
+    tier === 'free' ? 'Free Audit' : tier === 'operator' ? 'Operator' : 'White-Glove';
+  const subject = `ServiceOpera pricing · ${tierLabel} · ${email}`;
+  const html =
+    '<div style="font-family:system-ui,sans-serif;font-size:15px;color:#111;line-height:1.55">' +
+    '<p><strong>Pricing inquiry</strong> · ' +
+    escapeHtml(tierLabel) +
+    '</p>' +
+    '<p><strong>Email (portal):</strong> ' +
+    escapeHtml(email) +
+    '</p>' +
+    '<p><strong>Name:</strong> ' +
+    escapeHtml(name) +
+    '</p>' +
+    '<p><strong>Business:</strong> ' +
+    escapeHtml(business) +
+    '</p>' +
+    '<p><strong>Sector:</strong> ' +
+    escapeHtml(sector) +
+    '</p>' +
+    '<p><strong>What to improve:</strong><br>' +
+    escapeHtml(improvement).replace(/\n/g, '<br>') +
+    '</p>' +
+    (source ? '<p><strong>Source:</strong> ' + escapeHtml(source) + '</p>' : '') +
+    '<p><strong>Report slug:</strong> ' +
+    escapeHtml(user.reportSlug) +
+    '</p>' +
+    '<p style="font-size:13px;color:#444">IP: ' +
+    escapeHtml(ip) +
+    '</p>' +
+    '</div>';
+
+  let emailedAdmin = false;
+  if (RESEND_API_KEY) {
+    const sends = pruneSends(ip);
+    if (sends.length >= MAX_SENDS_PER_WINDOW) {
+      return res.status(429).json({ error: 'Too many outbound emails from this network. Try again in a few minutes.' });
+    }
+    try {
+      await sendResendEmail({ to: ADMIN_EMAIL, subject, html });
+      sends.push(Date.now());
+      sendTimestampsByIp.set(ip, sends);
+      emailedAdmin = true;
+    } catch (e) {
+      const status = e.status || 502;
+      return res.status(status).json({
+        error: resendFailureMessage(e, 'Could not send your inquiry. Try again later or contact jack@serviceopera.to.'),
+      });
+    }
+  } else {
+    console.warn('[serviceopera] pricing-inquiry: RESEND_API_KEY unset — account created but no email to admin.');
+  }
+
+  const sessionId = await recordPortalLogin(req, user);
+  const token = signPortalUserJwt(user);
+
+  try {
+    await leadEventsStore.appendEvent({
+      eventType: 'pricing_inquiry_success',
+      ip,
+      pagePath: '/pricing/inquiry',
+      tier,
+      userId: user.id,
+      userAgent: clientUserAgent(req),
+      detail: { emailedAdmin, reportSlug: user.reportSlug },
+    });
+  } catch (e) {
+    console.warn('[serviceopera] pricing-inquiry success log:', e && e.message ? e.message : e);
+  }
+
+  const reportUrl = '/clinics/report.html?slug=' + encodeURIComponent(user.reportSlug);
+  return res.status(201).json({
+    ok: true,
+    token,
+    sessionId,
+    reportSlug: user.reportSlug,
+    reportUrl,
+    emailedAdmin,
+    message: emailedAdmin
+      ? 'Thanks — your request was sent and you are signed in.'
+      : 'Account ready and you are signed in. We could not email the studio (server mail not configured).',
+  });
+});
 
 app.post('/api/marketing/inquiry', async (req, res) => {
   if (!RESEND_API_KEY) {
@@ -1943,6 +2276,12 @@ app.get('/logo.png', (_req, res) => {
 /** Clean URL — express.static does not map `/pricing` to `pricing.html`. */
 app.get(['/pricing', '/pricing/'], (_req, res) => {
   res.sendFile(path.join(publicDir, 'pricing.html'));
+});
+
+/** Pricing tier inquiry form (`?plan=free|operator|white`). */
+app.get(['/pricing/inquiry', '/pricing/inquiry/'], (_req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  res.sendFile(path.join(publicDir, 'pricing-inquiry.html'));
 });
 
 /** Retired marketing page — bookmarks and external links go to canonical pricing. */
