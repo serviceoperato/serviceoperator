@@ -1000,7 +1000,6 @@ async function buildPortalUserProfilingRows() {
       displayName: u.displayName,
       reportSlug: u.reportSlug,
       gender: u.gender || null,
-      signupVertical: u.signupVertical || null,
       createdAt: u.createdAt,
       lastLoginAt: u.lastLoginAt,
       firstTelemetryAt: t.firstSessionAt || null,
