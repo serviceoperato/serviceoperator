@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
-COPY server.mjs clinic-store.mjs postgres-user-store.mjs user-telemetry.mjs ./
+COPY server.mjs clinic-store.mjs postgres-user-store.mjs user-telemetry.mjs lead-events.mjs ./
 COPY lib ./lib/
 COPY public ./public/
 
@@ -16,7 +16,8 @@ RUN mkdir -p /app/data \
   && test -f /app/public/index.html \
   && test -f /app/server.mjs \
   && test -f /app/clinic-store.mjs \
-  && test -f /app/postgres-user-store.mjs
+  && test -f /app/postgres-user-store.mjs \
+  && test -f /app/lead-events.mjs
 
 ENV DATA_DIR=/app/data
 
