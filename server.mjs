@@ -31,26 +31,53 @@ try {
 const dataDir = process.env.DATA_DIR || path.join(__dirname, 'data');
 fs.mkdirSync(dataDir, { recursive: true });
 
+/** Fail fast on Railway before DB work so deploy logs show the real blocker. */
+const JWT_SECRET_FROM_ENV = (process.env.PORTAL_JWT_SECRET || process.env.ADMIN_JWT_SECRET || '').trim();
+const JWT_SECRET = JWT_SECRET_FROM_ENV || crypto.randomBytes(32).toString('hex');
+if (!JWT_SECRET_FROM_ENV) {
+  console.warn(
+    '[serviceopera] PORTAL_JWT_SECRET / ADMIN_JWT_SECRET is unset — using an ephemeral per-process JWT secret. ' +
+      'Portal and admin sessions break after every deploy/restart; multiple replicas would disagree on signatures. ' +
+      'Email confirmation links that still use JWT also fail across restarts. ' +
+      'Set PORTAL_JWT_SECRET (or ADMIN_JWT_SECRET) to one long random string shared by all instances.'
+  );
+  if (String(process.env.RAILWAY_ENVIRONMENT || '').trim()) {
+    console.error(
+      '[serviceopera] Refusing to start on Railway without PORTAL_JWT_SECRET or ADMIN_JWT_SECRET. ' +
+        'Railway → your Node service → Variables → add one secret (e.g. openssl rand -hex 32), redeploy.'
+    );
+    process.exit(1);
+  }
+}
+
 async function initUserStore() {
   const adminEmail = (process.env.ADMIN_EMAIL || 'jack@serviceopera.to').trim().toLowerCase();
   const databaseUrl = (process.env.DATABASE_URL || '').trim();
   if (databaseUrl) {
-    const { Pool } = await import('pg');
-    const pool = new Pool({
-      connectionString: databaseUrl,
-      ssl:
-        /sslmode=require/i.test(databaseUrl) || /railway/i.test(databaseUrl)
-          ? { rejectUnauthorized: false }
-          : undefined,
-    });
-    await ensurePostgresUserSchema(pool, adminEmail);
-    await ensureUserTelemetrySchema(pool);
-    await ensureLeadEventsSchema(pool);
-    return {
-      userStore: createPostgresUserStore(pool),
-      telemetryStore: createUserTelemetryStore({ pool }),
-      leadEventsStore: createLeadEventsStore({ pool }),
-    };
+    try {
+      const { Pool } = await import('pg');
+      const pool = new Pool({
+        connectionString: databaseUrl,
+        ssl:
+          /sslmode=require/i.test(databaseUrl) || /railway/i.test(databaseUrl)
+            ? { rejectUnauthorized: false }
+            : undefined,
+      });
+      await ensurePostgresUserSchema(pool, adminEmail);
+      await ensureUserTelemetrySchema(pool);
+      await ensureLeadEventsSchema(pool);
+      return {
+        userStore: createPostgresUserStore(pool),
+        telemetryStore: createUserTelemetryStore({ pool }),
+        leadEventsStore: createLeadEventsStore({ pool }),
+      };
+    } catch (err) {
+      const msg = err && err.message ? err.message : String(err);
+      console.error(
+        '[serviceopera] PostgreSQL init failed; falling back to JSON files under DATA_DIR. Fix DATABASE_URL or networking. Error:',
+        msg
+      );
+    }
   }
   return {
     userStore: createUserStore(dataDir, adminEmail),
@@ -516,25 +543,6 @@ const PORTAL_SELF_REGISTER = (function () {
   if (s === '0' || s === 'false' || s === 'no' || s === 'off') return false;
   return true;
 })();
-/** One HMAC secret for admin + portal user Bearer JWTs (same signer). Prefer PORTAL_JWT_SECRET on Railway for clarity. */
-const JWT_SECRET_FROM_ENV = (process.env.PORTAL_JWT_SECRET || process.env.ADMIN_JWT_SECRET || '').trim();
-const JWT_SECRET = JWT_SECRET_FROM_ENV || crypto.randomBytes(32).toString('hex');
-if (!JWT_SECRET_FROM_ENV) {
-  console.warn(
-    '[serviceopera] PORTAL_JWT_SECRET / ADMIN_JWT_SECRET is unset — using an ephemeral per-process JWT secret. ' +
-      'Portal and admin sessions break after every deploy/restart; multiple replicas would disagree on signatures. ' +
-      'Email confirmation links that still use JWT also fail across restarts. ' +
-      'Set PORTAL_JWT_SECRET (or ADMIN_JWT_SECRET) to one long random string shared by all instances.'
-  );
-  if (String(process.env.RAILWAY_ENVIRONMENT || '').trim()) {
-    console.error(
-      '[serviceopera] Refusing to start on Railway without PORTAL_JWT_SECRET or ADMIN_JWT_SECRET. ' +
-        'Railway → your Node service → Variables → add one secret (e.g. openssl rand -hex 32), redeploy.'
-    );
-    process.exit(1);
-  }
-}
-
 const OTP_TTL_MS = 10 * 60 * 1000;
 const JWT_TTL_MS = 8 * 60 * 60 * 1000;
 const CLINIC_JWT_TTL_MS = 30 * 24 * 60 * 60 * 1000;

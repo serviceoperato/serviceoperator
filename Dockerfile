@@ -1,5 +1,6 @@
 # Node serves /app/public + ServiceOpera API (operator console password JWT, portal email via Resend when configured).
-# Railway: ADMIN_PASSWORD_HASH, PORTAL_JWT_SECRET or ADMIN_JWT_SECRET, RESEND_API_KEY (optional ADMIN_EMAIL, DATA_DIR).
+# Railway (each service that runs this image): PORTAL_JWT_SECRET or ADMIN_JWT_SECRET — required when RAILWAY_ENVIRONMENT is set or the process exits before listen (/api/version healthcheck fails).
+# Also: ADMIN_PASSWORD_HASH (operator login), RESEND_API_KEY, DATABASE_URL (optional; if Postgres init fails, server falls back to JSON under DATA_DIR with an error log).
 
 FROM node:20-alpine
 
