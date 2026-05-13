@@ -1708,6 +1708,11 @@ app.use(
         res.setHeader('Cache-Control', 'no-store');
         return;
       }
+      if (norm.endsWith('demo-portal.json')) {
+        res.setHeader('Cache-Control', 'no-store');
+        res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+        return;
+      }
       if (
         filePath.endsWith('client.html') ||
         filePath.endsWith('login.html') ||
