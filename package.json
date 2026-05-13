@@ -1,6 +1,6 @@
 {
   "name": "serviceopera-site",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "type": "module",
   "description": "Static site served by Node (Express); admin OTP via Resend when RESEND_API_KEY is set. Includes POST /api/places/search (Google Places API New) for Pattaya lead collection — see PLACES_LEADS.md.",
