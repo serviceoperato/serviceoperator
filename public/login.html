@@ -277,7 +277,7 @@
       <div id="accountPanelMeta" class="tf-account-meta mono" style="font-size: 0.9rem; line-height: 1.6; color: var(--mute-2); margin-bottom: 1.15rem"></div>
       <div id="accountPanelErr" class="tf-error-box is-hidden" role="alert"></div>
       <div style="display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 0.75rem">
-        <a href="/clinics/report.html" class="btn btn--primary btn--block" id="accountOpenReport">Open my report<span class="ico-arrow-r" aria-hidden="true"></span></a>
+        <a href="#" class="btn btn--primary btn--block" id="accountOpenReport">Open my report<span class="ico-arrow-r" aria-hidden="true"></span></a>
         <button type="button" class="btn btn--ghost btn--block" id="accountForgotPw">Change password</button>
         <button type="button" class="btn btn--ghost btn--block" id="accountSignOut">Sign out</button>
       </div>
@@ -321,6 +321,15 @@
   var mustChangePwHint = document.getElementById('mustChangePwHint');
   var mustChangePwErrBox = document.getElementById('mustChangePwErrBox');
   var mustChangePwHelp = document.getElementById('mustChangePwHelp');
+  var userAccountPanel = document.getElementById('userAccountPanel');
+  var accountPanelLede = document.getElementById('accountPanelLede');
+  var accountPanelMeta = document.getElementById('accountPanelMeta');
+  var accountPanelErr = document.getElementById('accountPanelErr');
+  var accountOpenReport = document.getElementById('accountOpenReport');
+  var accountForgotPw = document.getElementById('accountForgotPw');
+  var accountSignOut = document.getElementById('accountSignOut');
+  var accountUseOther = document.getElementById('accountUseOther');
+  var userAccountHeading = document.getElementById('userAccountHeading');
   var loginMode = 'password';
   /** Bearer JWT while user must set password before redirect */
   var pendingBearerForPwChange = null;
@@ -344,6 +353,14 @@
   }
 
   var params = new URLSearchParams(window.location.search);
+  function isAccountSettingsUrl() {
+    try {
+      if (params.get('settings') === '1') return true;
+    } catch (eAs) {}
+    var h = String(window.location.hash || '').toLowerCase();
+    return h === '#account' || h.indexOf('#account') === 0;
+  }
+  var accountSettingsMode = isAccountSettingsUrl();
   var slugHint = (params.get('slug') || '').trim();
   var nextPath = (params.get('next') || '').trim();
   var resetToken = (params.get('reset') || '').trim();

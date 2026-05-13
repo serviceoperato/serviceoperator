@@ -64,6 +64,55 @@
   /* Shadows */
   --shadow-card: 0 1px 3px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.3);
   --shadow-elevated: 0 4px 24px rgba(0,0,0,0.5), 0 1px 4px rgba(0,0,0,0.3);
+
+  /* Dashboard / clinic audit page (inline components in index.html) */
+  --so-chart-surface: linear-gradient(180deg, #13171f 0%, #0f1219 100%);
+  --so-kpi-hover-border: #3a4357;
+  --so-review-bg: linear-gradient(180deg, #1a1010 0%, #13171f 100%);
+  --so-review-bg-warn: linear-gradient(180deg, #1d1810 0%, #13171f 100%);
+  --so-portal-card: linear-gradient(135deg, #1e1b4b 0%, #13171f 100%);
+  --so-star-off: #353d4f;
+  --so-code-bg: rgba(0, 0, 0, 0.35);
+  --so-code-fg: #f5f5ff;
+}
+
+[data-theme="light"] {
+  --color-bg: #f1f5f9;
+  --color-bg-card: #ffffff;
+  --color-bg-elevated: #f8fafc;
+  --color-border: #e2e8f0;
+  --color-border-light: #eef2f7;
+
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748b;
+  --color-text-inverse: #f8fafc;
+
+  --color-indigo-bg: rgba(99, 102, 241, 0.12);
+  --color-green-bg: rgba(34, 197, 94, 0.12);
+  --color-orange-bg: rgba(249, 115, 22, 0.12);
+  --color-red-bg: rgba(239, 68, 68, 0.1);
+  --color-blue-bg: rgba(59, 130, 246, 0.1);
+
+  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.06), 0 4px 16px rgba(15, 23, 42, 0.05);
+  --shadow-elevated: 0 4px 24px rgba(15, 23, 42, 0.08), 0 1px 4px rgba(15, 23, 42, 0.04);
+
+  --so-chart-surface: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+  --so-kpi-hover-border: #94a3b8;
+  --so-review-bg: linear-gradient(180deg, #fef2f2 0%, #ffffff 100%);
+  --so-review-bg-warn: linear-gradient(180deg, #fff7ed 0%, #ffffff 100%);
+  --so-portal-card: linear-gradient(135deg, #eef2ff 0%, #ffffff 100%);
+  --so-star-off: #cbd5e1;
+  --so-code-bg: rgba(15, 23, 42, 0.08);
+  --so-code-fg: #1e293b;
+}
+
+[data-theme="light"] .report-header {
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
+}
+
+[data-theme="light"] .audit-table tr:hover td {
+  background: rgba(15, 23, 42, 0.04);
 }
 
 /* ---- Reset & Base ---- */
@@ -76,6 +125,11 @@
   font-size: 15px;
   line-height: 1.65;
   min-height: 100vh;
+}
+
+body.audit-report {
+  background: var(--color-bg);
+  color: var(--color-text-primary);
 }
 
 /* ---- Report Header ---- */
