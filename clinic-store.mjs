@@ -105,6 +105,7 @@ function withProfileDefaults(user) {
     lastSeenAt: user.lastSeenAt || null,
     createdAt,
     updatedAt: user.updatedAt || createdAt,
+    passwordMustChange: user.passwordMustChange === true,
   };
 }
 
@@ -264,7 +265,7 @@ export function createUserStore(dataDir, adminEmail) {
       return tok;
     },
 
-    createUser({ email, password, reportSlug }) {
+    createUser({ email, password, reportSlug, passwordMustChange = false }) {
       const em = normalizeEmail(email);
       if (!em || !em.includes('@')) {
         const err = new Error('Invalid email.');
@@ -308,11 +309,13 @@ export function createUserStore(dataDir, adminEmail) {
       }
       const id = crypto.randomUUID();
       const profile = newUserProfileFields(em);
+      const mustChange = Boolean(passwordMustChange);
       const row = {
         id,
         email: em,
         passwordHash: hashPassword(password),
         reportSlug: slug,
+        ...(mustChange ? { passwordMustChange: true } : {}),
         ...profile,
       };
       data.users.push(row);
@@ -418,16 +421,43 @@ export function createUserStore(dataDir, adminEmail) {
       if (!u) return null;
       if (!verifyPassword(password, u.passwordHash)) return null;
       if (u.active === false) return null;
-      return { id: u.id, email: u.email, reportSlug: u.reportSlug };
+      return {
+        id: u.id,
+        email: u.email,
+        reportSlug: u.reportSlug,
+        passwordMustChange: u.passwordMustChange === true,
+      };
     },
 
-    /** @returns {{ id: string, email: string, reportSlug: string } | null} */
+    /** @returns {{ id: string, email: string, reportSlug: string, active: boolean, passwordMustChange: boolean } | null} */
     getUserByEmail(email) {
       const em = normalizeEmail(email);
       const data = load();
       const u = data.users.find((x) => x.email === em);
       if (!u) return null;
-      return { id: u.id, email: u.email, reportSlug: u.reportSlug, active: u.active !== false };
+      return {
+        id: u.id,
+        email: u.email,
+        reportSlug: u.reportSlug,
+        active: u.active !== false,
+        passwordMustChange: u.passwordMustChange === true,
+      };
+    },
+
+    /** @returns {{ id: string, email: string, reportSlug: string, active: boolean, passwordMustChange: boolean } | null} */
+    getUserById(userId) {
+      const id = typeof userId === 'string' ? userId.trim() : '';
+      if (!id) return null;
+      const data = load();
+      const u = data.users.find((x) => x.id === id);
+      if (!u) return null;
+      return {
+        id: u.id,
+        email: u.email,
+        reportSlug: u.reportSlug,
+        active: u.active !== false,
+        passwordMustChange: u.passwordMustChange === true,
+      };
     },
 
     setPasswordForUser(userId, newPassword) {
@@ -449,6 +479,33 @@ export function createUserStore(dataDir, adminEmail) {
         throw err;
       }
       u.passwordHash = hashPassword(newPassword);
+      delete u.passwordMustChange;
+      u.updatedAt = new Date().toISOString();
+      save(data);
+      return { id: u.id, email: u.email, reportSlug: u.reportSlug };
+    },
+
+    /** One-way hash + require password change on next login (bootstrap / ops). */
+    setPasswordWithMustChange(userId, newPassword) {
+      if (typeof userId !== 'string' || !userId) {
+        const err = new Error('Invalid user.');
+        err.status = 400;
+        throw err;
+      }
+      if (typeof newPassword !== 'string' || newPassword.length < 8) {
+        const err = new Error('Password must be at least 8 characters.');
+        err.status = 400;
+        throw err;
+      }
+      const data = load();
+      const u = data.users.find((x) => x.id === userId);
+      if (!u) {
+        const err = new Error('User not found.');
+        err.status = 404;
+        throw err;
+      }
+      u.passwordHash = hashPassword(newPassword);
+      u.passwordMustChange = true;
       u.updatedAt = new Date().toISOString();
       save(data);
       return { id: u.id, email: u.email, reportSlug: u.reportSlug };

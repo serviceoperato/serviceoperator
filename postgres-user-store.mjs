@@ -45,6 +45,7 @@ const PROFILE_COLUMN_MIGRATIONS = [
   'ALTER TABLE portal_users ADD COLUMN IF NOT EXISTS login_count BIGINT NOT NULL DEFAULT 0',
   'ALTER TABLE portal_users ADD COLUMN IF NOT EXISTS last_seen_at TIMESTAMPTZ',
   'ALTER TABLE portal_users ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()',
+  'ALTER TABLE portal_users ADD COLUMN IF NOT EXISTS password_must_change BOOLEAN NOT NULL DEFAULT false',
 ];
 
 function displayNameFromEmail(email) {
@@ -82,6 +83,7 @@ function mapPortalUserRow(row) {
     lastSeenAt: isoTimestamp(row.last_seen_at),
     createdAt: isoTimestamp(row.created_at),
     updatedAt: isoTimestamp(row.updated_at) || isoTimestamp(row.created_at),
+    passwordMustChange: row.password_must_change === true,
   };
 }
 
@@ -106,7 +108,8 @@ SELECT
   login_count,
   last_seen_at,
   created_at,
-  updated_at
+  updated_at,
+  password_must_change
 FROM portal_users
 ORDER BY created_at DESC
 `;
@@ -229,7 +232,7 @@ export function createPostgresUserStore(pool) {
       return tok;
     },
 
-    async createUser({ email, password, reportSlug }) {
+    async createUser({ email, password, reportSlug, passwordMustChange = false }) {
       const em = normalizeEmail(email);
       if (!em || !em.includes('@')) {
         const err = new Error('Invalid email.');
@@ -258,12 +261,13 @@ export function createPostgresUserStore(pool) {
       const id = crypto.randomUUID();
       const createdAt = new Date().toISOString();
       const displayName = displayNameFromEmail(em);
+      const mustChange = Boolean(passwordMustChange);
       try {
         await pool.query(
           `INSERT INTO portal_users (
-            id, email, password_hash, report_slug, display_name, created_at, updated_at
-          ) VALUES ($1, $2, $3, $4, $5, $6, $6)`,
-          [id, em, hashPassword(password), slug, displayName, createdAt]
+            id, email, password_hash, report_slug, display_name, created_at, updated_at, password_must_change
+          ) VALUES ($1, $2, $3, $4, $5, $6, $6, $7)`,
+          [id, em, hashPassword(password), slug, displayName, createdAt, mustChange]
         );
       } catch (e) {
         if (e && e.code === '23505') {
@@ -289,6 +293,7 @@ export function createPostgresUserStore(pool) {
         country: null,
         createdAt,
         updatedAt: createdAt,
+        passwordMustChange: mustChange,
       };
     },
 
@@ -367,8 +372,8 @@ export function createPostgresUserStore(pool) {
       try {
         await pool.query(
           `INSERT INTO portal_users (
-            id, email, password_hash, report_slug, display_name, created_at, updated_at
-          ) VALUES ($1, $2, $3, $4, $5, $6, $6)`,
+            id, email, password_hash, report_slug, display_name, created_at, updated_at, password_must_change
+          ) VALUES ($1, $2, $3, $4, $5, $6, $6, false)`,
           [uid, pen.email, pen.password_hash, pen.report_slug, displayName, createdAt]
         );
         await pool.query('DELETE FROM portal_pending_registrations WHERE id = $1', [pendingId]);
@@ -397,29 +402,60 @@ export function createPostgresUserStore(pool) {
         country: null,
         createdAt,
         updatedAt: createdAt,
+        passwordMustChange: false,
       };
     },
 
     async verifyLogin(email, password) {
       const em = normalizeEmail(email);
       const result = await pool.query(
-        'SELECT id, email, password_hash, report_slug, is_active FROM portal_users WHERE email = $1 LIMIT 1',
+        'SELECT id, email, password_hash, report_slug, is_active, password_must_change FROM portal_users WHERE email = $1 LIMIT 1',
         [em]
       );
       const row = result.rows[0];
       if (!row || row.is_active === false || !verifyPassword(password, row.password_hash)) return null;
-      return { id: row.id, email: row.email, reportSlug: row.report_slug };
+      return {
+        id: row.id,
+        email: row.email,
+        reportSlug: row.report_slug,
+        passwordMustChange: row.password_must_change === true,
+      };
     },
 
     async getUserByEmail(email) {
       const em = normalizeEmail(email);
       const result = await pool.query(
-        'SELECT id, email, report_slug, is_active FROM portal_users WHERE email = $1 LIMIT 1',
+        'SELECT id, email, report_slug, is_active, password_must_change FROM portal_users WHERE email = $1 LIMIT 1',
         [em]
       );
       const row = result.rows[0];
       if (!row) return null;
-      return { id: row.id, email: row.email, reportSlug: row.report_slug, active: row.is_active !== false };
+      return {
+        id: row.id,
+        email: row.email,
+        reportSlug: row.report_slug,
+        active: row.is_active !== false,
+        passwordMustChange: row.password_must_change === true,
+      };
+    },
+
+    /** @returns {{ id: string, email: string, reportSlug: string, active: boolean, passwordMustChange: boolean } | null} */
+    async getUserById(userId) {
+      const id = typeof userId === 'string' ? userId.trim() : '';
+      if (!id) return null;
+      const result = await pool.query(
+        'SELECT id, email, report_slug, is_active, password_must_change FROM portal_users WHERE id = $1 LIMIT 1',
+        [id]
+      );
+      const row = result.rows[0];
+      if (!row) return null;
+      return {
+        id: row.id,
+        email: row.email,
+        reportSlug: row.report_slug,
+        active: row.is_active !== false,
+        passwordMustChange: row.password_must_change === true,
+      };
     },
 
     async setPasswordForUser(userId, newPassword) {
@@ -434,7 +470,32 @@ export function createPostgresUserStore(pool) {
         throw err;
       }
       const result = await pool.query(
-        'UPDATE portal_users SET password_hash = $1 WHERE id = $2 RETURNING id, email, report_slug',
+        'UPDATE portal_users SET password_hash = $1, password_must_change = false WHERE id = $2 RETURNING id, email, report_slug',
+        [hashPassword(newPassword), userId]
+      );
+      const row = result.rows[0];
+      if (!row) {
+        const err = new Error('User not found.');
+        err.status = 404;
+        throw err;
+      }
+      return { id: row.id, email: row.email, reportSlug: row.report_slug };
+    },
+
+    /** One-way hash + require password change on next login (bootstrap / ops). */
+    async setPasswordWithMustChange(userId, newPassword) {
+      if (typeof userId !== 'string' || !userId) {
+        const err = new Error('Invalid user.');
+        err.status = 400;
+        throw err;
+      }
+      if (typeof newPassword !== 'string' || newPassword.length < 8) {
+        const err = new Error('Password must be at least 8 characters.');
+        err.status = 400;
+        throw err;
+      }
+      const result = await pool.query(
+        'UPDATE portal_users SET password_hash = $1, password_must_change = true, updated_at = NOW() WHERE id = $2 RETURNING id, email, report_slug',
         [hashPassword(newPassword), userId]
       );
       const row = result.rows[0];
@@ -485,7 +546,8 @@ export function createPostgresUserStore(pool) {
            login_count,
            last_seen_at,
            created_at,
-           updated_at`,
+           updated_at,
+           password_must_change`,
         [userId, loginIp, loginCountry, loginCity, loginRegion, loginUserAgent]
       );
       return mapPortalUserRow(result.rows[0]);
@@ -517,7 +579,8 @@ export function createPostgresUserStore(pool) {
            login_count,
            last_seen_at,
            created_at,
-           updated_at`,
+           updated_at,
+           password_must_change`,
         [userId]
       );
       return mapPortalUserRow(result.rows[0]);
@@ -608,7 +671,8 @@ export function createPostgresUserStore(pool) {
            last_login_ip,
            country,
            created_at,
-           updated_at`,
+           updated_at,
+           password_must_change`,
         values
       );
       const row = result.rows[0];
@@ -640,6 +704,7 @@ export function createPostgresUserStore(pool) {
           'last_login_ip',
           'country',
           'updated_at',
+          'password_must_change',
         ],
       };
     },

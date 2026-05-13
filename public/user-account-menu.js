@@ -7,6 +7,7 @@
   var USER_JWT_KEY = 'so_user_jwt';
   var LEGACY_JWT_KEY = 'so_clinic_jwt';
   var ADMIN_JWT_KEY = 'so_admin_jwt';
+  var USER_SESSION_KEY = 'so_user_session_id';
   var ADMIN_EMAIL = 'jack@serviceopera.to';
 
   var sessionCache = null;
@@ -15,7 +16,13 @@
 
   function getPortalJwt() {
     try {
-      return sessionStorage.getItem(USER_JWT_KEY) || sessionStorage.getItem(LEGACY_JWT_KEY) || '';
+      return (
+        localStorage.getItem(USER_JWT_KEY) ||
+        localStorage.getItem(LEGACY_JWT_KEY) ||
+        sessionStorage.getItem(USER_JWT_KEY) ||
+        sessionStorage.getItem(LEGACY_JWT_KEY) ||
+        ''
+      );
     } catch (e) {
       return '';
     }
@@ -33,6 +40,10 @@
     try {
       sessionStorage.removeItem(USER_JWT_KEY);
       sessionStorage.removeItem(LEGACY_JWT_KEY);
+      sessionStorage.removeItem(USER_SESSION_KEY);
+      localStorage.removeItem(USER_JWT_KEY);
+      localStorage.removeItem(LEGACY_JWT_KEY);
+      localStorage.removeItem(USER_SESSION_KEY);
     } catch (e) {}
   }
 
@@ -80,14 +91,6 @@
     var path = window.location.pathname || '/';
     if (/\/clinics\//.test(path)) return '../login.html';
     return '/login.html';
-  }
-
-  function resolveAdminHref(root) {
-    var href = root && root.getAttribute('data-admin-href');
-    if (href) return href;
-    var path = window.location.pathname || '/';
-    if (/\/clinics\//.test(path)) return '../admin.html';
-    return '/admin.html';
   }
 
   function fetchJson(path, token) {
@@ -221,8 +224,6 @@
     var email = portalEmail();
     var label = displayNameFromEmail(email);
     var loginHref = resolveLoginHref(root);
-    var adminHref = resolveAdminHref(root);
-    var showAdmin = adminOk || String(email).toLowerCase() === ADMIN_EMAIL;
 
     root.className = 'so-nav-account so-nav-account--authed';
     root.innerHTML = '';
@@ -255,9 +256,6 @@
 
     panel.appendChild(menuRow(loginHref, label, { accent: true }));
     panel.appendChild(menuRow(loginHref, 'Settings'));
-    if (showAdmin) {
-      panel.appendChild(menuRow(adminHref, 'Admin', { accent: true }));
-    }
     panel.appendChild(
       menuRow('#', 'Sign out', {
         onClick: function (e) {
@@ -323,9 +321,6 @@
         mount.setAttribute('data-so-nav-account', '');
         if (node.getAttribute('data-login-href')) {
           mount.setAttribute('data-login-href', node.getAttribute('data-login-href'));
-        }
-        if (node.getAttribute('data-admin-href')) {
-          mount.setAttribute('data-admin-href', node.getAttribute('data-admin-href'));
         }
         node.parentNode.replaceChild(mount, node);
         mountRoot(mount);

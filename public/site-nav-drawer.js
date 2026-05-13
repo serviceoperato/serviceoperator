@@ -4,7 +4,6 @@
 (function () {
   'use strict';
 
-  var ADMIN_JWT_KEY = 'so_admin_jwt';
   var USER_JWT_KEY = 'so_user_jwt';
   var LEGACY_JWT_KEY = 'so_clinic_jwt';
 
@@ -58,25 +57,16 @@
         { href: '/reports.html#inquiry', label: 'Contact Jack' },
       ],
     },
-    {
-      id: 'admin',
-      title: 'Admin',
-      adminOnly: true,
-      links: [{ href: '/admin.html', label: 'Admin console' }],
-    },
   ];
 
   function hasPortalJwt() {
     try {
-      return !!(sessionStorage.getItem(USER_JWT_KEY) || sessionStorage.getItem(LEGACY_JWT_KEY));
-    } catch (e) {
-      return false;
-    }
-  }
-
-  function hasAdminJwt() {
-    try {
-      return !!sessionStorage.getItem(ADMIN_JWT_KEY);
+      return !!(
+        sessionStorage.getItem(USER_JWT_KEY) ||
+        sessionStorage.getItem(LEGACY_JWT_KEY) ||
+        localStorage.getItem(USER_JWT_KEY) ||
+        localStorage.getItem(LEGACY_JWT_KEY)
+      );
     } catch (e) {
       return false;
     }
@@ -181,9 +171,7 @@
     header.appendChild(closeBtn);
     inner.appendChild(header);
 
-    var showAdmin = hasAdminJwt();
     SECTIONS.forEach(function (section) {
-      if (section.adminOnly && !showAdmin) return;
       var sectionId = 'soSiteNavSection-' + section.id;
       var toggle = document.createElement('button');
       toggle.type = 'button';

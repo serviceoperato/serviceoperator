@@ -14,7 +14,6 @@ COPY public ./public/
 
 RUN mkdir -p /app/data \
   && test -f /app/public/index.html \
-  && test -f /app/public/admin.html \
   && test -f /app/server.mjs \
   && test -f /app/clinic-store.mjs \
   && test -f /app/postgres-user-store.mjs

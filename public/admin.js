@@ -1196,7 +1196,8 @@
     var i;
     for (i = 0; i < PORTAL_JWT_KEYS.length; i++) {
       try {
-        var token = sessionStorage.getItem(PORTAL_JWT_KEYS[i]);
+        var k = PORTAL_JWT_KEYS[i];
+        var token = localStorage.getItem(k) || sessionStorage.getItem(k);
         if (token) return token;
       } catch (e) {}
     }

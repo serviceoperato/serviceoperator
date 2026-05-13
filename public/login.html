@@ -252,6 +252,22 @@
       <p class="portal-form__hint" id="resetHint"></p>
     </form>
 
+    <form id="userMustChangePwForm" class="portal-form is-hidden" autocomplete="on">
+      <h2 style="font-size: 1.1rem; margin: 0 0 0.5rem; font-weight: 700; font-family: var(--font-body)">Choose your password</h2>
+      <p class="portal-form__muted" id="mustChangePwHelp">Your account requires a new password before you can continue.</p>
+      <label>
+        <span class="portal-caption">NEW PASSWORD</span>
+        <input type="password" name="newPassword" id="userMustChangePw1" class="tf-input" required minlength="8" autocomplete="new-password" placeholder="min 8 characters" />
+      </label>
+      <label>
+        <span class="portal-caption">CONFIRM</span>
+        <input type="password" name="confirmPassword" id="userMustChangePw2" class="tf-input" required minlength="8" autocomplete="new-password" placeholder="repeat password" />
+      </label>
+      <div id="mustChangePwErrBox" class="tf-error-box is-hidden" role="alert"></div>
+      <button type="submit" class="btn btn--primary btn--block" id="userMustChangePwSubmit">Save and continue<span class="ico-arrow-r" aria-hidden="true"></span></button>
+      <p class="portal-form__hint" id="mustChangePwHint"></p>
+    </form>
+
     <p class="modal__footnote"><a href="/"><span class="ico-arrow-l" aria-hidden="true"></span>Back to site</a></p>
   </div>
 </div>
@@ -283,7 +299,13 @@
   var resendConfirmBtn = document.getElementById('userResendConfirmBtn');
   var resetForm = document.getElementById('userResetForm');
   var resetHint = document.getElementById('resetHint');
+  var mustChangePwForm = document.getElementById('userMustChangePwForm');
+  var mustChangePwHint = document.getElementById('mustChangePwHint');
+  var mustChangePwErrBox = document.getElementById('mustChangePwErrBox');
+  var mustChangePwHelp = document.getElementById('mustChangePwHelp');
   var loginMode = 'password';
+  /** Bearer JWT while user must set password before redirect */
+  var pendingBearerForPwChange = null;
 
   /** English-only UI copy for banners and post-reset hint. */
   var MSG = {
@@ -331,8 +353,9 @@
   if (slugHint && lede) {
     lede.textContent =
       'You were sent here for report “' + slugHint + '”. After sign-in you will be taken to that page.';
-  } else if (nextPath === '/admin.html' && lede) {
-    lede.textContent = 'Sign in with your ServiceOpera account to open the admin console.';
+  } else if (nextPath && lede) {
+    lede.textContent =
+      'After sign-in you will be taken to: ' + nextPath + ' (password or email code below).';
   }
 
   if (params.get('registered') === '1' && bannerRegistered) {
@@ -504,13 +527,16 @@
   }
 
   /** Portal auth API — always read body as text then JSON so HTML 404 does not collapse into “network error”. */
-  function requestPortalApi(method, path, bodyObj) {
+  function requestPortalApi(method, path, bodyObj, bearerToken) {
     var init = {
       method: method,
       credentials: typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin',
       headers: { 'Content-Type': 'application/json' },
       cache: 'no-store',
     };
+    if (bearerToken) {
+      init.headers.Authorization = 'Bearer ' + bearerToken;
+    }
     if (bodyObj !== undefined) init.body = JSON.stringify(bodyObj);
     var url = typeof soApiUrl === 'function' ? soApiUrl(path) : path;
     return fetch(url, init)
@@ -571,11 +597,95 @@
     }
   }
 
+  function setMustChangePwErr(msg) {
+    if (!mustChangePwErrBox) return;
+    if (!msg) {
+      mustChangePwErrBox.textContent = '';
+      mustChangePwErrBox.classList.add('is-hidden');
+      return;
+    }
+    mustChangePwErrBox.textContent = msg;
+    mustChangePwErrBox.classList.remove('is-hidden');
+  }
+
+  function setMustChangePwHint(msg, kind, detail) {
+    if (!mustChangePwHint) return;
+    mustChangePwHint.textContent = msg;
+    mustChangePwHint.className = hintClasses(kind, detail);
+  }
+
+  function redirectAfterPortalLogin(lj) {
+    var dest = '';
+    if (nextPath && nextPath.charAt(0) === '/' && nextPath.indexOf('//') !== 0) {
+      if (/^\/admin\.html$/i.test(nextPath)) {
+        dest = lj.reportUrl || '/clinics/report.html?slug=' + encodeURIComponent(lj.reportSlug);
+      } else {
+        dest = nextPath;
+      }
+    } else {
+      dest = lj.reportUrl || '/clinics/report.html?slug=' + encodeURIComponent(lj.reportSlug);
+    }
+    if (dest.charAt(0) !== '/') dest = '/' + dest;
+    window.location.href = dest;
+  }
+
+  function showMustChangePasswordMode(bearer) {
+    pendingBearerForPwChange = bearer;
+    setMustChangePwErr('');
+    setMustChangePwHint('', '');
+    if (gateTitle) gateTitle.textContent = 'Choose your password';
+    if (lede) {
+      lede.textContent =
+        'Set a new password for your account (at least 8 characters). You will then continue to the page you requested.';
+    }
+    if (mustChangePwHelp && nextPath) {
+      mustChangePwHelp.textContent =
+        'After you save, you will be redirected to: ' + nextPath + ' (or your report home if that path is unavailable).';
+    } else if (mustChangePwHelp) {
+      mustChangePwHelp.textContent = 'Your account requires a new password before you can continue.';
+    }
+    if (form) form.classList.add('is-hidden');
+    if (forgotPanel) forgotPanel.classList.add('is-hidden');
+    if (resetForm) resetForm.classList.add('is-hidden');
+    if (modeToggleEl) modeToggleEl.classList.add('is-hidden');
+    var portalRoot = document.querySelector('.tf-portal');
+    if (portalRoot) portalRoot.classList.remove('is-hidden');
+    if (mustChangePwForm) {
+      mustChangePwForm.classList.remove('is-hidden');
+      var i1 = document.getElementById('userMustChangePw1');
+      var i2 = document.getElementById('userMustChangePw2');
+      if (i1) {
+        i1.value = '';
+        i1.focus();
+      }
+      if (i2) i2.value = '';
+    }
+    setHint('', '');
+    setLoginErr('');
+  }
+
+  function applyUserJwt(lj) {
+    try {
+      sessionStorage.setItem('so_user_jwt', lj.token);
+      try {
+        localStorage.setItem('so_user_jwt', lj.token);
+      } catch (eLs) {}
+      if (lj.sessionId) {
+        sessionStorage.setItem('so_user_session_id', lj.sessionId);
+        try {
+          localStorage.setItem('so_user_session_id', lj.sessionId);
+        } catch (eLs2) {}
+      }
+    } catch (err) {}
+  }
+
   function showLoginMode() {
+    pendingBearerForPwChange = null;
     if (gateTitle) gateTitle.textContent = 'Log in';
     if (form) form.classList.remove('is-hidden');
     if (forgotPanel) forgotPanel.classList.add('is-hidden');
     if (resetForm) resetForm.classList.add('is-hidden');
+    if (mustChangePwForm) mustChangePwForm.classList.add('is-hidden');
     var portalRoot = document.querySelector('.tf-portal');
     if (portalRoot) portalRoot.classList.remove('is-hidden');
     if (modeToggleEl) modeToggleEl.classList.remove('is-hidden');
@@ -592,6 +702,7 @@
     if (form) form.classList.remove('is-hidden');
     if (forgotPanel) forgotPanel.classList.remove('is-hidden');
     if (resetForm) resetForm.classList.add('is-hidden');
+    if (mustChangePwForm) mustChangePwForm.classList.add('is-hidden');
     var pwInput = document.getElementById('userPassword');
     if (pwInput) {
       pwInput.removeAttribute('required');
@@ -609,6 +720,7 @@
     if (gateTitle) gateTitle.textContent = 'Reset password';
     if (form) form.classList.add('is-hidden');
     if (forgotPanel) forgotPanel.classList.add('is-hidden');
+    if (mustChangePwForm) mustChangePwForm.classList.add('is-hidden');
     var portalRoot = document.querySelector('.tf-portal');
     if (portalRoot) portalRoot.classList.add('is-hidden');
     if (resetForm) resetForm.classList.remove('is-hidden');
@@ -919,20 +1031,16 @@
           if (otpInput) otpInput.value = '';
           return;
         }
-        try {
-          sessionStorage.setItem('so_user_jwt', lj.token);
-          if (lj.sessionId) sessionStorage.setItem('so_user_session_id', lj.sessionId);
-        } catch (err) {}
+        applyUserJwt(lj);
+        if (lj.passwordMustChange) {
+          setHint('', '');
+          setLoginErr('');
+          showMustChangePasswordMode(lj.token);
+          return;
+        }
         setHint('Redirecting…', 'ok');
         setLoginErr('');
-        var dest = '';
-        if (nextPath && nextPath.charAt(0) === '/' && nextPath.indexOf('//') !== 0) {
-          dest = nextPath;
-        } else {
-          dest = lj.reportUrl || '/clinics/report.html?slug=' + encodeURIComponent(lj.reportSlug);
-        }
-        if (dest.charAt(0) !== '/') dest = '/' + dest;
-        window.location.href = dest;
+        redirectAfterPortalLogin(lj);
       });
     });
   }
@@ -1017,6 +1125,66 @@
         }
         var j = res.json || {};
         setHint(j.message || 'If that address has a pending sign-up, a new link was sent.', 'ok');
+      });
+    });
+  }
+
+  if (mustChangePwForm) {
+    mustChangePwForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!pendingBearerForPwChange) {
+        setMustChangePwErr('Session lost. Please sign in again.');
+        return;
+      }
+      var fd = new FormData(mustChangePwForm);
+      var a = (fd.get('newPassword') || '').toString();
+      var b = (fd.get('confirmPassword') || '').toString();
+      if (a.length < 8) {
+        setMustChangePwErr('Password must be at least 8 characters.');
+        return;
+      }
+      if (a !== b) {
+        setMustChangePwErr('Passwords do not match.');
+        return;
+      }
+      setMustChangePwErr('');
+      setMustChangePwHint('Saving…', '');
+      requestPortalApi(
+        'POST',
+        '/api/auth/user-complete-password-setup',
+        { password: a, confirmPassword: b },
+        pendingBearerForPwChange
+      ).then(function (res) {
+        if (res.__threw) {
+          setMustChangePwHint('', '');
+          setMustChangePwErr(detailFetchThrew('POST', '/api/auth/user-complete-password-setup', res.err));
+          return;
+        }
+        if (res.parseErr) {
+          setMustChangePwHint('', '');
+          setMustChangePwErr(
+            detailNonJsonResponse(
+              'POST',
+              '/api/auth/user-complete-password-setup',
+              res.status,
+              res.statusText,
+              res.contentType,
+              res.parseErr,
+              res.text
+            )
+          );
+          return;
+        }
+        var jr = res.json || {};
+        if (!res.okHttp || !jr.token) {
+          setMustChangePwHint('', '');
+          setMustChangePwErr((jr.error || 'Could not save password.') + '');
+          return;
+        }
+        pendingBearerForPwChange = null;
+        applyUserJwt(jr);
+        setMustChangePwHint('Redirecting…', 'ok');
+        redirectAfterPortalLogin(jr);
       });
     });
   }

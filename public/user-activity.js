@@ -10,7 +10,8 @@
   function getJwt() {
     try {
       for (var i = 0; i < JWT_KEYS.length; i++) {
-        var token = sessionStorage.getItem(JWT_KEYS[i]);
+        var k = JWT_KEYS[i];
+        var token = localStorage.getItem(k) || sessionStorage.getItem(k);
         if (token) return token;
       }
     } catch (e) {}
@@ -19,7 +20,7 @@
 
   function getSessionId() {
     try {
-      return sessionStorage.getItem(SESSION_KEY) || '';
+      return localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY) || '';
     } catch (e) {
       return '';
     }

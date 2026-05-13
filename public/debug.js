@@ -867,7 +867,7 @@
   lines.push({
     cat: 'OPS',
     text:
-      '82 · admin access: open /admin.html — email OTP or password on the same page; with portal JWT in session, bootstrap-from-portal can mint admin JWT when ADMIN_EMAIL matches.',
+      '82 · Admin APIs: POST /api/admin/send-code + verify-code (email OTP when RESEND_API_KEY is set); bootstrap-from-portal can mint admin JWT when ADMIN_EMAIL matches. There is no public /admin.html (it redirects to login).',
   });
   if (store && store.backend === 'postgres') {
     lines.push({

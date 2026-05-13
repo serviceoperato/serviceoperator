@@ -14,14 +14,13 @@ A complete, deployable site under **`serviceopera.to`**. All static assets live 
 | `public/client.html` | **The "secret page".** Demo workspace behind a **browser-only** username/password (see `public/app.js`). For real data, replace with server-side auth. |
 | `public/styles.css` | Shared black / white / indigo design system. |
 | `public/app.js` | Landing-page modal + demo credential check. |
-| `public/admin.html` | **Admin panel** — direct URL (`/admin.html`); same nav “Log in” points to clinic access at **`login.html`**. |
-| `public/admin.js` | Admin gate + tiles. With **`RESEND_API_KEY`** on the host, sign-in is **email OTP + server session**; without it, optional `admin-config.js` password for local/static preview only. |
+| `public/admin.js` | Legacy admin workspace script (no public admin page; `/admin.html` redirects to **`login.html`**). Admin APIs in **`server.mjs`** remain. With **`RESEND_API_KEY`**, sign-in is **email OTP + server session**; without it, optional `admin-config.js` password for local preview only. |
 | `public/admin-config.js` | Optional: `window.__ADMIN_PASSWORD__` for local preview when the server has no Resend key. **Do not rely on this in production.** |
 | `server.mjs` | Static file host + `/api/admin/*` + **clinic users** (`/api/clinic-users`, `/api/auth/clinic-login`, `/api/clinics/report-data`). User rows live in **`DATA_DIR`/clinic_users.json** (default `./data`, Docker `/app/data`). |
 | `public/login.html` | Clinic log-in; stores `so_clinic_jwt` and redirects to `/clinics/report.html?slug=…`. |
 | `public/clinics/report.html` | Private report view (same layout as the public demo); needs a valid clinic session and slug-specific or fallback `_data.json`. |
 
-The client and admin pages are marked `noindex, nofollow` and disallowed in `robots.txt` where applicable.
+The client page is marked `noindex, nofollow` and disallowed in `robots.txt` where applicable.
 
 ---
 
@@ -126,7 +125,7 @@ The `Dockerfile` runs **Node**: `server.mjs` serves **`public/`** and sets the s
 
 | Variable | Required | Purpose |
 |---|---|---|
-| `RESEND_API_KEY` | Yes, for automatic email | [Resend](https://resend.com) API key. When set on **`server.mjs`**: admin OTP on `/admin.html`, **and** automatic clinic **“Forgot password?”** on `/login.html` (reset link email — no extra code paths). If unset, clinic users see a message to configure Resend or use admin to change passwords. |
+| `RESEND_API_KEY` | Yes, for automatic email | [Resend](https://resend.com) API key. When set on **`server.mjs`**: **Jack admin** email OTP (`/api/admin/*`), **and** automatic clinic **“Forgot password?”** on `/login.html` (reset link email — no extra code paths). If unset, clinic users see a message to configure Resend or use admin to change passwords. |
 | `RESEND_FROM` | Recommended | Verified sender, e.g. `ServiceOpera <noreply@yourdomain.com>`. Resend’s test domain only delivers to your own mailbox. |
 | `CLINIC_SELF_REGISTER` | Optional | **On by default** for **`server.mjs`**: **Create account** on `/login.html` stages a pending sign-up and sends a **confirmation email** (needs **`RESEND_API_KEY`**); the account is created only after the user opens the link. Set to `false`, `0`, `no`, or `off` for invite-only accounts (admin creates users). |
 | `PUBLIC_ORIGIN` | Optional | Full public URL of the site (e.g. `https://serviceopera.to`), no trailing slash. Used in reset links if the reverse proxy does not pass a reliable host/proto. |

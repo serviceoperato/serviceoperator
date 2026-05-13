@@ -170,7 +170,6 @@ const MANAGED_PAGE_FILES = [
   'register.html',
   'places-leads.html',
   'clinics/report.html',
-  'admin.html',
   'property.html',
   'clinics.html',
   'hotels.html',
@@ -587,6 +586,18 @@ async function recordPortalLogin(req, user) {
   } catch {
     return null;
   }
+}
+
+function signPortalUserJwt(user) {
+  return signJwt({
+    v: 1,
+    role: 'user',
+    email: user.email,
+    reportSlug: user.reportSlug,
+    sub: user.id,
+    passwordMustChange: Boolean(user.passwordMustChange),
+    exp: Date.now() + CLINIC_JWT_TTL_MS,
+  });
 }
 
 function pruneSends(ip) {
@@ -1107,7 +1118,8 @@ async function createPortalUserAdmin(req, res) {
     const email = req.body?.email;
     const password = req.body?.password;
     const reportSlug = req.body?.reportSlug;
-    const created = await userStore.createUser({ email, password, reportSlug });
+    const passwordMustChange = Boolean(req.body?.passwordMustChange);
+    const created = await userStore.createUser({ email, password, reportSlug, passwordMustChange });
     return res.status(201).json(created);
   } catch (e) {
     const status = e.status || 400;
@@ -1194,16 +1206,16 @@ dualPost('/api/auth/user-login', '/api/auth/clinic-login', async (req, res) => {
     return res.status(401).json({ error: 'Invalid email or password.' });
   }
   const sessionId = await recordPortalLogin(req, user);
-  const token = signJwt({
-    v: 1,
-    role: 'user',
-    email: user.email,
-    reportSlug: user.reportSlug,
-    sub: user.id,
-    exp: Date.now() + CLINIC_JWT_TTL_MS,
-  });
+  const token = signPortalUserJwt(user);
   const reportUrl = '/clinics/report.html?slug=' + encodeURIComponent(user.reportSlug);
-  return res.json({ ok: true, token, reportSlug: user.reportSlug, reportUrl, sessionId });
+  return res.json({
+    ok: true,
+    token,
+    reportSlug: user.reportSlug,
+    reportUrl,
+    sessionId,
+    passwordMustChange: Boolean(user.passwordMustChange),
+  });
 });
 
 dualPost('/api/auth/user-otp/send', '/api/auth/clinic-otp/send', async (req, res) => {
@@ -1279,16 +1291,16 @@ dualPost('/api/auth/user-login-otp', '/api/auth/clinic-login-otp', async (req, r
   }
   portalOtpByEmail.delete(email);
   const sessionId = await recordPortalLogin(req, user);
-  const token = signJwt({
-    v: 1,
-    role: 'user',
-    email: user.email,
-    reportSlug: user.reportSlug,
-    sub: user.id,
-    exp: Date.now() + CLINIC_JWT_TTL_MS,
-  });
+  const token = signPortalUserJwt(user);
   const reportUrl = '/clinics/report.html?slug=' + encodeURIComponent(user.reportSlug);
-  return res.json({ ok: true, token, reportSlug: user.reportSlug, reportUrl, sessionId });
+  return res.json({
+    ok: true,
+    token,
+    reportSlug: user.reportSlug,
+    reportUrl,
+    sessionId,
+    passwordMustChange: Boolean(user.passwordMustChange),
+  });
 });
 
 dualPost('/api/auth/user-resend-confirmation', '/api/auth/clinic-resend-confirmation', async (req, res) => {
@@ -1427,6 +1439,54 @@ dualPost('/api/auth/user-reset-password', '/api/auth/clinic-reset-password', asy
     return res.status(status).json({ error: e.message || 'Bad request' });
   }
   return res.json({ ok: true, message: 'Password updated. You can sign in now.' });
+});
+
+dualPost('/api/auth/user-complete-password-setup', '/api/auth/clinic-complete-password-setup', async (req, res) => {
+  const p = verifyJwt(getBearer(req));
+  if (!p || !isPortalSessionRole(p.role) || typeof p.sub !== 'string') {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  const password = typeof req.body?.password === 'string' ? req.body.password : '';
+  const confirm =
+    typeof req.body?.confirmPassword === 'string'
+      ? req.body.confirmPassword
+      : typeof req.body?.confirm === 'string'
+        ? req.body.confirm
+        : '';
+  if (password.length < 8) {
+    return res.status(400).json({ error: 'Password must be at least 8 characters.' });
+  }
+  if (confirm && password !== confirm) {
+    return res.status(400).json({ error: 'Passwords do not match.' });
+  }
+  if (typeof userStore.getUserById !== 'function') {
+    return res.status(501).json({ error: 'Password completion is not supported on this deployment.' });
+  }
+  const row = await userStore.getUserById(p.sub);
+  if (!row) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  if (!row.passwordMustChange) {
+    return res.status(400).json({ error: 'Password change is not required for this account.' });
+  }
+  try {
+    await userStore.setPasswordForUser(p.sub, password);
+  } catch (e) {
+    const status = e.status || 400;
+    return res.status(status).json({ error: e.message || 'Bad request' });
+  }
+  const refreshed = await userStore.getUserById(p.sub);
+  const user = refreshed || { ...row, passwordMustChange: false };
+  const token = signPortalUserJwt(user);
+  const reportUrl = '/clinics/report.html?slug=' + encodeURIComponent(user.reportSlug);
+  return res.json({
+    ok: true,
+    token,
+    reportSlug: user.reportSlug,
+    reportUrl,
+    passwordMustChange: false,
+    message: 'Password saved.',
+  });
 });
 
 dualPost('/api/auth/user-verify-email', '/api/auth/clinic-verify-email', async (req, res) => {
@@ -1635,6 +1695,10 @@ app.get('/logo.png', (_req, res) => {
   return res.redirect(302, '/assets/logo.png');
 });
 
+app.get(/^\/admin\.html$/i, (_req, res) => {
+  res.redirect(302, '/login.html');
+});
+
 app.use(
   express.static(publicDir, {
     index: ['index.html'],
@@ -1648,7 +1712,6 @@ app.use(
         filePath.endsWith('client.html') ||
         filePath.endsWith('login.html') ||
         filePath.endsWith('register.html') ||
-        filePath.endsWith('admin.html') ||
         filePath.endsWith('admin.js') ||
         filePath.endsWith('places-leads.html') ||
         norm.includes('/clinics/report.html')
