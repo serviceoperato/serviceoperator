@@ -508,8 +508,7 @@ html.so-site-nav-open {
 [data-theme="light"] .hero__brand-img:not(.brand-logo),
 [data-theme="light"] .footer__logo-img:not(.brand-logo),
 [data-theme="light"] .gate__brand-img:not(.brand-logo),
-[data-theme="light"] .client-nav__brand-img:not(.brand-logo),
-[data-theme="light"] .admin-topbar__home img:not(.brand-logo) {
+[data-theme="light"] .client-nav__brand-img:not(.brand-logo) {
   filter: var(--logo-filter);
 }
 
@@ -558,10 +557,6 @@ html.so-site-nav-open {
 }
 .client-nav__brand-img.brand-logo {
   height: 34px;
-  max-width: 200px;
-}
-.admin-topbar__home .brand-logo {
-  height: 32px;
   max-width: 200px;
 }
 
@@ -2005,9 +2000,6 @@ html.so-site-nav-open {
   padding-top: var(--site-nav-offset);
   box-sizing: border-box;
 }
-.page-admin--with-nav .admin-topbar {
-  top: var(--site-nav-offset);
-}
 
 /* Clinic / audit marketing pages: content starts below fixed global `.nav` */
 .page-client.page-clinics-demo #demoSkeleton,
@@ -2075,62 +2067,6 @@ html.so-site-nav-open {
 .admin-config-banner strong { color: var(--amber-2); }
 
 .admin-workspace { min-height: 100vh; display: flex; flex-direction: column; }
-
-.admin-topbar {
-  position: sticky;
-  top: 0;
-  z-index: 40;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1rem var(--gutter);
-  background: var(--nav-sticky-bg);
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid var(--line);
-}
-.admin-topbar__site-nav {
-  flex-shrink: 0;
-}
-.admin-topbar__actions {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-.admin-topbar__home {
-  display: flex;
-  align-items: center;
-  gap: .55rem;
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 1rem;
-  letter-spacing: -0.02em;
-}
-.admin-topbar__meta { color: var(--mute-2); font-size: .68rem !important; text-align: center; flex: 1; }
-.admin-topbar__logout {
-  font-family: var(--font-mono);
-  font-size: .72rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--amber-2);
-  background: transparent;
-  border: 1px solid var(--line-strong);
-  padding: .5rem .85rem;
-  border-radius: 2px;
-  cursor: pointer;
-}
-.admin-topbar__logout:hover {
-  border-color: var(--amber);
-  color: var(--paper);
-}
-a.admin-topbar__logout {
-  text-decoration: none;
-  display: inline-block;
-}
-@media (max-width: 560px) {
-  .admin-topbar { flex-wrap: wrap; }
-  .admin-topbar__meta { order: 3; width: 100%; text-align: left; }
-}
 
 .admin-main {
   flex: 1;

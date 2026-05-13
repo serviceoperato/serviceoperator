@@ -47,7 +47,6 @@
   var bootEl = document.getElementById('adminBoot');
   var form = document.getElementById('adminGateForm');
   var hint = document.getElementById('adminGateHint');
-  var logoutBtn = document.getElementById('adminLogout');
   var tfNav = document.getElementById('tfAdminNav');
   var tfVerNum = document.getElementById('tfAdminVersionNum');
   var panel = document.getElementById('adminPanel');
@@ -66,6 +65,9 @@
   var reportCatalogVertical = 'clinics';
   /** Grouped rows from GET /api/admin/audit-reports (preferred for catalog UI when signed in). */
   var auditReportsByVertical = null;
+  /** idle | loading | ok | error */
+  var userProfilingLoadState = 'idle';
+  var userProfilingRows = [];
   /** idle | ok | error | skipped */
   var auditReportsLoadState = 'idle';
 
@@ -685,7 +687,7 @@
     panelTitle.textContent = 'Site appearance';
     panelBody.innerHTML =
       '<div class="so-site-appearance">' +
-      '<p class="tf-admin-muted so-site-appearance__lede">Square previews update as you type. Use <strong>Upload…</strong> (admin only, saves under <code>/assets/site-uploads/</code>) or paste <code>/assets/…</code> / a public <strong>https</strong> URL. <code>/logo.png</code> redirects to the nav logo below. Public: <code>GET /api/site-appearance</code>.</p>' +
+      '<p class="tf-admin-muted so-site-appearance__lede">Square previews update as you type. Use <strong>Upload…</strong> (admin only, saves under <code>/assets/site-uploads/</code>), <strong>Delete</strong> to remove an uploaded <code>su-*</code> file from the server (or clear any URL), or paste <code>/assets/…</code> / a public <strong>https</strong> URL. <code>/logo.png</code> redirects to the nav logo below. Public: <code>GET /api/site-appearance</code>.</p>' +
       '<div class="so-site-appearance__bulk" role="toolbar" aria-label="Bulk actions for hero images">' +
       '<span class="so-site-appearance__bulk-label mono">Selection</span>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteAppearSelectAll">Select all</button>' +
@@ -706,6 +708,7 @@
       '<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="is-hidden" id="soSiteNavLogoFile" />' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteNavLogoPickBtn">Upload…</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteNavLogoClearBtn">Clear URL</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSiteNavLogoDeleteBtn">Delete</button>' +
       '</div>' +
       '<label class="portal-form__label" for="soSiteNavLogoUrl">Image URL</label>' +
       '<input class="portal-form__input mono" type="text" id="soSiteNavLogoUrl" autocomplete="off" />' +
@@ -725,6 +728,7 @@
       '<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="is-hidden" id="soSiteHomeImgFile" />' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHomeImgPickBtn">Upload…</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHomeImgClearBtn">Clear URL</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHomeImgDeleteBtn">Delete</button>' +
       '</div>' +
       '<label class="portal-form__label" for="soSiteHomeImgUrl">Image URL</label>' +
       '<input class="portal-form__input mono" type="text" id="soSiteHomeImgUrl" autocomplete="off" />' +
@@ -744,6 +748,7 @@
       '<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="is-hidden" id="soSitePropImgFile" />' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSitePropImgPickBtn">Upload…</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSitePropImgClearBtn">Clear URL</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSitePropImgDeleteBtn">Delete</button>' +
       '</div>' +
       '<label class="portal-form__label" for="soSitePropImgUrl">Image URL</label>' +
       '<input class="portal-form__input mono" type="text" id="soSitePropImgUrl" autocomplete="off" />' +
@@ -763,6 +768,7 @@
       '<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="is-hidden" id="soSiteClinicImgFile" />' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteClinicImgPickBtn">Upload…</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteClinicImgClearBtn">Clear URL</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSiteClinicImgDeleteBtn">Delete</button>' +
       '</div>' +
       '<label class="portal-form__label" for="soSiteClinicImgUrl">Image URL</label>' +
       '<input class="portal-form__input mono" type="text" id="soSiteClinicImgUrl" autocomplete="off" />' +
@@ -782,6 +788,7 @@
       '<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="is-hidden" id="soSiteHotelImgFile" />' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHotelImgPickBtn">Upload…</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHotelImgClearBtn">Clear URL</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHotelImgDeleteBtn">Delete</button>' +
       '</div>' +
       '<label class="portal-form__label" for="soSiteHotelImgUrl">Image URL</label>' +
       '<input class="portal-form__input mono" type="text" id="soSiteHotelImgUrl" autocomplete="off" />' +
@@ -989,16 +996,72 @@
         urlInput.dispatchEvent(new Event('input', { bubbles: true }));
       });
     }
+    function bindDeleteUpload(btnId, urlInput) {
+      var btn = document.getElementById(btnId);
+      if (!btn || !urlInput) return;
+      btn.addEventListener('click', function () {
+        var tok = getAdminBearer();
+        if (!tok) {
+          if (hintEl) hintEl.textContent = 'Sign in as admin to remove uploaded files from this server.';
+          return;
+        }
+        var current = String(urlInput.value || '').trim();
+        if (!current) {
+          if (hintEl) hintEl.textContent = 'Nothing to delete.';
+          return;
+        }
+        if (hintEl) hintEl.textContent = 'Removing…';
+        fetch(api('/api/admin/site-appearance/delete-upload'), {
+          method: 'POST',
+          credentials: apiCred(),
+          cache: 'no-store',
+          headers: { Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: current }),
+        })
+          .then(function (r) {
+            return r.json().then(function (j) {
+              return { ok: r.ok, j: j };
+            });
+          })
+          .then(function (x) {
+            if (!x.ok || !x.j || !x.j.ok) {
+              if (hintEl) hintEl.textContent = (x.j && x.j.error) || 'Delete request failed.';
+              return;
+            }
+            urlInput.value = '';
+            urlInput.dispatchEvent(new Event('input', { bubbles: true }));
+            if (hintEl) {
+              if (x.j.deletedFromDisk) {
+                hintEl.textContent = 'Removed file from server. Save to persist empty URL in site config.';
+              } else if (x.j.reason === 'not_site_upload') {
+                hintEl.textContent =
+                  'Cleared URL (not an su-* upload under /assets/site-uploads/). Save to persist.';
+              } else {
+                hintEl.textContent =
+                  'Cleared URL (upload file was already gone). Save to persist empty URL in site config.';
+              }
+            }
+          })
+          .catch(function () {
+            if (hintEl) hintEl.textContent = 'Delete network error.';
+          });
+      });
+    }
     bindAppearanceUpload('soSiteNavLogoPickBtn', 'soSiteNavLogoFile', navLogoUrlEl);
     bindClearUrl('soSiteNavLogoClearBtn', navLogoUrlEl);
+    bindDeleteUpload('soSiteNavLogoDeleteBtn', navLogoUrlEl);
     bindAppearanceUpload('soSiteHomeImgPickBtn', 'soSiteHomeImgFile', homeUrlEl);
     bindClearUrl('soSiteHomeImgClearBtn', homeUrlEl);
+    bindDeleteUpload('soSiteHomeImgDeleteBtn', homeUrlEl);
     bindAppearanceUpload('soSitePropImgPickBtn', 'soSitePropImgFile', urlEl);
     bindClearUrl('soSitePropImgClearBtn', urlEl);
+    bindDeleteUpload('soSitePropImgDeleteBtn', urlEl);
     bindAppearanceUpload('soSiteClinicImgPickBtn', 'soSiteClinicImgFile', clinicUrlEl);
     bindClearUrl('soSiteClinicImgClearBtn', clinicUrlEl);
+    bindDeleteUpload('soSiteClinicImgDeleteBtn', clinicUrlEl);
     bindAppearanceUpload('soSiteHotelImgPickBtn', 'soSiteHotelImgFile', hotelUrlEl);
     bindClearUrl('soSiteHotelImgClearBtn', hotelUrlEl);
+    bindDeleteUpload('soSiteHotelImgDeleteBtn', hotelUrlEl);
     var selAll = document.getElementById('soSiteAppearSelectAll');
     var selNone = document.getElementById('soSiteAppearSelectNone');
     var selClear = document.getElementById('soSiteAppearClearSelected');
@@ -1147,6 +1210,126 @@
     }
   }
 
+  function renderUserProfilingTable() {
+    var tbody = document.getElementById('userProfilingTbody');
+    if (!tbody) return;
+    if (userProfilingLoadState === 'loading') {
+      tbody.innerHTML = '<tr><td colspan="12" class="tf-admin-muted">Loading…</td></tr>';
+      return;
+    }
+    if (userProfilingLoadState === 'error') {
+      tbody.innerHTML = '<tr><td colspan="12" class="tf-admin-muted">Could not load rows.</td></tr>';
+      return;
+    }
+    if (!userProfilingRows.length) {
+      tbody.innerHTML =
+        '<tr><td colspan="12" class="tf-admin-muted">No portal users in the store yet.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = userProfilingRows
+      .map(function (r) {
+        var online = r.currentOnline ? 'Yes' : '—';
+        return (
+          '<tr>' +
+          '<td class="mono">' +
+          escapeHtml(shortDisplayId(r.id)) +
+          '</td>' +
+          '<td>' +
+          escapeHtml(r.email || '') +
+          '</td>' +
+          '<td>' +
+          escapeHtml(r.displayName || displayNameFromEmail(r.email)) +
+          '</td>' +
+          '<td>' +
+          escapeHtml(r.gender || '—') +
+          '</td>' +
+          '<td><span class="' +
+          (r.currentOnline ? 'mono tf-admin-pill tf-admin-pill--ok' : 'mono tf-admin-muted') +
+          '">' +
+          escapeHtml(online) +
+          '</span></td>' +
+          '<td class="mono">' +
+          escapeHtml(formatAdminTs(r.lastActivityAt) || '—') +
+          '</td>' +
+          '<td class="mono">' +
+          String(r.sessionCount != null ? r.sessionCount : 0) +
+          '</td>' +
+          '<td class="mono">' +
+          (r.engagedMinutes != null && r.engagedMinutes > 0 ? String(r.engagedMinutes) : '—') +
+          '</td>' +
+          '<td class="mono">' +
+          String(r.pageViews != null ? r.pageViews : 0) +
+          '</td>' +
+          '<td class="mono">' +
+          String(r.loginCount != null ? r.loginCount : 0) +
+          '</td>' +
+          '<td class="mono">' +
+          escapeHtml(r.lastIp || '—') +
+          '</td>' +
+          '<td>' +
+          escapeHtml(r.lastLocation || '—') +
+          '</td>' +
+          '</tr>'
+        );
+      })
+      .join('');
+  }
+
+  function loadUserProfiling() {
+    var token = getAdminBearer();
+    var hint = document.getElementById('userProfilingHint');
+    if (!token) {
+      if (hint) hint.textContent = 'Sign in with operator credentials on the Node host to load profiling.';
+      userProfilingLoadState = 'error';
+      userProfilingRows = [];
+      renderUserProfilingTable();
+      return;
+    }
+    userProfilingLoadState = 'loading';
+    userProfilingRows = [];
+    renderUserProfilingTable();
+    if (hint) hint.textContent = 'Loading…';
+
+    fetch(api('/api/admin/user-profiling'), {
+      method: 'GET',
+      credentials: apiCred(),
+      cache: 'no-store',
+      headers: { Authorization: 'Bearer ' + token },
+    })
+      .then(function (r) {
+        return r.json().then(function (j) {
+          return { ok: r.ok, j: j };
+        });
+      })
+      .then(function (x) {
+        if (!x.ok || !x.j || !x.j.ok) {
+          userProfilingLoadState = 'error';
+          userProfilingRows = [];
+          if (hint) {
+            hint.textContent = (x.j && x.j.error) || 'Could not load profiling.';
+          }
+          renderUserProfilingTable();
+          return;
+        }
+        userProfilingLoadState = 'ok';
+        userProfilingRows = Array.isArray(x.j.rows) ? x.j.rows : [];
+        var metaMin = x.j.onlineWithinMinutes != null ? x.j.onlineWithinMinutes : 5;
+        if (hint) {
+          hint.innerHTML =
+            'Merged from <code>portal_users</code> and session/activity telemetry. <strong>Online</strong> = last activity (telemetry, last seen, or login) within ' +
+            escapeHtml(String(metaMin)) +
+            ' min. <strong>Engaged min</strong> sums <code>page_leave</code> dwell from <code>user-activity.js</code> (tab hidden/closed). If telemetry is empty, counts stay at zero.';
+        }
+        renderUserProfilingTable();
+      })
+      .catch(function () {
+        userProfilingLoadState = 'error';
+        userProfilingRows = [];
+        if (hint) hint.textContent = 'Network error.';
+        renderUserProfilingTable();
+      });
+  }
+
   function getAdminRouteFromLocation() {
     var raw = window.location.pathname || '';
     var path = raw.replace(/\/+$/, '') || '/';
@@ -1155,6 +1338,7 @@
     if (path === '/admin/site-appearance') return 'site-appearance';
     if (path === '/admin/report-catalog') return 'report-catalog';
     if (path === '/admin/user-reports') return 'user-reports';
+    if (path === '/admin/user-profiling') return 'user-profiling';
     if (path === '/admin/users' || path === '/admin') return 'users';
     if (/\/admin\.html$/i.test(path)) return 'users';
     return 'users';
@@ -1180,6 +1364,7 @@
     row.className = 'tf-admin-nav__row';
     row.appendChild(makeNavLink('Users & payouts', '/admin/users', 'users', id));
     row.appendChild(makeNavLink('Activity log', '/admin/activity', 'activity', id));
+    row.appendChild(makeNavLink('User profiling', '/admin/user-profiling', 'user-profiling', id));
     row.appendChild(makeNavLink('Deploy log', '/admin/deploy-log', 'deploy-log', id));
     row.appendChild(makeNavLink('Site appearance', '/admin/site-appearance', 'site-appearance', id));
     row.appendChild(makeNavLink('Reports', '/operator/reports', 'reports', id));
@@ -1191,6 +1376,7 @@
     var routeId = getAdminRouteFromLocation();
     var main = document.getElementById('adminMainDefault');
     var usersEl = document.getElementById('usersSection');
+    var profilingEl = document.getElementById('userProfilingSection');
     var inboxEl = document.getElementById('adminInbox');
     var reportsEl = document.getElementById('reportCatalogSection');
 
@@ -1219,11 +1405,13 @@
     if (main) main.classList.remove('is-hidden');
     if (panel) panel.classList.add('is-hidden');
     if (usersEl) usersEl.classList.toggle('is-hidden', routeId !== 'users');
+    if (profilingEl) profilingEl.classList.toggle('is-hidden', routeId !== 'user-profiling');
     if (inboxEl) inboxEl.classList.toggle('is-hidden', routeId !== 'activity');
     if (reportsEl) reportsEl.classList.toggle('is-hidden', routeId !== 'users' && routeId !== 'report-catalog');
 
     buildTfNav(routeId);
     window.scrollTo(0, 0);
+    if (routeId === 'user-profiling') loadUserProfiling();
   }
 
   function groupAuditReports(reports) {
@@ -1674,16 +1862,6 @@
       sessionStorage.setItem(SESSION_KEY, '1');
       setHint('Signed in.', 'ok');
       showWorkspace();
-    });
-  }
-
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', function () {
-      hideWorkspace();
-      if (form) form.reset();
-      if (document.getElementById('adminEmailInput')) {
-        document.getElementById('adminEmailInput').value = ADMIN_EMAIL;
-      }
     });
   }
 

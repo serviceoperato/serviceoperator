@@ -514,6 +514,46 @@ function sniffWritableSiteImage(buf) {
   return null;
 }
 
+const SITE_UPLOAD_PUBLIC_PREFIX = '/assets/site-uploads/';
+/** Only names minted by POST …/upload (`su-<timestamp>-<8 hex>.<ext>`). No directory segments, no traversal. */
+const SITE_UPLOAD_DELETABLE_BASENAME_RE = /^su-\d+-[a-f0-9]{8}\.(png|jpe?g|gif|webp)$/i;
+
+function parseSiteUploadDeletableBasenameFromUrl(inputUrl) {
+  const s = String(inputUrl || '').trim();
+  if (!s) return null;
+  let pathname = '';
+  try {
+    if (/^https?:\/\//i.test(s)) pathname = new URL(s).pathname || '';
+    else pathname = s.startsWith('/') ? s : '/' + s;
+  } catch {
+    return null;
+  }
+  pathname = pathname.split('?')[0].split('#')[0].replace(/\/+/g, '/');
+  if (!pathname.startsWith(SITE_UPLOAD_PUBLIC_PREFIX)) return null;
+  const rest = pathname.slice(SITE_UPLOAD_PUBLIC_PREFIX.length);
+  if (!rest || rest.includes('/')) return null;
+  let base;
+  try {
+    base = decodeURIComponent(rest);
+  } catch {
+    return null;
+  }
+  if (base.includes('..') || base.includes('/') || base.includes('\\')) return null;
+  if (!SITE_UPLOAD_DELETABLE_BASENAME_RE.test(base)) return null;
+  return base;
+}
+
+/** Absolute path inside `siteUploadsDir`, or null if it would escape. */
+function resolvedPathInsideSiteUploads(basename) {
+  const safeBase = path.basename(basename);
+  const full = path.join(siteUploadsDir, safeBase);
+  const resolvedFile = path.resolve(full);
+  const resolvedDir = path.resolve(siteUploadsDir);
+  const rel = path.relative(resolvedDir, resolvedFile);
+  if (!rel || rel.startsWith('..') || path.isAbsolute(rel)) return null;
+  return resolvedFile;
+}
+
 function isSafePropertyPageImageUrl(candidate) {
   const s = String(candidate || '').trim();
   if (!s || s.length > 2048) return false;
@@ -906,6 +946,81 @@ function recordAdminLoginFailure(ip) {
   const arr = pruneAdminLoginFails(ip);
   arr.push(Date.now());
   adminLoginFailTimestampsByIp.set(ip, arr);
+}
+
+const ADMIN_USER_PROFILING_WINDOW_MS = 60_000;
+const ADMIN_USER_PROFILING_MAX_PER_WINDOW = 45;
+/** @type {Map<string, number[]>} */
+const adminUserProfilingGetTimestampsByIp = new Map();
+
+function pruneAdminUserProfilingGets(ip) {
+  const now = Date.now();
+  const arr = (adminUserProfilingGetTimestampsByIp.get(ip) || []).filter(
+    (t) => now - t < ADMIN_USER_PROFILING_WINDOW_MS
+  );
+  adminUserProfilingGetTimestampsByIp.set(ip, arr);
+  return arr;
+}
+
+const USER_PROFILING_ONLINE_MINUTES = 5;
+
+async function buildPortalUserProfilingRows() {
+  const onlineWindowMs = USER_PROFILING_ONLINE_MINUTES * 60 * 1000;
+  const now = Date.now();
+  const users = await userStore.listUsers();
+  let byId = {};
+  if (telemetryStore && typeof telemetryStore.listTelemetryProfilingByUser === 'function') {
+    byId = await telemetryStore.listTelemetryProfilingByUser();
+  }
+  const rows = users.map((u) => {
+    const t = byId[u.id] || {};
+    const telemetryMs = t.lastActivityAt ? Date.parse(t.lastActivityAt) : 0;
+    const lastSeenMs = u.lastSeenAt ? Date.parse(u.lastSeenAt) : 0;
+    const lastLoginMs = u.lastLoginAt ? Date.parse(u.lastLoginAt) : 0;
+    const bestTelemetryMs = Number.isFinite(telemetryMs) ? telemetryMs : 0;
+    const bestMs = Math.max(bestTelemetryMs, lastSeenMs, lastLoginMs);
+    const lastActivityIso = bestMs > 0 ? new Date(bestMs).toISOString() : null;
+    const currentOnline = bestMs > 0 && now - bestMs <= onlineWindowMs;
+    const engagedMinutes =
+      typeof t.pageLeaveMs === 'number' && t.pageLeaveMs > 0
+        ? Math.round((t.pageLeaveMs / 60000) * 10) / 10
+        : 0;
+    const cityT = t.lastSessionCity || u.lastLoginCity;
+    const regT = t.lastSessionRegion || u.lastLoginRegion;
+    const ctry = t.lastSessionCountry || u.country;
+    const locParts = [];
+    if (cityT) locParts.push(cityT);
+    if (regT && regT !== cityT) locParts.push(regT);
+    if (ctry) locParts.push(ctry);
+    const lastLocation = locParts.length ? locParts.join(', ') : null;
+    const lastIp = t.lastSessionIp || u.lastLoginIp || null;
+    return {
+      id: u.id,
+      email: u.email,
+      displayName: u.displayName,
+      reportSlug: u.reportSlug,
+      gender: u.gender || null,
+      signupVertical: u.signupVertical || null,
+      createdAt: u.createdAt,
+      lastLoginAt: u.lastLoginAt,
+      firstTelemetryAt: t.firstSessionAt || null,
+      lastActivityAt: lastActivityIso,
+      currentOnline,
+      sessionCount: t.sessionCount || 0,
+      pageViews: t.pageViews || 0,
+      engagedMinutes,
+      lastIp,
+      lastLocation,
+      loginCount: u.loginCount || 0,
+    };
+  });
+  rows.sort((a, b) => {
+    const ta = a.lastActivityAt ? Date.parse(a.lastActivityAt) : 0;
+    const tb = b.lastActivityAt ? Date.parse(b.lastActivityAt) : 0;
+    if (tb !== ta) return tb - ta;
+    return String(a.email).localeCompare(String(b.email));
+  });
+  return rows;
 }
 
 function emailsEqualTiming(a, b) {
@@ -1319,6 +1434,28 @@ async function listPortalUsersForAdmin(_req, res) {
 app.get('/api/user-accounts', requireAdmin, listPortalUsersForAdmin);
 app.get('/api/clinic-users', requireAdmin, listPortalUsersForAdmin);
 
+app.get('/api/admin/user-profiling', requireAdmin, async (_req, res) => {
+  const ip = clientIp(_req);
+  const arr = pruneAdminUserProfilingGets(ip);
+  if (arr.length >= ADMIN_USER_PROFILING_MAX_PER_WINDOW) {
+    return res.status(429).json({ error: 'Too many requests. Try again later.' });
+  }
+  arr.push(Date.now());
+  adminUserProfilingGetTimestampsByIp.set(ip, arr);
+  try {
+    const rows = await buildPortalUserProfilingRows();
+    res.setHeader('Cache-Control', 'no-store');
+    return res.json({
+      ok: true,
+      generatedAt: new Date().toISOString(),
+      onlineWithinMinutes: USER_PROFILING_ONLINE_MINUTES,
+      rows,
+    });
+  } catch (e) {
+    return res.status(500).json({ error: e.message || 'Failed to load user profiling.' });
+  }
+});
+
 app.get('/api/admin/work-queue', requireAdmin, async (_req, res) => {
   try {
     res.json(await buildAdminWorkQueue());
@@ -1464,6 +1601,32 @@ app.post('/api/admin/site-appearance/upload', requireAdmin, (req, res) => {
     return res.status(500).json({ error: e.message || 'Could not save uploaded file.' });
   }
   return res.json({ ok: true, url: `/assets/site-uploads/${base}`, bytes: buf.length });
+});
+
+/** Remove a single file from `public/assets/site-uploads/` (admin only). Body: `{ url }` — only `su-*` names from this server’s upload endpoint are unlinkable; no other paths. */
+app.post('/api/admin/site-appearance/delete-upload', requireAdmin, (req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  const url = typeof req.body?.url === 'string' ? req.body.url.trim() : '';
+  const base = parseSiteUploadDeletableBasenameFromUrl(url);
+  if (!base) {
+    return res.json({ ok: true, deletedFromDisk: false, reason: 'not_site_upload' });
+  }
+  const full = resolvedPathInsideSiteUploads(base);
+  if (!full) return res.status(400).json({ error: 'Invalid upload path.' });
+  let deletedFromDisk = false;
+  try {
+    if (fs.existsSync(full)) {
+      fs.unlinkSync(full);
+      deletedFromDisk = true;
+    }
+  } catch (e) {
+    return res.status(500).json({ error: e.message || 'Could not delete file.' });
+  }
+  return res.json({
+    ok: true,
+    deletedFromDisk,
+    path: `${SITE_UPLOAD_PUBLIC_PREFIX}${base}`,
+  });
 });
 
 app.get('/api/admin/report-catalog', requireAdmin, async (_req, res) => {
@@ -2361,6 +2524,8 @@ app.get(
     '/admin/site-appearance/',
     '/admin/user-reports',
     '/admin/user-reports/',
+    '/admin/user-profiling',
+    '/admin/user-profiling/',
     '/admin/report-catalog',
     '/admin/report-catalog/',
   ],

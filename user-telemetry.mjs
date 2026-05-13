@@ -185,6 +185,84 @@ export function createUserTelemetryStore({ pool, dataDir }) {
           events: events.rows.map(mapActivityRow).filter(Boolean),
         };
       },
+
+      /** Per-user aggregates for operator profiling (sessions + page_view / page_leave from `user-activity.js`). */
+      async listTelemetryProfilingByUser() {
+        const { rows } = await pool.query(`
+          WITH sess_agg AS (
+            SELECT user_id,
+              COUNT(*)::int AS session_count,
+              MIN(started_at) AS first_session_at,
+              MAX(last_seen_at) AS last_session_seen
+            FROM portal_user_sessions
+            GROUP BY user_id
+          ),
+          ev_agg AS (
+            SELECT user_id,
+              COUNT(*) FILTER (WHERE event_type = 'page_view')::int AS page_views,
+              COALESCE(
+                SUM(duration_ms) FILTER (
+                  WHERE event_type = 'page_leave'
+                    AND duration_ms IS NOT NULL
+                    AND duration_ms >= 0
+                    AND duration_ms < 86400000
+                ),
+                0
+              )::bigint AS page_leave_ms,
+              MAX(created_at) AS last_event_at
+            FROM portal_user_activity
+            GROUP BY user_id
+          ),
+          all_u AS (
+            SELECT user_id FROM sess_agg
+            UNION
+            SELECT user_id FROM ev_agg
+          ),
+          latest_sess AS (
+            SELECT DISTINCT ON (user_id)
+              user_id,
+              ip,
+              country,
+              city,
+              region
+            FROM portal_user_sessions
+            ORDER BY user_id, last_seen_at DESC NULLS LAST, started_at DESC
+          )
+          SELECT
+            u.user_id,
+            COALESCE(sa.session_count, 0)::int AS session_count,
+            sa.first_session_at,
+            (SELECT MAX(v)
+             FROM unnest(ARRAY[sa.last_session_seen, ea.last_event_at]) AS t(v)) AS last_activity_at,
+            COALESCE(ea.page_views, 0)::int AS page_views,
+            COALESCE(ea.page_leave_ms, 0)::bigint AS page_leave_ms,
+            ls.ip AS last_session_ip,
+            ls.country AS last_session_country,
+            ls.city AS last_session_city,
+            ls.region AS last_session_region
+          FROM all_u u
+          LEFT JOIN sess_agg sa ON sa.user_id = u.user_id
+          LEFT JOIN ev_agg ea ON ea.user_id = u.user_id
+          LEFT JOIN latest_sess ls ON ls.user_id = u.user_id
+        `);
+        const out = {};
+        for (const row of rows) {
+          const uid = row.user_id;
+          if (!uid) continue;
+          out[uid] = {
+            sessionCount: Number(row.session_count) || 0,
+            firstSessionAt: isoTimestamp(row.first_session_at),
+            lastActivityAt: isoTimestamp(row.last_activity_at),
+            pageViews: Number(row.page_views) || 0,
+            pageLeaveMs: row.page_leave_ms != null ? Number(row.page_leave_ms) : 0,
+            lastSessionIp: row.last_session_ip || null,
+            lastSessionCountry: row.last_session_country || null,
+            lastSessionCity: row.last_session_city || null,
+            lastSessionRegion: row.last_session_region || null,
+          };
+        }
+        return out;
+      },
     };
   }
 
@@ -299,6 +377,87 @@ export function createUserTelemetryStore({ pool, dataDir }) {
           created_at: row.createdAt,
         }));
       return { sessions, events };
+    },
+
+    async listTelemetryProfilingByUser() {
+      const data = load();
+      const map = new Map();
+      function ensure(uid) {
+        if (typeof uid !== 'string' || !uid) return null;
+        let o = map.get(uid);
+        if (!o) {
+          o = {
+            sessionCount: 0,
+            firstSessionAt: null,
+            lastSessionActivityMs: 0,
+            pageViews: 0,
+            pageLeaveMs: 0,
+            lastEventMs: 0,
+            pickGeoMs: -1,
+            lastSessionIp: null,
+            lastSessionCountry: null,
+            lastSessionCity: null,
+            lastSessionRegion: null,
+          };
+          map.set(uid, o);
+        }
+        return o;
+      }
+      for (const s of data.sessions) {
+        const o = ensure(s.userId);
+        if (!o) continue;
+        o.sessionCount += 1;
+        const startedMs = s.startedAt ? Date.parse(s.startedAt) : NaN;
+        if (Number.isFinite(startedMs)) {
+          if (o.firstSessionAt == null || startedMs < Date.parse(o.firstSessionAt)) {
+            o.firstSessionAt = s.startedAt;
+          }
+        }
+        const lastSeenMs = s.lastSeenAt ? Date.parse(s.lastSeenAt) : startedMs;
+        if (Number.isFinite(lastSeenMs) && lastSeenMs > o.lastSessionActivityMs) {
+          o.lastSessionActivityMs = lastSeenMs;
+        }
+        const pickMs = Number.isFinite(lastSeenMs) ? lastSeenMs : NaN;
+        if (Number.isFinite(pickMs) && pickMs >= o.pickGeoMs) {
+          o.pickGeoMs = pickMs;
+          o.lastSessionIp = typeof s.ip === 'string' ? s.ip.trim() || null : s.ip || null;
+          o.lastSessionCountry = typeof s.country === 'string' ? s.country.trim().toUpperCase() || null : null;
+          o.lastSessionCity = typeof s.city === 'string' ? s.city.trim() || null : null;
+          o.lastSessionRegion = typeof s.region === 'string' ? s.region.trim() || null : null;
+        }
+      }
+      for (const e of data.events) {
+        const o = ensure(e.userId);
+        if (!o) continue;
+        if (e.type === 'page_view') o.pageViews += 1;
+        const d = Number(e.durationMs);
+        if (
+          e.type === 'page_leave' &&
+          Number.isFinite(d) &&
+          d >= 0 &&
+          d < 86400000
+        ) {
+          o.pageLeaveMs += Math.round(d);
+        }
+        const et = e.createdAt ? Date.parse(e.createdAt) : NaN;
+        if (Number.isFinite(et) && et > o.lastEventMs) o.lastEventMs = et;
+      }
+      const out = {};
+      for (const [uid, o] of map) {
+        const lastMs = Math.max(o.lastSessionActivityMs, o.lastEventMs);
+        out[uid] = {
+          sessionCount: o.sessionCount,
+          firstSessionAt: o.firstSessionAt,
+          lastActivityAt: lastMs > 0 ? new Date(lastMs).toISOString() : null,
+          pageViews: o.pageViews,
+          pageLeaveMs: o.pageLeaveMs,
+          lastSessionIp: o.lastSessionIp,
+          lastSessionCountry: o.lastSessionCountry,
+          lastSessionCity: o.lastSessionCity,
+          lastSessionRegion: o.lastSessionRegion,
+        };
+      }
+      return out;
     },
   };
 }

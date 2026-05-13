@@ -65,18 +65,6 @@
   <div class="tf-admin-version">Build <strong id="tfAdminVersionNum">—</strong></div>
   <nav id="tfAdminNav" class="tf-admin-nav" aria-label="Admin sections"></nav>
 
-  <header class="admin-topbar">
-    <div class="admin-topbar__site-nav"></div>
-    <div class="admin-topbar__home">
-      <a href="/"><img class="nav__logo-img brand-logo" src="/assets/logo.png" width="160" height="40" alt="Home" decoding="async" /></a>
-      <span>Admin</span>
-    </div>
-    <div class="admin-topbar__meta">Portal user store</div>
-    <div class="admin-topbar__actions">
-      <button type="button" id="adminLogout" class="admin-topbar__logout">Sign out</button>
-    </div>
-  </header>
-
   <main class="admin-main admin-main--wide" id="adminMainDefault">
     <section id="usersSection" class="tf-admin-table-card">
       <h2 class="tf-admin-section-title" id="portal-users">Portal users</h2>
@@ -121,6 +109,32 @@
       <div class="tf-admin-payout-card" id="admin-users-payouts" style="margin-top:1.5rem">
         <h3 class="tf-admin-section-title">Pending email confirmations</h3>
         <div id="pendingRegBody"></div>
+      </div>
+    </section>
+
+    <section id="userProfilingSection" class="tf-admin-table-card is-hidden">
+      <h2 class="tf-admin-section-title" id="portal-user-profiling">User profiling</h2>
+      <p id="userProfilingHint" class="tf-admin-muted"></p>
+      <div style="overflow-x:auto">
+        <table class="tf-users-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Email</th>
+              <th>Name</th>
+              <th>Gender</th>
+              <th>Online</th>
+              <th>Last activity</th>
+              <th>Sessions</th>
+              <th>Engaged min</th>
+              <th>Page views</th>
+              <th>Logins</th>
+              <th>Last IP</th>
+              <th>Location</th>
+            </tr>
+          </thead>
+          <tbody id="userProfilingTbody"></tbody>
+        </table>
       </div>
     </section>
 

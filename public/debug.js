@@ -859,7 +859,7 @@
   lines.push({
     cat: 'AUTH',
     text:
-      '80 · admin routes: GET /api/admin/capabilities · POST /api/admin/login · POST /api/admin/bootstrap-from-portal · GET /api/admin/work-queue · GET/PUT /api/admin/site-appearance · POST /api/admin/site-appearance/upload · PATCH /api/user-accounts/:id',
+      '80 · admin routes: GET /api/admin/capabilities · POST /api/admin/login · POST /api/admin/bootstrap-from-portal · GET /api/admin/work-queue · GET/PUT /api/admin/site-appearance · POST /api/admin/site-appearance/upload · POST /api/admin/site-appearance/delete-upload · PATCH /api/user-accounts/:id',
   });
   lines.push({
     cat: 'OPS',
