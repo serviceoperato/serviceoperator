@@ -2000,7 +2000,8 @@ html.so-site-nav-open {
   color: var(--amber-2);
 }
 
-.page-admin--with-nav #adminWorkspace {
+.page-admin--with-nav #adminWorkspace,
+.page-admin--with-nav #operatorReportsWorkspace {
   padding-top: var(--site-nav-offset);
   box-sizing: border-box;
 }
@@ -2121,6 +2122,10 @@ html.so-site-nav-open {
 .admin-topbar__logout:hover {
   border-color: var(--amber);
   color: var(--paper);
+}
+a.admin-topbar__logout {
+  text-decoration: none;
+  display: inline-block;
 }
 @media (max-width: 560px) {
   .admin-topbar { flex-wrap: wrap; }

@@ -893,3 +893,49 @@ body.audit-report.page-client {
 [data-theme="light"] .so-heatmap__scale-grad {
   background: linear-gradient(90deg, #e2e8f0, #fdba74, #ef4444);
 }
+
+/* ---- Hero: service opportunity rating (4.8/5, not implied 5/5) ---- */
+.audit-hero-rating {
+  margin: 0.65rem 0 1.1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+.audit-hero-rating__row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  line-height: 1.2;
+}
+.audit-hero-rating__stars {
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  color: #d4af6a;
+  text-shadow: 0 0 0.5px rgba(0, 0, 0, 0.35);
+}
+.audit-hero-rating__score {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  letter-spacing: 0.02em;
+}
+.audit-hero-rating__caption {
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+  max-width: 28rem;
+}
+[data-theme="light"] .audit-hero-rating__stars {
+  color: #b8860b;
+  text-shadow: none;
+}
+[data-theme="light"] .audit-hero-rating__score {
+  color: var(--color-text-primary);
+}
+[data-theme="light"] .audit-hero-rating__caption {
+  color: var(--color-text-secondary);
+}

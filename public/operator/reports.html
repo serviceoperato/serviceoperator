@@ -32,8 +32,9 @@
   </div>
 </nav>
 
-<main class="tf-admin-table-card" style="max-width:1200px;margin:1.25rem auto 3rem;padding:0 1rem">
-  <nav class="tf-admin-nav" aria-label="Operator sections" style="margin-bottom:1rem">
+<div id="operatorReportsWorkspace" class="admin-workspace admin-workspace--tf">
+  <div class="tf-admin-version">Build <strong id="orTfVer">—</strong></div>
+  <nav class="tf-admin-nav" aria-label="Operator sections">
     <div class="tf-admin-nav__row">
       <a class="tf-admin-nav__pill" href="/admin/users">Users &amp; payouts</a>
       <a class="tf-admin-nav__pill" href="/admin/activity">Activity log</a>
@@ -45,32 +46,48 @@
     </div>
   </nav>
 
-  <h1 class="tf-admin-section-title" style="font-size:1.1rem;margin-bottom:0.35rem">Audit reports</h1>
-  <p class="tf-admin-muted" style="margin:0 0 1rem">
-    Historical audit and report links the server knows about (manifest, slug JSON under <code class="mono">public/clinics/data/</code>, and portal users with a <code class="mono">reportSlug</code>).
-  </p>
+  <header class="admin-topbar">
+    <div class="admin-topbar__site-nav"></div>
+    <div class="admin-topbar__home">
+      <a href="/"><img class="nav__logo-img brand-logo" src="/assets/logo.png" width="160" height="40" alt="Home" decoding="async" /></a>
+      <span>Admin</span>
+    </div>
+    <div class="admin-topbar__meta">Audit reports</div>
+    <div class="admin-topbar__actions">
+      <a href="/admin/users" class="admin-topbar__logout">Operator home</a>
+    </div>
+  </header>
 
-  <p id="orGate" class="tf-admin-muted" hidden></p>
-  <p id="orErr" class="tf-admin-muted" style="color:var(--danger,#c44)" hidden></p>
+  <main class="admin-main admin-main--wide">
+    <section class="tf-admin-table-card">
+      <h1 class="tf-admin-section-title" style="font-size:1.1rem;margin-bottom:0.35rem">Audit reports</h1>
+      <p class="tf-admin-muted" style="margin:0 0 1rem">
+        Historical audit and report links the server knows about (manifest, slug JSON under <code class="mono">public/clinics/data/</code>, and portal users with a <code class="mono">reportSlug</code>).
+      </p>
 
-  <div style="overflow-x:auto">
-    <table class="tf-users-table" id="orTable" hidden>
-      <thead>
-        <tr>
-          <th scope="col">Updated</th>
-          <th scope="col">Vertical</th>
-          <th scope="col">Title</th>
-          <th scope="col">Subject</th>
-          <th scope="col">Status</th>
-          <th scope="col">View</th>
-          <th scope="col">Artifacts</th>
-        </tr>
-      </thead>
-      <tbody id="orTbody"></tbody>
-    </table>
-  </div>
-  <p id="orEmpty" class="tf-admin-muted" hidden>No reports in the catalog yet. Add entries to <code class="mono">public/reports/index.json</code> or drop JSON under <code class="mono">public/clinics/data/</code>, then assign slugs to portal users from the operator console.</p>
-</main>
+      <p id="orGate" class="tf-admin-muted" hidden></p>
+      <p id="orErr" class="tf-admin-muted" style="color:var(--danger,#c44)" hidden></p>
+
+      <div style="overflow-x:auto">
+        <table class="tf-users-table" id="orTable" hidden>
+          <thead>
+            <tr>
+              <th scope="col">Updated</th>
+              <th scope="col">Vertical</th>
+              <th scope="col">Title</th>
+              <th scope="col">Subject</th>
+              <th scope="col">Status</th>
+              <th scope="col">View</th>
+              <th scope="col">Artifacts</th>
+            </tr>
+          </thead>
+          <tbody id="orTbody"></tbody>
+        </table>
+      </div>
+      <p id="orEmpty" class="tf-admin-muted" hidden>No reports in the catalog yet. Add entries to <code class="mono">public/reports/index.json</code> or drop JSON under <code class="mono">public/clinics/data/</code>, then assign slugs to portal users from the operator console.</p>
+    </section>
+  </main>
+</div>
 
 <script src="/theme.js"></script>
 <script src="/user-account-menu.js"></script>
@@ -105,6 +122,20 @@
   var table = document.getElementById('orTable');
   var tbody = document.getElementById('orTbody');
   var empty = document.getElementById('orEmpty');
+  var verEl = document.getElementById('orTfVer');
+
+  fetch(api('/api/version'), { credentials: cred() })
+    .then(function (r) {
+      return r.json().then(function (j) {
+        return j && j.version ? String(j.version) : '—';
+      });
+    })
+    .then(function (v) {
+      if (verEl) verEl.textContent = v;
+    })
+    .catch(function () {
+      if (verEl) verEl.textContent = '—';
+    });
 
   var token = jwt();
   if (!token) {
