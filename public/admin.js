@@ -1210,6 +1210,169 @@
     }
   }
 
+  function openIconsPanel() {
+    if (!panel || !panelTitle || !panelBody) return;
+    if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.add('is-hidden');
+    panelTitle.textContent = 'Icons';
+    var rows = [
+      {
+        key: 'theme-sun',
+        title: 'Nav — theme (sun)',
+        hint: 'When the site is in dark mode, the header toggle shows this control (switch to light). Applies on every page that includes theme.js.',
+      },
+      {
+        key: 'theme-moon',
+        title: 'Nav — theme (moon)',
+        hint: 'When the site is in light mode, the toggle shows this control (switch to dark).',
+      },
+      {
+        key: 'home-sector-hotels',
+        title: 'Home — Hotels sector card',
+        hint: 'Homepage sector grid: Hotels & serviced apartments icon area.',
+      },
+      {
+        key: 'home-sector-clinics',
+        title: 'Home — Clinics sector card',
+        hint: 'Homepage sector grid: Clinics, dental & wellness icon area.',
+      },
+      {
+        key: 'home-sector-property',
+        title: 'Home — Property sector card',
+        hint: 'Homepage sector grid: Property & rental operators icon area.',
+      },
+      {
+        key: 'home-markets',
+        title: 'Home — “Markets” row icon',
+        hint: 'Small icon beside “Thailand & International Markets” on the homepage.',
+      },
+    ];
+    var fieldsHtml = rows
+      .map(function (row) {
+        return (
+          '<div class="portal-form" style="margin:0 0 1rem">' +
+          '<label class="portal-form__label" for="soIcon-' +
+          row.key +
+          '">' +
+          escapeHtml(row.title) +
+          ' <span class="mono">(' +
+          escapeHtml(row.key) +
+          ')</span></label>' +
+          '<p class="portal-form__hint tf-admin-muted" style="margin:0 0 0.35rem">' +
+          escapeHtml(row.hint) +
+          '</p>' +
+          '<textarea class="portal-form__input mono" id="soIcon-' +
+          row.key +
+          '" rows="3" style="min-height:3.5rem;resize:vertical" spellcheck="false" autocomplete="off" placeholder="Paste /assets/… or https://… URL, or inline &lt;svg&gt;…"></textarea>' +
+          '</div>'
+        );
+      })
+      .join('');
+    panelBody.innerHTML =
+      '<div class="so-site-appearance">' +
+      '<p class="tf-admin-muted so-site-appearance__lede">Replace icons for the shared nav and the homepage B2B slots below. Values persist in <code class="mono">site-appearance.json</code> as an <code class="mono">icons</code> map and are published on <code class="mono">GET /api/site-appearance</code> (same document as hero images and the nav logo). Use a path on this site (<code class="mono">/assets/…</code>), a public <strong>https</strong> image URL, or full inline <strong>&lt;svg&gt;…&lt;/svg&gt;</strong> markup. Clear a field and save to remove that override.</p>' +
+      fieldsHtml +
+      '<div class="so-site-appearance__footer">' +
+      '<p class="portal-form__hint mono" id="soIconsHint" style="margin:0;flex:1;min-width:12rem"></p>' +
+      '<div class="admin-panel__actions" style="margin:0">' +
+      '<button type="button" class="btn btn--primary" id="soIconsSave">Save icons</button> ' +
+      '<a href="/admin/users" class="btn btn--ghost mono" id="soIconsBack">← Users &amp; payouts</a>' +
+      '</div></div></div>';
+    panel.classList.remove('is-hidden');
+    window.scrollTo(0, 0);
+
+    var hintEl = document.getElementById('soIconsHint');
+    var serverIcons = {};
+    var token = getAdminBearer();
+
+    function fillFromServer() {
+      rows.forEach(function (row) {
+        var el = document.getElementById('soIcon-' + row.key);
+        if (!el) return;
+        var v = serverIcons[row.key];
+        el.value = typeof v === 'string' ? v : '';
+      });
+    }
+
+    if (!token) {
+      if (hintEl) {
+        hintEl.textContent =
+          'Sign in as admin on the Node host to load and save. Visitors read overrides from GET /api/site-appearance.';
+      }
+      return;
+    }
+
+    fetch(api('/api/admin/site-appearance'), {
+      method: 'GET',
+      credentials: apiCred(),
+      cache: 'no-store',
+      headers: { Authorization: 'Bearer ' + token },
+    })
+      .then(function (r) {
+        return r.json().then(function (j) {
+          return { ok: r.ok, status: r.status, j: j };
+        });
+      })
+      .then(function (x) {
+        if (!x.ok || !x.j) {
+          serverIcons = {};
+          if (hintEl) {
+            hintEl.textContent =
+              'Could not load settings (HTTP ' + (x.status != null ? x.status : '?') + ').';
+          }
+          fillFromServer();
+          return;
+        }
+        serverIcons = x.j.icons && typeof x.j.icons === 'object' ? x.j.icons : {};
+        if (hintEl) hintEl.textContent = 'Loaded from API.';
+        fillFromServer();
+      })
+      .catch(function () {
+        serverIcons = {};
+        if (hintEl) hintEl.textContent = 'Network error loading settings.';
+        fillFromServer();
+      });
+
+    var saveBtn = document.getElementById('soIconsSave');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', function () {
+        var next = Object.assign({}, serverIcons);
+        rows.forEach(function (row) {
+          var el = document.getElementById('soIcon-' + row.key);
+          var v = el ? el.value.trim() : '';
+          if (v) next[row.key] = v;
+          else delete next[row.key];
+        });
+        if (hintEl) hintEl.textContent = 'Saving…';
+        fetch(api('/api/admin/site-appearance'), {
+          method: 'PUT',
+          credentials: apiCred(),
+          cache: 'no-store',
+          headers: {
+            Authorization: 'Bearer ' + getAdminBearer(),
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ icons: next }),
+        })
+          .then(function (r) {
+            return r.json().then(function (j) {
+              return { ok: r.ok, j: j };
+            });
+          })
+          .then(function (x) {
+            if (!x.ok) {
+              if (hintEl) hintEl.textContent = (x.j && x.j.error) || 'Save failed.';
+              return;
+            }
+            serverIcons = x.j.icons && typeof x.j.icons === 'object' ? x.j.icons : next;
+            if (hintEl) hintEl.textContent = 'Saved. Visitors pick this up on the next page load.';
+          })
+          .catch(function () {
+            if (hintEl) hintEl.textContent = 'Network error on save.';
+          });
+      });
+    }
+  }
+
   function renderUserProfilingTable() {
     var tbody = document.getElementById('userProfilingTbody');
     if (!tbody) return;
@@ -1336,6 +1499,7 @@
     if (path === '/admin/activity') return 'activity';
     if (path === '/admin/deploy-log') return 'deploy-log';
     if (path === '/admin/site-appearance') return 'site-appearance';
+    if (path === '/admin/icons') return 'icons';
     if (path === '/admin/report-catalog') return 'report-catalog';
     if (path === '/admin/user-reports') return 'user-reports';
     if (path === '/admin/user-profiling') return 'user-profiling';
@@ -1367,6 +1531,7 @@
     row.appendChild(makeNavLink('User profiling', '/admin/user-profiling', 'user-profiling', id));
     row.appendChild(makeNavLink('Deploy log', '/admin/deploy-log', 'deploy-log', id));
     row.appendChild(makeNavLink('Site appearance', '/admin/site-appearance', 'site-appearance', id));
+    row.appendChild(makeNavLink('Icons', '/admin/icons', 'icons', id));
     row.appendChild(makeNavLink('Reports', '/operator/reports', 'reports', id));
     row.appendChild(makeNavLink('Report catalog', '/reports/catalog.html', 'report-catalog', id));
     row.appendChild(makeNavLink('User reports', '/admin/user-reports', 'user-reports', id));
@@ -1391,6 +1556,13 @@
     if (routeId === 'site-appearance') {
       if (main) main.classList.add('is-hidden');
       openBrandingPanel();
+      buildTfNav(routeId);
+      window.scrollTo(0, 0);
+      return;
+    }
+    if (routeId === 'icons') {
+      if (main) main.classList.add('is-hidden');
+      openIconsPanel();
       buildTfNav(routeId);
       window.scrollTo(0, 0);
       return;

@@ -489,6 +489,7 @@ function mergeSiteAppearance(raw) {
   const navLogoAlt = navLogoAltRaw
     ? navLogoAltRaw.slice(0, 180).replace(/[\u0000-\u001f\u007f]/g, '')
     : defaultSiteAppearance.navLogoAlt;
+  const icons = mergeIconsMap(raw.icons);
   return {
     propertyPageImageUrl: propUrl,
     propertyPageImageAlt: propAlt,
@@ -500,6 +501,7 @@ function mergeSiteAppearance(raw) {
     homePageImageAlt: homeAlt,
     navLogoUrl,
     navLogoAlt,
+    icons,
   };
 }
 
@@ -570,6 +572,47 @@ function isSafePropertyPageImageUrl(candidate) {
   } catch {
     return false;
   }
+}
+
+const SO_ICON_KEY_RE = /^[a-z0-9][a-z0-9_-]{0,63}$/i;
+const SO_ICON_MAX_KEYS = 48;
+const SO_ICON_SVG_MAX_BYTES = 49152;
+
+function normalizeSiteIconKey(k) {
+  const s = String(k || '').trim().toLowerCase();
+  if (!s || !SO_ICON_KEY_RE.test(s)) return '';
+  return s;
+}
+
+/** Strip common XSS vectors from admin-supplied inline SVG (stored JSON is admin-only but served on public GET). */
+function sanitizeSiteIconSvgMarkup(html) {
+  let t = String(html || '').trim();
+  if (!t || t.length > SO_ICON_SVG_MAX_BYTES) return '';
+  if (!/<svg[\s/>]/i.test(t)) return '';
+  t = t.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '');
+  t = t.replace(/\s+on[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '');
+  t = t.replace(/javascript:/gi, '');
+  return t;
+}
+
+function mergeIconsMap(rawIcons) {
+  const out = {};
+  if (!rawIcons || typeof rawIcons !== 'object' || Array.isArray(rawIcons)) return out;
+  for (const [k0, v0] of Object.entries(rawIcons)) {
+    const k = normalizeSiteIconKey(k0);
+    if (!k) continue;
+    let v = String(v0 ?? '').trim();
+    if (!v) continue;
+    if (/<svg[\s/>]/i.test(v)) {
+      v = sanitizeSiteIconSvgMarkup(v);
+      if (!v) continue;
+    } else if (!isSafePropertyPageImageUrl(v)) {
+      continue;
+    }
+    out[k] = v;
+    if (Object.keys(out).length >= SO_ICON_MAX_KEYS) break;
+  }
+  return out;
 }
 
 function normalizePageImageAlt(s, fallback) {
@@ -1546,6 +1589,46 @@ app.put('/api/admin/site-appearance', requireAdmin, (req, res) => {
       ? normalizePageImageAlt(body.navLogoAlt, defaultSiteAppearance.navLogoAlt).slice(0, 180)
       : cur.navLogoAlt;
 
+  let nextIcons = cur.icons && typeof cur.icons === 'object' ? { ...cur.icons } : {};
+  if ('icons' in body) {
+    const incoming = body.icons;
+    if (incoming === null) {
+      nextIcons = {};
+    } else if (typeof incoming === 'object' && incoming !== null && !Array.isArray(incoming)) {
+      for (const [k0, v0] of Object.entries(incoming)) {
+        const k = normalizeSiteIconKey(k0);
+        if (!k) {
+          return res.status(400).json({
+            error: `Invalid icon key "${String(k0).slice(0, 80)}". Use letters, digits, hyphen, underscore (max 64 chars).`,
+          });
+        }
+        const vs = String(v0 ?? '').trim();
+        if (!vs) {
+          delete nextIcons[k];
+          continue;
+        }
+        if (/<svg[\s/>]/i.test(vs)) {
+          const cleaned = sanitizeSiteIconSvgMarkup(vs);
+          if (!cleaned) {
+            return res.status(400).json({
+              error: `Invalid or disallowed SVG for icon "${k}" (max ${SO_ICON_SVG_MAX_BYTES} bytes, must include an <svg> root).`,
+            });
+          }
+          nextIcons[k] = cleaned;
+        } else if (isSafePropertyPageImageUrl(vs)) {
+          nextIcons[k] = vs;
+        } else {
+          return res.status(400).json({
+            error: `Invalid icon value for "${k}". Use a path starting with / (no spaces) or an https:// image URL, or inline <svg>… markup.`,
+          });
+        }
+        if (Object.keys(nextIcons).length > SO_ICON_MAX_KEYS) {
+          return res.status(400).json({ error: `Too many icon keys (max ${SO_ICON_MAX_KEYS}).` });
+        }
+      }
+    }
+  }
+
   const next = {
     propertyPageImageUrl: propUrl,
     propertyPageImageAlt: propAlt,
@@ -1557,6 +1640,7 @@ app.put('/api/admin/site-appearance', requireAdmin, (req, res) => {
     homePageImageAlt: homeAlt,
     navLogoUrl,
     navLogoAlt,
+    icons: nextIcons,
   };
   try {
     fs.writeFileSync(siteAppearancePath, JSON.stringify(next, null, 2) + '\n', 'utf8');
@@ -2521,6 +2605,8 @@ app.get(
     '/admin/deploy-log/',
     '/admin/site-appearance',
     '/admin/site-appearance/',
+    '/admin/icons',
+    '/admin/icons/',
     '/admin/user-reports',
     '/admin/user-reports/',
     '/admin/user-profiling',
