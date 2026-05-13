@@ -1,7 +1,12 @@
 (function () {
   'use strict';
 
-  var SECTOR_VALUES = ['hotels', 'clinics', 'properties', 'other'];
+  var SECTOR_OPTS = [
+    { value: 'hotels', label: 'Hotels' },
+    { value: 'clinics', label: 'Clinics' },
+    { value: 'property', label: 'Property' },
+    { value: 'other', label: 'Other' },
+  ];
 
   function el(tag, className, text) {
     var node = document.createElement(tag);
@@ -10,23 +15,12 @@
     return node;
   }
 
-  /** @param {string} sectorDefault */
-  function inferSectorSlug(sectorDefault) {
-    var s = (sectorDefault || '').toLowerCase();
-    if (!s) return null;
-    if (s.indexOf('cross-vertical') !== -1 || s.indexOf('cross vertical') !== -1) return null;
-    if (s.indexOf('property') !== -1 || s.indexOf('rental') !== -1) return 'properties';
-    if (s.indexOf('hotel') !== -1) return 'hotels';
-    if (s.indexOf('clinic') !== -1 || s.indexOf('dental') !== -1) return 'clinics';
-    return null;
-  }
-
   function mount(root) {
     if (!root || root.getAttribute('data-inquiry-mounted') === '1') return;
     root.setAttribute('data-inquiry-mounted', '1');
 
     var topic = (root.getAttribute('data-inquiry-topic') || '').trim();
-    var sectorDefault = (root.getAttribute('data-inquiry-sector') || '').trim();
+    var sectorPreset = (root.getAttribute('data-inquiry-sector-preset') || '').trim().toLowerCase();
     var source = (root.getAttribute('data-inquiry-source') || '').trim() || window.location.pathname || '/';
     var submitLabel = (root.getAttribute('data-inquiry-submit') || '').trim() || 'Send inquiry';
 
@@ -38,106 +32,104 @@
     status.setAttribute('aria-live', 'polite');
     status.hidden = true;
 
-    function field(id, labelText, options) {
-      options = options || {};
-      var wrap = el('label', 'inquiry-form__field');
-      wrap.setAttribute('for', id);
-      wrap.appendChild(el('span', 'inquiry-form__label', labelText));
-      var control;
-      if (options.multiline) {
-        control = document.createElement('textarea');
-        control.rows = 4;
-      } else {
-        control = document.createElement('input');
-        control.type = 'text';
-      }
-      control.id = id;
-      control.name = options.name || id;
-      control.className = 'inquiry-form__control';
-      control.required = true;
-      control.autocomplete = options.autocomplete || 'off';
-      if (options.placeholder) control.placeholder = options.placeholder;
-      if (options.value) control.value = options.value;
-      wrap.appendChild(control);
-      return { wrap: wrap, control: control };
-    }
+    var emailWrap = el('label', 'inquiry-form__field');
+    emailWrap.setAttribute('for', 'inquiry-email');
+    emailWrap.appendChild(el('span', 'inquiry-form__label', 'Work email'));
+    var emailInput = document.createElement('input');
+    emailInput.type = 'email';
+    emailInput.id = 'inquiry-email';
+    emailInput.name = 'email';
+    emailInput.className = 'inquiry-form__control';
+    emailInput.required = true;
+    emailInput.autocomplete = 'email';
+    emailInput.maxLength = 254;
+    emailWrap.appendChild(emailInput);
 
-    var nameField = field('inquiry-name', 'Name', { autocomplete: 'name' });
-    var businessField = field('inquiry-business', 'Business', { autocomplete: 'organization' });
-
-    var sectorFieldset = el('fieldset', 'inquiry-form__field so-sector-choice');
-    sectorFieldset.appendChild(el('legend', 'inquiry-form__label', 'Sector'));
-    var sectorGrid = el('div', 'so-sector-choice__grid');
-    sectorGrid.setAttribute('role', 'presentation');
-    var sectorInputs = [];
-    var initialSlug = inferSectorSlug(sectorDefault);
-    for (var si = 0; si < SECTOR_VALUES.length; si++) {
-      var val = SECTOR_VALUES[si];
+    var sectorFs = el('fieldset', 'inquiry-form__field so-sector-choice');
+    sectorFs.appendChild(el('legend', 'inquiry-form__label', 'Sector'));
+    var grid = el('div', 'so-sector-choice__grid');
+    grid.setAttribute('role', 'presentation');
+    var sectorRadios = [];
+    for (var si = 0; si < SECTOR_OPTS.length; si++) {
+      var opt = SECTOR_OPTS[si];
       var lab = el('label', 'so-sector-choice__opt');
-      var inp = document.createElement('input');
-      inp.type = 'radio';
-      inp.name = 'sector';
-      inp.value = val;
-      inp.className = 'so-sector-choice__input';
-      if (si === 0) inp.required = true;
-      if (initialSlug && val === initialSlug) inp.checked = true;
-      sectorInputs.push(inp);
-      var labelText = val === 'properties' ? 'Property' : val === 'other' ? 'Other' : val.charAt(0).toUpperCase() + val.slice(1);
-      lab.appendChild(inp);
-      lab.appendChild(document.createTextNode(labelText));
-      sectorGrid.appendChild(lab);
+      var rad = document.createElement('input');
+      rad.type = 'radio';
+      rad.name = 'sector';
+      rad.value = opt.value;
+      rad.className = 'so-sector-choice__input';
+      rad.required = si === 0;
+      lab.appendChild(rad);
+      lab.appendChild(document.createTextNode(' ' + opt.label));
+      grid.appendChild(lab);
+      sectorRadios.push(rad);
     }
-    sectorFieldset.appendChild(sectorGrid);
+    sectorFs.appendChild(grid);
 
-    var improvementField = field('inquiry-improvement', 'What do you want to improve?', {
-      name: 'improvement',
-      multiline: true,
-      placeholder: 'One urgent operational pain, bottleneck, or goal.',
-    });
+    if (sectorPreset === 'hotels' || sectorPreset === 'clinics' || sectorPreset === 'property' || sectorPreset === 'other') {
+      for (var j = 0; j < sectorRadios.length; j++) {
+        if (sectorRadios[j].value === sectorPreset) {
+          sectorRadios[j].checked = true;
+          break;
+        }
+      }
+    }
 
-    form.appendChild(nameField.wrap);
-    form.appendChild(businessField.wrap);
-    form.appendChild(sectorFieldset);
-    form.appendChild(improvementField.wrap);
+    var improveWrap = el('label', 'inquiry-form__field');
+    improveWrap.setAttribute('for', 'inquiry-improve');
+    improveWrap.appendChild(el('span', 'inquiry-form__label', 'What should we improve first?'));
+    var improveTa = document.createElement('textarea');
+    improveTa.id = 'inquiry-improve';
+    improveTa.name = 'improveFirst';
+    improveTa.className = 'inquiry-form__control';
+    improveTa.rows = 4;
+    improveTa.required = true;
+    improveTa.placeholder = 'One urgent operational pain, bottleneck, or goal.';
+    improveWrap.appendChild(improveTa);
+
+    var hpWrap = el('div', 'inquiry-form__hp');
+    hpWrap.setAttribute('aria-hidden', 'true');
+    var hpLab = el('label', null, 'Company website');
+    hpLab.setAttribute('for', 'inquiry-company-url');
+    var hpInput = document.createElement('input');
+    hpInput.type = 'text';
+    hpInput.id = 'inquiry-company-url';
+    hpInput.name = 'company_url';
+    hpInput.tabIndex = -1;
+    hpInput.autocomplete = 'off';
+    hpLab.appendChild(hpInput);
+    hpWrap.appendChild(hpLab);
 
     var actions = el('div', 'inquiry-form__actions');
     var submit = el('button', 'btn btn-primary inquiry-form__submit', submitLabel);
     submit.type = 'submit';
     actions.appendChild(submit);
+
+    form.appendChild(emailWrap);
+    form.appendChild(sectorFs);
+    form.appendChild(improveWrap);
+    form.appendChild(hpWrap);
     form.appendChild(actions);
     form.appendChild(status);
-
-    function getSectorValue() {
-      for (var i = 0; i < sectorInputs.length; i++) {
-        if (sectorInputs[i].checked) return sectorInputs[i].value;
-      }
-      return '';
-    }
-
-    function applySectorDefault() {
-      var slug = inferSectorSlug(sectorDefault);
-      for (var i = 0; i < sectorInputs.length; i++) {
-        sectorInputs[i].checked = Boolean(slug && sectorInputs[i].value === slug);
-      }
-    }
 
     form.addEventListener('submit', function (event) {
       event.preventDefault();
       status.hidden = true;
       status.classList.remove('is-error', 'is-success');
 
-      var sector = getSectorValue();
+      var sectorEl = form.querySelector('input[name="sector"]:checked');
+      var sector = sectorEl ? String(sectorEl.value || '').trim() : '';
       var payload = {
-        name: nameField.control.value.trim(),
-        business: businessField.control.value.trim(),
+        email: emailInput.value.trim(),
         sector: sector,
-        improvement: improvementField.control.value.trim(),
+        improveFirst: improveTa.value.trim(),
         topic: topic,
         source: source,
+        company_url: hpInput.value.trim(),
       };
 
-      if (!payload.name || !payload.business || !payload.sector || !payload.improvement) {
-        status.textContent = 'Please fill in all fields.';
+      if (!payload.email || !payload.sector || !payload.improveFirst) {
+        status.textContent = 'Please enter your work email, choose a sector, and describe what to improve first.';
         status.classList.add('is-error');
         status.hidden = false;
         return;
@@ -174,7 +166,14 @@
           status.classList.add('is-success');
           status.hidden = false;
           form.reset();
-          applySectorDefault();
+          if (sectorPreset === 'hotels' || sectorPreset === 'clinics' || sectorPreset === 'property' || sectorPreset === 'other') {
+            for (var k = 0; k < sectorRadios.length; k++) {
+              if (sectorRadios[k].value === sectorPreset) {
+                sectorRadios[k].checked = true;
+                break;
+              }
+            }
+          }
           submit.textContent = 'Sent';
         })
         .catch(function (error) {

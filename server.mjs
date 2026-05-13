@@ -2022,12 +2022,26 @@ app.post('/api/marketing/lead-event', async (req, res) => {
 });
 
 /**
- * Pricing tier inquiry: creates or verifies a portal account, emails ops, logs lead_events,
- * issues the same Bearer JWT + telemetry session as POST /api/auth/user-login.
+ * Pricing tier request: lead-only — emails ops via Resend, logs lead_events.
+ * Does not create a portal user or return a JWT (use /register or login separately).
  * POST /api/marketing/pricing-inquiry
- * Body: { plan, email, password, name, business, sector, improvement, source? }
+ * Body: { plan, email, sector, improveFirst, source?, company_url? (honeypot) }
+ * Legacy: improvement (alias for improveFirst); sector values property/properties accepted.
  */
 app.post('/api/marketing/pricing-inquiry', async (req, res) => {
+  if (inquiryHoneypotTripped(req.body)) {
+    return res.json({
+      ok: true,
+      message: 'Thanks — your request was sent. Jack will follow up shortly.',
+    });
+  }
+  if (!RESEND_API_KEY) {
+    return res.status(503).json({
+      error:
+        'Request delivery is not configured on this server (missing RESEND_API_KEY). Try again after deploy or email jack@serviceopera.to.',
+    });
+  }
+
   const ip = clientIp(req);
   const piHits = prunePricingInquiryHits(ip);
   if (piHits.length >= PRICING_INQUIRY_MAX_PER_IP) {
@@ -2042,102 +2056,64 @@ app.post('/api/marketing/pricing-inquiry', async (req, res) => {
   }
 
   const emailRaw = typeof req.body?.email === 'string' ? req.body.email : '';
-  const password = typeof req.body?.password === 'string' ? req.body.password : '';
   if (!isValidInquiryEmail(emailRaw)) {
-    return res.status(400).json({ error: 'Enter a valid email address.' });
-  }
-  if (typeof password !== 'string' || password.length < 8) {
-    return res.status(400).json({ error: 'Password must be at least 8 characters.' });
+    return res.status(400).json({ error: 'Enter a valid work email address.' });
   }
 
-  const name = clipFreeText(req.body?.name, 120);
-  const business = clipFreeText(req.body?.business, 160);
-  const sector = clipFreeText(req.body?.sector, 120);
-  const improvement = clipFreeText(req.body?.improvement, 2000);
+  const sectorSlug = normalizeInquirySector(req.body?.sector);
+  if (!sectorSlug) {
+    return res.status(400).json({ error: 'Choose a sector: hotels, clinics, property, or other.' });
+  }
+
+  const improveFirst = clipImproveFirst(req.body);
+  if (!improveFirst) {
+    return res.status(400).json({ error: 'Tell us what we should improve first.' });
+  }
+
   const source = clipFreeText(req.body?.source, 200);
-  if (!name || !business || !sector || !improvement) {
-    return res.status(400).json({ error: 'Name, business, sector, and what you want to improve are required.' });
-  }
-
   const email = normalizeEmail(emailRaw);
-
-  const pending = await userStore.findPendingByEmail(email);
-  if (pending) {
-    return res.status(403).json({
-      error:
-        'This email has a pending registration. Confirm the link in your inbox first, or use a different email.',
-    });
-  }
-
-  let user = await userStore.verifyLogin(email, password);
-  if (!user) {
-    const existing = await userStore.getUserByEmail(email);
-    if (existing) {
-      return res.status(401).json({ error: 'Invalid email or password for this account.' });
-    }
-    try {
-      user = await userStore.createUser({ email, password, passwordMustChange: false });
-    } catch (e) {
-      const status = e.status || 400;
-      return res.status(status).json({ error: e.message || 'Could not create account.' });
-    }
-  }
 
   const tierLabel =
     tier === 'free' ? 'Free Audit' : tier === 'operator' ? 'Operator' : 'White-Glove';
-  const subject = `ServiceOpera pricing · ${tierLabel} · ${email}`;
+  const sectorHuman = inquirySectorLabel(sectorSlug);
+  const subject = `ServiceOpera request · ${tierLabel} · ${email}`;
   const html =
     '<div style="font-family:system-ui,sans-serif;font-size:15px;color:#111;line-height:1.55">' +
-    '<p><strong>Pricing inquiry</strong> · ' +
+    '<p><strong>Pricing / tier request</strong> · ' +
     escapeHtml(tierLabel) +
     '</p>' +
-    '<p><strong>Email (portal):</strong> ' +
+    '<p><strong>Work email:</strong> ' +
     escapeHtml(email) +
     '</p>' +
-    '<p><strong>Name:</strong> ' +
-    escapeHtml(name) +
-    '</p>' +
-    '<p><strong>Business:</strong> ' +
-    escapeHtml(business) +
-    '</p>' +
     '<p><strong>Sector:</strong> ' +
-    escapeHtml(sector) +
+    escapeHtml(sectorHuman) +
     '</p>' +
-    '<p><strong>What to improve:</strong><br>' +
-    escapeHtml(improvement).replace(/\n/g, '<br>') +
+    '<p><strong>What should we improve first?</strong><br>' +
+    escapeHtml(improveFirst).replace(/\n/g, '<br>') +
     '</p>' +
     (source ? '<p><strong>Source:</strong> ' + escapeHtml(source) + '</p>' : '') +
-    '<p><strong>Report slug:</strong> ' +
-    escapeHtml(user.reportSlug) +
-    '</p>' +
     '<p style="font-size:13px;color:#444">IP: ' +
     escapeHtml(ip) +
     '</p>' +
     '</div>';
 
-  let emailedAdmin = false;
-  if (RESEND_API_KEY) {
-    const sends = pruneSends(ip);
-    if (sends.length >= MAX_SENDS_PER_WINDOW) {
-      return res.status(429).json({ error: 'Too many outbound emails from this network. Try again in a few minutes.' });
-    }
-    try {
-      await sendResendEmail({ to: ADMIN_EMAIL, subject, html });
-      sends.push(Date.now());
-      sendTimestampsByIp.set(ip, sends);
-      emailedAdmin = true;
-    } catch (e) {
-      const status = e.status || 502;
-      return res.status(status).json({
-        error: resendFailureMessage(e, 'Could not send your inquiry. Try again later or contact jack@serviceopera.to.'),
-      });
-    }
-  } else {
-    console.warn('[serviceopera] pricing-inquiry: RESEND_API_KEY unset — account created but no email to admin.');
+  const sends = pruneSends(ip);
+  if (sends.length >= MAX_SENDS_PER_WINDOW) {
+    return res.status(429).json({ error: 'Too many outbound emails from this network. Try again in a few minutes.' });
   }
 
-  const sessionId = await recordPortalLogin(req, user);
-  const token = signPortalUserJwt(user);
+  let emailedAdmin = false;
+  try {
+    await sendResendEmail({ to: ADMIN_EMAIL, subject, html });
+    sends.push(Date.now());
+    sendTimestampsByIp.set(ip, sends);
+    emailedAdmin = true;
+  } catch (e) {
+    const status = e.status || 502;
+    return res.status(status).json({
+      error: resendFailureMessage(e, 'Could not send your request. Try again later or contact jack@serviceopera.to.'),
+    });
+  }
 
   try {
     await leadEventsStore.appendEvent({
@@ -2145,29 +2121,34 @@ app.post('/api/marketing/pricing-inquiry', async (req, res) => {
       ip,
       pagePath: '/pricing/inquiry',
       tier,
-      userId: user.id,
+      userId: null,
       userAgent: clientUserAgent(req),
-      detail: { emailedAdmin, reportSlug: user.reportSlug },
+      detail: { emailedAdmin, sector: sectorSlug, tier },
     });
   } catch (e) {
     console.warn('[serviceopera] pricing-inquiry success log:', e && e.message ? e.message : e);
   }
 
-  const reportUrl = '/clinics/report.html?slug=' + encodeURIComponent(user.reportSlug);
-  return res.status(201).json({
+  return res.json({
     ok: true,
-    token,
-    sessionId,
-    reportSlug: user.reportSlug,
-    reportUrl,
     emailedAdmin,
-    message: emailedAdmin
-      ? 'Thanks — your request was sent and you are signed in.'
-      : 'Account ready and you are signed in. We could not email the studio (server mail not configured).',
+    message: 'Thanks — your request was sent. Jack will follow up shortly.',
   });
 });
 
+/**
+ * Site marketing inquiry (reports.html, vertical pages): lead email to admin only.
+ * POST /api/marketing/inquiry
+ * Body: { email, sector, improveFirst, topic?, source?, company_url? (honeypot) }
+ * Legacy: improvement (alias for improveFirst).
+ */
 app.post('/api/marketing/inquiry', async (req, res) => {
+  if (inquiryHoneypotTripped(req.body)) {
+    return res.json({
+      ok: true,
+      message: 'Thanks — your inquiry was sent. Jack will follow up shortly.',
+    });
+  }
   if (!RESEND_API_KEY) {
     return res.status(503).json({
       error:
@@ -2180,32 +2161,38 @@ app.post('/api/marketing/inquiry', async (req, res) => {
     return res.status(429).json({ error: 'Too many requests. Try again later.' });
   }
 
-  const name = clipFreeText(req.body?.name, 120);
-  const business = clipFreeText(req.body?.business, 160);
-  const sector = clipFreeText(req.body?.sector, 120);
-  const improvement = clipFreeText(req.body?.improvement, 2000);
-  const topic = clipFreeText(req.body?.topic, 120);
-  const source = clipFreeText(req.body?.source, 200);
-
-  if (!name || !business || !sector || !improvement) {
-    return res.status(400).json({ error: 'Name, business, sector, and what you want to improve are required.' });
+  const emailRaw = typeof req.body?.email === 'string' ? req.body.email : '';
+  if (!isValidInquiryEmail(emailRaw)) {
+    return res.status(400).json({ error: 'Enter a valid work email address.' });
   }
 
-  const subject = topic ? `ServiceOpera inquiry: ${topic}` : 'ServiceOpera inquiry';
+  const sectorSlug = normalizeInquirySector(req.body?.sector);
+  if (!sectorSlug) {
+    return res.status(400).json({ error: 'Choose a sector: hotels, clinics, property, or other.' });
+  }
+
+  const improveFirst = clipImproveFirst(req.body);
+  if (!improveFirst) {
+    return res.status(400).json({ error: 'Tell us what we should improve first.' });
+  }
+
+  const topic = clipFreeText(req.body?.topic, 120);
+  const source = clipFreeText(req.body?.source, 200);
+  const email = normalizeEmail(emailRaw);
+  const sectorHuman = inquirySectorLabel(sectorSlug);
+
+  const subject = topic ? `ServiceOpera inquiry: ${topic} · ${email}` : `ServiceOpera inquiry · ${email}`;
   const html =
     '<div style="font-family:system-ui,sans-serif;font-size:15px;color:#111;line-height:1.55">' +
     '<p><strong>New site inquiry</strong></p>' +
-    '<p><strong>Name:</strong> ' +
-    escapeHtml(name) +
-    '</p>' +
-    '<p><strong>Business:</strong> ' +
-    escapeHtml(business) +
+    '<p><strong>Work email:</strong> ' +
+    escapeHtml(email) +
     '</p>' +
     '<p><strong>Sector:</strong> ' +
-    escapeHtml(sector) +
+    escapeHtml(sectorHuman) +
     '</p>' +
-    '<p><strong>What to improve:</strong><br>' +
-    escapeHtml(improvement).replace(/\n/g, '<br>') +
+    '<p><strong>What should we improve first?</strong><br>' +
+    escapeHtml(improveFirst).replace(/\n/g, '<br>') +
     '</p>' +
     (topic ? '<p><strong>Topic:</strong> ' + escapeHtml(topic) + '</p>' : '') +
     (source ? '<p><strong>Source:</strong> ' + escapeHtml(source) + '</p>' : '') +
@@ -2223,6 +2210,20 @@ app.post('/api/marketing/inquiry', async (req, res) => {
     return res.status(status).json({
       error: resendFailureMessage(e, 'Could not send your inquiry. Try again later or book a call from the site.'),
     });
+  }
+
+  try {
+    await leadEventsStore.appendEvent({
+      eventType: 'site_inquiry_success',
+      ip,
+      pagePath: source || null,
+      tier: null,
+      userId: null,
+      userAgent: clientUserAgent(req),
+      detail: { topic: topic || null, sector: sectorSlug },
+    });
+  } catch (e) {
+    console.warn('[serviceopera] site inquiry lead log:', e && e.message ? e.message : e);
   }
 
   return res.json({
@@ -2371,6 +2372,11 @@ app.get(['/operator/reports', '/operator/reports/'], (_req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   res.setHeader('X-Robots-Tag', 'noindex, nofollow');
   res.sendFile(operatorReportsHtmlPath);
+});
+
+/** Public sample clinic audit (static `index.html`; explicit route mirrors clean-URL pattern used elsewhere). */
+app.get(['/clinics/sample-ai-automation-audit', '/clinics/sample-ai-automation-audit/'], (_req, res) => {
+  res.sendFile(path.join(publicDir, 'clinics', 'sample-ai-automation-audit', 'index.html'));
 });
 
 app.use(

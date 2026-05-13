@@ -3094,6 +3094,19 @@ a.admin-topbar__logout {
   color: #fca5a5;
 }
 
+/* Honeypot — leave empty (bots often fill). */
+.inquiry-form__hp {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* Sector / vertical: four slugs as native radios in a 2×2 card grid (pricing inquiry, embedded inquiry, register). */
 .so-sector-choice {
   border: 0;

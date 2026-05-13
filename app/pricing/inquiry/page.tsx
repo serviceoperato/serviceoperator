@@ -4,7 +4,7 @@ import { PricingInquiryClient } from "./PricingInquiryClient";
 
 export const metadata: Metadata = {
   title: "Pricing inquiry",
-  description: "Request Free Audit, Operator, or White-Glove — ServiceOpera portal signup.",
+  description: "Request Free Audit, Operator, or White-Glove — work email, sector, and priority (lead only; no automatic portal signup).",
 };
 
 export default function PricingInquiryPage() {

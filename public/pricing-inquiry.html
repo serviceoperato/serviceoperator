@@ -35,27 +35,19 @@
 
 <main class="mkt-page so-pricing-fadeIn so-pricing-inquiry">
   <header class="so-pricing-header">
-    <h1 class="so-pricing-title" id="inq-title">Pricing inquiry</h1>
+    <h1 class="so-pricing-title" id="inq-title">Request</h1>
+    <p class="so-pricing-subtitle" id="inq-sub">Send your work email, sector, and top priority. This does not create a portal account — use Log in or Register when you are ready.</p>
   </header>
 
   <form id="pricing-inquiry-form" class="inquiry-form so-pricing-inquiry__form" novalidate>
     <input type="hidden" name="plan" id="field-plan" value="free" />
+    <p class="so-pricing-inquiry__privacy" id="inq-privacy">
+      We collect your IP address, pages visited, and timestamps to deliver the audit or plan you requested and to protect the service. Questions: <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a>.
+    </p>
 
     <label class="inquiry-form__field" for="field-email">
       <span class="inquiry-form__label">Work email</span>
       <input class="inquiry-form__control" id="field-email" name="email" type="email" autocomplete="email" required maxlength="254" />
-    </label>
-    <label class="inquiry-form__field" for="field-password">
-      <span class="inquiry-form__label">Password (min 8 characters)</span>
-      <input class="inquiry-form__control" id="field-password" name="password" type="password" autocomplete="new-password" required minlength="8" />
-    </label>
-    <label class="inquiry-form__field" for="field-name">
-      <span class="inquiry-form__label">Name</span>
-      <input class="inquiry-form__control" id="field-name" name="name" type="text" autocomplete="name" required />
-    </label>
-    <label class="inquiry-form__field" for="field-business">
-      <span class="inquiry-form__label">Business</span>
-      <input class="inquiry-form__control" id="field-business" name="business" type="text" autocomplete="organization" required />
     </label>
     <fieldset class="inquiry-form__field so-sector-choice">
       <legend class="inquiry-form__label">Sector</legend>
@@ -69,7 +61,7 @@
           Clinics
         </label>
         <label class="so-sector-choice__opt">
-          <input type="radio" name="sector" value="properties" class="so-sector-choice__input" />
+          <input type="radio" name="sector" value="property" class="so-sector-choice__input" />
           Property
         </label>
         <label class="so-sector-choice__opt">
@@ -78,13 +70,18 @@
         </label>
       </div>
     </fieldset>
-    <label class="inquiry-form__field" for="field-improvement">
-      <span class="inquiry-form__label">What do you want to improve?</span>
-      <textarea class="inquiry-form__control" id="field-improvement" name="improvement" rows="4" required placeholder="One urgent operational pain, bottleneck, or goal."></textarea>
+    <label class="inquiry-form__field" for="field-improve-first">
+      <span class="inquiry-form__label">What should we improve first?</span>
+      <textarea class="inquiry-form__control" id="field-improve-first" name="improveFirst" rows="4" required placeholder="One urgent operational pain, bottleneck, or goal."></textarea>
     </label>
 
+    <div class="inquiry-form__hp" aria-hidden="true">
+      <label for="field-company-url">Company website</label>
+      <input type="text" id="field-company-url" name="company_url" tabindex="-1" autocomplete="off" />
+    </div>
+
     <div class="inquiry-form__actions">
-      <button type="submit" class="btn btn-primary inquiry-form__submit" id="inq-submit">Submit and open workspace</button>
+      <button type="submit" class="btn btn-primary inquiry-form__submit" id="inq-submit">Send request</button>
     </div>
     <p class="inquiry-form__status" id="inq-status" role="status" aria-live="polite" hidden></p>
   </form>
@@ -93,8 +90,8 @@
 <script src="/sw-register.js"></script>
 <script src="/site-nav-drawer.js"></script>
 <script src="/user-account-menu.js"></script>
-<script src="/theme.js"></script>
-<script src="/debug.js"></script>
+<script src="theme.js"></script>
+<script src="debug.js"></script>
 <script>
 (function () {
   'use strict';
@@ -124,8 +121,15 @@
   var plan = parsePlan();
   var planInput = document.getElementById('field-plan');
   var titleEl = document.getElementById('inq-title');
+  var subEl = document.getElementById('inq-sub');
   if (planInput) planInput.value = plan;
   if (titleEl) titleEl.textContent = 'Request · ' + (TIER_LABEL[plan] || 'Free Audit');
+  if (subEl) {
+    subEl.textContent =
+      'Send your work email, sector, and top priority for ' +
+      (TIER_LABEL[plan] || 'Free Audit') +
+      '. No portal account is created here — use Log in or Register when you are ready.';
+  }
 
   function postLeadView() {
     fetch(api('/api/marketing/lead-event'), {
@@ -158,14 +162,12 @@
       ev.preventDefault();
       setStatus('', '');
       var email = (document.getElementById('field-email').value || '').trim();
-      var password = document.getElementById('field-password').value || '';
-      var name = (document.getElementById('field-name').value || '').trim();
-      var business = (document.getElementById('field-business').value || '').trim();
       var sectorInput = document.querySelector('#pricing-inquiry-form input[name="sector"]:checked');
       var sector = sectorInput ? String(sectorInput.value || '').trim() : '';
-      var improvement = (document.getElementById('field-improvement').value || '').trim();
-      if (!email || !password || password.length < 8 || !name || !business || !sector || !improvement) {
-        setStatus('Please fill all fields. Password must be at least 8 characters.', 'error');
+      var improveFirst = (document.getElementById('field-improve-first').value || '').trim();
+      var companyUrl = (document.getElementById('field-company-url') && document.getElementById('field-company-url').value) || '';
+      if (!email || !sector || !improveFirst) {
+        setStatus('Please enter your work email, choose a sector, and describe what to improve first.', 'error');
         return;
       }
       submitBtn.disabled = true;
@@ -177,12 +179,10 @@
         body: JSON.stringify({
           plan: plan,
           email: email,
-          password: password,
-          name: name,
-          business: business,
           sector: sector,
-          improvement: improvement,
+          improveFirst: improveFirst,
           source: window.location.pathname + window.location.search,
+          company_url: String(companyUrl).trim(),
         }),
       })
         .then(function (r) {
@@ -196,26 +196,19 @@
             });
         })
         .then(function (x) {
-          if (!x.ok || !x.json || !x.json.token) {
+          if (!x.ok || !x.json || !x.json.ok) {
             throw new Error((x.json && x.json.error) || 'Request failed.');
           }
-          try {
-            localStorage.setItem('so_user_jwt', x.json.token);
-            if (x.json.sessionId) {
-              localStorage.setItem('so_user_session_id', x.json.sessionId);
-              sessionStorage.setItem('so_user_session_id', x.json.sessionId);
-            }
-          } catch (e2) {}
-          setStatus(x.json.message || 'Signed in. Redirecting…', 'ok');
-          var dest = x.json.reportUrl || '/clinics/report.html';
-          setTimeout(function () {
-            window.location.href = dest;
-          }, 400);
+          setStatus(x.json.message || 'Thanks — your request was sent.', 'ok');
+          form.reset();
+          if (planInput) planInput.value = plan;
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Send request';
         })
         .catch(function (err) {
           setStatus(err.message || 'Something went wrong.', 'error');
           submitBtn.disabled = false;
-          submitBtn.textContent = 'Submit and open workspace';
+          submitBtn.textContent = 'Send request';
         });
     });
   }

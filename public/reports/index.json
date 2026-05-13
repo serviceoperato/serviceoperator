@@ -1,6 +1,10 @@
 {
   "clinics": [
     {
+      "title": "Sample AI automation audit (fictional clinic)",
+      "href": "/clinics/sample-ai-automation-audit/"
+    },
+    {
       "title": "Sea clinic audit (sample)",
       "href": "/clinics/sea-clinic-audit/"
     },

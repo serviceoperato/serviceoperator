@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
+<title>Sample AI automation audit — Example Dental Clinic (Thailand) | www.serviceopera.to</title>
+<meta name="description" content="Anonymized, fully fictional sample clinic audit: executive dashboard, patient journey, booking friction, review patterns, AI opportunities, and estimated impact. No real patient data."/>
+<link rel="icon" href="/assets/favicon.png" type="image/png" sizes="any"/>
+<link rel="apple-touch-icon" href="/assets/favicon.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="../../styles.css"/>
+<link rel="stylesheet" href="sample-audit.css"/>
+<script src="/page-skeleton.js"></script>
+<script src="/so-api.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+<script src="sample-audit-charts.js" defer></script>
+</head>
+<body class="sample-clinic-audit page-client" data-page-skeleton="native">
+
+<div class="grain" aria-hidden="true"></div>
+
+<nav class="nav" aria-label="Primary">
+  <div class="nav__start">
+    <a href="/" class="nav__logo">
+      <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="www.serviceopera.to — home" decoding="async"/>
+    </a>
+  </div>
+  <div class="nav__links">
+    <a href="/pricing" class="nav__text">Pricing</a>
+    <a href="/login.html?next=/clinics/sample-ai-automation-audit/" class="nav__login mono" id="navPortalAuth" data-login-href="/login.html?next=/clinics/sample-ai-automation-audit/">Log in</a>
+    <button type="button" class="theme-toggle" data-theme-toggle aria-label="Theme"></button>
+  </div>
+</nav>
+
+<header class="report-header">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div class="brand-badge"><span class="dot"></span>www.serviceopera.to · Sample audit (public)</div>
+    <h1 class="report-title">Example Dental Clinic — Thailand<br/><em>Illustrative AI readiness report</em></h1>
+    <p class="report-subtitle">This page is a <strong>fully fictional</strong> walkthrough of how a real engagement is structured: dashboard, journey, friction, reviews, AI plays, quick wins, and impact ranges. Numbers and quotes are synthetic — for format and education only.</p>
+    <p class="audit-hero-rating" role="note" aria-label="Illustrative opportunity index">
+      <span class="audit-hero-rating__row">
+        <span class="audit-hero-rating__stars" aria-hidden="true">★★★★☆</span>
+        <span class="audit-hero-rating__score">4.6 / 5</span>
+      </span>
+      <span class="audit-hero-rating__caption">Illustrative “automation leverage” index (not a clinical or consumer rating).</span>
+    </p>
+    <div class="report-meta">
+      <div class="meta-item">
+        <span class="label">Prepared by</span>
+        <span class="value">Jack — www.serviceopera.to</span>
+      </div>
+      <div class="meta-item">
+        <span class="label">Sample date</span>
+        <span class="value">May 2026</span>
+      </div>
+      <div class="meta-item">
+        <span class="label">Category</span>
+        <span class="value">Dental · metropolitan Thailand (composite)</span>
+      </div>
+      <div class="meta-item">
+        <span class="label">Sample leverage score</span>
+        <div class="audit-score-badge"><span class="score">7.8</span><span>/ 10</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="so-dashboard" id="dashboard" aria-label="Executive dashboard">
+  <p class="sample-disclosure"><strong>Disclaimer:</strong> “Example Dental Clinic — Thailand” is not a real business. There is no patient data, no proprietary access, and no links to identifiable third-party reviews. Chart series are <strong>synthetic</strong> for layout demonstration.</p>
+  <h2 class="so-dashboard__title">At-a-glance dashboard</h2>
+  <p class="so-dashboard__sub">Twelve-month <em>illustrative</em> curves (M1–M12). Legend matches the chart dataset labels in the footnote of section 14.</p>
+
+  <div class="so-chart-card">
+    <div class="so-chart-card__head">
+      <span class="so-chart-card__title">Synthetic signal trend (demo)</span>
+      <div class="so-chart-card__legend">
+        <span class="so-legend-pill" style="color:#312e81;">Composite (×10)</span>
+        <span class="so-legend-pill" style="color:#0f766e;">Review cadence</span>
+        <span class="so-legend-pill" style="color:#b45309;">Reply coverage %</span>
+        <span class="so-legend-pill" style="color:#0369a1;">Sentiment index</span>
+      </div>
+    </div>
+    <div class="so-chart-wrap"><canvas id="soSampleTrendChart" aria-label="Line chart of synthetic metrics"></canvas></div>
+  </div>
+
+  <div class="so-kpi-grid">
+    <div class="so-kpi so-kpi--accent">
+      <div class="so-kpi__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 9v4"/><path d="M12 17h.01"/>
+          <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        </svg>
+      </div>
+      <div class="so-kpi__value">7.8<span style="font-size:.9rem;color:var(--color-text-secondary);"> / 10</span></div>
+      <div class="so-kpi__label">Leverage score</div>
+      <div class="so-kpi__sub">Room for automation without changing clinical protocols</div>
+    </div>
+    <div class="so-kpi so-kpi--amber">
+      <div class="so-kpi__icon">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+      </div>
+      <div class="so-kpi__value">2–4<span style="font-size:.9rem;color:var(--color-text-secondary);"> /mo</span></div>
+      <div class="so-kpi__label">Review cadence (example)</div>
+      <div class="so-kpi__sub">Post-automation target band: 7–12 (illustrative)</div>
+    </div>
+    <div class="so-kpi so-kpi--teal">
+      <div class="so-kpi__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </div>
+      <div class="so-kpi__value">6–18h</div>
+      <div class="so-kpi__label">First reply (example)</div>
+      <div class="so-kpi__sub">Target after automation: under 3 minutes (business hours)</div>
+    </div>
+    <div class="so-kpi so-kpi--slate">
+      <div class="so-kpi__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2" y="6" width="20" height="12" rx="2"/>
+          <circle cx="12" cy="12" r="2.5"/>
+          <path d="M6 12h.01M18 12h.01"/>
+        </svg>
+      </div>
+      <div class="so-kpi__value">฿400K–900K</div>
+      <div class="so-kpi__label">Annual uplift (fictional range)</div>
+      <div class="so-kpi__sub">Conservative composite; not a forecast for any real clinic</div>
+    </div>
+  </div>
+</section>
+
+<nav class="report-toc">
+  <div class="toc-inner">
+    <a class="toc-link" href="#s1">01 Snapshot</a>
+    <a class="toc-link" href="#s2">02 Patient journey</a>
+    <a class="toc-link" href="#s3">03 Booking friction</a>
+    <a class="toc-link" href="#s4">04 Reputation</a>
+    <a class="toc-link" href="#s5">05 Reviews</a>
+    <a class="toc-link" href="#s6">06 Trust signals</a>
+    <a class="toc-link" href="#s7">07 Follow-up gaps</a>
+    <a class="toc-link" href="#s8">08 Multilingual</a>
+    <a class="toc-link" href="#s9">09 AI opportunities</a>
+    <a class="toc-link" href="#s10">10 14-day wins</a>
+    <a class="toc-link" href="#s11">11 30-day plan</a>
+    <a class="toc-link" href="#s12">12 Impact</a>
+    <a class="toc-link" href="#s13">13 Offer</a>
+    <a class="toc-link" href="#s14">14 Sources</a>
+  </div>
+</nav>
+
+<main class="report-body">
+
+  <section class="report-section" id="s1">
+    <div class="section-header">
+      <span class="section-number">01</span>
+      <h2 class="section-title">Business snapshot (fictional)</h2>
+    </div>
+    <div class="two-col" style="margin-bottom:1.5rem;">
+      <table class="audit-table">
+        <thead><tr><th>Field</th><th>Detail</th></tr></thead>
+        <tbody>
+          <tr><td>Business name</td><td>Example Dental Clinic — Thailand</td></tr>
+          <tr><td>Location</td><td>Major metro, Thailand <span style="color:var(--color-text-muted);font-size:12px;">(no street address — sample only)</span></td></tr>
+          <tr><td>Example phone</td><td>+66 2 000 0000 <span style="color:var(--color-text-muted);font-size:12px;">(placeholder pattern)</span></td></tr>
+          <tr><td>Example inbox</td><td>care@example-dental.invalid</td></tr>
+          <tr><td>Web presence</td><td>Described as a brochure site + contact form (no live link in this sample)</td></tr>
+          <tr><td>Positioning</td><td>General &amp; cosmetic dentistry, mixed local + inbound tourists</td></tr>
+          <tr><td>Languages</td><td>English · Thai <span style="color:var(--color-text-muted);font-size:12px;">(+ optional third language in playbook)</span></td></tr>
+        </tbody>
+      </table>
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div class="insight-line insight-line--indigo">
+          <span class="insight-icon">📋</span>
+          <div class="insight-content">
+            <div class="insight-label">How to read this sample</div>
+            <div class="insight-text">Tables and narratives mirror a production audit layout. In a paid engagement, each line is tied to evidence from <strong>public</strong> materials and agreed scope — never to charts in your PMS or PHI.</div>
+          </div>
+        </div>
+        <div class="card card--elevated">
+          <div class="card__label">Composite clinical positioning (fictional)</div>
+          <p style="font-size:13px;margin:0.5rem 0 0;">Two “lead clinicians” would appear here with <strong>public</strong> credentials only. In this sample, names and diplomas are omitted intentionally.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="report-section" id="s2">
+    <div class="section-header">
+      <span class="section-number">02</span>
+      <h2 class="section-title">Patient journey audit</h2>
+    </div>
+    <div class="insight-line insight-line--indigo">
+      <span class="insight-icon">🗺️</span>
+      <div class="insight-content">
+        <div class="insight-label">Narrative (synthetic)</div>
+        <div class="insight-text">Discovery through search and referrals works, but digital handoff to a confirmed chair is where the composite clinic loses speed. Below is a representative six-stage map used in real audits.</div>
+      </div>
+    </div>
+    <div class="journey-timeline" style="margin-top:1.5rem;">
+      <div class="journey-stage journey-stage--ok">
+        <div class="stage-name">Stage 1 — Discovery</div>
+        <div class="stage-status" style="color:#0d9488;">✓ Functional</div>
+        <ul class="stage-gaps">
+          <li>Organic visibility for high-intent keywords (illustrative)</li>
+          <li>Limited structured data / FAQ for rich results (example gap)</li>
+        </ul>
+      </div>
+      <div class="journey-stage journey-stage--gap">
+        <div class="stage-name">Stage 2 — First contact</div>
+        <div class="stage-status" style="color:#dc2626;">⚠ High friction</div>
+        <ul class="stage-gaps">
+          <li>No single “preferred channel” CTA above the fold</li>
+          <li>After-hours inquiries queue until the next business day</li>
+        </ul>
+      </div>
+      <div class="journey-stage journey-stage--friction">
+        <div class="stage-name">Stage 3 — Triage &amp; quote</div>
+        <div class="stage-status" style="color:#ea580c;">⚠ Manual</div>
+        <ul class="stage-gaps">
+          <li>Treatment estimates require coordinator back-and-forth</li>
+          <li>No templated reply pack for top five procedures</li>
+        </ul>
+      </div>
+      <div class="journey-stage journey-stage--gap">
+        <div class="stage-name">Stage 4 — Booking</div>
+        <div class="stage-status" style="color:#dc2626;">⚠ Critical gap</div>
+        <ul class="stage-gaps">
+          <li>No self-serve slot selection (phone / form loop only)</li>
+          <li>Confirmation messages not standardized across channels</li>
+        </ul>
+      </div>
+      <div class="journey-stage journey-stage--gap">
+        <div class="stage-name">Stage 5 — Pre-visit</div>
+        <div class="stage-status" style="color:#dc2626;">⚠ Missing</div>
+        <ul class="stage-gaps">
+          <li>Reminder cadence inconsistent for international arrivals</li>
+          <li>Intake paperwork not prefilled from prior chat</li>
+        </ul>
+      </div>
+      <div class="journey-stage journey-stage--friction">
+        <div class="stage-name">Stage 6 — Post-visit</div>
+        <div class="stage-status" style="color:#ea580c;">⚠ Partial</div>
+        <ul class="stage-gaps">
+          <li>Happy patients rarely receive a structured review ask</li>
+          <li>No lightweight “day two” check-in for high-value cases</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="report-section" id="s3">
+    <div class="section-header">
+      <span class="section-number">03</span>
+      <h2 class="section-title">Intake &amp; booking friction</h2>
+    </div>
+    <div class="insight-line insight-line--red">
+      <span class="insight-icon">🚨</span>
+      <div class="insight-content">
+        <div class="insight-label">Synthetic risk statement</div>
+        <div class="insight-text">When competitors answer WhatsApp in minutes, a clinic that answers in hours bleeds high-intent tourists. This section quantifies the <em>shape</em> of that risk, not a real competitor benchmark for any named business.</div>
+      </div>
+    </div>
+    <div class="so-friction-icons">
+      <div class="so-friction-icon">
+        <div class="so-friction-icon__circle" style="background:linear-gradient(135deg,#b91c1c,#7f1d1d);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        </div>
+        <div class="so-friction-icon__label">Channel sprawl</div>
+        <div class="so-friction-icon__tag">High</div>
+      </div>
+      <div class="so-friction-icon">
+        <div class="so-friction-icon__circle" style="background:linear-gradient(135deg,#312e81,#1e1b4b);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="so-friction-icon__label">Slow first reply</div>
+        <div class="so-friction-icon__tag">6–18h</div>
+      </div>
+      <div class="so-friction-icon">
+        <div class="so-friction-icon__circle" style="background:linear-gradient(135deg,#c2410c,#9a3412);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>
+        </div>
+        <div class="so-friction-icon__label">No live slots</div>
+        <div class="so-friction-icon__tag">Example</div>
+      </div>
+      <div class="so-friction-icon">
+        <div class="so-friction-icon__circle" style="background:linear-gradient(135deg,#0f766e,#115e59);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </div>
+        <div class="so-friction-icon__label">Opaque pricing</div>
+        <div class="so-friction-icon__tag">Medium</div>
+      </div>
+      <div class="so-friction-icon">
+        <div class="so-friction-icon__circle" style="background:linear-gradient(135deg,#334155,#1e293b);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="so-friction-icon__label">Staff overload</div>
+        <div class="so-friction-icon__tag">Peak season</div>
+      </div>
+    </div>
+    <div style="margin-top:1.5rem;display:flex;flex-direction:column;gap:0.75rem;">
+      <div class="insight-line insight-line--red"><span class="insight-icon">1</span><div class="insight-content"><div class="insight-label">No unified inbox SLA</div><div class="insight-text">Synthetic scenario: 30–40% of evening inquiries never receive same-day acknowledgement.</div></div>
+      <div class="insight-line insight-line--orange"><span class="insight-icon">2</span><div class="insight-content"><div class="insight-label">Quote latency</div><div class="insight-text">Illustrative: implant package quotes take 2–4 touchpoints instead of one structured message with options.</div></div>
+      <div class="insight-line insight-line--orange"><span class="insight-icon">3</span><div class="insight-content"><div class="insight-label">No deposit / hold workflow</div><div class="insight-text">Fictional pattern: higher no-show risk for fly-in patients without a lightweight confirmation step.</div></div>
+    </div>
+  </section>
+
+  <section class="report-section" id="s4">
+    <div class="section-header">
+      <span class="section-number">04</span>
+      <h2 class="section-title">Public reputation audit (illustrative)</h2>
+    </div>
+    <table class="audit-table" style="margin-top:0.5rem;">
+      <thead>
+        <tr><th>Channel (generic)</th><th>Score / status</th><th>Volume</th><th>Flag</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Maps-style directory</td><td>4.2–4.5 (example band)</td><td>~180 text reviews (fictional)</td><td><span class="badge badge--medium">Watch</span></td></tr>
+        <tr><td>Travel health aggregator A</td><td>Listed</td><td>Sparse text vs. saves</td><td><span class="badge badge--low">OK</span></td></tr>
+        <tr><td>Forum threads (expat)</td><td>Mixed tone</td><td>2 recurring themes (sample)</td><td><span class="badge badge--high">Respond</span></td></tr>
+        <tr><td>Social proof on site</td><td>Strong copy</td><td>Weak recency signal</td><td><span class="badge badge--medium">Refresh</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="report-section" id="s5">
+    <div class="section-header">
+      <span class="section-number">05</span>
+      <h2 class="section-title">Review pattern analysis</h2>
+    </div>
+    <div class="two-col" style="margin-top:1rem;">
+      <div class="card">
+        <div class="card__label">Illustrative velocity</div>
+        <div class="card__value" style="color:#c2410c;">2–4</div>
+        <div class="card__sub">new public reviews / month (fictional composite)</div>
+      </div>
+      <div class="card" style="border-color:rgba(15,118,110,0.35);">
+        <div class="card__label">Automation target band</div>
+        <div class="card__value" style="color:#0f766e;">7–12</div>
+        <div class="card__sub">with post-visit sequence + staff nudges (example only)</div>
+      </div>
+    </div>
+    <h4 style="margin-top:1.5rem;">Synthetic “reviews that need attention”</h4>
+    <p style="font-size:13px;margin-bottom:0.75rem;">Paraphrased themes — not copied from any real person or URL.</p>
+    <div class="so-critical-reviews">
+      <article class="so-review-card">
+        <div class="so-review-card__head">
+          <span class="so-stars" aria-label="2 of 5 stars">
+            <svg class="so-star-on" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="so-star-on" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="so-star-off" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="so-star-off" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="so-star-off" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </span>
+          <span class="so-review-card__source">Synthetic · Channel A</span>
+        </div>
+        <p class="so-review-card__quote">“Took three days to confirm a cleaning slot; friendly on the phone but the process felt scattered.”</p>
+        <div class="so-review-card__meta">
+          <span>Theme: scheduling friction</span>
+          <span class="so-review-card__badge">Ops</span>
+        </div>
+      </article>
+      <article class="so-review-card so-review-card--warn">
+        <div class="so-review-card__head">
+          <span class="so-stars" aria-label="3 of 5 stars">
+            <svg class="so-star-on" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="so-star-on" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="so-star-on" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="so-star-off" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="so-star-off" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </span>
+          <span class="so-review-card__source">Synthetic · Channel B</span>
+        </div>
+        <p class="so-review-card__quote">“Treatment was fine; follow-up instructions arrived late and only by email.”</p>
+        <div class="so-review-card__meta">
+          <span>Theme: post-visit comms</span>
+          <span class="so-review-card__badge">Workflow</span>
+        </div>
+      </article>
+    </div>
+
+    <div class="so-heatmap" role="figure" aria-label="Illustrative heatmap">
+      <div class="so-heatmap__head">
+        <span class="so-heatmap__title">Recurring themes — synthetic intensity</span>
+        <div class="so-heatmap__scale">
+          <span>Low</span>
+          <div class="so-heatmap__scale-grad"></div>
+          <span>High</span>
+        </div>
+      </div>
+      <div class="so-heatmap__grid">
+        <div class="so-heatmap__head-cell">Theme</div>
+        <div class="so-heatmap__head-cell">A</div>
+        <div class="so-heatmap__head-cell">B</div>
+        <div class="so-heatmap__head-cell">C</div>
+        <div class="so-heatmap__head-cell">D</div>
+        <div class="so-heatmap__row-label">Wait / reply time</div>
+        <div class="so-heatmap__cell so-heat-3">3</div><div class="so-heatmap__cell so-heat-2">2</div><div class="so-heatmap__cell so-heat-3">3</div><div class="so-heatmap__cell so-heat-2">2</div>
+        <div class="so-heatmap__row-label">Billing clarity</div>
+        <div class="so-heatmap__cell so-heat-2">2</div><div class="so-heatmap__cell so-heat-1">1</div><div class="so-heatmap__cell so-heat-2">2</div><div class="so-heatmap__cell so-heat-1">1</div>
+        <div class="so-heatmap__row-label">Staff tone</div>
+        <div class="so-heatmap__cell so-heat-1">1</div><div class="so-heatmap__cell so-heat-2">2</div><div class="so-heatmap__cell so-heat-1">1</div><div class="so-heatmap__cell so-heat-2">2</div>
+        <div class="so-heatmap__row-label">Booking UX</div>
+        <div class="so-heatmap__cell so-heat-4">4</div><div class="so-heatmap__cell so-heat-3">3</div><div class="so-heatmap__cell so-heat-3">3</div><div class="so-heatmap__cell so-heat-2">2</div>
+      </div>
+      <div class="so-heatmap__footnote">Cells are arbitrary demo values (0–4 scale). In a live audit, definitions and sources are documented in the closing section.</div>
+    </div>
+  </section>
+
+  <section class="report-section" id="s6">
+    <div class="section-header">
+      <span class="section-number">06</span>
+      <h2 class="section-title">Trust &amp; credibility signals</h2>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card__label" style="color:#0f766e;">✓ Illustrative strengths</div>
+        <ul class="check-list check-list--green" style="margin-top:0.75rem;">
+          <li><span class="check-icon">✓</span> Clear treatment menu with indicative fees</li>
+          <li><span class="check-icon">✓</span> Photos of facility and chair-side setup</li>
+          <li><span class="check-icon">✓</span> Biography pages for clinicians (public facts only)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card__label" style="color:#b91c1c;">⚠ Illustrative gaps</div>
+        <ul class="check-list check-list--red" style="margin-top:0.75rem;">
+          <li><span class="check-icon">✗</span> Few recent video testimonials</li>
+          <li><span class="check-icon">✗</span> No published response playbook for negatives</li>
+          <li><span class="check-icon">✗</span> Limited proof of same-day emergency capacity</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="report-section" id="s7">
+    <div class="section-header">
+      <span class="section-number">07</span>
+      <h2 class="section-title">Follow-up workflow gaps</h2>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.75rem;">
+      <div class="insight-line insight-line--orange"><span class="insight-icon">1</span><div class="insight-content"><div class="insight-label">No milestone-based review ask</div><div class="insight-text">Synthetic: satisfied patients exit without a structured prompt at day 3 / 14 / 30.</div></div>
+      <div class="insight-line insight-line--orange"><span class="insight-icon">2</span><div class="insight-content"><div class="insight-label">Reminder gaps for inbound flights</div><div class="insight-text">Illustrative: only one SMS, no WhatsApp/LINE mirror, no timezone-aware send window.</div></div>
+      <div class="insight-line insight-line--orange"><span class="insight-icon">3</span><div class="insight-content"><div class="insight-label">Cold leads in inbox</div><div class="insight-text">Fictional: partial quotes that never received a second nudge.</div></div>
+    </div>
+  </section>
+
+  <section class="report-section" id="s8">
+    <div class="section-header">
+      <span class="section-number">08</span>
+      <h2 class="section-title">Multilingual communication</h2>
+    </div>
+    <table class="audit-table">
+      <thead><tr><th>Risk (example)</th><th>Audience</th><th>Severity</th></tr></thead>
+      <tbody>
+        <tr><td>English-only auto-replies on LINE</td><td>Local Thai patients</td><td><span class="badge badge--high">High</span></td></tr>
+        <tr><td>No Thai FAQ for high-volume cosmetic questions</td><td>Domestic cosmetic segment</td><td><span class="badge badge--medium">Medium</span></td></tr>
+        <tr><td>No Mandarin handoff template</td><td>Inbound tourists (example)</td><td><span class="badge badge--medium">Medium</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="report-section" id="s9">
+    <div class="section-header">
+      <span class="section-number">09</span>
+      <h2 class="section-title">AI automation opportunities</h2>
+    </div>
+    <div class="insight-line insight-line--blue">
+      <span class="insight-icon">🤖</span>
+      <div class="insight-content">
+        <div class="insight-label">Sample prioritization</div>
+        <div class="insight-text">Same P1/P2/P3 framing as production audits. Effort labels are directional for planning conversations only.</div>
+      </div>
+    </div>
+    <div style="margin-top:1.25rem;">
+      <div class="priority-row" style="background:var(--so-priority-head-bg);border-radius:8px 8px 0 0;padding:0.5rem 1rem;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-text-muted);border:1px solid var(--color-border);border-bottom:none;">
+        <span>Opportunity</span><span>Impact</span><span>Effort</span><span>Priority</span>
+      </div>
+      <div class="priority-row" style="background:var(--color-bg-card);border:1px solid var(--color-border);border-top:none;"><span class="opp-name">Unified AI receptionist (LINE + WhatsApp + email)</span><span><span class="badge badge--critical">High</span></span><span style="font-size:13px;color:var(--color-text-secondary);">Low</span><span><span class="badge badge--blue">P1</span></span></div>
+      <div class="priority-row" style="background:var(--color-bg-card);border:1px solid var(--color-border);border-top:none;"><span class="opp-name">Post-visit review sequence</span><span><span class="badge badge--critical">High</span></span><span style="font-size:13px;color:var(--color-text-secondary);">Very low</span><span><span class="badge badge--blue">P1</span></span></div>
+      <div class="priority-row" style="background:var(--color-bg-card);border:1px solid var(--color-border);border-top:none;"><span class="opp-name">Instant acknowledgement + triage tags</span><span><span class="badge badge--high">High</span></span><span style="font-size:13px;color:var(--color-text-secondary);">Low</span><span><span class="badge badge--blue">P1</span></span></div>
+      <div class="priority-row" style="background:var(--color-bg-card);border:1px solid var(--color-border);border-top:none;"><span class="opp-name">3-touch reminder stack</span><span><span class="badge badge--high">High</span></span><span style="font-size:13px;color:var(--color-text-secondary);">Low</span><span><span class="badge badge--medium">P2</span></span></div>
+      <div class="priority-row" style="background:var(--color-bg-card);border:1px solid var(--color-border);border-top:none;border-radius:0 0 8px 8px;"><span class="opp-name">Abandoned-quote re-engagement</span><span><span class="badge badge--medium">Med</span></span><span style="font-size:13px;color:var(--color-text-secondary);">Medium</span><span style="font-size:13px;color:var(--color-text-muted);">P3</span></div>
+    </div>
+  </section>
+
+  <section class="report-section" id="s10">
+    <div class="section-header">
+      <span class="section-number">10</span>
+      <h2 class="section-title">14-day quick wins</h2>
+    </div>
+    <div class="two-col">
+      <div class="card" style="border-color:rgba(49,46,129,0.25);">
+        <h3 style="color:var(--color-indigo);margin-bottom:1rem;">Week 1</h3>
+        <ul class="check-list check-list--green">
+          <li><span class="check-icon" style="color:var(--color-indigo);">▸</span>Turn on instant “we received your message” auto-replies on every channel</li>
+          <li><span class="check-icon" style="color:var(--color-indigo);">▸</span>Pin WhatsApp + LINE entry points on mobile header</li>
+          <li><span class="check-icon" style="color:var(--color-indigo);">▸</span>Ship one PDF “pricing &amp; what to expect” for top three procedures</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:rgba(15,118,110,0.3);">
+        <h3 style="color:var(--color-green);margin-bottom:1rem;">Week 2</h3>
+        <ul class="check-list check-list--green">
+          <li><span class="check-icon" style="color:var(--color-green);">▸</span>Launch bilingual FAQ snippets inside chat</li>
+          <li><span class="check-icon" style="color:var(--color-green);">▸</span>Add post-visit review ask at T+48h (automated)</li>
+          <li><span class="check-icon" style="color:var(--color-green);">▸</span>Baseline spreadsheet: inquiries → booked chairs (manual is fine)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="report-section" id="s11">
+    <div class="section-header">
+      <span class="section-number">11</span>
+      <h2 class="section-title">30-day expansion plan</h2>
+    </div>
+    <div class="two-col">
+      <div>
+        <h4>Weeks 3–4 (sample)</h4>
+        <ul class="check-list">
+          <li><span class="check-icon" style="color:var(--color-indigo);">▸</span>Lightweight procedure estimator → CRM tags</li>
+          <li><span class="check-icon" style="color:var(--color-indigo);">▸</span>Seasonal campaign for high-demand months</li>
+          <li><span class="check-icon" style="color:var(--color-indigo);">▸</span>Review monitoring digest for owners (weekly)</li>
+        </ul>
+      </div>
+      <div class="card card--elevated">
+        <div class="card__label">Stack view (illustrative)</div>
+        <ul class="check-list" style="margin-top:0.75rem;">
+          <li><span class="check-icon" style="color:var(--color-indigo);">①</span>Inbox + AI triage</li>
+          <li><span class="check-icon" style="color:var(--color-blue);">②</span>Reminders + confirmations</li>
+          <li><span class="check-icon" style="color:var(--color-green);">③</span>Reputation loop</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="report-section" id="s12">
+    <div class="section-header">
+      <span class="section-number">12</span>
+      <h2 class="section-title">Estimated business impact</h2>
+    </div>
+    <p style="font-size:12px;color:var(--color-text-muted);margin-bottom:1rem;font-style:italic;">Fictional ranges for UI demonstration. Not financial advice and not tied to any real clinic performance.</p>
+    <div class="impact-grid">
+      <div class="impact-card">
+        <div class="impact-card__metric">First response</div>
+        <div class="impact-card__before">6–18 hours</div>
+        <div class="impact-card__arrow">↓</div>
+        <div class="impact-card__after">&lt; 3 min (target)</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-card__metric">Lead → booked</div>
+        <div class="impact-card__before">~18–22% (example)</div>
+        <div class="impact-card__arrow">↑</div>
+        <div class="impact-card__after">28–34% (band)</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-card__metric">Reviews / month</div>
+        <div class="impact-card__before">2–4 (example)</div>
+        <div class="impact-card__arrow">↑</div>
+        <div class="impact-card__after">7–12</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-card__metric">No-show risk</div>
+        <div class="impact-card__before">~22% (illustrative)</div>
+        <div class="impact-card__arrow">↓</div>
+        <div class="impact-card__after">~12–15%</div>
+      </div>
+    </div>
+    <div class="insight-line insight-line--green" style="margin-top:1.5rem;">
+      <span class="insight-icon">💰</span>
+      <div class="insight-content">
+        <div class="insight-label">Revenue shape (fictional)</div>
+        <div class="insight-text">If automation recovered <strong>two</strong> extra high-value cases per month, a <strong>purely illustrative</strong> twelve-month band might sit around <strong>฿400K–900K</strong> — shown again in the KPI row above for consistency.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="report-section" id="s13">
+    <div class="section-header">
+      <span class="section-number">13</span>
+      <h2 class="section-title">Suggested Service Opera engagement</h2>
+    </div>
+    <div class="offer-box">
+      <h3 class="offer-title">Example “growth stack” narrative</h3>
+      <p class="offer-pitch">“You already have clinical credibility. The leak is operational: nights, weekends, and peak season. Automation is how you defend margin without adding headcount.”</p>
+      <h4 style="color:var(--color-indigo);margin-bottom:0.75rem;">Illustrative deliverables</h4>
+      <ul class="offer-components">
+        <li>Channel routing + AI-assisted replies with human escalation</li>
+        <li>Reminder + confirmation package aligned to your real schedule</li>
+        <li>Review sequence + owner dashboard</li>
+        <li>Monthly retro on metrics you choose (conversion, reviews, no-shows)</li>
+      </ul>
+      <p style="font-size:13px;margin-top:1.25rem;color:var(--color-text-secondary);">For a real proposal, see <a href="/pricing" style="color:var(--color-blue-light);">pricing</a> or request a clinic growth report from the <a href="/clinics.html#inquiry" style="color:var(--color-blue-light);">clinics page</a>.</p>
+    </div>
+  </section>
+
+  <section class="report-section" id="s14">
+    <div class="section-header">
+      <span class="section-number">14</span>
+      <h2 class="section-title">Sources &amp; methodology (sample page)</h2>
+    </div>
+    <p style="font-size:13px;color:var(--color-text-muted);margin-bottom:1rem;">This demo does <strong>not</strong> cite real clinic URLs, review permalinks, or private systems. A live audit lists only materials the client agrees are in scope (typically public web, listings, and anonymized operational notes you provide).</p>
+    <div class="sources-list">
+      <div class="source-item"><span class="source-id">01</span><div><div class="source-name">Service Opera — how reports work</div><div class="source-url"><a href="/reports.html">https://serviceopera.to/reports.html</a></div></div></div>
+      <div class="source-item"><span class="source-id">02</span><div><div class="source-name">Clinics overview</div><div class="source-url"><a href="/clinics.html">https://serviceopera.to/clinics.html</a></div></div></div>
+      <div class="source-item"><span class="source-id">03</span><div><div class="source-name">Pricing &amp; pilots</div><div class="source-url"><a href="/pricing">https://serviceopera.to/pricing</a></div></div></div>
+      <div class="source-item"><span class="source-id">04</span><div><div class="source-name">Chart.js (visualization library)</div><div class="source-url"><a href="https://www.chartjs.org/" rel="noopener noreferrer">https://www.chartjs.org/</a> · loaded 4.4.1 from jsDelivr CDN in this page</div></div></div>
+      <div class="source-item"><span class="source-id">05</span><div><div class="source-name">Synthetic data generator</div><div class="source-url">Internal layout seed — not a dataset</div></div></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="report-footer">
+  <div class="footer-brand">www.serviceopera.to</div>
+  <div class="footer-tagline">Sample AI automation audit page · Fictional clinic · Public-safe content only.<br/>Jack — Service Operator · Thailand</div>
+  <div style="margin-top:1rem;font-size:11px;color:var(--color-text-muted);">No medical claims. No patient data. Chart series are static fiction for demonstration.</div>
+</footer>
+
+<script src="/sw-register.js"></script>
+<script src="/site-nav-drawer.js"></script>
+<script src="/user-account-menu.js"></script>
+<script src="../../theme.js"></script>
+<script src="../../debug.js"></script>
+</body>
+</html>
