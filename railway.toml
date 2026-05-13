@@ -8,6 +8,5 @@ dockerfilePath = "Dockerfile"
 
 [deploy]
 startCommand = "node server.mjs"
-healthcheckPath = "/api/version"
 healthcheckTimeout = 30
 restartPolicyType = "ON_FAILURE"
