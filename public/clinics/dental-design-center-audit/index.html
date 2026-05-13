@@ -219,14 +219,7 @@ strong { color: #e8edf5; }
   color: #c7d2fe;
   line-height: 1.55;
 }
-.audit-portal-access__title {
-  font-family: 'DM Serif Display', serif;
-  font-size: 1.15rem;
-  color: #e8edf5;
-  margin: 0 0 0.4rem;
-}
-.audit-portal-access__hint { margin: 0 0 0.85rem; color: #a5b4fc; font-size: 12px; }
-.audit-portal-access__row { margin: 0.4rem 0; word-break: break-word; }
+.audit-portal-access__row { margin: 0.35rem 0; word-break: break-word; }
 .audit-portal-access__row strong { color: #e8edf5; margin-right: 0.35rem; }
 .audit-portal-access code {
   font-family: 'DM Mono', ui-monospace, monospace;
@@ -261,13 +254,11 @@ strong { color: #e8edf5; }
   </div>
 </nav>
 
-<section class="audit-portal-access" id="auditPortalAccess" hidden aria-labelledby="auditPortalAccessTitle">
+<section class="audit-portal-access" id="auditPortalAccess" hidden aria-label="Link report e credenziali">
   <div class="audit-portal-access__card">
-    <h2 class="audit-portal-access__title" id="auditPortalAccessTitle">Accesso al portale (report privato)</h2>
-    <p class="audit-portal-access__hint">Primo accesso: usa email e password temporanea qui sotto. Dopo il login ti chiederemo una password definitiva; poi tornerai a questa pagina.</p>
-    <p class="audit-portal-access__row"><strong>Link login</strong> <a id="auditPortalLoginLink" href="/login.html">…</a></p>
-    <p class="audit-portal-access__row"><strong>Email</strong> <code id="auditPortalEmail">…</code></p>
-    <p class="audit-portal-access__row"><strong>Password temporanea</strong> <code id="auditPortalTempPw">…</code></p>
+    <p class="audit-portal-access__row"><strong>Link</strong> <a id="auditPortalReportLink" href="#">…</a></p>
+    <p class="audit-portal-access__row"><strong>Nome utente</strong> <code id="auditPortalUsername">…</code></p>
+    <p class="audit-portal-access__row"><strong>Password</strong> <code id="auditPortalTempPw">…</code></p>
   </div>
 </section>
 
@@ -1065,21 +1056,23 @@ strong { color: #e8edf5; }
       return r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status));
     })
     .then(function (cfg) {
-      var next = (cfg && cfg.loginNextPath) || '/clinics/dental-design-center-audit/';
-      var path = '/login.html?next=' + encodeURIComponent(next);
-      var abs = (window.location.origin || '') + path;
-      var a = document.getElementById('auditPortalLoginLink');
-      var emailEl = document.getElementById('auditPortalEmail');
+      var reportPath =
+        (cfg && String(cfg.reportPath || '').trim()) ||
+        (cfg && String(cfg.loginNextPath || '').trim()) ||
+        '/clinics/dental-design-center-audit/';
+      var reportAbs = (window.location.origin || '') + reportPath;
+      var linkEl = document.getElementById('auditPortalReportLink');
+      var userEl = document.getElementById('auditPortalUsername');
       var pwEl = document.getElementById('auditPortalTempPw');
-      if (a) {
-        a.href = path;
-        a.textContent = abs;
+      if (linkEl) {
+        linkEl.href = reportPath;
+        linkEl.textContent = reportAbs;
       }
-      if (emailEl) emailEl.textContent = (cfg && cfg.email) || '';
-      if (pwEl) pwEl.textContent = (cfg && cfg.tempPassword) || '';
-      if ((cfg && cfg.email && cfg.tempPassword) || (emailEl && emailEl.textContent && pwEl && pwEl.textContent)) {
-        root.hidden = false;
-      }
+      var user = (cfg && (cfg.username || cfg.email)) || '';
+      var pw = (cfg && cfg.tempPassword) || '';
+      if (userEl) userEl.textContent = user;
+      if (pwEl) pwEl.textContent = pw;
+      if (reportPath && user && pw) root.hidden = false;
     })
     .catch(function () {});
 })();

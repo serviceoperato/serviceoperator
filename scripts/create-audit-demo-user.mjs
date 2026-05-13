@@ -63,7 +63,9 @@ function resolveDemoCredentials() {
   const envPw = (process.env.AUDIT_DEMO_TEMP_PASSWORD || '').trim();
 
   const email = normalizeEmail(
-    envEmail || (file && String(file.email || '').trim()) || 'info@dentaldesignpattaya.com'
+    envEmail ||
+      (file && String(file.email || file.username || '').trim()) ||
+      'info@dentaldesignpattaya.com'
   );
   const reportSlug = assertReportSlug(
     envSlug || (file && String(file.reportSlug || '').trim()) || 'dental-design-center-audit'
@@ -76,7 +78,8 @@ function resolveDemoCredentials() {
     );
   }
   const loginNextPath =
-    (file && String(file.loginNextPath || '').trim()) || '/clinics/dental-design-center-audit/';
+    (file && String(file.loginNextPath || file.reportPath || '').trim()) ||
+    '/clinics/dental-design-center-audit/';
   return { email, reportSlug, tempPassword, loginNextPath };
 }
 

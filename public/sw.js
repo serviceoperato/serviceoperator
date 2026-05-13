@@ -1,6 +1,6 @@
 /* global self, caches, fetch, clients */
 
-var PAGE_CACHE = 'so-pages-v3';
+var PAGE_CACHE = 'so-pages-v4';
 var ASSET_CACHE = 'so-assets-v2';
 
 function isSameOrigin(url) {
@@ -11,6 +11,7 @@ function isSensitiveDocument(pathname) {
   return (
     /\/login\.html$/i.test(pathname) ||
     /\/register\.html$/i.test(pathname) ||
+    /\/admin\.html$/i.test(pathname) ||
     /\/client\.html$/i.test(pathname) ||
     /\/places-leads\.html$/i.test(pathname) ||
     /\/clinics\/report\.html$/i.test(pathname)

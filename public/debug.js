@@ -867,7 +867,7 @@
   lines.push({
     cat: 'OPS',
     text:
-      '82 · Admin APIs: POST /api/admin/send-code + verify-code (email OTP when RESEND_API_KEY is set); bootstrap-from-portal can mint admin JWT when ADMIN_EMAIL matches. There is no public /admin.html (it redirects to login).',
+      '82 · Admin APIs: POST /api/admin/send-code + verify-code (email OTP when RESEND_API_KEY is set); bootstrap-from-portal can mint admin JWT when ADMIN_EMAIL matches. Operator UI: /admin.html.',
   });
   if (store && store.backend === 'postgres') {
     lines.push({

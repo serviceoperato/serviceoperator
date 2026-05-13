@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
+<title>Pricing — Service Opera</title>
+<meta name="description" content="Free operational report, monthly operator retainer, and scoped buildouts for Thailand hotels, clinics and property operators." />
+<link rel="icon" href="/assets/favicon.png" type="image/png" sizes="any" />
+<link rel="apple-touch-icon" href="/assets/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+<script src="/page-skeleton.js"></script>
+<script src="/so-api.js"></script>
+</head>
+<body class="page-mkt">
+
+<div class="grain" aria-hidden="true"></div>
+
+<nav class="nav">
+  <div class="nav__start">
+    <a href="/" class="nav__logo">
+      <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="ServiceOpera.to" decoding="async" />
+    </a>
+  </div>
+  <div class="nav__links">
+    <a href="/pricing" class="nav__text">Pricing</a>
+    <a href="/login.html" class="nav__login mono" id="navPortalAuth">Log in</a>
+    <button type="button" class="theme-toggle" data-theme-toggle aria-label="Theme"></button>
+
+  </div>
+</nav>
+
+<main class="mkt-page">
+  <header class="hero">
+    <p class="mkt-kicker">Pricing</p>
+    <h1>Start free. Scale when the system earns its seat.</h1>
+    <p class="lead">Engagement is staged: a free report, a monthly operator retainer for steady improvements, or a larger build when you need full-stack automation. <a href="/engagement.html">Full engagement model →</a></p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="/reports.html#inquiry">Request a free report</a>
+      <a class="btn btn-secondary" href="https://cal.com/jack-serviceoperato-r9s5zj/30min" target="_blank" rel="noopener noreferrer">Book a 30-min call</a>
+    </div>
+  </header>
+
+  <section class="mkt-section">
+    <h2>How to proceed</h2>
+    <p>Request the private audit from <a href="/reports.html">Reports</a>, or send context below and Jack will reply with the right tier and next step.</p>
+    <div
+      data-inquiry-form
+      data-inquiry-topic="Pricing / engagement"
+      data-inquiry-submit="Send inquiry"
+    ></div>
+  </section>
+</main>
+
+<footer class="mkt-footer">
+  <span>© 2026 Service Opera · Built in Thailand</span>
+  <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a>
+</footer>
+
+<script src="/inquiry-form.js"></script>
+<script src="/sw-register.js"></script>
+<script src="/site-nav-drawer.js"></script>
+<script src="/user-account-menu.js"></script>
+<script src="theme.js"></script>
+<script src="debug.js"></script>
+</body>
+</html>

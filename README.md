@@ -14,7 +14,8 @@ A complete, deployable site under **`serviceopera.to`**. All static assets live 
 | `public/client.html` | **The "secret page".** Demo workspace behind a **browser-only** username/password (see `public/app.js`). For real data, replace with server-side auth. |
 | `public/styles.css` | Shared black / white / indigo design system. |
 | `public/app.js` | Landing-page modal + demo credential check. |
-| `public/admin.js` | Legacy admin workspace script (no public admin page; `/admin.html` redirects to **`login.html`**). Admin APIs in **`server.mjs`** remain. With **`RESEND_API_KEY`**, sign-in is **email OTP + server session**; without it, optional `admin-config.js` password for local preview only. |
+| `public/admin.html` | **Jack admin console** — OTP or local `admin-config.js` password; loads `admin.js`. |
+| `public/admin.js` | Admin gate + users table, inbox, report catalog, site appearance. With **`RESEND_API_KEY`**, sign-in is **email OTP + server session**; without it, optional `admin-config.js` password for local preview only. |
 | `public/admin-config.js` | Optional: `window.__ADMIN_PASSWORD__` for local preview when the server has no Resend key. **Do not rely on this in production.** |
 | `server.mjs` | Static file host + `/api/admin/*` + **clinic users** (`/api/clinic-users`, `/api/auth/clinic-login`, `/api/clinics/report-data`). User rows live in **`DATA_DIR`/clinic_users.json** (default `./data`, Docker `/app/data`). |
 | `public/login.html` | Clinic log-in; stores `so_clinic_jwt` and redirects to `/clinics/report.html?slug=…`. |

@@ -156,6 +156,8 @@
     line-height: 1.5;
   }
   .tf-resend-block p { margin: 0 0 0.35rem; }
+  .tf-account-panel .tf-account-meta p { margin: 0.25rem 0; }
+  .tf-account-panel .tf-account-meta .portal-caption { margin-bottom: 0.15rem; display: block; }
 </style>
 </head>
 <body class="page-admin page-admin--with-nav page-user-portal">
@@ -267,6 +269,22 @@
       <button type="submit" class="btn btn--primary btn--block" id="userMustChangePwSubmit">Save and continue<span class="ico-arrow-r" aria-hidden="true"></span></button>
       <p class="portal-form__hint" id="mustChangePwHint"></p>
     </form>
+
+    <div id="userAccountPanel" class="portal-form tf-account-panel is-hidden" aria-live="polite">
+      <p class="portal-caption portal-caption--accent tf-portal__eyebrow">— ACCOUNT</p>
+      <h2 id="userAccountHeading" style="font-size: 1.35rem; margin: 0 0 0.5rem; font-weight: 600; font-family: var(--font-body)">Account</h2>
+      <p class="admin-gate__lede" id="accountPanelLede">You are signed in.</p>
+      <div id="accountPanelMeta" class="tf-account-meta mono" style="font-size: 0.9rem; line-height: 1.6; color: var(--mute-2); margin-bottom: 1.15rem"></div>
+      <div id="accountPanelErr" class="tf-error-box is-hidden" role="alert"></div>
+      <div style="display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 0.75rem">
+        <a href="/clinics/report.html" class="btn btn--primary btn--block" id="accountOpenReport">Open my report<span class="ico-arrow-r" aria-hidden="true"></span></a>
+        <button type="button" class="btn btn--ghost btn--block" id="accountForgotPw">Change password</button>
+        <button type="button" class="btn btn--ghost btn--block" id="accountSignOut">Sign out</button>
+      </div>
+      <p class="portal-form__hint" style="margin-top: 0.5rem">
+        <button type="button" class="tf-linkish" id="accountUseOther">Use a different account</button>
+      </p>
+    </div>
 
     <p class="modal__footnote"><a href="/"><span class="ico-arrow-l" aria-hidden="true"></span>Back to site</a></p>
   </div>

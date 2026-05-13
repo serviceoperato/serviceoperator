@@ -408,7 +408,7 @@
     if (paging) paging.textContent = users.length + ' users · page 1 / 1';
     if (!users.length) {
       tb.innerHTML =
-        '<tr><td colspan="15" style="opacity:0.85">No users yet. Use <strong>User reports</strong> in the nav to add one.</td></tr>';
+        '<tr><td colspan="14" style="opacity:0.85">No users yet. Use <strong>User reports</strong> in the nav to add one.</td></tr>';
     } else {
       tb.innerHTML = users
         .map(function (u) {

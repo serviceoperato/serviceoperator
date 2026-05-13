@@ -167,12 +167,14 @@ async function buildReportCatalog() {
 const MANAGED_PAGE_FILES = [
   'index.html',
   'login.html',
+  'admin.html',
   'register.html',
   'places-leads.html',
   'clinics/report.html',
   'property.html',
   'clinics.html',
   'hotels.html',
+  'pricing.html',
 ];
 
 async function buildAdminWorkQueue() {
@@ -1695,8 +1697,9 @@ app.get('/logo.png', (_req, res) => {
   return res.redirect(302, '/assets/logo.png');
 });
 
-app.get(/^\/admin\.html$/i, (_req, res) => {
-  res.redirect(302, '/login.html');
+/** Clean URL — express.static does not map `/pricing` to `pricing.html`. */
+app.get(['/pricing', '/pricing/'], (_req, res) => {
+  res.sendFile(path.join(publicDir, 'pricing.html'));
 });
 
 app.use(
@@ -1717,6 +1720,7 @@ app.use(
         filePath.endsWith('client.html') ||
         filePath.endsWith('login.html') ||
         filePath.endsWith('register.html') ||
+        filePath.endsWith('admin.html') ||
         filePath.endsWith('admin.js') ||
         filePath.endsWith('places-leads.html') ||
         norm.includes('/clinics/report.html')

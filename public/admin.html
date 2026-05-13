@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
+<title>Admin · ServiceOpera.to</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" href="/assets/favicon.png" type="image/png" sizes="any" />
+<link rel="apple-touch-icon" href="/assets/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css" />
+<script src="/page-skeleton.js"></script>
+<script src="/so-api.js"></script>
+</head>
+<body class="page-admin page-admin--with-nav" data-page-skeleton="native">
+
+<div class="grain" aria-hidden="true"></div>
+
+<nav class="nav" aria-label="Primary">
+  <div class="nav__start">
+    <a href="/" class="nav__logo">
+      <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="ServiceOpera.to — home" decoding="async" />
+    </a>
+  </div>
+  <div class="nav__links">
+    <a href="/pricing" class="nav__text">Pricing</a>
+    <a href="/login.html" class="nav__login mono" id="navPortalAuth" data-login-href="/login.html" data-admin-href="/admin.html">Log in</a>
+    <button type="button" class="theme-toggle" data-theme-toggle aria-label="Theme"></button>
+  </div>
+</nav>
+
+<div id="adminGate" class="admin-gate">
+  <div class="admin-gate__card">
+    <div class="admin-gate__brand">ServiceOpera.to</div>
+    <p class="mono" style="margin-bottom:0.75rem;color:var(--amber-2);font-size:0.72rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase">— ADMIN</p>
+    <h1>Operator console</h1>
+    <p id="adminGateLede" class="admin-gate__lede">Checking sign-in options…</p>
+    <div id="adminConfigBanner" class="admin-config-banner is-hidden" role="status"></div>
+    <form id="adminGateForm" class="portal-form" autocomplete="on">
+      <label>
+        <span class="mono">EMAIL</span>
+        <input type="email" name="email" id="adminEmailInput" required autocomplete="username" />
+      </label>
+      <div id="adminOtpWrap" class="is-hidden">
+        <p class="tf-admin-muted" style="margin:0 0 0.75rem">We email a 6-digit code to this address.</p>
+        <button type="button" class="btn btn--ghost mono" id="adminSendCodeBtn" style="margin-bottom:1rem">Send sign-in code</button>
+        <label>
+          <span class="mono">CODE</span>
+          <input type="text" name="code" id="adminCodeInput" inputmode="numeric" maxlength="8" autocomplete="one-time-code" placeholder="000000" />
+        </label>
+      </div>
+      <div id="adminPasswordWrap">
+        <label>
+          <span class="mono">PASSWORD</span>
+          <input type="password" name="password" id="adminPasswordInput" autocomplete="current-password" />
+        </label>
+      </div>
+      <button type="submit" class="btn btn--primary btn--block" id="adminSubmitBtn">Sign in<span class="ico-arrow-r" aria-hidden="true"></span></button>
+      <p id="adminGateHint" class="portal-form__hint mono"></p>
+    </form>
+  </div>
+</div>
+
+<div id="adminWorkspace" class="admin-workspace admin-workspace--tf is-hidden">
+  <div class="tf-admin-version">Build <strong id="tfAdminVersionNum">—</strong></div>
+  <nav id="tfAdminNav" class="tf-admin-nav" aria-label="Admin sections"></nav>
+
+  <header class="admin-topbar">
+    <div class="admin-topbar__site-nav"></div>
+    <div class="admin-topbar__home">
+      <a href="/"><img class="nav__logo-img brand-logo" src="/assets/logo.png" width="160" height="40" alt="Home" decoding="async" /></a>
+      <span>Admin</span>
+    </div>
+    <div class="admin-topbar__meta">Portal user store</div>
+    <div class="admin-topbar__actions">
+      <button type="button" id="adminLogout" class="admin-topbar__logout">Sign out</button>
+    </div>
+  </header>
+
+  <main class="admin-main admin-main--wide" id="adminMainDefault">
+    <section id="usersSection" class="tf-admin-table-card">
+      <h2 class="tf-admin-section-title">Portal users</h2>
+      <div class="tf-admin-toolbar">
+        <input type="search" id="adminUsersSearch" placeholder="Search email, slug, id…" autocomplete="off" />
+        <select id="adminUsersFilter" aria-label="Filter users">
+          <option value="all">All users</option>
+          <option value="active">Active only</option>
+          <option value="pending">Pending (see below)</option>
+        </select>
+        <select id="adminUsersSort" aria-label="Sort users">
+          <option value="recent">Newest first</option>
+          <option value="name">Name A–Z</option>
+        </select>
+        <button type="button" id="adminUsersCsvBtn" class="tf-admin-toolbar__btn">Export CSV</button>
+      </div>
+      <p id="usersTableHint" class="tf-admin-muted"></p>
+      <p id="usersPaging" class="tf-admin-muted"></p>
+      <div style="overflow-x:auto">
+        <table class="tf-users-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Email</th>
+              <th>Name</th>
+              <th>Gender</th>
+              <th>Active</th>
+              <th>Admin</th>
+              <th>Plus</th>
+              <th>Spend / earned</th>
+              <th>Last login</th>
+              <th>IP</th>
+              <th>Location</th>
+              <th>Logins</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tfUsersTbody"></tbody>
+        </table>
+      </div>
+      <div class="tf-admin-payout-card" style="margin-top:1.5rem">
+        <h3 class="tf-admin-section-title">Pending email confirmations</h3>
+        <div id="pendingRegBody"></div>
+      </div>
+    </section>
+
+    <section id="adminInbox" class="admin-inbox">
+      <div class="admin-inbox__head">
+        <h2 class="admin-inbox__title">Operations inbox</h2>
+        <button type="button" id="adminInboxRefresh" class="tf-admin-toolbar__btn">Refresh</button>
+      </div>
+      <p id="adminInboxHint" class="admin-inbox__hint mono"></p>
+      <div id="adminInboxBody" class="admin-inbox__body"></div>
+    </section>
+
+    <section class="tf-admin-reports" aria-label="Report catalog">
+      <h2 class="tf-admin-section-title">Report catalog</h2>
+      <div class="tf-admin-reports__tabs" role="tablist">
+        <button type="button" class="tf-admin-reports__tab is-active" data-report-vertical="clinics" role="tab" aria-selected="true">Clinics</button>
+        <button type="button" class="tf-admin-reports__tab" data-report-vertical="hotels" role="tab" aria-selected="false">Hotels</button>
+        <button type="button" class="tf-admin-reports__tab" data-report-vertical="properties" role="tab" aria-selected="false">Properties</button>
+      </div>
+      <div id="adminReportsList"></div>
+      <p id="adminReportsHint" class="tf-admin-reports__hint"></p>
+    </section>
+  </main>
+
+  <aside id="adminPanel" class="admin-panel is-hidden" aria-live="polite">
+    <h2 id="adminPanelTitle" class="admin-panel__title"></h2>
+    <div id="adminPanelBody" class="admin-panel__body"></div>
+  </aside>
+</div>
+
+<script src="/sw-register.js"></script>
+<script src="/site-nav-drawer.js"></script>
+<script src="/user-account-menu.js"></script>
+<script src="/theme.js"></script>
+<script src="/admin.js"></script>
+<script src="/debug.js"></script>
+</body>
+</html>
