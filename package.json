@@ -5,6 +5,8 @@
   "type": "module",
   "description": "Static site served by Node (Express); admin OTP via Resend when RESEND_API_KEY is set. Includes POST /api/places/search (Google Places API New) for Pattaya lead collection — see PLACES_LEADS.md.",
   "scripts": {
+    "sync:version": "node scripts/write-app-version.mjs",
+    "prestart": "npm run sync:version",
     "start": "node server.mjs",
     "preview:static": "npx --yes serve@14 . -l tcp://0.0.0.0:3000",
     "dev:next": "next dev",

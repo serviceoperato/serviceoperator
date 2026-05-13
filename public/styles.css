@@ -2642,6 +2642,49 @@ html.so-site-nav-open {
 }
 
 /* Admin · Site appearance (image grid) */
+.so-site-appearance__bulk {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.65rem;
+  margin-top: 0.85rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--line-strong);
+  background: color-mix(in srgb, var(--ink-2) 88%, transparent);
+}
+.so-site-appearance__bulk-label {
+  font-size: 0.68rem;
+  color: var(--mute-2);
+  margin-right: 0.25rem;
+}
+.so-site-appearance__field-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.5rem;
+  margin: 0.15rem 0 0.35rem;
+}
+.so-site-appearance__pick {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  color: var(--bone);
+  cursor: pointer;
+  margin: 0;
+  user-select: none;
+}
+.so-site-appearance__pick input {
+  width: 0.95rem;
+  height: 0.95rem;
+  accent-color: var(--amber);
+  cursor: pointer;
+}
+.so-site-appearance__field-actions .tf-admin-toolbar__btn {
+  font-size: 0.72rem;
+  padding: 0.35rem 0.65rem;
+}
 .so-site-appearance__lede {
   margin: 0 0 0.25rem;
   max-width: 72rem;

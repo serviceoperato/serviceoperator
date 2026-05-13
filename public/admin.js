@@ -10,6 +10,34 @@
   var PORTAL_ADMIN_SESSION = 'portal-admin';
   var PORTAL_JWT_KEYS = ['so_user_jwt', 'so_clinic_jwt'];
 
+  /** Admin bearer: mirror portal JWT storage (local + session) so OTP is not re-prompted on new tabs until expiry. */
+  function readStoredAdminJwt() {
+    try {
+      return localStorage.getItem(JWT_KEY) || sessionStorage.getItem(JWT_KEY) || '';
+    } catch (e) {
+      return '';
+    }
+  }
+  function writeStoredAdminJwt(token) {
+    try {
+      if (token) {
+        localStorage.setItem(JWT_KEY, token);
+        sessionStorage.setItem(JWT_KEY, token);
+      } else {
+        localStorage.removeItem(JWT_KEY);
+        sessionStorage.removeItem(JWT_KEY);
+      }
+    } catch (e) {
+      try {
+        if (token) sessionStorage.setItem(JWT_KEY, token);
+        else sessionStorage.removeItem(JWT_KEY);
+      } catch (e2) {}
+    }
+  }
+  function clearStoredAdminJwt() {
+    writeStoredAdminJwt('');
+  }
+
   var otpEnabled = false;
   var capabilitiesHttpOk = false;
   var capabilitiesFromOurServer = false;
@@ -49,16 +77,66 @@
 
   function loadTfVersion() {
     if (!tfVerNum) return;
-    fetch(api('/api/version'), { cache: 'no-store', credentials: apiCred() })
+    var wrap = tfVerNum.closest ? tfVerNum.closest('.tf-admin-version') : null;
+    var staticVer = '';
+    var origin =
+      typeof window !== 'undefined' && window.location && window.location.origin
+        ? window.location.origin
+        : '';
+    var staticFetch = origin
+      ? fetch(origin + '/app-version.json', { cache: 'no-store', credentials: 'same-origin' })
+          .then(function (r) {
+            return r.ok ? r.json() : null;
+          })
+          .then(function (j) {
+            if (j && typeof j.version === 'string') staticVer = String(j.version).trim();
+          })
+          .catch(function () {})
+      : Promise.resolve();
+    var apiFetch = fetch(api('/api/version'), { cache: 'no-store', credentials: apiCred() })
       .then(function (r) {
-        return r.json();
-      })
-      .then(function (j) {
-        if (j && j.version) tfVerNum.textContent = j.version;
+        return r.json().then(function (j) {
+          return { ok: r.ok, j: j };
+        });
       })
       .catch(function () {
-        tfVerNum.textContent = '(n/a)';
+        return { ok: false, j: null };
       });
+    Promise.all([staticFetch, apiFetch]).then(function (results) {
+      var apiPack = results[1];
+      var apiVer =
+        apiPack && apiPack.j && apiPack.j.version ? String(apiPack.j.version).trim() : '';
+      if (apiVer) {
+        tfVerNum.textContent = apiVer;
+        if (wrap) {
+          if (staticVer && staticVer !== apiVer) {
+            wrap.setAttribute(
+              'title',
+              'API reports ' +
+                apiVer +
+                '; this admin bundle is ' +
+                staticVer +
+                '. Redeploy the backend or check so-api origin if that is unexpected.'
+            );
+          } else {
+            wrap.removeAttribute('title');
+          }
+        }
+        return;
+      }
+      if (staticVer) {
+        tfVerNum.textContent = staticVer;
+        if (wrap) {
+          wrap.setAttribute(
+            'title',
+            'Could not load /api/version from the configured API host; showing app-version.json from this page origin.'
+          );
+        }
+        return;
+      }
+      tfVerNum.textContent = '(n/a)';
+      if (wrap) wrap.removeAttribute('title');
+    });
   }
 
   function shortDisplayId(raw) {
@@ -614,7 +692,13 @@
     panelTitle.textContent = 'Site appearance';
     panelBody.innerHTML =
       '<div class="so-site-appearance">' +
-      '<p class="tf-admin-muted so-site-appearance__lede">Square previews update as you type. Use <code>/assets/…</code> or a public <strong>https</strong> URL. <code>/logo.png</code> redirects to the nav logo below. Public: <code>GET /api/site-appearance</code>.</p>' +
+      '<p class="tf-admin-muted so-site-appearance__lede">Square previews update as you type. Use <strong>Upload…</strong> (admin only, saves under <code>/assets/site-uploads/</code>) or paste <code>/assets/…</code> / a public <strong>https</strong> URL. <code>/logo.png</code> redirects to the nav logo below. Public: <code>GET /api/site-appearance</code>.</p>' +
+      '<div class="so-site-appearance__bulk" role="toolbar" aria-label="Bulk actions for hero images">' +
+      '<span class="so-site-appearance__bulk-label mono">Selection</span>' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSiteAppearSelectAll">Select all</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSiteAppearSelectNone">Clear selection</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSiteAppearClearSelected">Clear URLs for selected</button>' +
+      '</div>' +
       '<div class="so-site-appearance__grid">' +
       '<article class="so-site-appearance__card">' +
       '<div class="so-site-appearance__preview">' +
@@ -624,6 +708,12 @@
       '<div class="so-site-appearance__card-fields">' +
       '<h3 class="so-site-appearance__card-title">Nav logo</h3>' +
       '<p class="so-site-appearance__card-meta mono">Header · <code>img.brand-logo</code></p>' +
+      '<div class="so-site-appearance__field-actions">' +
+      '<label class="so-site-appearance__pick"><input type="checkbox" class="so-site-appearance__cb" data-so-appearance-sel="nav" aria-label="Select nav logo" /> <span class="mono">Select</span></label>' +
+      '<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="is-hidden" id="soSiteNavLogoFile" />' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSiteNavLogoPickBtn">Upload…</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSiteNavLogoClearBtn">Clear URL</button>' +
+      '</div>' +
       '<label class="portal-form__label" for="soSiteNavLogoUrl">Image URL</label>' +
       '<input class="portal-form__input mono" type="text" id="soSiteNavLogoUrl" autocomplete="off" />' +
       '<label class="portal-form__label" for="soSiteNavLogoAlt">Alt text</label>' +
@@ -637,6 +727,12 @@
       '<div class="so-site-appearance__card-fields">' +
       '<h3 class="so-site-appearance__card-title">Homepage hero</h3>' +
       '<p class="so-site-appearance__card-meta mono">index.html hero</p>' +
+      '<div class="so-site-appearance__field-actions">' +
+      '<label class="so-site-appearance__pick"><input type="checkbox" class="so-site-appearance__cb" data-so-appearance-sel="home" aria-label="Select homepage hero" /> <span class="mono">Select</span></label>' +
+      '<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="is-hidden" id="soSiteHomeImgFile" />' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHomeImgPickBtn">Upload…</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHomeImgClearBtn">Clear URL</button>' +
+      '</div>' +
       '<label class="portal-form__label" for="soSiteHomeImgUrl">Image URL</label>' +
       '<input class="portal-form__input mono" type="text" id="soSiteHomeImgUrl" autocomplete="off" />' +
       '<label class="portal-form__label" for="soSiteHomeImgAlt">Alt text</label>' +
@@ -650,6 +746,12 @@
       '<div class="so-site-appearance__card-fields">' +
       '<h3 class="so-site-appearance__card-title">Property</h3>' +
       '<p class="so-site-appearance__card-meta mono">property.html hero</p>' +
+      '<div class="so-site-appearance__field-actions">' +
+      '<label class="so-site-appearance__pick"><input type="checkbox" class="so-site-appearance__cb" data-so-appearance-sel="prop" aria-label="Select property hero" /> <span class="mono">Select</span></label>' +
+      '<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="is-hidden" id="soSitePropImgFile" />' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSitePropImgPickBtn">Upload…</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSitePropImgClearBtn">Clear URL</button>' +
+      '</div>' +
       '<label class="portal-form__label" for="soSitePropImgUrl">Image URL</label>' +
       '<input class="portal-form__input mono" type="text" id="soSitePropImgUrl" autocomplete="off" />' +
       '<label class="portal-form__label" for="soSitePropImgAlt">Alt text</label>' +
@@ -663,6 +765,12 @@
       '<div class="so-site-appearance__card-fields">' +
       '<h3 class="so-site-appearance__card-title">Clinics</h3>' +
       '<p class="so-site-appearance__card-meta mono">clinics.html hero</p>' +
+      '<div class="so-site-appearance__field-actions">' +
+      '<label class="so-site-appearance__pick"><input type="checkbox" class="so-site-appearance__cb" data-so-appearance-sel="clinic" aria-label="Select clinics hero" /> <span class="mono">Select</span></label>' +
+      '<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="is-hidden" id="soSiteClinicImgFile" />' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSiteClinicImgPickBtn">Upload…</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSiteClinicImgClearBtn">Clear URL</button>' +
+      '</div>' +
       '<label class="portal-form__label" for="soSiteClinicImgUrl">Image URL</label>' +
       '<input class="portal-form__input mono" type="text" id="soSiteClinicImgUrl" autocomplete="off" />' +
       '<label class="portal-form__label" for="soSiteClinicImgAlt">Alt text</label>' +
@@ -676,6 +784,12 @@
       '<div class="so-site-appearance__card-fields">' +
       '<h3 class="so-site-appearance__card-title">Hotels</h3>' +
       '<p class="so-site-appearance__card-meta mono">hotels.html hero</p>' +
+      '<div class="so-site-appearance__field-actions">' +
+      '<label class="so-site-appearance__pick"><input type="checkbox" class="so-site-appearance__cb" data-so-appearance-sel="hotel" aria-label="Select hotels hero" /> <span class="mono">Select</span></label>' +
+      '<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="is-hidden" id="soSiteHotelImgFile" />' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHotelImgPickBtn">Upload…</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHotelImgClearBtn">Clear URL</button>' +
+      '</div>' +
       '<label class="portal-form__label" for="soSiteHotelImgUrl">Image URL</label>' +
       '<input class="portal-form__input mono" type="text" id="soSiteHotelImgUrl" autocomplete="off" />' +
       '<label class="portal-form__label" for="soSiteHotelImgAlt">Alt text</label>' +
@@ -685,7 +799,7 @@
       '<div class="so-site-appearance__footer">' +
       '<p class="portal-form__hint mono" id="soSiteAppearanceHint" style="margin:0;flex:1;min-width:12rem"></p>' +
       '<div class="admin-panel__actions" style="margin:0">' +
-      '<button type="button" class="btn btn-primary" id="soSiteAppearanceSave">Save all</button> ' +
+      '<button type="button" class="btn btn--primary" id="soSiteAppearanceSave">Save all</button> ' +
       '<button type="button" class="btn btn--ghost mono" id="soSiteAppearanceBack">← Back to users</button>' +
       '</div></div></div>';
     panel.classList.remove('is-hidden');
@@ -807,6 +921,136 @@
     function bumpSiteAppearanceUrlPreviews() {
       [navLogoUrlEl, homeUrlEl, urlEl, clinicUrlEl, hotelUrlEl].forEach(function (el) {
         if (el) el.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+    }
+    function bindAppearanceUpload(pickBtnId, fileInputId, urlInput) {
+      var pick = document.getElementById(pickBtnId);
+      var fin = document.getElementById(fileInputId);
+      if (!pick || !fin || !urlInput) return;
+      pick.addEventListener('click', function () {
+        fin.click();
+      });
+      fin.addEventListener('change', function () {
+        var file = fin.files && fin.files[0];
+        if (!file) return;
+        var tok = getAdminBearer();
+        if (!tok) {
+          if (hintEl) hintEl.textContent = 'Sign in as admin to upload images to this server.';
+          fin.value = '';
+          return;
+        }
+        if (hintEl) hintEl.textContent = 'Uploading…';
+        var reader = new FileReader();
+        reader.onerror = function () {
+          if (hintEl) hintEl.textContent = 'Could not read file.';
+          fin.value = '';
+        };
+        reader.onload = function () {
+          var dataUrl = reader.result;
+          var b64 =
+            typeof dataUrl === 'string' && dataUrl.indexOf(',') >= 0 ? dataUrl.split(',')[1] : '';
+          if (!b64) {
+            if (hintEl) hintEl.textContent = 'Empty file.';
+            fin.value = '';
+            return;
+          }
+          fetch(api('/api/admin/site-appearance/upload'), {
+            method: 'POST',
+            credentials: apiCred(),
+            cache: 'no-store',
+            headers: { Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ imageBase64: b64 }),
+          })
+            .then(function (r) {
+              return r.json().then(function (j) {
+                return { ok: r.ok, j: j };
+              });
+            })
+            .then(function (x) {
+              if (!x.ok || !x.j || !x.j.url) {
+                if (hintEl) hintEl.textContent = (x.j && x.j.error) || 'Upload failed.';
+                fin.value = '';
+                return;
+              }
+              urlInput.value = x.j.url;
+              urlInput.dispatchEvent(new Event('input', { bubbles: true }));
+              if (hintEl) {
+                hintEl.textContent =
+                  'Uploaded ' + x.j.url + ' (' + String(x.j.bytes) + ' B). Save to persist in site config.';
+              }
+              fin.value = '';
+            })
+            .catch(function () {
+              if (hintEl) hintEl.textContent = 'Upload network error.';
+              fin.value = '';
+            });
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+    function bindClearUrl(btnId, urlInput) {
+      var btn = document.getElementById(btnId);
+      if (!btn || !urlInput) return;
+      btn.addEventListener('click', function () {
+        urlInput.value = '';
+        urlInput.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+    }
+    bindAppearanceUpload('soSiteNavLogoPickBtn', 'soSiteNavLogoFile', navLogoUrlEl);
+    bindClearUrl('soSiteNavLogoClearBtn', navLogoUrlEl);
+    bindAppearanceUpload('soSiteHomeImgPickBtn', 'soSiteHomeImgFile', homeUrlEl);
+    bindClearUrl('soSiteHomeImgClearBtn', homeUrlEl);
+    bindAppearanceUpload('soSitePropImgPickBtn', 'soSitePropImgFile', urlEl);
+    bindClearUrl('soSitePropImgClearBtn', urlEl);
+    bindAppearanceUpload('soSiteClinicImgPickBtn', 'soSiteClinicImgFile', clinicUrlEl);
+    bindClearUrl('soSiteClinicImgClearBtn', clinicUrlEl);
+    bindAppearanceUpload('soSiteHotelImgPickBtn', 'soSiteHotelImgFile', hotelUrlEl);
+    bindClearUrl('soSiteHotelImgClearBtn', hotelUrlEl);
+    var selAll = document.getElementById('soSiteAppearSelectAll');
+    var selNone = document.getElementById('soSiteAppearSelectNone');
+    var selClear = document.getElementById('soSiteAppearClearSelected');
+    function appearanceCheckboxes() {
+      return panelBody ? panelBody.querySelectorAll('.so-site-appearance__cb') : [];
+    }
+    function appearanceRowForSel(sel) {
+      if (sel === 'nav') return { url: navLogoUrlEl };
+      if (sel === 'home') return { url: homeUrlEl };
+      if (sel === 'prop') return { url: urlEl };
+      if (sel === 'clinic') return { url: clinicUrlEl };
+      if (sel === 'hotel') return { url: hotelUrlEl };
+      return null;
+    }
+    if (selAll) {
+      selAll.addEventListener('click', function () {
+        appearanceCheckboxes().forEach(function (cb) {
+          cb.checked = true;
+        });
+      });
+    }
+    if (selNone) {
+      selNone.addEventListener('click', function () {
+        appearanceCheckboxes().forEach(function (cb) {
+          cb.checked = false;
+        });
+      });
+    }
+    if (selClear) {
+      selClear.addEventListener('click', function () {
+        var n = 0;
+        appearanceCheckboxes().forEach(function (cb) {
+          if (!cb.checked) return;
+          var row = appearanceRowForSel(cb.getAttribute('data-so-appearance-sel'));
+          if (!row || !row.url) return;
+          row.url.value = '';
+          row.url.dispatchEvent(new Event('input', { bubbles: true }));
+          n += 1;
+        });
+        if (hintEl) {
+          hintEl.textContent =
+            n > 0
+              ? 'Cleared ' + n + ' image URL(s). Save to apply defaults from the server for empty fields.'
+              : 'Select one or more fields first.';
+        }
       });
     }
     var token = getAdminBearer();
@@ -1067,7 +1311,7 @@
 
   function hideWorkspace() {
     sessionStorage.removeItem(SESSION_KEY);
-    sessionStorage.removeItem(JWT_KEY);
+    clearStoredAdminJwt();
     if (workspace) workspace.classList.add('is-hidden');
     if (gate) gate.classList.remove('is-hidden');
     if (hint) {
@@ -1159,7 +1403,7 @@
   }
 
   function tryRestoreJwtSession() {
-    var token = sessionStorage.getItem(JWT_KEY);
+    var token = readStoredAdminJwt();
     if (!token) return Promise.resolve(false);
     return fetch(api('/api/admin/session'), {
       method: 'GET',
@@ -1168,14 +1412,15 @@
     })
       .then(function (r) {
         if (!r.ok) {
-          sessionStorage.removeItem(JWT_KEY);
+          clearStoredAdminJwt();
           return false;
         }
+        writeStoredAdminJwt(token);
         showWorkspace();
         return true;
       })
       .catch(function () {
-        sessionStorage.removeItem(JWT_KEY);
+        clearStoredAdminJwt();
         return false;
       });
   }
@@ -1196,7 +1441,7 @@
       })
       .then(function (x) {
         if (x.ok && x.j && x.j.token) {
-          sessionStorage.setItem(JWT_KEY, x.j.token);
+          writeStoredAdminJwt(x.j.token);
           showWorkspace();
           return true;
         }
@@ -1321,7 +1566,7 @@
               if (codeInput) codeInput.value = '';
               return;
             }
-            sessionStorage.setItem(JWT_KEY, x.j.token);
+            writeStoredAdminJwt(x.j.token);
             setHint('Signed in.', 'ok');
             showWorkspace();
           })
@@ -1372,7 +1617,7 @@
   }
 
   function getAdminBearer() {
-    return sessionStorage.getItem(JWT_KEY) || '';
+    return readStoredAdminJwt();
   }
 
   function formatAdminTs(iso) {

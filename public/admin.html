@@ -34,11 +34,11 @@
 
 <script>
 (function () {
+  /** Only unhide the console shell when an admin JWT hint exists (portal JWT alone still needs OTP or bootstrap). */
   function hasStoredSessionHint() {
     try {
       if (sessionStorage.getItem('so_admin_jwt')) return true;
-      if (localStorage.getItem('so_user_jwt') || sessionStorage.getItem('so_user_jwt')) return true;
-      if (localStorage.getItem('so_clinic_jwt') || sessionStorage.getItem('so_clinic_jwt')) return true;
+      if (localStorage.getItem('so_admin_jwt')) return true;
     } catch (e) {}
     return false;
   }

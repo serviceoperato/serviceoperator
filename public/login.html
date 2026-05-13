@@ -1441,6 +1441,7 @@
     accountSignOut.addEventListener('click', function () {
       clearPortalJwtLogin();
       try {
+        localStorage.removeItem('so_admin_jwt');
         sessionStorage.removeItem('so_admin_jwt');
       } catch (eSo) {}
       window.location.href = '/login.html';
@@ -1450,6 +1451,7 @@
     accountUseOther.addEventListener('click', function () {
       clearPortalJwtLogin();
       try {
+        localStorage.removeItem('so_admin_jwt');
         sessionStorage.removeItem('so_admin_jwt');
       } catch (eSo2) {}
       try {

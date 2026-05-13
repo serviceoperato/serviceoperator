@@ -13,6 +13,8 @@ import { searchTextAllPages } from './lib/google-places-search.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(__dirname, 'public');
+const siteUploadsDir = path.join(publicDir, 'assets', 'site-uploads');
+fs.mkdirSync(siteUploadsDir, { recursive: true });
 
 let appVersion = '0.0.0';
 try {
@@ -328,6 +330,17 @@ function mergeSiteAppearance(raw) {
     navLogoUrl,
     navLogoAlt,
   };
+}
+
+function sniffWritableSiteImage(buf) {
+  if (!Buffer.isBuffer(buf) || buf.length < 12) return null;
+  if (buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47) return { ext: 'png' };
+  if (buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return { ext: 'jpg' };
+  if (buf[0] === 0x47 && buf[1] === 0x49 && buf[2] === 0x46 && buf[3] === 0x38 && (buf[4] === 0x37 || buf[4] === 0x39))
+    return { ext: 'gif' };
+  const ascii12 = buf.slice(0, 12).toString('ascii');
+  if (ascii12.startsWith('RIFF') && ascii12.slice(8, 12) === 'WEBP') return { ext: 'webp' };
+  return null;
 }
 
 function isSafePropertyPageImageUrl(candidate) {
@@ -748,7 +761,11 @@ function publicOriginForEmail(req) {
 const app = express();
 app.set('trust proxy', 1);
 app.disable('x-powered-by');
-app.use(express.json({ limit: '48kb' }));
+app.use((req, res, next) => {
+  const bigJson =
+    req.method === 'POST' && req.path === '/api/admin/site-appearance/upload';
+  express.json({ limit: bigJson ? '12mb' : '48kb' })(req, res, next);
+});
 
 app.use((req, res, next) => {
   if (!req.path.startsWith('/api/')) return next();
@@ -1121,6 +1138,41 @@ app.put('/api/admin/site-appearance', requireAdmin, (req, res) => {
   } catch (e) {
     return res.status(500).json({ error: e.message || 'Could not save site appearance.' });
   }
+});
+
+app.post('/api/admin/site-appearance/upload', requireAdmin, (req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  const rawB64 =
+    typeof req.body?.imageBase64 === 'string'
+      ? req.body.imageBase64.trim()
+      : typeof req.body?.data === 'string'
+        ? req.body.data.trim()
+        : '';
+  const cleaned = rawB64.replace(/^data:image\/\w+;base64,/i, '').replace(/\s/g, '');
+  let buf;
+  try {
+    buf = Buffer.from(cleaned, 'base64');
+  } catch {
+    return res.status(400).json({ error: 'Invalid base64 image payload.' });
+  }
+  const maxBytes = 6 * 1024 * 1024;
+  if (!buf.length || buf.length > maxBytes) {
+    return res.status(400).json({ error: 'Image too large (max 6 MB).' });
+  }
+  const sniffed = sniffWritableSiteImage(buf);
+  if (!sniffed) {
+    return res.status(400).json({ error: 'Unsupported image type. Use PNG, JPEG, GIF, or WebP.' });
+  }
+  const stamp = Date.now();
+  const rand = crypto.randomBytes(4).toString('hex');
+  const base = `su-${stamp}-${rand}.${sniffed.ext}`;
+  const full = path.join(siteUploadsDir, base);
+  try {
+    fs.writeFileSync(full, buf);
+  } catch (e) {
+    return res.status(500).json({ error: e.message || 'Could not save uploaded file.' });
+  }
+  return res.json({ ok: true, url: `/assets/site-uploads/${base}`, bytes: buf.length });
 });
 
 app.get('/api/admin/report-catalog', requireAdmin, async (_req, res) => {
@@ -1740,6 +1792,7 @@ app.use(
         filePath.endsWith('register.html') ||
         filePath.endsWith('admin.html') ||
         filePath.endsWith('admin.js') ||
+        norm.endsWith('app-version.json') ||
         filePath.endsWith('places-leads.html') ||
         norm.includes('/clinics/report.html')
       ) {

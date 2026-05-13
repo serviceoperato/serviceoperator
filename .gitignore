@@ -9,3 +9,5 @@ node_modules/
 !.env.example
 /data/
 test-data/
+public/assets/site-uploads/*
+!public/assets/site-uploads/.gitkeep

@@ -30,7 +30,7 @@
 
   function getAdminJwt() {
     try {
-      return sessionStorage.getItem(ADMIN_JWT_KEY) || '';
+      return localStorage.getItem(ADMIN_JWT_KEY) || sessionStorage.getItem(ADMIN_JWT_KEY) || '';
     } catch (e) {
       return '';
     }
@@ -178,6 +178,7 @@
           }
           if (!adminOk) {
             try {
+              localStorage.removeItem(ADMIN_JWT_KEY);
               sessionStorage.removeItem(ADMIN_JWT_KEY);
             } catch (e) {}
           }
@@ -293,6 +294,7 @@
           e.preventDefault();
           clearPortalJwt();
           try {
+            localStorage.removeItem(ADMIN_JWT_KEY);
             sessionStorage.removeItem(ADMIN_JWT_KEY);
           } catch (err) {}
           window.location.href = loginHref;

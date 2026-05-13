@@ -4,14 +4,15 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
-<title>Pricing — Service Opera</title>
-<meta name="description" content="Free operational report, monthly operator retainer, and scoped buildouts for Thailand hotels, clinics and property operators." />
+<title>Pricing · ServiceOpera</title>
+<meta name="description" content="Remote AI operations for hotels, clinics and property operators in Pattaya and Thailand." />
 <link rel="icon" href="/assets/favicon.png" type="image/png" sizes="any" />
 <link rel="apple-touch-icon" href="/assets/favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="/styles.css" />
+<link rel="stylesheet" href="/pricing-mkt.css" />
 <script src="/page-skeleton.js"></script>
 <script src="/so-api.js"></script>
 </head>
@@ -19,7 +20,7 @@
 
 <div class="grain" aria-hidden="true"></div>
 
-<nav class="nav">
+<nav class="nav" aria-label="Primary">
   <div class="nav__start">
     <a href="/" class="nav__logo">
       <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="ServiceOpera.to" decoding="async" />
@@ -29,38 +30,62 @@
     <a href="/pricing" class="nav__text">Pricing</a>
     <a href="/login.html" class="nav__login mono" id="navPortalAuth">Log in</a>
     <button type="button" class="theme-toggle" data-theme-toggle aria-label="Theme"></button>
-
   </div>
 </nav>
 
-<main class="mkt-page">
-  <header class="hero">
-    <p class="mkt-kicker">Pricing</p>
-    <h1>Start free. Scale when the system earns its seat.</h1>
-    <p class="lead">Engagement is staged: a free report, a monthly operator retainer for steady improvements, or a larger build when you need full-stack automation. <a href="/engagement.html">Full engagement model →</a></p>
-    <div class="cta-row">
-      <a class="btn btn-primary" href="/reports.html#inquiry">Request a free report</a>
-      <a class="btn btn-secondary" href="https://cal.com/jack-serviceoperato-r9s5zj/30min" target="_blank" rel="noopener noreferrer">Book a 30-min call</a>
-    </div>
-  </header>
+<main class="mkt-page so-pricing-fadeIn">
+  <section aria-labelledby="pricing-heading">
+    <header class="so-pricing-header">
+      <h1 id="pricing-heading" class="so-pricing-title">Pricing</h1>
+      <p class="so-pricing-subtitle">Remote AI operations for hotels, clinics and property operators in Pattaya and Thailand. Start free, scale when it works.</p>
+    </header>
 
-  <section class="mkt-section">
-    <h2>How to proceed</h2>
-    <p>Request the private audit from <a href="/reports.html">Reports</a>, or send context below and Jack will reply with the right tier and next step.</p>
-    <div
-      data-inquiry-form
-      data-inquiry-topic="Pricing / engagement"
-      data-inquiry-submit="Send inquiry"
-    ></div>
+    <div class="so-pricing-grid">
+      <article class="so-pricing-card" aria-labelledby="tier-free-heading">
+        <p id="tier-free-heading" class="so-pricing-label">Free Audit</p>
+        <p class="so-pricing-price">฿0</p>
+        <p class="so-pricing-subtext">One-time · No card required</p>
+        <p class="so-pricing-description">You receive a private audit report within 48 hours covering your public footprint, 3 visible operational gaps and one pilot idea — built from public data, not assumptions.</p>
+        <a class="so-pricing-cta so-pricing-cta--primary" href="/reports.html#inquiry" aria-label="Request your free audit">Request your free audit</a>
+      </article>
+
+      <article class="so-pricing-card so-pricing-card--recommended" aria-labelledby="tier-operator-heading operator-recommended">
+        <span id="operator-recommended" class="so-pricing-sr-only">Recommended tier.</span>
+        <span class="so-pricing-badge so-pricing-badge--accent">Most popular</span>
+        <p id="tier-operator-heading" class="so-pricing-label">Operator</p>
+        <p class="so-pricing-price">฿3,900 / month</p>
+        <p class="so-pricing-subtext">Cancel anytime · Prices in THB excl. VAT</p>
+        <ul class="so-pricing-features">
+          <li>Monthly audit refresh</li>
+          <li>Competitor &amp; price signal dashboard</li>
+          <li>One active AI workflow (reviews, intake or follow-up)</li>
+          <li>Async support · 48h reply</li>
+        </ul>
+        <a class="so-pricing-cta so-pricing-cta--primary" href="mailto:jack@serviceopera.to?subject=Operator%20Plan" aria-label="Start Operator">Start Operator</a>
+      </article>
+
+      <article class="so-pricing-card" aria-labelledby="tier-white-heading">
+        <span class="so-pricing-badge">Limited</span>
+        <p id="tier-white-heading" class="so-pricing-label">White-Glove</p>
+        <p class="so-pricing-price">฿9,900 / month</p>
+        <p class="so-pricing-subtext">Limited to 5 active clients</p>
+        <ul class="so-pricing-features">
+          <li>Everything in Operator</li>
+          <li>Up to 3 active automations</li>
+          <li>Custom integrations</li>
+          <li>Monthly review call</li>
+          <li>Priority support</li>
+        </ul>
+        <a class="so-pricing-cta so-pricing-cta--secondary" href="mailto:jack@serviceopera.to?subject=White-Glove" aria-label="Apply for White-Glove">Apply for White-Glove</a>
+      </article>
+    </div>
   </section>
+
+  <footer>
+    <p class="so-pricing-footerNote">Prices in Thai Baht (THB). Custom build fees may apply for complex integrations on White-Glove. Month-to-month, no annual lock-in. All tiers negotiable for multi-location operators.</p>
+  </footer>
 </main>
 
-<footer class="mkt-footer">
-  <span>© 2026 Service Opera · Built in Thailand</span>
-  <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a>
-</footer>
-
-<script src="/inquiry-form.js"></script>
 <script src="/sw-register.js"></script>
 <script src="/site-nav-drawer.js"></script>
 <script src="/user-account-menu.js"></script>
