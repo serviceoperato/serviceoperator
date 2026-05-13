@@ -2747,8 +2747,12 @@ html.so-site-nav-open {
 }
 .home-lp .hero,
 .mkt-page .hero {
-  max-width: 52rem;
+  /* Homepage `.hero` is a 2-column grid for copy + aside. Sector/marketing heroes are
+     a flat stack (kicker, h1, lead, CTAs); without this override, auto-placement splits
+     them across columns and the headline/CTAs read in a narrow “vertical” strip. */
+  max-width: none;
   margin-bottom: 3rem;
+  grid-template-columns: 1fr;
 }
 .home-lp .hero h1,
 .mkt-page .hero h1 {

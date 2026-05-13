@@ -32,6 +32,24 @@
   </div>
 </nav>
 
+<script>
+(function () {
+  function hasStoredSessionHint() {
+    try {
+      if (sessionStorage.getItem('so_admin_jwt')) return true;
+      if (localStorage.getItem('so_user_jwt') || sessionStorage.getItem('so_user_jwt')) return true;
+      if (localStorage.getItem('so_clinic_jwt') || sessionStorage.getItem('so_clinic_jwt')) return true;
+    } catch (e) {}
+    return false;
+  }
+  if (!hasStoredSessionHint()) return;
+  var g = document.getElementById('adminGate');
+  var w = document.getElementById('adminWorkspace');
+  if (g) g.classList.add('is-hidden');
+  if (w) w.classList.remove('is-hidden');
+})();
+</script>
+
 <div id="adminGate" class="admin-gate">
   <div class="admin-gate__card">
     <div class="admin-gate__brand">ServiceOpera.to</div>

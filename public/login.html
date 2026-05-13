@@ -814,6 +814,19 @@
     }
   }
 
+  function decodeJwtReportSlugLogin(token) {
+    try {
+      var parts = String(token || '').split('.');
+      if (parts.length < 2) return '';
+      var payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      while (payload.length % 4) payload += '=';
+      var json = JSON.parse(atob(payload));
+      return typeof json.reportSlug === 'string' ? json.reportSlug : '';
+    } catch (eRs) {
+      return '';
+    }
+  }
+
   function setAccountPanelErr(msg) {
     if (!accountPanelErr) return;
     if (!msg) {
@@ -939,7 +952,10 @@
         populateAccountPanelFromSession(x.json, emailFb);
         return;
       }
-      populateAccountPanelFromSession({ email: emailFb, reportSlug: '' }, emailFb);
+      populateAccountPanelFromSession(
+        { email: emailFb, reportSlug: decodeJwtReportSlugLogin(tok) },
+        emailFb
+      );
     });
   }
 

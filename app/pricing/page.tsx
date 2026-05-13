@@ -16,8 +16,8 @@ export default function PricingPage() {
             Pricing
           </h1>
           <p className={styles.subtitle}>
-            {`Remote AI operations for hotels, clinics and property operators
-in Pattaya and Thailand. Start free, scale when it works.`}
+            Remote AI operations for hotels, clinics and property operators in Pattaya and
+            Thailand.
           </p>
         </header>
 
@@ -28,11 +28,6 @@ in Pattaya and Thailand. Start free, scale when it works.`}
             </p>
             <p className={styles.price}>฿0</p>
             <p className={styles.subtext}>One-time · No card required</p>
-            <p className={styles.description}>
-              {`You receive a private audit report within 48 hours covering
-your public footprint, 3 visible operational gaps and one pilot idea —
-built from public data, not assumptions.`}
-            </p>
             <a
               className={`${styles.cta} ${styles.ctaPrimary}`}
               href="/reports.html#inquiry"
@@ -44,19 +39,18 @@ built from public data, not assumptions.`}
 
           <article
             className={`${styles.card} ${styles.cardRecommended}`}
-            aria-labelledby="tier-operator-heading operator-recommended"
+            aria-labelledby="tier-operator-heading"
           >
-            <span id="operator-recommended" className="sr-only">
-              Recommended tier.
-            </span>
             <span className={`${styles.badge} ${styles.badgeAccent}`} aria-hidden="true">
               Most popular
             </span>
             <p id="tier-operator-heading" className={styles.label}>
               Operator
             </p>
-            <p className={styles.price}>฿3,900 / month</p>
-            <p className={styles.subtext}>Cancel anytime · Prices in THB excl. VAT</p>
+            <p className={styles.price}>฿3,900/mo</p>
+            <p className={styles.subtext}>
+              Recommended · Cancel anytime · Prices in THB excl. VAT
+            </p>
             <ul className={styles.features}>
               <li>Monthly audit refresh</li>
               <li>Competitor &amp; price signal dashboard</li>
@@ -79,7 +73,7 @@ built from public data, not assumptions.`}
             <p id="tier-white-heading" className={styles.label}>
               White-Glove
             </p>
-            <p className={styles.price}>฿9,900 / month</p>
+            <p className={styles.price}>฿9,900/mo</p>
             <p className={styles.subtext}>Limited to 5 active clients</p>
             <ul className={styles.features}>
               <li>Everything in Operator</li>

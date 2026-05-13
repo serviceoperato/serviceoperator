@@ -156,6 +156,23 @@ async function buildReportCatalog() {
     const href = `/clinics/report.html?slug=${encodeURIComponent(file.slug)}`;
     buckets[meta.vertical].push({ title: meta.title, href, slug: file.slug });
   }
+  try {
+    const users = await userStore.listUsers();
+    for (const u of users) {
+      const slug = typeof u.reportSlug === 'string' ? u.reportSlug.trim() : '';
+      if (!slug) continue;
+      const href = `/clinics/report.html?slug=${encodeURIComponent(slug)}`;
+      const meta = readSlugReportMeta(slug);
+      const display =
+        (typeof u.displayName === 'string' && u.displayName.trim()) ||
+        (typeof u.email === 'string' && u.email.trim()) ||
+        slug;
+      const title = `${display} · ${slug}`;
+      buckets[meta.vertical].push({ title, href, slug });
+    }
+  } catch {
+    /* user store unavailable */
+  }
   return {
     clinics: dedupeReportLinks(buckets.clinics),
     hotels: dedupeReportLinks(buckets.hotels),
@@ -1536,9 +1553,10 @@ dualGet(
   '/api/auth/clinic-session',
   (req, res) => {
     const p = verifyJwt(getBearer(req));
-    if (!p || !isPortalSessionRole(p.role) || typeof p.reportSlug !== 'string')
+    if (!p || !isPortalSessionRole(p.role) || typeof p.email !== 'string')
       return res.status(401).json({ ok: false });
-    return res.json({ ok: true, email: p.email, reportSlug: p.reportSlug });
+    const slug = typeof p.reportSlug === 'string' ? p.reportSlug : '';
+    return res.json({ ok: true, email: p.email, reportSlug: slug });
   }
 );
 

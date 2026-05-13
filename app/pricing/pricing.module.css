@@ -71,8 +71,13 @@
 }
 
 .cardRecommended {
+  z-index: 1;
   border-color: var(--amber);
-  box-shadow: none;
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--ink) 16%, transparent);
+}
+
+:global([data-theme="light"]) .cardRecommended {
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--paper) 12%, transparent);
 }
 
 .badge {

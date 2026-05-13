@@ -608,26 +608,6 @@
       });
   }
 
-  function openStubPanel(title, stubId) {
-    if (!panel || !panelTitle || !panelBody) return;
-    if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.add('is-hidden');
-    panelTitle.textContent = title;
-    panelBody.innerHTML =
-      '<p class="admin-panel__stub">This admin section is not available on ServiceOpera yet.</p>' +
-      '<p class="admin-panel__actions"><button type="button" class="btn btn--ghost mono" id="stubBackToUsers">← Back to users</button></p>';
-    var back = document.getElementById('stubBackToUsers');
-    if (back) {
-      back.addEventListener('click', function () {
-        panel.classList.add('is-hidden');
-        if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.remove('is-hidden');
-        var u = document.getElementById('usersSection');
-        if (u) u.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-    }
-    panel.classList.remove('is-hidden');
-    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
-
   function openBrandingPanel() {
     if (!panel || !panelTitle || !panelBody) return;
     if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.add('is-hidden');
@@ -951,69 +931,43 @@
   function buildTfNav() {
     if (!tfNav) return;
     tfNav.innerHTML = '';
-    var row1 = document.createElement('div');
-    row1.className = 'tf-admin-nav__row';
-    [
-      ['Users & payouts', 'users'],
-      ['User profiling', 'profiling'],
-      ['DB console', 'db'],
-      ['Activity log', 'activity'],
-      ['Deploy log', 'deploy'],
-      ['Site appearance', 'branding'],
-    ].forEach(function (pair) {
-      row1.appendChild(
-        makeNavPill(pair[0], function () {
-          if (pair[1] === 'users' || pair[1] === 'profiling') {
-            if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.remove('is-hidden');
-            if (panel) panel.classList.add('is-hidden');
-            var el = document.getElementById('usersSection');
-            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          } else if (pair[1] === 'deploy') {
-            openDeployLogPanel();
-          } else if (pair[1] === 'activity') {
-            if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.remove('is-hidden');
-            if (panel) panel.classList.add('is-hidden');
-            var inbox = document.getElementById('adminInbox');
-            if (inbox) inbox.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          } else if (pair[1] === 'branding') {
-            openBrandingPanel();
-          } else openStubPanel(pair[0], pair[1]);
-        })
-      );
-    });
-    row1.appendChild(
-      makeNavPill('Dashboard', function () {
-        openStubPanel('Dashboard', 'dashboard');
+    var row = document.createElement('div');
+    row.className = 'tf-admin-nav__row';
+    function showMainHidePanel() {
+      if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.remove('is-hidden');
+      if (panel) panel.classList.add('is-hidden');
+    }
+    row.appendChild(
+      makeNavPill('Users & payouts', function () {
+        showMainHidePanel();
+        var el = document.getElementById('usersSection');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
       })
     );
-    tfNav.appendChild(row1);
-    var mediaWrap = document.createElement('div');
-    mediaWrap.className = 'tf-admin-nav__media-wrap';
-    var lab = document.createElement('div');
-    lab.className = 'tf-admin-nav__label';
-    lab.textContent = 'Media moderation';
-    mediaWrap.appendChild(lab);
-    var row2 = document.createElement('div');
-    row2.className = 'tf-admin-nav__row';
-    [
-      ['Dashboard', 'dashboard'],
-      ['Media moderation', 'media'],
-      ['Photo approvals', 'photos'],
-      ['Photos chat', 'chatimg'],
-      ['Photo stories', 'stories'],
-      ['Messages', 'messages'],
-      ['Chat', 'chat'],
-    ].forEach(function (pair) {
-      row2.appendChild(makeNavPill(pair[0], function () { openStubPanel(pair[0], pair[1]); }));
-    });
-    row2.appendChild(
+    row.appendChild(
+      makeNavPill('Activity log', function () {
+        showMainHidePanel();
+        var inbox = document.getElementById('adminInbox');
+        if (inbox) inbox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      })
+    );
+    row.appendChild(
+      makeNavPill('Deploy log', function () {
+        openDeployLogPanel();
+      })
+    );
+    row.appendChild(
+      makeNavPill('Site appearance', function () {
+        openBrandingPanel();
+      })
+    );
+    row.appendChild(
       makeNavPill('User reports', function () {
-        if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.remove('is-hidden');
+        showMainHidePanel();
         openUserReportsPanel({ id: 'user-reports', label: 'User report access' });
       })
     );
-    mediaWrap.appendChild(row2);
-    tfNav.appendChild(mediaWrap);
+    tfNav.appendChild(row);
   }
 
   function renderAdminReports() {
