@@ -293,6 +293,10 @@ strong { color: var(--color-text-primary); }
   cursor: pointer;
 }
 .audit-portal-access__btn:hover { border-color: #a5b4fc; background: rgba(67, 56, 202, 0.55); }
+.audit-portal-access__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
 .audit-portal-access__btn:focus-visible {
   outline: 2px solid #a5b4fc;
   outline-offset: 2px;
@@ -304,6 +308,9 @@ strong { color: var(--color-text-primary); }
   border-color: rgba(79, 70, 229, 0.45);
   background: rgba(79, 70, 229, 0.12);
   color: #312e81;
+}
+[data-theme="light"] .audit-portal-access__btn:disabled {
+  opacity: 0.5;
 }
 </style>
 </head>
@@ -341,12 +348,13 @@ strong { color: var(--color-text-primary); }
         <dt>Temporary password</dt>
         <dd>
           <code id="auditPortalTempPw" translate="no">…</code>
-          <span class="audit-portal-access__pw-hint" id="auditPortalPwHint">For security, copy the password by selecting it (no copy-to-clipboard button).</span>
+          <span class="audit-portal-access__pw-hint" id="auditPortalPwHint">After sign-in, clear the clipboard on shared devices.</span>
         </dd>
       </div>
     </dl>
     <div class="audit-portal-access__actions">
       <button type="button" class="audit-portal-access__btn" id="auditPortalCopyEmail">Copy email</button>
+      <button type="button" class="audit-portal-access__btn" id="auditPortalCopyPassword" disabled aria-disabled="true">Copy password</button>
       <span class="audit-portal-access__status" id="auditPortalCopyStatus" role="status" aria-live="polite"></span>
     </div>
   </div>
@@ -1153,7 +1161,57 @@ strong { color: var(--color-text-primary); }
   var pwEl = document.getElementById('auditPortalTempPw');
   var pwHint = document.getElementById('auditPortalPwHint');
   var copyBtn = document.getElementById('auditPortalCopyEmail');
+  var copyPwBtn = document.getElementById('auditPortalCopyPassword');
   var copyStatus = document.getElementById('auditPortalCopyStatus');
+
+  function setPasswordCopyEnabled(on) {
+    if (!copyPwBtn) return;
+    copyPwBtn.disabled = !on;
+    copyPwBtn.setAttribute('aria-disabled', on ? 'false' : 'true');
+  }
+
+  function copyUsingExecCommand(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.setAttribute('aria-hidden', 'true');
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    ta.style.top = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try {
+      ta.setSelectionRange(0, text.length);
+    } catch (e) {}
+    var ok = false;
+    try {
+      ok = document.execCommand('copy');
+    } catch (e2) {}
+    document.body.removeChild(ta);
+    return ok;
+  }
+
+  function copyTextToClipboard(text, onOk, onManual) {
+    if (!text) {
+      onManual();
+      return;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard
+        .writeText(text)
+        .then(function () {
+          onOk();
+        })
+        .catch(function () {
+          if (copyUsingExecCommand(text)) onOk();
+          else onManual();
+        });
+      return;
+    }
+    if (copyUsingExecCommand(text)) onOk();
+    else onManual();
+  }
 
   function api(path) {
     return typeof soApiUrl === 'function' ? soApiUrl(path) : path;
@@ -1269,9 +1327,10 @@ strong { color: var(--color-text-primary); }
       }
       if (pwHint) {
         pwHint.textContent = pw
-          ? 'For security, copy the password by selecting it (no copy-to-clipboard button).'
+          ? 'After sign-in, clear the clipboard on shared devices.'
           : 'The temporary password is not stored in the repository; it is injected at deploy time.';
       }
+      setPasswordCopyEnabled(!!pw);
       return { user: user, pw: pw, reportPath: reportPath };
     }
 
@@ -1287,9 +1346,9 @@ strong { color: var(--color-text-primary); }
       if (userEl) userEl.textContent = pub.email;
       if (pwEl) pwEl.textContent = pub.tempPassword;
       if (pwHint) {
-        pwHint.textContent =
-          'For security, copy the password by selecting it (no copy-to-clipboard button).';
+        pwHint.textContent = 'After sign-in, clear the clipboard on shared devices.';
       }
+      setPasswordCopyEnabled(true);
     } else {
       fillFromDemo();
       expectedEmail = normEmail((cfg && (cfg.username || cfg.email)) || '');
@@ -1304,17 +1363,32 @@ strong { color: var(--color-text-primary); }
     copyBtn.addEventListener('click', function () {
       var text = (userEl.textContent || '').trim();
       if (!text) return;
-      function ok() {
-        copyStatus.textContent = 'Email copied to clipboard.';
-      }
-      function manual() {
-        copyStatus.textContent = 'Select the email above and copy manually (Ctrl+C).';
-      }
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(ok).catch(manual);
-      } else {
-        manual();
-      }
+      copyTextToClipboard(
+        text,
+        function () {
+          copyStatus.textContent = 'Email copied to clipboard.';
+        },
+        function () {
+          copyStatus.textContent = 'Select the email above and copy manually (Ctrl+C / ⌘C).';
+        }
+      );
+    });
+  }
+
+  if (copyPwBtn && copyStatus && pwEl) {
+    copyPwBtn.addEventListener('click', function () {
+      if (copyPwBtn.disabled) return;
+      var text = (pwEl.textContent || '').trim();
+      if (!text) return;
+      copyTextToClipboard(
+        text,
+        function () {
+          copyStatus.textContent = 'Password copied to clipboard.';
+        },
+        function () {
+          copyStatus.textContent = 'Select the password above and copy manually (Ctrl+C / ⌘C).';
+        }
+      );
     });
   }
 })();
