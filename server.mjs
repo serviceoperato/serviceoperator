@@ -110,6 +110,20 @@ async function initUserStore() {
 
 const { userStore, telemetryStore, leadEventsStore, pgPool } = await initUserStore();
 
+/** Presence of env var (may still fall back to JSON if init failed). */
+const ENV_DATABASE_URL_CONFIGURED = Boolean((process.env.DATABASE_URL || '').trim());
+const POSTGRES_POOL_ACTIVE = Boolean(pgPool);
+/** True when DATABASE_URL was set but the pool is not usable — uploads must not silently use disk. */
+const POSTGRES_CONFIGURED_BUT_POOL_MISSING = ENV_DATABASE_URL_CONFIGURED && !POSTGRES_POOL_ACTIVE;
+const RAILWAY_DEPLOY = Boolean(String(process.env.RAILWAY_ENVIRONMENT || '').trim());
+
+if (POSTGRES_CONFIGURED_BUT_POOL_MISSING) {
+  console.error(
+    '[serviceopera] DATABASE_URL is set but PostgreSQL did not initialize (see earlier "PostgreSQL init failed" log). ' +
+      'Site appearance JSON and admin image uploads are not using Postgres until this is fixed.'
+  );
+}
+
 const clinicDataDir = path.join(publicDir, 'clinics', 'data');
 
 function statMtimeMs(filePath) {
@@ -1464,21 +1478,23 @@ app.get('/api/debug/user-store', async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   try {
     const storage = await userStore.getStorageSummary();
-    const databaseUrlConfigured = Boolean((process.env.DATABASE_URL || '').trim());
     return res.json({
       ok: true,
       service: 'serviceopera',
       version: appVersion,
       storage,
       deploy: {
-        databaseUrlConfigured,
+        databaseUrlConfigured: ENV_DATABASE_URL_CONFIGURED,
+        postgresPoolActive: POSTGRES_POOL_ACTIVE,
+        postgresConfiguredButUnavailable: POSTGRES_CONFIGURED_BUT_POOL_MISSING,
         dataDir,
         portalSelfRegister: Boolean(PORTAL_SELF_REGISTER),
         resendConfigured: Boolean(RESEND_API_KEY),
         registrationConfirmEmail: Boolean(RESEND_API_KEY && PORTAL_SELF_REGISTER),
         adminEmailConfigured: Boolean((process.env.ADMIN_EMAIL || '').trim()),
         nodeVersion: process.version,
-        userStoreBackend: storage.backend || userStore.backend || (databaseUrlConfigured ? 'postgres' : 'json-files'),
+        userStoreBackend:
+          storage.backend || userStore.backend || (ENV_DATABASE_URL_CONFIGURED ? 'postgres' : 'json-files'),
       },
     });
   } catch (e) {
@@ -1691,7 +1707,18 @@ app.get('/api/admin/work-queue', requireAdmin, async (_req, res) => {
 app.get('/api/admin/site-appearance', requireAdmin, async (_req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   try {
-    res.json({ ok: true, ...mergeSiteAppearance(await readSiteAppearanceRawAsync()) });
+    const merged = mergeSiteAppearance(await readSiteAppearanceRawAsync());
+    res.json({
+      ok: true,
+      ...merged,
+      serverHints: {
+        databaseUrlConfigured: ENV_DATABASE_URL_CONFIGURED,
+        postgresPoolActive: POSTGRES_POOL_ACTIVE,
+        postgresConfiguredButUnavailable: POSTGRES_CONFIGURED_BUT_POOL_MISSING,
+        siteImageUploadTarget: POSTGRES_POOL_ACTIVE ? 'postgres' : 'disk',
+        runningOnRailway: RAILWAY_DEPLOY,
+      },
+    });
   } catch (e) {
     res.status(500).json({ error: e.message || 'Could not load site appearance.' });
   }
@@ -1941,6 +1968,22 @@ app.post('/api/admin/site-appearance/upload', requireAdmin, async (req, res) => 
       return res.status(500).json({ error: e.message || 'Could not save uploaded file.' });
     }
   }
+  if (POSTGRES_CONFIGURED_BUT_POOL_MISSING) {
+    console.error(
+      '[serviceopera] Site appearance upload refused: DATABASE_URL is set but Postgres pool is inactive. ' +
+        'Fix startup DB errors, redeploy, then upload again (target: /api/site-uploads/<uuid>).'
+    );
+    return res.status(503).json({
+      error:
+        'Image uploads require a working database connection: DATABASE_URL is set but PostgreSQL failed at server startup. Check deploy logs for PostgreSQL init errors, fix DATABASE_URL or networking, redeploy, then try again.',
+    });
+  }
+  console.warn(
+    '[serviceopera] Site appearance upload: saving to public/assets/site-uploads/ (no active Postgres pool). ' +
+      (RAILWAY_DEPLOY
+        ? 'Railway’s filesystem is ephemeral — these files disappear on redeploy. Set DATABASE_URL on this Node service and redeploy so bytes live in site_uploads and URLs use /api/site-uploads/<uuid>.'
+        : 'Without DATABASE_URL, new deploys or hosts without a volume will lose these files.')
+  );
   const stamp = Date.now();
   const rand = crypto.randomBytes(4).toString('hex');
   const base = `su-${stamp}-${rand}.${sniffed.ext}`;

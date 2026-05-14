@@ -654,6 +654,14 @@
         }
         if (store.json && store.json.deploy) {
           lines.push('DATABASE_URL on server: ' + (store.json.deploy.databaseUrlConfigured ? 'configured' : 'not set'));
+          if (store.json.deploy.postgresPoolActive != null) {
+            lines.push('Postgres pool active: ' + String(!!store.json.deploy.postgresPoolActive));
+          }
+          if (store.json.deploy.postgresConfiguredButUnavailable) {
+            lines.push(
+              'WARNING: DATABASE_URL is set but Postgres did not connect at startup. User/site data may be JSON fallback; site uploads to disk are refused until DB init succeeds.'
+            );
+          }
           lines.push('Node runtime: ' + (store.json.deploy.nodeVersion || 'n/a'));
           lines.push('DATA_DIR: ' + (store.json.deploy.dataDir || 'n/a'));
           lines.push('Self-register: ' + String(!!store.json.deploy.portalSelfRegister));
@@ -1670,7 +1678,16 @@
           return;
         }
         applySiteAppearanceMerge(x.j);
-        if (hintEl) hintEl.textContent = 'Loaded from API. Edits save automatically. Public: GET /api/site-appearance';
+        var baseHint = 'Loaded from API. Edits save automatically. Public: GET /api/site-appearance';
+        var sh = x.j.serverHints;
+        if (sh && sh.postgresConfiguredButUnavailable) {
+          baseHint =
+            'Warning: DATABASE_URL is set but PostgreSQL is not active (see Deploy log → Postgres pool / deploy logs). New image uploads are blocked until the DB connects. Existing /assets/site-uploads/* previews fail after redeploy.';
+        } else if (sh && sh.siteImageUploadTarget === 'disk' && sh.runningOnRailway) {
+          baseHint +=
+            ' Uploads use ephemeral disk (/assets/site-uploads/) — add DATABASE_URL to this Node service, redeploy, then re-upload for /api/site-uploads/<uuid> URLs.';
+        }
+        if (hintEl) hintEl.textContent = baseHint;
         bumpSiteAppearanceUrlPreviews();
         markSiteAppearanceFormReady();
       })

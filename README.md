@@ -136,6 +136,16 @@ The `Dockerfile` runs **Node**: `server.mjs` serves **`public/`** and sets the s
 | `CLINIC_SELF_REGISTER` | Optional | **On by default** for **`server.mjs`**: **Create account** on `/login.html` stages a pending sign-up and sends a **confirmation email** (needs **`RESEND_API_KEY`**); the account is created only after the user opens the link. Set to `false`, `0`, `no`, or `off` for invite-only accounts (admin creates users). |
 | `PUBLIC_ORIGIN` | Optional | Full public URL of the site (e.g. `https://serviceopera.to`), no trailing slash. Used in reset links if the reverse proxy does not pass a reliable host/proto. |
 | `DATA_DIR` | Optional | Directory for JSON state when not on Postgres (`site-appearance.json`, portal users, etc.). Defaults to `./data` locally and `/app/data` in the Docker image. **Railway’s root filesystem is ephemeral**; with **`DATABASE_URL`**, site appearance + uploads live in Postgres and do not need a volume for those. Without Postgres, add a [volume](https://docs.railway.com/guides/volumes) if you rely on `DATA_DIR` or `public/assets/site-uploads/` staying across redeploys. |
+| `DATABASE_URL` | Recommended on Railway | When set **and** the server connects at startup, portal users, site appearance JSON, and admin image bytes use PostgreSQL (`site_uploads` + `GET /api/site-uploads/<uuid>`). Must be on the **same Railway service** that runs `server.mjs` (the process that handles `POST /api/admin/site-appearance/upload`). If the variable is present but deploy logs show `PostgreSQL init failed`, the pool stays off: site appearance falls back to JSON/disk, **`GET /api/site-uploads/:id` returns 404**, and **new uploads are rejected with HTTP 503** until you fix connectivity and redeploy (then re-upload images).
+
+**Railway checklist — persistent “Site appearance” images**
+
+1. Add a **PostgreSQL** plugin (or external DB) and copy its connection string into **`DATABASE_URL`** on the **Node / Docker service** that runs `server.mjs` — not on a separate static-only service.
+2. Redeploy that service and confirm deploy logs **do not** contain `PostgreSQL init failed`. In admin → **Deploy log**, `Postgres pool active` should be **true**.
+3. Open **Site appearance** and **re-upload** any asset whose URL still starts with `/assets/site-uploads/` (legacy disk). After Postgres is active, new uploads get `/api/site-uploads/<uuid>` and survive redeploys.
+4. If the marketing domain is on another host but the API is on Railway, keep **`so-api.js`** pointed at the Railway **public URL** for `/api/*` so admin previews and `theme.js` resolve uploads against the Node origin.
+
+**Legacy `/assets/site-uploads/su-*` URLs:** After a redeploy, those files are gone; the admin preview shows “Could not load”. There is no automatic byte migration from disk to Postgres. Re-upload each field (or switch to a stable `https://…` URL).
 
 **Migration — admin email OTP removed (deploy checklist)**
 
