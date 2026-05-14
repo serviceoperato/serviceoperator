@@ -582,7 +582,7 @@
   }
   .page-home .so-b2b__next-steps li {
     display: grid;
-    grid-template-columns: 2.25rem 1fr;
+    grid-template-columns: auto 2.25rem minmax(0, 1fr);
     gap: 0.65rem 0.85rem;
     align-items: center;
     padding: 0.85rem 1rem;
@@ -590,6 +590,24 @@
     font-size: 0.875rem;
     line-height: 1.45;
     color: var(--so-muted);
+  }
+  @media (max-width: 380px) {
+    .page-home .so-b2b__next-steps li {
+      grid-template-columns: auto 1fr;
+      grid-template-rows: auto auto;
+    }
+    .page-home .so-b2b__next-steps li .so-b2b__icon-pill {
+      grid-row: 1 / span 2;
+      align-self: start;
+    }
+    .page-home .so-b2b__next-steps li .so-b2b__next-n {
+      grid-column: 2;
+      grid-row: 1;
+    }
+    .page-home .so-b2b__next-steps li .so-b2b__next-copy {
+      grid-column: 2;
+      grid-row: 2;
+    }
   }
   .page-home .so-b2b__next-steps li:last-child {
     border-bottom: none;
@@ -727,6 +745,45 @@
     font-size: 0.78rem;
     line-height: 1.45;
     color: var(--so-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    min-width: 0;
+  }
+  /* Lucide-style strokes on solid brand indigo (matches --so-workflow-accent). */
+  .page-home .so-b2b__icon-pill {
+    flex-shrink: 0;
+    box-sizing: border-box;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--so-workflow-accent);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 1px 2px color-mix(in srgb, var(--so-workflow-accent) 28%, transparent);
+  }
+  @media (min-width: 640px) {
+    .page-home .so-b2b__icon-pill {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      min-height: 44px;
+    }
+  }
+  .page-home .so-b2b__icon-pill svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
   }
   .page-home .so-b2b__outcomes-grid strong {
     display: block;
@@ -797,12 +854,19 @@
   }
   .page-home .so-b2b__audit-preview-meta > div {
     display: flex;
-    align-items: baseline;
-    gap: 0.35rem;
+    align-items: center;
+    gap: 0.55rem;
+    flex-wrap: wrap;
     margin: 0;
+    min-width: 0;
   }
   .page-home .so-b2b__audit-preview-meta dt {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex: 1 1 auto;
     margin: 0;
+    min-width: 0;
     font-family: var(--font-mono, ui-monospace, monospace);
     font-size: 0.6rem;
     font-weight: 600;
@@ -811,7 +875,7 @@
     color: #64748b;
   }
   .page-home .so-b2b__audit-preview-meta dd {
-    margin: 0;
+    margin: 0 0 0 auto;
     font-size: 0.8125rem;
     font-weight: 700;
     color: var(--so-ink);
@@ -830,6 +894,15 @@
   }
   .page-home .so-b2b__audit-preview .so-b2b__preview-list {
     padding: 0.35rem 1rem 0.85rem;
+  }
+  .page-home .so-b2b__audit-preview .so-b2b__preview-list--signals li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+    padding-left: 0;
+  }
+  .page-home .so-b2b__audit-preview .so-b2b__preview-list--signals li::before {
+    display: none;
   }
   .page-home .so-b2b__audit-preview-foot {
     margin: 0;
@@ -1587,7 +1660,7 @@
 <div class="so-b2b__hero-deco so-b2b__hero-deco--bl" aria-hidden="true"></div>
 
 <footer class="so-b2b-footer">
-  <span class="so-b2b-footer__row"><svg class="so-b2b-footer__mark so-brand-ring-svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15.75 18.495A7.5 7.5 0 0 1 8.25 18.495"/><path d="M5.505 15.75A7.5 7.5 0 0 1 5.505 8.25"/><path d="M8.25 5.505A7.5 7.5 0 0 1 15.75 5.505"/><path d="M18.495 8.25A7.5 7.5 0 0 1 18.495 15.75"/></svg><span>© 2026 www.serviceopera.to · Private audits &amp; workflow pilots · <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a></span></span>
+  <span class="so-b2b-footer__row"><svg class="so-b2b-footer__mark so-brand-ring-svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15.75 18.495A7.5 7.5 0 0 1 8.25 18.495"/><path d="M5.505 15.75A7.5 7.5 0 0 1 5.505 8.25"/><path d="M8.25 5.505A7.5 7.5 0 0 1 15.75 5.505"/><path d="M18.495 8.25A7.5 7.5 0 0 1 18.495 15.75"/></svg><span>© 2026 www.serviceopera.to · Private audits &amp; workflow pilots · <a href="/free-audit.html">Free 48h audit</a> · <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a></span></span>
 </footer>
 </div>
 
