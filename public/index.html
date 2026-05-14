@@ -1064,36 +1064,33 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 0;
-    min-width: 0;
+    min-width: min(33vmin, 11rem);
+    min-height: min(33vmin, 11rem);
   }
   .page-home .so-b2b__jack-avatar {
     position: relative;
     box-sizing: border-box;
-    flex: 0 1 auto;
-    align-self: center;
-    height: 100%;
-    max-height: 100%;
-    aspect-ratio: 1 / 1;
-    width: auto;
+    width: min(33vmin, 11rem);
+    height: min(33vmin, 11rem);
     max-width: 100%;
-    min-width: 0;
-    min-height: 0;
+    flex: 0 0 auto;
+    align-self: center;
     border-radius: 50%;
     flex-shrink: 0;
     border: 2px solid rgba(255, 255, 255, 0.35);
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
     overflow: hidden;
-    background: transparent;
+    background: rgba(255, 255, 255, 0.08);
   }
   .page-home .so-b2b__jack-photo {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
+    object-position: center 22%;
     display: block;
-    z-index: 1;
+    z-index: 2;
   }
   .page-home .so-b2b__jack-photo.so-b2b__jack-photo--load-error {
     visibility: hidden;
@@ -1109,10 +1106,12 @@
     font-weight: 700;
     color: #fff;
     letter-spacing: -0.02em;
-    z-index: 0;
+    z-index: 1;
   }
-  .page-home .so-b2b__jack-avatar:has(.so-b2b__jack-photo) .so-b2b__jack-avatar-fallback {
+  /* Hide “J” once the portrait has loaded — transparent PNG edges would otherwise show the fallback through alpha. */
+  .page-home .so-b2b__jack-avatar[data-so-jack-loaded] .so-b2b__jack-avatar-fallback {
     opacity: 0;
+    visibility: hidden;
     pointer-events: none;
   }
   .page-home .so-b2b__jack-head-copy {
@@ -1128,11 +1127,13 @@
       align-self: center;
       width: 100%;
       max-width: 11.5rem;
-      min-height: 0;
+      min-width: 0;
+      min-height: min(33vmin, 11rem);
     }
     .page-home .so-b2b__jack-avatar {
-      height: auto;
       width: min(100%, 11.5rem);
+      height: auto;
+      aspect-ratio: 1 / 1;
       max-height: none;
     }
     .page-home .so-b2b__jack-main {

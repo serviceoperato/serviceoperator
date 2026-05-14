@@ -142,13 +142,45 @@
       : String(raw || '').trim();
   }
 
+  function jackAvatarWrap(img) {
+    return img && img.closest ? img.closest('[data-so-jack-avatar]') : null;
+  }
+
+  function setJackAvatarWrapLoaded(img, loaded) {
+    var w = jackAvatarWrap(img);
+    if (!w) return;
+    if (loaded) w.setAttribute('data-so-jack-loaded', '');
+    else w.removeAttribute('data-so-jack-loaded');
+  }
+
+  function ensureJackPhotoLoadHandlers(img) {
+    if (!img || img.dataset.soJackWire === '1') return;
+    img.dataset.soJackWire = '1';
+    img.addEventListener('load', function () {
+      img.classList.remove('so-b2b__jack-photo--load-error');
+      setJackAvatarWrapLoaded(img, true);
+    });
+    img.addEventListener('error', function () {
+      setJackAvatarWrapLoaded(img, false);
+    });
+  }
+
+  function syncJackAvatarLoadedIfComplete(img) {
+    if (img && img.complete && img.naturalWidth > 0 && !img.classList.contains('so-b2b__jack-photo--load-error')) {
+      img.classList.remove('so-b2b__jack-photo--load-error');
+      setJackAvatarWrapLoaded(img, true);
+    }
+  }
+
   function patchInitialAssetImgSrc() {
     document.querySelectorAll('img.brand-logo, img.so-b2b__jack-photo').forEach(function (img) {
       try {
         var cur = img.getAttribute('src') || '';
         if (!cur || cur.charAt(0) !== '/') return;
         var next = resolveSitePublicAssetUrl(cur);
+        if (img.classList.contains('so-b2b__jack-photo')) ensureJackPhotoLoadHandlers(img);
         if (next && next !== cur) img.src = next;
+        if (img.classList.contains('so-b2b__jack-photo')) syncJackAvatarLoadedIfComplete(img);
       } catch (e2) {}
     });
   }
@@ -175,17 +207,18 @@
     var u = typeof j.jackAvatarUrl === 'string' ? j.jackAvatarUrl.trim() : '';
     var alt = typeof j.jackAvatarAlt === 'string' && j.jackAvatarAlt.trim() ? j.jackAvatarAlt.trim() : '';
     document.querySelectorAll('[data-so-jack-avatar] img.so-b2b__jack-photo').forEach(function (img) {
+      ensureJackPhotoLoadHandlers(img);
       if (!u) {
         /* Keep markup + static / patched src; removing hid the portrait when API returned "" or before JSON loaded. */
+        syncJackAvatarLoadedIfComplete(img);
         return;
       }
       img.classList.remove('so-b2b__jack-photo--load-error');
-      img.onload = function () {
-        img.classList.remove('so-b2b__jack-photo--load-error');
-      };
+      setJackAvatarWrapLoaded(img, false);
       img.src = resolveSitePublicAssetUrl(u);
       if (alt) img.alt = alt;
       else img.removeAttribute('alt');
+      syncJackAvatarLoadedIfComplete(img);
     });
   }
 
