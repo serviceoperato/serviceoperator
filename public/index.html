@@ -125,6 +125,13 @@
     gap: 0.35rem;
     overflow: visible;
   }
+  /* Reuse `.client-hero h1.clinics-hero__title` cascade like clinics report; strip shell padding (outer `.so-b2b` already gutters). */
+  .page-home .so-b2b__hero.client-hero {
+    padding: 0;
+    max-width: none;
+    margin: 0;
+    border-bottom: 0;
+  }
   /* Decorative ring swooshes — URLs/opacity from GET /api/site-appearance (theme.js sets --so-hero-deco-* on html). */
   .page-home .so-b2b__hero-deco {
     position: absolute;
@@ -174,21 +181,9 @@
     z-index: 1;
     margin-bottom: 1.25rem;
   }
-  .page-home .so-b2b .clinics-hero__title {
-    margin: 0 0 1.25rem;
-  }
-  .page-home .so-b2b .clinics-hero__title .line:nth-child(4) {
-    animation-delay: 0.36s;
-  }
-  .page-home .so-b2b .clinics-hero__title .line:nth-child(5) {
-    animation-delay: 0.46s;
-  }
+  /* Title + `.line` stagger: shared `styles.css` (matches clinics report). Lede: static like report (no extra `rise`). */
   .page-home .so-b2b .client-hero__lede.so-b2b__hero-lede {
-    margin: 0 0 0.25rem;
-    max-width: 42rem;
-    opacity: 0;
-    transform: translateY(16px);
-    animation: rise 0.85s cubic-bezier(0.2, 0.7, 0.2, 1) 0.42s forwards;
+    max-width: 40em;
   }
   .page-home .so-b2b__cta-row {
     display: flex;
@@ -1366,7 +1361,7 @@
 <div id="homeMain" class="is-hidden">
 <main class="so-b2b">
   <div class="so-b2b__wrap">
-    <header class="so-b2b__hero">
+    <header class="so-b2b__hero client-hero">
       <div class="so-b2b__hero-deco so-b2b__hero-deco--tr" aria-hidden="true"></div>
       <p class="so-b2b__brand">www.serviceopera.to</p>
       <div class="client-hero__eyebrow">
