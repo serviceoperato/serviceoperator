@@ -305,27 +305,33 @@ const blocks = [
     color: var(--amber-deep);
     pointer-events: none;
   }
+  .page-home .so-b2b__step-ring path {
+    stroke: currentColor;
+  }
   [data-theme="dark"] .page-home .so-b2b__step-ring {
-    color: var(--amber-2);
+    color: var(--so-indigo);
   }
   .page-home .so-b2b__step-num {
     position: relative;
     z-index: 1;
-    width: 1.625rem;
-    height: 1.625rem;
-    border-radius: 50%;
-    background: var(--amber-deep);
-    color: #fff;
-    font-size: 1rem;
-    font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
+    min-width: 1.25rem;
+    min-height: 1.25rem;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--so-indigo);
+    font-size: 1.0625rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    box-shadow: none;
   }
   [data-theme="dark"] .page-home .so-b2b__step-num {
-    background: var(--amber);
-    color: #fff;
+    color: var(--so-indigo);
   }`,
   ],
   [
