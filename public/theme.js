@@ -6,10 +6,10 @@
   var ICON_SUN =
     '<svg class="theme-toggle__icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
     '<g transform="translate(12,12) scale(0.58) translate(-12,-12)" fill="none">' +
-    '<path d="M19.24 13.94A7.5 7.5 0 0 1 13.94 19.24"/>' +
-    '<path d="M10.06 19.24A7.5 7.5 0 0 1 4.76 13.94"/>' +
-    '<path d="M4.76 10.06A7.5 7.5 0 0 1 10.06 4.76"/>' +
-    '<path d="M13.94 4.76A7.5 7.5 0 0 1 19.24 10.06"/>' +
+    '<path d="M15.75 18.495A7.5 7.5 0 0 1 8.25 18.495"/>' +
+    '<path d="M5.505 15.75A7.5 7.5 0 0 1 5.505 8.25"/>' +
+    '<path d="M8.25 5.505A7.5 7.5 0 0 1 15.75 5.505"/>' +
+    '<path d="M18.495 8.25A7.5 7.5 0 0 1 18.495 15.75"/>' +
     '</g>' +
     '<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>' +
     '</svg>';

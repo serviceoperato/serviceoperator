@@ -70,7 +70,7 @@
   --so-brand-ring-2: #4338ca;
 }
 
-/* --- Segmented brand ring: four stroke arcs, hollow centre (decorative mark only) --- */
+/* --- Segmented brand ring: four 60° stroke arcs, 30° gaps on diagonals (45°/135°/225°/315°) --- */
 @keyframes so-brand-ring-spin {
   to {
     transform: rotate(360deg);
