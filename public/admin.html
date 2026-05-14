@@ -67,8 +67,12 @@
 </div>
 
 <div id="adminWorkspace" class="admin-workspace admin-workspace--tf is-hidden">
-  <div class="tf-admin-version">Build <strong id="tfAdminVersionNum">—</strong></div>
-  <nav id="tfAdminNav" class="tf-admin-nav" aria-label="Admin sections"></nav>
+  <nav id="tfAdminNav" class="tf-admin-nav" aria-label="Admin sections">
+    <div class="tf-admin-nav__bar">
+      <div id="tfAdminNavPills" class="tf-admin-nav__pills"></div>
+      <div class="tf-admin-version">Build <strong id="tfAdminVersionNum">—</strong></div>
+    </div>
+  </nav>
 
   <main class="admin-main admin-main--wide" id="adminMainDefault">
     <section id="usersSection" class="tf-admin-table-card">

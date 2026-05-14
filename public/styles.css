@@ -2503,16 +2503,31 @@ html.so-site-nav-open {
 .admin-workspace--tf {
   box-sizing: border-box;
 }
+.tf-admin-nav__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem 1rem;
+}
+.tf-admin-nav__pills {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.45rem;
+  flex: 1 1 auto;
+  min-width: 0;
+}
 .tf-admin-version {
   flex-shrink: 0;
-  padding: 0.5rem 1.25rem;
-  border-bottom: 1px solid var(--line);
-  display: flex;
-  justify-content: flex-end;
+  margin-left: auto;
+  display: inline-flex;
   align-items: center;
+  justify-content: flex-end;
   color: var(--mute-2);
-  font-size: 0.8rem;
-  background: var(--ink-2);
+  font-size: 0.78rem;
+  line-height: 1.2;
+  background: transparent;
 }
 .tf-admin-version strong { color: var(--paper); font-weight: 600; margin-left: 0.35rem; }
 .tf-admin-nav {
@@ -2524,6 +2539,7 @@ html.so-site-nav-open {
   background: var(--ink);
   padding: 0.55rem 1.25rem;
 }
+/* Legacy: multi-row admin nav (e.g. Next operator shell) */
 .tf-admin-nav__row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.45rem; margin-bottom: 0.35rem; }
 .tf-admin-nav__row:last-child { margin-bottom: 0; }
 .tf-admin-nav__pill {
