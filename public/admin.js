@@ -829,7 +829,23 @@
       var u = String(raw || '').trim();
       if (!u) return '';
       if (/^https?:\/\//i.test(u)) return u;
-      if (u.charAt(0) === '/') return window.location.origin + u;
+      if (u.charAt(0) === '/') {
+        /* Marketing static host vs Node API (so-api.js): uploads live under public/ on the API only. */
+        if (u.indexOf('/assets/') === 0 && typeof soApiOrigin === 'function') {
+          try {
+            var apiOrigin = String(soApiOrigin() || '')
+              .trim()
+              .replace(/\/+$/, '');
+            if (apiOrigin && /^https?:\/\//i.test(apiOrigin)) {
+              var pageOrigin = window.location && window.location.origin ? window.location.origin : '';
+              if (pageOrigin && new URL(apiOrigin).origin !== new URL(pageOrigin).origin) {
+                return apiOrigin + u;
+              }
+            }
+          } catch (e) {}
+        }
+        return (window.location && window.location.origin ? window.location.origin : '') + u;
+      }
       return u;
     }
 
