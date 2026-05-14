@@ -46,6 +46,9 @@
     --so-subtle: #1e293b;
     --so-shadow: 0 1px 2px rgba(2, 6, 23, 0.35), 0 12px 40px rgba(15, 23, 42, 0.45);
   }
+  .page-home #homeMain {
+    position: relative;
+  }
   .page-home #homeMain > .so-b2b,
   .page-home #homeMain > .so-b2b-footer {
     position: relative;
@@ -64,35 +67,46 @@
   .page-home .so-b2b__hero {
     position: relative;
     isolation: isolate;
-    overflow-x: clip;
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
+    overflow: visible;
   }
   /* Decorative ring swooshes — URLs/opacity from GET /api/site-appearance (theme.js sets --so-hero-deco-* on html). */
   .page-home .so-b2b__hero-deco {
     position: absolute;
-    width: min(85vw, 720px);
+    width: min(105vw, 960px);
     aspect-ratio: 1;
     pointer-events: none;
     z-index: 0;
     background-repeat: no-repeat;
-    background-size: 108% auto;
+    background-size: 100% auto;
     filter: blur(0.8px);
   }
   .page-home .so-b2b__hero-deco--tr {
     top: -2.5rem;
-    right: -4%;
-    background-position: right top;
+    right: max(-8vw, -2.5rem);
+    background-position: 96% 0;
     background-image: var(--so-hero-deco-tr-url, url(/assets/hero-corner-arc.svg));
     opacity: var(--so-hero-deco-tr-opacity, 0.12);
   }
-  .page-home .so-b2b__hero-deco--bl {
-    bottom: -2.5rem;
-    left: -4%;
+  /* Bottom swoosh: fixed to viewport so it sits at true page bottom (not mid-hero). */
+  .page-home #homeMain > .so-b2b__hero-deco--bl {
+    position: fixed;
+    bottom: 0;
+    left: max(-6vw, -2.5rem);
+    top: auto;
+    right: auto;
+    width: min(105vw, 960px);
+    aspect-ratio: 1;
+    pointer-events: none;
+    z-index: 0;
+    background-repeat: no-repeat;
+    background-size: 100% auto;
     background-position: left bottom;
     background-image: var(--so-hero-deco-bl-url, url(/assets/hero-corner-arc-bl.svg));
     opacity: var(--so-hero-deco-bl-opacity, 0.12);
+    filter: blur(1.05px);
   }
   .page-home .so-b2b__brand {
     margin: 0 0 0.35rem;
@@ -102,6 +116,8 @@
     color: var(--so-ink);
   }
   .page-home .so-b2b .client-hero__eyebrow {
+    position: relative;
+    z-index: 1;
     margin-bottom: 1.25rem;
   }
   .page-home .so-b2b .clinics-hero__title {
@@ -744,6 +760,10 @@
     display: block;
     z-index: 1;
   }
+  .page-home .so-b2b__jack-photo.so-b2b__jack-photo--load-error {
+    visibility: hidden;
+    pointer-events: none;
+  }
   .page-home .so-b2b__jack-avatar-fallback {
     position: absolute;
     inset: 0;
@@ -937,7 +957,6 @@
   <div class="so-b2b__wrap">
     <header class="so-b2b__hero">
       <div class="so-b2b__hero-deco so-b2b__hero-deco--tr" aria-hidden="true"></div>
-      <div class="so-b2b__hero-deco so-b2b__hero-deco--bl" aria-hidden="true"></div>
       <p class="so-b2b__brand">www.serviceopera.to</p>
       <div class="client-hero__eyebrow">
         <span class="dot dot--live" aria-hidden="true"></span>
@@ -1170,7 +1189,7 @@
     <aside class="so-b2b__jack" aria-labelledby="jack-h">
       <div class="so-b2b__jack-avatar-col">
         <div class="so-b2b__jack-avatar" data-so-jack-avatar>
-          <img class="so-b2b__jack-photo" src="/assets/jack-avatar.png" alt="" width="256" height="256" decoding="async" onerror="this.remove();" />
+          <img class="so-b2b__jack-photo" src="/assets/jack-avatar.png" alt="" width="256" height="256" decoding="async" onerror="(function(el){if(el.dataset.soJackRetry==='1'){el.classList.add('so-b2b__jack-photo--load-error');return;}el.dataset.soJackRetry='1';try{var u=new URL(el.currentSrc||el.src,location.href);u.searchParams.set('soRetry','1');el.src=u.toString();}catch(e){el.classList.add('so-b2b__jack-photo--load-error');}})(this);" />
           <span class="so-b2b__jack-avatar-fallback" aria-hidden="true">J</span>
         </div>
       </div>
@@ -1201,6 +1220,8 @@
     </aside>
   </div>
 </main>
+
+<div class="so-b2b__hero-deco so-b2b__hero-deco--bl" aria-hidden="true"></div>
 
 <footer class="so-b2b-footer">
   <span class="so-b2b-footer__row"><svg class="so-b2b-footer__mark so-brand-ring-svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15.75 18.495A7.5 7.5 0 0 1 8.25 18.495"/><path d="M5.505 15.75A7.5 7.5 0 0 1 5.505 8.25"/><path d="M8.25 5.505A7.5 7.5 0 0 1 15.75 5.505"/><path d="M18.495 8.25A7.5 7.5 0 0 1 18.495 15.75"/></svg><span>© 2026 www.serviceopera.to · Done-for-you AI operations · <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a></span></span>

@@ -435,6 +435,89 @@
       });
     })();
 
+    var jackAppear = await timedJson('/api/site-appearance');
+    var jackJ = jackAppear.json || {};
+    var jackUrlRaw = typeof jackJ.jackAvatarUrl === 'string' ? jackJ.jackAvatarUrl : '(not string)';
+    var jackUrlSnip = jackUrlRaw.length > 140 ? jackUrlRaw.slice(0, 140) + '…' : jackUrlRaw;
+    lines.push({
+      cat: 'FE',
+      text:
+        '53b · GET /api/site-appearance jackAvatarUrl: HTTP ' +
+        jackAppear.status +
+        ' · ' +
+        jackAppear.ms +
+        ' ms · raw≈' +
+        jackUrlSnip,
+    });
+    var resolveJack = '';
+    try {
+      resolveJack =
+        typeof window.__soResolveSitePublicAssetUrl === 'function'
+          ? String(window.__soResolveSitePublicAssetUrl('/assets/jack-avatar.png') || '(empty)')
+          : '(no __soResolveSitePublicAssetUrl)';
+    } catch (eR) {
+      resolveJack = 'err: ' + (eR && eR.message ? eR.message : String(eR));
+    }
+    var resolveJackDisp = resolveJack.length > 160 ? resolveJack.slice(0, 160) + '…' : resolveJack;
+    lines.push({ cat: 'FE', text: '53c · __soResolveSitePublicAssetUrl(/assets/jack-avatar.png): ' + resolveJackDisp });
+    var metaApi = '';
+    try {
+      var mo = document.querySelector('meta[name="so-api-origin"]');
+      metaApi = mo && mo.getAttribute('content') ? mo.getAttribute('content').trim() : '(no meta)';
+    } catch (eM) {
+      metaApi = 'n/a';
+    }
+    lines.push({ cat: 'FE', text: '53d · meta so-api-origin: ' + (metaApi.length > 120 ? metaApi.slice(0, 120) + '…' : metaApi) });
+    var jackImgs = document.querySelectorAll('[data-so-jack-avatar] img.so-b2b__jack-photo');
+    var jackImg0 = jackImgs.length ? jackImgs[0] : null;
+    if (!jackImg0) {
+      lines.push({
+        cat: 'FE',
+        text: '53e · jack-photo: (no [data-so-jack-avatar] img.so-b2b__jack-photo in DOM) · count=0',
+      });
+    } else {
+      var jSrc = '';
+      try {
+        jSrc = new URL(jackImg0.currentSrc || jackImg0.src, window.location.href).href;
+      } catch (eJ) {
+        jSrc = jackImg0.getAttribute('src') || '(src?)';
+      }
+      var jNat =
+        jackImg0.naturalWidth && jackImg0.naturalHeight
+          ? jackImg0.naturalWidth + '×' + jackImg0.naturalHeight
+          : '(not decoded)';
+      lines.push({
+        cat: 'FE',
+        text:
+          '53e · jack-photo: inDOM=yes · count=' +
+          jackImgs.length +
+          ' · resolved=' +
+          (jSrc.length > 140 ? jSrc.slice(0, 140) + '…' : jSrc) +
+          ' · complete=' +
+          (jackImg0.complete ? 'yes' : 'no') +
+          ' · natural=' +
+          jNat +
+          ' · load-error-class=' +
+          (jackImg0.classList && jackImg0.classList.contains('so-b2b__jack-photo--load-error') ? 'yes' : 'no'),
+      });
+    }
+    var decoRoot = document.documentElement;
+    var decoCs = window.getComputedStyle(decoRoot);
+    var trUrlProp = (decoCs.getPropertyValue('--so-hero-deco-tr-url') || '').trim();
+    var blUrlProp = (decoCs.getPropertyValue('--so-hero-deco-bl-url') || '').trim();
+    lines.push({
+      cat: 'FE',
+      text:
+        '53f · hero deco (--so-hero-deco-* on html): tr-url=' +
+        (trUrlProp.length > 80 ? trUrlProp.slice(0, 80) + '…' : trUrlProp) +
+        ' · tr-op=' +
+        (decoCs.getPropertyValue('--so-hero-deco-tr-opacity') || '?').trim() +
+        ' · bl-url=' +
+        (blUrlProp.length > 80 ? blUrlProp.slice(0, 80) + '…' : blUrlProp) +
+        ' · bl-op=' +
+        (decoCs.getPropertyValue('--so-hero-deco-bl-opacity') || '?').trim(),
+    });
+
   var rootEl = document.documentElement;
   var rootCs = window.getComputedStyle(rootEl);
   var bodyCs = window.getComputedStyle(document.body);

@@ -173,9 +173,13 @@
     var alt = typeof j.jackAvatarAlt === 'string' && j.jackAvatarAlt.trim() ? j.jackAvatarAlt.trim() : '';
     document.querySelectorAll('[data-so-jack-avatar] img.so-b2b__jack-photo').forEach(function (img) {
       if (!u) {
-        img.remove();
+        /* Keep markup + static / patched src; removing hid the portrait when API returned "" or before JSON loaded. */
         return;
       }
+      img.classList.remove('so-b2b__jack-photo--load-error');
+      img.onload = function () {
+        img.classList.remove('so-b2b__jack-photo--load-error');
+      };
       img.src = resolveSitePublicAssetUrl(u);
       if (alt) img.alt = alt;
       else img.removeAttribute('alt');
