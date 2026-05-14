@@ -1335,6 +1335,26 @@
       });
       return next;
     }
+    /** Cancel pending debounced autosave and PUT the same full payload autosave uses (avoids races with navigation or a stale timer). */
+    function flushSiteAppearanceSaveFromDom() {
+      if (appearanceAutosaveTimer) {
+        clearTimeout(appearanceAutosaveTimer);
+        appearanceAutosaveTimer = null;
+      }
+      if (isSiteAppearancePanelStale()) {
+        return Promise.resolve({ ok: false, j: { error: 'Panel closed.' } });
+      }
+      var tok = getAdminBearer();
+      if (!tok) {
+        return Promise.resolve({
+          ok: false,
+          j: { error: 'Not signed in as admin; cannot save site appearance.' },
+        });
+      }
+      var domPayload = collectSiteAppearancePayloadFromDom();
+      if (!domPayload) return Promise.resolve({ ok: false, j: { error: 'Nothing to save.' } });
+      return enqueueAppearancePersistPut(domPayload);
+    }
     function bindAppearanceUpload(pickBtnId, fileInputId, urlInput, persistField) {
       var pick = document.getElementById(pickBtnId);
       var fin = document.getElementById(fileInputId);
@@ -1391,7 +1411,10 @@
               }
               var patch = {};
               patch[persistField] = uploadedUrl;
-              enqueueAppearancePersistPut(patch).then(function (putX) {
+              var persistPromise = siteAppearanceFormHydrated
+                ? flushSiteAppearanceSaveFromDom()
+                : enqueueAppearancePersistPut(patch);
+              persistPromise.then(function (putX) {
                 if (isSiteAppearancePanelStale()) return;
                 if (!putX.ok) {
                   if (hintEl) {
