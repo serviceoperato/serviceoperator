@@ -917,12 +917,18 @@
       if (/^https?:\/\//i.test(u)) return u;
       if (u.charAt(0) === '/') {
         /*
-         * Only admin uploads live on the Node host under public/assets/site-uploads/.
-         * Bundled marketing assets (/assets/*.svg, hero PNGs, etc.) stay on the static site origin;
-         * sending every /assets/* URL to the API origin breaks previews (e.g. default hero-corner SVG).
+         * Admin uploads: legacy disk files under /assets/site-uploads/, or Postgres-backed
+         * GET /api/site-uploads/<uuid> on the Node host. Bundled marketing assets stay on the static origin.
          */
-        var siteUploadPrefix = '/assets/site-uploads/';
-        if (u.indexOf(siteUploadPrefix) === 0 && typeof soApiOrigin === 'function') {
+        var siteUploadPrefixes = ['/assets/site-uploads/', '/api/site-uploads/'];
+        var needsApiOrigin = false;
+        for (var pi = 0; pi < siteUploadPrefixes.length; pi++) {
+          if (u.indexOf(siteUploadPrefixes[pi]) === 0) {
+            needsApiOrigin = true;
+            break;
+          }
+        }
+        if (needsApiOrigin && typeof soApiOrigin === 'function') {
           try {
             var apiOrigin = String(soApiOrigin() || '')
               .trim()
@@ -1479,11 +1485,13 @@
             urlInput.value = '';
             urlInput.dispatchEvent(new Event('input', { bubbles: true }));
             if (hintEl) {
-              if (x.j.deletedFromDisk) {
+              if (x.j.deletedFromDatabase) {
+                hintEl.textContent = 'Removed upload from database. Saving empty URL…';
+              } else if (x.j.deletedFromDisk) {
                 hintEl.textContent = 'Removed file from server. Saving empty URL…';
               } else if (x.j.reason === 'not_site_upload') {
                 hintEl.textContent =
-                  'Cleared URL (not an su-* upload under /assets/site-uploads/). Saving…';
+                  'Cleared URL (not a removable site upload: use /assets/site-uploads/su-* or /api/site-uploads/<uuid>). Saving…';
               } else {
                 hintEl.textContent =
                   'Cleared URL (upload file was already gone). Saving…';

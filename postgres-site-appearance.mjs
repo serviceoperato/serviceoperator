@@ -11,6 +11,44 @@ export async function ensureSiteAppearanceSchema(pool) {
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
   `);
+  /** Admin “Site appearance” image bytes — survives container redeploys (unlike files under public/). */
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS site_uploads (
+      id UUID PRIMARY KEY,
+      mime_type TEXT NOT NULL,
+      bytes BYTEA NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `);
+}
+
+const SITE_UPLOAD_UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** @param {import('pg').Pool} pool */
+export async function insertSiteUpload(pool, id, mimeType, bytes) {
+  await pool.query(
+    `INSERT INTO site_uploads (id, mime_type, bytes, created_at) VALUES ($1::uuid, $2, $3, NOW())`,
+    [id, mimeType, bytes]
+  );
+}
+
+/** @param {import('pg').Pool} pool */
+export async function getSiteUpload(pool, id) {
+  if (!SITE_UPLOAD_UUID_RE.test(String(id || '').trim())) return null;
+  const { rows } = await pool.query(
+    'SELECT mime_type, bytes FROM site_uploads WHERE id = $1::uuid LIMIT 1',
+    [id]
+  );
+  if (!rows.length) return null;
+  const row = rows[0];
+  return { mimeType: row.mime_type, bytes: row.bytes };
+}
+
+/** @param {import('pg').Pool} pool */
+export async function deleteSiteUpload(pool, id) {
+  if (!SITE_UPLOAD_UUID_RE.test(String(id || '').trim())) return false;
+  const r = await pool.query('DELETE FROM site_uploads WHERE id = $1::uuid', [id]);
+  return r.rowCount > 0;
 }
 
 /** @param {import('pg').Pool} pool */

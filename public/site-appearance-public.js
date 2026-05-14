@@ -6,6 +6,9 @@
     if (!img || typeof url !== 'string') return;
     var u = url.trim();
     if (!u) return;
+    if (typeof window !== 'undefined' && typeof window.__soResolveSitePublicAssetUrl === 'function') {
+      u = window.__soResolveSitePublicAssetUrl(u);
+    }
     img.src = u;
     if (typeof alt === 'string' && alt.trim()) {
       img.alt = alt.trim();

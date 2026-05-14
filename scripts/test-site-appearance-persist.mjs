@@ -8,19 +8,21 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 
-/** Mirrors public/admin.js `siteAppearanceResolveUrl` (site-uploads → API origin when cross-origin). */
+/** Mirrors public/admin.js `siteAppearanceResolveUrl` (upload paths → API origin when cross-origin). */
 function siteAppearanceResolveUrlForTest(raw, ctx) {
   var u = String(raw || '').trim();
   if (!u) return '';
   if (/^https?:\/\//i.test(u)) return u;
   if (u.charAt(0) !== '/') return u;
-  var siteUploadPrefix = '/assets/site-uploads/';
+  var prefixes = ['/assets/site-uploads/', '/api/site-uploads/'];
   var pageOrigin = ctx.pageOrigin || '';
   var apiOrigin = String(ctx.apiOrigin || '')
     .trim()
     .replace(/\/+$/, '');
-  if (u.indexOf(siteUploadPrefix) === 0 && apiOrigin && /^https?:\/\//i.test(apiOrigin) && pageOrigin) {
-    if (new URL(apiOrigin).origin !== new URL(pageOrigin).origin) return apiOrigin + u;
+  for (var i = 0; i < prefixes.length; i++) {
+    if (u.indexOf(prefixes[i]) === 0 && apiOrigin && /^https?:\/\//i.test(apiOrigin) && pageOrigin) {
+      if (new URL(apiOrigin).origin !== new URL(pageOrigin).origin) return apiOrigin + u;
+    }
   }
   return pageOrigin + u;
 }
@@ -46,6 +48,14 @@ assert.equal(
     apiOrigin: 'https://api.example.com',
   }),
   'https://api.example.com/assets/site-uploads/su-1-abcdef00.png'
+);
+
+assert.equal(
+  siteAppearanceResolveUrlForTest('/api/site-uploads/550e8400-e29b-41d4-a716-446655440000', {
+    pageOrigin: 'https://www.example.com',
+    apiOrigin: 'https://api.example.com',
+  }),
+  'https://api.example.com/api/site-uploads/550e8400-e29b-41d4-a716-446655440000'
 );
 
 assert.equal(

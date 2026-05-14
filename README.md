@@ -21,7 +21,7 @@ A complete, deployable site under **`serviceopera.to`**. All static assets live 
 | `public/login.html` | Clinic log-in; stores `so_clinic_jwt` and redirects to `/clinics/report.html?slug=…`. |
 | `public/clinics/report.html` | Private report view (same layout as the public demo); needs a valid clinic session and slug-specific or fallback `_data.json`. |
 
-**Site appearance & deploys:** Admin “Site appearance” (and `GET /api/site-appearance`) persist to **`DATA_DIR/site-appearance.json`** — the same `DATA_DIR` as portal JSON (default `./data`, Docker/Railway often `/app/data`). Admin image uploads are written under **`public/assets/site-uploads/`** on the Node host. On platforms with an **ephemeral filesystem** and no **persistent volume** mounted for those paths, logo/hero URL changes and uploaded `su-*` files are **lost on redeploy** (it can look like an automatic rollback). Use a volume (or store only `https://…` URLs on a durable CDN) if settings must survive deploys.
+**Site appearance & deploys:** When **`DATABASE_URL`** is set, “Site appearance” JSON is stored in PostgreSQL (`site_appearance_config`), and admin image uploads are stored as bytes in **`site_uploads`** and served at **`GET /api/site-uploads/<uuid>`** — they survive Railway redeploys without a volume. Without Postgres, settings use **`DATA_DIR/site-appearance.json`** and uploads go to **`public/assets/site-uploads/`** (`su-*` files), which are lost on ephemeral disks unless you mount a [volume](https://docs.railway.com/guides/volumes) or use external **`https://…`** image URLs.
 
 The client page is marked `noindex, nofollow` and disallowed in `robots.txt` where applicable.
 
@@ -135,7 +135,7 @@ The `Dockerfile` runs **Node**: `server.mjs` serves **`public/`** and sets the s
 | `RESEND_FROM` | Recommended | Verified sender, e.g. `ServiceOpera <noreply@yourdomain.com>`. Resend’s test domain only delivers to your own mailbox. |
 | `CLINIC_SELF_REGISTER` | Optional | **On by default** for **`server.mjs`**: **Create account** on `/login.html` stages a pending sign-up and sends a **confirmation email** (needs **`RESEND_API_KEY`**); the account is created only after the user opens the link. Set to `false`, `0`, `no`, or `off` for invite-only accounts (admin creates users). |
 | `PUBLIC_ORIGIN` | Optional | Full public URL of the site (e.g. `https://serviceopera.to`), no trailing slash. Used in reset links if the reverse proxy does not pass a reliable host/proto. |
-| `DATA_DIR` | Optional | Directory for JSON state (`site-appearance.json`, portal users when not on Postgres, etc.). Defaults to `./data` locally and `/app/data` in the Docker image. **Railway’s root filesystem is ephemeral** unless you add a [volume](https://docs.railway.com/guides/volumes): mount it at `/app/data` (or set `DATA_DIR` to your mount path) so site appearance and uploads under `public/assets/site-uploads/` are not lost on every redeploy. |
+| `DATA_DIR` | Optional | Directory for JSON state when not on Postgres (`site-appearance.json`, portal users, etc.). Defaults to `./data` locally and `/app/data` in the Docker image. **Railway’s root filesystem is ephemeral**; with **`DATABASE_URL`**, site appearance + uploads live in Postgres and do not need a volume for those. Without Postgres, add a [volume](https://docs.railway.com/guides/volumes) if you rely on `DATA_DIR` or `public/assets/site-uploads/` staying across redeploys. |
 
 **Migration — admin email OTP removed (deploy checklist)**
 

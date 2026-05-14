@@ -6,7 +6,7 @@
     if (/^https?:\/\//i.test(u)) return u;
     if (u.charAt(0) === '/') {
       if (
-        u.indexOf('/assets/site-uploads/') === 0 &&
+        (u.indexOf('/assets/site-uploads/') === 0 || u.indexOf('/api/site-uploads/') === 0) &&
         typeof g.soApiOrigin === 'function'
       ) {
         try {

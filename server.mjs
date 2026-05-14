@@ -10,6 +10,9 @@ import { assertReportSlug, createUserStore, normalizeEmail, verifyPassword } fro
 import { createPostgresUserStore, ensurePostgresUserSchema } from './postgres-user-store.mjs';
 import {
   ensureSiteAppearanceSchema,
+  deleteSiteUpload,
+  getSiteUpload,
+  insertSiteUpload,
   loadSiteAppearanceJson,
   saveSiteAppearanceJson,
 } from './postgres-site-appearance.mjs';
@@ -621,6 +624,24 @@ function sniffWritableSiteImage(buf) {
   return null;
 }
 
+function mimeTypeForWritableSiteImageExt(ext) {
+  const e = String(ext || '').toLowerCase();
+  if (e === 'png') return 'image/png';
+  if (e === 'jpg') return 'image/jpeg';
+  if (e === 'gif') return 'image/gif';
+  if (e === 'webp') return 'image/webp';
+  if (e === 'svg') return 'image/svg+xml';
+  return 'application/octet-stream';
+}
+
+const SITE_UPLOAD_API_PREFIX = '/api/site-uploads/';
+const SITE_UPLOAD_DB_ID_IN_PATH_RE = /^\/api\/site-uploads\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\/?$/i;
+
+function isStableSiteUploadApiPath(candidate) {
+  const s = String(candidate || '').trim();
+  return SITE_UPLOAD_DB_ID_IN_PATH_RE.test(s.split('?')[0].split('#')[0].replace(/\/+/g, '/'));
+}
+
 const SITE_UPLOAD_PUBLIC_PREFIX = '/assets/site-uploads/';
 /** Only names minted by POST …/upload (`su-<timestamp>-<8 hex>.<ext>`). No directory segments, no traversal. */
 const SITE_UPLOAD_DELETABLE_BASENAME_RE = /^su-\d+-[a-f0-9]{8}\.(png|jpe?g|gif|webp|svg)$/i;
@@ -650,6 +671,22 @@ function parseSiteUploadDeletableBasenameFromUrl(inputUrl) {
   return base;
 }
 
+/** UUID from `/api/site-uploads/<uuid>` (or full URL with that path). */
+function parseSiteUploadDbIdFromUrl(inputUrl) {
+  const s = String(inputUrl || '').trim();
+  if (!s) return null;
+  let pathname = '';
+  try {
+    if (/^https?:\/\//i.test(s)) pathname = new URL(s).pathname || '';
+    else pathname = s.startsWith('/') ? s : '/' + s;
+  } catch {
+    return null;
+  }
+  pathname = pathname.split('?')[0].split('#')[0].replace(/\/+/g, '/');
+  const m = pathname.match(SITE_UPLOAD_DB_ID_IN_PATH_RE);
+  return m ? m[1].toLowerCase() : null;
+}
+
 /** Absolute path inside `siteUploadsDir`, or null if it would escape. */
 function resolvedPathInsideSiteUploads(basename) {
   const safeBase = path.basename(basename);
@@ -668,6 +705,7 @@ function isSafePropertyPageImageUrl(candidate) {
   if (s.includes('..')) return false;
   if (s.startsWith('/')) {
     if (s.startsWith('//')) return false;
+    if (isStableSiteUploadApiPath(s)) return true;
     return /^\/[\w./~$%-]+$/i.test(s);
   }
   try {
@@ -1366,6 +1404,29 @@ app.get('/api/site-appearance', async (_req, res) => {
   }
 });
 
+/** Public image bytes for admin “Site appearance” uploads when `DATABASE_URL` is set (Postgres `site_uploads`). */
+app.get('/api/site-uploads/:id', async (req, res) => {
+  const id = String(req.params.id || '').trim().toLowerCase();
+  if (!pgPool) {
+    res.setHeader('Cache-Control', 'no-store');
+    return res.status(404).type('text/plain').send('Not found');
+  }
+  try {
+    const row = await getSiteUpload(pgPool, id);
+    if (!row || !row.bytes) {
+      res.setHeader('Cache-Control', 'no-store');
+      return res.status(404).end();
+    }
+    res.setHeader('Content-Type', row.mimeType || 'application/octet-stream');
+    res.setHeader('Cache-Control', 'public, max-age=604800, immutable');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    return res.send(row.bytes);
+  } catch (e) {
+    res.setHeader('Cache-Control', 'no-store');
+    return res.status(500).type('text/plain').send(e.message || 'Error');
+  }
+});
+
 /**
  * First-time audit portal handoff (Dental Design Center). Values from env only; when the
  * portal user exists and no longer has passwordMustChange, credentials are omitted so the
@@ -1847,7 +1908,7 @@ app.put('/api/admin/site-appearance', requireAdmin, async (req, res) => {
   }
 });
 
-app.post('/api/admin/site-appearance/upload', requireAdmin, (req, res) => {
+app.post('/api/admin/site-appearance/upload', requireAdmin, async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   const rawB64 =
     typeof req.body?.imageBase64 === 'string'
@@ -1870,6 +1931,16 @@ app.post('/api/admin/site-appearance/upload', requireAdmin, (req, res) => {
   if (!sniffed) {
     return res.status(400).json({ error: 'Unsupported image type. Use PNG, JPEG, GIF, WebP, or SVG.' });
   }
+  if (pgPool) {
+    const id = crypto.randomUUID();
+    const mimeType = mimeTypeForWritableSiteImageExt(sniffed.ext);
+    try {
+      await insertSiteUpload(pgPool, id, mimeType, buf);
+      return res.json({ ok: true, url: `${SITE_UPLOAD_API_PREFIX}${id}`, bytes: buf.length });
+    } catch (e) {
+      return res.status(500).json({ error: e.message || 'Could not save uploaded file.' });
+    }
+  }
   const stamp = Date.now();
   const rand = crypto.randomBytes(4).toString('hex');
   const base = `su-${stamp}-${rand}.${sniffed.ext}`;
@@ -1880,13 +1951,30 @@ app.post('/api/admin/site-appearance/upload', requireAdmin, (req, res) => {
   } catch (e) {
     return res.status(500).json({ error: e.message || 'Could not save uploaded file.' });
   }
-  return res.json({ ok: true, url: `/assets/site-uploads/${base}`, bytes: buf.length });
+  return res.json({ ok: true, url: `${SITE_UPLOAD_PUBLIC_PREFIX}${base}`, bytes: buf.length });
 });
 
-/** Remove a single file from `public/assets/site-uploads/` (admin only). Body: `{ url }` — only `su-*` names from this server’s upload endpoint are unlinkable; no other paths. */
-app.post('/api/admin/site-appearance/delete-upload', requireAdmin, (req, res) => {
+/** Remove an upload: Postgres row (`/api/site-uploads/<uuid>`) when configured, else disk file under `public/assets/site-uploads/` (`su-*` only). */
+app.post('/api/admin/site-appearance/delete-upload', requireAdmin, async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   const url = typeof req.body?.url === 'string' ? req.body.url.trim() : '';
+  const dbId = parseSiteUploadDbIdFromUrl(url);
+  if (dbId && pgPool) {
+    try {
+      const deletedFromDatabase = await deleteSiteUpload(pgPool, dbId);
+      return res.json({
+        ok: true,
+        deletedFromDisk: false,
+        deletedFromDatabase,
+        path: `${SITE_UPLOAD_API_PREFIX}${dbId}`,
+      });
+    } catch (e) {
+      return res.status(500).json({ error: e.message || 'Could not delete upload.' });
+    }
+  }
+  if (dbId && !pgPool) {
+    return res.json({ ok: true, deletedFromDisk: false, deletedFromDatabase: false, reason: 'no_database' });
+  }
   const base = parseSiteUploadDeletableBasenameFromUrl(url);
   if (!base) {
     return res.json({ ok: true, deletedFromDisk: false, reason: 'not_site_upload' });
