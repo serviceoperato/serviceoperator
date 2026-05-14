@@ -518,6 +518,76 @@
         (decoCs.getPropertyValue('--so-hero-deco-bl-opacity') || '?').trim(),
     });
 
+    (function pushHeroBlDiagnostics() {
+      var htmlCs = window.getComputedStyle(decoRoot);
+      var rawBlUrl = (htmlCs.getPropertyValue('--so-hero-deco-bl-url') || '').trim();
+      var blUrlDisp = rawBlUrl;
+      if (/^url\(/i.test(rawBlUrl)) {
+        blUrlDisp = rawBlUrl
+          .replace(/^url\(\s*/i, '')
+          .replace(/\s*\)\s*$/, '')
+          .trim();
+        if (
+          (blUrlDisp.charAt(0) === '"' && blUrlDisp.charAt(blUrlDisp.length - 1) === '"') ||
+          (blUrlDisp.charAt(0) === "'" && blUrlDisp.charAt(blUrlDisp.length - 1) === "'")
+        ) {
+          blUrlDisp = blUrlDisp.slice(1, -1).trim();
+        }
+      }
+      if (blUrlDisp.length > 100) blUrlDisp = blUrlDisp.slice(0, 100) + '…';
+      var blVarOp = (htmlCs.getPropertyValue('--so-hero-deco-bl-opacity') || '').trim() || '(unset)';
+      lines.push({
+        cat: 'FE',
+        text: '53g · hero BL (computed on html): --so-hero-deco-bl-url≈' + (blUrlDisp || '(empty)') + ' · --so-hero-deco-bl-opacity=' + blVarOp,
+      });
+      var blNodes = document.querySelectorAll('.so-b2b__hero-deco--bl');
+      lines.push({
+        cat: 'FE',
+        text: '53h · .so-b2b__hero-deco--bl: inDOM=' + (blNodes.length ? 'yes' : 'no') + ' · count=' + blNodes.length,
+      });
+      var bl0 = blNodes.length ? blNodes[0] : null;
+      var vh = window.innerHeight;
+      if (!bl0) {
+        lines.push({ cat: 'FE', text: '53i · hero BL geometry: n/a (no element)' });
+      } else {
+        var r = bl0.getBoundingClientRect();
+        var distBottom = Math.round(vh - r.bottom);
+        lines.push({
+          cat: 'FE',
+          text:
+            '53i · hero BL rect: bottom=' +
+            Math.round(r.bottom) +
+            ' · innerHeight=' +
+            vh +
+            ' · px above viewport bottom=' +
+            distBottom,
+        });
+      }
+      var metaAo = '';
+      try {
+        var mAo = document.querySelector('meta[name="so-api-origin"]');
+        metaAo = mAo && mAo.getAttribute('content') ? mAo.getAttribute('content').trim() : '(no meta)';
+      } catch (eAo) {
+        metaAo = 'n/a';
+      }
+      var fnOrigin = '';
+      try {
+        fnOrigin =
+          typeof soApiOrigin === 'function' ? String(soApiOrigin() || '(empty)') : '(no soApiOrigin)';
+      } catch (eFn) {
+        fnOrigin = 'err: ' + (eFn && eFn.message ? eFn.message : String(eFn));
+      }
+      var metaShort = metaAo.length > 72 ? metaAo.slice(0, 72) + '…' : metaAo;
+      var fnShort = fnOrigin.length > 72 ? fnOrigin.slice(0, 72) + '…' : fnOrigin;
+      lines.push({ cat: 'FE', text: '53j · so-api-origin: meta=' + metaShort + ' · soApiOrigin()=' + fnShort });
+      var jackWrap = document.querySelector('[data-so-jack-avatar]');
+      var jackLoaded = jackWrap && jackWrap.hasAttribute('data-so-jack-loaded') ? 'present' : 'absent';
+      lines.push({
+        cat: 'FE',
+        text: '53k · jack wrap [data-so-jack-avatar]: ' + (jackWrap ? 'inDOM=yes' : 'inDOM=no') + ' · data-so-jack-loaded=' + jackLoaded,
+      });
+    })();
+
   var rootEl = document.documentElement;
   var rootCs = window.getComputedStyle(rootEl);
   var bodyCs = window.getComputedStyle(document.body);
