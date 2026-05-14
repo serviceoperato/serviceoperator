@@ -8,6 +8,26 @@
     { value: 'other', label: 'Other' },
   ];
 
+  /* Line icons aligned with homepage sector cards (index.html); "other" = 2×2 grid. */
+  var SECTOR_ICON_SVG = {
+    hotels:
+      '<svg viewBox="0 0 24 24" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M6 20V10L12 6.5l6 3.5V20"/><path d="M12 6.5V4"/><path d="M8 20v-6h8v6"/><rect x="8.5" y="11" width="2" height="2" rx="0.35"/><rect x="11" y="11" width="2" height="2" rx="0.35"/><rect x="13.5" y="11" width="2" height="2" rx="0.35"/><rect x="8.5" y="14.5" width="2" height="2" rx="0.35"/><rect x="11" y="14.5" width="2" height="2" rx="0.35"/><rect x="13.5" y="14.5" width="2" height="2" rx="0.35"/></svg>',
+    clinics:
+      '<svg viewBox="0 0 24 24" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5c-1.8 2.8-4.5 5-4.5 8.8a4.5 4.5 0 0 0 9 0c0-3.8-2.7-6-4.5-8.8z"/><path d="M8.5 13c1.4 1.1 2.6 1.6 3.5 1.6s2.1-.5 3.5-1.6"/><path d="M7.5 15.5c1.8 1.5 3.2 2 4.5 2s2.7-.5 4.5-2"/><path d="M12 4.5v2"/></svg>',
+    property:
+      '<svg viewBox="0 0 24 24" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V11.5z"/><path d="M9 21v-7h6v7"/></svg>',
+    other:
+      '<svg viewBox="0 0 24 24" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>',
+  };
+
+  function sectorIconEl(slug) {
+    var wrap = document.createElement('span');
+    wrap.className = 'so-sector-choice__icon';
+    wrap.setAttribute('aria-hidden', 'true');
+    wrap.innerHTML = SECTOR_ICON_SVG[slug] || SECTOR_ICON_SVG.other;
+    return wrap;
+  }
+
   function el(tag, className, text) {
     var node = document.createElement(tag);
     if (className) node.className = className;
@@ -60,7 +80,8 @@
       rad.className = 'so-sector-choice__input';
       rad.required = si === 0;
       lab.appendChild(rad);
-      lab.appendChild(document.createTextNode(' ' + opt.label));
+      lab.appendChild(sectorIconEl(opt.value));
+      lab.appendChild(el('span', 'so-sector-choice__label', opt.label));
       grid.appendChild(lab);
       sectorRadios.push(rad);
     }

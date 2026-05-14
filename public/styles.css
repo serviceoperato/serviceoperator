@@ -3179,10 +3179,12 @@ html.so-site-nav-open {
 .so-sector-choice__opt {
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 2.75rem;
-  padding: 0.55rem 0.5rem;
+  gap: 0.35rem;
+  min-height: 3.35rem;
+  padding: 0.5rem 0.45rem 0.55rem;
   border: 1px solid var(--line-strong);
   border-radius: 10px;
   background: color-mix(in srgb, var(--ink-2) 92%, transparent);
@@ -3192,6 +3194,26 @@ html.so-site-nav-open {
   cursor: pointer;
   text-align: center;
   user-select: none;
+}
+.so-sector-choice__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.45rem;
+  height: 1.45rem;
+  color: color-mix(in srgb, currentColor 88%, transparent);
+  pointer-events: none;
+}
+.so-sector-choice__icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.so-sector-choice__label {
+  position: relative;
+  z-index: 1;
+  line-height: 1.15;
 }
 .so-sector-choice__opt:has(:checked) {
   border-color: var(--amber-2);
