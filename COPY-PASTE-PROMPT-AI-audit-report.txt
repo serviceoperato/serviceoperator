@@ -1,0 +1,833 @@
+================================================================================
+COPY-PASTE PROMPT FOR AI: CREATE HEALTHCARE AUDIT REPORT SAMPLE
+================================================================================
+
+You are an expert web developer and UX designer tasked with creating a professional,
+clinical-grade AI automation audit report sample in HTML5. This report will be displayed
+on a healthcare company's homepage to showcase analytical capabilities to prospective
+clinic owners in Thailand (medical clinics, wellness centers, beauty clinics, health
+coaching services).
+
+CRITICAL REQUIREMENTS:
+
+1. OUTPUT FORMAT: Single, self-contained HTML5 file (no external CSS files, only
+   inline styles). JavaScript must include Chart.js 4.5.0 from CDN and vanilla JS
+   for tab switching. File should be production-ready and responsive (mobile-first).
+
+2. TARGET AUDIENCE: Healthcare business owners in Thailand (decision-makers, clinic
+   directors, wellness center owners). They understand data, value clinical precision,
+   are skeptical of marketing claims, and want proof of analytical depth.
+
+3. TONE & MESSAGING:
+   - CLINICAL, NOT MARKETING: Use diagnostic language ("friction points", "leakage",
+     "operational gaps") NOT motivational language ("revolutionize", "game-changing",
+     "amazing potential")
+   - QUANTIFIED, NOT QUALITATIVE: Every claim must have a number. Instead of "slow
+     response", say "6-24 hour response time (industry benchmark: 2 minutes post-automation)"
+   - DATA-DRIVEN: Reference "public data analysis", "12-month trend tracking",
+     "operational flow mapping" to establish credibility
+   - PROFESSIONAL: Use formal grammar, proper medical/business terminology, no emojis
+     in body text (only in headers/cards as accents)
+
+SAMPLE CLINIC DETAILS (USE THESE EXACT VALUES):
+
+Clinic Name: "Bangkok Integrated Health Center"
+Location: "Bangkok, Thailand"
+Service Lines: Medical Consultations, Beauty & Wellness, Health Coaching
+Analyst: "Operato AI"
+Audit Date: "May 2026"
+Overall Rating: 4.3★ out of 5
+Audit Potential Score: 7.8/10 (color: amber)
+
+KEY METRICS (MUST USE THESE EXACT NUMBERS):
+- Revenue Friction Gap: ฿2.1M annually
+- Review Velocity (current): 18-25 days
+- Review Velocity (target): 3-5 days
+- Inquiry Response Time (current): 6-24 hours
+- Inquiry Response Time (target): < 2 minutes
+- No-Show Rate (current): 22%
+- No-Show Rate (target): 8%
+- Booking Conversion Range: 28-37% (trending upward)
+- Review Response Rate: 12%
+- Positive Sentiment: 67%
+- 12-Month Conservative ROI: ฿7.8M (Range: 6.2M–10.5M)
+
+================================================================================
+SECTION 1: HEADER (At the top of page)
+================================================================================
+
+Create a prominent header section with:
+
+[1a] BADGE (small pill-shaped):
+- Text: "🏥 AI AUTOMATION AUDIT"
+- Background: Light indigo (#eae5ff)
+- Text Color: Indigo (#6366f1)
+- Padding: 8px 16px
+- Border-radius: 20px
+- Font: 11px, weight 700, letter-spaced 1px, uppercase
+- Margin-bottom: 20px
+
+[1b] MAIN TITLE:
+- Text: "Bangkok Integrated Health Center"
+- Font: 48px, weight 800, color #1a1a2e
+- Margin-bottom: 10px
+- Line-height: 1.2
+
+[1c] SUBTITLE:
+- Text: "Bangkok, Thailand"
+- Font: 28px, weight 600, color #6366f1, italic
+- Margin-bottom: 30px
+
+[1d] DESCRIPTION PARAGRAPH:
+- Text: "A comprehensive AI readiness audit analyzing patient acquisition flow, operational
+  friction, and digital maturity across all service lines: medical consultations, wellness
+  services, beauty treatments, and health coaching."
+- Font: 16px, weight 400, color #475569
+- Line-height: 1.8
+- Max-width: 800px
+- Margin-bottom: 30px
+
+[1e] HEADER META GRID:
+Create a responsive grid (5 columns on desktop, 2-3 on tablet, 1 on mobile) with these items:
+
+Meta Item 1:
+- Label: "Analyzed By"
+- Value: "Operato AI"
+
+Meta Item 2:
+- Label: "Audit Date"
+- Value: "May 2026"
+
+Meta Item 3:
+- Label: "Service Lines"
+- Value: "4 Lines"
+
+Meta Item 4:
+- Label: "Audit Score"
+- Value: "7.8/10" (font-size larger, color #f59e0b amber)
+
+Meta Item 5:
+- Label: "Rating"
+- Value: "★★★★☆ 4.3/5" (display as flex row with stars #fbbf24 gold color)
+
+Each meta item:
+- Text-align: center
+- Label: 11px, uppercase, letter-spaced, weight 700, color #64748b
+- Value: 18px, weight 800, color #1a1a2e
+- Margin-bottom: 8px between label and value
+
+Header Section Container:
+- Background: white
+- Border-radius: 16px
+- Padding: 60px 40px
+- Margin-bottom: 40px
+- Box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08)
+- Add 1px border-top #e2e8f0 above the meta grid
+
+================================================================================
+SECTION 2: DASHBOARD - 12-MONTH TREND CHART
+================================================================================
+
+Create a dashboard section with Chart.js line chart showing 4 parallel metrics:
+
+Container:
+- Background: white
+- Border-radius: 16px
+- Padding: 40px
+- Margin-bottom: 40px
+- Box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08)
+
+[2a] SECTION HEADING:
+- Text: "12-Month Public Signal Trend"
+- Font: 24px, weight 800, color #1a1a2e
+- Margin-bottom: 12px
+
+[2b] SECTION DESCRIPTION:
+- Text: "Four key metrics tracked across last 12 months: Patient Review Velocity,
+  Booking Conversion Rate, Average Response Time, and Digital Sentiment Score."
+- Font: 14px, color #64748b
+- Margin-bottom: 32px
+
+[2c] CHART CONTAINER:
+- Canvas ID: "trendChart"
+- Position: relative
+- Height: 300px
+- Margin-bottom: 40px
+
+Chart Configuration (Chart.js):
+- Type: 'line'
+- Responsive: true
+- Maintain Aspect Ratio: false
+- Interaction Mode: 'index', intersect: false
+
+X-Axis Labels: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May']
+
+Datasets (4 total):
+
+DATASET 1 - Avg Rating (x10)
+- Label: "Avg Rating (x10)"
+- Data: [41, 42, 40, 41, 42, 43, 42, 41, 42, 43, 42, 43]
+- BorderColor: #6366f1 (indigo)
+- BackgroundColor: rgba(99, 102, 241, 0.1)
+- Tension: 0.4
+- Fill: true
+- YAxisID: 'y'
+
+DATASET 2 - Review Volume
+- Label: "Review Volume"
+- Data: [12, 15, 14, 18, 16, 19, 20, 18, 21, 19, 22, 18]
+- BorderColor: #10b981 (green)
+- BackgroundColor: rgba(16, 185, 129, 0.1)
+- Tension: 0.4
+- Fill: true
+- YAxisID: 'y1'
+
+DATASET 3 - Response Time (hours)
+- Label: "Response Time (hours)"
+- Data: [18, 16, 19, 17, 20, 18, 21, 19, 22, 20, 24, 18]
+- BorderColor: #f59e0b (amber)
+- BorderDash: [5, 5]
+- Tension: 0.4
+- YAxisID: 'y1'
+
+DATASET 4 - Booking Conversion %
+- Label: "Booking Conversion %"
+- Data: [28, 30, 27, 32, 29, 34, 31, 35, 32, 36, 33, 37]
+- BorderColor: #ef4444 (red)
+- BorderDash: [5, 5]
+- Tension: 0.4
+- YAxisID: 'y1'
+
+Y-Axis (Left) Configuration:
+- Type: 'linear'
+- Display: true
+- Position: 'left'
+- Tick Color: #64748b
+- Tick Font: 11px
+- Grid Color: #e2e8f0
+
+Y1-Axis (Right) Configuration:
+- Type: 'linear'
+- Display: true
+- Position: 'right'
+- Tick Color: #64748b
+- Tick Font: 11px
+- Grid Display: false
+
+X-Axis Configuration:
+- Tick Color: #64748b
+- Tick Font: 11px
+- Grid Color: #e2e8f0
+
+Legend:
+- Display: true
+- Position: 'top'
+- Font Size: 12px, weight 600
+- Label Color: #64748b
+- Padding: 16px
+- UsePointStyle: true
+
+================================================================================
+SECTION 3: KPI CARDS GRID
+================================================================================
+
+Container:
+- Display: grid
+- Grid-template-columns: repeat(auto-fit, minmax(240px, 1fr))
+- Gap: 24px
+- Margin-bottom: 40px
+
+KPI CARD 1 - Revenue Friction Gap:
+- Icon: ⚠️
+- Label (uppercase, 12px, weight 700, color #64748b): "REVENUE FRICTION GAP"
+- Value (36px, weight 800, color #1a1a2e): "฿2.1M"
+- Detail (13px, color #64748b): "Annual revenue leakage through manual booking process
+  and delayed responses"
+- Background: Linear gradient from #f8fafc to #f1f5ff
+- Border-left: 4px solid #6366f1 (indigo)
+- Hover State: transform translateY(-4px) with 0.3s ease
+
+KPI CARD 2 - Review Velocity:
+- Icon: ⭐
+- Label: "REVIEW VELOCITY (POST-AUTOMATION)"
+- Value: "3-5 days"
+- Detail: "Current: 18-25 days. Target post-automation: < 5 days"
+- Same styling as Card 1
+- Border-left: 4px solid #10b981 (green)
+
+KPI CARD 3 - Inquiry Response Time:
+- Icon: ⏱️
+- Label: "INQUIRY RESPONSE TIME"
+- Value: "6-24h"
+- Detail: "Currently manual. Post-automation: < 2 minutes across all channels"
+- Same styling as Card 1
+- Border-left: 4px solid #f59e0b (amber)
+
+KPI CARD 4 - 12-Month ROI:
+- Icon: 💰
+- Label: "CONSERVATIVE 12-MONTH ROI"
+- Value: "฿7.8M"
+- Detail: "Range: 6.2M–10.5M. Includes booking recovery + operational savings"
+- Same styling as Card 1
+- Border-left: 4px solid #10b981 (green)
+
+Each Card Styling:
+- Border-radius: 12px
+- Padding: 28px
+- Text-align: Not specified (let content flow naturally)
+- Icon font-size: 32px, margin-bottom: 12px
+- Label: 12px, uppercase, letter-spaced 1px, font-weight 700
+- Value: 36px, font-weight 800, color #1a1a2e, margin-bottom 6px
+- Detail: 13px, color #64748b, line-height 1.6
+- Transition: transform 0.3s ease, box-shadow 0.3s ease
+- Box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08)
+
+================================================================================
+SECTION 4: TABBED CONTENT SYSTEM
+================================================================================
+
+Create a tabbed interface with 4 tabs. When a user clicks a tab button, show/hide
+the corresponding content.
+
+[4a] TAB NAVIGATION BAR:
+- Display: flex
+- Overflow-x: auto (for mobile horizontal scroll)
+- Border-bottom: 2px solid #e2e8f0
+- Padding-bottom: 16px
+- Gap: 8px between buttons
+- Margin-bottom: 32px
+
+Tab Button Styling:
+- Background: none
+- Border: none
+- Padding: 8px 16px
+- Font: 13px, weight 600, uppercase, letter-spaced 0.5px
+- Color: #64748b (inactive)
+- Cursor: pointer
+- Transition: all 0.3s ease
+
+Tab Button Active State:
+- Color: #6366f1
+- Border-bottom: 3px solid #6366f1 (creates underline effect)
+- Padding-bottom: 13px (adjust to account for border)
+
+Tab Buttons Text (exactly as written):
+1. "Patient Journey"
+2. "Review Analytics"
+3. "Opportunities"
+4. "Service Line Breakdown"
+
+Tab Content Styling:
+- Display: none (by default)
+- Display: block (when .active class applied)
+- Each tab content is within a white card container with same styling as dashboard sections
+  (border-radius 16px, padding 40px, box-shadow, margin-bottom 40px)
+
+================================================================================
+TAB 1: PATIENT JOURNEY
+================================================================================
+
+[1a] TAB SECTION HEADING:
+- Text: "Patient Journey Analysis"
+- Font: 24px, weight 800, color #1a1a2e
+- Margin-bottom: 12px
+
+[1b] TAB SECTION DESCRIPTION:
+- Text: "Five-stage funnel from discovery to follow-up. Each stage includes friction
+  points identified through public data analysis and operational flow mapping."
+- Font: 14px, color #64748b
+- Margin-bottom: 32px
+
+[1c] JOURNEY TIMELINE (5 stages total):
+
+Timeline Container:
+- Position: relative
+- Padding: 40px 0
+
+Each Stage Block:
+- Display: grid
+- Grid-template-columns: 120px 1fr
+- Gap: 32px
+- Margin-bottom: 48px
+- Position: relative
+
+Connector Line (between stages):
+- Position: absolute (on the stage block)
+- Left: 60px (center of left column)
+- Top: 120px
+- Width: 2px
+- Height: calc(100% + 48px)
+- Background: #e2e8f0
+- NOT displayed on mobile (< 768px)
+
+Left Column (Stage Number & Icon):
+- Stage Number: "STAGE 1", "STAGE 2", etc.
+  - Font: 14px, weight 700, color #6366f1, uppercase, letter-spaced 1px
+  - Margin-bottom: 8px
+
+- Stage Title (with Icon):
+  - Display: flex
+  - Align-items: center
+  - Gap: 12px
+  - Font: 20px, weight 800, color #1a1a2e
+  - Icons: 🔍 📋 💬 📅 ⭐ (one per stage)
+
+- Status Badge:
+  - Padding: 4px 12px
+  - Border-radius: 20px
+  - Font: 11px, weight 700, uppercase, letter-spaced 0.5px
+
+Status Badge Colors:
+- Green (.status-good): Background #dcfce7, Text #166534 for "Functional"
+- Amber (.status-warning): Background #fed7aa, Text #92400e for "Manual Process" or "Partial"
+- Red (.status-critical): Background #fee2e2, Text #991b1b for "Critical Gap"
+
+Right Column (Stage Content):
+- Background: white
+- Border-radius: 12px
+- Padding: 24px
+- Border-left: 3px solid #e2e8f0
+
+Content Inside:
+- Paragraph (14px, color #475569, margin-bottom 12px): Brief status description
+- Bulleted List (.gap-list):
+  - List-style: none
+  - Each <li>: margin-bottom 12px, padding-left 24px, position relative
+  - Bullet prefix (✗): position absolute, left 8px, color #ef4444, font-weight bold, font-size 18px
+  - Text: 14px, color #475569, line-height 1.6
+
+STAGE 1 - DISCOVERY:
+- Icon: 🔍
+- Title: "Discovery"
+- Status: "Functional" (.status-good)
+- Description: "Ranks organically for [relevant keywords]. Strong local presence."
+- Gap Items:
+  1. "No paid search strategy detected — organic-only creates CAC ceiling"
+  2. "Limited service line keywords (medical vs beauty vs wellness treated separately)"
+
+STAGE 2 - FIRST CONTACT:
+- Icon: 💬
+- Title: "First Contact"
+- Status: "Critical Gap" (.status-critical)
+- Description: "No live chat, no WhatsApp integration, email only — creates 6-24 hour response lag."
+- Gap Items:
+  1. "No instant communication widget on website"
+  2. "WhatsApp Business account not linked to booking system"
+  3. "No LINE ID on homepage (critical for Thai audience)"
+  4. "No chatbot for after-hours international inquiries"
+
+STAGE 3 - CONSULTATION BOOKING:
+- Icon: 📋
+- Title: "Consultation Booking"
+- Status: "Manual Process" (.status-warning)
+- Description: "Free consultation form exists but no stated response SLA. Manual intake requires staff review."
+- Gap Items:
+  1. "No instant booking confirmation (patients wait for staff callback)"
+  2. "International patients face timezone delays (US/EU inquiries get 18-hour wait)"
+  3. "No service line routing (all inquiries hit same inbox)"
+  4. "No pre-qualification questions (wasted intake time on wrong service matches)"
+
+STAGE 4 - APPOINTMENT CONFIRMATION:
+- Icon: 📅
+- Title: "Appointment Confirmation"
+- Status: "Critical Gap" (.status-critical)
+- Description: "No automated confirmations, reminders, or rescheduling. Manual SMS/email only."
+- Gap Items:
+  1. "No appointment confirmation system detected"
+  2. "No automated reminders (estimated 22% no-show rate)"
+  3. "No self-service rescheduling — patients must call"
+  4. "No pre-visit checklist (delays treatment intake)"
+
+STAGE 5 - POST-VISIT FOLLOW-UP:
+- Icon: ⭐
+- Title: "Post-Visit Follow-Up"
+- Status: "Partial" (.status-warning)
+- Description: "No automated review request sequence detected. Follow-ups are ad-hoc."
+- Gap Items:
+  1. "No automated post-visit survey or review nudge"
+  2. "No follow-up appointment reminder sequence"
+  3. "No patient education content sent post-visit"
+  4. "Review response lag: 18-25 days average (industry: 3-5 days)"
+
+================================================================================
+TAB 2: REVIEW ANALYTICS
+================================================================================
+
+[2a] TAB SECTION HEADING:
+- Text: "Review & Reputation Analysis"
+- Font: 24px, weight 800, color #1a1a2e
+- Margin-bottom: 12px
+
+[2b] TAB SECTION DESCRIPTION:
+- Text: "Public review data aggregated from Google, Facebook, and local Thai health platforms."
+- Font: 14px, color #64748b
+- Margin-bottom: 32px
+
+[2c] REVIEW STATS GRID:
+- Display: grid
+- Grid-template-columns: repeat(auto-fit, minmax(240px, 1fr))
+- Gap: 20px
+
+Review Stat Card 1:
+- Number (32px, weight 800, color #6366f1): "4.3★"
+- Label (12px, uppercase, weight 700, color #64748b): "Overall Rating"
+
+Review Stat Card 2:
+- Number: "+18/mo"
+- Label: "Review Velocity"
+
+Review Stat Card 3:
+- Number: "67%"
+- Label: "Positive Sentiment"
+
+Review Stat Card 4:
+- Number: "12%"
+- Label: "Response Rate"
+
+Each Review Stat Card Styling:
+- Background: Linear gradient from #f8fafc to #f1f5ff
+- Border-radius: 12px
+- Padding: 24px
+- Text-align: center
+
+[2d] KEY THEMES SECTION:
+- Background: #f8fafc
+- Border-radius: 12px
+- Padding: 24px
+- Margin-top: 40px
+
+Heading:
+- Text: "Key Themes in Reviews"
+- Font: 16px, weight 700, color #1a1a2e
+- Margin-bottom: 16px
+
+Two-Column Grid:
+- Display: grid
+- Grid-template-columns: 1fr 1fr
+- Gap: 16px
+- On mobile (< 768px): 1fr
+
+Left Column (Praised):
+- Prefix: "✓ Praised" (font 12px, weight 700, color #10b981, uppercase, letter-spaced 0.5px)
+- Text (13px, color #475569): "Professional staff, clean facilities, good English speakers, fast treatments"
+
+Right Column (Criticized):
+- Prefix: "✗ Criticized" (font 12px, weight 700, color #ef4444, uppercase, letter-spaced 0.5px)
+- Text (13px, color #475569): "Slow response to inquiries, unclear pricing upfront, no online booking, follow-up gaps"
+
+================================================================================
+TAB 3: AI OPPORTUNITIES (21-Day Wins)
+================================================================================
+
+[3a] TAB SECTION HEADING:
+- Text: "AI Automation Opportunities (21-Day Wins)"
+- Font: 24px, weight 800, color #1a1a2e
+- Margin-bottom: 12px
+
+[3b] TAB SECTION DESCRIPTION:
+- Text: "Ranked by implementation speed and impact. All opportunities can be activated within 21 days."
+- Font: 14px, color #64748b
+- Margin-bottom: 32px
+
+[3c] OPPORTUNITY CARDS GRID:
+- Display: grid
+- Grid-template-columns: repeat(auto-fit, minmax(220px, 1fr))
+- Gap: 20px
+- Margin-top: 24px
+
+Each Opportunity Card:
+- Background: white
+- Border-radius: 12px
+- Border-top: 3px solid #6366f1 (indigo)
+- Padding: 24px
+- Box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05)
+
+Card Elements:
+- Icon (28px, margin-bottom 12px): Listed below
+- Title (14px, weight 700, color #1a1a2e, margin-bottom 8px): Listed below
+- Detail (13px, color #64748b, line-height 1.6): Listed below
+
+OPPORTUNITY 1:
+- Icon: 💬
+- Title: "Live Chat + WhatsApp Bot"
+- Detail: "Response time: 24h → 2 min. Impact: Captures 34% of abandoning visitors."
+
+OPPORTUNITY 2:
+- Icon: 📅
+- Title: "Instant Booking Confirmation"
+- Detail: "No-show rate: 22% → 8%. Appointment form + calendar sync + SMS confirm."
+
+OPPORTUNITY 3:
+- Icon: ⭐
+- Title: "Auto Review Request Sequence"
+- Detail: "Review velocity: 18 days → 3 days. Post-visit automation + multi-channel
+  (Google, FB, Thai platforms)."
+
+OPPORTUNITY 4:
+- Icon: 🎯
+- Title: "Service Line Routing"
+- Detail: "Inquiries auto-routed to correct department. Reduces intake time by 40%."
+
+OPPORTUNITY 5:
+- Icon: 📧
+- Title: "Patient Education Email Sequence"
+- Detail: "Post-visit care instructions + cross-sell opportunities. Reduces follow-up call volume."
+
+OPPORTUNITY 6:
+- Icon: 🌐
+- Title: "Multilingual FAQ Bot"
+- Detail: "Thai, English, Mandarin, Korean. Handles 60% of repeating questions without staff."
+
+================================================================================
+TAB 4: SERVICE LINE BREAKDOWN
+================================================================================
+
+[4a] TAB SECTION HEADING:
+- Text: "Service Line Performance Breakdown"
+- Font: 24px, weight 800, color #1a1a2e
+- Margin-bottom: 12px
+
+[4b] TAB SECTION DESCRIPTION:
+- Text: "Each service line shows distinct automation opportunities based on patient
+  acquisition patterns."
+- Font: 14px, color #64748b
+- Margin-bottom: 32px
+
+[4c] SERVICE LINE CARDS GRID:
+- Display: grid
+- Grid-template-columns: repeat(auto-fit, minmax(280px, 1fr))
+- Gap: 24px
+- Margin-top: 24px
+
+Each Service Line Card:
+- Background: #f8fafc
+- Border-radius: 12px
+- Padding: 24px
+- Border-left: 4px solid [color specific to service line]
+
+SERVICE LINE 1 - MEDICAL CONSULTATIONS:
+- Border-left Color: #3b82f6 (blue)
+- Title (16px, weight 700, color #1a1a2e): "Medical Consultations"
+- Patient Mix (13px, color #475569, margin-bottom 12px): "International patients (50%), local walk-ins (50%)"
+- Top Gap Label (12px, uppercase, weight 700, color #64748b, letter-spaced 0.5px, margin-bottom 8px): "Top Gap:"
+- Top Gap Detail (13px, color #475569): "Timezone delays for US/EU inquiries. Chatbot in
+  English + auto-translator for Thai locals."
+
+SERVICE LINE 2 - BEAUTY & WELLNESS:
+- Border-left Color: #ec4899 (pink)
+- Title: "Beauty & Wellness"
+- Patient Mix: "Laser, skin treatments, IV therapy, massage"
+- Top Gap Label: "Top Gap:"
+- Top Gap Detail: "No package/pricing transparency online. AI-driven product recommender
+  + instant pricing quotes."
+
+SERVICE LINE 3 - HEALTH COACHING:
+- Border-left Color: #10b981 (green)
+- Title: "Health Coaching"
+- Patient Mix: "Nutrition, fitness, preventive health programs"
+- Top Gap Label: "Top Gap:"
+- Top Gap Detail: "No automated follow-up between sessions. SMS coaching + app notifications
+  + progress tracking."
+
+================================================================================
+STYLING REQUIREMENTS - GLOBAL
+================================================================================
+
+Color Palette (mandatory, use these exact hex codes):
+- Primary Indigo: #6366f1
+- Success Green: #10b981
+- Warning Amber: #f59e0b
+- Critical Red: #ef4444
+- Neutral Slate: #64748b
+- Text Dark: #1a1a2e
+- Text Light: #475569
+- Border Light: #e2e8f0
+- Background Soft: #f8fafc
+- Background Lighter: #f1f5ff
+- Background Hero: Gradient from #f5f7ff to #f9f5ff
+
+Typography (mandatory):
+- Font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif
+- Line-height: 1.6 (body), 1.2 (headings)
+- Letter-spacing: Applied to uppercase labels (0.5px to 1px)
+
+Spacing:
+- Container max-width: 1400px, margin 0 auto, padding 40px 20px
+- Section padding: 40px (all sections)
+- Section margin-bottom: 40px
+- Grid gap: 20-32px depending on section
+- Card padding: 24-28px
+- Card margin: No individual margins (use grid gap)
+
+Border-radius:
+- Large sections: 16px
+- Cards: 12px
+- Badges/Pills: 20px
+- Buttons: 8px
+
+Shadows:
+- Primary shadow: 0 4px 20px rgba(0, 0, 0, 0.08)
+- Card shadow: 0 4px 12px rgba(0, 0, 0, 0.08)
+- Light shadow: 0 2px 8px rgba(0, 0, 0, 0.05)
+
+Transitions:
+- Default: 0.3s ease for all hover states
+- Apply to: transform, box-shadow, color, background-color
+
+Responsive Breakpoints:
+- Mobile: < 768px (1 column layouts, hide connector lines, adjust padding)
+- Tablet: 768px - 1024px (2 column layouts where possible)
+- Desktop: > 1024px (full 3-4+ column layouts)
+
+================================================================================
+JAVASCRIPT FUNCTIONALITY REQUIREMENTS
+================================================================================
+
+[1] CHART.JS INTEGRATION:
+
+Include Chart.js 4.5.0 via CDN:
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js"
+integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi"
+crossorigin="anonymous"></script>
+
+Create the chart on page load with the exact configuration specified in SECTION 2 above.
+The chart canvas should have ID "trendChart".
+
+[2] TAB SWITCHING:
+
+Create a JavaScript function that:
+1. Takes a tab name as parameter (e.g., 'journey', 'reviews', 'opportunities', 'services')
+2. Removes .active class from all .tab-content elements (display: none)
+3. Removes .active class from all .tab-btn elements
+4. Adds .active class to the matching .tab-content element (display: block)
+5. Adds .active class to the clicked .tab-btn element
+
+Each tab button should have onclick="switchTab('tabname')" attribute.
+
+[3] NO OTHER JAVASCRIPT:
+
+No external dependencies beyond Chart.js. No jQuery, no other libraries. Pure vanilla JavaScript only.
+
+================================================================================
+RESPONSIVE DESIGN SPECIFICATIONS
+================================================================================
+
+Mobile (< 768px):
+- Font sizes reduce by 20-30% (e.g., 48px h1 → 32px)
+- Grid columns: 1 column for all multi-column grids
+- Padding: Reduce to 20px left/right
+- Connector lines: Hidden (display: none)
+- Overflow: Tab navigation can scroll horizontally
+- Chart height: 250px (reduced from 300px)
+
+Tablet (768px - 1024px):
+- Font sizes: 10-15% reduction
+- Grid columns: 2-column layout where possible
+- Padding: 30px
+- Chart height: 280px
+
+Desktop (> 1024px):
+- Full sizes as specified
+- All multi-column layouts active
+- Full padding 40px
+
+================================================================================
+TECHNICAL REQUIREMENTS
+================================================================================
+
+1. HTML STRUCTURE:
+   - Semantic HTML5 (use <section>, <article>, <header> tags appropriately)
+   - Accessibility: Include alt attributes on icons, proper heading hierarchy (h1, h2, h3)
+   - No <table> elements (use CSS Grid instead)
+
+2. CSS:
+   - ALL CSS must be inline <style> in <head> (no external stylesheets)
+   - Use CSS Grid and Flexbox (no float, no absolute positioning except for connectors)
+   - Mobile-first media queries (start with mobile styles, then add desktop breakpoints)
+   - CSS Variables for colors (optional but recommended for reuse)
+
+3. JAVASCRIPT:
+   - Vanilla JavaScript only (no frameworks)
+   - Chart.js script tag included in <head> or before closing </body>
+   - Tab switching function defined in <script> at end of body
+   - No console.log() or debugging statements in production code
+   - Graceful degradation (chart and tabs should fail silently if JS disabled)
+
+4. OUTPUT:
+   - Single .html file, ready to save and open in browser
+   - File size: < 150KB (including Chart.js CDN)
+   - Load time: < 3 seconds on 4G connection
+
+5. VALIDATION:
+   - Valid HTML5 (run through W3C validator)
+   - Valid CSS (run through W3C CSS validator)
+   - No console errors when opened in browser
+
+================================================================================
+TONE GUIDELINES FOR ALL TEXT COPY
+================================================================================
+
+DO use:
+✓ Specific numbers ("6-24 hours", "22% no-show rate", "฿2.1M")
+✓ Diagnostic language ("friction points", "operational gaps", "leakage")
+✓ Before/after metrics ("24h → 2 minutes")
+✓ Clinical references ("AI readiness audit", "operational flow mapping", "public data analysis")
+✓ Concrete actions ("no live chat widget detected", "WhatsApp not linked")
+✓ Thai-specific context (WhatsApp, LINE, medical tourism, timezones)
+
+DO NOT use:
+✗ Marketing speak ("revolutionize", "game-changing", "unlock hidden potential")
+✗ Vague claims ("improve customer satisfaction", "increase efficiency")
+✗ Emotional language ("amazing", "incredible", "world-class")
+✗ Promises ("guaranteed results", "will triple revenue")
+✗ Overstatement ("completely transformative", "unprecedented growth")
+
+Example of GOOD copy:
+"No live chat widget detected on website. Current inquiry response time: 6-24 hours.
+Industry benchmark post-automation: 2 minutes. Estimated opportunity: 34% of abandoned
+visitors recovered."
+
+Example of BAD copy:
+"Your clinic is missing out on amazing customer engagement opportunities! Implement
+live chat to revolutionize your patient experience and unlock hidden revenue potential!"
+
+================================================================================
+FINAL CHECKLIST BEFORE DELIVERY
+================================================================================
+
+✓ Single HTML5 file with all CSS inline
+✓ Chart.js integrated and rendering 4 datasets correctly
+✓ Header section complete with all 5 meta items and correct styling
+✓ 4 KPI cards with icons, values, and descriptions
+✓ 4 fully functional tabs (Patient Journey, Reviews, Opportunities, Service Lines)
+✓ Patient Journey: 5 stages with 4 gap items each
+✓ Review Analytics: 4 stats cards + key themes section
+✓ Opportunities: 6 cards with icons and details
+✓ Service Lines: 3 cards (Medical, Beauty, Health Coaching)
+✓ Responsive design works on mobile (< 768px), tablet, and desktop
+✓ All colors match exact hex codes provided
+✓ All font sizes and weights match specifications
+✓ All spacing (padding, margin, gap) matches specifications
+✓ Border-radius, shadows, and transitions applied correctly
+✓ No console errors when opened in browser
+✓ Chart displays data correctly
+✓ Tabs switch content correctly on click
+✓ No external dependencies except Chart.js from CDN
+✓ All copy matches tone guidelines (clinical, data-driven, not marketing)
+✓ ฿ symbol used for Thai currency
+✓ All metrics match exact numbers provided (2.1M, 7.8/10, 4.3★, etc.)
+
+================================================================================
+DELIVERY INSTRUCTIONS
+================================================================================
+
+When you're done, provide:
+1. The complete HTML file as plain text (ready to copy-paste into a .html file)
+2. A brief summary of what was created and its features
+3. Instructions for how to customize it (change clinic name, metrics, etc.)
+
+The file should be production-ready and require no additional work to display on a website.
+
+================================================================================
+END OF PROMPT
+================================================================================

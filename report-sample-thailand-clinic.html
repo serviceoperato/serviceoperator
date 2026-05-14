@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Automation Audit — Bangkok Integrated Health Center</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #f5f7ff 0%, #f9f5ff 100%);
+            color: #1a1a2e;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* HEADER */
+        .header {
+            background: white;
+            border-radius: 16px;
+            padding: 60px 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .badge {
+            display: inline-block;
+            background: #eae5ff;
+            color: #6366f1;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: #1a1a2e;
+        }
+
+        .subtitle {
+            font-size: 28px;
+            color: #6366f1;
+            font-style: italic;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .description {
+            font-size: 16px;
+            color: #475569;
+            margin-bottom: 30px;
+            line-height: 1.8;
+            max-width: 800px;
+        }
+
+        .header-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .meta-item {
+            text-align: center;
+        }
+
+        .meta-label {
+            font-size: 11px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .meta-value {
+            font-size: 18px;
+            font-weight: 800;
+            color: #1a1a2e;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .stars {
+            color: #fbbf24;
+            font-size: 18px;
+        }
+
+        .rating-text {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        /* DASHBOARD */
+        .dashboard-section {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: #1a1a2e;
+        }
+
+        .section-desc {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 32px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 40px;
+        }
+
+        /* KPI GRID */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .kpi-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5ff 100%);
+            border-radius: 12px;
+            padding: 28px;
+            border-left: 4px solid #6366f1;
+            transition: transform 0.3s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .kpi-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .kpi-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: #1a1a2e;
+            margin-bottom: 6px;
+        }
+
+        .kpi-label {
+            font-size: 12px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .kpi-detail {
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        /* TABS */
+        .tabs-container {
+            margin-bottom: 40px;
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+        }
+
+        .tab-nav button {
+            background: none;
+            border: none;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .tab-nav button.active {
+            color: #6366f1;
+            border-bottom: 3px solid #6366f1;
+            padding-bottom: 13px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* PATIENT JOURNEY */
+        .journey-timeline {
+            position: relative;
+            padding: 40px 0;
+        }
+
+        .journey-stage {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 32px;
+            margin-bottom: 48px;
+            position: relative;
+        }
+
+        .journey-stage:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 60px;
+            top: 120px;
+            width: 2px;
+            height: calc(100% + 48px);
+            background: #e2e8f0;
+        }
+
+        .stage-number {
+            font-size: 14px;
+            font-weight: 700;
+            color: #6366f1;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .stage-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #1a1a2e;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .stage-icon {
+            font-size: 28px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-good {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-warning {
+            background: #fed7aa;
+            color: #92400e;
+        }
+
+        .status-critical {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .stage-content {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            border-left: 3px solid #e2e8f0;
+        }
+
+        .gap-list {
+            list-style: none;
+            margin-top: 16px;
+        }
+
+        .gap-list li {
+            margin-bottom: 12px;
+            padding-left: 24px;
+            position: relative;
+            font-size: 14px;
+            color: #475569;
+            line-height: 1.6;
+        }
+
+        .gap-list li:before {
+            content: '−';
+            position: absolute;
+            left: 8px;
+            color: #ef4444;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* REVIEWS SECTION */
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-top: 24px;
+        }
+
+        .review-stat {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5ff 100%);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .review-stat-number {
+            font-size: 32px;
+            font-weight: 800;
+            color: #6366f1;
+            margin-bottom: 8px;
+        }
+
+        .review-stat-label {
+            font-size: 12px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        /* OPPORTUNITIES */
+        .opp-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-top: 24px;
+        }
+
+        .opp-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            border-top: 3px solid #6366f1;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .opp-icon {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .opp-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+
+        .opp-detail {
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 32px;
+            }
+
+            .journey-stage {
+                grid-template-columns: 1fr;
+            }
+
+            .journey-stage::after {
+                display: none;
+            }
+
+            .tab-nav {
+                gap: 4px;
+            }
+
+            .tab-nav button {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="badge">🏥 AI Automation Audit</div>
+            <h1>Bangkok Integrated Health Center</h1>
+            <div class="subtitle">Bangkok, Thailand</div>
+            <p class="description">
+                A comprehensive AI readiness audit analyzing patient acquisition flow, operational friction, and digital maturity across all service lines: medical consultations, wellness services, beauty treatments, and health coaching.
+            </p>
+
+            <div class="header-meta">
+                <div class="meta-item">
+                    <div class="meta-label">Analyzed By</div>
+                    <div class="meta-value">Operato AI</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Audit Date</div>
+                    <div class="meta-value">May 2026</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Service Lines</div>
+                    <div class="meta-value">4 Lines</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Audit Score</div>
+                    <div class="meta-value" style="color: #f59e0b; font-size: 28px;">7.8/10</div>
+                </div>
+                <div class="meta-item">
+                    <div class="rating">
+                        <span class="stars">★★★★☆</span>
+                        <span class="rating-text">4.3/5</span>
+                    </div>
+                    <div class="meta-label">AI Maturity</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DASHBOARD -->
+        <div class="dashboard-section">
+            <h2 class="section-title">12-Month Public Signal Trend</h2>
+            <p class="section-desc">Four key metrics tracked across last 12 months: Patient Review Velocity, Booking Conversion Rate, Average Response Time, and Digital Sentiment Score.</p>
+            <div class="chart-container">
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+
+        <!-- KPI CARDS -->
+        <div class="dashboard-section">
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon">⚠️</div>
+                    <div class="kpi-label">Revenue Friction Gap</div>
+                    <div class="kpi-value">฿2.1M</div>
+                    <div class="kpi-detail">Annual revenue leakage through manual booking process and delayed responses</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon">⭐</div>
+                    <div class="kpi-label">Review Velocity (Post-Automation)</div>
+                    <div class="kpi-value">3-5 days</div>
+                    <div class="kpi-detail">Current: 18-25 days. Target post-automation: < 5 days</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon">⏱️</div>
+                    <div class="kpi-label">Inquiry Response Time</div>
+                    <div class="kpi-value">6-24h</div>
+                    <div class="kpi-detail">Currently manual. Post-automation: < 2 minutes across all channels</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon">💰</div>
+                    <div class="kpi-label">Conservative 12-Month ROI</div>
+                    <div class="kpi-value">฿7.8M</div>
+                    <div class="kpi-detail">Range: 6.2M–10.5M. Includes booking recovery + operational savings</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABS & CONTENT -->
+        <div class="tabs-container">
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="switchTab('journey')">Patient Journey</button>
+                <button class="tab-btn" onclick="switchTab('reviews')">Review Analytics</button>
+                <button class="tab-btn" onclick="switchTab('opportunities')">AI Opportunities</button>
+                <button class="tab-btn" onclick="switchTab('services')">Service Line Breakdown</button>
+            </div>
+
+            <!-- PATIENT JOURNEY TAB -->
+            <div id="journey" class="tab-content active">
+                <div class="dashboard-section">
+                    <h2 class="section-title">Patient Journey Analysis</h2>
+                    <p class="section-desc">Five-stage funnel from discovery to follow-up. Each stage includes friction points identified through public data analysis and operational flow mapping.</p>
+
+                    <div class="journey-timeline">
+                        <!-- Stage 1 -->
+                        <div class="journey-stage">
+                            <div>
+                                <div class="stage-number">Stage 1</div>
+                                <div class="stage-title">
+                                    <span class="stage-icon">🔍</span>
+                                    Discovery
+                                </div>
+                                <div class="status-badge status-good">Functional</div>
+                            </div>
+                            <div class="stage-content">
+                                <p style="font-size: 14px; color: #475569; margin-bottom: 12px;"><strong>Status:</strong> Ranks organically for "medical clinic Bangkok" and wellness-related queries. Strong local presence.</p>
+                                <ul class="gap-list">
+                                    <li>No paid search strategy detected — organic-only creates CAC ceiling</li>
+                                    <li>Limited service line keywords (medical vs beauty vs wellness treated separately)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Stage 2 -->
+                        <div class="journey-stage">
+                            <div>
+                                <div class="stage-number">Stage 2</div>
+                                <div class="stage-title">
+                                    <span class="stage-icon">💬</span>
+                                    First Contact
+                                </div>
+                                <div class="status-badge status-critical">Critical Gap</div>
+                            </div>
+                            <div class="stage-content">
+                                <p style="font-size: 14px; color: #475569; margin-bottom: 12px;"><strong>Status:</strong> No live chat, no WhatsApp integration, email only — creates 6-24 hour response lag.</p>
+                                <ul class="gap-list">
+                                    <li>No instant communication widget on website</li>
+                                    <li>WhatsApp Business account not linked to booking system</li>
+                                    <li>No LINE ID on homepage (critical for Thai audience)</li>
+                                    <li>No chatbot for after-hours international inquiries</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Stage 3 -->
+                        <div class="journey-stage">
+                            <div>
+                                <div class="stage-number">Stage 3</div>
+                                <div class="stage-title">
+                                    <span class="stage-icon">📋</span>
+                                    Consultation Booking
+                                </div>
+                                <div class="status-badge status-warning">Manual Process</div>
+                            </div>
+                            <div class="stage-content">
+                                <p style="font-size: 14px; color: #475569; margin-bottom: 12px;"><strong>Status:</strong> Free consultation form exists but no stated response SLA. Manual intake requires staff review.</p>
+                                <ul class="gap-list">
+                                    <li>No instant booking confirmation (patients wait for staff callback)</li>
+                                    <li>International patients face timezone delays (US/EU inquiries get 18-hour wait)</li>
+                                    <li>No service line routing (all inquiries hit same inbox)</li>
+                                    <li>No pre-qualification questions (wasted intake time on wrong service matches)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Stage 4 -->
+                        <div class="journey-stage">
+                            <div>
+                                <div class="stage-number">Stage 4</div>
+                                <div class="stage-title">
+                                    <span class="stage-icon">📅</span>
+                                    Appointment Confirmation
+                                </div>
+                                <div class="status-badge status-critical">Critical Gap</div>
+                            </div>
+                            <div class="stage-content">
+                                <p style="font-size: 14px; color: #475569; margin-bottom: 12px;"><strong>Status:</strong> No automated confirmations, reminders, or rescheduling. Manual SMS/email only.</p>
+                                <ul class="gap-list">
+                                    <li>No appointment confirmation system detected</li>
+                                    <li>No automated reminders (estimated 22% no-show rate)</li>
+                                    <li>No self-service rescheduling — patients must call</li>
+                                    <li>No pre-visit checklist (delays treatment intake)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Stage 5 -->
+                        <div class="journey-stage">
+                            <div>
+                                <div class="stage-number">Stage 5</div>
+                                <div class="stage-title">
+                                    <span class="stage-icon">⭐</span>
+                                    Post-Visit Follow-Up
+                                </div>
+                                <div class="status-badge status-warning">Partial</div>
+                            </div>
+                            <div class="stage-content">
+                                <p style="font-size: 14px; color: #475569; margin-bottom: 12px;"><strong>Status:</strong> No automated review request sequence detected. Follow-ups are ad-hoc.</p>
+                                <ul class="gap-list">
+                                    <li>No automated post-visit survey or review nudge</li>
+                                    <li>No follow-up appointment reminder sequence</li>
+                                    <li>No patient education content sent post-visit</li>
+                                    <li>Review response lag: 18-25 days average (industry: 3-5 days)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REVIEWS TAB -->
+            <div id="reviews" class="tab-content">
+                <div class="dashboard-section">
+                    <h2 class="section-title">Review & Reputation Analysis</h2>
+                    <p class="section-desc">Public review data aggregated from Google, Facebook, and local Thai health platforms.</p>
+
+                    <div class="reviews-grid">
+                        <div class="review-stat">
+                            <div class="review-stat-number">4.3★</div>
+                            <div class="review-stat-label">Overall Rating</div>
+                        </div>
+                        <div class="review-stat">
+                            <div class="review-stat-number">+18/mo</div>
+                            <div class="review-stat-label">Review Velocity</div>
+                        </div>
+                        <div class="review-stat">
+                            <div class="review-stat-number">67%</div>
+                            <div class="review-stat-label">Positive Sentiment</div>
+                        </div>
+                        <div class="review-stat">
+                            <div class="review-stat-number">12%</div>
+                            <div class="review-stat-label">Response Rate</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 40px; padding: 24px; background: #f8fafc; border-radius: 12px;">
+                        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px; color: #1a1a2e;">Key Themes in Reviews</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;">
+                            <div>
+                                <div style="font-size: 12px; color: #10b981; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">✓ Praised</div>
+                                <p style="font-size: 13px; color: #475569; line-height: 1.6;">Professional staff, clean facilities, good English speakers, fast treatments</p>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: #ef4444; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">✗ Criticized</div>
+                                <p style="font-size: 13px; color: #475569; line-height: 1.6;">Slow response to inquiries, unclear pricing upfront, no online booking, follow-up gaps</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OPPORTUNITIES TAB -->
+            <div id="opportunities" class="tab-content">
+                <div class="dashboard-section">
+                    <h2 class="section-title">AI Automation Opportunities (21-Day Wins)</h2>
+                    <p class="section-desc">Ranked by implementation speed and impact. All opportunities can be activated within 21 days.</p>
+
+                    <div class="opp-grid">
+                        <div class="opp-card">
+                            <div class="opp-icon">💬</div>
+                            <div class="opp-title">Live Chat + WhatsApp Bot</div>
+                            <div class="opp-detail">Response time: 24h → 2 min. Impact: Captures 34% of abandoning visitors.</div>
+                        </div>
+
+                        <div class="opp-card">
+                            <div class="opp-icon">📅</div>
+                            <div class="opp-title">Instant Booking Confirmation</div>
+                            <div class="opp-detail">No-show rate: 22% → 8%. Appointment form + calendar sync + SMS confirm.</div>
+                        </div>
+
+                        <div class="opp-card">
+                            <div class="opp-icon">⭐</div>
+                            <div class="opp-title">Auto Review Request Sequence</div>
+                            <div class="opp-detail">Review velocity: 18 days → 3 days. Post-visit automation + multi-channel (Google, FB, Thai platforms).</div>
+                        </div>
+
+                        <div class="opp-card">
+                            <div class="opp-icon">🎯</div>
+                            <div class="opp-title">Service Line Routing</div>
+                            <div class="opp-detail">Inquiries auto-routed to correct department. Reduces intake time by 40%.</div>
+                        </div>
+
+                        <div class="opp-card">
+                            <div class="opp-icon">📧</div>
+                            <div class="opp-title">Patient Education Email Sequence</div>
+                            <div class="opp-detail">Post-visit care instructions + cross-sell opportunities. Reduces follow-up call volume.</div>
+                        </div>
+
+                        <div class="opp-card">
+                            <div class="opp-icon">🌐</div>
+                            <div class="opp-title">Multilingual FAQ Bot</div>
+                            <div class="opp-detail">Thai, English, Mandarin, Korean. Handles 60% of repeating questions without staff.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SERVICE LINE BREAKDOWN TAB -->
+            <div id="services" class="tab-content">
+                <div class="dashboard-section">
+                    <h2 class="section-title">Service Line Performance Breakdown</h2>
+                    <p class="section-desc">Each service line shows distinct automation opportunities based on patient acquisition patterns.</p>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 24px;">
+                        <div style="background: #f8fafc; border-radius: 12px; padding: 24px; border-left: 4px solid #3b82f6;">
+                            <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: #1a1a2e;">Medical Consultations</h3>
+                            <p style="font-size: 13px; color: #475569; margin-bottom: 12px;">International patients (50%), local walk-ins (50%)</p>
+                            <p style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Top Gap:</p>
+                            <p style="font-size: 13px; color: #475569;">Timezone delays for US/EU inquiries. Chatbot in English + auto-translator for Thai locals.</p>
+                        </div>
+
+                        <div style="background: #f8fafc; border-radius: 12px; padding: 24px; border-left: 4px solid #ec4899;">
+                            <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: #1a1a2e;">Beauty & Wellness</h3>
+                            <p style="font-size: 13px; color: #475569; margin-bottom: 12px;">Laser, skin treatments, IV therapy, massage</p>
+                            <p style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Top Gap:</p>
+                            <p style="font-size: 13px; color: #475569;">No package/pricing transparency online. AI-driven product recommender + instant pricing quotes.</p>
+                        </div>
+
+                        <div style="background: #f8fafc; border-radius: 12px; padding: 24px; border-left: 4px solid #10b981;">
+                            <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: #1a1a2e;">Health Coaching</h3>
+                            <p style="font-size: 13px; color: #475569; margin-bottom: 12px;">Nutrition, fitness, preventive health programs</p>
+                            <p style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Top Gap:</p>
+                            <p style="font-size: 13px; color: #475569;">No automated follow-up between sessions. SMS coaching + app notifications + progress tracking.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Chart.js - 12 Month Trend
+        const ctx = document.getElementById('trendChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May'],
+                datasets: [
+                    {
+                        label: 'Avg Rating (x10)',
+                        data: [41, 42, 40, 41, 42, 43, 42, 41, 42, 43, 42, 43],
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Review Volume',
+                        data: [12, 15, 14, 18, 16, 19, 20, 18, 21, 19, 22, 18],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        yAxisID: 'y1'
+                    },
+                    {
+                        label: 'Response Time (hours)',
+                        data: [18, 16, 19, 17, 20, 18, 21, 19, 22, 20, 24, 18],
+                        borderColor: '#f59e0b',
+                        borderDash: [5, 5],
+                        tension: 0.4,
+                        yAxisID: 'y1'
+                    },
+                    {
+                        label: 'Booking Conversion %',
+                        data: [28, 30, 27, 32, 29, 34, 31, 35, 32, 36, 33, 37],
+                        borderColor: '#ef4444',
+                        borderDash: [5, 5],
+                        tension: 0.4,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            font: { size: 12, weight: '600' },
+                            color: '#64748b',
+                            padding: 16,
+                            usePointStyle: true
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        ticks: { color: '#64748b', font: { size: 11 } },
+                        grid: { color: '#e2e8f0' }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        ticks: { color: '#64748b', font: { size: 11 } },
+                        grid: { display: false }
+                    },
+                    x: {
+                        ticks: { color: '#64748b', font: { size: 11 } },
+                        grid: { color: '#e2e8f0' }
+                    }
+                }
+            }
+        });
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
