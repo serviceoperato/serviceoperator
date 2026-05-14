@@ -5,7 +5,10 @@
     if (!u) return '';
     if (/^https?:\/\//i.test(u)) return u;
     if (u.charAt(0) === '/') {
-      if (u.indexOf('/assets/') === 0 && typeof g.soApiOrigin === 'function') {
+      if (
+        u.indexOf('/assets/site-uploads/') === 0 &&
+        typeof g.soApiOrigin === 'function'
+      ) {
         try {
           var apiOrigin = String(g.soApiOrigin() || '')
             .trim()

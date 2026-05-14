@@ -1355,9 +1355,13 @@ app.get('/api/version', (req, res) => {
   res.json({ version: appVersion });
 });
 
-app.get('/api/site-appearance', (_req, res) => {
+app.get('/api/site-appearance', async (_req, res) => {
   res.setHeader('Cache-Control', 'no-store');
-  res.json(mergeSiteAppearance(readSiteAppearanceRaw()));
+  try {
+    res.json(mergeSiteAppearance(await readSiteAppearanceRawAsync()));
+  } catch (e) {
+    res.status(500).json({ error: e.message || 'Could not load site appearance.' });
+  }
 });
 
 /**
@@ -1621,14 +1625,23 @@ app.get('/api/admin/work-queue', requireAdmin, async (_req, res) => {
   }
 });
 
-app.get('/api/admin/site-appearance', requireAdmin, (_req, res) => {
+app.get('/api/admin/site-appearance', requireAdmin, async (_req, res) => {
   res.setHeader('Cache-Control', 'no-store');
-  res.json({ ok: true, ...mergeSiteAppearance(readSiteAppearanceRaw()) });
+  try {
+    res.json({ ok: true, ...mergeSiteAppearance(await readSiteAppearanceRawAsync()) });
+  } catch (e) {
+    res.status(500).json({ error: e.message || 'Could not load site appearance.' });
+  }
 });
 
-app.put('/api/admin/site-appearance', requireAdmin, (req, res) => {
+app.put('/api/admin/site-appearance', requireAdmin, async (req, res) => {
   const body = req.body || {};
-  const cur = mergeSiteAppearance(readSiteAppearanceRaw());
+  let cur;
+  try {
+    cur = mergeSiteAppearance(await readSiteAppearanceRawAsync());
+  } catch (e) {
+    return res.status(500).json({ error: e.message || 'Could not load current site appearance.' });
+  }
 
   /* Each field: if the key is present in body with the expected type (string for image URLs), body wins for that field; omitted keys keep `cur`. Empty required hero URLs fall back to shipped defaults; optional hero-deco URLs may be cleared with "". */
   const propUrlIn =
@@ -1821,7 +1834,11 @@ app.put('/api/admin/site-appearance', requireAdmin, (req, res) => {
     icons: nextIcons,
   };
   try {
-    fs.writeFileSync(siteAppearancePath, JSON.stringify(next, null, 2) + '\n', 'utf8');
+    if (pgPool) {
+      await saveSiteAppearanceJson(pgPool, next);
+    } else {
+      fs.writeFileSync(siteAppearancePath, JSON.stringify(next, null, 2) + '\n', 'utf8');
+    }
     return res.json({ ok: true, ...next });
   } catch (e) {
     return res.status(500).json({ error: e.message || 'Could not save site appearance.' });
@@ -2731,9 +2748,9 @@ app.get('/api/clinics/report-data', (req, res) => {
   }
 });
 
-app.get('/logo.png', (_req, res) => {
+app.get('/logo.png', async (_req, res) => {
   try {
-    const merged = mergeSiteAppearance(readSiteAppearanceRaw());
+    const merged = mergeSiteAppearance(await readSiteAppearanceRawAsync());
     const rawTarget = String(merged.navLogoUrl || '').trim() || defaultSiteAppearance.navLogoUrl;
     const target = normalizeNavLogoUrl(rawTarget);
     if (/^https:/i.test(target)) {
