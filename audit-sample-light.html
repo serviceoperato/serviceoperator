@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Automation Audit Sample — SmileCare Dental Studio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f5f7ff 0%, #f9f5ff 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #eae5ff;
+            color: #6366f1;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            font-size: 48px;
+            font-weight: 800;
+            color: #1a1a2e;
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 32px;
+            color: #6366f1;
+            font-style: italic;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .description {
+            font-size: 18px;
+            color: #4b5563;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .stars {
+            color: #fbbf24;
+            font-size: 20px;
+        }
+
+        .rating-text {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .meta-info {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-bottom: 60px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            text-align: center;
+        }
+
+        .meta-label {
+            font-size: 12px;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .meta-value {
+            font-size: 16px;
+            color: #1a1a2e;
+            font-weight: 700;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .kpi-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            display: inline-block;
+        }
+
+        .kpi-value {
+            font-size: 42px;
+            font-weight: 800;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+
+        .kpi-label {
+            font-size: 14px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .kpi-detail {
+            font-size: 13px;
+            color: #9ca3af;
+            line-height: 1.5;
+        }
+
+        .cta-section {
+            text-align: center;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border-radius: 20px;
+            color: white;
+        }
+
+        .cta-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .cta-text {
+            font-size: 16px;
+            opacity: 0.95;
+            margin-bottom: 32px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: #6366f1;
+            padding: 14px 40px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 13px;
+            color: #9ca3af;
+        }
+
+        .color-accent {
+            color: #8b5cf6;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 32px;
+            }
+
+            .subtitle {
+                font-size: 24px;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .meta-info {
+                gap: 30px;
+            }
+
+            .cta-section {
+                padding: 40px 24px;
+            }
+
+            .cta-title {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER SECTION -->
+        <div class="header">
+            <div class="badge">🎯 AI Automation Audit</div>
+
+            <h1>SmileCare Dental Studio</h1>
+            <div class="subtitle">Milano, Italia</div>
+
+            <p class="description">
+                Report breve. Una sola conclusione: <span class="color-accent">€380K di ricavi sfugge ogni mese</span> attraverso
+                buchi che l'automazione chiude in 21 giorni.
+            </p>
+
+            <div class="rating">
+                <span class="stars">★★★★☆ 4.6/5</span>
+                <span class="rating-text">Potenziale automazione alto</span>
+            </div>
+
+            <div class="meta-info">
+                <div class="meta-item">
+                    <div class="meta-label">Analizzato Da</div>
+                    <div class="meta-value">Operato AI</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Data Audit</div>
+                    <div class="meta-value">Maggio 2026</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Categoria</div>
+                    <div class="meta-value">Studio Dentale</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Potenziale</div>
+                    <div class="meta-value" style="color: #10b981; font-size: 32px;">8.7/10</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI SECTION -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-icon">⚠️</div>
+                <div class="kpi-label">Revenue Leak</div>
+                <div class="kpi-value">€380K</div>
+                <div class="kpi-detail">Ricavi persi mensili per automazione assente</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon">⭐</div>
+                <div class="kpi-label">Conversione Pazienti</div>
+                <div class="kpi-value">2-4 mesi</div>
+                <div class="kpi-detail">Tempo medio per conferma dopo primo contatto</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon">⏱️</div>
+                <div class="kpi-label">Risposta Inquiries</div>
+                <div class="kpi-value">24-48h</div>
+                <div class="kpi-detail">Ritardo post-automazione: < 2 minuti</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon">💰</div>
+                <div class="kpi-label">ROI 12 Mesi</div>
+                <div class="kpi-value">€2.1M</div>
+                <div class="kpi-detail">Conservativo. Range: 1.8M–2.8M</div>
+            </div>
+        </div>
+
+        <!-- CTA SECTION -->
+        <div class="cta-section">
+            <div class="cta-title">Scopri il Tuo Audit Completo</div>
+            <div class="cta-text">
+                Questo è un sample semplificato. Il report completo include analisi dettagliate del patient journey,
+                gap di reputazione online, opportunità AI e un piano di implementazione step-by-step per i prossimi 30 giorni.
+            </div>
+            <button class="cta-button">Accedi al Report Completo</button>
+        </div>
+
+        <div class="footer-note">
+            ℹ️ Dati campione per demo. Questo sample rappresenta come appare un audit ben strutturato.
+        </div>
+    </div>
+</body>
+</html>
