@@ -108,6 +108,8 @@
     z-index: 3;
   }
   .page-home .so-b2b__wrap {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     gap: var(--space-12);
@@ -150,10 +152,10 @@
     background-image: var(--so-hero-deco-tr-url, url(/assets/hero-corner-arc.svg));
     opacity: var(--so-hero-deco-tr-opacity, 0.12);
   }
-  /* Bottom swoosh: fixed to viewport bottom-left. z-index above page canvas but below main/footer (z:3) so it is not trapped under the white column by #homeMain's isolated stack. */
-  /* Descendant (not only direct child): keeps BL rules if the node moves under #homeMain; theme targets .so-b2b__hero-deco--bl. */
+  /* Bottom swoosh: absolute to bottom-left of the white main column (`main.so-b2b`), not the viewport — avoids the arc sitting in the grey gutters. */
+  /* Descendant of #homeMain; theme targets .so-b2b__hero-deco--bl. `.so-b2b__wrap` stacks above (z-index:1) so copy stays readable. */
   .page-home #homeMain .so-b2b__hero-deco--bl {
-    position: fixed;
+    position: absolute;
     bottom: 0;
     left: max(-6vw, -2.5rem);
     top: auto;
@@ -161,7 +163,7 @@
     width: min(105vw, 960px);
     aspect-ratio: 1;
     pointer-events: none;
-    z-index: 2;
+    z-index: 0;
     background-repeat: no-repeat;
     background-size: 100% auto;
     background-position: left bottom;
@@ -1657,9 +1659,8 @@
       </div>
     </aside>
   </div>
+  <div class="so-b2b__hero-deco so-b2b__hero-deco--bl" aria-hidden="true"></div>
 </main>
-
-<div class="so-b2b__hero-deco so-b2b__hero-deco--bl" aria-hidden="true"></div>
 
 <footer class="so-b2b-footer">
   <span class="so-b2b-footer__row"><svg class="so-b2b-footer__mark so-brand-ring-svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15.75 18.495A7.5 7.5 0 0 1 8.25 18.495"/><path d="M5.505 15.75A7.5 7.5 0 0 1 5.505 8.25"/><path d="M8.25 5.505A7.5 7.5 0 0 1 15.75 5.505"/><path d="M18.495 8.25A7.5 7.5 0 0 1 18.495 15.75"/></svg><span>© 2026 www.serviceopera.to · Private audits &amp; workflow pilots · <a href="/free-audit.html">Free 48h audit</a> · <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a></span></span>
