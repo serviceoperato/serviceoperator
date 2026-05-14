@@ -14,6 +14,9 @@ import { searchTextAllPages } from './lib/google-places-search.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(__dirname, 'public');
+const placesLeadsOperatorHtmlPath = path.join(publicDir, 'operator', 'places-leads.html');
+/** Short-lived JWT (`kind: places_page`) minted by POST /api/admin/places-page-token; required query `t` to load the Places HTML document. */
+const PLACES_PAGE_DOCUMENT_TTL_MS = 60 * 60 * 1000;
 const siteUploadsDir = path.join(publicDir, 'assets', 'site-uploads');
 try {
   fs.mkdirSync(siteUploadsDir, { recursive: true });
@@ -358,7 +361,7 @@ const MANAGED_PAGE_FILES = [
   'login.html',
   'admin.html',
   'register.html',
-  'places-leads.html',
+  'operator/places-leads.html',
   'clinics/report.html',
   'property.html',
   'clinics.html',

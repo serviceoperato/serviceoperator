@@ -871,40 +871,6 @@
     panel.classList.remove('is-hidden');
     window.scrollTo(0, 0);
 
-    (function initSiteAppearanceGridCols() {
-      var LS_KEY = 'so-site-appearance-cols';
-      var root = document.getElementById('soSiteAppearanceRoot');
-      if (!root) return;
-      var stored = null;
-      try {
-        stored = localStorage.getItem(LS_KEY);
-      } catch (e) {}
-      var parsed = parseInt(stored, 10);
-      var cols = [4, 5, 6, 7].indexOf(parsed) !== -1 ? parsed : 4;
-      function apply(next) {
-        cols = next;
-        root.style.setProperty('--so-appearance-cols', String(cols));
-        root.querySelectorAll('[data-so-appearance-cols]').forEach(function (btn) {
-          var v = parseInt(btn.getAttribute('data-so-appearance-cols'), 10);
-          var on = v === cols;
-          btn.classList.toggle('is-active', on);
-          btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-        });
-        try {
-          localStorage.setItem(LS_KEY, String(cols));
-        } catch (e) {}
-      }
-      apply(cols);
-      root.addEventListener('click', function (ev) {
-        var el = ev.target;
-        if (!el || !el.closest) return;
-        var btn = el.closest('[data-so-appearance-cols]');
-        if (!btn || !root.contains(btn)) return;
-        var c = parseInt(btn.getAttribute('data-so-appearance-cols'), 10);
-        if ([4, 5, 6, 7].indexOf(c) !== -1) apply(c);
-      });
-    })();
-
     function siteAppearanceResolveUrl(raw) {
       var u = String(raw || '').trim();
       if (!u) return '';
@@ -1105,52 +1071,7 @@
         }
       );
     }
-    /** Serialize PUTs so rapid uploads do not race last-write-wins on site-appearance.json. */
-    var appearancePutChain = Promise.resolve();
-    function executeSiteAppearancePut(body) {
-      var tok = getAdminBearer();
-      if (!tok) {
-        return Promise.resolve({
-          ok: false,
-          j: { error: 'Not signed in as admin; cannot save site appearance.' },
-        });
-      }
-      return fetch(api('/api/admin/site-appearance'), {
-        method: 'PUT',
-        credentials: apiCred(),
-        cache: 'no-store',
-        headers: {
-          Authorization: 'Bearer ' + tok,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-      })
-        .then(function (r) {
-          return r.json().then(function (j) {
-            return { ok: r.ok, j: j };
-          });
-        })
-        .then(function (x) {
-          if (x.ok && x.j) {
-            applySiteAppearanceMerge(x.j);
-            bumpSiteAppearanceUrlPreviews();
-          }
-          return x;
-        })
-        .catch(function () {
-          return { ok: false, j: { error: 'Network error on save.' } };
-        });
-    }
-    function enqueueAppearancePersistPut(body) {
-      var next = appearancePutChain.then(function () {
-        return executeSiteAppearancePut(body);
-      });
-      appearancePutChain = next.catch(function () {
-        return { ok: false, j: { error: 'Network error on save.' } };
-      });
-      return next;
-    }
-    function bindAppearanceUpload(pickBtnId, fileInputId, urlInput, persistField) {
+    function bindAppearanceUpload(pickBtnId, fileInputId, urlInput) {
       var pick = document.getElementById(pickBtnId);
       var fin = document.getElementById(fileInputId);
       if (!pick || !fin || !urlInput) return;
@@ -1199,32 +1120,13 @@
                 fin.value = '';
                 return;
               }
-              var uploadedUrl = x.j.url;
-              var bytes = x.j.bytes;
-              urlInput.value = uploadedUrl;
+              urlInput.value = x.j.url;
               urlInput.dispatchEvent(new Event('input', { bubbles: true }));
               if (hintEl) {
                 hintEl.textContent =
-                  'Uploaded ' + uploadedUrl + ' (' + String(bytes) + ' B). Saving to site config…';
+                  'Uploaded ' + x.j.url + ' (' + String(x.j.bytes) + ' B). Save to persist in site config.';
               }
-              var patch = {};
-              patch[persistField] = uploadedUrl;
-              enqueueAppearancePersistPut(patch).then(function (putX) {
-                if (!putX.ok) {
-                  if (hintEl) {
-                    hintEl.textContent =
-                      (putX.j && putX.j.error) ||
-                      'Uploaded but could not save to site config. Click Save all to retry.';
-                  }
-                  fin.value = '';
-                  return;
-                }
-                if (hintEl) {
-                  hintEl.textContent =
-                    'Uploaded ' + uploadedUrl + ' (' + String(bytes) + ' B). Saved to site config.';
-                }
-                fin.value = '';
-              });
+              fin.value = '';
             })
             .catch(function () {
               if (hintEl) hintEl.textContent = 'Upload network error.';
@@ -1293,28 +1195,28 @@
           });
       });
     }
-    bindAppearanceUpload('soSiteNavLogoPickBtn', 'soSiteNavLogoFile', navLogoUrlEl, 'navLogoUrl');
+    bindAppearanceUpload('soSiteNavLogoPickBtn', 'soSiteNavLogoFile', navLogoUrlEl);
     bindClearUrl('soSiteNavLogoClearBtn', navLogoUrlEl);
     bindDeleteUpload('soSiteNavLogoDeleteBtn', navLogoUrlEl);
-    bindAppearanceUpload('soSiteJackAvatarPickBtn', 'soSiteJackAvatarFile', jackUrlEl, 'jackAvatarUrl');
+    bindAppearanceUpload('soSiteJackAvatarPickBtn', 'soSiteJackAvatarFile', jackUrlEl);
     bindClearUrl('soSiteJackAvatarClearBtn', jackUrlEl);
     bindDeleteUpload('soSiteJackAvatarDeleteBtn', jackUrlEl);
-    bindAppearanceUpload('soSiteHomeImgPickBtn', 'soSiteHomeImgFile', homeUrlEl, 'homePageImageUrl');
+    bindAppearanceUpload('soSiteHomeImgPickBtn', 'soSiteHomeImgFile', homeUrlEl);
     bindClearUrl('soSiteHomeImgClearBtn', homeUrlEl);
     bindDeleteUpload('soSiteHomeImgDeleteBtn', homeUrlEl);
-    bindAppearanceUpload('soSitePropImgPickBtn', 'soSitePropImgFile', urlEl, 'propertyPageImageUrl');
+    bindAppearanceUpload('soSitePropImgPickBtn', 'soSitePropImgFile', urlEl);
     bindClearUrl('soSitePropImgClearBtn', urlEl);
     bindDeleteUpload('soSitePropImgDeleteBtn', urlEl);
-    bindAppearanceUpload('soSiteClinicImgPickBtn', 'soSiteClinicImgFile', clinicUrlEl, 'clinicPageImageUrl');
+    bindAppearanceUpload('soSiteClinicImgPickBtn', 'soSiteClinicImgFile', clinicUrlEl);
     bindClearUrl('soSiteClinicImgClearBtn', clinicUrlEl);
     bindDeleteUpload('soSiteClinicImgDeleteBtn', clinicUrlEl);
-    bindAppearanceUpload('soSiteHotelImgPickBtn', 'soSiteHotelImgFile', hotelUrlEl, 'hotelPageImageUrl');
+    bindAppearanceUpload('soSiteHotelImgPickBtn', 'soSiteHotelImgFile', hotelUrlEl);
     bindClearUrl('soSiteHotelImgClearBtn', hotelUrlEl);
     bindDeleteUpload('soSiteHotelImgDeleteBtn', hotelUrlEl);
-    bindAppearanceUpload('soSiteHeroDecoTrPickBtn', 'soSiteHeroDecoTrFile', heroDecoTrUrlEl, 'heroDecoTopRightUrl');
+    bindAppearanceUpload('soSiteHeroDecoTrPickBtn', 'soSiteHeroDecoTrFile', heroDecoTrUrlEl);
     bindClearUrl('soSiteHeroDecoTrClearBtn', heroDecoTrUrlEl);
     bindDeleteUpload('soSiteHeroDecoTrDeleteBtn', heroDecoTrUrlEl);
-    bindAppearanceUpload('soSiteHeroDecoBlPickBtn', 'soSiteHeroDecoBlFile', heroDecoBlUrlEl, 'heroDecoBottomLeftUrl');
+    bindAppearanceUpload('soSiteHeroDecoBlPickBtn', 'soSiteHeroDecoBlFile', heroDecoBlUrlEl);
     bindClearUrl('soSiteHeroDecoBlClearBtn', heroDecoBlUrlEl);
     bindDeleteUpload('soSiteHeroDecoBlDeleteBtn', heroDecoBlUrlEl);
     var selAll = document.getElementById('soSiteAppearSelectAll');
@@ -1437,13 +1339,33 @@
         };
         if (Number.isFinite(trOpNum)) savePayload.heroDecoTopRightOpacity = trOpNum;
         if (Number.isFinite(blOpNum)) savePayload.heroDecoBottomLeftOpacity = blOpNum;
-        enqueueAppearancePersistPut(savePayload).then(function (x) {
-          if (!x.ok) {
-            if (hintEl) hintEl.textContent = (x.j && x.j.error) || 'Save failed.';
-            return;
-          }
-          if (hintEl) hintEl.textContent = 'Saved. Visitors will see the new images on the next page load.';
-        });
+        fetch(api('/api/admin/site-appearance'), {
+          method: 'PUT',
+          credentials: apiCred(),
+          cache: 'no-store',
+          headers: {
+            Authorization: 'Bearer ' + getAdminBearer(),
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(savePayload),
+        })
+          .then(function (r) {
+            return r.json().then(function (j) {
+              return { ok: r.ok, j: j };
+            });
+          })
+          .then(function (x) {
+            if (!x.ok) {
+              if (hintEl) hintEl.textContent = (x.j && x.j.error) || 'Save failed.';
+              return;
+            }
+            if (hintEl) hintEl.textContent = 'Saved. Visitors will see the new images on the next page load.';
+            applySiteAppearanceMerge(x.j);
+            bumpSiteAppearanceUrlPreviews();
+          })
+          .catch(function () {
+            if (hintEl) hintEl.textContent = 'Network error on save.';
+          });
       });
     }
   }
