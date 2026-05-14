@@ -430,6 +430,10 @@ const defaultSiteAppearance = {
     'Dashboard preview: ServiceOpera AI inbox across hotels, clinics and property with regional market context.',
   navLogoUrl: '/assets/logo.png',
   navLogoAlt: 'www.serviceopera.to',
+  heroDecoTopRightUrl: '/assets/hero-corner-arc.svg',
+  heroDecoBottomLeftUrl: '/assets/hero-corner-arc-bl.svg',
+  heroDecoTopRightOpacity: 0.12,
+  heroDecoBottomLeftOpacity: 0.12,
 };
 
 function readSiteAppearanceRaw() {
@@ -452,6 +456,24 @@ function normalizeNavLogoUrl(url) {
   const u = rewriteLegacyImagesUrl(typeof url === 'string' ? url.trim() : '');
   if (u === '/logo.png') return '/assets/logo.png';
   return u;
+}
+
+const DEFAULT_HERO_DECO_OPACITY = 0.12;
+
+/** Optional homepage hero corner SVG/image URL: absent key → default URL; present empty string → hidden. */
+function mergeHeroDecoImageUrl(raw, key, defaultUrl) {
+  if (!(key in raw)) return defaultUrl;
+  const v = typeof raw[key] === 'string' ? raw[key].trim() : '';
+  if (!v) return '';
+  const u = rewriteLegacyImagesUrl(v);
+  return isSafePropertyPageImageUrl(u) ? u : defaultUrl;
+}
+
+function mergeHeroDecoOpacity(raw, key) {
+  if (!(key in raw)) return DEFAULT_HERO_DECO_OPACITY;
+  const n = Number(raw[key]);
+  if (!Number.isFinite(n)) return DEFAULT_HERO_DECO_OPACITY;
+  return Math.min(1, Math.max(0, n));
 }
 
 function mergeSiteAppearance(raw) {
@@ -515,6 +537,18 @@ function mergeSiteAppearance(raw) {
     ? jackAltRaw.slice(0, 180).replace(/[\u0000-\u001f\u007f]/g, '')
     : '';
   const icons = mergeIconsMap(raw.icons);
+  const heroDecoTopRightUrl = mergeHeroDecoImageUrl(
+    raw,
+    'heroDecoTopRightUrl',
+    defaultSiteAppearance.heroDecoTopRightUrl
+  );
+  const heroDecoBottomLeftUrl = mergeHeroDecoImageUrl(
+    raw,
+    'heroDecoBottomLeftUrl',
+    defaultSiteAppearance.heroDecoBottomLeftUrl
+  );
+  const heroDecoTopRightOpacity = mergeHeroDecoOpacity(raw, 'heroDecoTopRightOpacity');
+  const heroDecoBottomLeftOpacity = mergeHeroDecoOpacity(raw, 'heroDecoBottomLeftOpacity');
   return {
     propertyPageImageUrl: propUrl,
     propertyPageImageAlt: propAlt,
@@ -528,6 +562,10 @@ function mergeSiteAppearance(raw) {
     navLogoAlt,
     jackAvatarUrl,
     jackAvatarAlt,
+    heroDecoTopRightUrl,
+    heroDecoBottomLeftUrl,
+    heroDecoTopRightOpacity,
+    heroDecoBottomLeftOpacity,
     icons,
   };
 }
@@ -1634,6 +1672,44 @@ app.put('/api/admin/site-appearance', requireAdmin, (req, res) => {
           .replace(/[\u0000-\u001f\u007f]/g, '')
       : cur.jackAvatarAlt;
 
+  const heroDecoTrIn =
+    'heroDecoTopRightUrl' in body && typeof body.heroDecoTopRightUrl === 'string'
+      ? body.heroDecoTopRightUrl.trim()
+      : cur.heroDecoTopRightUrl;
+  let heroDecoTopRightUrl = heroDecoTrIn === '' ? '' : rewriteLegacyImagesUrl(heroDecoTrIn);
+  if (heroDecoTopRightUrl && !isSafePropertyPageImageUrl(heroDecoTopRightUrl)) {
+    return res.status(400).json({
+      error:
+        'Invalid heroDecoTopRightUrl. Use a path on this site (starting with /) or an https:// image URL, or clear the field to hide.',
+    });
+  }
+
+  const heroDecoBlIn =
+    'heroDecoBottomLeftUrl' in body && typeof body.heroDecoBottomLeftUrl === 'string'
+      ? body.heroDecoBottomLeftUrl.trim()
+      : cur.heroDecoBottomLeftUrl;
+  let heroDecoBottomLeftUrl = heroDecoBlIn === '' ? '' : rewriteLegacyImagesUrl(heroDecoBlIn);
+  if (heroDecoBottomLeftUrl && !isSafePropertyPageImageUrl(heroDecoBottomLeftUrl)) {
+    return res.status(400).json({
+      error:
+        'Invalid heroDecoBottomLeftUrl. Use a path on this site (starting with /) or an https:// image URL, or clear the field to hide.',
+    });
+  }
+
+  function clampHeroDecoOpacityField(bodyVal, curVal) {
+    const n = Number(bodyVal);
+    if (!Number.isFinite(n)) return curVal;
+    return Math.min(1, Math.max(0, n));
+  }
+  const heroDecoTopRightOpacity =
+    'heroDecoTopRightOpacity' in body
+      ? clampHeroDecoOpacityField(body.heroDecoTopRightOpacity, cur.heroDecoTopRightOpacity)
+      : cur.heroDecoTopRightOpacity;
+  const heroDecoBottomLeftOpacity =
+    'heroDecoBottomLeftOpacity' in body
+      ? clampHeroDecoOpacityField(body.heroDecoBottomLeftOpacity, cur.heroDecoBottomLeftOpacity)
+      : cur.heroDecoBottomLeftOpacity;
+
   let nextIcons = cur.icons && typeof cur.icons === 'object' ? { ...cur.icons } : {};
   if ('icons' in body) {
     const incoming = body.icons;
@@ -1687,6 +1763,10 @@ app.put('/api/admin/site-appearance', requireAdmin, (req, res) => {
     navLogoAlt,
     jackAvatarUrl,
     jackAvatarAlt,
+    heroDecoTopRightUrl,
+    heroDecoBottomLeftUrl,
+    heroDecoTopRightOpacity,
+    heroDecoBottomLeftOpacity,
     icons: nextIcons,
   };
   try {

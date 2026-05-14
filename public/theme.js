@@ -153,6 +153,40 @@
     if (typeof window.__soThemeSyncButtons === 'function') window.__soThemeSyncButtons();
   }
 
+  function cssUrlForBackground(u) {
+    if (!u || typeof u !== 'string') return 'none';
+    var t = u.trim();
+    if (!t) return 'none';
+    return 'url(' + JSON.stringify(t) + ')';
+  }
+
+  function applyHeroCornerDeco(j) {
+    if (!j || typeof j !== 'object') return;
+    var root = document.documentElement;
+    var tr = typeof j.heroDecoTopRightUrl === 'string' ? j.heroDecoTopRightUrl.trim() : '';
+    var bl = typeof j.heroDecoBottomLeftUrl === 'string' ? j.heroDecoBottomLeftUrl.trim() : '';
+    var trOp = 0.12;
+    if (typeof j.heroDecoTopRightOpacity === 'number' && Number.isFinite(j.heroDecoTopRightOpacity)) {
+      trOp = Math.min(1, Math.max(0, j.heroDecoTopRightOpacity));
+    }
+    var blOp = 0.12;
+    if (typeof j.heroDecoBottomLeftOpacity === 'number' && Number.isFinite(j.heroDecoBottomLeftOpacity)) {
+      blOp = Math.min(1, Math.max(0, j.heroDecoBottomLeftOpacity));
+    }
+    root.style.setProperty('--so-hero-deco-tr-url', cssUrlForBackground(tr));
+    root.style.setProperty('--so-hero-deco-bl-url', cssUrlForBackground(bl));
+    root.style.setProperty('--so-hero-deco-tr-opacity', String(trOp));
+    root.style.setProperty('--so-hero-deco-bl-opacity', String(blOp));
+    document.querySelectorAll('.so-b2b__hero-deco--tr').forEach(function (el) {
+      if (tr) el.removeAttribute('hidden');
+      else el.setAttribute('hidden', '');
+    });
+    document.querySelectorAll('.so-b2b__hero-deco--bl').forEach(function (el) {
+      if (bl) el.removeAttribute('hidden');
+      else el.setAttribute('hidden', '');
+    });
+  }
+
   fetch(typeof soApiUrl === 'function' ? soApiUrl('/api/site-appearance') : '/api/site-appearance', {
     credentials: typeof soApiCredentials === 'function' ? soApiCredentials() : 'omit',
     cache: 'no-store',
@@ -164,6 +198,7 @@
       applyNav(j);
       applyJackAvatar(j);
       applyIconSlots(j && j.icons);
+      applyHeroCornerDeco(j);
     })
     .catch(function () {});
 })();

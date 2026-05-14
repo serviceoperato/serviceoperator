@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" fill="none" aria-hidden="true">
+  <!-- Bottom/left corner companion to hero-corner-arc.svg: rotate +90° so the arc bulge aims toward the page center from the lower-left. -->
+  <g transform="translate(-750 -375) scale(100) rotate(90 12 12)">
+    <path stroke="#312e81" stroke-width="2" stroke-linecap="round" d="M15.75 18.495A7.5 7.5 0 0 1 8.25 18.495"/>
+  </g>
+</svg>

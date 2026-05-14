@@ -757,6 +757,46 @@
       '</div></article>' +
       '<article class="so-site-appearance__card">' +
       '<div class="so-site-appearance__preview">' +
+      '<img id="soSiteHeroDecoTrPreview" class="so-site-appearance__preview-img is-hidden" alt="" decoding="async" />' +
+      '<div id="soSiteHeroDecoTrPreviewEmpty" class="so-site-appearance__preview-empty">No preview</div>' +
+      '</div>' +
+      '<div class="so-site-appearance__card-fields">' +
+      '<h3 class="so-site-appearance__card-title">Hero corner (top right)</h3>' +
+      '<p class="so-site-appearance__card-meta mono">index.html · <code>.so-b2b__hero-deco--tr</code> · default <code>/assets/hero-corner-arc.svg</code> · clear URL to hide</p>' +
+      '<div class="so-site-appearance__field-actions">' +
+      '<label class="so-site-appearance__pick"><input type="checkbox" class="so-site-appearance__cb" data-so-appearance-sel="decoTr" aria-label="Select hero corner top-right" /> <span class="mono">Select</span></label>' +
+      '<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="is-hidden" id="soSiteHeroDecoTrFile" />' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHeroDecoTrPickBtn">Upload…</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHeroDecoTrClearBtn">Clear URL</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHeroDecoTrDeleteBtn">Delete</button>' +
+      '</div>' +
+      '<label class="portal-form__label" for="soSiteHeroDecoTrUrl">Image URL</label>' +
+      '<input class="portal-form__input mono" type="text" id="soSiteHeroDecoTrUrl" autocomplete="off" placeholder="/assets/hero-corner-arc.svg" />' +
+      '<label class="portal-form__label" for="soSiteHeroDecoTrOp">Opacity (0–1)</label>' +
+      '<input class="portal-form__input mono" type="number" id="soSiteHeroDecoTrOp" min="0" max="1" step="0.01" />' +
+      '</div></article>' +
+      '<article class="so-site-appearance__card">' +
+      '<div class="so-site-appearance__preview">' +
+      '<img id="soSiteHeroDecoBlPreview" class="so-site-appearance__preview-img is-hidden" alt="" decoding="async" />' +
+      '<div id="soSiteHeroDecoBlPreviewEmpty" class="so-site-appearance__preview-empty">No preview</div>' +
+      '</div>' +
+      '<div class="so-site-appearance__card-fields">' +
+      '<h3 class="so-site-appearance__card-title">Hero corner (bottom left)</h3>' +
+      '<p class="so-site-appearance__card-meta mono">index.html · <code>.so-b2b__hero-deco--bl</code> · default <code>/assets/hero-corner-arc-bl.svg</code> · clear URL to hide</p>' +
+      '<div class="so-site-appearance__field-actions">' +
+      '<label class="so-site-appearance__pick"><input type="checkbox" class="so-site-appearance__cb" data-so-appearance-sel="decoBl" aria-label="Select hero corner bottom-left" /> <span class="mono">Select</span></label>' +
+      '<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="is-hidden" id="soSiteHeroDecoBlFile" />' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHeroDecoBlPickBtn">Upload…</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHeroDecoBlClearBtn">Clear URL</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHeroDecoBlDeleteBtn">Delete</button>' +
+      '</div>' +
+      '<label class="portal-form__label" for="soSiteHeroDecoBlUrl">Image URL</label>' +
+      '<input class="portal-form__input mono" type="text" id="soSiteHeroDecoBlUrl" autocomplete="off" placeholder="/assets/hero-corner-arc-bl.svg" />' +
+      '<label class="portal-form__label" for="soSiteHeroDecoBlOp">Opacity (0–1)</label>' +
+      '<input class="portal-form__input mono" type="number" id="soSiteHeroDecoBlOp" min="0" max="1" step="0.01" />' +
+      '</div></article>' +
+      '<article class="so-site-appearance__card">' +
+      '<div class="so-site-appearance__preview">' +
       '<img id="soSitePropImgPreview" class="so-site-appearance__preview-img is-hidden" alt="" decoding="async" />' +
       '<div id="soSitePropImgPreviewEmpty" class="so-site-appearance__preview-empty">No preview</div>' +
       '</div>' +
@@ -917,6 +957,16 @@
       document.getElementById('soSiteHotelImgPreview'),
       document.getElementById('soSiteHotelImgPreviewEmpty')
     );
+    wireSitePreview(
+      document.getElementById('soSiteHeroDecoTrUrl'),
+      document.getElementById('soSiteHeroDecoTrPreview'),
+      document.getElementById('soSiteHeroDecoTrPreviewEmpty')
+    );
+    wireSitePreview(
+      document.getElementById('soSiteHeroDecoBlUrl'),
+      document.getElementById('soSiteHeroDecoBlPreview'),
+      document.getElementById('soSiteHeroDecoBlPreviewEmpty')
+    );
 
     var navLogoUrlEl = document.getElementById('soSiteNavLogoUrl');
     var navLogoAltEl = document.getElementById('soSiteNavLogoAlt');
@@ -930,6 +980,10 @@
     var clinicAltEl = document.getElementById('soSiteClinicImgAlt');
     var hotelUrlEl = document.getElementById('soSiteHotelImgUrl');
     var hotelAltEl = document.getElementById('soSiteHotelImgAlt');
+    var heroDecoTrUrlEl = document.getElementById('soSiteHeroDecoTrUrl');
+    var heroDecoBlUrlEl = document.getElementById('soSiteHeroDecoBlUrl');
+    var heroDecoTrOpEl = document.getElementById('soSiteHeroDecoTrOp');
+    var heroDecoBlOpEl = document.getElementById('soSiteHeroDecoBlOp');
     var hintEl = document.getElementById('soSiteAppearanceHint');
     var SITE_APPEARANCE_DEFAULTS = {
       navLogoUrl: '/assets/logo.png',
@@ -944,6 +998,10 @@
       clinicPageImageAlt: 'Clinics — www.serviceopera.to',
       hotelPageImageUrl: '/assets/hotels-page-hero.png',
       hotelPageImageAlt: 'Hotels — www.serviceopera.to',
+      heroDecoTopRightUrl: '/assets/hero-corner-arc.svg',
+      heroDecoBottomLeftUrl: '/assets/hero-corner-arc-bl.svg',
+      heroDecoTopRightOpacity: 0.12,
+      heroDecoBottomLeftOpacity: 0.12,
     };
     function applySiteAppearanceMerge(apiJson) {
       var o = apiJson && typeof apiJson === 'object' ? apiJson : {};
@@ -964,11 +1022,48 @@
       if (clinicAltEl) clinicAltEl.value = pick('clinicPageImageAlt');
       if (hotelUrlEl) hotelUrlEl.value = pick('hotelPageImageUrl');
       if (hotelAltEl) hotelAltEl.value = pick('hotelPageImageAlt');
+      function pickOptionalImageUrl(k, def) {
+        if (!(k in o)) return def;
+        if (o[k] == null) return '';
+        return String(o[k]).trim();
+      }
+      if (heroDecoTrUrlEl) {
+        heroDecoTrUrlEl.value = pickOptionalImageUrl(
+          'heroDecoTopRightUrl',
+          SITE_APPEARANCE_DEFAULTS.heroDecoTopRightUrl
+        );
+      }
+      if (heroDecoBlUrlEl) {
+        heroDecoBlUrlEl.value = pickOptionalImageUrl(
+          'heroDecoBottomLeftUrl',
+          SITE_APPEARANCE_DEFAULTS.heroDecoBottomLeftUrl
+        );
+      }
+      function pickOpacity(k, def) {
+        if (!(k in o)) return String(def);
+        var n = typeof o[k] === 'number' ? o[k] : Number(o[k]);
+        if (Number.isFinite(n)) return String(Math.min(1, Math.max(0, n)));
+        return String(def);
+      }
+      if (heroDecoTrOpEl) {
+        heroDecoTrOpEl.value = pickOpacity(
+          'heroDecoTopRightOpacity',
+          SITE_APPEARANCE_DEFAULTS.heroDecoTopRightOpacity
+        );
+      }
+      if (heroDecoBlOpEl) {
+        heroDecoBlOpEl.value = pickOpacity(
+          'heroDecoBottomLeftOpacity',
+          SITE_APPEARANCE_DEFAULTS.heroDecoBottomLeftOpacity
+        );
+      }
     }
     function bumpSiteAppearanceUrlPreviews() {
-      [navLogoUrlEl, jackUrlEl, homeUrlEl, urlEl, clinicUrlEl, hotelUrlEl].forEach(function (el) {
-        if (el) el.dispatchEvent(new Event('input', { bubbles: true }));
-      });
+      [navLogoUrlEl, jackUrlEl, homeUrlEl, urlEl, clinicUrlEl, hotelUrlEl, heroDecoTrUrlEl, heroDecoBlUrlEl].forEach(
+        function (el) {
+          if (el) el.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+      );
     }
     function bindAppearanceUpload(pickBtnId, fileInputId, urlInput) {
       var pick = document.getElementById(pickBtnId);
@@ -1112,6 +1207,12 @@
     bindAppearanceUpload('soSiteHotelImgPickBtn', 'soSiteHotelImgFile', hotelUrlEl);
     bindClearUrl('soSiteHotelImgClearBtn', hotelUrlEl);
     bindDeleteUpload('soSiteHotelImgDeleteBtn', hotelUrlEl);
+    bindAppearanceUpload('soSiteHeroDecoTrPickBtn', 'soSiteHeroDecoTrFile', heroDecoTrUrlEl);
+    bindClearUrl('soSiteHeroDecoTrClearBtn', heroDecoTrUrlEl);
+    bindDeleteUpload('soSiteHeroDecoTrDeleteBtn', heroDecoTrUrlEl);
+    bindAppearanceUpload('soSiteHeroDecoBlPickBtn', 'soSiteHeroDecoBlFile', heroDecoBlUrlEl);
+    bindClearUrl('soSiteHeroDecoBlClearBtn', heroDecoBlUrlEl);
+    bindDeleteUpload('soSiteHeroDecoBlDeleteBtn', heroDecoBlUrlEl);
     var selAll = document.getElementById('soSiteAppearSelectAll');
     var selNone = document.getElementById('soSiteAppearSelectNone');
     var selClear = document.getElementById('soSiteAppearClearSelected');
@@ -1125,6 +1226,8 @@
       if (sel === 'prop') return { url: urlEl };
       if (sel === 'clinic') return { url: clinicUrlEl };
       if (sel === 'hotel') return { url: hotelUrlEl };
+      if (sel === 'decoTr') return { url: heroDecoTrUrlEl };
+      if (sel === 'decoBl') return { url: heroDecoBlUrlEl };
       return null;
     }
     if (selAll) {
@@ -1210,6 +1313,26 @@
     if (save) {
       save.addEventListener('click', function () {
         if (hintEl) hintEl.textContent = 'Saving…';
+        var trOpNum = heroDecoTrOpEl ? Number(heroDecoTrOpEl.value) : NaN;
+        var blOpNum = heroDecoBlOpEl ? Number(heroDecoBlOpEl.value) : NaN;
+        var savePayload = {
+          navLogoUrl: navLogoUrlEl ? navLogoUrlEl.value : '',
+          navLogoAlt: navLogoAltEl ? navLogoAltEl.value : '',
+          jackAvatarUrl: jackUrlEl ? jackUrlEl.value : '',
+          jackAvatarAlt: jackAltEl ? jackAltEl.value : '',
+          homePageImageUrl: homeUrlEl ? homeUrlEl.value : '',
+          homePageImageAlt: homeAltEl ? homeAltEl.value : '',
+          propertyPageImageUrl: urlEl ? urlEl.value : '',
+          propertyPageImageAlt: altEl ? altEl.value : '',
+          clinicPageImageUrl: clinicUrlEl ? clinicUrlEl.value : '',
+          clinicPageImageAlt: clinicAltEl ? clinicAltEl.value : '',
+          hotelPageImageUrl: hotelUrlEl ? hotelUrlEl.value : '',
+          hotelPageImageAlt: hotelAltEl ? hotelAltEl.value : '',
+          heroDecoTopRightUrl: heroDecoTrUrlEl ? heroDecoTrUrlEl.value : '',
+          heroDecoBottomLeftUrl: heroDecoBlUrlEl ? heroDecoBlUrlEl.value : '',
+        };
+        if (Number.isFinite(trOpNum)) savePayload.heroDecoTopRightOpacity = trOpNum;
+        if (Number.isFinite(blOpNum)) savePayload.heroDecoBottomLeftOpacity = blOpNum;
         fetch(api('/api/admin/site-appearance'), {
           method: 'PUT',
           credentials: apiCred(),
@@ -1218,20 +1341,7 @@
             Authorization: 'Bearer ' + getAdminBearer(),
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            navLogoUrl: navLogoUrlEl ? navLogoUrlEl.value : '',
-            navLogoAlt: navLogoAltEl ? navLogoAltEl.value : '',
-            jackAvatarUrl: jackUrlEl ? jackUrlEl.value : '',
-            jackAvatarAlt: jackAltEl ? jackAltEl.value : '',
-            homePageImageUrl: homeUrlEl ? homeUrlEl.value : '',
-            homePageImageAlt: homeAltEl ? homeAltEl.value : '',
-            propertyPageImageUrl: urlEl ? urlEl.value : '',
-            propertyPageImageAlt: altEl ? altEl.value : '',
-            clinicPageImageUrl: clinicUrlEl ? clinicUrlEl.value : '',
-            clinicPageImageAlt: clinicAltEl ? clinicAltEl.value : '',
-            hotelPageImageUrl: hotelUrlEl ? hotelUrlEl.value : '',
-            hotelPageImageAlt: hotelAltEl ? hotelAltEl.value : '',
-          }),
+          body: JSON.stringify(savePayload),
         })
           .then(function (r) {
             return r.json().then(function (j) {
@@ -1244,18 +1354,7 @@
               return;
             }
             if (hintEl) hintEl.textContent = 'Saved. Visitors will see the new images on the next page load.';
-            if (navLogoUrlEl && x.j.navLogoUrl) navLogoUrlEl.value = x.j.navLogoUrl;
-            if (navLogoAltEl && x.j.navLogoAlt) navLogoAltEl.value = x.j.navLogoAlt;
-            if (jackUrlEl && 'jackAvatarUrl' in x.j) jackUrlEl.value = x.j.jackAvatarUrl || '';
-            if (jackAltEl && 'jackAvatarAlt' in x.j) jackAltEl.value = x.j.jackAvatarAlt || '';
-            if (homeUrlEl && x.j.homePageImageUrl) homeUrlEl.value = x.j.homePageImageUrl;
-            if (homeAltEl && x.j.homePageImageAlt) homeAltEl.value = x.j.homePageImageAlt;
-            if (urlEl && x.j.propertyPageImageUrl) urlEl.value = x.j.propertyPageImageUrl;
-            if (altEl && x.j.propertyPageImageAlt) altEl.value = x.j.propertyPageImageAlt;
-            if (clinicUrlEl && x.j.clinicPageImageUrl) clinicUrlEl.value = x.j.clinicPageImageUrl;
-            if (clinicAltEl && x.j.clinicPageImageAlt) clinicAltEl.value = x.j.clinicPageImageAlt;
-            if (hotelUrlEl && x.j.hotelPageImageUrl) hotelUrlEl.value = x.j.hotelPageImageUrl;
-            if (hotelAltEl && x.j.hotelPageImageAlt) hotelAltEl.value = x.j.hotelPageImageAlt;
+            applySiteAppearanceMerge(x.j);
             bumpSiteAppearanceUrlPreviews();
           })
           .catch(function () {
