@@ -47,7 +47,7 @@
   var bootEl = document.getElementById('adminBoot');
   var form = document.getElementById('adminGateForm');
   var hint = document.getElementById('adminGateHint');
-  var tfNav = document.getElementById('tfAdminNav');
+  var tfNav = document.getElementById('tfAdminNavPills');
   var tfVerNum = document.getElementById('tfAdminVersionNum');
   var panel = document.getElementById('adminPanel');
   var panelTitle = document.getElementById('adminPanelTitle');
@@ -1184,12 +1184,27 @@
         heroDecoBlOpEl.value = Number.isFinite(brn) ? String(Math.min(1, Math.max(0, brn))) : '';
       }
     }
+    /**
+     * Preview sync listens on `input`, same as autosave. Synthetic `input` events after a PUT must not
+     * re-queue autosave or the panel enters an infinite save → merge → bump → save loop.
+     */
+    var appearanceAutosaveSuppressDepth = 0;
+    function withAppearanceAutosaveSuppressed(fn) {
+      appearanceAutosaveSuppressDepth += 1;
+      try {
+        fn();
+      } finally {
+        appearanceAutosaveSuppressDepth -= 1;
+      }
+    }
     function bumpSiteAppearanceUrlPreviews() {
-      [navLogoUrlEl, jackUrlEl, homeUrlEl, urlEl, clinicUrlEl, hotelUrlEl, heroDecoTrUrlEl, heroDecoBlUrlEl].forEach(
-        function (el) {
-          if (el) el.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-      );
+      withAppearanceAutosaveSuppressed(function () {
+        [navLogoUrlEl, jackUrlEl, homeUrlEl, urlEl, clinicUrlEl, hotelUrlEl, heroDecoTrUrlEl, heroDecoBlUrlEl].forEach(
+          function (el) {
+            if (el) el.dispatchEvent(new Event('input', { bubbles: true }));
+          }
+        );
+      });
     }
     /** Serialize PUTs so rapid uploads or debounced autosave do not race on site-appearance storage. */
     var appearancePutChain = Promise.resolve();
@@ -1537,6 +1552,7 @@
     bindDeleteUpload('soSiteHeroDecoBlDeleteBtn', heroDecoBlUrlEl);
     var appearanceAutosaveTimer = null;
     function scheduleSiteAppearanceAutosave() {
+      if (appearanceAutosaveSuppressDepth > 0) return;
       if (isSiteAppearancePanelStale() || !siteAppearanceFormHydrated) return;
       if (appearanceAutosaveTimer) clearTimeout(appearanceAutosaveTimer);
       appearanceAutosaveTimer = setTimeout(function () {
@@ -2063,19 +2079,16 @@
     if (!tfNav) return;
     var id = activeRouteId != null ? activeRouteId : getAdminRouteFromLocation();
     tfNav.innerHTML = '';
-    var row = document.createElement('div');
-    row.className = 'tf-admin-nav__row';
-    row.appendChild(makeNavLink('Users & payouts', '/admin/users', 'users', id));
-    row.appendChild(makeNavLink('Activity log', '/admin/activity', 'activity', id));
-    row.appendChild(makeNavLink('User profiling', '/admin/user-profiling', 'user-profiling', id));
-    row.appendChild(makeNavLink('Deploy log', '/admin/deploy-log', 'deploy-log', id));
-    row.appendChild(makeNavLink('Site appearance', '/admin/site-appearance', 'site-appearance', id));
-    row.appendChild(makeNavLink('Icons', '/admin/icons', 'icons', id));
-    row.appendChild(makeNavLink('Reports', '/operator/reports', 'reports', id));
-    row.appendChild(makePlacesLeadsNavControl());
-    row.appendChild(makeNavLink('Report catalog', '/reports/catalog.html', 'report-catalog', id));
-    row.appendChild(makeNavLink('User reports', '/admin/user-reports', 'user-reports', id));
-    tfNav.appendChild(row);
+    tfNav.appendChild(makeNavLink('Users & payouts', '/admin/users', 'users', id));
+    tfNav.appendChild(makeNavLink('Activity log', '/admin/activity', 'activity', id));
+    tfNav.appendChild(makeNavLink('User profiling', '/admin/user-profiling', 'user-profiling', id));
+    tfNav.appendChild(makeNavLink('Deploy log', '/admin/deploy-log', 'deploy-log', id));
+    tfNav.appendChild(makeNavLink('Site appearance', '/admin/site-appearance', 'site-appearance', id));
+    tfNav.appendChild(makeNavLink('Icons', '/admin/icons', 'icons', id));
+    tfNav.appendChild(makeNavLink('Reports', '/operator/reports', 'reports', id));
+    tfNav.appendChild(makePlacesLeadsNavControl());
+    tfNav.appendChild(makeNavLink('Report catalog', '/reports/catalog.html', 'report-catalog', id));
+    tfNav.appendChild(makeNavLink('User reports', '/admin/user-reports', 'user-reports', id));
   }
 
   function syncAdminRouteFromLocation() {
