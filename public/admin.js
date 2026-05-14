@@ -797,7 +797,7 @@
       '<input class="portal-form__input mono" type="number" id="soSiteHeroDecoTrOp" min="0" max="1" step="0.01" />' +
       '</div></article>' +
       '<article class="so-site-appearance__card">' +
-      '<div class="so-site-appearance__preview">' +
+      '<div class="so-site-appearance__preview so-site-appearance__preview--hero-deco-bl">' +
       '<img id="soSiteHeroDecoBlPreview" class="so-site-appearance__preview-img is-hidden" alt="" decoding="async" />' +
       '<div id="soSiteHeroDecoBlPreviewEmpty" class="so-site-appearance__preview-empty">No preview</div>' +
       '</div>' +

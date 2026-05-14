@@ -2907,6 +2907,16 @@ html.so-site-nav-open {
   object-fit: contain;
   display: block;
 }
+/* Hero bottom-left deco: large viewBox + object-fit:contain centers the arc; flex + object-position match live homepage. */
+.so-site-appearance__preview--hero-deco-bl {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+.so-site-appearance__preview--hero-deco-bl .so-site-appearance__preview-img {
+  object-position: left bottom;
+}
 .so-site-appearance__preview-empty {
   position: absolute;
   inset: 0;
