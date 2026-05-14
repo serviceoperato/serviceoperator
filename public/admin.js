@@ -718,7 +718,7 @@
       '<p class="so-site-appearance__card-meta mono">Header · <code>img.brand-logo</code> · default <code>/assets/logo.png</code></p>' +
       '<div class="so-site-appearance__field-actions">' +
       '<label class="so-site-appearance__pick"><input type="checkbox" class="so-site-appearance__cb" data-so-appearance-sel="nav" aria-label="Select nav logo" /> <span class="mono">Select</span></label>' +
-      '<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="is-hidden" id="soSiteNavLogoFile" />' +
+      '<input type="file" accept="image/png,image/jpeg,image/jpg,image/webp,image/gif,image/heic,image/heif,.heic,.heif" class="is-hidden" id="soSiteNavLogoFile" />' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteNavLogoPickBtn">Upload…</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteNavLogoClearBtn">Clear URL</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteNavLogoDeleteBtn">Delete</button>' +
@@ -738,7 +738,7 @@
       '<p class="so-site-appearance__card-meta mono">index.html Jack block · <code>img.so-b2b__jack-photo</code> · default <code>/assets/jack-avatar.png</code> when that file exists on the server</p>' +
       '<div class="so-site-appearance__field-actions">' +
       '<label class="so-site-appearance__pick"><input type="checkbox" class="so-site-appearance__cb" data-so-appearance-sel="jack" aria-label="Select Jack avatar" /> <span class="mono">Select</span></label>' +
-      '<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="is-hidden" id="soSiteJackAvatarFile" />' +
+      '<input type="file" accept="image/png,image/jpeg,image/jpg,image/webp,image/gif,image/heic,image/heif,.heic,.heif" class="is-hidden" id="soSiteJackAvatarFile" />' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteJackAvatarPickBtn">Upload…</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteJackAvatarClearBtn">Clear URL</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteJackAvatarDeleteBtn">Delete</button>' +
@@ -758,7 +758,7 @@
       '<p class="so-site-appearance__card-meta mono">index.html hero</p>' +
       '<div class="so-site-appearance__field-actions">' +
       '<label class="so-site-appearance__pick"><input type="checkbox" class="so-site-appearance__cb" data-so-appearance-sel="home" aria-label="Select homepage hero" /> <span class="mono">Select</span></label>' +
-      '<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="is-hidden" id="soSiteHomeImgFile" />' +
+      '<input type="file" accept="image/png,image/jpeg,image/jpg,image/webp,image/gif,image/heic,image/heif,.heic,.heif" class="is-hidden" id="soSiteHomeImgFile" />' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHomeImgPickBtn">Upload…</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHomeImgClearBtn">Clear URL</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHomeImgDeleteBtn">Delete</button>' +
@@ -778,7 +778,7 @@
       '<p class="so-site-appearance__card-meta mono">index.html · <code>.so-b2b__hero-deco--tr</code> · default <code>/assets/hero-corner-arc.svg</code> · clear URL to hide</p>' +
       '<div class="so-site-appearance__field-actions">' +
       '<label class="so-site-appearance__pick"><input type="checkbox" class="so-site-appearance__cb" data-so-appearance-sel="decoTr" aria-label="Select hero corner top-right" /> <span class="mono">Select</span></label>' +
-      '<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="is-hidden" id="soSiteHeroDecoTrFile" />' +
+      '<input type="file" accept="image/png,image/jpeg,image/jpg,image/webp,image/gif,image/svg+xml,.svg" class="is-hidden" id="soSiteHeroDecoTrFile" />' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHeroDecoTrPickBtn">Upload…</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHeroDecoTrClearBtn">Clear URL</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHeroDecoTrDeleteBtn">Delete</button>' +
@@ -798,7 +798,7 @@
       '<p class="so-site-appearance__card-meta mono">index.html · <code>.so-b2b__hero-deco--bl</code> · default <code>/assets/hero-corner-arc-bl.svg</code> · clear URL to hide</p>' +
       '<div class="so-site-appearance__field-actions">' +
       '<label class="so-site-appearance__pick"><input type="checkbox" class="so-site-appearance__cb" data-so-appearance-sel="decoBl" aria-label="Select hero corner bottom-left" /> <span class="mono">Select</span></label>' +
-      '<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="is-hidden" id="soSiteHeroDecoBlFile" />' +
+      '<input type="file" accept="image/png,image/jpeg,image/jpg,image/webp,image/gif,image/svg+xml,.svg" class="is-hidden" id="soSiteHeroDecoBlFile" />' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHeroDecoBlPickBtn">Upload…</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHeroDecoBlClearBtn">Clear URL</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHeroDecoBlDeleteBtn">Delete</button>' +
@@ -818,7 +818,7 @@
       '<p class="so-site-appearance__card-meta mono">property.html hero</p>' +
       '<div class="so-site-appearance__field-actions">' +
       '<label class="so-site-appearance__pick"><input type="checkbox" class="so-site-appearance__cb" data-so-appearance-sel="prop" aria-label="Select property hero" /> <span class="mono">Select</span></label>' +
-      '<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="is-hidden" id="soSitePropImgFile" />' +
+      '<input type="file" accept="image/png,image/jpeg,image/jpg,image/webp,image/gif,image/heic,image/heif,.heic,.heif" class="is-hidden" id="soSitePropImgFile" />' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSitePropImgPickBtn">Upload…</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSitePropImgClearBtn">Clear URL</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSitePropImgDeleteBtn">Delete</button>' +
@@ -838,7 +838,7 @@
       '<p class="so-site-appearance__card-meta mono">clinics.html hero</p>' +
       '<div class="so-site-appearance__field-actions">' +
       '<label class="so-site-appearance__pick"><input type="checkbox" class="so-site-appearance__cb" data-so-appearance-sel="clinic" aria-label="Select clinics hero" /> <span class="mono">Select</span></label>' +
-      '<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="is-hidden" id="soSiteClinicImgFile" />' +
+      '<input type="file" accept="image/png,image/jpeg,image/jpg,image/webp,image/gif,image/heic,image/heif,.heic,.heif" class="is-hidden" id="soSiteClinicImgFile" />' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteClinicImgPickBtn">Upload…</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteClinicImgClearBtn">Clear URL</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteClinicImgDeleteBtn">Delete</button>' +
@@ -858,7 +858,7 @@
       '<p class="so-site-appearance__card-meta mono">hotels.html hero</p>' +
       '<div class="so-site-appearance__field-actions">' +
       '<label class="so-site-appearance__pick"><input type="checkbox" class="so-site-appearance__cb" data-so-appearance-sel="hotel" aria-label="Select hotels hero" /> <span class="mono">Select</span></label>' +
-      '<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="is-hidden" id="soSiteHotelImgFile" />' +
+      '<input type="file" accept="image/png,image/jpeg,image/jpg,image/webp,image/gif,image/heic,image/heif,.heic,.heif" class="is-hidden" id="soSiteHotelImgFile" />' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHotelImgPickBtn">Upload…</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHotelImgClearBtn">Clear URL</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteHotelImgDeleteBtn">Delete</button>' +
@@ -1324,18 +1324,15 @@
           return;
         }
         if (hintEl) hintEl.textContent = 'Uploading…';
-        var reader = new FileReader();
-        reader.onerror = function () {
-          if (hintEl) hintEl.textContent = 'Could not read file.';
+
+        function failRead(msg) {
+          if (hintEl) hintEl.textContent = msg || 'Could not read file.';
           fin.value = '';
-        };
-        reader.onload = function () {
-          var dataUrl = reader.result;
-          var b64 =
-            typeof dataUrl === 'string' && dataUrl.indexOf(',') >= 0 ? dataUrl.split(',')[1] : '';
+        }
+
+        function postUpload(b64) {
           if (!b64) {
-            if (hintEl) hintEl.textContent = 'Empty file.';
-            fin.value = '';
+            failRead('Empty file.');
             return;
           }
           fetch(api('/api/admin/site-appearance/upload'), {
@@ -1388,6 +1385,54 @@
               if (hintEl) hintEl.textContent = 'Upload network error.';
               fin.value = '';
             });
+        }
+
+        function uint8ToBase64(bytes) {
+          var CHUNK = 0x8000;
+          var binary = '';
+          for (var i = 0; i < bytes.length; i += CHUNK) {
+            binary += String.fromCharCode.apply(
+              null,
+              bytes.subarray(i, Math.min(i + CHUNK, bytes.length))
+            );
+          }
+          return btoa(binary);
+        }
+
+        if (typeof file.arrayBuffer === 'function') {
+          file
+            .arrayBuffer()
+            .then(function (buf) {
+              if (!buf || buf.byteLength === 0) {
+                failRead('Empty file.');
+                return;
+              }
+              try {
+                postUpload(uint8ToBase64(new Uint8Array(buf)));
+              } catch (eEnc) {
+                failRead(eEnc && eEnc.message ? eEnc.message : 'Could not encode file.');
+              }
+            })
+            .catch(function (e) {
+              failRead(
+                e && (e.name || e.message)
+                  ? 'Could not read file (' + (e.name || '') + (e.message ? ': ' + e.message : '') + ').'
+                  : 'Could not read file.'
+              );
+            });
+          return;
+        }
+
+        var reader = new FileReader();
+        reader.onerror = function () {
+          var er = reader.error;
+          failRead(er && er.message ? 'Could not read file: ' + er.message : 'Could not read file.');
+        };
+        reader.onload = function () {
+          var dataUrl = reader.result;
+          var b64 =
+            typeof dataUrl === 'string' && dataUrl.indexOf(',') >= 0 ? dataUrl.split(',')[1] : '';
+          postUpload(b64);
         };
         reader.readAsDataURL(file);
       });

@@ -610,6 +610,8 @@ function mergeSiteAppearance(raw) {
 
 function sniffWritableSiteImage(buf) {
   if (!Buffer.isBuffer(buf) || buf.length < 12) return null;
+  const sniffUtf8 = buf.slice(0, Math.min(512, buf.length)).toString('utf8').trimStart();
+  if (/^<\?xml/i.test(sniffUtf8) || /^<svg[\s/>]/i.test(sniffUtf8)) return { ext: 'svg' };
   if (buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47) return { ext: 'png' };
   if (buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return { ext: 'jpg' };
   if (buf[0] === 0x47 && buf[1] === 0x49 && buf[2] === 0x46 && buf[3] === 0x38 && (buf[4] === 0x37 || buf[4] === 0x39))
@@ -621,7 +623,7 @@ function sniffWritableSiteImage(buf) {
 
 const SITE_UPLOAD_PUBLIC_PREFIX = '/assets/site-uploads/';
 /** Only names minted by POST …/upload (`su-<timestamp>-<8 hex>.<ext>`). No directory segments, no traversal. */
-const SITE_UPLOAD_DELETABLE_BASENAME_RE = /^su-\d+-[a-f0-9]{8}\.(png|jpe?g|gif|webp)$/i;
+const SITE_UPLOAD_DELETABLE_BASENAME_RE = /^su-\d+-[a-f0-9]{8}\.(png|jpe?g|gif|webp|svg)$/i;
 
 function parseSiteUploadDeletableBasenameFromUrl(inputUrl) {
   const s = String(inputUrl || '').trim();
@@ -1866,7 +1868,7 @@ app.post('/api/admin/site-appearance/upload', requireAdmin, (req, res) => {
   }
   const sniffed = sniffWritableSiteImage(buf);
   if (!sniffed) {
-    return res.status(400).json({ error: 'Unsupported image type. Use PNG, JPEG, GIF, or WebP.' });
+    return res.status(400).json({ error: 'Unsupported image type. Use PNG, JPEG, GIF, WebP, or SVG.' });
   }
   const stamp = Date.now();
   const rand = crypto.randomBytes(4).toString('hex');
