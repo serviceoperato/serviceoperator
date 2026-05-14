@@ -46,6 +46,35 @@
     --so-subtle: #1e293b;
     --so-shadow: 0 1px 2px rgba(2, 6, 23, 0.35), 0 12px 40px rgba(15, 23, 42, 0.45);
   }
+  .page-home #homeMain > .so-b2b,
+  .page-home #homeMain > .so-b2b-footer {
+    position: relative;
+    z-index: 1;
+  }
+  .page-home .so-b2b__hero-deco {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    width: min(78vw, 56rem);
+    height: auto;
+    max-height: 85vh;
+    object-fit: contain;
+    object-position: center;
+  }
+  .page-home .so-b2b__hero-deco--tr {
+    top: 0;
+    right: 0;
+    opacity: 0.12;
+    filter: blur(1px);
+    transform: translate(10%, -14%);
+  }
+  .page-home .so-b2b__hero-deco--bl {
+    bottom: 0;
+    left: 0;
+    opacity: 0.08;
+    filter: blur(1.25px);
+    transform: translate(-8%, 12%);
+  }
   .page-home .so-b2b__wrap {
     display: flex;
     flex-direction: column;
@@ -894,6 +923,8 @@
 </div>
 
 <div id="homeMain" class="is-hidden">
+<img class="so-b2b__hero-deco so-b2b__hero-deco--tr" src="/assets/hero-corner-arc.svg" width="1280" height="720" alt="" decoding="async" />
+<img class="so-b2b__hero-deco so-b2b__hero-deco--bl" src="/assets/hero-corner-arc-bl.svg" width="1280" height="780" alt="" decoding="async" />
 <main class="so-b2b">
   <div class="so-b2b__wrap">
     <header class="so-b2b__hero">

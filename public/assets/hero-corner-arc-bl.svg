@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 780" fill="none" aria-hidden="true">
+  <!-- Same 90 arc as north segment, rotated 180 about ring center (12,12)  south segment; placed for bottom-left viewport corner -->
+  <g transform="translate(200 708) scale(54) translate(-12 -12) rotate(180)">
+    <path stroke="#312e81" stroke-width="0.037" stroke-linecap="round" d="M8.25 5.505A7.5 7.5 0 0 1 15.75 5.505"/>
+  </g>
+</svg>
