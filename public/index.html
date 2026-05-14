@@ -51,30 +51,6 @@
     position: relative;
     z-index: 1;
   }
-  .page-home .so-b2b__hero-deco {
-    position: fixed;
-    pointer-events: none;
-    z-index: 0;
-    width: min(78vw, 56rem);
-    height: auto;
-    max-height: 85vh;
-    object-fit: contain;
-    object-position: center;
-  }
-  .page-home .so-b2b__hero-deco--tr {
-    top: 0;
-    right: 0;
-    opacity: 0.12;
-    filter: blur(1px);
-    transform: translate(10%, -14%);
-  }
-  .page-home .so-b2b__hero-deco--bl {
-    bottom: 0;
-    left: 0;
-    opacity: 0.08;
-    filter: blur(1.25px);
-    transform: translate(-8%, 12%);
-  }
   .page-home .so-b2b__wrap {
     display: flex;
     flex-direction: column;
@@ -160,18 +136,18 @@
     transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
   }
   .page-home .so-b2b__btn--primary {
-    background: var(--so-indigo-deep);
-    color: #f8fafc;
+    background: #4f46e5;
+    color: #ffffff;
     border-color: transparent;
-    box-shadow: 0 1px 2px rgba(30, 27, 75, 0.12);
+    box-shadow: 0 1px 2px rgba(79, 70, 229, 0.22);
   }
   .page-home .so-b2b__btn--primary:hover {
     filter: brightness(1.06);
-    box-shadow: 0 4px 20px rgba(30, 27, 75, 0.2);
+    box-shadow: 0 4px 20px rgba(79, 70, 229, 0.38);
   }
   [data-theme="dark"] .page-home .so-b2b__btn--primary {
-    background: #4338ca;
-    color: #fff;
+    background: #4f46e5;
+    color: #ffffff;
   }
   .page-home .so-b2b__btn--ghost {
     background: transparent;
@@ -179,17 +155,17 @@
     border-color: var(--so-line);
   }
   .page-home .so-b2b__btn--ghost:hover {
-    border-color: var(--so-indigo);
-    color: var(--so-indigo);
+    border-color: #4f46e5;
+    color: #4f46e5;
   }
   .page-home .so-b2b__btn--ghost .so-b2b__btn-play {
-    color: var(--amber-deep);
+    color: #4f46e5;
   }
   [data-theme="dark"] .page-home .so-b2b__btn--ghost .so-b2b__btn-play {
-    color: var(--amber-2);
+    color: #4f46e5;
   }
   .page-home .so-b2b__btn--ghost:hover .so-b2b__btn-play {
-    color: var(--amber);
+    color: #4f46e5;
   }
   .page-home .so-b2b__btn-inner {
     display: inline-flex;
@@ -213,11 +189,11 @@
     inset: 0;
     width: 100%;
     height: 100%;
-    color: var(--amber-deep);
+    color: #4f46e5;
     pointer-events: none;
   }
   [data-theme="dark"] .page-home .so-b2b__btn-play-ring {
-    color: var(--amber-2);
+    color: #4f46e5;
   }
   .page-home .so-b2b__btn-play-tri {
     position: relative;
@@ -253,10 +229,10 @@
     align-items: center;
     vertical-align: middle;
     margin-right: 0.1rem;
-    color: var(--amber-deep);
+    color: #4f46e5;
   }
   [data-theme="dark"] .page-home .so-b2b__markets-ico-slot {
-    color: var(--amber-2);
+    color: #4f46e5;
   }
   .page-home .so-b2b .home-lp__card-icon-wrap .so-icon-override-img {
     width: 22px;
@@ -318,14 +294,14 @@
     justify-content: center;
     flex-shrink: 0;
     margin-bottom: 14px;
-    color: var(--amber-deep);
-    background: color-mix(in srgb, var(--amber) 10%, #ffffff);
-    border: 1px solid color-mix(in srgb, var(--amber-deep) 18%, transparent);
+    color: #4f46e5;
+    background: color-mix(in srgb, #4f46e5 10%, #ffffff);
+    border: 1px solid color-mix(in srgb, #4f46e5 18%, transparent);
   }
   [data-theme="dark"] .page-home .so-b2b .home-lp__card-icon-wrap {
-    color: var(--amber-2);
-    background: color-mix(in srgb, var(--amber) 14%, var(--so-surface));
-    border-color: color-mix(in srgb, var(--amber-2) 28%, transparent);
+    color: #4f46e5;
+    background: color-mix(in srgb, #4f46e5 14%, var(--so-surface));
+    border-color: color-mix(in srgb, #4f46e5 28%, transparent);
   }
   .page-home .so-b2b .home-lp__card-icon-wrap svg {
     width: 22px;
@@ -417,7 +393,7 @@
     line-height: 1.4;
   }
   .page-home .so-b2b .home-lp__card-cta a {
-    color: var(--amber);
+    color: #4f46e5;
     text-decoration: none;
   }
   .page-home .so-b2b .home-lp__card--sector-clinics .home-lp__card-cta a {
@@ -477,7 +453,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--amber-deep);
+    background: #4f46e5;
     color: #ffffff;
     border: 1px solid rgba(255, 255, 255, 0.12);
     flex-shrink: 0;
@@ -492,7 +468,7 @@
     stroke-linejoin: round;
   }
   [data-theme="dark"] .page-home .so-b2b__picon {
-    background: var(--amber);
+    background: #4f46e5;
   }
   .page-home .so-b2b__pcard h3 {
     margin: 0;
@@ -540,14 +516,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--amber-deep);
+    background: #4f46e5;
     color: #ffffff;
     flex-shrink: 0;
     border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 1px 2px color-mix(in srgb, var(--amber-deep) 25%, transparent);
+    box-shadow: 0 1px 2px color-mix(in srgb, #4f46e5 25%, transparent);
   }
   [data-theme="dark"] .page-home .so-b2b__feat-ico {
-    background: var(--amber);
+    background: #4f46e5;
     color: #ffffff;
     border-color: rgba(255, 255, 255, 0.14);
   }
@@ -654,14 +630,14 @@
     inset: 0;
     width: 100%;
     height: 100%;
-    color: var(--amber-deep);
+    color: #4f46e5;
     pointer-events: none;
   }
   .page-home .so-b2b__step-ring path {
     stroke: currentColor;
   }
   [data-theme="dark"] .page-home .so-b2b__step-ring {
-    color: var(--so-indigo);
+    color: #4f46e5;
   }
   .page-home .so-b2b__step-num {
     position: relative;
@@ -675,7 +651,7 @@
     padding: 0;
     border-radius: 0;
     background: transparent;
-    color: var(--so-indigo);
+    color: #4f46e5;
     font-size: 1.0625rem;
     font-weight: 700;
     line-height: 1;
@@ -683,7 +659,7 @@
     box-shadow: none;
   }
   [data-theme="dark"] .page-home .so-b2b__step-num {
-    color: var(--so-indigo);
+    color: #4f46e5;
   }
   .page-home .so-b2b__step-title {
     margin: 0 0 0.4rem;
@@ -884,12 +860,12 @@
     width: 0.9rem;
     height: 0.9rem;
     flex-shrink: 0;
-    color: var(--amber);
+    color: #4f46e5;
     opacity: 0.88;
     margin-right: 0.35rem;
   }
   [data-theme="dark"] .page-home .so-b2b-footer__mark {
-    color: var(--amber-2);
+    color: #4f46e5;
   }
   .page-home .so-b2b-footer__row {
     display: inline-flex;
@@ -904,12 +880,12 @@
     background: #0f172a;
   }
   .page-home .so-b2b-footer a {
-    color: var(--amber-deep);
+    color: #4f46e5;
     text-decoration: none;
     font-weight: 600;
   }
   [data-theme="dark"] .page-home .so-b2b-footer a {
-    color: var(--amber-2);
+    color: #4f46e5;
   }
   .page-home .so-b2b-footer a:hover {
     text-decoration: underline;
@@ -946,8 +922,6 @@
 </div>
 
 <div id="homeMain" class="is-hidden">
-<img class="so-b2b__hero-deco so-b2b__hero-deco--tr" src="/assets/hero-corner-arc.svg" width="1280" height="720" alt="" decoding="async" />
-<img class="so-b2b__hero-deco so-b2b__hero-deco--bl" src="/assets/hero-corner-arc-bl.svg" width="1280" height="780" alt="" decoding="async" />
 <main class="so-b2b">
   <div class="so-b2b__wrap">
     <header class="so-b2b__hero">
