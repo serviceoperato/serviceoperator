@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sample AI audit — Bangkok Integrated Health Center | ServiceOpera.to</title>
+  <meta name="description" content="Illustrative ServiceOpera AI Audit for a fictional Bangkok integrated health clinic: synthetic metrics, patient journey, reviews, AI opportunities, and service lines. No real patient data." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" href="/favicon.png" type="image/png" />
+  <style>
+    :root {
+      --primary: #6366f1;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --slate: #64748b;
+      --ink: #0f172a;
+      --muted: #475569;
+      --card: #ffffff;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      --radius: 16px;
+      --page-max: 1400px;
+      --section-gap: 40px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--ink);
+      line-height: 1.55;
+      background: linear-gradient(180deg, #f5f7ff 0%, #f9f5ff 100%);
+      min-height: 100vh;
+    }
+    .wrap {
+      max-width: var(--page-max);
+      margin: 0 auto;
+      padding: 28px 20px 56px;
+    }
+    .hero {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px 28px 24px;
+      margin-bottom: var(--section-gap);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--primary);
+      background: rgba(99, 102, 241, 0.1);
+      padding: 6px 12px;
+      border-radius: 999px;
+    }
+    .badge::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+    h1 {
+      margin: 14px 0 6px;
+      font-size: clamp(1.45rem, 3vw, 2rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .subtitle {
+      margin: 0 0 16px;
+      color: var(--slate);
+      font-size: 1rem;
+    }
+    .scope {
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 85ch;
+    }
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px 18px;
+      margin-top: 8px;
+    }
+    .meta-item {
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+    .meta-item .label {
+      display: block;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--slate);
+      margin-bottom: 4px;
+    }
+    .meta-item .value { font-weight: 600; font-size: 0.95rem; }
+    .score-pill {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+    .score-pill .num { font-size: 1.35rem; font-weight: 800; color: var(--amber); }
+    .score-pill.muted .num { color: var(--green); }
+    .stars {
+      color: #fbbf24;
+      letter-spacing: 2px;
+      font-size: 1.1rem;
+    }
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+      margin: 22px 0 0;
+    }
+    section {
+      margin-bottom: var(--section-gap);
+    }
+    .section-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin: 0 0 8px;
+      color: var(--ink);
+    }
+    .section-lead {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 85ch;
+    }
+    .chart-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px 22px 12px;
+    }
+    .chart-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .chart-wrap { position: relative; height: 300px; width: 100%; }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+    }
+    .kpi {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px 20px 18px;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .kpi:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.1);
+    }
+    .kpi-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    .kpi-value {
+      font-size: 1.55rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+    }
+    .kpi-label { font-weight: 600; font-size: 0.9rem; margin-top: 4px; }
+    .kpi-sub { font-size: 0.82rem; color: var(--slate); margin-top: 8px; }
+    .tabs {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+    }
+    [role="tablist"] {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+      border-bottom: 1px solid #e2e8f0;
+      background: #f8fafc;
+    }
+    [role="tab"] {
+      flex: 1 1 auto;
+      min-width: 140px;
+      padding: 14px 16px;
+      border: none;
+      background: transparent;
+      font: inherit;
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -1px;
+    }
+    [role="tab"]:hover { color: var(--ink); background: rgba(99, 102, 241, 0.06); }
+    [role="tab"][aria-selected="true"] {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      background: var(--card);
+    }
+    [role="tabpanel"] {
+      padding: 22px 22px 26px;
+      display: none;
+    }
+    [role="tabpanel"][data-active="true"] { display: block; }
+    .journey {
+      display: grid;
+      gap: 16px;
+    }
+    @media (min-width: 900px) {
+      .journey {
+        grid-template-columns: repeat(5, 1fr);
+        align-items: stretch;
+      }
+      .journey-stage { position: relative; }
+      .journey-stage:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        top: 28px;
+        right: -8px;
+        width: 16px;
+        height: 2px;
+        background: #e2e8f0;
+        z-index: 0;
+      }
+    }
+    .journey-stage {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 14px 14px 16px;
+      border: 1px solid #e2e8f0;
+    }
+    .journey-stage h3 { margin: 0 0 8px; font-size: 0.88rem; }
+    .journey-stage p { margin: 0; font-size: 0.82rem; color: var(--muted); }
+    .badges-row { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+    .tag-functional { background: rgba(16, 185, 129, 0.15); color: #047857; }
+    .tag-manual { background: rgba(100, 116, 139, 0.2); color: #334155; }
+    .tag-critical { background: rgba(239, 68, 68, 0.15); color: #b91c1c; }
+    .tag-partial { background: rgba(245, 158, 11, 0.2); color: #b45309; }
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+    .stat-card {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 14px 16px;
+      border: 1px solid #e2e8f0;
+    }
+    .stat-card .n { font-size: 1.35rem; font-weight: 800; color: var(--primary); }
+    .stat-card .l { font-size: 0.8rem; color: var(--slate); margin-top: 4px; }
+    .two-col {
+      display: grid;
+      gap: 20px;
+    }
+    @media (min-width: 768px) {
+      .two-col { grid-template-columns: 1fr 1fr; }
+    }
+    .themes ul { margin: 0; padding-left: 1.1rem; color: var(--muted); font-size: 0.9rem; }
+    .themes li { margin-bottom: 8px; }
+    .opp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
+    .opp-card {
+      border-radius: 12px;
+      padding: 16px;
+      background: #fafafa;
+      border: 1px solid #e5e5e5;
+    }
+    .opp-card h3 { margin: 0 0 8px; font-size: 0.95rem; }
+    .opp-card p { margin: 0; font-size: 0.85rem; color: var(--muted); }
+    .opp-meta { font-size: 0.75rem; color: var(--primary); font-weight: 600; margin-top: 10px; }
+    .svc-grid { display: grid; gap: 14px; }
+    @media (min-width: 700px) { .svc-grid { grid-template-columns: repeat(3, 1fr); } }
+    .svc-card {
+      border-radius: 12px;
+      padding: 16px 16px 16px 18px;
+      background: var(--card);
+      border: 1px solid #e2e8f0;
+      border-left-width: 4px;
+    }
+    .svc-card p { margin: 8px 0 0; font-size: 0.88rem; color: var(--muted); }
+    footer.cta {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px 26px;
+      text-align: center;
+    }
+    footer.cta p { margin: 0 0 16px; color: var(--muted); font-size: 0.95rem; }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { filter: brightness(1.05); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--primary);
+      border: 2px solid rgba(99, 102, 241, 0.35);
+    }
+    .btn-ghost:hover { background: rgba(99, 102, 241, 0.08); }
+    .fineprint {
+      margin-top: 28px;
+      font-size: 0.8rem;
+      color: var(--slate);
+      text-align: center;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.min.js" defer></script>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero" aria-labelledby="report-title">
+      <div class="badge">ServiceOpera AI Audit · Sample</div>
+      <h1 id="report-title">Bangkok Integrated Health Center</h1>
+      <p class="subtitle">Bangkok, Thailand · Synthetic composite for format demonstration</p>
+      <p class="scope">
+        Scope covers inbound channels used by Thai metropolitan clinics and medical-tourism programs: LINE Official Account, WhatsApp Business, web forms, phone triage, and English/Chinese concierge threads. Figures below are <strong>illustrative only</strong>; no proprietary systems or patient records were accessed.
+      </p>
+      <div class="meta-grid">
+        <div class="meta-item">
+          <span class="label">Analyzed by</span>
+          <span class="value">ServiceOpera.to</span>
+        </div>
+        <div class="meta-item">
+          <span class="label">Audit date</span>
+          <span class="value">May 2026</span>
+        </div>
+        <div class="meta-item">
+          <span class="label">Service lines count</span>
+          <span class="value">3</span>
+        </div>
+        <div class="meta-item">
+          <span class="label">Audit score</span>
+          <span class="value score-pill"><span class="num">7.8</span><span>/10</span></span>
+        </div>
+        <div class="meta-item">
+          <span class="label">Star rating (public)</span>
+          <span class="value"><span class="stars" aria-hidden="true">★★★★</span><span aria-label="4.3 out of 5">☆</span> <span>4.3 / 5</span></span>
+        </div>
+      </div>
+      <div class="divider" role="presentation"></div>
+    </header>
+
+    <section aria-labelledby="trend-heading">
+      <h2 class="section-title" id="trend-heading">12-month operational trend</h2>
+      <p class="section-lead">
+        Rolling view (Jun–May) of four synthetic series: average public rating scaled ×10 (demand signal), monthly review volume, median first-response time in hours, and web-to-booking conversion. Axes are split so volume and rating are readable alongside time and percentage drivers.
+      </p>
+      <div class="chart-card">
+        <div class="chart-head">
+          <strong style="font-size:0.95rem">Composite trend (demo data)</strong>
+        </div>
+        <div class="chart-wrap"><canvas id="trendChart" aria-label="Line chart of twelve-month synthetic clinic metrics"></canvas></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="kpi-heading">
+      <h2 class="section-title" id="kpi-heading">Quantified snapshot</h2>
+      <p class="section-lead">Ranges are modeled for a mid-size integrated clinic with international mix; they are not forecasts for any real entity.</p>
+      <div class="kpi-grid">
+        <article class="kpi">
+          <div class="kpi-icon" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div class="kpi-value">฿2.1M</div>
+          <div class="kpi-label">Modeled admin drag (annual)</div>
+          <p class="kpi-sub">Staff time on duplicate intake, manual scheduling reconciliation, and multilingual thread handling across LINE and WhatsApp.</p>
+        </article>
+        <article class="kpi">
+          <div class="kpi-icon" aria-hidden="true">📅</div>
+          <div class="kpi-value">3–5 days</div>
+          <div class="kpi-label">Consultation lead time (median)</div>
+          <p class="kpi-sub">Calendar density plus manual confirmation steps; medical-tourism packages show wider variance than local bookings.</p>
+        </article>
+        <article class="kpi">
+          <div class="kpi-icon" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <div class="kpi-value">6–24h</div>
+          <div class="kpi-label">First response window</div>
+          <p class="kpi-sub">Off-hours gaps on messaging channels; English and Chinese inquiries skew toward the upper band without automated acknowledgement.</p>
+        </article>
+        <article class="kpi">
+          <div class="kpi-icon" aria-hidden="true">📈</div>
+          <div class="kpi-value">฿7.8M</div>
+          <div class="kpi-label">Illustrative upside band (12 mo)</div>
+          <p class="kpi-sub">Composite of higher-value procedure mix, reduced fallout from slow replies, and improved conversion on deposit-taking flows—sensitivity-tested, not guaranteed.</p>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="tabs-heading">
+      <h2 class="section-title" id="tabs-heading">Deep dives</h2>
+      <p class="section-lead">Use the tabs to move between journey mapping, review signals, AI opportunities framed for a 21-day pilot, and modeled service lines.</p>
+      <div class="tabs">
+        <div role="tablist" aria-label="Report sections">
+          <button type="button" role="tab" id="tab-j" aria-controls="panel-j" aria-selected="true" tabindex="0">Patient journey</button>
+          <button type="button" role="tab" id="tab-r" aria-controls="panel-r" aria-selected="false" tabindex="-1">Review analytics</button>
+          <button type="button" role="tab" id="tab-a" aria-controls="panel-a" aria-selected="false" tabindex="-1">AI opportunities</button>
+          <button type="button" role="tab" id="tab-s" aria-controls="panel-s" aria-selected="false" tabindex="-1">Service lines</button>
+        </div>
+        <div id="panel-j" role="tabpanel" aria-labelledby="tab-j" data-active="true">
+          <div class="journey">
+            <div class="journey-stage">
+              <h3>1 · Discovery</h3>
+              <p>Google Business Profile, LINE rich menu, and referral microsites drive mixed-language traffic.</p>
+              <div class="badges-row">
+                <span class="tag tag-functional">Functional</span>
+                <span class="tag tag-partial">Partial</span>
+              </div>
+            </div>
+            <div class="journey-stage">
+              <h3>2 · Inquiry</h3>
+              <p>WhatsApp and LINE threads carry imaging questions; CRM fields are not consistently populated.</p>
+              <div class="badges-row">
+                <span class="tag tag-manual">Manual</span>
+                <span class="tag tag-critical">Critical</span>
+              </div>
+            </div>
+            <div class="journey-stage">
+              <h3>3 · Booking</h3>
+              <p>Deposit links are sent manually; calendar holds expire when staff overlap shifts.</p>
+              <div class="badges-row">
+                <span class="tag tag-manual">Manual</span>
+                <span class="tag tag-partial">Partial</span>
+              </div>
+            </div>
+            <div class="journey-stage">
+              <h3>4 · Pre-visit</h3>
+              <p>Consent and travel documents for medical tourists are verified by email chains.</p>
+              <div class="badges-row">
+                <span class="tag tag-functional">Functional</span>
+                <span class="tag tag-manual">Manual</span>
+              </div>
+            </div>
+            <div class="journey-stage">
+              <h3>5 · Post-visit</h3>
+              <p>Follow-up medication reminders rely on ad-hoc LINE broadcasts without segmentation.</p>
+              <div class="badges-row">
+                <span class="tag tag-partial">Partial</span>
+                <span class="tag tag-critical">Critical</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="panel-r" role="tabpanel" aria-labelledby="tab-r" data-active="false" hidden>
+          <div class="stat-grid">
+            <div class="stat-card"><div class="n">4.3</div><div class="l">Weighted public rating (synthetic)</div></div>
+            <div class="stat-card"><div class="n">38%</div><div class="l">Reviews mentioning wait time or scheduling</div></div>
+            <div class="stat-card"><div class="n">62%</div><div class="l">Threads with non-Thai language (EN/ZH)</div></div>
+            <div class="stat-card"><div class="n">21%</div><div class="l">Negative sentiment tied to billing clarity</div></div>
+          </div>
+          <div class="two-col">
+            <div>
+              <h3 class="section-title" style="font-size:1rem;margin-bottom:10px">Positive themes</h3>
+              <div class="themes">
+                <ul>
+                  <li>Physician thoroughness and perceived clinical quality.</li>
+                  <li>Facility cleanliness and wayfinding for international patients.</li>
+                  <li>Value framing versus home-country pricing for elective procedures.</li>
+                </ul>
+              </div>
+            </div>
+            <div>
+              <h3 class="section-title" style="font-size:1rem;margin-bottom:10px">Friction themes</h3>
+              <div class="themes">
+                <ul>
+                  <li>Inconsistent deposit and refund communication across channels.</li>
+                  <li>Delays when moving from LINE to phone verification.</li>
+                  <li>Package add-ons not explained in the same language as the initial inquiry.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="panel-a" role="tabpanel" aria-labelledby="tab-a" data-active="false" hidden>
+          <div class="opp-grid">
+            <div class="opp-card">
+              <h3>1 · After-hours acknowledgement</h3>
+              <p>Auto-ack on LINE/WhatsApp with Thai/English templates and SLA for human handoff.</p>
+              <p class="opp-meta">21-day pilot: measure median first response and thread abandonment.</p>
+            </div>
+            <div class="opp-card">
+              <h3>2 · Structured intake extraction</h3>
+              <p>Map free-text symptoms and attachments into FHIR-friendly summaries for triage nurses.</p>
+              <p class="opp-meta">21-day pilot: reduce duplicate questions in first human reply.</p>
+            </div>
+            <div class="opp-card">
+              <h3>3 · Calendar-aware deposit nudges</h3>
+              <p>Trigger deposit links when slot is soft-held; expire holds with explicit patient messaging.</p>
+              <p class="opp-meta">21-day pilot: track hold-to-deposit conversion by cohort.</p>
+            </div>
+            <div class="opp-card">
+              <h3>4 · Medical-tourism document checklist</h3>
+              <p>Language-matched checklist bot before long-haul arrivals; escalate exceptions only.</p>
+              <p class="opp-meta">21-day pilot: fewer same-day cancellations for missing visa/medical letters.</p>
+            </div>
+            <div class="opp-card">
+              <h3>5 · Review reply drafting</h3>
+              <p>Human-in-the-loop drafts for billing and wait-time complaints with compliance guardrails.</p>
+              <p class="opp-meta">21-day pilot: time-to-public-reply vs. control weeks.</p>
+            </div>
+            <div class="opp-card">
+              <h3>6 · Post-discharge micro-surveys</h3>
+              <p>Segmented LINE follow-ups at day 3 and day 14 with sentiment tagging for service lines.</p>
+              <p class="opp-meta">21-day pilot: response rate and early complication keywords.</p>
+            </div>
+          </div>
+        </div>
+        <div id="panel-s" role="tabpanel" aria-labelledby="tab-s" data-active="false" hidden>
+          <div class="svc-grid">
+            <article class="svc-card" style="border-left-color:#6366f1">
+              <h3 style="margin:0;font-size:1rem">Executive health screening</h3>
+              <p>High attach rate for imaging upsells; bottleneck at morning lab throughput.</p>
+            </article>
+            <article class="svc-card" style="border-left-color:#10b981">
+              <h3 style="margin:0;font-size:1rem">Orthopedics &amp; sports medicine</h3>
+              <p>Strong domestic demand; international patients ask for implant brand transparency.</p>
+            </article>
+            <article class="svc-card" style="border-left-color:#f59e0b">
+              <h3 style="margin:0;font-size:1rem">Dermatology &amp; aesthetics</h3>
+              <p>Peak LINE volume; price-sensitive; consent photography workflows still manual.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="cta">
+      <p>This is a sample audit for layout and methodology illustration only. ServiceOpera.to does not claim these metrics describe any real clinic.</p>
+      <div class="btn-row">
+        <a class="btn btn-primary" href="mailto:hello@serviceopera.to?subject=Request%20AI%20audit">Request your audit</a>
+        <a class="btn btn-ghost" href="#">View engagement options</a>
+      </div>
+    </footer>
+    <p class="fineprint">© ServiceOpera.to · Sample report · Chart data synthetic</p>
+  </div>
+
+  <script>
+    function initTabs() {
+      var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+      var panels = {
+        'tab-j': document.getElementById('panel-j'),
+        'tab-r': document.getElementById('panel-r'),
+        'tab-a': document.getElementById('panel-a'),
+        'tab-s': document.getElementById('panel-s')
+      };
+      function select(id) {
+        tabs.forEach(function (t) {
+          var on = t.id === id;
+          t.setAttribute('aria-selected', on ? 'true' : 'false');
+          t.tabIndex = on ? 0 : -1;
+        });
+        Object.keys(panels).forEach(function (key) {
+          var p = panels[key];
+          var on = key === id;
+          p.setAttribute('data-active', on ? 'true' : 'false');
+          if (on) { p.removeAttribute('hidden'); } else { p.setAttribute('hidden', 'hidden'); }
+        });
+      }
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () { select(tab.id); });
+        tab.addEventListener('keydown', function (e) {
+          var i = tabs.indexOf(tab);
+          if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+            e.preventDefault();
+            var n = (i + 1) % tabs.length;
+            select(tabs[n].id);
+            tabs[n].focus();
+          } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            var j = (i - 1 + tabs.length) % tabs.length;
+            select(tabs[j].id);
+            tabs[j].focus();
+          }
+        });
+      });
+      select('tab-j');
+    }
+
+    function initChart() {
+      if (typeof Chart === 'undefined') return;
+      var labels = ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May'];
+      var ctx = document.getElementById('trendChart');
+      if (!ctx) return;
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Avg. rating ×10',
+              data: [38, 38.5, 39, 39.2, 40, 40.5, 41, 41.2, 41.8, 42.1, 42.6, 43],
+              borderColor: '#4f46e5',
+              backgroundColor: 'rgba(79, 70, 229, 0.18)',
+              fill: true,
+              tension: 0.35,
+              yAxisID: 'y',
+              borderWidth: 2,
+              pointRadius: 2
+            },
+            {
+              label: 'Review volume',
+              data: [92, 88, 102, 110, 105, 118, 125, 130, 122, 140, 148, 155],
+              borderColor: '#10b981',
+              backgroundColor: 'transparent',
+              fill: false,
+              tension: 0.35,
+              yAxisID: 'y1',
+              borderWidth: 2,
+              pointRadius: 2
+            },
+            {
+              label: 'Response time (h)',
+              data: [22, 20, 19, 18, 17, 16, 15, 14, 13, 12, 10, 8],
+              borderColor: '#f59e0b',
+              backgroundColor: 'transparent',
+              borderDash: [6, 4],
+              fill: false,
+              tension: 0.35,
+              yAxisID: 'y2',
+              borderWidth: 2,
+              pointRadius: 2
+            },
+            {
+              label: 'Booking conversion %',
+              data: [11, 11.5, 12, 12.5, 13, 13.5, 14, 15, 15.5, 16.5, 17.5, 18.5],
+              borderColor: '#ef4444',
+              backgroundColor: 'transparent',
+              borderDash: [4, 4],
+              fill: false,
+              tension: 0.35,
+              yAxisID: 'y3',
+              borderWidth: 2,
+              pointRadius: 2
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              labels: { boxWidth: 10, usePointStyle: true, padding: 14, font: { size: 11 } }
+            },
+            tooltip: {
+              callbacks: {
+                label: function (ctx) {
+                  var v = ctx.parsed.y;
+                  if (ctx.dataset.label.indexOf('%') !== -1) return ctx.dataset.label + ': ' + v + '%';
+                  if (ctx.dataset.label.indexOf('h)') !== -1) return ctx.dataset.label + ': ' + v + ' h';
+                  return ctx.dataset.label + ': ' + v;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { font: { size: 11 } }
+            },
+            y: {
+              type: 'linear',
+              position: 'left',
+              title: { display: true, text: 'Rating ×10', color: '#4f46e5', font: { size: 11, weight: '600' } },
+              grid: { color: 'rgba(148, 163, 184, 0.25)' },
+              suggestedMin: 36,
+              suggestedMax: 46,
+              ticks: { color: '#4f46e5', font: { size: 10 } }
+            },
+            y1: {
+              type: 'linear',
+              position: 'right',
+              title: { display: true, text: 'Reviews / mo', color: '#10b981', font: { size: 11, weight: '600' } },
+              grid: { drawOnChartArea: false },
+              suggestedMin: 70,
+              suggestedMax: 170,
+              ticks: { color: '#059669', font: { size: 10 } }
+            },
+            y2: {
+              type: 'linear',
+              position: 'right',
+              offset: true,
+              title: { display: true, text: 'Response (h)', color: '#d97706', font: { size: 11, weight: '600' } },
+              grid: { drawOnChartArea: false },
+              suggestedMin: 6,
+              suggestedMax: 24,
+              ticks: { color: '#b45309', font: { size: 10 } }
+            },
+            y3: {
+              type: 'linear',
+              position: 'right',
+              offset: true,
+              title: { display: true, text: 'Conversion %', color: '#b91c1c', font: { size: 11, weight: '600' } },
+              grid: { drawOnChartArea: false },
+              suggestedMin: 8,
+              suggestedMax: 22,
+              ticks: { color: '#b91c1c', font: { size: 10 }, callback: function (v) { return v + '%'; } }
+            }
+          }
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      initTabs();
+      initChart();
+    });
+  </script>
+</body>
+</html>
