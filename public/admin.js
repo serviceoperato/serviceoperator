@@ -872,7 +872,6 @@
       '<div class="so-site-appearance__footer">' +
       '<p class="portal-form__hint mono" id="soSiteAppearanceHint" style="margin:0;flex:1;min-width:12rem"></p>' +
       '<div class="admin-panel__actions" style="margin:0">' +
-      '<button type="button" class="btn btn--primary" id="soSiteAppearanceSave">Save all</button> ' +
       '<a href="/admin/users" class="btn btn--ghost mono" id="soSiteAppearanceBack">← Users & payouts</a>' +
       '</div></div></div>';
     panel.classList.remove('is-hidden');
@@ -1058,7 +1057,7 @@
     /**
      * Hydrate the panel from API JSON. When `opts.force` is false (default GET), do not overwrite a
      * non-empty input that differs from the payload — avoids a slow initial GET arriving after upload
-     * + PATCH and wiping the new URL before the user clicks Save all.
+     * + PUT and wiping the new URL before autosave runs.
      */
     function applySiteAppearanceMerge(apiJson, opts) {
       var force = opts && opts.force;
@@ -1178,10 +1177,10 @@
         }
       );
     }
-    /** Serialize PUTs so rapid uploads (or Save all) do not race on site-appearance.json. */
+    /** Serialize PUTs so rapid uploads or debounced autosave do not race on site-appearance storage. */
     var appearancePutChain = Promise.resolve();
 
-    /** Read persisted fields from live DOM (by id) so Save all matches what the user sees. */
+    /** Read persisted fields from live DOM (by id) for PUT payloads (autosave + uploads). */
     function collectSiteAppearancePayloadFromDom() {
       if (!document.getElementById('soSiteAppearanceRoot')) return null;
       function inputVal(id) {
@@ -1369,7 +1368,7 @@
                   if (hintEl) {
                     hintEl.textContent =
                       (putX.j && putX.j.error) ||
-                      'Uploaded but could not save to site config. Click Save all to retry.';
+                      'Uploaded but could not save to site config. Autosave will retry when you change a field.';
                   }
                   fin.value = '';
                   return;
@@ -1481,13 +1480,13 @@
             urlInput.dispatchEvent(new Event('input', { bubbles: true }));
             if (hintEl) {
               if (x.j.deletedFromDisk) {
-                hintEl.textContent = 'Removed file from server. Save to persist empty URL in site config.';
+                hintEl.textContent = 'Removed file from server. Saving empty URL…';
               } else if (x.j.reason === 'not_site_upload') {
                 hintEl.textContent =
-                  'Cleared URL (not an su-* upload under /assets/site-uploads/). Save to persist.';
+                  'Cleared URL (not an su-* upload under /assets/site-uploads/). Saving…';
               } else {
                 hintEl.textContent =
-                  'Cleared URL (upload file was already gone). Save to persist empty URL in site config.';
+                  'Cleared URL (upload file was already gone). Saving…';
               }
             }
           })
@@ -1520,6 +1519,55 @@
     bindAppearanceUpload('soSiteHeroDecoBlPickBtn', 'soSiteHeroDecoBlFile', heroDecoBlUrlEl, 'heroDecoBottomLeftUrl');
     bindClearUrl('soSiteHeroDecoBlClearBtn', heroDecoBlUrlEl);
     bindDeleteUpload('soSiteHeroDecoBlDeleteBtn', heroDecoBlUrlEl);
+    var appearanceAutosaveTimer = null;
+    function scheduleSiteAppearanceAutosave() {
+      if (isSiteAppearancePanelStale() || !siteAppearanceFormHydrated) return;
+      if (appearanceAutosaveTimer) clearTimeout(appearanceAutosaveTimer);
+      appearanceAutosaveTimer = setTimeout(function () {
+        appearanceAutosaveTimer = null;
+        if (isSiteAppearancePanelStale() || !siteAppearanceFormHydrated) return;
+        var tok = getAdminBearer();
+        if (!tok) return;
+        var domPayload = collectSiteAppearancePayloadFromDom();
+        if (!domPayload) return;
+        if (hintEl) hintEl.textContent = 'Saving…';
+        enqueueAppearancePersistPut(domPayload).then(function (x) {
+          if (isSiteAppearancePanelStale()) return;
+          if (!hintEl) return;
+          if (x && x.ok) {
+            hintEl.textContent = 'Saved automatically. Public: GET /api/site-appearance';
+          } else {
+            hintEl.textContent = (x && x.j && x.j.error) || 'Save failed — fix the fields or check the network.';
+          }
+        });
+      }, 550);
+    }
+    function wireSiteAppearanceAutosaveFields() {
+      var ids = [
+        'soSiteNavLogoUrl',
+        'soSiteNavLogoAlt',
+        'soSiteJackAvatarUrl',
+        'soSiteJackAvatarAlt',
+        'soSiteHomeImgUrl',
+        'soSiteHomeImgAlt',
+        'soSiteHeroDecoTrUrl',
+        'soSiteHeroDecoTrOp',
+        'soSiteHeroDecoBlUrl',
+        'soSiteHeroDecoBlOp',
+        'soSitePropImgUrl',
+        'soSitePropImgAlt',
+        'soSiteClinicImgUrl',
+        'soSiteClinicImgAlt',
+        'soSiteHotelImgUrl',
+        'soSiteHotelImgAlt',
+      ];
+      ids.forEach(function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('input', scheduleSiteAppearanceAutosave);
+        el.addEventListener('change', scheduleSiteAppearanceAutosave);
+      });
+    }
     var selAll = document.getElementById('soSiteAppearSelectAll');
     var selNone = document.getElementById('soSiteAppearSelectNone');
     var selClear = document.getElementById('soSiteAppearClearSelected');
@@ -1564,21 +1612,15 @@
         });
         if (hintEl) {
           hintEl.textContent =
-            n > 0
-              ? 'Cleared ' + n + ' image URL(s). Save to apply defaults from the server for empty fields.'
-              : 'Select one or more fields first.';
+            n > 0 ? 'Cleared ' + n + ' image URL(s). Saving…' : 'Select one or more fields first.';
         }
       });
     }
-    var save = document.getElementById('soSiteAppearanceSave');
-    function setSiteAppearanceSaveEnabled(on) {
-      if (!save) return;
-      save.disabled = !on;
-    }
+    wireSiteAppearanceAutosaveFields();
+
     function markSiteAppearanceFormReady() {
       if (isSiteAppearancePanelStale()) return;
       siteAppearanceFormHydrated = true;
-      setSiteAppearanceSaveEnabled(true);
     }
 
     var token = getAdminBearer();
@@ -1589,11 +1631,10 @@
       }
       if (hintEl) {
         hintEl.textContent =
-          'Sign in as admin on the Node host to load saved URLs from the server and save. Below: suggested paths from /assets/ on this host.';
+          'Sign in as admin on the Node host to load saved URLs; changes save automatically when signed in. Below: suggested paths from /assets/ on this host.';
       }
       return;
     }
-    setSiteAppearanceSaveEnabled(false);
     if (hintEl) hintEl.textContent = 'Loading saved settings…';
     fetch(api('/api/admin/site-appearance'), {
       method: 'GET',
@@ -1614,14 +1655,14 @@
             hintEl.textContent =
               'Could not load saved settings (HTTP ' +
               (x.status != null ? x.status : '?') +
-              '). Showing defaults under /assets/… on this origin. Save still needs the Node API (so-api.js → backend).';
+              '). Showing defaults under /assets/… on this origin. Autosave needs the Node API (so-api.js → backend).';
           }
           bumpSiteAppearanceUrlPreviews();
           markSiteAppearanceFormReady();
           return;
         }
         applySiteAppearanceMerge(x.j);
-        if (hintEl) hintEl.textContent = 'Loaded from API. Public: GET /api/site-appearance';
+        if (hintEl) hintEl.textContent = 'Loaded from API. Edits save automatically. Public: GET /api/site-appearance';
         bumpSiteAppearanceUrlPreviews();
         markSiteAppearanceFormReady();
       })
@@ -1636,43 +1677,6 @@
         markSiteAppearanceFormReady();
       });
 
-    if (save) {
-      save.addEventListener('click', function () {
-        if (isSiteAppearancePanelStale()) return;
-        if (!siteAppearanceFormHydrated) {
-          if (hintEl) {
-            hintEl.textContent = 'Still loading saved settings; wait a moment, then try Save all again.';
-          }
-          return;
-        }
-        var tok = getAdminBearer();
-        if (!tok) {
-          if (hintEl) hintEl.textContent = 'Sign in as admin to save site appearance.';
-          return;
-        }
-        if (hintEl) hintEl.textContent = 'Saving…';
-        var domPayload = collectSiteAppearancePayloadFromDom();
-        if (!domPayload) {
-          if (hintEl) hintEl.textContent = 'Could not read form (reload the page).';
-          return;
-        }
-        /* PUT omits `icons` — server keeps existing icons. No pre-save GET (avoids racing stale baseline). */
-        return enqueueAppearancePersistPut(domPayload)
-          .then(function (x) {
-            if (isSiteAppearancePanelStale()) return;
-            if (!x || typeof x.ok === 'undefined') return;
-            if (!x.ok) {
-              if (hintEl) hintEl.textContent = (x.j && x.j.error) || 'Save failed.';
-              return;
-            }
-            if (hintEl) hintEl.textContent = 'Saved. Visitors will see the new images on the next page load.';
-          })
-          .catch(function () {
-            if (isSiteAppearancePanelStale()) return;
-            if (hintEl) hintEl.textContent = 'Network error while saving.';
-          });
-      });
-    }
   }
 
   function openIconsPanel() {
