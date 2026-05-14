@@ -1155,30 +1155,40 @@
       function has(k) {
         return !!set[k];
       }
-      if (has('navLogoUrl') && navLogoUrlEl) navLogoUrlEl.value = 'navLogoUrl' in o ? String(o.navLogoUrl != null ? o.navLogoUrl : '') : '';
-      if (has('navLogoAlt') && navLogoAltEl) navLogoAltEl.value = 'navLogoAlt' in o ? String(o.navLogoAlt != null ? o.navLogoAlt : '') : '';
-      if (has('jackAvatarUrl') && jackUrlEl) jackUrlEl.value = 'jackAvatarUrl' in o ? String(o.jackAvatarUrl != null ? o.jackAvatarUrl : '') : '';
-      if (has('jackAvatarAlt') && jackAltEl) jackAltEl.value = 'jackAvatarAlt' in o ? String(o.jackAvatarAlt != null ? o.jackAvatarAlt : '') : '';
-      if (has('homePageImageUrl') && homeUrlEl) homeUrlEl.value = 'homePageImageUrl' in o ? String(o.homePageImageUrl != null ? o.homePageImageUrl : '') : '';
-      if (has('homePageImageAlt') && homeAltEl) homeAltEl.value = 'homePageImageAlt' in o ? String(o.homePageImageAlt != null ? o.homePageImageAlt : '') : '';
-      if (has('propertyPageImageUrl') && urlEl) urlEl.value = 'propertyPageImageUrl' in o ? String(o.propertyPageImageUrl != null ? o.propertyPageImageUrl : '') : '';
-      if (has('propertyPageImageAlt') && altEl) altEl.value = 'propertyPageImageAlt' in o ? String(o.propertyPageImageAlt != null ? o.propertyPageImageAlt : '') : '';
-      if (has('clinicPageImageUrl') && clinicUrlEl)
-        clinicUrlEl.value = 'clinicPageImageUrl' in o ? String(o.clinicPageImageUrl != null ? o.clinicPageImageUrl : '') : '';
-      if (has('clinicPageImageAlt') && clinicAltEl)
-        clinicAltEl.value = 'clinicPageImageAlt' in o ? String(o.clinicPageImageAlt != null ? o.clinicPageImageAlt : '') : '';
-      if (has('hotelPageImageUrl') && hotelUrlEl) hotelUrlEl.value = 'hotelPageImageUrl' in o ? String(o.hotelPageImageUrl != null ? o.hotelPageImageUrl : '') : '';
-      if (has('hotelPageImageAlt') && hotelAltEl) hotelAltEl.value = 'hotelPageImageAlt' in o ? String(o.hotelPageImageAlt != null ? o.hotelPageImageAlt : '') : '';
-      if (has('heroDecoTopRightUrl') && heroDecoTrUrlEl)
-        heroDecoTrUrlEl.value = 'heroDecoTopRightUrl' in o ? String(o.heroDecoTopRightUrl != null ? o.heroDecoTopRightUrl : '') : '';
-      if (has('heroDecoBottomLeftUrl') && heroDecoBlUrlEl)
-        heroDecoBlUrlEl.value = 'heroDecoBottomLeftUrl' in o ? String(o.heroDecoBottomLeftUrl != null ? o.heroDecoBottomLeftUrl : '') : '';
-      if (has('heroDecoTopRightOpacity') && heroDecoTrOpEl) {
+      if (has('navLogoUrl') && navLogoUrlEl && 'navLogoUrl' in o)
+        navLogoUrlEl.value = String(o.navLogoUrl != null ? o.navLogoUrl : '');
+      if (has('navLogoAlt') && navLogoAltEl && 'navLogoAlt' in o)
+        navLogoAltEl.value = String(o.navLogoAlt != null ? o.navLogoAlt : '');
+      if (has('jackAvatarUrl') && jackUrlEl && 'jackAvatarUrl' in o)
+        jackUrlEl.value = String(o.jackAvatarUrl != null ? o.jackAvatarUrl : '');
+      if (has('jackAvatarAlt') && jackAltEl && 'jackAvatarAlt' in o)
+        jackAltEl.value = String(o.jackAvatarAlt != null ? o.jackAvatarAlt : '');
+      if (has('homePageImageUrl') && homeUrlEl && 'homePageImageUrl' in o)
+        homeUrlEl.value = String(o.homePageImageUrl != null ? o.homePageImageUrl : '');
+      if (has('homePageImageAlt') && homeAltEl && 'homePageImageAlt' in o)
+        homeAltEl.value = String(o.homePageImageAlt != null ? o.homePageImageAlt : '');
+      if (has('propertyPageImageUrl') && urlEl && 'propertyPageImageUrl' in o)
+        urlEl.value = String(o.propertyPageImageUrl != null ? o.propertyPageImageUrl : '');
+      if (has('propertyPageImageAlt') && altEl && 'propertyPageImageAlt' in o)
+        altEl.value = String(o.propertyPageImageAlt != null ? o.propertyPageImageAlt : '');
+      if (has('clinicPageImageUrl') && clinicUrlEl && 'clinicPageImageUrl' in o)
+        clinicUrlEl.value = String(o.clinicPageImageUrl != null ? o.clinicPageImageUrl : '');
+      if (has('clinicPageImageAlt') && clinicAltEl && 'clinicPageImageAlt' in o)
+        clinicAltEl.value = String(o.clinicPageImageAlt != null ? o.clinicPageImageAlt : '');
+      if (has('hotelPageImageUrl') && hotelUrlEl && 'hotelPageImageUrl' in o)
+        hotelUrlEl.value = String(o.hotelPageImageUrl != null ? o.hotelPageImageUrl : '');
+      if (has('hotelPageImageAlt') && hotelAltEl && 'hotelPageImageAlt' in o)
+        hotelAltEl.value = String(o.hotelPageImageAlt != null ? o.hotelPageImageAlt : '');
+      if (has('heroDecoTopRightUrl') && heroDecoTrUrlEl && 'heroDecoTopRightUrl' in o)
+        heroDecoTrUrlEl.value = String(o.heroDecoTopRightUrl != null ? o.heroDecoTopRightUrl : '');
+      if (has('heroDecoBottomLeftUrl') && heroDecoBlUrlEl && 'heroDecoBottomLeftUrl' in o)
+        heroDecoBlUrlEl.value = String(o.heroDecoBottomLeftUrl != null ? o.heroDecoBottomLeftUrl : '');
+      if (has('heroDecoTopRightOpacity') && heroDecoTrOpEl && 'heroDecoTopRightOpacity' in o) {
         var tr = o.heroDecoTopRightOpacity;
         var trn = typeof tr === 'number' ? tr : parseFloat(String(tr != null ? tr : ''));
         heroDecoTrOpEl.value = Number.isFinite(trn) ? String(Math.min(1, Math.max(0, trn))) : '';
       }
-      if (has('heroDecoBottomLeftOpacity') && heroDecoBlOpEl) {
+      if (has('heroDecoBottomLeftOpacity') && heroDecoBlOpEl && 'heroDecoBottomLeftOpacity' in o) {
         var br = o.heroDecoBottomLeftOpacity;
         var brn = typeof br === 'number' ? br : parseFloat(String(br != null ? br : ''));
         heroDecoBlOpEl.value = Number.isFinite(brn) ? String(Math.min(1, Math.max(0, brn))) : '';
@@ -1336,7 +1346,7 @@
       return next;
     }
     /** Cancel pending debounced autosave and PUT the same full payload autosave uses (avoids races with navigation or a stale timer). */
-    function flushSiteAppearanceSaveFromDom() {
+    function flushSiteAppearanceSaveFromDom(priorityPatch) {
       if (appearanceAutosaveTimer) {
         clearTimeout(appearanceAutosaveTimer);
         appearanceAutosaveTimer = null;
@@ -1353,6 +1363,11 @@
       }
       var domPayload = collectSiteAppearancePayloadFromDom();
       if (!domPayload) return Promise.resolve({ ok: false, j: { error: 'Nothing to save.' } });
+      if (priorityPatch && typeof priorityPatch === 'object') {
+        for (var pk in priorityPatch) {
+          if (Object.prototype.hasOwnProperty.call(priorityPatch, pk)) domPayload[pk] = priorityPatch[pk];
+        }
+      }
       return enqueueAppearancePersistPut(domPayload);
     }
     function bindAppearanceUpload(pickBtnId, fileInputId, urlInput, persistField) {
@@ -1412,7 +1427,7 @@
               var patch = {};
               patch[persistField] = uploadedUrl;
               var persistPromise = siteAppearanceFormHydrated
-                ? flushSiteAppearanceSaveFromDom()
+                ? flushSiteAppearanceSaveFromDom(patch)
                 : enqueueAppearancePersistPut(patch);
               persistPromise.then(function (putX) {
                 if (isSiteAppearancePanelStale()) return;
