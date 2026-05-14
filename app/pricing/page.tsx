@@ -3,17 +3,36 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "International remote AI operations for hotels, clinics, wellness and property operators. Start free; pricing in THB with USD/EUR quotes on request.",
+    "Remote AI operations for hotels, clinics, wellness and property operators. Start free; pricing in THB with USD/EUR quotes on request.",
+  alternates: { canonical: "https://serviceopera.to/pricing" },
+  robots: { index: true, follow: true },
+  openGraph: {
+    title: "Pricing · www.serviceopera.to",
+    description:
+      "Remote AI operations for hotels, clinics, wellness and property operators. Start free; pricing in THB with USD/EUR quotes on request.",
+    url: "https://serviceopera.to/pricing",
+    siteName: "www.serviceopera.to",
+    type: "website",
+    locale: "en_US",
+    images: [{ url: "https://serviceopera.to/assets/logo.png", width: 512, height: 512, alt: "www.serviceopera.to" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pricing · www.serviceopera.to",
+    description:
+      "Remote AI operations for hotels, clinics, wellness and property operators. Start free; pricing in THB with USD/EUR quotes on request.",
+    images: ["https://serviceopera.to/assets/logo.png"],
+  },
 };
 
 const subtitle =
   "Remote AI operations for hotels, clinics and property operators serving international customers. Start free, scale when it works.";
 
 const credibility =
-  "International and Southeast Asia market experience anchors our studio — we run remote AI operations for hotels, clinics, wellness brands, and property portfolios worldwide.";
+  "Remote AI operations for hotels, clinics, wellness brands, and property portfolios serving international demand — delivery and support on a fixed cadence.";
 
 const freeDescription =
-  "You receive a private audit report within 48 hours covering your public footprint, 3 visible operational gaps and one pilot idea — built from public data, not assumptions.";
+  "Private audit within 48 hours: public footprint review, three visible operational gaps, three automation opportunities, and one pilot idea — structured, not generic.";
 
 const footerNote =
   "International clients welcome. Pricing shown in Thai Baht (THB); USD/EUR quotes available on request. Custom build fees may apply for complex integrations on White-Glove. Month-to-month, no annual lock-in. All tiers negotiable for multi-location operators.";
@@ -33,7 +52,7 @@ export default function PricingPage() {
         <div className="so-pricing-grid">
           <article className="so-pricing-card" aria-labelledby="tier-free-heading">
             <p id="tier-free-heading" className="so-pricing-label">
-              Free Audit
+              48-hour private audit
             </p>
             <p className="so-pricing-price">฿0</p>
             <p className="so-pricing-subtext">One-time · No card required</p>
@@ -41,9 +60,9 @@ export default function PricingPage() {
             <a
               className="so-pricing-cta so-pricing-cta--primary"
               href="/pricing/inquiry?plan=free"
-              aria-label="Request your free audit"
+              aria-label="Request a 48-hour private audit"
             >
-              Request your free audit
+              Request a 48-hour private audit
             </a>
           </article>
 

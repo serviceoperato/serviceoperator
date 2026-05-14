@@ -37,8 +37,7 @@
     if (e.key === 'Escape' && modal.classList.contains('is-open')) close();
   });
 
-  // Demo credentials map.
-  // For each prospect Jack adds an entry here (or serves it from the backend).
+  // Demo credentials map (static demo only).
   // username -> { password, slug, business }
   const CREDENTIALS = {
     'amari-resort':   { password: 'demo2026', slug: 'amari-resort',   business: 'Amari Resort · Thailand' },
@@ -56,7 +55,7 @@
       const rec = CREDENTIALS[u];
 
       if (!rec || rec.password !== p) {
-        hint.textContent = 'Invalid credentials. Check the access details Jack sent you.';
+        hint.textContent = 'Invalid credentials. Check the access details you received.';
         hint.className = 'portal-form__hint mono is-error';
         form.querySelector('input[type="password"]').value = '';
         return;
@@ -89,24 +88,24 @@
 
   var MAIL_REPORT =
     'mailto:jack@serviceopera.to?subject=' +
-    encodeURIComponent('Request: Private AI Operations Report') +
+    encodeURIComponent('Request: 48-hour private audit') +
     '&body=' +
     encodeURIComponent(
-      'Hi Jack,\n\nBusiness name:\nCity / region:\nWebsite:\nWhat I want the report to focus on:\n\nThanks.'
+      'Business name:\nSector (hotel / clinic / property):\nWebsite:\nPriority bottleneck:\n\nThanks.'
     );
   var MAIL_AUDIT =
     'mailto:jack@serviceopera.to?subject=' +
-    encodeURIComponent('Request: Automation Audit') +
+    encodeURIComponent('Request: Automation audit') +
     '&body=' +
     encodeURIComponent(
-      'Hi Jack,\n\nBusiness name:\nSector (hotel / clinic / property):\nWhat feels broken in operations today:\n\nThanks.'
+      'Business name:\nSector (hotel / clinic / property):\nWhat feels broken in operations today:\n\nThanks.'
     );
 
   var TITLE_HTML =
     '<span class="line">AI Operations for Service Businesses</span>' +
     '<span class="line line--soft">Hotels, Clinics &amp; Property · Worldwide</span>';
   var LEDE =
-    'I analyze public business data, reviews, competitors and lead flows, then build practical AI systems that help international-facing operators capture more inquiries, reply faster and automate repetitive work.';
+    'Public footprint, reviews, competitors, and lead flows are reviewed; the output is practical automation scoped to international-facing operators — faster replies, structured follow-up, and less manual repetition.';
 
   var COPY = {
     clinics: { lede: LEDE },

@@ -2720,7 +2720,17 @@ app.get(['/pricing', '/pricing/'], (_req, res) => {
 /** Pricing tier inquiry form (`?plan=free|operator|white`). */
 app.get(['/pricing/inquiry', '/pricing/inquiry/'], (_req, res) => {
   res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow');
   res.sendFile(path.join(publicDir, 'pricing-inquiry.html'));
+});
+
+/** SEO hub: AI operations verticals (same document as long filename; canonical `/ai-operations/`). */
+app.get(['/ai-operations', '/ai-operations/'], (_req, res) => {
+  res.sendFile(path.join(publicDir, 'ai-operations-for-hotels-clinics-property.html'));
+});
+
+app.get('/ai-operations-for-hotels-clinics-property.html', (_req, res) => {
+  res.redirect(301, '/ai-operations/');
 });
 
 /** Retired marketing page — bookmarks and external links go to canonical pricing. */
@@ -2821,7 +2831,13 @@ app.use(
         filePath.endsWith('admin.js') ||
         norm.endsWith('app-version.json') ||
         norm.endsWith('operator/places-leads.html') ||
-        norm.includes('/clinics/report.html')
+        filePath.endsWith('places-leads.html') ||
+        filePath.endsWith('pricing-inquiry.html') ||
+        norm.includes('/clinics/report.html') ||
+        norm.includes('/clinics/') ||
+        norm.includes('/hotels/') ||
+        norm.includes('/operator/') ||
+        norm.includes('/reports/catalog.html')
       ) {
         res.setHeader('Cache-Control', 'no-store');
         res.setHeader('X-Robots-Tag', 'noindex, nofollow');

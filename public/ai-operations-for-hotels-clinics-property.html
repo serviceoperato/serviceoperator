@@ -5,17 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
 <title>AI operations for hotels, clinics &amp; property — www.serviceopera.to</title>
-<meta name="description" content="AI operations for hotels, clinics and property: WhatsApp and LINE concierge, inquiry qualification, review follow-up, lead capture and operator reporting — packaged as one-pain, one-pilot engagements." />
-<meta name="keywords" content="AI operations for hotels clinics property, hotel AI automation, clinic AI follow-up, property AI lead capture, WhatsApp concierge, LINE concierge, service operator automation, international AI operations" />
+<meta name="description" content="AI operations for hotels, clinics and property: inquiry handling, channel automation, reviews, and operator reporting. Start with a 48-hour private audit; one pain, one pilot." />
+<meta name="keywords" content="AI operations for hotels clinics property, hotel AI automation, clinic AI follow-up, property AI lead capture, WhatsApp concierge, LINE concierge, service operator automation" />
 <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1" />
-<link rel="canonical" href="https://serviceopera.to/ai-operations-for-hotels-clinics-property.html" />
+<link rel="canonical" href="https://serviceopera.to/ai-operations/" />
 
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="www.serviceopera.to" />
-<meta property="og:url" content="https://serviceopera.to/ai-operations-for-hotels-clinics-property.html" />
+<meta property="og:url" content="https://serviceopera.to/ai-operations/" />
 <meta property="og:title" content="AI operations for hotels, clinics &amp; property — www.serviceopera.to" />
 <meta property="og:description" content="One operator framework. Three verticals. Practical AI systems for hotels, clinics and property operators that reduce manual work and recover missed demand." />
 <meta property="og:image" content="https://serviceopera.to/assets/logo.png" />
+<meta property="og:locale" content="en_US" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="AI operations for hotels, clinics &amp; property" />
 <meta name="twitter:description" content="Practical AI systems for hotels, clinics and property operators. One pain, one pilot, one operator cadence." />
@@ -33,16 +34,22 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "Service",
-  "name": "AI operations for hotels, clinics and property",
-  "serviceType": "AI operations and automation for service operators",
-  "provider": {
-    "@type": "Organization",
-    "name": "www.serviceopera.to",
-    "url": "https://serviceopera.to/",
-    "logo": "https://serviceopera.to/assets/logo.png",
-    "email": "jack@serviceopera.to"
-  },
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://serviceopera.to/#organization",
+      "name": "ServiceOpera.to",
+      "alternateName": ["www.serviceopera.to", "serviceopera.to"],
+      "url": "https://serviceopera.to/",
+      "logo": "https://serviceopera.to/assets/logo.png",
+      "email": "jack@serviceopera.to",
+      "description": "AI operations and automation for hotels, clinics, and property operators."
+    },
+    {
+      "@type": "Service",
+      "name": "AI operations for hotels, clinics and property",
+      "serviceType": "AI operations and automation for service operators",
+      "provider": { "@id": "https://serviceopera.to/#organization" },
   "areaServed": [
     { "@type": "Place", "name": "Worldwide" },
     { "@type": "Place", "name": "International service markets" }
@@ -51,7 +58,7 @@
     "@type": "BusinessAudience",
     "audienceType": "Hotel, clinic and property operators"
   },
-  "url": "https://serviceopera.to/ai-operations-for-hotels-clinics-property.html",
+  "url": "https://serviceopera.to/ai-operations/",
   "description": "Operator-grade AI automation for hotels, clinics and property: inquiry qualification, WhatsApp and LINE workflows, review follow-up, lead reactivation, owner reporting and operational visibility.",
   "hasOfferCatalog": {
     "@type": "OfferCatalog",
@@ -86,6 +93,8 @@
       }
     ]
   }
+    }
+  ]
 }
 </script>
 
@@ -95,7 +104,7 @@
   "@type": "BreadcrumbList",
   "itemListElement": [
     { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://serviceopera.to/" },
-    { "@type": "ListItem", "position": 2, "name": "AI operations for hotels, clinics & property", "item": "https://serviceopera.to/ai-operations-for-hotels-clinics-property.html" }
+    { "@type": "ListItem", "position": 2, "name": "AI operations for hotels, clinics & property", "item": "https://serviceopera.to/ai-operations/" }
   ]
 }
 </script>
@@ -118,7 +127,7 @@
       "name": "How does an engagement start?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "With a private operational audit based on public footprint data and market signals. The audit ranks practical automation opportunities. One urgent bottleneck is then picked, piloted as a small working system, and only expanded if it earns its keep in daily operations."
+        "text": "With a 48-hour private operational audit using public footprint data and market signals. You receive a short private report: three visible operational gaps, three automation opportunities, and one practical pilot idea. One bottleneck is then piloted as a small working system and expanded only if it holds up in daily operations."
       }
     },
     {
@@ -209,6 +218,13 @@
     font-size: 0.95rem;
     line-height: 1.55;
   }
+  .mkt-microcopy {
+    margin: 0.75rem 0 0;
+    max-width: 42rem;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--mute-2);
+  }
 </style>
 </head>
 <body class="page-mkt">
@@ -233,11 +249,12 @@
   <header class="hero">
     <p class="mkt-kicker">AI operations · Three verticals · One operator framework</p>
     <h1>AI operations for hotels, clinics &amp; property.</h1>
-    <p class="lead">www.serviceopera.to packages AI operations for service operators across three verticals — hotels and serviced apartments, clinics and wellness, and property and rental operators. Same operator framework, different workflows. Built remotely for international-facing businesses, with deep experience in mixed-channel service markets.</p>
+    <p class="lead">www.serviceopera.to delivers AI operations for service operators across three verticals — hotels and serviced apartments, clinics and wellness, and property and rental operators. Same operator framework, different workflows. Remote delivery for international-facing businesses.</p>
     <div class="cta-row">
-      <a class="btn btn-primary" href="#inquiry">Request a private audit</a>
-      <a class="btn btn-secondary" href="/reports.html">How the audit works</a>
+      <a class="btn btn-primary" href="/reports.html#inquiry">Get a 48-hour private audit</a>
+      <a class="btn btn-secondary" href="/reports.html">Audit scope &amp; process</a>
     </div>
+    <p class="mkt-microcopy">Receive a short private report with 3 visible operational gaps, 3 automation opportunities, and one practical pilot idea for your hotel, clinic or property business.</p>
   </header>
 
   <section class="mkt-section" aria-labelledby="seo-scope">
@@ -305,7 +322,7 @@
   <section class="mkt-section" aria-labelledby="seo-engagement">
     <h2 id="seo-engagement">How an engagement starts</h2>
     <ol>
-      <li><strong>Private audit.</strong> A short operational audit using public footprint data, channel signals and visible bottlenecks. Output is a ranked list of automation opportunities tied to the vertical, not generic AI claims.</li>
+      <li><strong>Private audit (48 hours).</strong> A concise operational audit from public footprint data, channel signals, and visible bottlenecks. Output is a ranked list of automation opportunities tied to the vertical — not generic AI claims.</li>
       <li><strong>One pain → one pilot.</strong> One urgent bottleneck is selected. A small working AI system is built around it, deployed on the channels the business already uses, and monitored against an operator-readable metric.</li>
       <li><strong>Operator cadence.</strong> The system is supported remotely on a fixed cadence. What performs is kept and refined. Unnecessary complexity is removed before it accumulates.</li>
     </ol>
@@ -344,7 +361,7 @@
 
   <section class="mkt-section" id="inquiry">
     <h2>Request a private audit</h2>
-    <p>Work email, sector, and what we should improve first — the audit returns a ranked list of practical automation opportunities for the relevant vertical.</p>
+    <p>Work email, sector, and priority bottleneck. The 48-hour audit returns the structured gaps, opportunities, and pilot idea described above.</p>
     <div
       data-inquiry-form
       data-inquiry-topic="AI operations audit (hotels / clinics / property)"
@@ -354,7 +371,7 @@
 </main>
 
 <footer class="mkt-footer">
-  <span>© 2026 Service Opera · Remote AI operations · www.serviceopera.to</span>
+  <span>© 2026 www.serviceopera.to · Remote AI operations</span>
   <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a>
 </footer>
 
