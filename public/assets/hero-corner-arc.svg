@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" fill="none" aria-hidden="true">
-  <!-- North (#312e81) segment from icons/segmented-ring.svg; ring center off top-right, arc cropped into viewport -->
-  <g transform="translate(1140 72) scale(52) translate(-12 -12)">
-    <path stroke="#312e81" stroke-width="0.0385" stroke-linecap="round" d="M8.25 5.505A7.5 7.5 0 0 1 15.75 5.505"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" fill="none" aria-hidden="true">
+  <!-- Single 60° arc: same rx/ry, stroke-width, linecap as public/assets/icons/segmented-ring.svg (#312e81 paths). Rotated -90° so the bulge faces left for top-right placement (corner swoosh). Large translate + scale crops most of the ring inside the viewBox. -->
+  <g transform="translate(-750 -825) scale(100) rotate(-90 12 12)">
+    <path stroke="#312e81" stroke-width="2" stroke-linecap="round" d="M15.75 18.495A7.5 7.5 0 0 1 8.25 18.495"/>
   </g>
 </svg>

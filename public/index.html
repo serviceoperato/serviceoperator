@@ -87,6 +87,7 @@
   }
   .page-home .so-b2b__hero {
     position: relative;
+    isolation: isolate;
     overflow-x: clip;
     display: flex;
     flex-direction: column;
@@ -745,7 +746,7 @@
     border: 2px solid rgba(255, 255, 255, 0.35);
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
     overflow: hidden;
-    background: rgba(255, 255, 255, 0.12);
+    background: transparent;
   }
   .page-home .so-b2b__jack-photo {
     position: absolute;
@@ -1182,7 +1183,7 @@
 
     <aside class="so-b2b__jack" aria-labelledby="jack-h">
       <div class="so-b2b__jack-avatar-col">
-        <div class="so-b2b__jack-avatar">
+        <div class="so-b2b__jack-avatar" data-so-jack-avatar>
           <img class="so-b2b__jack-photo" src="/assets/jack-avatar.png" alt="" width="256" height="256" decoding="async" onerror="this.remove();" />
           <span class="so-b2b__jack-avatar-fallback" aria-hidden="true">J</span>
         </div>
