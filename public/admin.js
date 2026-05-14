@@ -976,7 +976,7 @@
       }
       imgEl.addEventListener('load', function () {
         if (!siteAppearanceResolveUrl(urlInput.value)) return;
-        if (!imgEl.naturalWidth) return;
+        /* Do not require naturalWidth: some SVG (and occasional WebP) report 0×0 in <img> while still painting. */
         imgEl.classList.remove('is-hidden');
         if (emptyEl) emptyEl.classList.add('is-hidden');
       });

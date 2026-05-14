@@ -144,7 +144,8 @@
     opacity: var(--so-hero-deco-tr-opacity, 0.12);
   }
   /* Bottom swoosh: fixed to viewport bottom-left. z-index above page canvas but below main/footer (z:3) so it is not trapped under the white column by #homeMain's isolated stack. */
-  .page-home #homeMain > .so-b2b__hero-deco--bl {
+  /* Descendant (not only direct child): keeps BL rules if the node moves under #homeMain; theme targets .so-b2b__hero-deco--bl. */
+  .page-home #homeMain .so-b2b__hero-deco--bl {
     position: fixed;
     bottom: 0;
     left: max(-6vw, -2.5rem);
