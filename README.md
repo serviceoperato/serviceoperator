@@ -133,6 +133,7 @@ The `Dockerfile` runs **Node**: `server.mjs` serves **`public/`** and sets the s
 | `RESEND_FROM` | Recommended | Verified sender, e.g. `ServiceOpera <noreply@yourdomain.com>`. Resend’s test domain only delivers to your own mailbox. |
 | `CLINIC_SELF_REGISTER` | Optional | **On by default** for **`server.mjs`**: **Create account** on `/login.html` stages a pending sign-up and sends a **confirmation email** (needs **`RESEND_API_KEY`**); the account is created only after the user opens the link. Set to `false`, `0`, `no`, or `off` for invite-only accounts (admin creates users). |
 | `PUBLIC_ORIGIN` | Optional | Full public URL of the site (e.g. `https://serviceopera.to`), no trailing slash. Used in reset links if the reverse proxy does not pass a reliable host/proto. |
+| `DATA_DIR` | Optional | Directory for JSON state (`site-appearance.json`, portal users when not on Postgres, etc.). Defaults to `./data` locally and `/app/data` in the Docker image. **Railway’s root filesystem is ephemeral** unless you add a [volume](https://docs.railway.com/guides/volumes): mount it at `/app/data` (or set `DATA_DIR` to your mount path) so site appearance and uploads under `public/assets/site-uploads/` are not lost on every redeploy. |
 
 **Migration — admin email OTP removed (deploy checklist)**
 

@@ -70,6 +70,8 @@
   var userProfilingRows = [];
   /** idle | ok | error | skipped */
   var auditReportsLoadState = 'idle';
+  /** Bumped each time Site appearance opens so late GET/PUT callbacks cannot touch a replaced panel. */
+  var siteAppearancePanelGen = 0;
 
   function api(path) {
     return typeof soApiUrl === 'function' ? soApiUrl(path) : path;
@@ -683,6 +685,12 @@
 
   function openBrandingPanel() {
     if (!panel || !panelTitle || !panelBody) return;
+    siteAppearancePanelGen += 1;
+    var appearanceMountGen = siteAppearancePanelGen;
+    function isSiteAppearancePanelStale() {
+      return appearanceMountGen !== siteAppearancePanelGen;
+    }
+    var siteAppearanceFormHydrated = false;
     if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.add('is-hidden');
     panelTitle.textContent = 'Site appearance';
     panelBody.innerHTML =
@@ -1123,6 +1131,54 @@
     }
     /** Serialize PUTs so rapid uploads (or Save all) do not race on site-appearance.json. */
     var appearancePutChain = Promise.resolve();
+
+    /** Read persisted fields from live DOM (by id) so Save all matches what the user sees. */
+    function collectSiteAppearancePayloadFromDom() {
+      function inputVal(id) {
+        var el = document.getElementById(id);
+        return el ? String(el.value != null ? el.value : '') : '';
+      }
+      function parseHeroDecoOpacity(id) {
+        var el = document.getElementById(id);
+        if (!el) return undefined;
+        var s = String(el.value != null ? el.value : '').trim();
+        if (s === '') return undefined;
+        var n = parseFloat(s);
+        return Number.isFinite(n) ? n : undefined;
+      }
+      var trOp = parseHeroDecoOpacity('soSiteHeroDecoTrOp');
+      var blOp = parseHeroDecoOpacity('soSiteHeroDecoBlOp');
+      var payload = {
+        navLogoUrl: inputVal('soSiteNavLogoUrl'),
+        navLogoAlt: inputVal('soSiteNavLogoAlt'),
+        jackAvatarUrl: inputVal('soSiteJackAvatarUrl'),
+        jackAvatarAlt: inputVal('soSiteJackAvatarAlt'),
+        homePageImageUrl: inputVal('soSiteHomeImgUrl'),
+        homePageImageAlt: inputVal('soSiteHomeImgAlt'),
+        propertyPageImageUrl: inputVal('soSitePropImgUrl'),
+        propertyPageImageAlt: inputVal('soSitePropImgAlt'),
+        clinicPageImageUrl: inputVal('soSiteClinicImgUrl'),
+        clinicPageImageAlt: inputVal('soSiteClinicImgAlt'),
+        hotelPageImageUrl: inputVal('soSiteHotelImgUrl'),
+        hotelPageImageAlt: inputVal('soSiteHotelImgAlt'),
+        heroDecoTopRightUrl: inputVal('soSiteHeroDecoTrUrl'),
+        heroDecoBottomLeftUrl: inputVal('soSiteHeroDecoBlUrl'),
+      };
+      if (trOp !== undefined) payload.heroDecoTopRightOpacity = trOp;
+      if (blOp !== undefined) payload.heroDecoBottomLeftOpacity = blOp;
+      return payload;
+    }
+
+    function stripOkFromSiteAppearanceJson(body) {
+      var o = body && typeof body === 'object' ? body : {};
+      var out = {};
+      for (var k in o) {
+        if (!Object.prototype.hasOwnProperty.call(o, k) || k === 'ok') continue;
+        out[k] = o[k];
+      }
+      return out;
+    }
+
     function executeSiteAppearancePut(body) {
       var tok = getAdminBearer();
       if (!tok) {
@@ -1147,7 +1203,7 @@
           });
         })
         .then(function (x) {
-          if (x.ok && x.j) {
+          if (!isSiteAppearancePanelStale() && x.ok && x.j) {
             applySiteAppearanceMerge(x.j, { force: true });
             bumpSiteAppearanceUrlPreviews();
           }
@@ -1226,6 +1282,7 @@
               var patch = {};
               patch[persistField] = uploadedUrl;
               enqueueAppearancePersistPut(patch).then(function (putX) {
+                if (isSiteAppearancePanelStale()) return;
                 if (!putX.ok) {
                   if (hintEl) {
                     hintEl.textContent =
@@ -1383,16 +1440,31 @@
         }
       });
     }
+    var save = document.getElementById('soSiteAppearanceSave');
+    function setSiteAppearanceSaveEnabled(on) {
+      if (!save) return;
+      save.disabled = !on;
+    }
+    function markSiteAppearanceFormReady() {
+      if (isSiteAppearancePanelStale()) return;
+      siteAppearanceFormHydrated = true;
+      setSiteAppearanceSaveEnabled(true);
+    }
+
     var token = getAdminBearer();
     if (!token) {
-      applySiteAppearanceMerge({});
-      bumpSiteAppearanceUrlPreviews();
+      if (!isSiteAppearancePanelStale()) {
+        applySiteAppearanceMerge({});
+        bumpSiteAppearanceUrlPreviews();
+      }
       if (hintEl) {
         hintEl.textContent =
           'Sign in as admin on the Node host to load saved URLs from the server and save. Below: suggested paths from /assets/ on this host.';
       }
       return;
     }
+    setSiteAppearanceSaveEnabled(false);
+    if (hintEl) hintEl.textContent = 'Loading saved settings…';
     fetch(api('/api/admin/site-appearance'), {
       method: 'GET',
       credentials: apiCred(),
@@ -1405,6 +1477,7 @@
         });
       })
       .then(function (x) {
+        if (isSiteAppearancePanelStale()) return;
         if (!x.ok || !x.j) {
           applySiteAppearanceMerge({});
           if (hintEl) {
@@ -1414,52 +1487,71 @@
               '). Showing defaults under /assets/… on this origin. Save still needs the Node API (so-api.js → backend).';
           }
           bumpSiteAppearanceUrlPreviews();
+          markSiteAppearanceFormReady();
           return;
         }
         applySiteAppearanceMerge(x.j);
         if (hintEl) hintEl.textContent = 'Loaded from API. Public: GET /api/site-appearance';
         bumpSiteAppearanceUrlPreviews();
+        markSiteAppearanceFormReady();
       })
       .catch(function () {
+        if (isSiteAppearancePanelStale()) return;
         applySiteAppearanceMerge({});
         if (hintEl) {
           hintEl.textContent =
             'Network error calling the API. Showing /assets/… defaults. Deploy frontend with so-api.js so admin requests reach the backend.';
         }
         bumpSiteAppearanceUrlPreviews();
+        markSiteAppearanceFormReady();
       });
 
-    var save = document.getElementById('soSiteAppearanceSave');
     if (save) {
       save.addEventListener('click', function () {
-        if (hintEl) hintEl.textContent = 'Saving…';
-        var trOpNum = heroDecoTrOpEl ? Number(heroDecoTrOpEl.value) : NaN;
-        var blOpNum = heroDecoBlOpEl ? Number(heroDecoBlOpEl.value) : NaN;
-        var savePayload = {
-          navLogoUrl: navLogoUrlEl ? navLogoUrlEl.value : '',
-          navLogoAlt: navLogoAltEl ? navLogoAltEl.value : '',
-          jackAvatarUrl: jackUrlEl ? jackUrlEl.value : '',
-          jackAvatarAlt: jackAltEl ? jackAltEl.value : '',
-          homePageImageUrl: homeUrlEl ? homeUrlEl.value : '',
-          homePageImageAlt: homeAltEl ? homeAltEl.value : '',
-          propertyPageImageUrl: urlEl ? urlEl.value : '',
-          propertyPageImageAlt: altEl ? altEl.value : '',
-          clinicPageImageUrl: clinicUrlEl ? clinicUrlEl.value : '',
-          clinicPageImageAlt: clinicAltEl ? clinicAltEl.value : '',
-          hotelPageImageUrl: hotelUrlEl ? hotelUrlEl.value : '',
-          hotelPageImageAlt: hotelAltEl ? hotelAltEl.value : '',
-          heroDecoTopRightUrl: heroDecoTrUrlEl ? heroDecoTrUrlEl.value : '',
-          heroDecoBottomLeftUrl: heroDecoBlUrlEl ? heroDecoBlUrlEl.value : '',
-        };
-        if (Number.isFinite(trOpNum)) savePayload.heroDecoTopRightOpacity = trOpNum;
-        if (Number.isFinite(blOpNum)) savePayload.heroDecoBottomLeftOpacity = blOpNum;
-        enqueueAppearancePersistPut(savePayload).then(function (x) {
-          if (!x.ok) {
-            if (hintEl) hintEl.textContent = (x.j && x.j.error) || 'Save failed.';
-            return;
+        if (isSiteAppearancePanelStale()) return;
+        if (!siteAppearanceFormHydrated) {
+          if (hintEl) {
+            hintEl.textContent = 'Still loading saved settings; wait a moment, then try Save all again.';
           }
-          if (hintEl) hintEl.textContent = 'Saved. Visitors will see the new images on the next page load.';
-        });
+          return;
+        }
+        var tok = getAdminBearer();
+        if (!tok) {
+          if (hintEl) hintEl.textContent = 'Sign in as admin to save site appearance.';
+          return;
+        }
+        if (hintEl) hintEl.textContent = 'Saving…';
+        fetch(api('/api/admin/site-appearance'), {
+          method: 'GET',
+          credentials: apiCred(),
+          cache: 'no-store',
+          headers: { Authorization: 'Bearer ' + tok },
+        })
+          .then(function (r) {
+            return r.json().then(function (j) {
+              return { ok: r.ok, j: j };
+            });
+          })
+          .then(function (x) {
+            if (isSiteAppearancePanelStale()) return;
+            var baseline = stripOkFromSiteAppearanceJson(x.ok && x.j ? x.j : {});
+            var domPayload = collectSiteAppearancePayloadFromDom();
+            var merged = Object.assign({}, baseline, domPayload);
+            return enqueueAppearancePersistPut(merged);
+          })
+          .then(function (x) {
+            if (isSiteAppearancePanelStale()) return;
+            if (!x || typeof x.ok === 'undefined') return;
+            if (!x.ok) {
+              if (hintEl) hintEl.textContent = (x.j && x.j.error) || 'Save failed.';
+              return;
+            }
+            if (hintEl) hintEl.textContent = 'Saved. Visitors will see the new images on the next page load.';
+          })
+          .catch(function () {
+            if (isSiteAppearancePanelStale()) return;
+            if (hintEl) hintEl.textContent = 'Network error while saving.';
+          });
       });
     }
   }
