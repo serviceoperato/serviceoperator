@@ -138,6 +138,20 @@ The `Dockerfile` runs **Node**: `server.mjs` serves **`public/`** and sets the s
 | `DATA_DIR` | Optional | Directory for JSON state when not on Postgres (`site-appearance.json`, portal users, etc.). Defaults to `./data` locally and `/app/data` in the Docker image. **Railway’s root filesystem is ephemeral**; with **`DATABASE_URL`**, site appearance + uploads live in Postgres and do not need a volume for those. Without Postgres, add a [volume](https://docs.railway.com/guides/volumes) if you rely on `DATA_DIR` or `public/assets/site-uploads/` staying across redeploys. |
 | `DATABASE_URL` | Recommended on Railway | When set **and** the server connects at startup, portal users, site appearance JSON, and admin image bytes use PostgreSQL (`site_uploads` + `GET /api/site-uploads/<uuid>`). Must be on the **same Railway service** that runs `server.mjs` (the process that handles `POST /api/admin/site-appearance/upload`). If the variable is present but deploy logs show `PostgreSQL init failed`, the pool stays off: site appearance falls back to JSON/disk, **`GET /api/site-uploads/:id` returns 404**, and **new uploads are rejected with HTTP 503** until you fix connectivity and redeploy (then re-upload images).
 
+### Dental Design Center audit — emailed magic link (passwordless open)
+
+The public audit page stays anonymous for everyone without `?access=` / `?magic=`. With those query params, the page loads the same HTML, **immediately removes the token from the address bar** (`history.replaceState`), **`POST /api/auth/audit-ddc-magic`**, and stores **`so_user_jwt`** / **`so_user_session_id`** like **`login.html`** after a normal sign-in. The magic token is an **HMAC-signed JWT** using the same **`PORTAL_JWT_SECRET`** / **`ADMIN_JWT_SECRET`** as the rest of the portal (`aud: audit-ddc`, **`sub` = portal user email**, **`exp`**). It is **not single-use** (anyone with the URL can exchange it until **`exp`**). **Rotating `PORTAL_JWT_SECRET`** revokes all outstanding links.
+
+**Mint a link** on a machine that has the production API secret:
+
+```bash
+export PORTAL_JWT_SECRET='…same as Railway…'
+export PUBLIC_ORIGIN='https://www.serviceopera.to'   # optional
+node scripts/mint-audit-ddc-magic-link.mjs recipient@example.com
+```
+
+The portal user must already exist and **`reportSlug`** must match **`AUDIT_DDC_REPORT_SLUG`** (default `dental-design-center-audit`). Optional **`AUDIT_DDC_MAGIC_TTL_MS`** sets link lifetime when minting (default seven days, capped at thirty days in the script).
+
 **Railway checklist — persistent “Site appearance” images**
 
 1. Add a **PostgreSQL** plugin (or external DB) and copy its connection string into **`DATABASE_URL`** on the **Node / Docker service** that runs `server.mjs` — not on a separate static-only service.

@@ -797,6 +797,7 @@ const CLINIC_JWT_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const CLINIC_RESET_JWT_MS = 60 * 60 * 1000;
 /** Email confirmation / onboarding link after self-registration (pending row consumed on completion). */
 const CLINIC_VERIFY_JWT_MS = 48 * 60 * 60 * 1000;
+const AUDIT_DDC_REPORT_SLUG = (process.env.AUDIT_DDC_REPORT_SLUG || 'dental-design-center-audit').trim() || 'dental-design-center-audit';
 const PORTAL_REGISTER_OK_RESPONSE = {
   ok: true,
   message:
@@ -849,6 +850,27 @@ function isPortalResetRole(role) {
 }
 function isPortalOnboardRole(role) {
   return role === 'user_onboard' || role === 'clinic_onboard';
+}
+
+function isAuditDdMagicJwtPayload(p) {
+  return (
+    p &&
+    p.role === 'audit_dd_magic' &&
+    p.aud === 'audit-ddc' &&
+    typeof p.sub === 'string' &&
+    p.sub.includes('@')
+  );
+}
+
+/** @type {Map<string, number[]>} */
+const auditMagicExchangeTimestampsByIp = new Map();
+const AUDIT_MAGIC_EXCHANGE_WINDOW_MS = SEND_WINDOW_MS;
+const AUDIT_MAGIC_EXCHANGE_MAX_PER_WINDOW = 30;
+function pruneAuditMagicExchange(ip) {
+  const now = Date.now();
+  const arr = (auditMagicExchangeTimestampsByIp.get(ip) || []).filter((t) => now - t < AUDIT_MAGIC_EXCHANGE_WINDOW_MS);
+  auditMagicExchangeTimestampsByIp.set(ip, arr);
+  return arr;
 }
 
 function dualPost(pathNew, pathLegacy, handler) {
@@ -1470,6 +1492,54 @@ app.get('/api/public/audit-ddc-first-access', async (_req, res) => {
     reportPath,
     email,
     tempPassword,
+  });
+});
+
+/**
+ * Exchange a short-lived signed magic JWT for a normal portal session JWT (same storage keys as
+ * login.html). Token is minted offline via scripts/mint-audit-ddc-magic-link.mjs using PORTAL_JWT_SECRET.
+ * Not single-use: valid until exp; rotating PORTAL_JWT_SECRET revokes all outstanding links.
+ */
+app.post('/api/auth/audit-ddc-magic', async (req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  const ip = clientIp(req);
+  const hits = pruneAuditMagicExchange(ip);
+  if (hits.length >= AUDIT_MAGIC_EXCHANGE_MAX_PER_WINDOW) {
+    return res.status(429).json({ error: 'Too many requests. Try again later.' });
+  }
+  const token = typeof req.body?.token === 'string' ? req.body.token.trim() : '';
+  if (!token) {
+    return res.status(400).json({ error: 'Missing token.' });
+  }
+  const p = verifyJwt(token);
+  if (!isAuditDdMagicJwtPayload(p)) {
+    return res.status(401).json({ error: 'Invalid or expired access link.' });
+  }
+  const email = normalizeEmail(p.sub);
+  let user;
+  try {
+    user = await userStore.getUserByEmail(email);
+  } catch {
+    return res.status(503).json({ error: 'Sign-in is temporarily unavailable. Try again later.' });
+  }
+  if (!user || user.active === false) {
+    return res.status(401).json({ error: 'Invalid or expired access link.' });
+  }
+  if (user.reportSlug !== AUDIT_DDC_REPORT_SLUG) {
+    return res.status(403).json({ error: 'This access link is not valid for your account.' });
+  }
+  hits.push(Date.now());
+  auditMagicExchangeTimestampsByIp.set(ip, hits);
+  const sessionId = await recordPortalLogin(req, user);
+  const portalToken = signPortalUserJwt(user);
+  const reportPath = '/clinics/' + AUDIT_DDC_REPORT_SLUG + '/';
+  return res.json({
+    ok: true,
+    token: portalToken,
+    sessionId,
+    reportSlug: user.reportSlug,
+    reportUrl: reportPath,
+    passwordMustChange: Boolean(user.passwordMustChange),
   });
 });
 

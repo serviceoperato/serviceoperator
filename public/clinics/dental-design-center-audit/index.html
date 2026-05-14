@@ -312,6 +312,30 @@ strong { color: var(--color-text-primary); }
 [data-theme="light"] .audit-portal-access__btn:disabled {
   opacity: 0.5;
 }
+
+/* Magic-link bootstrap (?access=…): brief status strip */
+.so-audit-magic-banner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0.45rem 1rem 0.55rem;
+  font-size: 13px;
+  text-align: center;
+  border-radius: 0 0 12px 12px;
+  background: rgba(67, 56, 202, 0.28);
+  color: #e0e7ff;
+}
+.so-audit-magic-banner[data-error="1"] {
+  background: rgba(127, 29, 29, 0.45);
+  color: #fecaca;
+}
+[data-theme="light"] .so-audit-magic-banner {
+  background: rgba(79, 70, 229, 0.14);
+  color: #312e81;
+}
+[data-theme="light"] .so-audit-magic-banner[data-error="1"] {
+  background: #fee2e2;
+  color: #991b1b;
+}
 </style>
 </head>
 <body class="audit-report page-client" data-page-skeleton="native">
@@ -330,6 +354,8 @@ strong { color: var(--color-text-primary); }
     <button type="button" class="theme-toggle" data-theme-toggle aria-label="Theme"></button>
   </div>
 </nav>
+
+<div id="soAuditMagicBanner" class="so-audit-magic-banner" hidden role="status" aria-live="polite"></div>
 
 <section class="audit-portal-access" id="auditPortalAccess" hidden lang="en" aria-labelledby="auditPortalAccessTitle">
   <div class="audit-portal-access__card">
@@ -1147,6 +1173,91 @@ strong { color: var(--color-text-primary); }
   <div style="margin-top:1rem;font-size:11px;color:var(--color-text-muted);">Public data only. No medical claims made. No patient data accessed. All impact figures are estimates from public signals and industry benchmarks.</div>
 </footer>
 
+<script>
+(function () {
+  if (window.__SO_AUDIT_DDC_MAGIC_DONE__) return;
+  var u;
+  try {
+    u = new URL(window.location.href);
+  } catch (e) {
+    return;
+  }
+  var raw = (u.searchParams.get('access') || u.searchParams.get('magic') || '').trim();
+  if (!raw) return;
+  window.__SO_AUDIT_DDC_MAGIC_DONE__ = true;
+
+  function api(path) {
+    return typeof soApiUrl === 'function' ? soApiUrl(path) : path;
+  }
+  function credMode() {
+    return typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin';
+  }
+  function setBanner(text, isErr) {
+    var el = document.getElementById('soAuditMagicBanner');
+    if (!el) return;
+    el.textContent = text;
+    el.hidden = false;
+    if (isErr) el.setAttribute('data-error', '1');
+    else el.removeAttribute('data-error');
+  }
+
+  u.searchParams.delete('access');
+  u.searchParams.delete('magic');
+  var qs = u.searchParams.toString();
+  var cleanUrl = u.pathname + (qs ? '?' + qs : '') + u.hash;
+  try {
+    history.replaceState(null, '', cleanUrl);
+  } catch (e2) {}
+
+  setBanner('Signing you in…', false);
+
+  fetch(api('/api/auth/audit-ddc-magic'), {
+    method: 'POST',
+    credentials: credMode(),
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token: raw }),
+    cache: 'no-store',
+  })
+    .then(function (r) {
+      return r.json().then(function (j) {
+        return { ok: r.ok, j: j };
+      });
+    })
+    .then(function (x) {
+      if (!x.ok || !x.j || !x.j.ok || !x.j.token) {
+        var err = (x.j && x.j.error) || 'Sign-in link invalid or expired.';
+        setBanner(err, true);
+        return;
+      }
+      var lj = x.j;
+      try {
+        sessionStorage.setItem('so_user_jwt', lj.token);
+        try {
+          localStorage.setItem('so_user_jwt', lj.token);
+        } catch (eLs) {}
+        if (lj.sessionId) {
+          sessionStorage.setItem('so_user_session_id', lj.sessionId);
+          try {
+            localStorage.setItem('so_user_session_id', lj.sessionId);
+          } catch (eLs2) {}
+        }
+      } catch (err) {}
+      var ban = document.getElementById('soAuditMagicBanner');
+      if (ban) ban.hidden = true;
+      if (lj.passwordMustChange) {
+        var nextPath = u.pathname || '/clinics/dental-design-center-audit/';
+        window.location.replace('/login.html?next=' + encodeURIComponent(nextPath));
+        return;
+      }
+      try {
+        window.location.reload();
+      } catch (eR) {}
+    })
+    .catch(function () {
+      setBanner('Could not reach the server. Try again or use Log in.', true);
+    });
+})();
+</script>
 <script src="/sw-register.js"></script>
 <script src="/site-nav-drawer.js"></script>
 <script src="/user-account-menu.js"></script>
