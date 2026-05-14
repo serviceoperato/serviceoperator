@@ -48,6 +48,7 @@
   }
   .page-home #homeMain {
     position: relative;
+    isolation: isolate;
   }
   .page-home #homeMain > .so-b2b,
   .page-home #homeMain > .so-b2b-footer {
@@ -78,7 +79,7 @@
     width: min(105vw, 960px);
     aspect-ratio: 1;
     pointer-events: none;
-    z-index: 0;
+    z-index: -1;
     background-repeat: no-repeat;
     background-size: 100% auto;
     filter: blur(0.8px);
@@ -100,7 +101,7 @@
     width: min(105vw, 960px);
     aspect-ratio: 1;
     pointer-events: none;
-    z-index: 0;
+    z-index: -1;
     background-repeat: no-repeat;
     background-size: 100% auto;
     background-position: left bottom;
