@@ -1,6 +1,22 @@
+# https://serviceopera.to — public marketing only; private/demo/admin paths disallowed
 User-agent: *
 Allow: /
+
+# Private, auth, admin, and internal tools
 Disallow: /client.html
+Disallow: /login.html
+Disallow: /register.html
+Disallow: /admin.html
+Disallow: /admin
+Disallow: /operator/
+Disallow: /places-leads.html
+
+# Demo and sample content (audits under these prefixes)
 Disallow: /clinics/
+Disallow: /hotels/
+
+# Forms and internal catalogs
+Disallow: /pricing/inquiry
+Disallow: /reports/catalog.html
 
 Sitemap: https://serviceopera.to/sitemap.xml

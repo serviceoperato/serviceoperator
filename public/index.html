@@ -6,8 +6,22 @@
 <!-- When this HTML is served from a static host, point API calls at the Node service (override in deploy if URL changes). -->
 <meta name="so-api-origin" content="https://serviceoperato-backend-production.up.railway.app" />
 <script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
-<title>www.serviceopera.to · AI automations that operate</title>
-<meta name="description" content="Done-for-you AI operations: private demo with real data, then pilot or monthly managed service for hotels, clinics, wellness and property operators." />
+<title>www.serviceopera.to · 48-hour private audit &amp; operator workflows</title>
+<meta name="description" content="48-hour private audit: written brief on operational gaps, workflow leverage points, and one pilot for hotels, clinics, and property operators. Execution optional." />
+<link rel="canonical" href="https://serviceopera.to/" />
+<meta name="robots" content="index,follow" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="www.serviceopera.to" />
+<meta property="og:url" content="https://serviceopera.to/" />
+<meta property="og:title" content="www.serviceopera.to · 48-hour private audit &amp; operator workflows" />
+<meta property="og:description" content="48-hour private audit: written brief on operational gaps, workflow leverage points, and one pilot for hotels, clinics, and property operators. Execution optional." />
+<meta property="og:image" content="https://serviceopera.to/assets/logo.png" />
+<meta property="og:image:alt" content="www.serviceopera.to" />
+<meta property="og:locale" content="en_US" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="www.serviceopera.to · 48-hour private audit &amp; operator workflows" />
+<meta name="twitter:description" content="48-hour private audit: written brief on operational gaps, workflow leverage points, and one pilot for hotels, clinics, and property operators. Execution optional." />
+<meta name="twitter:image" content="https://serviceopera.to/assets/logo.png" />
 <link rel="icon" href="/favicon.png" type="image/png" sizes="any" />
 <link rel="apple-touch-icon" href="/favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,6 +30,32 @@
 <link rel="stylesheet" href="styles.css" />
 <script src="/page-skeleton.js"></script>
 <script src="/so-api.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://serviceopera.to/#organization",
+      "name": "ServiceOpera.to",
+      "alternateName": ["www.serviceopera.to", "serviceopera.to"],
+      "url": "https://serviceopera.to/",
+      "logo": "https://serviceopera.to/assets/logo.png",
+      "email": "jack@serviceopera.to",
+      "description": "Private operational audits, workflow pilots, and managed execution for hotels, clinics, and property operators.",
+      "sameAs": []
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://serviceopera.to/#website",
+      "url": "https://serviceopera.to/",
+      "name": "www.serviceopera.to",
+      "publisher": { "@id": "https://serviceopera.to/#organization" },
+      "inLanguage": "en"
+    }
+  ]
+}
+</script>
 <style>
   /* Homepage B2B landing — scoped to .page-home .so-b2b */
   .page-home .so-b2b {
@@ -32,7 +72,7 @@
     background: var(--so-surface);
     max-width: 68rem;
     margin: 0 auto;
-    padding: calc(var(--site-nav-offset) + 1rem) var(--gutter) 3.5rem;
+    padding: calc(var(--site-nav-offset) + var(--space-4)) var(--gutter) var(--space-12);
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
   }
@@ -59,11 +99,11 @@
   .page-home .so-b2b__wrap {
     display: flex;
     flex-direction: column;
-    gap: 3.25rem;
+    gap: var(--space-12);
   }
   @media (min-width: 900px) {
     .page-home .so-b2b__wrap {
-      gap: 4rem;
+      gap: var(--space-16);
     }
   }
   .page-home .so-b2b__hero {
@@ -141,8 +181,8 @@
   .page-home .so-b2b__cta-row {
     display: flex;
     flex-direction: column;
-    gap: 0.65rem;
-    margin-top: 1.35rem;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
   }
   @media (min-width: 480px) {
     .page-home .so-b2b__cta-row {
@@ -151,32 +191,36 @@
       align-items: center;
     }
   }
+  .page-home .so-b2b__cta-micro {
+    margin: var(--space-3) 0 0;
+    max-width: 36rem;
+    font-size: clamp(0.8125rem, 2.4vw, 0.875rem);
+    line-height: 1.55;
+    color: var(--mute-2);
+    letter-spacing: 0.01em;
+  }
   .page-home .so-b2b__btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 0.9rem 1.35rem;
-    border-radius: 12px;
+    padding: 0.875rem var(--space-6);
+    border-radius: var(--radius-btn);
     font-size: 0.9375rem;
     font-weight: 600;
     text-decoration: none;
     border: 1px solid transparent;
-    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
   }
   .page-home .so-b2b__btn--primary {
-    background: #4f46e5;
-    color: #ffffff;
+    background: var(--amber);
+    color: var(--pill-on-amber);
     border-color: transparent;
-    box-shadow: 0 1px 2px rgba(79, 70, 229, 0.22);
+    box-shadow: 0 1px 2px color-mix(in srgb, var(--amber) 24%, transparent);
   }
   .page-home .so-b2b__btn--primary:hover {
     filter: brightness(1.06);
-    box-shadow: 0 4px 20px rgba(79, 70, 229, 0.38);
-  }
-  [data-theme="dark"] .page-home .so-b2b__btn--primary {
-    background: #4f46e5;
-    color: #ffffff;
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--amber) 36%, transparent);
   }
   .page-home .so-b2b__btn--ghost {
     background: transparent;
@@ -184,17 +228,17 @@
     border-color: var(--so-line);
   }
   .page-home .so-b2b__btn--ghost:hover {
-    border-color: #4f46e5;
-    color: #4f46e5;
+    border-color: var(--amber);
+    color: var(--amber);
   }
   .page-home .so-b2b__btn--ghost .so-b2b__btn-play {
-    color: #4f46e5;
+    color: var(--amber);
   }
   [data-theme="dark"] .page-home .so-b2b__btn--ghost .so-b2b__btn-play {
-    color: #4f46e5;
+    color: var(--amber);
   }
   .page-home .so-b2b__btn--ghost:hover .so-b2b__btn-play {
-    color: #4f46e5;
+    color: var(--amber);
   }
   .page-home .so-b2b__btn-inner {
     display: inline-flex;
@@ -218,11 +262,8 @@
     inset: 0;
     width: 100%;
     height: 100%;
-    color: #4f46e5;
+    color: var(--amber);
     pointer-events: none;
-  }
-  [data-theme="dark"] .page-home .so-b2b__btn-play-ring {
-    color: #4f46e5;
   }
   .page-home .so-b2b__btn-play-tri {
     position: relative;
@@ -237,14 +278,11 @@
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
-    font-size: 0.75rem;
+    font-size: clamp(0.7rem, 2vw, 0.75rem);
     font-weight: 500;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: #64748b;
-  }
-  [data-theme="dark"] .page-home .so-b2b__markets {
-    color: #94a3b8;
+    color: var(--mute-2);
   }
   .page-home .so-b2b__markets-ico {
     width: 1rem;
@@ -258,10 +296,7 @@
     align-items: center;
     vertical-align: middle;
     margin-right: 0.1rem;
-    color: #4f46e5;
-  }
-  [data-theme="dark"] .page-home .so-b2b__markets-ico-slot {
-    color: #4f46e5;
+    color: var(--amber);
   }
   .page-home .so-b2b .home-lp__card-icon-wrap .so-icon-override-img {
     width: 22px;
@@ -439,7 +474,9 @@
     flex-direction: column;
     gap: 1.25rem;
   }
-  .page-home .so-b2b__section#process {
+  .page-home .so-b2b__section#process,
+  .page-home .so-b2b__section#workflow,
+  .page-home .so-b2b__section#outcomes {
     scroll-margin-top: calc(var(--site-nav-offset) + 0.75rem);
   }
   .page-home .so-b2b__h2 {
@@ -510,6 +547,291 @@
     font-size: 0.8125rem;
     line-height: 1.5;
     color: var(--so-muted);
+  }
+  .page-home .so-b2b__next-layout {
+    display: grid;
+    gap: 1.25rem;
+    align-items: start;
+  }
+  @media (min-width: 840px) {
+    .page-home .so-b2b__next-layout {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: 1.5rem;
+    }
+  }
+  .page-home .so-b2b__next-steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-radius: 14px;
+    border: 1px solid var(--so-line);
+    background: var(--so-surface);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+    overflow: hidden;
+  }
+  .page-home .so-b2b__next-steps li {
+    display: grid;
+    grid-template-columns: 2.25rem 1fr;
+    gap: 0.65rem 0.85rem;
+    align-items: center;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--so-line);
+    font-size: 0.875rem;
+    line-height: 1.45;
+    color: var(--so-muted);
+  }
+  .page-home .so-b2b__next-steps li:last-child {
+    border-bottom: none;
+  }
+  .page-home .so-b2b__next-n {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: #4f46e5;
+  }
+  [data-theme="dark"] .page-home .so-b2b__next-n {
+    color: #818cf8;
+  }
+  .page-home .so-b2b__next-steps strong {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--so-ink);
+    letter-spacing: -0.01em;
+  }
+  .page-home .so-b2b__preview-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+  .page-home .so-b2b__preview-list li {
+    position: relative;
+    padding-left: 1rem;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: var(--so-muted);
+  }
+  .page-home .so-b2b__preview-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.45;
+  }
+  .page-home .so-b2b__section-lede {
+    margin: -0.25rem 0 0;
+    max-width: 42rem;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--so-muted);
+  }
+  .page-home .so-b2b__workflow-rail {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 0.45rem 0.35rem;
+    margin: 0;
+    padding: 0;
+  }
+  .page-home .so-b2b__workflow-node {
+    flex: 1 1 148px;
+    min-width: 0;
+    margin: 0;
+    padding: 0.85rem 0.95rem;
+    border-radius: 12px;
+    border: 1px solid var(--so-line);
+    background: var(--so-surface);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+  }
+  .page-home .so-b2b__workflow-label {
+    display: block;
+    margin: 0 0 0.35rem;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #64748b;
+  }
+  [data-theme="dark"] .page-home .so-b2b__workflow-label {
+    color: #94a3b8;
+  }
+  .page-home .so-b2b__workflow-detail {
+    display: block;
+    margin: 0;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    font-weight: 500;
+    color: var(--so-ink);
+  }
+  .page-home .so-b2b__workflow-arrow {
+    display: none;
+    align-self: center;
+    flex: 0 0 auto;
+    padding: 0 0.2rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #94a3b8;
+    line-height: 1;
+    user-select: none;
+  }
+  @media (min-width: 900px) {
+    .page-home .so-b2b__workflow-arrow {
+      display: block;
+    }
+  }
+  .page-home .so-b2b__outcomes-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.65rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 640px) {
+    .page-home .so-b2b__outcomes-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1024px) {
+    .page-home .so-b2b__outcomes-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .page-home .so-b2b__outcomes-grid > li {
+    margin: 0;
+    padding: 0.85rem 0.95rem;
+    border-radius: 12px;
+    border: 1px solid var(--so-line);
+    background: var(--so-surface);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: var(--so-muted);
+  }
+  .page-home .so-b2b__outcomes-grid strong {
+    display: block;
+    margin: 0 0 0.3rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--so-ink);
+    letter-spacing: -0.01em;
+  }
+  .page-home .so-b2b__audit-preview {
+    margin: 0;
+  }
+  .page-home .so-b2b__audit-preview-doc {
+    padding: 0;
+    border-radius: 14px;
+    border: 1px solid var(--so-line);
+    background: var(--so-subtle);
+    box-shadow: 0 2px 12px rgba(15, 23, 42, 0.06);
+    overflow: hidden;
+    border-left: 3px solid #4f46e5;
+  }
+  [data-theme="dark"] .page-home .so-b2b__audit-preview-doc {
+    background: rgba(15, 23, 42, 0.45);
+    border-left-color: #6366f1;
+    box-shadow: 0 2px 16px rgba(2, 6, 23, 0.4);
+  }
+  .page-home .so-b2b__audit-preview-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.35rem 0.75rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--so-line);
+    background: var(--so-surface);
+  }
+  [data-theme="dark"] .page-home .so-b2b__audit-preview-head {
+    background: rgba(30, 41, 59, 0.65);
+  }
+  .page-home .so-b2b__audit-preview-badge {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #64748b;
+  }
+  [data-theme="dark"] .page-home .so-b2b__audit-preview-badge {
+    color: #94a3b8;
+  }
+  .page-home .so-b2b__audit-preview-title {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--so-ink);
+    letter-spacing: -0.02em;
+  }
+  .page-home .so-b2b__audit-preview-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    margin: 0;
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid var(--so-line);
+    background: color-mix(in srgb, #4f46e5 5%, var(--so-surface));
+  }
+  [data-theme="dark"] .page-home .so-b2b__audit-preview-meta {
+    background: rgba(79, 70, 229, 0.12);
+  }
+  .page-home .so-b2b__audit-preview-meta > div {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    margin: 0;
+  }
+  .page-home .so-b2b__audit-preview-meta dt {
+    margin: 0;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #64748b;
+  }
+  .page-home .so-b2b__audit-preview-meta dd {
+    margin: 0;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--so-ink);
+  }
+  .page-home .so-b2b__audit-preview-sub {
+    margin: 0;
+    padding: 0.55rem 1rem 0;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #64748b;
+  }
+  [data-theme="dark"] .page-home .so-b2b__audit-preview-sub {
+    color: #94a3b8;
+  }
+  .page-home .so-b2b__audit-preview .so-b2b__preview-list {
+    padding: 0.35rem 1rem 0.85rem;
+  }
+  .page-home .so-b2b__audit-preview-foot {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--so-line);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--so-ink);
+    background: var(--so-surface);
+  }
+  [data-theme="dark"] .page-home .so-b2b__audit-preview-foot {
+    background: rgba(30, 41, 59, 0.5);
   }
   .page-home .so-b2b__feat-list {
     list-style: none;
@@ -962,24 +1284,25 @@
       <p class="so-b2b__brand">www.serviceopera.to</p>
       <div class="client-hero__eyebrow">
         <span class="dot dot--live" aria-hidden="true"></span>
-        <span class="mono">AI AUTOMATIONS THAT OPERATE</span>
+        <span class="mono">CHANNEL OPS · WORKFLOWS · REPORTING</span>
       </div>
       <h1 class="clinics-hero__title">
-        <span class="line">We build AI automations that</span>
-        <span class="line"><span class="line--accent-plain">save time</span>, win more <span class="line--accent-plain">leads</span></span>
-        <span class="line">and increase <span class="line--accent-plain">revenue</span>.</span>
+        <span class="line">Enquiries triaged.</span>
+        <span class="line">Follow-up <span class="line--accent-plain">closed</span>.</span>
+        <span class="line"><span class="line--accent-plain">Reporting</span> on time.</span>
       </h1>
-      <p class="client-hero__lede so-b2b__hero-lede">We analyze your business, create a private demo with real data and show exactly where you lose time, leads or revenue — then automate what matters.</p>
+      <p class="client-hero__lede so-b2b__hero-lede">Structured review of operations, enquiry handling, and margin leakage. Build and run only what the numbers justify.</p>
 
       <div class="so-b2b__cta-row">
-        <a class="so-b2b__btn so-b2b__btn--primary" href="/reports.html#inquiry">Get a free private audit in 48h</a>
-        <a class="so-b2b__btn so-b2b__btn--ghost" href="#process"><span class="so-b2b__btn-inner"><span class="so-b2b__btn-play" aria-hidden="true"><svg class="so-b2b__btn-play-ring" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15.75 18.495A7.5 7.5 0 0 1 8.25 18.495"/><path d="M5.505 15.75A7.5 7.5 0 0 1 5.505 8.25"/><path d="M8.25 5.505A7.5 7.5 0 0 1 15.75 5.505"/><path d="M18.495 8.25A7.5 7.5 0 0 1 18.495 15.75"/></svg><svg class="so-b2b__btn-play-tri" viewBox="0 0 10 12" width="10" height="12" aria-hidden="true"><polygon points="0,0 10,6 0,12" fill="currentColor"/></svg></span>See How It Works</span></a>
+        <a class="so-b2b__btn so-b2b__btn--primary" href="/reports.html#inquiry">Get a 48-hour private audit</a>
+        <a class="so-b2b__btn so-b2b__btn--ghost" href="#workflow"><span class="so-b2b__btn-inner"><span class="so-b2b__btn-play" aria-hidden="true"><svg class="so-b2b__btn-play-ring" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15.75 18.495A7.5 7.5 0 0 1 8.25 18.495"/><path d="M5.505 15.75A7.5 7.5 0 0 1 5.505 8.25"/><path d="M8.25 5.505A7.5 7.5 0 0 1 15.75 5.505"/><path d="M18.495 8.25A7.5 7.5 0 0 1 18.495 15.75"/></svg><svg class="so-b2b__btn-play-tri" viewBox="0 0 10 12" width="10" height="12" aria-hidden="true"><polygon points="0,0 10,6 0,12" fill="currentColor"/></svg></span>See workflow</span></a>
       </div>
+      <p class="so-b2b__cta-micro">Receive a short private report with 3 visible operational gaps, 3 workflow leverage points, and one practical pilot idea for your hotel, clinic or property business.</p>
       <p class="so-b2b__markets">
         <span data-so-icon="home-markets" class="so-b2b__markets-ico-slot" aria-hidden="true">
         <svg class="so-b2b__markets-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.4 2.9 3.7 6.2 3.7 9s-1.3 6.1-3.7 9"/><path d="M12 3c-2.4 2.9-3.7 6.2-3.7 9s1.3 6.1 3.7 9"/></svg>
         </span>
-        Thailand &amp; International Markets
+        Hotels · Clinics · Property operators
       </p>
 
       <figure class="so-b2b__visual" aria-label="Operations preview">
@@ -988,7 +1311,7 @@
           src="/assets/home-page-hero.png"
           width="1280"
           height="720"
-          alt="Private demo and operations view for multi-channel businesses."
+          alt="Inbox triage, reply templates, and operator reporting view."
           loading="lazy"
           decoding="async"
           data-so-site-appearance="home-hero"
@@ -1003,7 +1326,7 @@
             </div>
             <p class="home-lp__card-label"><a href="/hotels.html">Hotels &amp; serviced apartments</a></p>
             <p class="home-lp__card-stat">48%</p>
-            <p class="home-lp__card-desc">of Thai hotel operators lose revenue at least once a week by reacting too slowly to competitor pricing — despite 96% agreeing speed is critical.</p>
+            <p class="home-lp__card-desc">of surveyed hotel operators lose revenue at least once a week by reacting too slowly to competitor pricing — despite 96% agreeing speed is critical.</p>
             <p class="home-lp__card-source"><a href="https://www.siteminder.com/news/dynamic-revenue-plus-global-release/" target="_blank" rel="noopener noreferrer">SiteMinder, Aug 2025 →</a></p>
             <p class="home-lp__card-cta"><a href="/hotels.html">Explore hotels →</a></p>
           </article>
@@ -1013,8 +1336,8 @@
             </div>
             <p class="home-lp__card-label"><a href="/clinics.html">Clinics, dental &amp; wellness</a></p>
             <p class="home-lp__card-stat">3M</p>
-            <p class="home-lp__card-desc">international patients visited Thailand in 2024 — including 900,000+ for dental care. Treatments cost 50–70% less than in the West, but inquiries still drop with slow follow-up.</p>
-            <p class="home-lp__card-source"><a href="https://us-uk.bookimed.com/article/thailand-dental-holiday/" target="_blank" rel="noopener noreferrer">Bookimed / TAT, 2024 →</a></p>
+            <p class="home-lp__card-desc">cross-border patient volumes keep rising, yet margin still walks out the door when enquiry and treatment coordination lag—even where price positioning is strong.</p>
+            <p class="home-lp__card-source"><a href="https://us-uk.bookimed.com/article/thailand-dental-holiday/" target="_blank" rel="noopener noreferrer">Industry reporting, 2024 →</a></p>
             <p class="home-lp__card-cta"><a href="/clinics.html">Explore clinics →</a></p>
           </article>
           <article class="home-lp__card home-lp__card--sector home-lp__card--sector-property">
@@ -1023,8 +1346,8 @@
             </div>
             <p class="home-lp__card-label"><a href="/property.html">Property &amp; rental operators</a></p>
             <p class="home-lp__card-stat">7–10%</p>
-            <p class="home-lp__card-desc">gross rental yield in Phuket and Pattaya tourist areas — but fragmented handovers and manual reporting are leaving money on the table for most operators.</p>
-            <p class="home-lp__card-source"><a href="https://www.globalpropertyguide.com/asia/thailand/rental-yields" target="_blank" rel="noopener noreferrer">Bangkok Post / Global Property Guide, 2025 →</a></p>
+            <p class="home-lp__card-desc">attractive headline yields in high-turnover rental corridors mean little when handovers, renewals, and owner reporting stay manual.</p>
+            <p class="home-lp__card-source"><a href="https://www.globalpropertyguide.com/asia/thailand/rental-yields" target="_blank" rel="noopener noreferrer">Market data, 2025 →</a></p>
             <p class="home-lp__card-cta"><a href="/property.html">Explore property →</a></p>
           </article>
         </div>
@@ -1065,8 +1388,104 @@
       </div>
     </section>
 
+    <section class="so-b2b__section" id="workflow" aria-labelledby="workflow-h">
+      <h2 class="so-b2b__h2" id="workflow-h">Operational workflow</h2>
+      <p class="so-b2b__section-lede">One chain from inbound signal to staff handoff and scheduled readouts — no parallel innovation track.</p>
+      <div class="so-b2b__workflow-rail">
+        <div class="so-b2b__workflow-node">
+          <span class="so-b2b__workflow-label">Inbound</span>
+          <span class="so-b2b__workflow-detail">WhatsApp, LINE, email, forms</span>
+        </div>
+        <span class="so-b2b__workflow-arrow" aria-hidden="true">→</span>
+        <div class="so-b2b__workflow-node">
+          <span class="so-b2b__workflow-label">Triage</span>
+          <span class="so-b2b__workflow-detail">Intent, SLA, routing rules</span>
+        </div>
+        <span class="so-b2b__workflow-arrow" aria-hidden="true">→</span>
+        <div class="so-b2b__workflow-node">
+          <span class="so-b2b__workflow-label">Playbook</span>
+          <span class="so-b2b__workflow-detail">Draft replies, checklists, escalations</span>
+        </div>
+        <span class="so-b2b__workflow-arrow" aria-hidden="true">→</span>
+        <div class="so-b2b__workflow-node">
+          <span class="so-b2b__workflow-label">Handoff</span>
+          <span class="so-b2b__workflow-detail">Staff owns exceptions &amp; closes</span>
+        </div>
+        <span class="so-b2b__workflow-arrow" aria-hidden="true">→</span>
+        <div class="so-b2b__workflow-node">
+          <span class="so-b2b__workflow-label">Readout</span>
+          <span class="so-b2b__workflow-detail">Weekly or monthly operator cut</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="so-b2b__section" id="outcomes" aria-labelledby="outcomes-h">
+      <h2 class="so-b2b__h2" id="outcomes-h">Measurable outcomes</h2>
+      <p class="so-b2b__section-lede">Each pilot names one metric, a baseline, and a review window. Scale only when the delta holds.</p>
+      <ul class="so-b2b__outcomes-grid">
+        <li><strong>Median first response</strong> Time from inbound signal to first meaningful reply — tracked down-channel.</li>
+        <li><strong>Qualified inquiry rate</strong> Share of threads meeting your qualification bar before staff time is spent.</li>
+        <li><strong>Review thread closure</strong> Open review or complaint threads resolved inside the agreed SLA.</li>
+        <li><strong>Reporting cut-off</strong> Owner or leadership pack published on the scheduled day, every cycle.</li>
+      </ul>
+    </section>
+
+    <section class="so-b2b__section" aria-labelledby="next-h">
+      <h2 class="so-b2b__h2" id="next-h">What happens next</h2>
+      <div class="so-b2b__next-layout">
+        <ol class="so-b2b__next-steps">
+          <li>
+            <span class="so-b2b__next-n" aria-hidden="true">01</span>
+            <span class="so-b2b__next-copy"><strong>Private operational review</strong></span>
+          </li>
+          <li>
+            <span class="so-b2b__next-n" aria-hidden="true">02</span>
+            <span class="so-b2b__next-copy"><strong>Written audit brief</strong></span>
+          </li>
+          <li>
+            <span class="so-b2b__next-n" aria-hidden="true">03</span>
+            <span class="so-b2b__next-copy"><strong>One operational pilot</strong></span>
+          </li>
+          <li>
+            <span class="so-b2b__next-n" aria-hidden="true">04</span>
+            <span class="so-b2b__next-copy"><strong>Measurable workflow improvement</strong></span>
+          </li>
+        </ol>
+        <div class="so-b2b__audit-preview" role="complementary" aria-label="Audit excerpt preview">
+          <div class="so-b2b__audit-preview-doc">
+            <header class="so-b2b__audit-preview-head">
+              <span class="so-b2b__audit-preview-badge">Private · excerpt</span>
+              <span class="so-b2b__audit-preview-title">Operational audit</span>
+            </header>
+            <dl class="so-b2b__audit-preview-meta">
+              <div>
+                <dt>Gaps</dt>
+                <dd>3</dd>
+              </div>
+              <div>
+                <dt>Levers</dt>
+                <dd>3</dd>
+              </div>
+              <div>
+                <dt>Pilot</dt>
+                <dd>1</dd>
+              </div>
+            </dl>
+            <p class="so-b2b__audit-preview-sub">Typical signal mix</p>
+            <ul class="so-b2b__preview-list">
+              <li>Missed inquiries</li>
+              <li>Delayed replies</li>
+              <li>Manual follow-up gaps</li>
+              <li>Booking/admin bottlenecks</li>
+            </ul>
+            <p class="so-b2b__audit-preview-foot">Jack from ServiceOpera.to</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="so-b2b__section" aria-labelledby="auto-drive">
-      <h2 class="so-b2b__h2" id="auto-drive">Automations that drive results.</h2>
+      <h2 class="so-b2b__h2" id="auto-drive">Workflows in scope</h2>
       <ul class="so-b2b__feat-list">
         <li>
           <a class="so-b2b__feat" href="/reports.html#inquiry">
@@ -1074,8 +1493,8 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z"/><rect x="8.5" y="8" width="5" height="9" rx="1"/><path d="M11 8V6a1.5 1.5 0 0 1 1.5-1.5h.01"/></svg>
             </span>
             <span class="so-b2b__feat-body">
-              <span class="so-b2b__feat-title">Faster WhatsApp &amp; Chat Replies</span>
-              <span class="so-b2b__feat-desc">Instant, accurate and 24/7 — never miss a guest.</span>
+              <span class="so-b2b__feat-title">Channel reply SLAs</span>
+              <span class="so-b2b__feat-desc">Queued drafts, routing rules, and escalation when the thread needs a human.</span>
             </span>
             <span class="so-b2b__feat-arrow" aria-hidden="true">›</span>
           </a>
@@ -1086,8 +1505,8 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l2.8 8.6h9l-7.3 5.3 2.8 8.6-7.3-5.3-7.3 5.3 2.8-8.6-7.3-5.3h9L12 2.5z"/></svg>
             </span>
             <span class="so-b2b__feat-body">
-              <span class="so-b2b__feat-title">Review Management</span>
-              <span class="so-b2b__feat-desc">Monitor, respond and turn reviews into reputation.</span>
+              <span class="so-b2b__feat-title">Review &amp; reputation queue</span>
+              <span class="so-b2b__feat-desc">Open items triaged, response templates, closure logged against SLA.</span>
             </span>
             <span class="so-b2b__feat-arrow" aria-hidden="true">›</span>
           </a>
@@ -1098,8 +1517,8 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-3-3.87"/><path d="M7 21v-2a4 4 0 0 1 3-3.87"/><circle cx="9" cy="7" r="3.5"/><path d="M21 12a4 4 0 0 0-6.5-3.1"/></svg>
             </span>
             <span class="so-b2b__feat-body">
-              <span class="so-b2b__feat-title">Lead Follow-up &amp; CRM</span>
-              <span class="so-b2b__feat-desc">Capture, nurture and convert more leads automatically.</span>
+              <span class="so-b2b__feat-title">Inquiry qualification &amp; handoff</span>
+              <span class="so-b2b__feat-desc">Structured capture, status, and owner — before calendar or chair time.</span>
             </span>
             <span class="so-b2b__feat-arrow" aria-hidden="true">›</span>
           </a>
@@ -1110,8 +1529,8 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="1.2"/><path d="M8 17h8"/><path d="M10 21h4"/><path d="M7 14l3-4 2.5 3 4.5-6"/></svg>
             </span>
             <span class="so-b2b__feat-body">
-              <span class="so-b2b__feat-title">Competitor &amp; Pricing Monitoring</span>
-              <span class="so-b2b__feat-desc">Track competitors, rates and market shifts in real-time.</span>
+              <span class="so-b2b__feat-title">Market &amp; rate signals</span>
+              <span class="so-b2b__feat-desc">Competitor and public-rate deltas on a fixed cadence — fed into your pricing ritual.</span>
             </span>
             <span class="so-b2b__feat-arrow" aria-hidden="true">›</span>
           </a>
@@ -1120,7 +1539,7 @@
     </section>
 
     <section class="so-b2b__section" id="process" aria-labelledby="process-h">
-      <h2 class="so-b2b__h2" id="process-h">Our 4-Step Process</h2>
+      <h2 class="so-b2b__h2" id="process-h">Delivery sequence</h2>
       <ol class="so-b2b__process">
         <li class="so-b2b__step">
           <div class="so-b2b__step-circle">
@@ -1134,8 +1553,8 @@
             </svg>
             <span class="so-b2b__step-num">1</span>
           </div>
-          <h3 class="so-b2b__step-title">Analyze</h3>
-          <p>We analyze your business and operations.</p>
+          <h3 class="so-b2b__step-title">Map &amp; baseline</h3>
+          <p>Queues, owners, and the single metric that moves first.</p>
         </li>
         <li class="so-b2b__process-dash" aria-hidden="true"></li>
         <li class="so-b2b__step">
@@ -1150,8 +1569,8 @@
             </svg>
             <span class="so-b2b__step-num">2</span>
           </div>
-          <h3 class="so-b2b__step-title">Private Demo</h3>
-          <p>We build a custom demo with your data and real scenarios.</p>
+          <h3 class="so-b2b__step-title">Working prototype</h3>
+          <p>Runnable flow on your channels with agreed guardrails.</p>
         </li>
         <li class="so-b2b__process-dash" aria-hidden="true"></li>
         <li class="so-b2b__step">
@@ -1166,8 +1585,8 @@
             </svg>
             <span class="so-b2b__step-num">3</span>
           </div>
-          <h3 class="so-b2b__step-title">Plan &amp; Automate</h3>
-          <p>We propose the right automations and execution plan.</p>
+          <h3 class="so-b2b__step-title">Plan &amp; deploy</h3>
+          <p>Cut-over plan, owners, and rollback if the metric does not move.</p>
         </li>
         <li class="so-b2b__process-dash" aria-hidden="true"></li>
         <li class="so-b2b__step">
@@ -1183,7 +1602,7 @@
             <span class="so-b2b__step-num">4</span>
           </div>
           <h3 class="so-b2b__step-title">Pilot or Monthly Service</h3>
-          <p>Start a pilot or let Jack manage it for you.</p>
+          <p>Start a pilot or retain monthly operations.</p>
         </li>
       </ol>
     </section>
@@ -1197,8 +1616,8 @@
       </div>
       <div class="so-b2b__jack-main">
         <div class="so-b2b__jack-head-copy">
-          <h2 class="so-b2b__jack-title" id="jack-h">Built &amp; Managed by Jack</h2>
-          <p class="so-b2b__jack-sub">AI automation expert for hospitality &amp; wellness</p>
+          <h2 class="so-b2b__jack-title" id="jack-h">Jack from ServiceOpera.to</h2>
+          <p class="so-b2b__jack-sub">Private audits, pilots, and operator coverage.</p>
         </div>
         <ul class="so-b2b__jack-list">
         <li>
@@ -1226,7 +1645,7 @@
 <div class="so-b2b__hero-deco so-b2b__hero-deco--bl" aria-hidden="true"></div>
 
 <footer class="so-b2b-footer">
-  <span class="so-b2b-footer__row"><svg class="so-b2b-footer__mark so-brand-ring-svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15.75 18.495A7.5 7.5 0 0 1 8.25 18.495"/><path d="M5.505 15.75A7.5 7.5 0 0 1 5.505 8.25"/><path d="M8.25 5.505A7.5 7.5 0 0 1 15.75 5.505"/><path d="M18.495 8.25A7.5 7.5 0 0 1 18.495 15.75"/></svg><span>© 2026 www.serviceopera.to · Done-for-you AI operations · <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a></span></span>
+  <span class="so-b2b-footer__row"><svg class="so-b2b-footer__mark so-brand-ring-svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15.75 18.495A7.5 7.5 0 0 1 8.25 18.495"/><path d="M5.505 15.75A7.5 7.5 0 0 1 5.505 8.25"/><path d="M8.25 5.505A7.5 7.5 0 0 1 15.75 5.505"/><path d="M18.495 8.25A7.5 7.5 0 0 1 18.495 15.75"/></svg><span>© 2026 www.serviceopera.to · Done-for-you operator coverage · <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a></span></span>
 </footer>
 </div>
 
@@ -1237,7 +1656,7 @@
     <button type="button" class="modal__close" data-close aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     <div class="modal__eyebrow mono">— PRIVATE ACCESS</div>
     <h3>Client Portal</h3>
-    <p class="modal__sub">Enter the credentials I sent you to open your private workspace.</p>
+    <p class="modal__sub">Enter the credentials you received to open your private workspace.</p>
 
     <form id="portalForm" class="portal-form" autocomplete="off">
       <label>
@@ -1252,7 +1671,7 @@
       <p class="portal-form__hint mono" id="portalHint"></p>
     </form>
 
-    <p class="modal__footnote">No credentials yet? Write to <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a> and I'll prepare a private demo for your business.</p>
+    <p class="modal__footnote">No credentials yet? Write to <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a> to request access and a private demo scoped to your business.</p>
   </div>
 </div>
 

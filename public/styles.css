@@ -39,6 +39,21 @@
   --gutter: clamp(1.25rem, 4vw, 3rem);
   /* Fixed `.nav` height cushion for gate pages and stacked toolbars */
   --site-nav-offset: 5.5rem;
+  /* Spacing scale (4px base) — use for padding, gap, section rhythm */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-btn: 10px;
   color-scheme: dark;
 }
 
@@ -145,7 +160,7 @@ body {
   background: var(--ink);
   color: var(--paper);
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: clamp(15px, 0.32rem + 2.6vw, 16px);
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -734,12 +749,12 @@ html.so-site-nav-open {
    HERO
    ============================================ */
 .hero {
-  padding: 3rem var(--gutter) 5rem;
+  padding: var(--space-12) var(--gutter) var(--space-20);
   max-width: var(--max);
   margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
-  gap: 4rem;
+  gap: var(--space-16);
   align-items: start;
   position: relative;
   overflow-x: clip;
@@ -752,7 +767,11 @@ html.so-site-nav-open {
   top: 30%;
   left: -20%;
   width: 700px; height: 700px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.22), transparent 60%);
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--amber) 22%, transparent),
+    transparent 60%
+  );
   filter: blur(60px);
   pointer-events: none;
   z-index: -1;
@@ -818,7 +837,7 @@ html.so-site-nav-open {
 .hero__byline a {
   color: var(--amber-2);
   text-decoration: none;
-  border-bottom: 1px solid rgba(251, 191, 36, 0.35);
+  border-bottom: 1px solid color-mix(in srgb, var(--amber-2) 42%, transparent);
 }
 .hero__byline a:hover {
   color: var(--amber);
@@ -988,16 +1007,16 @@ html.so-site-nav-open {
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: .5rem;
-  padding: .95rem 1.5rem;
+  gap: var(--space-2);
+  padding: 0.875rem var(--space-6);
   font-family: var(--font-body);
-  font-size: .92rem;
+  font-size: 0.9375rem;
   font-weight: 500;
   letter-spacing: 0.01em;
-  border-radius: 2px;
+  border-radius: var(--radius-btn);
   border: 1px solid transparent;
   cursor: pointer;
-  transition: all .25s ease;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, filter 0.2s ease;
   text-decoration: none;
 }
 .btn--primary {
@@ -1007,7 +1026,7 @@ html.so-site-nav-open {
 .btn--primary:hover {
   background: var(--amber);
   color: var(--on-accent-text);
-  transform: translateY(-1px);
+  filter: brightness(1.04);
 }
 .btn--ghost {
   border-color: var(--line-strong);
@@ -1018,8 +1037,15 @@ html.so-site-nav-open {
   border-color: var(--amber);
   color: var(--amber-2);
 }
-.btn--lg { padding: 1.15rem 2rem; font-size: 1rem; }
-.btn--block { width: 100%; justify-content: center; padding: 1.05rem; }
+.btn--lg {
+  padding: var(--space-5) var(--space-8);
+  font-size: 1rem;
+}
+.btn--block {
+  width: 100%;
+  justify-content: center;
+  padding: var(--space-4) var(--space-5);
+}
 
 /* Marquee */
 .marquee {
@@ -1849,11 +1875,11 @@ html.so-site-nav-open {
   font-size: .65rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  padding: .4rem .7rem;
+  padding: var(--space-1) var(--space-3);
   background: transparent;
   border: 1px solid var(--line-strong);
   color: var(--bone);
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all .2s;
 }
@@ -2926,7 +2952,7 @@ html.so-site-nav-open {
 /* Marketing / landing pages (home + verticals) */
 .home-lp,
 .mkt-page {
-  padding: calc(var(--site-nav-offset) + 2rem) var(--gutter) 4rem;
+  padding: calc(var(--site-nav-offset) + var(--space-8)) var(--gutter) var(--space-16);
   max-width: var(--max);
   margin: 0 auto;
 }
@@ -2936,21 +2962,21 @@ html.so-site-nav-open {
      a flat stack (kicker, h1, lead, CTAs); without this override, auto-placement splits
      them across columns and the headline/CTAs read in a narrow “vertical” strip. */
   max-width: none;
-  margin-bottom: 3rem;
+  margin-bottom: var(--space-12);
   grid-template-columns: 1fr;
 }
 .home-lp .hero h1,
 .mkt-page .hero h1 {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-size: clamp(1.7rem, 5vw, 3.25rem);
   font-weight: 700;
   line-height: 1.12;
   letter-spacing: -0.03em;
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-4);
 }
 .home-lp .hero .lead,
 .mkt-page .hero .lead {
-  font-size: 1.125rem;
+  font-size: clamp(1rem, 2.8vw, 1.125rem);
   line-height: 1.65;
   color: var(--mute-2);
   max-width: 42rem;
@@ -2964,21 +2990,21 @@ html.so-site-nav-open {
 .mkt-page .cta-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 1.75rem;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
 }
 .home-lp .btn,
 .mkt-page .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.85rem 1.35rem;
-  border-radius: 999px;
+  padding: 0.875rem var(--space-6);
+  border-radius: var(--radius-btn);
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.9375rem;
   text-decoration: none;
   border: 1px solid transparent;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, filter 0.15s;
 }
 .home-lp .btn-primary,
 .mkt-page .btn-primary {
@@ -2987,7 +3013,7 @@ html.so-site-nav-open {
 }
 .home-lp .btn-primary:hover,
 .mkt-page .btn-primary:hover {
-  filter: brightness(1.08);
+  filter: brightness(1.06);
 }
 .home-lp .btn-secondary,
 .mkt-page .btn-secondary {
@@ -3001,11 +3027,11 @@ html.so-site-nav-open {
   color: var(--amber-2);
 }
 .mkt-section--visual {
-  padding-top: 2rem;
+  padding-top: var(--space-8);
 }
 .mkt-page-visual {
   margin: 0;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   overflow: hidden;
   border: 1px solid var(--line);
   box-shadow: 0 16px 48px color-mix(in srgb, var(--ink) 18%, transparent);
@@ -3020,42 +3046,42 @@ html.so-site-nav-open {
   box-shadow: 0 12px 36px rgba(15, 23, 42, 0.08);
 }
 .mkt-section {
-  margin-top: 2.75rem;
-  padding-top: 2.75rem;
+  margin-top: var(--space-10);
+  padding-top: var(--space-10);
   border-top: 1px solid var(--line);
 }
 .mkt-section h2 {
-  font-size: 1.35rem;
+  font-size: clamp(1.2rem, 2.6vw, 1.35rem);
   font-weight: 700;
-  margin-bottom: 0.85rem;
+  margin-bottom: var(--space-3);
   letter-spacing: -0.02em;
 }
 .mkt-section p,
 .mkt-section li {
   color: var(--mute-2);
   line-height: 1.65;
-  font-size: 1rem;
+  font-size: clamp(0.9375rem, 2.4vw, 1rem);
 }
 .mkt-section ul {
-  margin: 0.75rem 0 0;
-  padding-left: 1.25rem;
+  margin: var(--space-3) 0 0;
+  padding-left: var(--space-5);
   display: grid;
-  gap: 0.45rem;
+  gap: var(--space-2);
 }
 .mkt-section blockquote {
-  margin: 1.25rem 0 0;
-  padding: 1rem 1.15rem;
+  margin: var(--space-5) 0 0;
+  padding: var(--space-4) var(--space-4);
   border-left: 3px solid var(--amber);
   background: color-mix(in srgb, var(--ink-2) 88%, transparent);
-  border-radius: 0 10px 10px 0;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
   color: var(--paper);
   font-size: 0.98rem;
   line-height: 1.6;
 }
 .mkt-grid {
   display: grid;
-  gap: 1rem;
-  margin-top: 1.25rem;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
 }
 @media (min-width: 720px) {
   .mkt-grid--2 {
@@ -3066,9 +3092,9 @@ html.so-site-nav-open {
   }
 }
 .mkt-card {
-  padding: 1.25rem 1.35rem;
+  padding: var(--space-5) var(--space-5);
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   background: color-mix(in srgb, var(--ink-2) 92%, transparent);
 }
 .mkt-card h3 {
@@ -3092,7 +3118,7 @@ html.so-site-nav-open {
 .mkt-footer {
   max-width: var(--max);
   margin: 0 auto;
-  padding: 2rem var(--gutter) 3rem;
+  padding: var(--space-8) var(--gutter) var(--space-12);
   border-top: 1px solid var(--line);
   font-size: 0.85rem;
   color: var(--mute);
@@ -3104,18 +3130,33 @@ html.so-site-nav-open {
 .mkt-footer a:hover {
   text-decoration: underline;
 }
+
+@media (max-width: 560px) {
+  body {
+    line-height: 1.6;
+  }
+  .home-lp,
+  .mkt-page {
+    padding: calc(var(--site-nav-offset) + var(--space-6)) var(--gutter) var(--space-12);
+  }
+  .home-lp .hero h1,
+  .mkt-page .hero h1 {
+    line-height: 1.14;
+  }
+}
+
 .mkt-kicker {
   font-family: var(--font-mono);
   font-size: 0.72rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--amber-2);
-  margin-bottom: 0.65rem;
+  margin-bottom: var(--space-3);
 }
 .mkt-pricing-tier {
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+  gap: var(--space-3);
 }
 .mkt-pricing-tier .price {
   font-family: var(--font-mono);
@@ -3140,7 +3181,7 @@ html.so-site-nav-open {
 .inquiry-form__control {
   width: 100%;
   border: 1px solid var(--line-strong);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   background: color-mix(in srgb, var(--ink-2) 92%, transparent);
   color: var(--paper);
   font: inherit;
