@@ -1762,6 +1762,51 @@
     return 'users';
   }
 
+  function makePlacesLeadsNavControl() {
+    var a = document.createElement('a');
+    a.href = '#';
+    a.className = 'tf-admin-nav__pill';
+    a.textContent = 'Places leads';
+    a.setAttribute('aria-label', 'Open Google Places lead collector in a new tab');
+    a.addEventListener('click', function (ev) {
+      ev.preventDefault();
+      var jwt = readStoredAdminJwt();
+      if (!jwt) {
+        window.location.href = '/admin/users';
+        return;
+      }
+      fetch(api('/api/admin/places-page-token'), {
+        method: 'POST',
+        credentials: apiCred(),
+        cache: 'no-store',
+        headers: { Authorization: 'Bearer ' + jwt },
+      })
+        .then(function (r) {
+          return r.json().then(function (j) {
+            return { ok: r.ok, j: j };
+          });
+        })
+        .then(function (pack) {
+          if (!pack.ok || !pack.j || !pack.j.page_token) {
+            var msg =
+              (pack.j && (pack.j.error || pack.j.message)) || 'Could not open Places tool. Sign in again.';
+            window.alert(String(msg));
+            return;
+          }
+          var origin =
+            typeof window !== 'undefined' && window.location && window.location.origin
+              ? window.location.origin
+              : '';
+          var url = origin + '/operator/places-leads.html?t=' + encodeURIComponent(pack.j.page_token);
+          window.open(url, '_blank', 'noopener,noreferrer');
+        })
+        .catch(function () {
+          window.alert('Network error opening Places tool.');
+        });
+    });
+    return a;
+  }
+
   function makeNavLink(label, href, routeKey, activeRouteId) {
     var a = document.createElement('a');
     a.href = href;
@@ -1787,6 +1832,7 @@
     row.appendChild(makeNavLink('Site appearance', '/admin/site-appearance', 'site-appearance', id));
     row.appendChild(makeNavLink('Icons', '/admin/icons', 'icons', id));
     row.appendChild(makeNavLink('Reports', '/operator/reports', 'reports', id));
+    row.appendChild(makePlacesLeadsNavControl());
     row.appendChild(makeNavLink('Report catalog', '/reports/catalog.html', 'report-catalog', id));
     row.appendChild(makeNavLink('User reports', '/admin/user-reports', 'user-reports', id));
     tfNav.appendChild(row);

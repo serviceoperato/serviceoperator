@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="referrer" content="strict-origin-when-cross-origin" />
 <title>Pattaya lead collector · Google Places · www.serviceopera.to</title>
 <meta name="robots" content="noindex, nofollow" />
 <link rel="icon" href="/favicon.png" type="image/png" sizes="any" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="/styles.css" />
 <script src="/page-skeleton.js"></script>
 <script src="/so-api.js"></script>
 <style>
@@ -58,16 +59,16 @@
   <div class="nav__links">
     <a href="/" class="nav__text">Home</a>
     <a href="/pricing" class="nav__text">Pricing</a>
-
+    <a href="/admin/users" class="nav__text mono">Admin</a>
   </div>
 </nav>
 
 <main class="places-tool">
   <h1>Pattaya leads (Google Places API)</h1>
   <p class="places-tool__sub">
-    Text Search runs on the server only — your Google API key is never sent to the browser.
-    Open this page from the same origin as the Node server (e.g. <code>http://localhost:8080/places-leads.html</code>).
-    Each line runs <code>POST /api/places/search</code>. Optional per-line override: <code>clinic|your query here</code>,
+    Text Search runs on the server only — the Google API key is never sent to the browser and is read only from Node env (<code>GOOGLE_MAPS_API_KEY</code>).
+    Open this tool from the <strong>operator console</strong> (<strong>Places leads</strong> in the admin nav); searches require your <strong>admin JWT</strong> on each <code>POST /api/places/search</code> request.
+    Optional per-line override: <code>clinic|your query here</code>,
     <code>hotel|…</code>, or <code>real_estate|…</code>.
   </p>
 
@@ -128,7 +129,7 @@ property management Pattaya Thailand</textarea>
   <p class="places-tool__hint" id="previewNote" style="margin-top: 0.75rem;"></p>
 </main>
 
-<script src="theme.js"></script>
+<script src="/theme.js"></script>
 <script>
 (function () {
   var queriesEl = document.getElementById('queries');
@@ -143,6 +144,14 @@ property management Pattaya Thailand</textarea>
 
   var allRows = [];
   var CATEGORY_LINE = /^(clinic|hotel|real_estate)\|\s*(.+)$/i;
+
+  function readAdminJwt() {
+    try {
+      return localStorage.getItem('so_admin_jwt') || sessionStorage.getItem('so_admin_jwt') || '';
+    } catch (e) {
+      return '';
+    }
+  }
 
   function parseLine(line) {
     var raw = (line || '').trim();
@@ -249,6 +258,12 @@ property management Pattaya Thailand</textarea>
       return;
     }
 
+    var adminTok = readAdminJwt().trim();
+    if (!adminTok) {
+      showErrors(['No admin session in this browser. Sign in at /admin/users, then open Places leads from the admin nav again.']);
+      return;
+    }
+
     btnCollect.disabled = true;
     btnCsv.disabled = true;
     allRows = [];
@@ -268,7 +283,10 @@ property management Pattaya Thailand</textarea>
         var res = await fetch(typeof soApiUrl === 'function' ? soApiUrl('/api/places/search') : '/api/places/search', {
           method: 'POST',
           credentials: typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + adminTok,
+          },
           body: JSON.stringify({ query: item.query, category: item.category }),
         });
         var json = await res.json().catch(function () { return {}; });
@@ -298,6 +316,6 @@ property management Pattaya Thailand</textarea>
 })();
 </script>
 <script src="/sw-register.js"></script>
-<script src="debug.js"></script>
+<script src="/debug.js"></script>
 </body>
 </html>

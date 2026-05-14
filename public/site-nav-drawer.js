@@ -38,7 +38,6 @@
       id: 'tools',
       title: 'Tools',
       links: [
-        { href: '/places-leads.html', label: 'Places leads' },
         { href: '/reports.html#inquiry', label: 'Contact Jack' },
       ],
     },
