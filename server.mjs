@@ -526,12 +526,11 @@ function mergeSiteAppearance(raw) {
     ? navLogoAltRaw.slice(0, 180).replace(/[\u0000-\u001f\u007f]/g, '')
     : defaultSiteAppearance.navLogoAlt;
   const diskJackUrl = defaultJackAvatarUrlFromDisk();
+  /** Non-empty URL from JSON wins; missing or blank falls back to bundled file when present (blank no longer overrides disk). */
   let jackAvatarUrl = '';
   if (typeof raw.jackAvatarUrl === 'string' && raw.jackAvatarUrl.trim()) {
     const ju = rewriteLegacyImagesUrl(raw.jackAvatarUrl.trim());
     jackAvatarUrl = isSafePropertyPageImageUrl(ju) ? ju : diskJackUrl;
-  } else if ('jackAvatarUrl' in raw && typeof raw.jackAvatarUrl === 'string' && !raw.jackAvatarUrl.trim()) {
-    jackAvatarUrl = '';
   } else {
     jackAvatarUrl = diskJackUrl;
   }
@@ -1271,7 +1270,8 @@ app.set('trust proxy', 1);
 app.disable('x-powered-by');
 app.use((req, res, next) => {
   const bigJson =
-    req.method === 'POST' && req.path === '/api/admin/site-appearance/upload';
+    (req.method === 'POST' && req.path === '/api/admin/site-appearance/upload') ||
+    (req.method === 'PUT' && req.path === '/api/admin/site-appearance');
   express.json({ limit: bigJson ? '12mb' : '48kb' })(req, res, next);
 });
 
@@ -1536,6 +1536,17 @@ app.post('/api/admin/bootstrap-from-portal', (req, res) => {
   }
   const token = signJwt({ v: 1, role: 'admin', email: ADMIN_EMAIL, exp: Date.now() + JWT_TTL_MS });
   return res.json({ ok: true, token, expiresInMs: JWT_TTL_MS });
+});
+
+/** Mint a short-lived token so GET /operator/places-leads.html?t=… can load the operator Places UI (no API keys in HTML). */
+app.post('/api/admin/places-page-token', requireAdmin, (_req, res) => {
+  const pageToken = signJwt({
+    v: 1,
+    kind: 'places_page',
+    exp: Date.now() + PLACES_PAGE_DOCUMENT_TTL_MS,
+  });
+  res.setHeader('Cache-Control', 'no-store');
+  return res.json({ ok: true, page_token: pageToken, expires_in_ms: PLACES_PAGE_DOCUMENT_TTL_MS });
 });
 
 async function listPortalUsersForAdmin(_req, res) {
@@ -2611,8 +2622,9 @@ app.post('/api/marketing/inquiry', async (req, res) => {
 /**
  * Google Places API (New) — Text Search lead collector (API key server-side only).
  * POST /api/places/search { "query": "...", "category": "clinic" | "hotel" | "real_estate" }
+ * Requires admin JWT (same as other /api/admin/* tools).
  */
-app.post('/api/places/search', async (req, res) => {
+app.post('/api/places/search', requireAdmin, async (req, res) => {
   if (!GOOGLE_MAPS_API_KEY) {
     return res.status(503).json({
       error:
@@ -2754,6 +2766,33 @@ app.get(['/operator/reports', '/operator/reports/'], (_req, res) => {
   res.sendFile(operatorReportsHtmlPath);
 });
 
+/** Retired public path — Places tooling is admin-only (see /operator/places-leads.html + admin nav). */
+app.get(['/places-leads.html', '/places-leads', '/places-leads/'], (_req, res) => {
+  const p404 = path.join(publicDir, '404.html');
+  if (fs.existsSync(p404)) return res.status(404).sendFile(p404);
+  return res.status(404).type('text/plain').send('Not found');
+});
+
+function isValidPlacesPageDocumentJwt(token) {
+  const p = verifyJwt(token);
+  return Boolean(p && p.kind === 'places_page');
+}
+
+app.get(['/operator/places-leads.html', '/operator/places-leads', '/operator/places-leads/'], (req, res) => {
+  const raw = typeof req.query.t === 'string' ? req.query.t.trim() : '';
+  if (!raw || !isValidPlacesPageDocumentJwt(raw)) {
+    const p404 = path.join(publicDir, '404.html');
+    if (fs.existsSync(p404)) return res.status(404).sendFile(p404);
+    return res.status(404).type('text/plain').send('Not found');
+  }
+  if (!fs.existsSync(placesLeadsOperatorHtmlPath)) {
+    return res.status(500).type('text/plain').send('Places tool page missing on server.');
+  }
+  res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+  return res.sendFile(placesLeadsOperatorHtmlPath);
+});
+
 /** Public sample clinic audit (static `index.html`; explicit route mirrors clean-URL pattern used elsewhere). */
 app.get(['/clinics/sample-ai-automation-audit', '/clinics/sample-ai-automation-audit/'], (_req, res) => {
   res.sendFile(path.join(publicDir, 'clinics', 'sample-ai-automation-audit', 'index.html'));
@@ -2780,7 +2819,7 @@ app.use(
         filePath.endsWith('admin.html') ||
         filePath.endsWith('admin.js') ||
         norm.endsWith('app-version.json') ||
-        filePath.endsWith('places-leads.html') ||
+        norm.endsWith('operator/places-leads.html') ||
         norm.includes('/clinics/report.html')
       ) {
         res.setHeader('Cache-Control', 'no-store');
@@ -2826,7 +2865,7 @@ app.listen(port, '0.0.0.0', () => {
   );
   console.log(
     GOOGLE_MAPS_API_KEY
-      ? '[serviceopera] Google Places: GOOGLE_MAPS_API_KEY is set (POST /api/places/search).'
+      ? '[serviceopera] Google Places: GOOGLE_MAPS_API_KEY is set (POST /api/places/search, admin JWT only).'
       : '[serviceopera] Google Places: GOOGLE_MAPS_API_KEY missing — /api/places/search will return 503 until set.'
   );
 });
