@@ -701,7 +701,7 @@
       '<button type="button" class="tf-admin-toolbar__btn so-site-appearance__cols-btn" data-so-appearance-cols="6" aria-pressed="false">6</button>' +
       '<button type="button" class="tf-admin-toolbar__btn so-site-appearance__cols-btn" data-so-appearance-cols="7" aria-pressed="false">7</button>' +
       '</div>' +
-      '<p class="tf-admin-muted so-site-appearance__lede">Square previews update as you type. Use <strong>Upload…</strong> (admin only, saves under <code>/assets/site-uploads/</code>), <strong>Delete</strong> to remove an uploaded <code>su-*</code> file from the server (or clear any URL), or paste <code>/assets/…</code> / a public <strong>https</strong> URL. <strong>Nav logo</strong> and <strong>Jack avatar</strong>: PNG or WebP with transparency (alpha) is supported — the public header and Jack portrait do not paint an opaque plate behind the image. <code>/logo.png</code> redirects to the nav logo URL below. Public: <code>GET /api/site-appearance</code>.</p>' +
+      '<p class="tf-admin-muted so-site-appearance__lede">Square previews update as you type. Use <strong>Upload…</strong> (admin only, saves under <code>/assets/site-uploads/</code>), <strong>Delete</strong> to remove an uploaded <code>su-*</code> file from the server (or clear any URL), or paste <code>/assets/…</code> / a public <strong>https</strong> URL. <strong>Nav logo</strong> and <strong>Jack avatar</strong>: PNG or WebP with transparency (alpha) is supported — the public header and Jack portrait do not paint an opaque plate behind the image. <code>/logo.png</code> redirects to the nav logo URL below. Public: <code>GET /api/site-appearance</code>. <strong>Deploy note:</strong> settings are stored in <code class="mono">DATA_DIR/site-appearance.json</code> (often <code class="mono">/app/data</code> on Railway). Without a <strong>persistent volume</strong> mounted at that path, hero/logo URLs reset on redeploy — attach a volume or restore from backup after deploy.</p>' +
       '<div class="so-site-appearance__bulk" role="toolbar" aria-label="Bulk actions for hero images">' +
       '<span class="so-site-appearance__bulk-label mono">Selection</span>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteAppearSelectAll">Select all</button>' +
@@ -918,8 +918,13 @@
       if (!u) return '';
       if (/^https?:\/\//i.test(u)) return u;
       if (u.charAt(0) === '/') {
-        /* Marketing static host vs Node API (so-api.js): uploads live under public/ on the API only. */
-        if (u.indexOf('/assets/') === 0 && typeof soApiOrigin === 'function') {
+        /*
+         * Only admin uploads live on the Node host under public/assets/site-uploads/.
+         * Bundled marketing assets (/assets/*.svg, hero PNGs, etc.) stay on the static site origin;
+         * sending every /assets/* URL to the API origin breaks previews (e.g. default hero-corner SVG).
+         */
+        var siteUploadPrefix = '/assets/site-uploads/';
+        if (u.indexOf(siteUploadPrefix) === 0 && typeof soApiOrigin === 'function') {
           try {
             var apiOrigin = String(soApiOrigin() || '')
               .trim()
@@ -1122,6 +1127,51 @@
         );
       }
     }
+    /**
+     * After a successful PUT, sync only the fields that were in the request body.
+     * A full forced merge would wipe in-progress edits in other inputs (e.g. upload auto-save while the
+     * user is typing another hero URL).
+     */
+    function applySiteAppearanceMergePartial(apiJson, putKeys) {
+      if (!putKeys || !putKeys.length) return;
+      var o = apiJson && typeof apiJson === 'object' ? apiJson : {};
+      var set = {};
+      for (var i = 0; i < putKeys.length; i++) {
+        var pk = putKeys[i];
+        if (pk && pk !== 'ok') set[pk] = true;
+      }
+      function has(k) {
+        return !!set[k];
+      }
+      if (has('navLogoUrl') && navLogoUrlEl) navLogoUrlEl.value = 'navLogoUrl' in o ? String(o.navLogoUrl != null ? o.navLogoUrl : '') : '';
+      if (has('navLogoAlt') && navLogoAltEl) navLogoAltEl.value = 'navLogoAlt' in o ? String(o.navLogoAlt != null ? o.navLogoAlt : '') : '';
+      if (has('jackAvatarUrl') && jackUrlEl) jackUrlEl.value = 'jackAvatarUrl' in o ? String(o.jackAvatarUrl != null ? o.jackAvatarUrl : '') : '';
+      if (has('jackAvatarAlt') && jackAltEl) jackAltEl.value = 'jackAvatarAlt' in o ? String(o.jackAvatarAlt != null ? o.jackAvatarAlt : '') : '';
+      if (has('homePageImageUrl') && homeUrlEl) homeUrlEl.value = 'homePageImageUrl' in o ? String(o.homePageImageUrl != null ? o.homePageImageUrl : '') : '';
+      if (has('homePageImageAlt') && homeAltEl) homeAltEl.value = 'homePageImageAlt' in o ? String(o.homePageImageAlt != null ? o.homePageImageAlt : '') : '';
+      if (has('propertyPageImageUrl') && urlEl) urlEl.value = 'propertyPageImageUrl' in o ? String(o.propertyPageImageUrl != null ? o.propertyPageImageUrl : '') : '';
+      if (has('propertyPageImageAlt') && altEl) altEl.value = 'propertyPageImageAlt' in o ? String(o.propertyPageImageAlt != null ? o.propertyPageImageAlt : '') : '';
+      if (has('clinicPageImageUrl') && clinicUrlEl)
+        clinicUrlEl.value = 'clinicPageImageUrl' in o ? String(o.clinicPageImageUrl != null ? o.clinicPageImageUrl : '') : '';
+      if (has('clinicPageImageAlt') && clinicAltEl)
+        clinicAltEl.value = 'clinicPageImageAlt' in o ? String(o.clinicPageImageAlt != null ? o.clinicPageImageAlt : '') : '';
+      if (has('hotelPageImageUrl') && hotelUrlEl) hotelUrlEl.value = 'hotelPageImageUrl' in o ? String(o.hotelPageImageUrl != null ? o.hotelPageImageUrl : '') : '';
+      if (has('hotelPageImageAlt') && hotelAltEl) hotelAltEl.value = 'hotelPageImageAlt' in o ? String(o.hotelPageImageAlt != null ? o.hotelPageImageAlt : '') : '';
+      if (has('heroDecoTopRightUrl') && heroDecoTrUrlEl)
+        heroDecoTrUrlEl.value = 'heroDecoTopRightUrl' in o ? String(o.heroDecoTopRightUrl != null ? o.heroDecoTopRightUrl : '') : '';
+      if (has('heroDecoBottomLeftUrl') && heroDecoBlUrlEl)
+        heroDecoBlUrlEl.value = 'heroDecoBottomLeftUrl' in o ? String(o.heroDecoBottomLeftUrl != null ? o.heroDecoBottomLeftUrl : '') : '';
+      if (has('heroDecoTopRightOpacity') && heroDecoTrOpEl) {
+        var tr = o.heroDecoTopRightOpacity;
+        var trn = typeof tr === 'number' ? tr : parseFloat(String(tr != null ? tr : ''));
+        heroDecoTrOpEl.value = Number.isFinite(trn) ? String(Math.min(1, Math.max(0, trn))) : '';
+      }
+      if (has('heroDecoBottomLeftOpacity') && heroDecoBlOpEl) {
+        var br = o.heroDecoBottomLeftOpacity;
+        var brn = typeof br === 'number' ? br : parseFloat(String(br != null ? br : ''));
+        heroDecoBlOpEl.value = Number.isFinite(brn) ? String(Math.min(1, Math.max(0, brn))) : '';
+      }
+    }
     function bumpSiteAppearanceUrlPreviews() {
       [navLogoUrlEl, jackUrlEl, homeUrlEl, urlEl, clinicUrlEl, hotelUrlEl, heroDecoTrUrlEl, heroDecoBlUrlEl].forEach(
         function (el) {
@@ -1181,6 +1231,9 @@
     }
 
     function executeSiteAppearancePut(body) {
+      var putKeys = Object.keys(body && typeof body === 'object' ? body : {}).filter(function (k) {
+        return k !== 'ok';
+      });
       var tok = getAdminBearer();
       if (!tok) {
         return Promise.resolve({
@@ -1209,7 +1262,11 @@
           var tok = getAdminBearer();
           function mergeSavedIntoForm(j) {
             if (isSiteAppearancePanelStale()) return;
-            if (j) applySiteAppearanceMerge(j, { force: true });
+            if (j) {
+              var cleaned = stripOkFromSiteAppearanceJson(j);
+              if (putKeys.length) applySiteAppearanceMergePartial(cleaned, putKeys);
+              else applySiteAppearanceMerge(j, { force: true });
+            }
             bumpSiteAppearanceUrlPreviews();
           }
           if (!tok) {
@@ -1550,28 +1607,13 @@
           return;
         }
         if (hintEl) hintEl.textContent = 'Saving…';
-        fetch(api('/api/admin/site-appearance'), {
-          method: 'GET',
-          credentials: apiCred(),
-          cache: 'no-store',
-          headers: { Authorization: 'Bearer ' + tok },
-        })
-          .then(function (r) {
-            return r.json().then(function (j) {
-              return { ok: r.ok, j: j };
-            });
-          })
-          .then(function (x) {
-            if (isSiteAppearancePanelStale()) return;
-            var baseline = stripOkFromSiteAppearanceJson(x.ok && x.j ? x.j : {});
-            var domPayload = collectSiteAppearancePayloadFromDom();
-            if (!domPayload) {
-              if (hintEl) hintEl.textContent = 'Could not read form (reload the page).';
-              return;
-            }
-            var merged = Object.assign({}, baseline, domPayload);
-            return enqueueAppearancePersistPut(merged);
-          })
+        var domPayload = collectSiteAppearancePayloadFromDom();
+        if (!domPayload) {
+          if (hintEl) hintEl.textContent = 'Could not read form (reload the page).';
+          return;
+        }
+        /* PUT omits `icons` — server keeps existing icons. No pre-save GET (avoids racing stale baseline). */
+        return enqueueAppearancePersistPut(domPayload)
           .then(function (x) {
             if (isSiteAppearancePanelStale()) return;
             if (!x || typeof x.ok === 'undefined') return;

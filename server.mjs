@@ -8,6 +8,11 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { assertReportSlug, createUserStore, normalizeEmail, verifyPassword } from './clinic-store.mjs';
 import { createPostgresUserStore, ensurePostgresUserSchema } from './postgres-user-store.mjs';
+import {
+  ensureSiteAppearanceSchema,
+  loadSiteAppearanceJson,
+  saveSiteAppearanceJson,
+} from './postgres-site-appearance.mjs';
 import { createUserTelemetryStore, ensureUserTelemetrySchema } from './user-telemetry.mjs';
 import { createLeadEventsStore, ensureLeadEventsSchema } from './lead-events.mjs';
 import { searchTextAllPages } from './lib/google-places-search.mjs';
@@ -72,10 +77,12 @@ async function initUserStore() {
       await ensurePostgresUserSchema(pool, adminEmail);
       await ensureUserTelemetrySchema(pool);
       await ensureLeadEventsSchema(pool);
+      await ensureSiteAppearanceSchema(pool);
       return {
         userStore: createPostgresUserStore(pool),
         telemetryStore: createUserTelemetryStore({ pool }),
         leadEventsStore: createLeadEventsStore({ pool }),
+        pgPool: pool,
       };
     } catch (err) {
       const msg = err && err.message ? err.message : String(err);
@@ -94,10 +101,11 @@ async function initUserStore() {
     userStore: createUserStore(dataDir, adminEmail),
     telemetryStore: createUserTelemetryStore({ dataDir }),
     leadEventsStore: createLeadEventsStore({ dataDir }),
+    pgPool: null,
   };
 }
 
-const { userStore, telemetryStore, leadEventsStore } = await initUserStore();
+const { userStore, telemetryStore, leadEventsStore, pgPool } = await initUserStore();
 
 const clinicDataDir = path.join(publicDir, 'clinics', 'data');
 
@@ -439,12 +447,40 @@ const defaultSiteAppearance = {
   heroDecoBottomLeftOpacity: 0.12,
 };
 
-function readSiteAppearanceRaw() {
+function readSiteAppearanceRawFromFile() {
   try {
     return JSON.parse(fs.readFileSync(siteAppearancePath, 'utf8'));
   } catch {
     return {};
   }
+}
+
+/** When PostgreSQL is available, read (and optionally one-time migrate from file). Otherwise JSON under DATA_DIR. */
+async function readSiteAppearanceRawAsync() {
+  if (pgPool) {
+    try {
+      let raw = await loadSiteAppearanceJson(pgPool);
+      if (raw && typeof raw === 'object' && Object.keys(raw).length > 0) {
+        return raw;
+      }
+      const disk = readSiteAppearanceRawFromFile();
+      if (disk && typeof disk === 'object' && Object.keys(disk).length > 0) {
+        try {
+          await saveSiteAppearanceJson(pgPool, disk);
+        } catch (e) {
+          console.warn(
+            '[serviceopera] site appearance: could not migrate from file to Postgres:',
+            e && e.message ? e.message : e
+          );
+        }
+        return disk;
+      }
+      return {};
+    } catch (e) {
+      console.error('[serviceopera] site appearance PG read failed:', e && e.message ? e.message : e);
+    }
+  }
+  return readSiteAppearanceRawFromFile();
 }
 
 /** Map legacy `/images/*` hero paths to `/assets/*` after the static folder consolidation. */
@@ -1594,7 +1630,7 @@ app.put('/api/admin/site-appearance', requireAdmin, (req, res) => {
   const body = req.body || {};
   const cur = mergeSiteAppearance(readSiteAppearanceRaw());
 
-  /* Each field: if the key is present in body (even as ""), body wins for that field; omitted keys keep `cur`. Empty hero image URLs fall back to shipped defaults (except optional hero-deco URLs, handled separately). */
+  /* Each field: if the key is present in body with the expected type (string for image URLs), body wins for that field; omitted keys keep `cur`. Empty required hero URLs fall back to shipped defaults; optional hero-deco URLs may be cleared with "". */
   const propUrlIn =
     'propertyPageImageUrl' in body && typeof body.propertyPageImageUrl === 'string'
       ? body.propertyPageImageUrl.trim()

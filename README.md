@@ -21,6 +21,8 @@ A complete, deployable site under **`serviceopera.to`**. All static assets live 
 | `public/login.html` | Clinic log-in; stores `so_clinic_jwt` and redirects to `/clinics/report.html?slug=…`. |
 | `public/clinics/report.html` | Private report view (same layout as the public demo); needs a valid clinic session and slug-specific or fallback `_data.json`. |
 
+**Site appearance & deploys:** Admin “Site appearance” (and `GET /api/site-appearance`) persist to **`DATA_DIR/site-appearance.json`** — the same `DATA_DIR` as portal JSON (default `./data`, Docker/Railway often `/app/data`). Admin image uploads are written under **`public/assets/site-uploads/`** on the Node host. On platforms with an **ephemeral filesystem** and no **persistent volume** mounted for those paths, logo/hero URL changes and uploaded `su-*` files are **lost on redeploy** (it can look like an automatic rollback). Use a volume (or store only `https://…` URLs on a durable CDN) if settings must survive deploys.
+
 The client page is marked `noindex, nofollow` and disallowed in `robots.txt` where applicable.
 
 ---

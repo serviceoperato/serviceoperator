@@ -8,6 +8,7 @@
     "sync:version": "node scripts/write-app-version.mjs",
     "prestart": "npm run sync:version",
     "postversion": "npm run sync:version",
+    "test:site-appearance": "node scripts/test-site-appearance-persist.mjs",
     "start": "node server.mjs",
     "preview:static": "npx --yes serve@14 . -l tcp://0.0.0.0:3000",
     "dev:next": "next dev",
