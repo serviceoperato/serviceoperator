@@ -66,6 +66,72 @@
   --grain-opacity: 0.035;
   --logo-filter: brightness(0) saturate(100%) invert(10%) sepia(30%) saturate(2200%) hue-rotate(220deg) brightness(0.72) contrast(1.08);
   color-scheme: light;
+  --so-brand-ring-1: #312e81;
+  --so-brand-ring-2: #4338ca;
+}
+
+/* --- Segmented brand ring: four stroke arcs, hollow centre (decorative mark only) --- */
+@keyframes so-brand-ring-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.so-brand-ring {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  line-height: 0;
+  vertical-align: middle;
+}
+.so-brand-ring-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.so-brand-ring--sm {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+.so-brand-ring--md {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+.so-brand-ring--lg {
+  width: 2.75rem;
+  height: 2.75rem;
+}
+.so-brand-ring--spin {
+  transform-origin: center;
+}
+.so-brand-ring--spin .so-brand-ring-svg,
+.so-brand-ring--spin svg {
+  animation: so-brand-ring-spin 1.15s linear infinite;
+  transform-origin: center;
+}
+.admin-boot__mark {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 1rem;
+  color: var(--amber-2);
+  filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.25));
+}
+.tf-admin-empty-mark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+  text-align: center;
+  max-width: 38rem;
+  margin-inline: auto;
+}
+.tf-admin-empty-mark::before {
+  content: "";
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  background: url("/assets/icons/segmented-ring.svg") center / contain no-repeat;
+  opacity: 0.55;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -2783,13 +2849,23 @@ html.so-site-nav-open {
   position: absolute;
   inset: 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 0.5rem;
   text-align: center;
   font-size: 0.72rem;
   color: var(--mute-2);
   padding: 0.65rem;
   pointer-events: none;
+}
+.so-site-appearance__preview-empty::before {
+  content: "";
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-shrink: 0;
+  background: url("/assets/icons/segmented-ring.svg") center / contain no-repeat;
+  opacity: 0.42;
 }
 .so-site-appearance__card-fields {
   display: flex;

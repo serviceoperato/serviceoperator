@@ -10,11 +10,8 @@ export const metadata: Metadata = {
     template: "%s · www.serviceopera.to",
   },
   icons: {
-    icon: [
-      { url: "/assets/favicon.svg", type: "image/svg+xml" },
-      { url: "/assets/favicon.png", sizes: "any" },
-    ],
-    apple: "/assets/favicon.png",
+    icon: [{ url: "/favicon.png", type: "image/png", sizes: "any" }],
+    apple: "/favicon.png",
   },
 };
 
