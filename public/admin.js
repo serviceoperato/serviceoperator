@@ -687,7 +687,7 @@
     panelTitle.textContent = 'Site appearance';
     panelBody.innerHTML =
       '<div class="so-site-appearance">' +
-      '<p class="tf-admin-muted so-site-appearance__lede">Square previews update as you type. Use <strong>Upload…</strong> (admin only, saves under <code>/assets/site-uploads/</code>), <strong>Delete</strong> to remove an uploaded <code>su-*</code> file from the server (or clear any URL), or paste <code>/assets/…</code> / a public <strong>https</strong> URL. <strong>Nav logo:</strong> PNG or WebP with transparency (alpha) is supported — the public header does not paint an opaque background behind the image. <code>/logo.png</code> redirects to the nav logo URL below. Public: <code>GET /api/site-appearance</code>.</p>' +
+      '<p class="tf-admin-muted so-site-appearance__lede">Square previews update as you type. Use <strong>Upload…</strong> (admin only, saves under <code>/assets/site-uploads/</code>), <strong>Delete</strong> to remove an uploaded <code>su-*</code> file from the server (or clear any URL), or paste <code>/assets/…</code> / a public <strong>https</strong> URL. <strong>Nav logo</strong> and <strong>Jack avatar</strong>: PNG or WebP with transparency (alpha) is supported — the public header and Jack portrait do not paint an opaque plate behind the image. <code>/logo.png</code> redirects to the nav logo URL below. Public: <code>GET /api/site-appearance</code>.</p>' +
       '<div class="so-site-appearance__bulk" role="toolbar" aria-label="Bulk actions for hero images">' +
       '<span class="so-site-appearance__bulk-label mono">Selection</span>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteAppearSelectAll">Select all</button>' +
@@ -714,6 +714,26 @@
       '<input class="portal-form__input mono" type="text" id="soSiteNavLogoUrl" autocomplete="off" placeholder="/assets/logo.png" />' +
       '<label class="portal-form__label" for="soSiteNavLogoAlt">Nav logo alt text</label>' +
       '<input class="portal-form__input" type="text" id="soSiteNavLogoAlt" maxlength="180" autocomplete="off" />' +
+      '</div></article>' +
+      '<article class="so-site-appearance__card">' +
+      '<div class="so-site-appearance__preview">' +
+      '<img id="soSiteJackAvatarPreview" class="so-site-appearance__preview-img is-hidden" alt="" decoding="async" />' +
+      '<div id="soSiteJackAvatarPreviewEmpty" class="so-site-appearance__preview-empty">No preview</div>' +
+      '</div>' +
+      '<div class="so-site-appearance__card-fields">' +
+      '<h3 class="so-site-appearance__card-title">Jack avatar</h3>' +
+      '<p class="so-site-appearance__card-meta mono">index.html Jack block · <code>img.so-b2b__jack-photo</code> · default <code>/assets/jack-avatar.png</code> when that file exists on the server</p>' +
+      '<div class="so-site-appearance__field-actions">' +
+      '<label class="so-site-appearance__pick"><input type="checkbox" class="so-site-appearance__cb" data-so-appearance-sel="jack" aria-label="Select Jack avatar" /> <span class="mono">Select</span></label>' +
+      '<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="is-hidden" id="soSiteJackAvatarFile" />' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSiteJackAvatarPickBtn">Upload…</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSiteJackAvatarClearBtn">Clear URL</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="soSiteJackAvatarDeleteBtn">Delete</button>' +
+      '</div>' +
+      '<label class="portal-form__label" for="soSiteJackAvatarUrl">Jack avatar URL</label>' +
+      '<input class="portal-form__input mono" type="text" id="soSiteJackAvatarUrl" autocomplete="off" placeholder="/assets/jack-avatar.png" />' +
+      '<label class="portal-form__label" for="soSiteJackAvatarAlt">Jack avatar alt</label>' +
+      '<input class="portal-form__input" type="text" id="soSiteJackAvatarAlt" maxlength="180" autocomplete="off" />' +
       '</div></article>' +
       '<article class="so-site-appearance__card">' +
       '<div class="so-site-appearance__preview">' +
@@ -857,6 +877,11 @@
       document.getElementById('soSiteNavLogoPreviewEmpty')
     );
     wireSitePreview(
+      document.getElementById('soSiteJackAvatarUrl'),
+      document.getElementById('soSiteJackAvatarPreview'),
+      document.getElementById('soSiteJackAvatarPreviewEmpty')
+    );
+    wireSitePreview(
       document.getElementById('soSiteHomeImgUrl'),
       document.getElementById('soSiteHomeImgPreview'),
       document.getElementById('soSiteHomeImgPreviewEmpty')
@@ -879,6 +904,8 @@
 
     var navLogoUrlEl = document.getElementById('soSiteNavLogoUrl');
     var navLogoAltEl = document.getElementById('soSiteNavLogoAlt');
+    var jackUrlEl = document.getElementById('soSiteJackAvatarUrl');
+    var jackAltEl = document.getElementById('soSiteJackAvatarAlt');
     var homeUrlEl = document.getElementById('soSiteHomeImgUrl');
     var homeAltEl = document.getElementById('soSiteHomeImgAlt');
     var urlEl = document.getElementById('soSitePropImgUrl');
@@ -891,6 +918,8 @@
     var SITE_APPEARANCE_DEFAULTS = {
       navLogoUrl: '/assets/logo.png',
       navLogoAlt: 'www.serviceopera.to',
+      jackAvatarUrl: '/assets/jack-avatar.png',
+      jackAvatarAlt: '',
       homePageImageUrl: '/assets/home-page-hero.png',
       homePageImageAlt: 'www.serviceopera.to — home',
       propertyPageImageUrl: '/assets/property-page-hero.png',
@@ -909,6 +938,8 @@
       }
       if (navLogoUrlEl) navLogoUrlEl.value = pick('navLogoUrl');
       if (navLogoAltEl) navLogoAltEl.value = pick('navLogoAlt');
+      if (jackUrlEl) jackUrlEl.value = pick('jackAvatarUrl');
+      if (jackAltEl) jackAltEl.value = pick('jackAvatarAlt');
       if (homeUrlEl) homeUrlEl.value = pick('homePageImageUrl');
       if (homeAltEl) homeAltEl.value = pick('homePageImageAlt');
       if (urlEl) urlEl.value = pick('propertyPageImageUrl');
@@ -919,7 +950,7 @@
       if (hotelAltEl) hotelAltEl.value = pick('hotelPageImageAlt');
     }
     function bumpSiteAppearanceUrlPreviews() {
-      [navLogoUrlEl, homeUrlEl, urlEl, clinicUrlEl, hotelUrlEl].forEach(function (el) {
+      [navLogoUrlEl, jackUrlEl, homeUrlEl, urlEl, clinicUrlEl, hotelUrlEl].forEach(function (el) {
         if (el) el.dispatchEvent(new Event('input', { bubbles: true }));
       });
     }
@@ -1050,6 +1081,9 @@
     bindAppearanceUpload('soSiteNavLogoPickBtn', 'soSiteNavLogoFile', navLogoUrlEl);
     bindClearUrl('soSiteNavLogoClearBtn', navLogoUrlEl);
     bindDeleteUpload('soSiteNavLogoDeleteBtn', navLogoUrlEl);
+    bindAppearanceUpload('soSiteJackAvatarPickBtn', 'soSiteJackAvatarFile', jackUrlEl);
+    bindClearUrl('soSiteJackAvatarClearBtn', jackUrlEl);
+    bindDeleteUpload('soSiteJackAvatarDeleteBtn', jackUrlEl);
     bindAppearanceUpload('soSiteHomeImgPickBtn', 'soSiteHomeImgFile', homeUrlEl);
     bindClearUrl('soSiteHomeImgClearBtn', homeUrlEl);
     bindDeleteUpload('soSiteHomeImgDeleteBtn', homeUrlEl);
@@ -1070,6 +1104,7 @@
     }
     function appearanceRowForSel(sel) {
       if (sel === 'nav') return { url: navLogoUrlEl };
+      if (sel === 'jack') return { url: jackUrlEl };
       if (sel === 'home') return { url: homeUrlEl };
       if (sel === 'prop') return { url: urlEl };
       if (sel === 'clinic') return { url: clinicUrlEl };
@@ -1170,6 +1205,8 @@
           body: JSON.stringify({
             navLogoUrl: navLogoUrlEl ? navLogoUrlEl.value : '',
             navLogoAlt: navLogoAltEl ? navLogoAltEl.value : '',
+            jackAvatarUrl: jackUrlEl ? jackUrlEl.value : '',
+            jackAvatarAlt: jackAltEl ? jackAltEl.value : '',
             homePageImageUrl: homeUrlEl ? homeUrlEl.value : '',
             homePageImageAlt: homeAltEl ? homeAltEl.value : '',
             propertyPageImageUrl: urlEl ? urlEl.value : '',
@@ -1193,6 +1230,8 @@
             if (hintEl) hintEl.textContent = 'Saved. Visitors will see the new images on the next page load.';
             if (navLogoUrlEl && x.j.navLogoUrl) navLogoUrlEl.value = x.j.navLogoUrl;
             if (navLogoAltEl && x.j.navLogoAlt) navLogoAltEl.value = x.j.navLogoAlt;
+            if (jackUrlEl && 'jackAvatarUrl' in x.j) jackUrlEl.value = x.j.jackAvatarUrl || '';
+            if (jackAltEl && 'jackAvatarAlt' in x.j) jackAltEl.value = x.j.jackAvatarAlt || '';
             if (homeUrlEl && x.j.homePageImageUrl) homeUrlEl.value = x.j.homePageImageUrl;
             if (homeAltEl && x.j.homePageImageAlt) homeAltEl.value = x.j.homePageImageAlt;
             if (urlEl && x.j.propertyPageImageUrl) urlEl.value = x.j.propertyPageImageUrl;

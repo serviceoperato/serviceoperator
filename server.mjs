@@ -404,6 +404,17 @@ async function buildAdminWorkQueue() {
 }
 
 const siteAppearancePath = path.join(dataDir, 'site-appearance.json');
+
+/** Public homepage Jack portrait — default URL only when the file is shipped under `public/assets/`. */
+function defaultJackAvatarUrlFromDisk() {
+  try {
+    const p = path.join(publicDir, 'assets', 'jack-avatar.png');
+    return fs.existsSync(p) ? '/assets/jack-avatar.png' : '';
+  } catch {
+    return '';
+  }
+}
+
 const defaultSiteAppearance = {
   propertyPageImageUrl: '/assets/property-page-hero.png',
   propertyPageImageAlt:
@@ -489,6 +500,20 @@ function mergeSiteAppearance(raw) {
   const navLogoAlt = navLogoAltRaw
     ? navLogoAltRaw.slice(0, 180).replace(/[\u0000-\u001f\u007f]/g, '')
     : defaultSiteAppearance.navLogoAlt;
+  const diskJackUrl = defaultJackAvatarUrlFromDisk();
+  let jackAvatarUrl = '';
+  if (typeof raw.jackAvatarUrl === 'string' && raw.jackAvatarUrl.trim()) {
+    const ju = rewriteLegacyImagesUrl(raw.jackAvatarUrl.trim());
+    jackAvatarUrl = isSafePropertyPageImageUrl(ju) ? ju : diskJackUrl;
+  } else if ('jackAvatarUrl' in raw && typeof raw.jackAvatarUrl === 'string' && !raw.jackAvatarUrl.trim()) {
+    jackAvatarUrl = '';
+  } else {
+    jackAvatarUrl = diskJackUrl;
+  }
+  const jackAltRaw = typeof raw.jackAvatarAlt === 'string' ? raw.jackAvatarAlt.trim() : '';
+  const jackAvatarAlt = jackAltRaw
+    ? jackAltRaw.slice(0, 180).replace(/[\u0000-\u001f\u007f]/g, '')
+    : '';
   const icons = mergeIconsMap(raw.icons);
   return {
     propertyPageImageUrl: propUrl,
@@ -501,6 +526,8 @@ function mergeSiteAppearance(raw) {
     homePageImageAlt: homeAlt,
     navLogoUrl,
     navLogoAlt,
+    jackAvatarUrl,
+    jackAvatarAlt,
     icons,
   };
 }
@@ -1589,6 +1616,24 @@ app.put('/api/admin/site-appearance', requireAdmin, (req, res) => {
       ? normalizePageImageAlt(body.navLogoAlt, defaultSiteAppearance.navLogoAlt).slice(0, 180)
       : cur.navLogoAlt;
 
+  const jackUrlIn =
+    'jackAvatarUrl' in body && typeof body.jackAvatarUrl === 'string'
+      ? body.jackAvatarUrl.trim()
+      : cur.jackAvatarUrl;
+  let jackAvatarUrl = jackUrlIn === '' ? '' : rewriteLegacyImagesUrl(jackUrlIn);
+  if (jackAvatarUrl && !isSafePropertyPageImageUrl(jackAvatarUrl)) {
+    return res.status(400).json({
+      error: 'Invalid jackAvatarUrl. Use a path on this site (starting with /) or an https:// image URL.',
+    });
+  }
+  const jackAvatarAlt =
+    'jackAvatarAlt' in body
+      ? String(body.jackAvatarAlt ?? '')
+          .trim()
+          .slice(0, 180)
+          .replace(/[\u0000-\u001f\u007f]/g, '')
+      : cur.jackAvatarAlt;
+
   let nextIcons = cur.icons && typeof cur.icons === 'object' ? { ...cur.icons } : {};
   if ('icons' in body) {
     const incoming = body.icons;
@@ -1640,6 +1685,8 @@ app.put('/api/admin/site-appearance', requireAdmin, (req, res) => {
     homePageImageAlt: homeAlt,
     navLogoUrl,
     navLogoAlt,
+    jackAvatarUrl,
+    jackAvatarAlt,
     icons: nextIcons,
   };
   try {

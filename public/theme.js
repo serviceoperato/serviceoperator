@@ -115,6 +115,21 @@
     });
   }
 
+  function applyJackAvatar(j) {
+    if (!j) return;
+    var u = typeof j.jackAvatarUrl === 'string' ? j.jackAvatarUrl.trim() : '';
+    var alt = typeof j.jackAvatarAlt === 'string' && j.jackAvatarAlt.trim() ? j.jackAvatarAlt.trim() : '';
+    document.querySelectorAll('[data-so-jack-avatar] img.so-b2b__jack-photo').forEach(function (img) {
+      if (!u) {
+        img.remove();
+        return;
+      }
+      img.src = u;
+      if (alt) img.alt = alt;
+      else img.removeAttribute('alt');
+    });
+  }
+
   function applyIconSlots(icons) {
     window.__SO_SITE_ICON_MAP__ = icons && typeof icons === 'object' ? icons : {};
     document.querySelectorAll('[data-so-icon]').forEach(function (el) {
@@ -147,6 +162,7 @@
     })
     .then(function (j) {
       applyNav(j);
+      applyJackAvatar(j);
       applyIconSlots(j && j.icons);
     })
     .catch(function () {});
