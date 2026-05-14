@@ -1043,40 +1043,56 @@
       heroDecoTopRightOpacity: 0.12,
       heroDecoBottomLeftOpacity: 0.12,
     };
-    function applySiteAppearanceMerge(apiJson) {
+    /**
+     * Hydrate the panel from API JSON. When `opts.force` is false (default GET), do not overwrite a
+     * non-empty input that differs from the payload — avoids a slow initial GET arriving after upload
+     * + PATCH and wiping the new URL before the user clicks Save all.
+     */
+    function applySiteAppearanceMerge(apiJson, opts) {
+      var force = opts && opts.force;
       var o = apiJson && typeof apiJson === 'object' ? apiJson : {};
+      function setInputUnlessLocalConflict(el, nextVal) {
+        if (!el) return;
+        var next = nextVal != null ? String(nextVal) : '';
+        if (!force) {
+          var cur = String(el.value || '').trim();
+          var nextTrim = String(next).trim();
+          if (cur !== '' && cur !== nextTrim) return;
+        }
+        el.value = next;
+      }
       function pick(k) {
         var v = o[k];
         var t = v != null && String(v).trim() ? String(v).trim() : '';
         return t || (SITE_APPEARANCE_DEFAULTS[k] != null ? SITE_APPEARANCE_DEFAULTS[k] : '');
       }
-      if (navLogoUrlEl) navLogoUrlEl.value = pick('navLogoUrl');
-      if (navLogoAltEl) navLogoAltEl.value = pick('navLogoAlt');
-      if (jackUrlEl) jackUrlEl.value = pick('jackAvatarUrl');
-      if (jackAltEl) jackAltEl.value = pick('jackAvatarAlt');
-      if (homeUrlEl) homeUrlEl.value = pick('homePageImageUrl');
-      if (homeAltEl) homeAltEl.value = pick('homePageImageAlt');
-      if (urlEl) urlEl.value = pick('propertyPageImageUrl');
-      if (altEl) altEl.value = pick('propertyPageImageAlt');
-      if (clinicUrlEl) clinicUrlEl.value = pick('clinicPageImageUrl');
-      if (clinicAltEl) clinicAltEl.value = pick('clinicPageImageAlt');
-      if (hotelUrlEl) hotelUrlEl.value = pick('hotelPageImageUrl');
-      if (hotelAltEl) hotelAltEl.value = pick('hotelPageImageAlt');
+      setInputUnlessLocalConflict(navLogoUrlEl, pick('navLogoUrl'));
+      setInputUnlessLocalConflict(navLogoAltEl, pick('navLogoAlt'));
+      setInputUnlessLocalConflict(jackUrlEl, pick('jackAvatarUrl'));
+      setInputUnlessLocalConflict(jackAltEl, pick('jackAvatarAlt'));
+      setInputUnlessLocalConflict(homeUrlEl, pick('homePageImageUrl'));
+      setInputUnlessLocalConflict(homeAltEl, pick('homePageImageAlt'));
+      setInputUnlessLocalConflict(urlEl, pick('propertyPageImageUrl'));
+      setInputUnlessLocalConflict(altEl, pick('propertyPageImageAlt'));
+      setInputUnlessLocalConflict(clinicUrlEl, pick('clinicPageImageUrl'));
+      setInputUnlessLocalConflict(clinicAltEl, pick('clinicPageImageAlt'));
+      setInputUnlessLocalConflict(hotelUrlEl, pick('hotelPageImageUrl'));
+      setInputUnlessLocalConflict(hotelAltEl, pick('hotelPageImageAlt'));
       function pickOptionalImageUrl(k, def) {
         if (!(k in o)) return def;
         if (o[k] == null) return '';
         return String(o[k]).trim();
       }
       if (heroDecoTrUrlEl) {
-        heroDecoTrUrlEl.value = pickOptionalImageUrl(
-          'heroDecoTopRightUrl',
-          SITE_APPEARANCE_DEFAULTS.heroDecoTopRightUrl
+        setInputUnlessLocalConflict(
+          heroDecoTrUrlEl,
+          pickOptionalImageUrl('heroDecoTopRightUrl', SITE_APPEARANCE_DEFAULTS.heroDecoTopRightUrl)
         );
       }
       if (heroDecoBlUrlEl) {
-        heroDecoBlUrlEl.value = pickOptionalImageUrl(
-          'heroDecoBottomLeftUrl',
-          SITE_APPEARANCE_DEFAULTS.heroDecoBottomLeftUrl
+        setInputUnlessLocalConflict(
+          heroDecoBlUrlEl,
+          pickOptionalImageUrl('heroDecoBottomLeftUrl', SITE_APPEARANCE_DEFAULTS.heroDecoBottomLeftUrl)
         );
       }
       function pickOpacity(k, def) {
@@ -1086,15 +1102,15 @@
         return String(def);
       }
       if (heroDecoTrOpEl) {
-        heroDecoTrOpEl.value = pickOpacity(
-          'heroDecoTopRightOpacity',
-          SITE_APPEARANCE_DEFAULTS.heroDecoTopRightOpacity
+        setInputUnlessLocalConflict(
+          heroDecoTrOpEl,
+          pickOpacity('heroDecoTopRightOpacity', SITE_APPEARANCE_DEFAULTS.heroDecoTopRightOpacity)
         );
       }
       if (heroDecoBlOpEl) {
-        heroDecoBlOpEl.value = pickOpacity(
-          'heroDecoBottomLeftOpacity',
-          SITE_APPEARANCE_DEFAULTS.heroDecoBottomLeftOpacity
+        setInputUnlessLocalConflict(
+          heroDecoBlOpEl,
+          pickOpacity('heroDecoBottomLeftOpacity', SITE_APPEARANCE_DEFAULTS.heroDecoBottomLeftOpacity)
         );
       }
     }
@@ -1105,7 +1121,52 @@
         }
       );
     }
-    function bindAppearanceUpload(pickBtnId, fileInputId, urlInput) {
+    /** Serialize PUTs so rapid uploads (or Save all) do not race on site-appearance.json. */
+    var appearancePutChain = Promise.resolve();
+    function executeSiteAppearancePut(body) {
+      var tok = getAdminBearer();
+      if (!tok) {
+        return Promise.resolve({
+          ok: false,
+          j: { error: 'Not signed in as admin; cannot save site appearance.' },
+        });
+      }
+      return fetch(api('/api/admin/site-appearance'), {
+        method: 'PUT',
+        credentials: apiCred(),
+        cache: 'no-store',
+        headers: {
+          Authorization: 'Bearer ' + tok,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      })
+        .then(function (r) {
+          return r.json().then(function (j) {
+            return { ok: r.ok, j: j };
+          });
+        })
+        .then(function (x) {
+          if (x.ok && x.j) {
+            applySiteAppearanceMerge(x.j, { force: true });
+            bumpSiteAppearanceUrlPreviews();
+          }
+          return x;
+        })
+        .catch(function () {
+          return { ok: false, j: { error: 'Network error on save.' } };
+        });
+    }
+    function enqueueAppearancePersistPut(body) {
+      var next = appearancePutChain.then(function () {
+        return executeSiteAppearancePut(body);
+      });
+      appearancePutChain = next.catch(function () {
+        return { ok: false, j: { error: 'Network error on save.' } };
+      });
+      return next;
+    }
+    function bindAppearanceUpload(pickBtnId, fileInputId, urlInput, persistField) {
       var pick = document.getElementById(pickBtnId);
       var fin = document.getElementById(fileInputId);
       if (!pick || !fin || !urlInput) return;
@@ -1154,13 +1215,32 @@
                 fin.value = '';
                 return;
               }
-              urlInput.value = x.j.url;
+              var uploadedUrl = x.j.url;
+              var bytes = x.j.bytes;
+              urlInput.value = uploadedUrl;
               urlInput.dispatchEvent(new Event('input', { bubbles: true }));
               if (hintEl) {
                 hintEl.textContent =
-                  'Uploaded ' + x.j.url + ' (' + String(x.j.bytes) + ' B). Save to persist in site config.';
+                  'Uploaded ' + uploadedUrl + ' (' + String(bytes) + ' B). Saving to site config…';
               }
-              fin.value = '';
+              var patch = {};
+              patch[persistField] = uploadedUrl;
+              enqueueAppearancePersistPut(patch).then(function (putX) {
+                if (!putX.ok) {
+                  if (hintEl) {
+                    hintEl.textContent =
+                      (putX.j && putX.j.error) ||
+                      'Uploaded but could not save to site config. Click Save all to retry.';
+                  }
+                  fin.value = '';
+                  return;
+                }
+                if (hintEl) {
+                  hintEl.textContent =
+                    'Uploaded ' + uploadedUrl + ' (' + String(bytes) + ' B). Saved to site config.';
+                }
+                fin.value = '';
+              });
             })
             .catch(function () {
               if (hintEl) hintEl.textContent = 'Upload network error.';
@@ -1229,28 +1309,28 @@
           });
       });
     }
-    bindAppearanceUpload('soSiteNavLogoPickBtn', 'soSiteNavLogoFile', navLogoUrlEl);
+    bindAppearanceUpload('soSiteNavLogoPickBtn', 'soSiteNavLogoFile', navLogoUrlEl, 'navLogoUrl');
     bindClearUrl('soSiteNavLogoClearBtn', navLogoUrlEl);
     bindDeleteUpload('soSiteNavLogoDeleteBtn', navLogoUrlEl);
-    bindAppearanceUpload('soSiteJackAvatarPickBtn', 'soSiteJackAvatarFile', jackUrlEl);
+    bindAppearanceUpload('soSiteJackAvatarPickBtn', 'soSiteJackAvatarFile', jackUrlEl, 'jackAvatarUrl');
     bindClearUrl('soSiteJackAvatarClearBtn', jackUrlEl);
     bindDeleteUpload('soSiteJackAvatarDeleteBtn', jackUrlEl);
-    bindAppearanceUpload('soSiteHomeImgPickBtn', 'soSiteHomeImgFile', homeUrlEl);
+    bindAppearanceUpload('soSiteHomeImgPickBtn', 'soSiteHomeImgFile', homeUrlEl, 'homePageImageUrl');
     bindClearUrl('soSiteHomeImgClearBtn', homeUrlEl);
     bindDeleteUpload('soSiteHomeImgDeleteBtn', homeUrlEl);
-    bindAppearanceUpload('soSitePropImgPickBtn', 'soSitePropImgFile', urlEl);
+    bindAppearanceUpload('soSitePropImgPickBtn', 'soSitePropImgFile', urlEl, 'propertyPageImageUrl');
     bindClearUrl('soSitePropImgClearBtn', urlEl);
     bindDeleteUpload('soSitePropImgDeleteBtn', urlEl);
-    bindAppearanceUpload('soSiteClinicImgPickBtn', 'soSiteClinicImgFile', clinicUrlEl);
+    bindAppearanceUpload('soSiteClinicImgPickBtn', 'soSiteClinicImgFile', clinicUrlEl, 'clinicPageImageUrl');
     bindClearUrl('soSiteClinicImgClearBtn', clinicUrlEl);
     bindDeleteUpload('soSiteClinicImgDeleteBtn', clinicUrlEl);
-    bindAppearanceUpload('soSiteHotelImgPickBtn', 'soSiteHotelImgFile', hotelUrlEl);
+    bindAppearanceUpload('soSiteHotelImgPickBtn', 'soSiteHotelImgFile', hotelUrlEl, 'hotelPageImageUrl');
     bindClearUrl('soSiteHotelImgClearBtn', hotelUrlEl);
     bindDeleteUpload('soSiteHotelImgDeleteBtn', hotelUrlEl);
-    bindAppearanceUpload('soSiteHeroDecoTrPickBtn', 'soSiteHeroDecoTrFile', heroDecoTrUrlEl);
+    bindAppearanceUpload('soSiteHeroDecoTrPickBtn', 'soSiteHeroDecoTrFile', heroDecoTrUrlEl, 'heroDecoTopRightUrl');
     bindClearUrl('soSiteHeroDecoTrClearBtn', heroDecoTrUrlEl);
     bindDeleteUpload('soSiteHeroDecoTrDeleteBtn', heroDecoTrUrlEl);
-    bindAppearanceUpload('soSiteHeroDecoBlPickBtn', 'soSiteHeroDecoBlFile', heroDecoBlUrlEl);
+    bindAppearanceUpload('soSiteHeroDecoBlPickBtn', 'soSiteHeroDecoBlFile', heroDecoBlUrlEl, 'heroDecoBottomLeftUrl');
     bindClearUrl('soSiteHeroDecoBlClearBtn', heroDecoBlUrlEl);
     bindDeleteUpload('soSiteHeroDecoBlDeleteBtn', heroDecoBlUrlEl);
     var selAll = document.getElementById('soSiteAppearSelectAll');
@@ -1373,33 +1453,13 @@
         };
         if (Number.isFinite(trOpNum)) savePayload.heroDecoTopRightOpacity = trOpNum;
         if (Number.isFinite(blOpNum)) savePayload.heroDecoBottomLeftOpacity = blOpNum;
-        fetch(api('/api/admin/site-appearance'), {
-          method: 'PUT',
-          credentials: apiCred(),
-          cache: 'no-store',
-          headers: {
-            Authorization: 'Bearer ' + getAdminBearer(),
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(savePayload),
-        })
-          .then(function (r) {
-            return r.json().then(function (j) {
-              return { ok: r.ok, j: j };
-            });
-          })
-          .then(function (x) {
-            if (!x.ok) {
-              if (hintEl) hintEl.textContent = (x.j && x.j.error) || 'Save failed.';
-              return;
-            }
-            if (hintEl) hintEl.textContent = 'Saved. Visitors will see the new images on the next page load.';
-            applySiteAppearanceMerge(x.j);
-            bumpSiteAppearanceUrlPreviews();
-          })
-          .catch(function () {
-            if (hintEl) hintEl.textContent = 'Network error on save.';
-          });
+        enqueueAppearancePersistPut(savePayload).then(function (x) {
+          if (!x.ok) {
+            if (hintEl) hintEl.textContent = (x.j && x.j.error) || 'Save failed.';
+            return;
+          }
+          if (hintEl) hintEl.textContent = 'Saved. Visitors will see the new images on the next page load.';
+        });
       });
     }
   }
