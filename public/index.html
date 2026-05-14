@@ -86,9 +86,25 @@
     }
   }
   .page-home .so-b2b__hero {
+    position: relative;
+    overflow-x: clip;
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
+  }
+  /* Decorative ring swoosh: SVG /assets/hero-corner-arc.svg — top/right on .so-b2b__hero, no transform needed (path oriented for bulge toward center-left). Tweak background-position/size if layout changes. */
+  .page-home .so-b2b__hero-deco {
+    position: absolute;
+    top: -2.5rem;
+    right: -4%;
+    width: min(85vw, 720px);
+    aspect-ratio: 1;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.12;
+    background: url(/assets/hero-corner-arc.svg) no-repeat right top;
+    background-size: 108% auto;
+    filter: blur(0.8px);
   }
   .page-home .so-b2b__brand {
     margin: 0 0 0.35rem;
@@ -934,6 +950,7 @@
 <main class="so-b2b">
   <div class="so-b2b__wrap">
     <header class="so-b2b__hero">
+      <div class="so-b2b__hero-deco" aria-hidden="true"></div>
       <p class="so-b2b__brand">www.serviceopera.to</p>
       <div class="client-hero__eyebrow">
         <span class="dot dot--live" aria-hidden="true"></span>
