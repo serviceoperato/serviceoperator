@@ -686,7 +686,13 @@
     if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.add('is-hidden');
     panelTitle.textContent = 'Site appearance';
     panelBody.innerHTML =
-      '<div class="so-site-appearance">' +
+      '<div class="so-site-appearance" id="soSiteAppearanceRoot">' +
+      '<div class="so-site-appearance__cols-bar" role="toolbar" aria-label="Card grid columns">' +
+      '<button type="button" class="tf-admin-toolbar__btn so-site-appearance__cols-btn" data-so-appearance-cols="4" aria-pressed="false">4</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn so-site-appearance__cols-btn" data-so-appearance-cols="5" aria-pressed="false">5</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn so-site-appearance__cols-btn" data-so-appearance-cols="6" aria-pressed="false">6</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn so-site-appearance__cols-btn" data-so-appearance-cols="7" aria-pressed="false">7</button>' +
+      '</div>' +
       '<p class="tf-admin-muted so-site-appearance__lede">Square previews update as you type. Use <strong>Upload…</strong> (admin only, saves under <code>/assets/site-uploads/</code>), <strong>Delete</strong> to remove an uploaded <code>su-*</code> file from the server (or clear any URL), or paste <code>/assets/…</code> / a public <strong>https</strong> URL. <strong>Nav logo</strong> and <strong>Jack avatar</strong>: PNG or WebP with transparency (alpha) is supported — the public header and Jack portrait do not paint an opaque plate behind the image. <code>/logo.png</code> redirects to the nav logo URL below. Public: <code>GET /api/site-appearance</code>.</p>' +
       '<div class="so-site-appearance__bulk" role="toolbar" aria-label="Bulk actions for hero images">' +
       '<span class="so-site-appearance__bulk-label mono">Selection</span>' +
@@ -864,6 +870,40 @@
       '</div></div></div>';
     panel.classList.remove('is-hidden');
     window.scrollTo(0, 0);
+
+    (function initSiteAppearanceGridCols() {
+      var LS_KEY = 'so-site-appearance-cols';
+      var root = document.getElementById('soSiteAppearanceRoot');
+      if (!root) return;
+      var stored = null;
+      try {
+        stored = localStorage.getItem(LS_KEY);
+      } catch (e) {}
+      var parsed = parseInt(stored, 10);
+      var cols = [4, 5, 6, 7].indexOf(parsed) !== -1 ? parsed : 4;
+      function apply(next) {
+        cols = next;
+        root.style.setProperty('--so-appearance-cols', String(cols));
+        root.querySelectorAll('[data-so-appearance-cols]').forEach(function (btn) {
+          var v = parseInt(btn.getAttribute('data-so-appearance-cols'), 10);
+          var on = v === cols;
+          btn.classList.toggle('is-active', on);
+          btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+        try {
+          localStorage.setItem(LS_KEY, String(cols));
+        } catch (e) {}
+      }
+      apply(cols);
+      root.addEventListener('click', function (ev) {
+        var el = ev.target;
+        if (!el || !el.closest) return;
+        var btn = el.closest('[data-so-appearance-cols]');
+        if (!btn || !root.contains(btn)) return;
+        var c = parseInt(btn.getAttribute('data-so-appearance-cols'), 10);
+        if ([4, 5, 6, 7].indexOf(c) !== -1) apply(c);
+      });
+    })();
 
     function siteAppearanceResolveUrl(raw) {
       var u = String(raw || '').trim();
@@ -1065,7 +1105,52 @@
         }
       );
     }
-    function bindAppearanceUpload(pickBtnId, fileInputId, urlInput) {
+    /** Serialize PUTs so rapid uploads do not race last-write-wins on site-appearance.json. */
+    var appearancePutChain = Promise.resolve();
+    function executeSiteAppearancePut(body) {
+      var tok = getAdminBearer();
+      if (!tok) {
+        return Promise.resolve({
+          ok: false,
+          j: { error: 'Not signed in as admin; cannot save site appearance.' },
+        });
+      }
+      return fetch(api('/api/admin/site-appearance'), {
+        method: 'PUT',
+        credentials: apiCred(),
+        cache: 'no-store',
+        headers: {
+          Authorization: 'Bearer ' + tok,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      })
+        .then(function (r) {
+          return r.json().then(function (j) {
+            return { ok: r.ok, j: j };
+          });
+        })
+        .then(function (x) {
+          if (x.ok && x.j) {
+            applySiteAppearanceMerge(x.j);
+            bumpSiteAppearanceUrlPreviews();
+          }
+          return x;
+        })
+        .catch(function () {
+          return { ok: false, j: { error: 'Network error on save.' } };
+        });
+    }
+    function enqueueAppearancePersistPut(body) {
+      var next = appearancePutChain.then(function () {
+        return executeSiteAppearancePut(body);
+      });
+      appearancePutChain = next.catch(function () {
+        return { ok: false, j: { error: 'Network error on save.' } };
+      });
+      return next;
+    }
+    function bindAppearanceUpload(pickBtnId, fileInputId, urlInput, persistField) {
       var pick = document.getElementById(pickBtnId);
       var fin = document.getElementById(fileInputId);
       if (!pick || !fin || !urlInput) return;
@@ -1114,13 +1199,32 @@
                 fin.value = '';
                 return;
               }
-              urlInput.value = x.j.url;
+              var uploadedUrl = x.j.url;
+              var bytes = x.j.bytes;
+              urlInput.value = uploadedUrl;
               urlInput.dispatchEvent(new Event('input', { bubbles: true }));
               if (hintEl) {
                 hintEl.textContent =
-                  'Uploaded ' + x.j.url + ' (' + String(x.j.bytes) + ' B). Save to persist in site config.';
+                  'Uploaded ' + uploadedUrl + ' (' + String(bytes) + ' B). Saving to site config…';
               }
-              fin.value = '';
+              var patch = {};
+              patch[persistField] = uploadedUrl;
+              enqueueAppearancePersistPut(patch).then(function (putX) {
+                if (!putX.ok) {
+                  if (hintEl) {
+                    hintEl.textContent =
+                      (putX.j && putX.j.error) ||
+                      'Uploaded but could not save to site config. Click Save all to retry.';
+                  }
+                  fin.value = '';
+                  return;
+                }
+                if (hintEl) {
+                  hintEl.textContent =
+                    'Uploaded ' + uploadedUrl + ' (' + String(bytes) + ' B). Saved to site config.';
+                }
+                fin.value = '';
+              });
             })
             .catch(function () {
               if (hintEl) hintEl.textContent = 'Upload network error.';
@@ -1189,28 +1293,28 @@
           });
       });
     }
-    bindAppearanceUpload('soSiteNavLogoPickBtn', 'soSiteNavLogoFile', navLogoUrlEl);
+    bindAppearanceUpload('soSiteNavLogoPickBtn', 'soSiteNavLogoFile', navLogoUrlEl, 'navLogoUrl');
     bindClearUrl('soSiteNavLogoClearBtn', navLogoUrlEl);
     bindDeleteUpload('soSiteNavLogoDeleteBtn', navLogoUrlEl);
-    bindAppearanceUpload('soSiteJackAvatarPickBtn', 'soSiteJackAvatarFile', jackUrlEl);
+    bindAppearanceUpload('soSiteJackAvatarPickBtn', 'soSiteJackAvatarFile', jackUrlEl, 'jackAvatarUrl');
     bindClearUrl('soSiteJackAvatarClearBtn', jackUrlEl);
     bindDeleteUpload('soSiteJackAvatarDeleteBtn', jackUrlEl);
-    bindAppearanceUpload('soSiteHomeImgPickBtn', 'soSiteHomeImgFile', homeUrlEl);
+    bindAppearanceUpload('soSiteHomeImgPickBtn', 'soSiteHomeImgFile', homeUrlEl, 'homePageImageUrl');
     bindClearUrl('soSiteHomeImgClearBtn', homeUrlEl);
     bindDeleteUpload('soSiteHomeImgDeleteBtn', homeUrlEl);
-    bindAppearanceUpload('soSitePropImgPickBtn', 'soSitePropImgFile', urlEl);
+    bindAppearanceUpload('soSitePropImgPickBtn', 'soSitePropImgFile', urlEl, 'propertyPageImageUrl');
     bindClearUrl('soSitePropImgClearBtn', urlEl);
     bindDeleteUpload('soSitePropImgDeleteBtn', urlEl);
-    bindAppearanceUpload('soSiteClinicImgPickBtn', 'soSiteClinicImgFile', clinicUrlEl);
+    bindAppearanceUpload('soSiteClinicImgPickBtn', 'soSiteClinicImgFile', clinicUrlEl, 'clinicPageImageUrl');
     bindClearUrl('soSiteClinicImgClearBtn', clinicUrlEl);
     bindDeleteUpload('soSiteClinicImgDeleteBtn', clinicUrlEl);
-    bindAppearanceUpload('soSiteHotelImgPickBtn', 'soSiteHotelImgFile', hotelUrlEl);
+    bindAppearanceUpload('soSiteHotelImgPickBtn', 'soSiteHotelImgFile', hotelUrlEl, 'hotelPageImageUrl');
     bindClearUrl('soSiteHotelImgClearBtn', hotelUrlEl);
     bindDeleteUpload('soSiteHotelImgDeleteBtn', hotelUrlEl);
-    bindAppearanceUpload('soSiteHeroDecoTrPickBtn', 'soSiteHeroDecoTrFile', heroDecoTrUrlEl);
+    bindAppearanceUpload('soSiteHeroDecoTrPickBtn', 'soSiteHeroDecoTrFile', heroDecoTrUrlEl, 'heroDecoTopRightUrl');
     bindClearUrl('soSiteHeroDecoTrClearBtn', heroDecoTrUrlEl);
     bindDeleteUpload('soSiteHeroDecoTrDeleteBtn', heroDecoTrUrlEl);
-    bindAppearanceUpload('soSiteHeroDecoBlPickBtn', 'soSiteHeroDecoBlFile', heroDecoBlUrlEl);
+    bindAppearanceUpload('soSiteHeroDecoBlPickBtn', 'soSiteHeroDecoBlFile', heroDecoBlUrlEl, 'heroDecoBottomLeftUrl');
     bindClearUrl('soSiteHeroDecoBlClearBtn', heroDecoBlUrlEl);
     bindDeleteUpload('soSiteHeroDecoBlDeleteBtn', heroDecoBlUrlEl);
     var selAll = document.getElementById('soSiteAppearSelectAll');
@@ -1333,33 +1437,13 @@
         };
         if (Number.isFinite(trOpNum)) savePayload.heroDecoTopRightOpacity = trOpNum;
         if (Number.isFinite(blOpNum)) savePayload.heroDecoBottomLeftOpacity = blOpNum;
-        fetch(api('/api/admin/site-appearance'), {
-          method: 'PUT',
-          credentials: apiCred(),
-          cache: 'no-store',
-          headers: {
-            Authorization: 'Bearer ' + getAdminBearer(),
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(savePayload),
-        })
-          .then(function (r) {
-            return r.json().then(function (j) {
-              return { ok: r.ok, j: j };
-            });
-          })
-          .then(function (x) {
-            if (!x.ok) {
-              if (hintEl) hintEl.textContent = (x.j && x.j.error) || 'Save failed.';
-              return;
-            }
-            if (hintEl) hintEl.textContent = 'Saved. Visitors will see the new images on the next page load.';
-            applySiteAppearanceMerge(x.j);
-            bumpSiteAppearanceUrlPreviews();
-          })
-          .catch(function () {
-            if (hintEl) hintEl.textContent = 'Network error on save.';
-          });
+        enqueueAppearancePersistPut(savePayload).then(function (x) {
+          if (!x.ok) {
+            if (hintEl) hintEl.textContent = (x.j && x.j.error) || 'Save failed.';
+            return;
+          }
+          if (hintEl) hintEl.textContent = 'Saved. Visitors will see the new images on the next page load.';
+        });
       });
     }
   }
