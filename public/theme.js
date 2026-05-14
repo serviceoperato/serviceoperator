@@ -1,4 +1,29 @@
 /* www.serviceopera.to — light / dark theme toggle (icone monocrome SVG, currentColor) */
+(function (g) {
+  g.__soResolveSitePublicAssetUrl = function (raw) {
+    var u = String(raw || '').trim();
+    if (!u) return '';
+    if (/^https?:\/\//i.test(u)) return u;
+    if (u.charAt(0) === '/') {
+      if (u.indexOf('/assets/') === 0 && typeof g.soApiOrigin === 'function') {
+        try {
+          var apiOrigin = String(g.soApiOrigin() || '')
+            .trim()
+            .replace(/\/+$/, '');
+          if (apiOrigin && /^https?:\/\//i.test(apiOrigin)) {
+            var pageOrigin = g.location && g.location.origin ? g.location.origin : '';
+            if (pageOrigin && new URL(apiOrigin).origin !== new URL(pageOrigin).origin) {
+              return apiOrigin + u;
+            }
+          }
+        } catch (e) {}
+      }
+      return (g.location && g.location.origin ? g.location.origin : '') + u;
+    }
+    return u;
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
 (function () {
   var KEY = 'so-theme';
 
@@ -35,7 +60,11 @@
     if (/^https?:\/\//i.test(val) || val.charAt(0) === '/') {
       return (
         '<img class="theme-toggle__icon" src="' +
-        escapeAttr(val) +
+        escapeAttr(
+          typeof window !== 'undefined' && typeof window.__soResolveSitePublicAssetUrl === 'function'
+            ? window.__soResolveSitePublicAssetUrl(val)
+            : val
+        ) +
         '" alt="" width="20" height="20" decoding="async"/>'
       );
     }
@@ -104,9 +133,32 @@
       .replace(/'/g, '&#39;');
   }
 
+  function resolveSitePublicAssetUrl(raw) {
+    return typeof window !== 'undefined' && typeof window.__soResolveSitePublicAssetUrl === 'function'
+      ? window.__soResolveSitePublicAssetUrl(raw)
+      : String(raw || '').trim();
+  }
+
+  function patchInitialAssetImgSrc() {
+    document.querySelectorAll('img.brand-logo, img.so-b2b__jack-photo').forEach(function (img) {
+      try {
+        var cur = img.getAttribute('src') || '';
+        if (!cur || cur.charAt(0) !== '/') return;
+        var next = resolveSitePublicAssetUrl(cur);
+        if (next && next !== cur) img.src = next;
+      } catch (e2) {}
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', patchInitialAssetImgSrc);
+  } else {
+    patchInitialAssetImgSrc();
+  }
+
   function applyNav(j) {
     if (!j || typeof j.navLogoUrl !== 'string') return;
-    var u = j.navLogoUrl.trim();
+    var u = resolveSitePublicAssetUrl(j.navLogoUrl.trim());
     if (!u) return;
     var alt = typeof j.navLogoAlt === 'string' && j.navLogoAlt.trim() ? j.navLogoAlt.trim() : '';
     document.querySelectorAll('img.brand-logo').forEach(function (img) {
@@ -124,7 +176,7 @@
         img.remove();
         return;
       }
-      img.src = u;
+      img.src = resolveSitePublicAssetUrl(u);
       if (alt) img.alt = alt;
       else img.removeAttribute('alt');
     });
@@ -143,7 +195,11 @@
         var isMarkets = key === 'home-markets';
         var imgClass = isMarkets ? 'so-b2b__markets-ico so-icon-override-img' : 'so-icon-override-img';
         el.innerHTML =
-          '<img src="' + escapeAttr(val) + '" alt="" class="' + imgClass + '" decoding="async"/>';
+          '<img src="' +
+          escapeAttr(resolveSitePublicAssetUrl(val)) +
+          '" alt="" class="' +
+          imgClass +
+          '" decoding="async"/>';
         return;
       }
       if (/<svg/i.test(val)) {
@@ -173,8 +229,8 @@
     if (typeof j.heroDecoBottomLeftOpacity === 'number' && Number.isFinite(j.heroDecoBottomLeftOpacity)) {
       blOp = Math.min(1, Math.max(0, j.heroDecoBottomLeftOpacity));
     }
-    root.style.setProperty('--so-hero-deco-tr-url', cssUrlForBackground(tr));
-    root.style.setProperty('--so-hero-deco-bl-url', cssUrlForBackground(bl));
+    root.style.setProperty('--so-hero-deco-tr-url', cssUrlForBackground(resolveSitePublicAssetUrl(tr)));
+    root.style.setProperty('--so-hero-deco-bl-url', cssUrlForBackground(resolveSitePublicAssetUrl(bl)));
     root.style.setProperty('--so-hero-deco-tr-opacity', String(trOp));
     root.style.setProperty('--so-hero-deco-bl-opacity', String(blOp));
     document.querySelectorAll('.so-b2b__hero-deco--tr').forEach(function (el) {
