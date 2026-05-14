@@ -15,6 +15,16 @@
     }
   }
 
+  function applyAllHeroes(j) {
+    if (!j) return;
+    applyHero('property-hero', j.propertyPageImageUrl, j.propertyPageImageAlt);
+    applyHero('clinics-hero', j.clinicPageImageUrl, j.clinicPageImageAlt);
+    applyHero('hotels-hero', j.hotelPageImageUrl, j.hotelPageImageAlt);
+    applyHero('home-hero', j.homePageImageUrl, j.homePageImageAlt);
+  }
+
+  window.__soApplySiteAppearanceHeroImages = applyAllHeroes;
+
   function dismissHomePageSkeleton() {
     var sk = document.getElementById('homeSkeleton');
     var main = document.getElementById('homeMain');
@@ -23,20 +33,20 @@
     main.classList.remove('is-hidden');
   }
 
-  fetch(typeof soApiUrl === 'function' ? soApiUrl('/api/site-appearance') : '/api/site-appearance', {
-    credentials: typeof soApiCredentials === 'function' ? soApiCredentials() : 'omit',
-    cache: 'no-store',
-  })
-    .then(function (r) {
-      if (!r.ok) return null;
-      return r.json();
-    })
+  function runFetch() {
+    if (typeof window.__soFetchSiteAppearanceJson === 'function') {
+      return window.__soFetchSiteAppearanceJson();
+    }
+    var url = typeof soApiUrl === 'function' ? soApiUrl('/api/site-appearance') : '/api/site-appearance';
+    var cred = typeof soApiCredentials === 'function' ? soApiCredentials() : 'omit';
+    return fetch(url, { credentials: cred, cache: 'no-store' }).then(function (r) {
+      return r.ok ? r.json() : null;
+    });
+  }
+
+  runFetch()
     .then(function (j) {
-      if (!j) return;
-      applyHero('property-hero', j.propertyPageImageUrl, j.propertyPageImageAlt);
-      applyHero('clinics-hero', j.clinicPageImageUrl, j.clinicPageImageAlt);
-      applyHero('hotels-hero', j.hotelPageImageUrl, j.hotelPageImageAlt);
-      applyHero('home-hero', j.homePageImageUrl, j.homePageImageAlt);
+      applyAllHeroes(j);
     })
     .catch(function () {
       /* keep static src from HTML */

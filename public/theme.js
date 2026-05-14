@@ -283,18 +283,45 @@
     });
   }
 
-  fetch(typeof soApiUrl === 'function' ? soApiUrl('/api/site-appearance') : '/api/site-appearance', {
-    credentials: typeof soApiCredentials === 'function' ? soApiCredentials() : 'omit',
-    cache: 'no-store',
-  })
-    .then(function (r) {
-      return r.ok ? r.json() : null;
-    })
-    .then(function (j) {
-      applyNav(j);
-      applyJackAvatar(j);
-      applyIconSlots(j && j.icons);
-      applyHeroCornerDeco(j);
-    })
-    .catch(function () {});
+  function applyThemeSiteAppearance(j) {
+    applyNav(j);
+    applyJackAvatar(j);
+    applyIconSlots(j && j.icons);
+    applyHeroCornerDeco(j);
+  }
+
+  /**
+   * Single in-flight GET /api/site-appearance for the tab (theme + site-appearance-public.js share it).
+   * Avoids duplicate requests and races where one response overwrote another.
+   */
+  window.__soFetchSiteAppearanceJson = function () {
+    if (window.__soSiteAppearanceJsonPromise) return window.__soSiteAppearanceJsonPromise;
+    var url = typeof soApiUrl === 'function' ? soApiUrl('/api/site-appearance') : '/api/site-appearance';
+    var cred = typeof soApiCredentials === 'function' ? soApiCredentials() : 'omit';
+    window.__soSiteAppearanceJsonPromise = fetch(url, { credentials: cred, cache: 'no-store' })
+      .then(function (r) {
+        return r.ok ? r.json() : null;
+      })
+      .catch(function () {
+        return null;
+      });
+    return window.__soSiteAppearanceJsonPromise;
+  };
+
+  window.__soFetchSiteAppearanceJson().then(function (j) {
+    applyThemeSiteAppearance(j);
+  });
+
+  window.addEventListener('pageshow', function (ev) {
+    if (!ev.persisted) return;
+    try {
+      delete window.__soSiteAppearanceJsonPromise;
+    } catch (e1) {}
+    window.__soFetchSiteAppearanceJson().then(function (j) {
+      applyThemeSiteAppearance(j);
+      if (typeof window.__soApplySiteAppearanceHeroImages === 'function') {
+        window.__soApplySiteAppearanceHeroImages(j);
+      }
+    });
+  });
 })();
