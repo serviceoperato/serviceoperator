@@ -687,7 +687,7 @@
     panelTitle.textContent = 'Site appearance';
     panelBody.innerHTML =
       '<div class="so-site-appearance">' +
-      '<p class="tf-admin-muted so-site-appearance__lede">Square previews update as you type. Use <strong>Upload…</strong> (admin only, saves under <code>/assets/site-uploads/</code>), <strong>Delete</strong> to remove an uploaded <code>su-*</code> file from the server (or clear any URL), or paste <code>/assets/…</code> / a public <strong>https</strong> URL. <code>/logo.png</code> redirects to the nav logo below. Public: <code>GET /api/site-appearance</code>.</p>' +
+      '<p class="tf-admin-muted so-site-appearance__lede">Square previews update as you type. Use <strong>Upload…</strong> (admin only, saves under <code>/assets/site-uploads/</code>), <strong>Delete</strong> to remove an uploaded <code>su-*</code> file from the server (or clear any URL), or paste <code>/assets/…</code> / a public <strong>https</strong> URL. <strong>Nav logo:</strong> PNG or WebP with transparency (alpha) is supported — the public header does not paint an opaque background behind the image. <code>/logo.png</code> redirects to the nav logo URL below. Public: <code>GET /api/site-appearance</code>.</p>' +
       '<div class="so-site-appearance__bulk" role="toolbar" aria-label="Bulk actions for hero images">' +
       '<span class="so-site-appearance__bulk-label mono">Selection</span>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteAppearSelectAll">Select all</button>' +
@@ -702,7 +702,7 @@
       '</div>' +
       '<div class="so-site-appearance__card-fields">' +
       '<h3 class="so-site-appearance__card-title">Nav logo</h3>' +
-      '<p class="so-site-appearance__card-meta mono">Header · <code>img.brand-logo</code></p>' +
+      '<p class="so-site-appearance__card-meta mono">Header · <code>img.brand-logo</code> · default <code>/assets/logo.png</code></p>' +
       '<div class="so-site-appearance__field-actions">' +
       '<label class="so-site-appearance__pick"><input type="checkbox" class="so-site-appearance__cb" data-so-appearance-sel="nav" aria-label="Select nav logo" /> <span class="mono">Select</span></label>' +
       '<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="is-hidden" id="soSiteNavLogoFile" />' +
@@ -710,9 +710,9 @@
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteNavLogoClearBtn">Clear URL</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="soSiteNavLogoDeleteBtn">Delete</button>' +
       '</div>' +
-      '<label class="portal-form__label" for="soSiteNavLogoUrl">Image URL</label>' +
-      '<input class="portal-form__input mono" type="text" id="soSiteNavLogoUrl" autocomplete="off" />' +
-      '<label class="portal-form__label" for="soSiteNavLogoAlt">Alt text</label>' +
+      '<label class="portal-form__label" for="soSiteNavLogoUrl">Nav logo URL</label>' +
+      '<input class="portal-form__input mono" type="text" id="soSiteNavLogoUrl" autocomplete="off" placeholder="/assets/logo.png" />' +
+      '<label class="portal-form__label" for="soSiteNavLogoAlt">Nav logo alt text</label>' +
       '<input class="portal-form__input" type="text" id="soSiteNavLogoAlt" maxlength="180" autocomplete="off" />' +
       '</div></article>' +
       '<article class="so-site-appearance__card">' +
@@ -890,7 +890,7 @@
     var hintEl = document.getElementById('soSiteAppearanceHint');
     var SITE_APPEARANCE_DEFAULTS = {
       navLogoUrl: '/assets/logo.png',
-      navLogoAlt: 'www.serviceopera.to — home',
+      navLogoAlt: 'www.serviceopera.to',
       homePageImageUrl: '/assets/home-page-hero.png',
       homePageImageAlt: 'www.serviceopera.to — home',
       propertyPageImageUrl: '/assets/property-page-hero.png',

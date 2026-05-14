@@ -604,13 +604,12 @@ html.so-site-nav-open {
   mix-blend-mode: normal;
   filter: none;
 }
-/* Dark canvas: charcoal/black ink needs a light translucent panel, not a flattened matte. */
+/* Dark theme: alpha channel shows through the real page chrome (nav bar, footer, etc.); no CSS plate behind the PNG. */
 [data-theme="dark"] .brand-logo {
-  background: rgba(255, 255, 255, 0.16);
-  border-radius: 12px;
-  padding: 0.2em 0.38em;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  filter: none;
 }
 [data-theme="light"] .brand-logo {
   background: transparent;
