@@ -20,6 +20,13 @@ import { createUserTelemetryStore, ensureUserTelemetrySchema } from './user-tele
 import { createLeadEventsStore, ensureLeadEventsSchema } from './lead-events.mjs';
 import { searchTextAllPages } from './lib/google-places-search.mjs';
 
+const processFatalLogHandlersKey = Symbol.for('serviceopera.server.processFatalLogHandlers');
+if (!globalThis[processFatalLogHandlersKey]) {
+  globalThis[processFatalLogHandlersKey] = true;
+  process.on('uncaughtException', (err) => console.error('Uncaught:', err));
+  process.on('unhandledRejection', (reason) => console.error('Unhandled:', reason));
+}
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(__dirname, 'public');
 const placesLeadsOperatorHtmlPath = path.join(publicDir, 'operator', 'places-leads.html');
