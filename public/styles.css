@@ -2523,7 +2523,6 @@ html.so-site-nav-open {
   border-bottom: 1px solid var(--line);
   background: var(--ink);
   padding: 0.55rem 1.25rem;
-  box-shadow: 0 1px 0 color-mix(in srgb, var(--line) 80%, transparent);
 }
 .tf-admin-nav__row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.45rem; margin-bottom: 0.35rem; }
 .tf-admin-nav__row:last-child { margin-bottom: 0; }
