@@ -1594,6 +1594,7 @@ app.put('/api/admin/site-appearance', requireAdmin, (req, res) => {
   const body = req.body || {};
   const cur = mergeSiteAppearance(readSiteAppearanceRaw());
 
+  /* Each field: if the key is present in body (even as ""), body wins for that field; omitted keys keep `cur`. Empty hero image URLs fall back to shipped defaults (except optional hero-deco URLs, handled separately). */
   const propUrlIn =
     'propertyPageImageUrl' in body && typeof body.propertyPageImageUrl === 'string'
       ? body.propertyPageImageUrl.trim()

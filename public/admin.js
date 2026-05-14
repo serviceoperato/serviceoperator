@@ -1134,6 +1134,7 @@
 
     /** Read persisted fields from live DOM (by id) so Save all matches what the user sees. */
     function collectSiteAppearancePayloadFromDom() {
+      if (!document.getElementById('soSiteAppearanceRoot')) return null;
       function inputVal(id) {
         var el = document.getElementById(id);
         return el ? String(el.value != null ? el.value : '') : '';
@@ -1203,11 +1204,39 @@
           });
         })
         .then(function (x) {
-          if (!isSiteAppearancePanelStale() && x.ok && x.j) {
-            applySiteAppearanceMerge(x.j, { force: true });
+          if (isSiteAppearancePanelStale()) return x;
+          if (!x.ok || !x.j) return x;
+          var tok = getAdminBearer();
+          function mergeSavedIntoForm(j) {
+            if (isSiteAppearancePanelStale()) return;
+            if (j) applySiteAppearanceMerge(j, { force: true });
             bumpSiteAppearanceUrlPreviews();
           }
-          return x;
+          if (!tok) {
+            mergeSavedIntoForm(x.j);
+            return x;
+          }
+          return fetch(api('/api/admin/site-appearance'), {
+            method: 'GET',
+            credentials: apiCred(),
+            cache: 'no-store',
+            headers: { Authorization: 'Bearer ' + tok },
+          })
+            .then(function (r) {
+              return r.json().then(function (j) {
+                return { ok: r.ok, j: j };
+              });
+            })
+            .then(function (g) {
+              if (isSiteAppearancePanelStale()) return x;
+              if (g.ok && g.j) mergeSavedIntoForm(g.j);
+              else mergeSavedIntoForm(x.j);
+              return x;
+            })
+            .catch(function () {
+              mergeSavedIntoForm(x.j);
+              return x;
+            });
         })
         .catch(function () {
           return { ok: false, j: { error: 'Network error on save.' } };
@@ -1536,6 +1565,10 @@
             if (isSiteAppearancePanelStale()) return;
             var baseline = stripOkFromSiteAppearanceJson(x.ok && x.j ? x.j : {});
             var domPayload = collectSiteAppearancePayloadFromDom();
+            if (!domPayload) {
+              if (hintEl) hintEl.textContent = 'Could not read form (reload the page).';
+              return;
+            }
             var merged = Object.assign({}, baseline, domPayload);
             return enqueueAppearancePersistPut(merged);
           })
