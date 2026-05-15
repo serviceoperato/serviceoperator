@@ -100,7 +100,7 @@
     --so-workflow-accent: #4f46e5;
     --so-workflow-on-accent: #f8fafc;
   }
-  /* Modular ring: four 60° arcs; gap centers at NE / SE / SW / NW (not N/E/S/W). */
+  /* Modular ring: four thick arcs; gap centers at NE / SE / SW / NW (not N/E/S/W). */
   .page-home .so-modular-ring {
     position: relative;
     display: inline-flex;
@@ -108,7 +108,7 @@
     justify-content: center;
     flex-shrink: 0;
     box-sizing: border-box;
-    --so-modular-inner-ratio: 0.7;
+    --so-modular-inner-ratio: 0.64;
     --so-modular-ring-url: url("/assets/icons/segmented-ring.svg");
     --so-modular-inner-bg: #ffffff;
     --so-modular-icon: var(--so-workflow-accent, #4f46e5);
@@ -160,7 +160,7 @@
   .page-home .so-modular-ring--xs {
     width: 1.25rem;
     height: 1.25rem;
-    --so-modular-inner-ratio: 0.68;
+    --so-modular-inner-ratio: 0.62;
   }
   .page-home .so-modular-ring--xs .so-modular-ring__inner > svg {
     width: 52%;
@@ -170,7 +170,7 @@
   .page-home .so-modular-ring--sm {
     width: 2.5rem;
     height: 2.5rem;
-    --so-modular-inner-ratio: 0.7;
+    --so-modular-inner-ratio: 0.64;
   }
   .page-home .so-modular-ring--sm .so-modular-ring__inner > svg {
     width: 54%;
@@ -182,7 +182,7 @@
     height: 40px;
     min-width: 40px;
     min-height: 40px;
-    --so-modular-inner-ratio: 0.7;
+    --so-modular-inner-ratio: 0.64;
   }
   @media (min-width: 640px) {
     .page-home .so-modular-ring--md {
@@ -199,7 +199,7 @@
   .page-home .so-modular-ring--lg {
     width: 44px;
     height: 44px;
-    --so-modular-inner-ratio: 0.72;
+    --so-modular-inner-ratio: 0.66;
   }
   .page-home .so-modular-ring--lg .so-modular-ring__inner > svg {
     width: 50%;
@@ -210,7 +210,7 @@
     width: min(28vmin, 9.5rem);
     height: min(28vmin, 9.5rem);
     max-width: 100%;
-    --so-modular-inner-ratio: 0.9;
+    --so-modular-inner-ratio: 0.82;
   }
   .page-home .so-modular-ring__inner--photo {
     background: transparent;
@@ -316,6 +316,10 @@
   /* Title + `.line` stagger: shared `styles.css` (matches clinics report). Lede: static like report (no extra `rise`). */
   .page-home .so-b2b .client-hero__lede.so-b2b__hero-lede {
     max-width: 40em;
+    font-size: 1.15rem;
+    line-height: 1.55;
+    color: var(--so-muted);
+    margin: 0 0 2rem;
   }
   .page-home .so-b2b__cta-row {
     margin-top: var(--space-5);
@@ -1093,10 +1097,8 @@
       <h1 class="clinics-hero__title">
         <span class="line">Stop losing leads to</span>
         <span class="line"><span class="line--accent">slow replies</span> and manual follow-up.</span>
-        <span class="line">ServiceOpera.to reviews your</span>
-        <span class="line line--italic">hotel, clinic or property workflow,</span>
       </h1>
-      <p class="client-hero__lede so-b2b__hero-lede">shows where leads and revenue leak, and builds one practical AI automation pilot you can test.</p>
+      <p class="client-hero__lede so-b2b__hero-lede">www.ServiceOpera.to reviews your hotel, clinic or property workflow, shows where leads and revenue leak, and builds one practical AI automation pilot you can test.</p>
 
       <div class="so-b2b__cta-row">
         <a class="so-b2b__btn so-b2b__btn--primary" href="/free-audit.html">Get your free 48-hour ROI audit</a>
