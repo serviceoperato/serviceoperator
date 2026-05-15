@@ -3166,13 +3166,14 @@ const LEGACY_REPORT_REDIRECTS = [
   ['/clinics/case-study-lumina-dental-group', '/clinics/008/'],
   ['/hotels/melia-pattaya-audit', '/hotels/009/'],
   ['/clinics/sample-audit-teaser', '/clinics/010/'],
+  ['/clinics/sample-audit-teaser-011', '/clinics/011/'],
 ];
 for (const [from, to] of LEGACY_REPORT_REDIRECTS) {
   app.get([from, `${from}/`], (_req, res) => res.redirect(301, to));
 }
 
-/** Numbered audit reports (catalog 001–010 clinics, 009 hotels) — admin session only; not public. */
-const PRIVATE_CLINIC_REPORT_IDS = new Set(['001', '002', '003', '004', '005', '006', '007', '008', '010']);
+/** Numbered audit reports (catalog 001–011 clinics, 009 hotels) — admin session only; not public (010 public funnel exception on static host). */
+const PRIVATE_CLINIC_REPORT_IDS = new Set(['001', '002', '003', '004', '005', '006', '007', '008', '010', '011']);
 const PRIVATE_HOTEL_REPORT_IDS = new Set(['009']);
 
 function matchPrivateNumberedReportPath(pathname) {

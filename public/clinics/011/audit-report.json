@@ -1,0 +1,46 @@
+{
+  "meta": {
+    "report_id": "011",
+    "report_title": "Report 011 — Clinic ABC automation audit teaser",
+    "prepared_by": "www.serviceopera.to",
+    "audit_date": "2026-05",
+    "report_type": "AI Automation Audit Teaser (Sample)",
+    "visibility": "admin-only",
+    "legacy_slug": "sample-audit-teaser-011",
+    "disclaimer": {
+      "en_lead": "SAMPLE REPORT — fictional clinic, real methodology.",
+      "it_body": "Questo è un esempio del formato che riceveresti per la tua attività. I numeri qui sono inventati; nel tuo audit sarebbero estratti dai tuoi canali pubblici reali in 48h.",
+      "legal_footnote": "No real clinic referenced; any resemblance to existing businesses is coincidental."
+    }
+  },
+  "business": {
+    "name": "Clinic ABC (Sample)",
+    "location": "Pattaya, Thailand",
+    "years_operating_estimate": "~12 years",
+    "audit_potential_score": 9.2
+  },
+  "kpis": {
+    "review_velocity": "1–3/mo",
+    "review_velocity_target": "8–15/mo",
+    "inquiry_response": "4–24h",
+    "inquiry_response_target": "< 2 min",
+    "annual_uplift_estimate_thb": "฿500K–1.5M"
+  },
+  "revenue_gap_distribution": [
+    { "label": "Booking Friction", "percent": 28 },
+    { "label": "No Follow-Up", "percent": 22 },
+    { "label": "Review Gap", "percent": 18 },
+    { "label": "Multilingual Miss", "percent": 15 },
+    { "label": "Slow Response", "percent": 12 },
+    { "label": "Trust Signals", "percent": 5 }
+  ],
+  "sections_teaser": ["KPI bar", "02 Patient Journey", "Revenue gap donut"],
+  "sections_gated": [
+    "01 Business Snapshot",
+    "03 Booking Friction",
+    "04–05 Reputation & Review Gap (review chart)",
+    "06+ Trust · Follow-Up · Multilingual · AI · ROI"
+  ],
+  "sections_gated_count": 9,
+  "funnel_cta": "/free-audit.html?from=sample_011&utm_content=report_011"
+}
