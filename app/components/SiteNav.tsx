@@ -17,8 +17,13 @@ export function SiteNav() {
         <a href="/pricing" className="nav__text">
           Pricing
         </a>
-        <a href="/login.html" className="nav__login mono" id="navPortalAuth">
-          Log in
+        <a
+          href="/login.html"
+          className="nav__login mono"
+          id="navPortalAuth"
+          aria-label="Login or Register"
+        >
+          Login / Register
         </a>
         <button type="button" className="theme-toggle" data-theme-toggle aria-label="Theme" />
       </div>

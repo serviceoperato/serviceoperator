@@ -253,7 +253,8 @@
     var login = document.createElement('a');
     login.className = 'nav__login mono';
     login.href = resolveLoginHref(root);
-    login.textContent = 'Log in';
+    login.textContent = 'Login / Register';
+    login.setAttribute('aria-label', 'Login or Register');
     root.appendChild(login);
   }
 
