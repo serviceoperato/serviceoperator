@@ -3104,10 +3104,17 @@ app.get(['/operator/places-leads.html', '/operator/places-leads', '/operator/pla
   return res.sendFile(placesLeadsOperatorHtmlPath);
 });
 
-/** Public sample clinic audit (static `index.html`; explicit route mirrors clean-URL pattern used elsewhere). */
+/** Public sample clinic audit (indexable; static `index.html`; clean URL). */
 app.get(['/clinics/sample-ai-automation-audit', '/clinics/sample-ai-automation-audit/'], (_req, res) => {
+  res.setHeader('X-Robots-Tag', 'index, follow');
   res.sendFile(path.join(publicDir, 'clinics', 'sample-ai-automation-audit', 'index.html'));
 });
+
+function isNoindexClinicsOrHotelsPath(norm) {
+  if (norm.includes('/clinics/sample-ai-automation-audit/')) return false;
+  if (norm.endsWith('/clinics/ai-automation-audit-sample-bangkok.html')) return false;
+  return norm.includes('/clinics/') || norm.includes('/hotels/');
+}
 
 app.use(
   express.static(publicDir, {
@@ -3134,8 +3141,7 @@ app.use(
         filePath.endsWith('places-leads.html') ||
         filePath.endsWith('pricing-inquiry.html') ||
         norm.includes('/clinics/report.html') ||
-        norm.includes('/clinics/') ||
-        norm.includes('/hotels/') ||
+        isNoindexClinicsOrHotelsPath(norm) ||
         norm.includes('/operator/') ||
         norm.includes('/reports/catalog.html')
       ) {

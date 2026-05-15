@@ -1,7 +1,7 @@
 # www.serviceopera.to — AI Service Audit Report
 ## Meliá Pattaya Hotel · Pattaya, Thailand
 **Audit Date:** May 12, 2026  
-**Prepared by:** Jack — Service Operator · www.serviceopera.to  
+**Prepared by:** Jack from ServiceOpera.to  
 **Audit Category:** Hotels & Serviced Apartments — AI Automation Gap Analysis  
 
 ---
@@ -343,6 +343,6 @@ Trigger: Day 2 of stay (for stays ≥2 nights). "How's your stay going? Let us k
 
 ---
 
-*Report prepared by www.serviceopera.to · Jack — Service Operator*  
+*Report prepared by Jack from ServiceOpera.to*  
 *AI systems for service businesses. No fluff. Just results.*  
 *Contact: serviceopera.to*

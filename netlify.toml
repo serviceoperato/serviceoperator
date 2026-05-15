@@ -16,6 +16,24 @@
     Cache-Control = "no-store"
 
 [[headers]]
+  for = "/clinics/sample-ai-automation-audit"
+  [headers.values]
+    X-Robots-Tag = "index, follow"
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/clinics/sample-ai-automation-audit/*"
+  [headers.values]
+    X-Robots-Tag = "index, follow"
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/clinics/ai-automation-audit-sample-bangkok.html"
+  [headers.values]
+    X-Robots-Tag = "index, follow"
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
   for = "/clinics/*"
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"

@@ -21,5 +21,4 @@ This is not a generic chatbot. It is a clinic operating layer that helps staff r
 I prepared a small public-data audit showing where the automation value is highest.
 
 Best,
-Jack
-www.serviceopera.to
+Jack from ServiceOpera.to
