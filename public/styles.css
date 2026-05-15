@@ -2673,6 +2673,21 @@ html.so-site-nav-open {
   padding: 0.35rem;
   z-index: 120;
 }
+.so-user-menu__panel--admin {
+  min-width: 15.5rem;
+  max-height: min(70vh, 22rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.so-user-menu__heading {
+  padding: 0.35rem 0.75rem 0.2rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mute-2);
+  pointer-events: none;
+}
 .so-user-menu__row {
   display: flex;
   align-items: center;

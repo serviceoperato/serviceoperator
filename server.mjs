@@ -3205,8 +3205,8 @@ for (const [from, to] of LEGACY_REPORT_REDIRECTS) {
   app.get([from, `${from}/`], (_req, res) => res.redirect(301, to));
 }
 
-/** Numbered audit reports (catalog 001–011 clinics, 009 hotels) — admin session only; not public (010 public funnel exception on static host). */
-const PRIVATE_CLINIC_REPORT_IDS = new Set(['001', '002', '003', '004', '005', '006', '007', '008', '010', '011']);
+/** Numbered audit reports — admin session required on Node. 010 is public (home funnel “See what you'll get”). */
+const PRIVATE_CLINIC_REPORT_IDS = new Set(['001', '002', '003', '004', '005', '006', '007', '008', '011']);
 const PRIVATE_HOTEL_REPORT_IDS = new Set(['009']);
 
 function matchPrivateNumberedReportPath(pathname) {

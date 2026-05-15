@@ -113,9 +113,92 @@
   function resolveAdminHref(root) {
     var href = root && root.getAttribute('data-admin-href');
     if (href) return href;
-    var path = window.location.pathname || '/';
-    if (/\/clinics\//.test(path)) return '../admin/users';
-    return '/admin/users';
+    return resolveAdminPath('/admin/users');
+  }
+
+  function resolveAdminPath(adminPath) {
+    var p = String(adminPath || '').trim();
+    if (!p) return '/admin/users';
+    if (p.charAt(0) !== '/') p = '/' + p;
+    var loc = window.location.pathname || '/';
+    if (/\/clinics\//.test(loc)) return '..' + p;
+    return p;
+  }
+
+  var ADMIN_CONSOLE_LINKS = [
+    { label: 'Users & payouts', path: '/admin/users' },
+    { label: 'Activity log', path: '/admin/activity' },
+    { label: 'User profiling', path: '/admin/user-profiling' },
+    { label: 'Deploy log', path: '/admin/deploy-log' },
+    { label: 'Site appearance', path: '/admin/site-appearance' },
+    { label: 'Icons', path: '/admin/icons' },
+    { label: 'Reports', path: '/operator/reports' },
+    { label: 'Places leads', path: '', placesLeads: true },
+    { label: 'Report catalog', path: '/admin/report-catalog' },
+    { label: 'User reports', path: '/admin/user-reports' },
+  ];
+
+  function openPlacesLeadsFromMenu(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    var jwt = getAdminJwt();
+    if (!jwt) {
+      window.location.href = resolveAdminPath('/admin/users');
+      return;
+    }
+    var url = typeof soApiUrl === 'function' ? soApiUrl('/api/admin/places-page-token') : '/api/admin/places-page-token';
+    var cred = typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin';
+    fetch(url, {
+      method: 'POST',
+      credentials: cred,
+      cache: 'no-store',
+      headers: { Authorization: 'Bearer ' + jwt },
+    })
+      .then(function (r) {
+        return r.json().then(function (j) {
+          return { ok: r.ok, j: j };
+        });
+      })
+      .then(function (pack) {
+        if (!pack.ok || !pack.j || !pack.j.page_token) {
+          var msg =
+            (pack.j && (pack.j.error || pack.j.message)) || 'Could not open Places tool. Sign in again.';
+          window.alert(String(msg));
+          return;
+        }
+        var origin =
+          typeof window !== 'undefined' && window.location && window.location.origin
+            ? window.location.origin
+            : '';
+        var toolUrl = origin + '/operator/places-leads.html?t=' + encodeURIComponent(pack.j.page_token);
+        window.open(toolUrl, '_blank', 'noopener,noreferrer');
+      })
+      .catch(function () {
+        window.alert('Network error opening Places tool.');
+      });
+  }
+
+  function menuHeading(label) {
+    var h = document.createElement('div');
+    h.className = 'so-user-menu__heading';
+    h.setAttribute('role', 'presentation');
+    h.textContent = label;
+    return h;
+  }
+
+  function appendAdminConsoleRows(panel) {
+    panel.appendChild(menuHeading('Admin console'));
+    for (var i = 0; i < ADMIN_CONSOLE_LINKS.length; i++) {
+      var item = ADMIN_CONSOLE_LINKS[i];
+      if (item.placesLeads) {
+        panel.appendChild(
+          menuRow('#', item.label, {
+            onClick: openPlacesLeadsFromMenu,
+          })
+        );
+        continue;
+      }
+      panel.appendChild(menuRow(resolveAdminPath(item.path), item.label, { accent: true }));
+    }
   }
 
   /** Read body as text then JSON so HTML/502 pages keep HTTP status and never look like { ok: false }. */
@@ -297,7 +380,8 @@
 
     panel.appendChild(menuRow(settingsHref, 'Settings'));
     if (showAdmin) {
-      panel.appendChild(menuRow(adminHref, 'Admin', { accent: true }));
+      panel.classList.add('so-user-menu__panel--admin');
+      appendAdminConsoleRows(panel);
     }
     panel.appendChild(
       menuRow('#', 'Sign out', {

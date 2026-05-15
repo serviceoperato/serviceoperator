@@ -100,7 +100,7 @@
     --so-workflow-accent: #4f46e5;
     --so-workflow-on-accent: #f8fafc;
   }
-  /* Quad ring: outer circle + four colored arcs (gaps NE/SE/SW/NW) + quadrant icons. */
+  /* Quad ring: white outer + mono inner ring (4 diagonal segment cuts) + one center icon. */
   .page-home .so-quad-ring {
     position: relative;
     display: inline-flex;
@@ -108,71 +108,75 @@
     justify-content: center;
     flex-shrink: 0;
     box-sizing: border-box;
-    --so-quad-ne: #6366f1;
-    --so-quad-se: #4f46e5;
-    --so-quad-sw: #4338ca;
-    --so-quad-nw: #312e81;
+    --so-quad-accent: #4f46e5;
+    --so-quad-icon: var(--so-quad-accent);
     --so-quad-fill: #ffffff;
-    --so-quad-outer-stroke: rgba(30, 58, 95, 0.14);
+    --so-quad-outer-stroke: rgba(30, 58, 95, 0.12);
+  }
+  /* Section 1 — hero + problem cards: green */
+  .page-home .so-b2b__hero .so-quad-ring,
+  .page-home .so-b2b__section[aria-labelledby="hold-back"] .so-quad-ring {
+    --so-quad-accent: #16a34a;
+    --so-quad-icon: #15803d;
+  }
+  /* Section 2 — sector highlights: indigo */
+  .page-home .so-b2b__section.so-b2b__below-fold .so-quad-ring {
+    --so-quad-accent: #4f46e5;
+    --so-quad-icon: #4338ca;
+  }
+  /* Section 3 — how it works + audit preview: orange */
+  .page-home .so-b2b__section#how-it-works .so-quad-ring {
+    --so-quad-accent: #ea580c;
+    --so-quad-icon: #c2410c;
+  }
+  .page-home .so-b2b__jack .so-quad-ring {
+    --so-quad-accent: #818cf8;
+    --so-quad-icon: #e0e7ff;
+  }
+  .page-home .so-b2b-footer .so-quad-ring {
+    --so-quad-accent: #4f46e5;
+    --so-quad-icon: #4f46e5;
   }
   .page-home .so-quad-ring--on-dark {
-    --so-quad-ne: #e0e7ff;
-    --so-quad-se: #c7d2fe;
-    --so-quad-sw: #a5b4fc;
-    --so-quad-nw: #818cf8;
     --so-quad-fill: #ffffff;
     --so-quad-outer-stroke: rgba(255, 255, 255, 0.32);
+  }
+  .page-home .so-b2b__jack .so-quad-ring--on-dark {
+    --so-quad-accent: #a5b4fc;
+    --so-quad-icon: #e0e7ff;
   }
   .page-home .so-quad-ring__svg {
     width: 100%;
     height: 100%;
     display: block;
   }
-  .page-home .so-quad-ring__qi {
-    fill: none;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    vector-effect: non-scaling-stroke;
+  .page-home .so-quad-ring__icon {
+    stroke: var(--so-quad-icon, var(--so-quad-accent));
+    color: var(--so-quad-icon, var(--so-quad-accent));
     stroke-width: 2.2;
   }
-  .page-home .so-quad-ring__qi--ne {
-    color: var(--so-quad-ne);
-    stroke: var(--so-quad-ne);
-  }
-  .page-home .so-quad-ring__qi--se {
-    color: var(--so-quad-se);
-    stroke: var(--so-quad-se);
-  }
-  .page-home .so-quad-ring__qi--sw {
-    color: var(--so-quad-sw);
-    stroke: var(--so-quad-sw);
-  }
-  .page-home .so-quad-ring__qi--nw {
-    color: var(--so-quad-nw);
-    stroke: var(--so-quad-nw);
-  }
-  .page-home .so-quad-ring__qi rect {
+  .page-home .so-quad-ring__icon rect {
     fill: none;
   }
   .page-home .so-quad-ring--2xs {
     width: 0.9rem;
     height: 0.9rem;
   }
-  .page-home .so-quad-ring--2xs .so-quad-ring__qi {
+  .page-home .so-quad-ring--2xs .so-quad-ring__icon {
     stroke-width: 2.8;
   }
   .page-home .so-quad-ring--xs {
     width: 1.25rem;
     height: 1.25rem;
   }
-  .page-home .so-quad-ring--xs .so-quad-ring__qi {
+  .page-home .so-quad-ring--xs .so-quad-ring__icon {
     stroke-width: 2.5;
   }
   .page-home .so-quad-ring--sm {
     width: 2.5rem;
     height: 2.5rem;
   }
-  .page-home .so-quad-ring--sm .so-quad-ring__qi {
+  .page-home .so-quad-ring--sm .so-quad-ring__icon {
     stroke-width: 1.65;
   }
   .page-home .so-quad-ring--md {
@@ -189,14 +193,14 @@
       min-height: 44px;
     }
   }
-  .page-home .so-quad-ring--md .so-quad-ring__qi {
+  .page-home .so-quad-ring--md .so-quad-ring__icon {
     stroke-width: 1.85;
   }
   .page-home .so-quad-ring--lg {
     width: 44px;
     height: 44px;
   }
-  .page-home .so-quad-ring--lg .so-quad-ring__qi {
+  .page-home .so-quad-ring--lg .so-quad-ring__icon {
     stroke-width: 1.55;
   }
   .page-home .so-quad-ring--avatar {
@@ -213,7 +217,7 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--so-quad-nw) 12%, transparent);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--so-quad-accent) 12%, transparent);
   }
   .page-home .so-quad-ring__center--photo {
     background: rgba(255, 255, 255, 0.06);
@@ -447,9 +451,9 @@
     object-fit: contain;
     display: block;
   }
-  [data-theme="dark"] .page-home .so-quad-ring__svg.so-b2b__markets-ico .so-quad-ring__qi {
-    stroke: var(--so-workflow-accent);
-    color: var(--so-workflow-accent);
+  [data-theme="dark"] .page-home .so-b2b__hero .so-quad-ring {
+    --so-quad-accent: #22c55e;
+    --so-quad-icon: #4ade80;
   }
   .page-home .so-b2b__visual {
     margin: 1.25rem 0 0;
@@ -495,7 +499,6 @@
   .page-home .so-b2b .home-lp__card-icon-wrap.so-quad-ring {
     margin-bottom: 14px;
   }
-  .page-home .so-quad-ring__qi rect,
   .page-home .so-b2b .home-lp__card-icon-wrap svg rect {
     fill: none;
   }
@@ -1110,13 +1113,13 @@
       <p class="so-b2b__cta-note">Written brief on gaps, leverage points, and one pilot — no obligation to run execution.</p>
       <p class="so-b2b__markets">
         <span data-so-icon="home-markets" class="so-b2b__markets-ico-slot" aria-hidden="true">
-          <span class="so-quad-ring so-quad-ring--xs" aria-hidden="true"><svg class="so-quad-ring__svg so-b2b__markets-ico" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.25" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.14))" stroke-width="0.9"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke-width="5.25" stroke-linecap="round">
-      <path class="so-quad-ring__arc so-quad-ring__arc--ne" stroke="var(--so-quad-ne)" d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--se" stroke="var(--so-quad-se)" d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--sw" stroke="var(--so-quad-sw)" d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--nw" stroke="var(--so-quad-nw)" d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
-    </g><g class="so-quad-ring__icons"><g class="so-quad-ring__qi so-quad-ring__qi--ne" transform="translate(32.49 15.51) scale(0.38) translate(-12 -12)"><path d="M3 12h18"/><path d="M12 3c2.4 2.9 3.7 6.2 3.7 9s-1.3 6.1-3.7 9"/><path d="M12 3c-2.4 2.9-3.7 6.2-3.7 9s1.3 6.1 3.7 9"/></g><g class="so-quad-ring__qi so-quad-ring__qi--se" transform="translate(32.49 32.49) scale(0.38) translate(-12 -12)"><path d="M3 12h18"/><path d="M12 3c2.4 2.9 3.7 6.2 3.7 9s-1.3 6.1-3.7 9"/><path d="M12 3c-2.4 2.9-3.7 6.2-3.7 9s1.3 6.1 3.7 9"/></g><g class="so-quad-ring__qi so-quad-ring__qi--sw" transform="translate(15.51 32.49) scale(0.38) translate(-12 -12)"><path d="M3 12h18"/><path d="M12 3c2.4 2.9 3.7 6.2 3.7 9s-1.3 6.1-3.7 9"/><path d="M12 3c-2.4 2.9-3.7 6.2-3.7 9s1.3 6.1 3.7 9"/></g><g class="so-quad-ring__qi so-quad-ring__qi--nw" transform="translate(15.51 15.51) scale(0.38) translate(-12 -12)"><path d="M3 12h18"/><path d="M12 3c2.4 2.9 3.7 6.2 3.7 9s-1.3 6.1-3.7 9"/><path d="M12 3c-2.4 2.9-3.7 6.2-3.7 9s1.3 6.1 3.7 9"/></g></g></svg></span>
+          <span class="so-quad-ring so-quad-ring--xs" aria-hidden="true"><svg class="so-quad-ring__svg so-b2b__markets-ico" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
+      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
+      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
+      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
+      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.5) translate(-12 -12)"><path d="M3 12h18"/><path d="M12 3c2.4 2.9 3.7 6.2 3.7 9s-1.3 6.1-3.7 9"/><path d="M12 3c-2.4 2.9-3.7 6.2-3.7 9s1.3 6.1 3.7 9"/></g></svg></span>
         </span>
         Hotels · Clinics · Property
       </p>
@@ -1126,46 +1129,46 @@
       <h2 class="so-b2b__h2" id="hold-back">We show you what&apos;s holding you back.</h2>
       <div class="so-b2b__problem-grid">
         <article class="so-b2b__pcard">
-          <div class="so-quad-ring so-quad-ring--sm so-b2b__picon" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.25" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.14))" stroke-width="0.9"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke-width="5.25" stroke-linecap="round">
-      <path class="so-quad-ring__arc so-quad-ring__arc--ne" stroke="var(--so-quad-ne)" d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--se" stroke="var(--so-quad-se)" d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--sw" stroke="var(--so-quad-sw)" d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--nw" stroke="var(--so-quad-nw)" d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
-    </g><g class="so-quad-ring__icons"><g class="so-quad-ring__qi so-quad-ring__qi--ne" transform="translate(32.49 15.51) scale(0.38) translate(-12 -12)"><path d="M12 12V7M12 12l3.5 2"/></g><g class="so-quad-ring__qi so-quad-ring__qi--se" transform="translate(32.49 32.49) scale(0.38) translate(-12 -12)"><path d="M12 12V7M12 12l3.5 2"/></g><g class="so-quad-ring__qi so-quad-ring__qi--sw" transform="translate(15.51 32.49) scale(0.38) translate(-12 -12)"><path d="M12 12V7M12 12l3.5 2"/></g><g class="so-quad-ring__qi so-quad-ring__qi--nw" transform="translate(15.51 15.51) scale(0.38) translate(-12 -12)"><path d="M12 12V7M12 12l3.5 2"/></g></g></svg></div>
+          <div class="so-quad-ring so-quad-ring--sm so-b2b__picon" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
+      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
+      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
+      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
+      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.5) translate(-12 -12)"><path d="M12 12V7M12 12l3.5 2"/></g></svg></div>
           <h3>Wasted Time</h3>
           <p>Manual replies and repeated busywork.</p>
         </article>
         <article class="so-b2b__pcard">
-          <div class="so-quad-ring so-quad-ring--sm so-b2b__picon" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.25" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.14))" stroke-width="0.9"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke-width="5.25" stroke-linecap="round">
-      <path class="so-quad-ring__arc so-quad-ring__arc--ne" stroke="var(--so-quad-ne)" d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--se" stroke="var(--so-quad-se)" d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--sw" stroke="var(--so-quad-sw)" d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--nw" stroke="var(--so-quad-nw)" d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
-    </g><g class="so-quad-ring__icons"><g class="so-quad-ring__qi so-quad-ring__qi--ne" transform="translate(32.49 15.51) scale(0.38) translate(-12 -12)"><path d="M17 21v-2a4 4 0 0 0-3-3.87"/><path d="M7 21v-2a4 4 0 0 1 3-3.87"/><circle cx="9" cy="7" r="3.5"/><path d="M21 12a4 4 0 0 0-6.5-3.1"/></g><g class="so-quad-ring__qi so-quad-ring__qi--se" transform="translate(32.49 32.49) scale(0.38) translate(-12 -12)"><path d="M17 21v-2a4 4 0 0 0-3-3.87"/><path d="M7 21v-2a4 4 0 0 1 3-3.87"/><circle cx="9" cy="7" r="3.5"/><path d="M21 12a4 4 0 0 0-6.5-3.1"/></g><g class="so-quad-ring__qi so-quad-ring__qi--sw" transform="translate(15.51 32.49) scale(0.38) translate(-12 -12)"><path d="M17 21v-2a4 4 0 0 0-3-3.87"/><path d="M7 21v-2a4 4 0 0 1 3-3.87"/><circle cx="9" cy="7" r="3.5"/><path d="M21 12a4 4 0 0 0-6.5-3.1"/></g><g class="so-quad-ring__qi so-quad-ring__qi--nw" transform="translate(15.51 15.51) scale(0.38) translate(-12 -12)"><path d="M17 21v-2a4 4 0 0 0-3-3.87"/><path d="M7 21v-2a4 4 0 0 1 3-3.87"/><circle cx="9" cy="7" r="3.5"/><path d="M21 12a4 4 0 0 0-6.5-3.1"/></g></g></svg></div>
+          <div class="so-quad-ring so-quad-ring--sm so-b2b__picon" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
+      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
+      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
+      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
+      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.5) translate(-12 -12)"><path d="M17 21v-2a4 4 0 0 0-3-3.87"/><path d="M7 21v-2a4 4 0 0 1 3-3.87"/><circle cx="9" cy="7" r="3.5"/><path d="M21 12a4 4 0 0 0-6.5-3.1"/></g></svg></div>
           <h3>Lost Leads</h3>
           <p>No follow-up, no CRM discipline.</p>
         </article>
         <article class="so-b2b__pcard">
-          <div class="so-quad-ring so-quad-ring--sm so-b2b__picon" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.25" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.14))" stroke-width="0.9"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke-width="5.25" stroke-linecap="round">
-      <path class="so-quad-ring__arc so-quad-ring__arc--ne" stroke="var(--so-quad-ne)" d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--se" stroke="var(--so-quad-se)" d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--sw" stroke="var(--so-quad-sw)" d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--nw" stroke="var(--so-quad-nw)" d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
-    </g><g class="so-quad-ring__icons"><g class="so-quad-ring__qi so-quad-ring__qi--ne" transform="translate(32.49 15.51) scale(0.38) translate(-12 -12)"><path d="M12 2.5l2.8 8.6h9l-7.3 5.3 2.8 8.6-7.3-5.3-7.3 5.3 2.8-8.6-7.3-5.3h9L12 2.5z"/></g><g class="so-quad-ring__qi so-quad-ring__qi--se" transform="translate(32.49 32.49) scale(0.38) translate(-12 -12)"><path d="M12 2.5l2.8 8.6h9l-7.3 5.3 2.8 8.6-7.3-5.3-7.3 5.3 2.8-8.6-7.3-5.3h9L12 2.5z"/></g><g class="so-quad-ring__qi so-quad-ring__qi--sw" transform="translate(15.51 32.49) scale(0.38) translate(-12 -12)"><path d="M12 2.5l2.8 8.6h9l-7.3 5.3 2.8 8.6-7.3-5.3-7.3 5.3 2.8-8.6-7.3-5.3h9L12 2.5z"/></g><g class="so-quad-ring__qi so-quad-ring__qi--nw" transform="translate(15.51 15.51) scale(0.38) translate(-12 -12)"><path d="M12 2.5l2.8 8.6h9l-7.3 5.3 2.8 8.6-7.3-5.3-7.3 5.3 2.8-8.6-7.3-5.3h9L12 2.5z"/></g></g></svg></div>
+          <div class="so-quad-ring so-quad-ring--sm so-b2b__picon" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
+      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
+      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
+      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
+      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.5) translate(-12 -12)"><path d="M12 2.5l2.8 8.6h9l-7.3 5.3 2.8 8.6-7.3-5.3-7.3 5.3 2.8-8.6-7.3-5.3h9L12 2.5z"/></g></svg></div>
           <h3>Poor Reputation</h3>
           <p>Reviews and complaints unmanaged.</p>
         </article>
         <article class="so-b2b__pcard">
-          <div class="so-quad-ring so-quad-ring--sm so-b2b__picon" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.25" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.14))" stroke-width="0.9"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke-width="5.25" stroke-linecap="round">
-      <path class="so-quad-ring__arc so-quad-ring__arc--ne" stroke="var(--so-quad-ne)" d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--se" stroke="var(--so-quad-se)" d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--sw" stroke="var(--so-quad-sw)" d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--nw" stroke="var(--so-quad-nw)" d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
-    </g><g class="so-quad-ring__icons"><g class="so-quad-ring__qi so-quad-ring__qi--ne" transform="translate(32.49 15.51) scale(0.38) translate(-12 -12)"><path d="M3 3v18h18"/><path d="M7 16l4-5 3 3 6-7"/><path d="M17 9V5h-4"/></g><g class="so-quad-ring__qi so-quad-ring__qi--se" transform="translate(32.49 32.49) scale(0.38) translate(-12 -12)"><path d="M3 3v18h18"/><path d="M7 16l4-5 3 3 6-7"/><path d="M17 9V5h-4"/></g><g class="so-quad-ring__qi so-quad-ring__qi--sw" transform="translate(15.51 32.49) scale(0.38) translate(-12 -12)"><path d="M3 3v18h18"/><path d="M7 16l4-5 3 3 6-7"/><path d="M17 9V5h-4"/></g><g class="so-quad-ring__qi so-quad-ring__qi--nw" transform="translate(15.51 15.51) scale(0.38) translate(-12 -12)"><path d="M3 3v18h18"/><path d="M7 16l4-5 3 3 6-7"/><path d="M17 9V5h-4"/></g></g></svg></div>
+          <div class="so-quad-ring so-quad-ring--sm so-b2b__picon" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
+      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
+      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
+      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
+      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.5) translate(-12 -12)"><path d="M3 3v18h18"/><path d="M7 16l4-5 3 3 6-7"/><path d="M17 9V5h-4"/></g></svg></div>
           <h3>Lost Revenue</h3>
           <p>Weak pricing and competitor blind spots.</p>
         </article>
@@ -1189,13 +1192,13 @@
       <div class="so-b2b__sector-slab">
         <div class="home-lp__sectors">
           <article class="home-lp__card home-lp__card--sector home-lp__card--sector-hotels">
-            <div class="so-quad-ring so-quad-ring--lg home-lp__card-icon-wrap" data-so-icon="home-sector-hotels" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.25" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.14))" stroke-width="0.9"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke-width="5.25" stroke-linecap="round">
-      <path class="so-quad-ring__arc so-quad-ring__arc--ne" stroke="var(--so-quad-ne)" d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--se" stroke="var(--so-quad-se)" d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--sw" stroke="var(--so-quad-sw)" d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--nw" stroke="var(--so-quad-nw)" d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
-    </g><g class="so-quad-ring__icons"><g class="so-quad-ring__qi so-quad-ring__qi--ne" transform="translate(32.49 15.51) scale(0.38) translate(-12 -12)"><path d="M4 20h16"/><path d="M6 20V10L12 6.5l6 3.5V20"/><path d="M12 6.5V4"/><path d="M8 20v-6h8v6"/><rect x="8.5" y="11" width="2" height="2" rx="0.35"/><rect x="11" y="11" width="2" height="2" rx="0.35"/><rect x="13.5" y="11" width="2" height="2" rx="0.35"/><rect x="8.5" y="14.5" width="2" height="2" rx="0.35"/><rect x="11" y="14.5" width="2" height="2" rx="0.35"/><rect x="13.5" y="14.5" width="2" height="2" rx="0.35"/></g><g class="so-quad-ring__qi so-quad-ring__qi--se" transform="translate(32.49 32.49) scale(0.38) translate(-12 -12)"><path d="M4 20h16"/><path d="M6 20V10L12 6.5l6 3.5V20"/><path d="M12 6.5V4"/><path d="M8 20v-6h8v6"/><rect x="8.5" y="11" width="2" height="2" rx="0.35"/><rect x="11" y="11" width="2" height="2" rx="0.35"/><rect x="13.5" y="11" width="2" height="2" rx="0.35"/><rect x="8.5" y="14.5" width="2" height="2" rx="0.35"/><rect x="11" y="14.5" width="2" height="2" rx="0.35"/><rect x="13.5" y="14.5" width="2" height="2" rx="0.35"/></g><g class="so-quad-ring__qi so-quad-ring__qi--sw" transform="translate(15.51 32.49) scale(0.38) translate(-12 -12)"><path d="M4 20h16"/><path d="M6 20V10L12 6.5l6 3.5V20"/><path d="M12 6.5V4"/><path d="M8 20v-6h8v6"/><rect x="8.5" y="11" width="2" height="2" rx="0.35"/><rect x="11" y="11" width="2" height="2" rx="0.35"/><rect x="13.5" y="11" width="2" height="2" rx="0.35"/><rect x="8.5" y="14.5" width="2" height="2" rx="0.35"/><rect x="11" y="14.5" width="2" height="2" rx="0.35"/><rect x="13.5" y="14.5" width="2" height="2" rx="0.35"/></g><g class="so-quad-ring__qi so-quad-ring__qi--nw" transform="translate(15.51 15.51) scale(0.38) translate(-12 -12)"><path d="M4 20h16"/><path d="M6 20V10L12 6.5l6 3.5V20"/><path d="M12 6.5V4"/><path d="M8 20v-6h8v6"/><rect x="8.5" y="11" width="2" height="2" rx="0.35"/><rect x="11" y="11" width="2" height="2" rx="0.35"/><rect x="13.5" y="11" width="2" height="2" rx="0.35"/><rect x="8.5" y="14.5" width="2" height="2" rx="0.35"/><rect x="11" y="14.5" width="2" height="2" rx="0.35"/><rect x="13.5" y="14.5" width="2" height="2" rx="0.35"/></g></g></svg></div>
+            <div class="so-quad-ring so-quad-ring--lg home-lp__card-icon-wrap" data-so-icon="home-sector-hotels" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
+      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
+      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
+      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
+      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.5) translate(-12 -12)"><path d="M4 20h16"/><path d="M6 20V10L12 6.5l6 3.5V20"/><path d="M12 6.5V4"/><path d="M8 20v-6h8v6"/><rect x="8.5" y="11" width="2" height="2" rx="0.35"/><rect x="11" y="11" width="2" height="2" rx="0.35"/><rect x="13.5" y="11" width="2" height="2" rx="0.35"/><rect x="8.5" y="14.5" width="2" height="2" rx="0.35"/><rect x="11" y="14.5" width="2" height="2" rx="0.35"/><rect x="13.5" y="14.5" width="2" height="2" rx="0.35"/></g></svg></div>
             <p class="home-lp__card-label"><a href="/hotels.html">Hotels &amp; serviced apartments</a></p>
             <p class="home-lp__card-stat">48%</p>
             <p class="home-lp__card-desc">Slow replies and pricing delays cost bookings.</p>
@@ -1203,13 +1206,13 @@
             <p class="home-lp__card-cta"><a href="/hotels.html">Explore hotels →</a></p>
           </article>
           <article class="home-lp__card home-lp__card--sector home-lp__card--sector-clinics">
-            <div class="so-quad-ring so-quad-ring--lg home-lp__card-icon-wrap" data-so-icon="home-sector-clinics" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.25" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.14))" stroke-width="0.9"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke-width="5.25" stroke-linecap="round">
-      <path class="so-quad-ring__arc so-quad-ring__arc--ne" stroke="var(--so-quad-ne)" d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--se" stroke="var(--so-quad-se)" d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--sw" stroke="var(--so-quad-sw)" d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--nw" stroke="var(--so-quad-nw)" d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
-    </g><g class="so-quad-ring__icons"><g class="so-quad-ring__qi so-quad-ring__qi--ne" transform="translate(32.49 15.51) scale(0.38) translate(-12 -12)"><path d="M12 4.5c-1.8 2.8-4.5 5-4.5 8.8a4.5 4.5 0 0 0 9 0c0-3.8-2.7-6-4.5-8.8z"/><path d="M8.5 13c1.4 1.1 2.6 1.6 3.5 1.6s2.1-.5 3.5-1.6"/><path d="M7.5 15.5c1.8 1.5 3.2 2 4.5 2s2.7-.5 4.5-2"/><path d="M12 4.5v2"/></g><g class="so-quad-ring__qi so-quad-ring__qi--se" transform="translate(32.49 32.49) scale(0.38) translate(-12 -12)"><path d="M12 4.5c-1.8 2.8-4.5 5-4.5 8.8a4.5 4.5 0 0 0 9 0c0-3.8-2.7-6-4.5-8.8z"/><path d="M8.5 13c1.4 1.1 2.6 1.6 3.5 1.6s2.1-.5 3.5-1.6"/><path d="M7.5 15.5c1.8 1.5 3.2 2 4.5 2s2.7-.5 4.5-2"/><path d="M12 4.5v2"/></g><g class="so-quad-ring__qi so-quad-ring__qi--sw" transform="translate(15.51 32.49) scale(0.38) translate(-12 -12)"><path d="M12 4.5c-1.8 2.8-4.5 5-4.5 8.8a4.5 4.5 0 0 0 9 0c0-3.8-2.7-6-4.5-8.8z"/><path d="M8.5 13c1.4 1.1 2.6 1.6 3.5 1.6s2.1-.5 3.5-1.6"/><path d="M7.5 15.5c1.8 1.5 3.2 2 4.5 2s2.7-.5 4.5-2"/><path d="M12 4.5v2"/></g><g class="so-quad-ring__qi so-quad-ring__qi--nw" transform="translate(15.51 15.51) scale(0.38) translate(-12 -12)"><path d="M12 4.5c-1.8 2.8-4.5 5-4.5 8.8a4.5 4.5 0 0 0 9 0c0-3.8-2.7-6-4.5-8.8z"/><path d="M8.5 13c1.4 1.1 2.6 1.6 3.5 1.6s2.1-.5 3.5-1.6"/><path d="M7.5 15.5c1.8 1.5 3.2 2 4.5 2s2.7-.5 4.5-2"/><path d="M12 4.5v2"/></g></g></svg></div>
+            <div class="so-quad-ring so-quad-ring--lg home-lp__card-icon-wrap" data-so-icon="home-sector-clinics" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
+      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
+      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
+      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
+      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.5) translate(-12 -12)"><path d="M12 4.5c-1.8 2.8-4.5 5-4.5 8.8a4.5 4.5 0 0 0 9 0c0-3.8-2.7-6-4.5-8.8z"/><path d="M8.5 13c1.4 1.1 2.6 1.6 3.5 1.6s2.1-.5 3.5-1.6"/><path d="M7.5 15.5c1.8 1.5 3.2 2 4.5 2s2.7-.5 4.5-2"/><path d="M12 4.5v2"/></g></svg></div>
             <p class="home-lp__card-label"><a href="/clinics.html">Clinics, dental &amp; wellness</a></p>
             <p class="home-lp__card-stat">3M</p>
             <p class="home-lp__card-desc">Lead follow-up and treatment coordination leak margin.</p>
@@ -1217,13 +1220,13 @@
             <p class="home-lp__card-cta"><a href="/clinics.html">Explore clinics →</a></p>
           </article>
           <article class="home-lp__card home-lp__card--sector home-lp__card--sector-property">
-            <div class="so-quad-ring so-quad-ring--lg home-lp__card-icon-wrap" data-so-icon="home-sector-property" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.25" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.14))" stroke-width="0.9"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke-width="5.25" stroke-linecap="round">
-      <path class="so-quad-ring__arc so-quad-ring__arc--ne" stroke="var(--so-quad-ne)" d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--se" stroke="var(--so-quad-se)" d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--sw" stroke="var(--so-quad-sw)" d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--nw" stroke="var(--so-quad-nw)" d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
-    </g><g class="so-quad-ring__icons"><g class="so-quad-ring__qi so-quad-ring__qi--ne" transform="translate(32.49 15.51) scale(0.38) translate(-12 -12)"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V11.5z"/><path d="M9 21v-7h6v7"/></g><g class="so-quad-ring__qi so-quad-ring__qi--se" transform="translate(32.49 32.49) scale(0.38) translate(-12 -12)"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V11.5z"/><path d="M9 21v-7h6v7"/></g><g class="so-quad-ring__qi so-quad-ring__qi--sw" transform="translate(15.51 32.49) scale(0.38) translate(-12 -12)"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V11.5z"/><path d="M9 21v-7h6v7"/></g><g class="so-quad-ring__qi so-quad-ring__qi--nw" transform="translate(15.51 15.51) scale(0.38) translate(-12 -12)"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V11.5z"/><path d="M9 21v-7h6v7"/></g></g></svg></div>
+            <div class="so-quad-ring so-quad-ring--lg home-lp__card-icon-wrap" data-so-icon="home-sector-property" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
+      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
+      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
+      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
+      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.5) translate(-12 -12)"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V11.5z"/><path d="M9 21v-7h6v7"/></g></svg></div>
             <p class="home-lp__card-label"><a href="/property.html">Property &amp; rental operators</a></p>
             <p class="home-lp__card-stat">7–10%</p>
             <p class="home-lp__card-desc">Manual handovers and owner reporting waste time.</p>
@@ -1240,57 +1243,57 @@
       <div class="so-b2b__next-layout">
         <ol class="so-b2b__next-steps">
           <li>
-            <span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.25" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.14))" stroke-width="0.9"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke-width="5.25" stroke-linecap="round">
-      <path class="so-quad-ring__arc so-quad-ring__arc--ne" stroke="var(--so-quad-ne)" d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--se" stroke="var(--so-quad-se)" d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--sw" stroke="var(--so-quad-sw)" d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--nw" stroke="var(--so-quad-nw)" d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
-    </g><g class="so-quad-ring__icons"><g class="so-quad-ring__qi so-quad-ring__qi--ne" transform="translate(32.49 15.51) scale(0.38) translate(-12 -12)"><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></g><g class="so-quad-ring__qi so-quad-ring__qi--se" transform="translate(32.49 32.49) scale(0.38) translate(-12 -12)"><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></g><g class="so-quad-ring__qi so-quad-ring__qi--sw" transform="translate(15.51 32.49) scale(0.38) translate(-12 -12)"><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></g><g class="so-quad-ring__qi so-quad-ring__qi--nw" transform="translate(15.51 15.51) scale(0.38) translate(-12 -12)"><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></g></g></svg></span>
+            <span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
+      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
+      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
+      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
+      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.5) translate(-12 -12)"><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></g></svg></span>
             <span class="so-b2b__next-n" aria-hidden="true">01</span>
             <span class="so-b2b__next-copy"><strong>Send your website or business profile</strong></span>
           </li>
           <li>
-            <span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.25" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.14))" stroke-width="0.9"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke-width="5.25" stroke-linecap="round">
-      <path class="so-quad-ring__arc so-quad-ring__arc--ne" stroke="var(--so-quad-ne)" d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--se" stroke="var(--so-quad-se)" d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--sw" stroke="var(--so-quad-sw)" d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--nw" stroke="var(--so-quad-nw)" d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
-    </g><g class="so-quad-ring__icons"><g class="so-quad-ring__qi so-quad-ring__qi--ne" transform="translate(32.49 15.51) scale(0.38) translate(-12 -12)"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></g><g class="so-quad-ring__qi so-quad-ring__qi--se" transform="translate(32.49 32.49) scale(0.38) translate(-12 -12)"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></g><g class="so-quad-ring__qi so-quad-ring__qi--sw" transform="translate(15.51 32.49) scale(0.38) translate(-12 -12)"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></g><g class="so-quad-ring__qi so-quad-ring__qi--nw" transform="translate(15.51 15.51) scale(0.38) translate(-12 -12)"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></g></g></svg></span>
+            <span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
+      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
+      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
+      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
+      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.5) translate(-12 -12)"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></g></svg></span>
             <span class="so-b2b__next-n" aria-hidden="true">02</span>
             <span class="so-b2b__next-copy"><strong>We review your enquiry and revenue leaks</strong></span>
           </li>
           <li>
-            <span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.25" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.14))" stroke-width="0.9"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke-width="5.25" stroke-linecap="round">
-      <path class="so-quad-ring__arc so-quad-ring__arc--ne" stroke="var(--so-quad-ne)" d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--se" stroke="var(--so-quad-se)" d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--sw" stroke="var(--so-quad-sw)" d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--nw" stroke="var(--so-quad-nw)" d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
-    </g><g class="so-quad-ring__icons"><g class="so-quad-ring__qi so-quad-ring__qi--ne" transform="translate(32.49 15.51) scale(0.38) translate(-12 -12)"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><rect width="8" height="6" x="8" y="12" rx="1"/><path d="M10 12v-2a2 2 0 1 1 4 0v2"/></g><g class="so-quad-ring__qi so-quad-ring__qi--se" transform="translate(32.49 32.49) scale(0.38) translate(-12 -12)"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><rect width="8" height="6" x="8" y="12" rx="1"/><path d="M10 12v-2a2 2 0 1 1 4 0v2"/></g><g class="so-quad-ring__qi so-quad-ring__qi--sw" transform="translate(15.51 32.49) scale(0.38) translate(-12 -12)"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><rect width="8" height="6" x="8" y="12" rx="1"/><path d="M10 12v-2a2 2 0 1 1 4 0v2"/></g><g class="so-quad-ring__qi so-quad-ring__qi--nw" transform="translate(15.51 15.51) scale(0.38) translate(-12 -12)"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><rect width="8" height="6" x="8" y="12" rx="1"/><path d="M10 12v-2a2 2 0 1 1 4 0v2"/></g></g></svg></span>
+            <span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
+      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
+      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
+      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
+      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.5) translate(-12 -12)"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><rect width="8" height="6" x="8" y="12" rx="1"/><path d="M10 12v-2a2 2 0 1 1 4 0v2"/></g></svg></span>
             <span class="so-b2b__next-n" aria-hidden="true">03</span>
             <span class="so-b2b__next-copy"><strong>You receive a private audit</strong></span>
           </li>
           <li>
-            <span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.25" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.14))" stroke-width="0.9"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke-width="5.25" stroke-linecap="round">
-      <path class="so-quad-ring__arc so-quad-ring__arc--ne" stroke="var(--so-quad-ne)" d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--se" stroke="var(--so-quad-se)" d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--sw" stroke="var(--so-quad-sw)" d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--nw" stroke="var(--so-quad-nw)" d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
-    </g><g class="so-quad-ring__icons"><g class="so-quad-ring__qi so-quad-ring__qi--ne" transform="translate(32.49 15.51) scale(0.38) translate(-12 -12)"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></g><g class="so-quad-ring__qi so-quad-ring__qi--se" transform="translate(32.49 32.49) scale(0.38) translate(-12 -12)"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></g><g class="so-quad-ring__qi so-quad-ring__qi--sw" transform="translate(15.51 32.49) scale(0.38) translate(-12 -12)"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></g><g class="so-quad-ring__qi so-quad-ring__qi--nw" transform="translate(15.51 15.51) scale(0.38) translate(-12 -12)"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></g></g></svg></span>
+            <span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
+      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
+      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
+      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
+      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.5) translate(-12 -12)"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></g></svg></span>
             <span class="so-b2b__next-n" aria-hidden="true">04</span>
             <span class="so-b2b__next-copy"><strong>We propose one pilot</strong></span>
           </li>
           <li>
-            <span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.25" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.14))" stroke-width="0.9"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke-width="5.25" stroke-linecap="round">
-      <path class="so-quad-ring__arc so-quad-ring__arc--ne" stroke="var(--so-quad-ne)" d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--se" stroke="var(--so-quad-se)" d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--sw" stroke="var(--so-quad-sw)" d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--nw" stroke="var(--so-quad-nw)" d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
-    </g><g class="so-quad-ring__icons"><g class="so-quad-ring__qi so-quad-ring__qi--ne" transform="translate(32.49 15.51) scale(0.38) translate(-12 -12)"><rect width="20" height="12" x="2" y="6" rx="6" ry="6"/><circle cx="16" cy="12" r="2"/></g><g class="so-quad-ring__qi so-quad-ring__qi--se" transform="translate(32.49 32.49) scale(0.38) translate(-12 -12)"><rect width="20" height="12" x="2" y="6" rx="6" ry="6"/><circle cx="16" cy="12" r="2"/></g><g class="so-quad-ring__qi so-quad-ring__qi--sw" transform="translate(15.51 32.49) scale(0.38) translate(-12 -12)"><rect width="20" height="12" x="2" y="6" rx="6" ry="6"/><circle cx="16" cy="12" r="2"/></g><g class="so-quad-ring__qi so-quad-ring__qi--nw" transform="translate(15.51 15.51) scale(0.38) translate(-12 -12)"><rect width="20" height="12" x="2" y="6" rx="6" ry="6"/><circle cx="16" cy="12" r="2"/></g></g></svg></span>
+            <span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
+      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
+      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
+      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
+      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.5) translate(-12 -12)"><rect width="20" height="12" x="2" y="6" rx="6" ry="6"/><circle cx="16" cy="12" r="2"/></g></svg></span>
             <span class="so-b2b__next-n" aria-hidden="true">05</span>
             <span class="so-b2b__next-copy"><strong>You decide whether to run it</strong></span>
           </li>
@@ -1303,66 +1306,66 @@
             </header>
             <dl class="so-b2b__audit-preview-meta">
               <div>
-                <dt><span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.25" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.14))" stroke-width="0.9"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke-width="5.25" stroke-linecap="round">
-      <path class="so-quad-ring__arc so-quad-ring__arc--ne" stroke="var(--so-quad-ne)" d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--se" stroke="var(--so-quad-se)" d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--sw" stroke="var(--so-quad-sw)" d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--nw" stroke="var(--so-quad-nw)" d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
-    </g><g class="so-quad-ring__icons"><g class="so-quad-ring__qi so-quad-ring__qi--ne" transform="translate(32.49 15.51) scale(0.38) translate(-12 -12)"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></g><g class="so-quad-ring__qi so-quad-ring__qi--se" transform="translate(32.49 32.49) scale(0.38) translate(-12 -12)"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></g><g class="so-quad-ring__qi so-quad-ring__qi--sw" transform="translate(15.51 32.49) scale(0.38) translate(-12 -12)"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></g><g class="so-quad-ring__qi so-quad-ring__qi--nw" transform="translate(15.51 15.51) scale(0.38) translate(-12 -12)"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></g></g></svg></span> Gaps</dt>
+                <dt><span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
+      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
+      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
+      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
+      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.5) translate(-12 -12)"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></g></svg></span> Gaps</dt>
                 <dd>3</dd>
               </div>
               <div>
-                <dt><span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.25" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.14))" stroke-width="0.9"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke-width="5.25" stroke-linecap="round">
-      <path class="so-quad-ring__arc so-quad-ring__arc--ne" stroke="var(--so-quad-ne)" d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--se" stroke="var(--so-quad-se)" d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--sw" stroke="var(--so-quad-sw)" d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--nw" stroke="var(--so-quad-nw)" d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
-    </g><g class="so-quad-ring__icons"><g class="so-quad-ring__qi so-quad-ring__qi--ne" transform="translate(32.49 15.51) scale(0.38) translate(-12 -12)"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></g><g class="so-quad-ring__qi so-quad-ring__qi--se" transform="translate(32.49 32.49) scale(0.38) translate(-12 -12)"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></g><g class="so-quad-ring__qi so-quad-ring__qi--sw" transform="translate(15.51 32.49) scale(0.38) translate(-12 -12)"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></g><g class="so-quad-ring__qi so-quad-ring__qi--nw" transform="translate(15.51 15.51) scale(0.38) translate(-12 -12)"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></g></g></svg></span> Levers</dt>
+                <dt><span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
+      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
+      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
+      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
+      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.5) translate(-12 -12)"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></g></svg></span> Levers</dt>
                 <dd>3</dd>
               </div>
               <div>
-                <dt><span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.25" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.14))" stroke-width="0.9"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke-width="5.25" stroke-linecap="round">
-      <path class="so-quad-ring__arc so-quad-ring__arc--ne" stroke="var(--so-quad-ne)" d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--se" stroke="var(--so-quad-se)" d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--sw" stroke="var(--so-quad-sw)" d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--nw" stroke="var(--so-quad-nw)" d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
-    </g><g class="so-quad-ring__icons"><g class="so-quad-ring__qi so-quad-ring__qi--ne" transform="translate(32.49 15.51) scale(0.38) translate(-12 -12)"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></g><g class="so-quad-ring__qi so-quad-ring__qi--se" transform="translate(32.49 32.49) scale(0.38) translate(-12 -12)"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></g><g class="so-quad-ring__qi so-quad-ring__qi--sw" transform="translate(15.51 32.49) scale(0.38) translate(-12 -12)"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></g><g class="so-quad-ring__qi so-quad-ring__qi--nw" transform="translate(15.51 15.51) scale(0.38) translate(-12 -12)"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></g></g></svg></span> Pilot</dt>
+                <dt><span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
+      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
+      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
+      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
+      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.5) translate(-12 -12)"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></g></svg></span> Pilot</dt>
                 <dd>1</dd>
               </div>
             </dl>
             <p class="so-b2b__audit-preview-sub">Typical signal mix</p>
             <ul class="so-b2b__preview-list so-b2b__preview-list--signals">
-              <li><span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.25" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.14))" stroke-width="0.9"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke-width="5.25" stroke-linecap="round">
-      <path class="so-quad-ring__arc so-quad-ring__arc--ne" stroke="var(--so-quad-ne)" d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--se" stroke="var(--so-quad-se)" d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--sw" stroke="var(--so-quad-sw)" d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--nw" stroke="var(--so-quad-nw)" d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
-    </g><g class="so-quad-ring__icons"><g class="so-quad-ring__qi so-quad-ring__qi--ne" transform="translate(32.49 15.51) scale(0.38) translate(-12 -12)"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="m14.5 7.5-5 5"/><path d="m9.5 7.5 5 5"/></g><g class="so-quad-ring__qi so-quad-ring__qi--se" transform="translate(32.49 32.49) scale(0.38) translate(-12 -12)"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="m14.5 7.5-5 5"/><path d="m9.5 7.5 5 5"/></g><g class="so-quad-ring__qi so-quad-ring__qi--sw" transform="translate(15.51 32.49) scale(0.38) translate(-12 -12)"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="m14.5 7.5-5 5"/><path d="m9.5 7.5 5 5"/></g><g class="so-quad-ring__qi so-quad-ring__qi--nw" transform="translate(15.51 15.51) scale(0.38) translate(-12 -12)"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="m14.5 7.5-5 5"/><path d="m9.5 7.5 5 5"/></g></g></svg></span> Missed inquiries</li>
-              <li><span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.25" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.14))" stroke-width="0.9"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke-width="5.25" stroke-linecap="round">
-      <path class="so-quad-ring__arc so-quad-ring__arc--ne" stroke="var(--so-quad-ne)" d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--se" stroke="var(--so-quad-se)" d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--sw" stroke="var(--so-quad-sw)" d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--nw" stroke="var(--so-quad-nw)" d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
-    </g><g class="so-quad-ring__icons"><g class="so-quad-ring__qi so-quad-ring__qi--ne" transform="translate(32.49 15.51) scale(0.38) translate(-12 -12)"><polyline points="12 6 12 12 16 14"/></g><g class="so-quad-ring__qi so-quad-ring__qi--se" transform="translate(32.49 32.49) scale(0.38) translate(-12 -12)"><polyline points="12 6 12 12 16 14"/></g><g class="so-quad-ring__qi so-quad-ring__qi--sw" transform="translate(15.51 32.49) scale(0.38) translate(-12 -12)"><polyline points="12 6 12 12 16 14"/></g><g class="so-quad-ring__qi so-quad-ring__qi--nw" transform="translate(15.51 15.51) scale(0.38) translate(-12 -12)"><polyline points="12 6 12 12 16 14"/></g></g></svg></span> Delayed replies</li>
-              <li><span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.25" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.14))" stroke-width="0.9"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke-width="5.25" stroke-linecap="round">
-      <path class="so-quad-ring__arc so-quad-ring__arc--ne" stroke="var(--so-quad-ne)" d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--se" stroke="var(--so-quad-se)" d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--sw" stroke="var(--so-quad-sw)" d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--nw" stroke="var(--so-quad-nw)" d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
-    </g><g class="so-quad-ring__icons"><g class="so-quad-ring__qi so-quad-ring__qi--ne" transform="translate(32.49 15.51) scale(0.38) translate(-12 -12)"><rect width="8" height="8" x="3" y="3" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><rect width="8" height="8" x="13" y="13" rx="2"/></g><g class="so-quad-ring__qi so-quad-ring__qi--se" transform="translate(32.49 32.49) scale(0.38) translate(-12 -12)"><rect width="8" height="8" x="3" y="3" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><rect width="8" height="8" x="13" y="13" rx="2"/></g><g class="so-quad-ring__qi so-quad-ring__qi--sw" transform="translate(15.51 32.49) scale(0.38) translate(-12 -12)"><rect width="8" height="8" x="3" y="3" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><rect width="8" height="8" x="13" y="13" rx="2"/></g><g class="so-quad-ring__qi so-quad-ring__qi--nw" transform="translate(15.51 15.51) scale(0.38) translate(-12 -12)"><rect width="8" height="8" x="3" y="3" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><rect width="8" height="8" x="13" y="13" rx="2"/></g></g></svg></span> Manual follow-up gaps</li>
-              <li><span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.25" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.14))" stroke-width="0.9"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke-width="5.25" stroke-linecap="round">
-      <path class="so-quad-ring__arc so-quad-ring__arc--ne" stroke="var(--so-quad-ne)" d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--se" stroke="var(--so-quad-se)" d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--sw" stroke="var(--so-quad-sw)" d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--nw" stroke="var(--so-quad-nw)" d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
-    </g><g class="so-quad-ring__icons"><g class="so-quad-ring__qi so-quad-ring__qi--ne" transform="translate(32.49 15.51) scale(0.38) translate(-12 -12)"><line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></g><g class="so-quad-ring__qi so-quad-ring__qi--se" transform="translate(32.49 32.49) scale(0.38) translate(-12 -12)"><line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></g><g class="so-quad-ring__qi so-quad-ring__qi--sw" transform="translate(15.51 32.49) scale(0.38) translate(-12 -12)"><line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></g><g class="so-quad-ring__qi so-quad-ring__qi--nw" transform="translate(15.51 15.51) scale(0.38) translate(-12 -12)"><line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></g></g></svg></span> Booking bottlenecks</li>
+              <li><span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
+      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
+      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
+      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
+      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.5) translate(-12 -12)"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="m14.5 7.5-5 5"/><path d="m9.5 7.5 5 5"/></g></svg></span> Missed inquiries</li>
+              <li><span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
+      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
+      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
+      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
+      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.5) translate(-12 -12)"><polyline points="12 6 12 12 16 14"/></g></svg></span> Delayed replies</li>
+              <li><span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
+      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
+      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
+      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
+      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.5) translate(-12 -12)"><rect width="8" height="8" x="3" y="3" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><rect width="8" height="8" x="13" y="13" rx="2"/></g></svg></span> Manual follow-up gaps</li>
+              <li><span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
+      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
+      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
+      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
+      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.5) translate(-12 -12)"><line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></g></svg></span> Booking bottlenecks</li>
             </ul>
             <p class="so-b2b__audit-preview-foot">ServiceOpera.to private audit</p>
           </div>
@@ -1372,7 +1375,13 @@
 
     <aside class="so-b2b__jack" aria-labelledby="so-contact-h">
       <div class="so-b2b__jack-avatar-col">
-        <div class="so-quad-ring so-quad-ring--avatar so-quad-ring--on-dark" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.25" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke)" stroke-width="0.9"/><g class="so-quad-ring__arcs" fill="none" stroke-width="5.25" stroke-linecap="round"><path class="so-quad-ring__arc so-quad-ring__arc--ne" stroke="var(--so-quad-ne)" d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/><path class="so-quad-ring__arc so-quad-ring__arc--se" stroke="var(--so-quad-se)" d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/><path class="so-quad-ring__arc so-quad-ring__arc--sw" stroke="var(--so-quad-sw)" d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/><path class="so-quad-ring__arc so-quad-ring__arc--nw" stroke="var(--so-quad-nw)" d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/></g></svg>
+        <div class="so-quad-ring so-quad-ring--avatar so-quad-ring--on-dark" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
+      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
+      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
+      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
+      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    </g></svg>
           <span class="so-quad-ring__center so-quad-ring__center--photo">
             <div class="so-b2b__jack-avatar" data-so-jack-avatar>
               <img class="so-b2b__jack-photo" src="/assets/jack-avatar.png" alt="" width="256" height="256" decoding="async" onerror="(function(el){if(el.dataset.soJackRetry==='1'){el.classList.add('so-b2b__jack-photo--load-error');return;}el.dataset.soJackRetry='1';try{var u=new URL(el.currentSrc||el.src,location.href);u.searchParams.set('soRetry','1');el.src=u.toString();}catch(e){el.classList.add('so-b2b__jack-photo--load-error');}})(this);" />
@@ -1388,33 +1397,33 @@
         </div>
         <ul class="so-b2b__jack-list">
         <li>
-          <span class="so-quad-ring so-quad-ring--xs so-quad-ring--on-dark so-b2b__jack-check" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.25" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.14))" stroke-width="0.9"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke-width="5.25" stroke-linecap="round">
-      <path class="so-quad-ring__arc so-quad-ring__arc--ne" stroke="var(--so-quad-ne)" d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--se" stroke="var(--so-quad-se)" d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--sw" stroke="var(--so-quad-sw)" d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--nw" stroke="var(--so-quad-nw)" d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
-    </g><g class="so-quad-ring__icons"><g class="so-quad-ring__qi so-quad-ring__qi--ne" transform="translate(32.49 15.51) scale(0.38) translate(-12 -12)"><path d="M20 6L9 17l-5-5"/></g><g class="so-quad-ring__qi so-quad-ring__qi--se" transform="translate(32.49 32.49) scale(0.38) translate(-12 -12)"><path d="M20 6L9 17l-5-5"/></g><g class="so-quad-ring__qi so-quad-ring__qi--sw" transform="translate(15.51 32.49) scale(0.38) translate(-12 -12)"><path d="M20 6L9 17l-5-5"/></g><g class="so-quad-ring__qi so-quad-ring__qi--nw" transform="translate(15.51 15.51) scale(0.38) translate(-12 -12)"><path d="M20 6L9 17l-5-5"/></g></g></svg></span>
+          <span class="so-quad-ring so-quad-ring--xs so-quad-ring--on-dark so-b2b__jack-check" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
+      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
+      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
+      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
+      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.5) translate(-12 -12)"><path d="M20 6L9 17l-5-5"/></g></svg></span>
           Named accountability on every engagement
         </li>
         <li>
-          <span class="so-quad-ring so-quad-ring--xs so-quad-ring--on-dark so-b2b__jack-check" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.25" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.14))" stroke-width="0.9"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke-width="5.25" stroke-linecap="round">
-      <path class="so-quad-ring__arc so-quad-ring__arc--ne" stroke="var(--so-quad-ne)" d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--se" stroke="var(--so-quad-se)" d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--sw" stroke="var(--so-quad-sw)" d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--nw" stroke="var(--so-quad-nw)" d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
-    </g><g class="so-quad-ring__icons"><g class="so-quad-ring__qi so-quad-ring__qi--ne" transform="translate(32.49 15.51) scale(0.38) translate(-12 -12)"><path d="M20 6L9 17l-5-5"/></g><g class="so-quad-ring__qi so-quad-ring__qi--se" transform="translate(32.49 32.49) scale(0.38) translate(-12 -12)"><path d="M20 6L9 17l-5-5"/></g><g class="so-quad-ring__qi so-quad-ring__qi--sw" transform="translate(15.51 32.49) scale(0.38) translate(-12 -12)"><path d="M20 6L9 17l-5-5"/></g><g class="so-quad-ring__qi so-quad-ring__qi--nw" transform="translate(15.51 15.51) scale(0.38) translate(-12 -12)"><path d="M20 6L9 17l-5-5"/></g></g></svg></span>
+          <span class="so-quad-ring so-quad-ring--xs so-quad-ring--on-dark so-b2b__jack-check" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
+      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
+      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
+      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
+      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.5) translate(-12 -12)"><path d="M20 6L9 17l-5-5"/></g></svg></span>
           Guardrails and approvals you control
         </li>
         <li>
-          <span class="so-quad-ring so-quad-ring--xs so-quad-ring--on-dark so-b2b__jack-check" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.25" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.14))" stroke-width="0.9"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke-width="5.25" stroke-linecap="round">
-      <path class="so-quad-ring__arc so-quad-ring__arc--ne" stroke="var(--so-quad-ne)" d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--se" stroke="var(--so-quad-se)" d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--sw" stroke="var(--so-quad-sw)" d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--nw" stroke="var(--so-quad-nw)" d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
-    </g><g class="so-quad-ring__icons"><g class="so-quad-ring__qi so-quad-ring__qi--ne" transform="translate(32.49 15.51) scale(0.38) translate(-12 -12)"><path d="M20 6L9 17l-5-5"/></g><g class="so-quad-ring__qi so-quad-ring__qi--se" transform="translate(32.49 32.49) scale(0.38) translate(-12 -12)"><path d="M20 6L9 17l-5-5"/></g><g class="so-quad-ring__qi so-quad-ring__qi--sw" transform="translate(15.51 32.49) scale(0.38) translate(-12 -12)"><path d="M20 6L9 17l-5-5"/></g><g class="so-quad-ring__qi so-quad-ring__qi--nw" transform="translate(15.51 15.51) scale(0.38) translate(-12 -12)"><path d="M20 6L9 17l-5-5"/></g></g></svg></span>
+          <span class="so-quad-ring so-quad-ring--xs so-quad-ring--on-dark so-b2b__jack-check" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
+      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
+      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
+      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
+      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.5) translate(-12 -12)"><path d="M20 6L9 17l-5-5"/></g></svg></span>
           Email jack@serviceopera.to to scope fit
         </li>
         </ul>
@@ -1425,13 +1434,13 @@
 </main>
 
 <footer class="so-b2b-footer">
-  <span class="so-b2b-footer__row"><span class="so-quad-ring so-quad-ring--2xs so-b2b-footer__mark" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.25" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.14))" stroke-width="0.9"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke-width="5.25" stroke-linecap="round">
-      <path class="so-quad-ring__arc so-quad-ring__arc--ne" stroke="var(--so-quad-ne)" d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--se" stroke="var(--so-quad-se)" d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--sw" stroke="var(--so-quad-sw)" d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
-      <path class="so-quad-ring__arc so-quad-ring__arc--nw" stroke="var(--so-quad-nw)" d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
-    </g><g class="so-quad-ring__icons"><g class="so-quad-ring__qi so-quad-ring__qi--ne" transform="translate(32.49 15.51) scale(0.38) translate(-12 -12)"><circle cx="0" cy="0" r="1.1" fill="currentColor" stroke="none"/><path d="M-2.5 0h5M0-2.5v5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></g><g class="so-quad-ring__qi so-quad-ring__qi--se" transform="translate(32.49 32.49) scale(0.38) translate(-12 -12)"><circle cx="0" cy="0" r="1.1" fill="currentColor" stroke="none"/><path d="M-2.5 0h5M0-2.5v5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></g><g class="so-quad-ring__qi so-quad-ring__qi--sw" transform="translate(15.51 32.49) scale(0.38) translate(-12 -12)"><circle cx="0" cy="0" r="1.1" fill="currentColor" stroke="none"/><path d="M-2.5 0h5M0-2.5v5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></g><g class="so-quad-ring__qi so-quad-ring__qi--nw" transform="translate(15.51 15.51) scale(0.38) translate(-12 -12)"><circle cx="0" cy="0" r="1.1" fill="currentColor" stroke="none"/><path d="M-2.5 0h5M0-2.5v5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></g></g></svg></span><span>© 2026 www.serviceopera.to · Private audits &amp; workflow pilots · <a href="/free-audit.html">Free 48h audit</a> · <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a></span></span>
+  <span class="so-b2b-footer__row"><span class="so-quad-ring so-quad-ring--2xs so-b2b-footer__mark" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
+      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
+      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
+      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
+      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.5) translate(-12 -12)"><circle cx="0" cy="0" r="1.1" fill="currentColor" stroke="none"/><path d="M-2.5 0h5M0-2.5v5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></g></svg></span><span>© 2026 www.serviceopera.to · Private audits &amp; workflow pilots · <a href="/free-audit.html">Free 48h audit</a> · <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a></span></span>
 </footer>
 </div>
 
