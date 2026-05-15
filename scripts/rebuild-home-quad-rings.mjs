@@ -8,12 +8,13 @@ import path from 'node:path';
 const indexPath = path.join(path.resolve(import.meta.dirname, '..'), 'public', 'index.html');
 let html = fs.readFileSync(indexPath, 'utf8');
 
+/** ~87° arcs, 3° gaps at 45° / 135° / 225° / 315° (r=16.5, viewBox 48×48). */
 const RING_SVG_BODY = `<circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5.5" stroke-linecap="round">
-      <path d="M34.158 10.998A16.5 16.5 0 0 1 37.002 13.842"/>
-      <path d="M37.002 34.158A16.5 16.5 0 0 1 34.158 37.002"/>
-      <path d="M13.842 37.002A16.5 16.5 0 0 1 10.998 34.158"/>
-      <path d="M10.998 13.842A16.5 16.5 0 0 1 13.842 10.998"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5" stroke-linecap="butt">
+      <path d="M35.358 35.969A16.5 16.5 0 0 1 12.642 35.969"/>
+      <path d="M12.031 35.358A16.5 16.5 0 0 1 12.031 12.642"/>
+      <path d="M12.642 12.031A16.5 16.5 0 0 1 35.358 12.031"/>
+      <path d="M35.969 12.642A16.5 16.5 0 0 1 35.969 35.358"/>
     </g>`;
 
 const FOOTER_MARK =
@@ -21,7 +22,7 @@ const FOOTER_MARK =
 
 function centerIconGroup(iconInner) {
   const body = (iconInner || FOOTER_MARK).trim();
-  return `<g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.5) translate(-12 -12)">${body}</g>`;
+  return `<g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.64) translate(-12 -12)">${body}</g>`;
 }
 
 function buildRingSvg({ extraClass = '', iconInner = '', withIcon = true } = {}) {
@@ -43,8 +44,12 @@ html = html.replace(
   /<svg class="so-quad-ring__svg([^"]*)"[^>]*>[\s\S]*?<\/svg>/g,
   (full, classSuffix) => {
     const extraClass = classSuffix.trim() ? ` ${classSuffix.trim()}` : '';
-    const isAvatar = full.includes('so-quad-ring__center--photo') || !full.includes('so-quad-ring__icons');
-    const hasIcons = full.includes('so-quad-ring__icons') || full.includes('so-quad-ring__icon');
+    const isAvatar =
+      full.includes('so-quad-ring__center--photo') || /so-quad-ring--avatar/.test(full);
+    const hasIcons =
+      full.includes('so-quad-ring__icon') ||
+      full.includes('so-quad-ring__icons') ||
+      full.includes('so-quad-ring__qi');
     const iconInner = hasIcons ? extractFirstQuadrantIcon(full) : '';
     const withIcon = hasIcons && !isAvatar;
     if (withIcon || (hasIcons && iconInner)) replaced += 1;
