@@ -360,11 +360,18 @@ strong { color: var(--color-text-primary); }
 <section class="audit-portal-access" id="auditPortalAccess" hidden lang="en" aria-labelledby="auditPortalAccessTitle">
   <div class="audit-portal-access__card">
     <h2 class="audit-portal-access__title" id="auditPortalAccessTitle">Portal access (first visit)</h2>
-    <p class="audit-portal-access__lede">Please use <strong>Log in</strong> in the header, then enter the <strong>email</strong> and <strong>temporary password</strong> below. After you sign in, you will be asked to <strong>choose your own password</strong>. Once that step is finished, this notice is removed automatically.</p>
+    <p class="audit-portal-access__lede">Open the <strong>account activation link</strong> for one-click sign-in to your report, or use <strong>Log in</strong> in the header with the <strong>email</strong> and <strong>temporary password</strong> below. After you sign in, you will be asked to <strong>choose your own password</strong>. Once that step is finished, this notice is removed automatically.</p>
     <dl class="audit-portal-access__dl">
       <div>
         <dt>Report page</dt>
         <dd><a id="auditPortalReportLink" href="/clinics/004/">…</a></dd>
+      </div>
+      <div id="auditPortalActivationRow" hidden>
+        <dt>Account activation link</dt>
+        <dd>
+          <a id="auditPortalActivationLink" href="#" rel="noopener noreferrer">…</a>
+          <span class="audit-portal-access__pw-hint" id="auditPortalActivationHint">Opens your report and signs you in automatically (same mechanism as the emailed link).</span>
+        </dd>
       </div>
       <div>
         <dt>Username / email</dt>
@@ -381,6 +388,7 @@ strong { color: var(--color-text-primary); }
     <div class="audit-portal-access__actions">
       <button type="button" class="audit-portal-access__btn" id="auditPortalCopyEmail">Copy email</button>
       <button type="button" class="audit-portal-access__btn" id="auditPortalCopyPassword" disabled aria-disabled="true">Copy password</button>
+      <button type="button" class="audit-portal-access__btn" id="auditPortalCopyActivation" hidden disabled aria-disabled="true">Copy activation link</button>
       <span class="audit-portal-access__status" id="auditPortalCopyStatus" role="status" aria-live="polite"></span>
     </div>
   </div>
@@ -1273,12 +1281,53 @@ strong { color: var(--color-text-primary); }
   var pwHint = document.getElementById('auditPortalPwHint');
   var copyBtn = document.getElementById('auditPortalCopyEmail');
   var copyPwBtn = document.getElementById('auditPortalCopyPassword');
+  var copyActivationBtn = document.getElementById('auditPortalCopyActivation');
   var copyStatus = document.getElementById('auditPortalCopyStatus');
+  var activationRow = document.getElementById('auditPortalActivationRow');
+  var activationLinkEl = document.getElementById('auditPortalActivationLink');
+  var activationHintEl = document.getElementById('auditPortalActivationHint');
+  var activationUrlStored = '';
 
   function setPasswordCopyEnabled(on) {
     if (!copyPwBtn) return;
     copyPwBtn.disabled = !on;
     copyPwBtn.setAttribute('aria-disabled', on ? 'false' : 'true');
+  }
+  function setActivationCopyEnabled(on) {
+    if (!copyActivationBtn) return;
+    copyActivationBtn.hidden = !on;
+    copyActivationBtn.disabled = !on;
+    copyActivationBtn.setAttribute('aria-disabled', on ? 'false' : 'true');
+  }
+  function formatActivationExpiry(iso) {
+    if (!iso) return '';
+    try {
+      var d = new Date(iso);
+      if (Number.isNaN(d.getTime())) return '';
+      return d.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+    } catch (e) {
+      return '';
+    }
+  }
+  function applyActivationUrl(url, expiresAt) {
+    activationUrlStored = url && String(url).trim() ? String(url).trim() : '';
+    if (!activationUrlStored) {
+      if (activationRow) activationRow.hidden = true;
+      setActivationCopyEnabled(false);
+      return;
+    }
+    if (activationRow) activationRow.hidden = false;
+    if (activationLinkEl) {
+      activationLinkEl.href = activationUrlStored;
+      activationLinkEl.textContent = activationUrlStored;
+    }
+    if (activationHintEl) {
+      var expLabel = formatActivationExpiry(expiresAt);
+      activationHintEl.textContent = expLabel
+        ? 'One click signs you in and opens your report. Link expires ' + expLabel + ' (same signed token as the emailed link).'
+        : 'One click signs you in and opens your report (same signed token as the emailed link).';
+    }
+    setActivationCopyEnabled(true);
   }
 
   function copyUsingExecCommand(text) {
@@ -1460,6 +1509,7 @@ strong { color: var(--color-text-primary); }
         pwHint.textContent = 'After sign-in, clear the clipboard on shared devices.';
       }
       setPasswordCopyEnabled(true);
+      applyActivationUrl(pub.activationUrl, pub.activationExpiresAt);
     } else {
       fillFromDemo();
       expectedEmail = normEmail((cfg && (cfg.username || cfg.email)) || '');
@@ -1498,6 +1548,21 @@ strong { color: var(--color-text-primary); }
         },
         function () {
           copyStatus.textContent = 'Select the password above and copy manually (Ctrl+C / ⌘C).';
+        }
+      );
+    });
+  }
+
+  if (copyActivationBtn && copyStatus) {
+    copyActivationBtn.addEventListener('click', function () {
+      if (copyActivationBtn.disabled || !activationUrlStored) return;
+      copyTextToClipboard(
+        activationUrlStored,
+        function () {
+          copyStatus.textContent = 'Activation link copied to clipboard.';
+        },
+        function () {
+          copyStatus.textContent = 'Select the activation link above and copy manually (Ctrl+C / ⌘C).';
         }
       );
     });

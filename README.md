@@ -142,6 +142,8 @@ The `Dockerfile` runs **Node**: `server.mjs` serves **`public/`** and sets the s
 
 The public audit page stays anonymous for everyone without `?access=` / `?magic=`. With those query params, the page loads the same HTML, **immediately removes the token from the address bar** (`history.replaceState`), **`POST /api/auth/audit-ddc-magic`**, and stores **`so_user_jwt`** / **`so_user_session_id`** like **`login.html`** after a normal sign-in. The magic token is an **HMAC-signed JWT** using the same **`PORTAL_JWT_SECRET`** / **`ADMIN_JWT_SECRET`** as the rest of the portal (`aud: audit-ddc`, **`sub` = portal user email**, **`exp`**). It is **not single-use** (anyone with the URL can exchange it until **`exp`**). **Rotating `PORTAL_JWT_SECRET`** revokes all outstanding links.
 
+While first-time credentials are shown on **`/clinics/004/`**, **`GET /api/public/audit-ddc-first-access`** also returns **`activationUrl`** (same signed token) when the portal user already exists — the **Portal access** callout displays it with **Copy activation link**. Set **`PUBLIC_ORIGIN`** to the frontend host (e.g. your Railway static URL) so the link opens the report on the correct origin.
+
 **Mint a link** on a machine that has the production API secret:
 
 ```bash

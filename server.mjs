@@ -811,6 +811,28 @@ const CLINIC_RESET_JWT_MS = 60 * 60 * 1000;
 /** Email confirmation / onboarding link after self-registration (pending row consumed on completion). */
 const CLINIC_VERIFY_JWT_MS = 48 * 60 * 60 * 1000;
 const AUDIT_DDC_REPORT_SLUG = (process.env.AUDIT_DDC_REPORT_SLUG || '004').trim() || '004';
+const AUDIT_DDC_MAGIC_TTL_MS_DEFAULT = 7 * 24 * 60 * 60 * 1000;
+function auditDdcMagicTtlMs() {
+  const ttlRaw = Number(process.env.AUDIT_DDC_MAGIC_TTL_MS || AUDIT_DDC_MAGIC_TTL_MS_DEFAULT);
+  if (
+    Number.isFinite(ttlRaw) &&
+    ttlRaw >= 5 * 60 * 1000 &&
+    ttlRaw <= 30 * 24 * 60 * 60 * 1000
+  ) {
+    return ttlRaw;
+  }
+  return AUDIT_DDC_MAGIC_TTL_MS_DEFAULT;
+}
+function mintAuditDdcMagicJwt(email) {
+  const ttl = auditDdcMagicTtlMs();
+  return signJwt({
+    v: 1,
+    role: 'audit_dd_magic',
+    aud: 'audit-ddc',
+    sub: normalizeEmail(email),
+    exp: Date.now() + ttl,
+  });
+}
 const PORTAL_REGISTER_OK_RESPONSE = {
   ok: true,
   message:
@@ -1535,17 +1557,18 @@ app.get('/api/site-uploads/:id', async (req, res) => {
  * portal user exists and no longer has passwordMustChange, credentials are omitted so the
  * temporary password is not served after first-time setup.
  */
-app.get('/api/public/audit-ddc-first-access', async (_req, res) => {
+app.get('/api/public/audit-ddc-first-access', async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
-  const reportPath = '/clinics/004/';
+  const reportPath = '/clinics/' + AUDIT_DDC_REPORT_SLUG + '/';
   const rawEmail = (process.env.AUDIT_DDC_EMAIL || '').trim();
   const tempPassword = (process.env.AUDIT_DDC_TEMP_PASSWORD || '').trim();
   if (!rawEmail || !rawEmail.includes('@') || !tempPassword) {
     return res.json({ ok: true, state: 'unconfigured', reportPath });
   }
   const email = normalizeEmail(rawEmail);
+  let user;
   try {
-    const user = await userStore.getUserByEmail(email);
+    user = await userStore.getUserByEmail(email);
     if (user && user.passwordMustChange !== true) {
       return res.json({ ok: true, state: 'completed', reportPath });
     }
@@ -1553,12 +1576,22 @@ app.get('/api/public/audit-ddc-first-access', async (_req, res) => {
     /* If the store is unavailable, avoid returning secrets. */
     return res.json({ ok: true, state: 'unconfigured', reportPath });
   }
+  const ttl = auditDdcMagicTtlMs();
+  const activationExpiresAt = new Date(Date.now() + ttl).toISOString();
+  let activationUrl = null;
+  if (user && user.active !== false && user.reportSlug === AUDIT_DDC_REPORT_SLUG) {
+    const origin = publicOriginForEmail(req);
+    const token = mintAuditDdcMagicJwt(email);
+    activationUrl = `${origin}${reportPath}?access=${encodeURIComponent(token)}`;
+  }
   return res.json({
     ok: true,
     state: 'credentials',
     reportPath,
     email,
     tempPassword,
+    activationUrl,
+    activationExpiresAt,
   });
 });
 
