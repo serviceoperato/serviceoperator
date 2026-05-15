@@ -30,6 +30,58 @@
   to { opacity: 1; transform: none; }
 }
 
+.so-sample-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 20px;
+  padding: 16px 18px;
+  background: var(--amber-bg);
+  border: 1px solid #fcd34d;
+  border-left: 4px solid var(--amber);
+  border-radius: var(--radius);
+  line-height: 1.55;
+}
+
+.so-sample-banner__badge {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--amber);
+  background: #fff;
+  border: 1px solid #fcd34d;
+  border-radius: 6px;
+  padding: 6px 8px;
+  line-height: 1.2;
+}
+
+.so-sample-banner__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.so-sample-banner__lead {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.so-sample-banner__lead strong {
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+
+.so-sample-banner__it {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
 .so-eyebrow {
   font-size: 11px;
   font-weight: 600;
@@ -60,6 +112,16 @@
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 12px;
   margin-bottom: 40px;
+}
+
+.so-kpi-row--shock {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 520px) {
+  .so-kpi-row--shock {
+    grid-template-columns: 1fr;
+  }
 }
 
 .so-kpi {
@@ -98,6 +160,34 @@
   border-radius: var(--radius);
   padding: 28px 28px 24px;
   margin-bottom: 16px;
+}
+
+.so-section--hero {
+  border-color: #d4d4ce;
+  box-shadow: 0 2px 12px rgba(15, 15, 15, 0.04);
+}
+
+.so-section--gated {
+  margin-bottom: 12px;
+  padding: 20px 22px 18px;
+}
+
+.so-section--placeholder {
+  opacity: 0.7;
+}
+
+.so-gated-note {
+  font-size: 13px;
+  color: var(--ink-2);
+  line-height: 1.5;
+  margin: 12px 0 0;
+}
+
+.so-chart-intro {
+  font-size: 13px;
+  color: var(--ink-2);
+  line-height: 1.5;
+  margin: 0 0 14px;
 }
 
 .so-section-head {
@@ -387,33 +477,91 @@
 
 .so-star-row { display: inline-flex; gap: 2px; align-items: center; }
 
-.so-gate { position: relative; margin-top: 8px; }
+.so-gate { position: relative; margin-top: 8px; min-height: 420px; }
 
 .so-gate-blur {
-  filter: blur(4px);
+  filter: blur(5px);
   pointer-events: none;
   user-select: none;
-  opacity: .45;
-  height: 120px;
+  opacity: .5;
+  max-height: 280px;
   overflow: hidden;
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 28px;
+  padding: 16px 16px 48px;
 }
 
 .so-gate-overlay {
   position: absolute;
-  inset: 0;
+  inset: auto 0 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  background: linear-gradient(to bottom, transparent 0%, var(--surface) 50%);
-  border-radius: var(--radius);
-  padding: 24px;
+  align-items: stretch;
+  justify-content: flex-end;
+  gap: 12px;
+  background: linear-gradient(to bottom, transparent 0%, var(--surface) 28%, var(--surface) 100%);
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 48px 20px 22px;
   text-align: center;
+  min-height: 100%;
+}
+
+.so-gate-inquiry {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.so-gate-inquiry .inquiry-form {
+  gap: 10px;
+}
+
+.so-gate-inquiry .inquiry-form__control {
+  font-size: 13px;
+  padding: 10px 12px;
+}
+
+.so-gate-inquiry .inquiry-form__label {
+  font-size: 11px;
+}
+
+.so-gate-inquiry .so-sector-choice__grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.so-gate-inquiry .inquiry-form__submit {
+  width: 100%;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 11px 18px;
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.so-gate-inquiry .inquiry-form__submit:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.so-gate-alt {
+  margin: 0;
+  font-size: 12px;
+}
+
+.so-gate-alt a {
+  color: var(--ink-2);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.so-gate-alt a:hover {
+  color: var(--ink);
+  text-decoration: underline;
 }
 
 .so-gate-text {
@@ -470,6 +618,11 @@
   border-top: 1px solid var(--border);
   padding-top: 16px;
   line-height: 1.6;
+}
+
+.so-footnote--minimal {
+  font-size: 12px;
+  color: var(--ink-2);
 }
 
 body.report-010 { padding-top: var(--site-nav-offset, 72px); }

@@ -63,25 +63,24 @@
     obs.observe(el);
   }
 
-  function initEmailGate() {
-    var form = document.getElementById('soGateForm');
-    var success = document.getElementById('soGateSuccess');
-    if (!form) return;
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var email = form.querySelector('input[type="email"]');
-      if (!email || email.value.indexOf('@') < 1) return;
-      form.hidden = true;
-      if (success) success.hidden = false;
+  function animateReviewBars(root) {
+    root.querySelectorAll('.so-review-bar-fill').forEach(function (el) {
+      var h = el.getAttribute('data-height');
+      if (h) el.style.height = h;
     });
   }
 
   function initReviewBars(root) {
+    if (!root) return;
+    var inGate = root.closest && root.closest('#soGateHidden');
+    if (inGate) {
+      setTimeout(function () {
+        animateReviewBars(root);
+      }, 500);
+      return;
+    }
     observeAnimate(root, function () {
-      root.querySelectorAll('.so-review-bar-fill').forEach(function (el) {
-        var h = el.getAttribute('data-height');
-        if (h) el.style.height = h;
-      });
+      animateReviewBars(root);
     });
   }
 
@@ -159,7 +158,6 @@
   }
 
   function boot() {
-    initEmailGate();
     var donutRoot = document.getElementById('soDonutChart');
     if (donutRoot) initDonutSection(donutRoot);
     var reviewRoot = document.getElementById('soReviewGap');

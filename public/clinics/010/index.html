@@ -36,6 +36,19 @@
 <main>
 <div class="so-audit-wrap">
 
+  <div class="so-sample-banner" role="note" aria-label="Sample report notice">
+    <span class="so-sample-banner__badge" aria-hidden="true">Sample</span>
+    <div class="so-sample-banner__copy">
+      <p class="so-sample-banner__lead">
+        <strong>SAMPLE REPORT</strong> — fictional clinic, real methodology.
+      </p>
+      <p class="so-sample-banner__it" lang="it">
+        Questo è un esempio del formato che riceveresti per la tua attività. I numeri qui sono inventati;
+        nel tuo audit sarebbero estratti dai tuoi canali pubblici reali in 48h.
+      </p>
+    </div>
+  </div>
+
   <p class="so-eyebrow">ServiceOpera.to · AI Automation Audit · Sample Report · 010</p>
   <h1 class="so-headline">Clinic ABC</h1>
   <p class="so-subhead">
@@ -43,14 +56,15 @@
     Revenue is leaking every night through gaps automation closes in 14 days.
   </p>
 
-  <div class="so-kpi-row">
+  <!-- 1 · KPI bar — three headline numbers -->
+  <div class="so-kpi-row so-kpi-row--shock" aria-label="Key audit metrics">
     <div class="so-kpi">
       <div class="so-kpi-icon" aria-hidden="true">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
       </div>
-      <div class="so-kpi-label">Audit Potential</div>
-      <div class="so-kpi-value amber">9.2 <span style="font-size:14px">/ 10</span></div>
-      <div class="so-kpi-sub">High-leverage gap</div>
+      <div class="so-kpi-label">Inquiry Response</div>
+      <div class="so-kpi-value red" style="font-size:22px">4–24h</div>
+      <div class="so-kpi-sub">Target: &lt; 2 min</div>
     </div>
     <div class="so-kpi">
       <div class="so-kpi-icon" aria-hidden="true">
@@ -62,40 +76,16 @@
     </div>
     <div class="so-kpi">
       <div class="so-kpi-icon" aria-hidden="true">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><path d="M23 6l-9.5 9.5-5-5L1 18M17 6h6v6"/></svg>
       </div>
-      <div class="so-kpi-label">Inquiry Response</div>
-      <div class="so-kpi-value red" style="font-size:22px">4–24h</div>
-      <div class="so-kpi-sub">Target: &lt; 2 min</div>
-    </div>
-    <div class="so-kpi">
-      <div class="so-kpi-icon" aria-hidden="true">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M23 6l-9.5 9.5-5-5L1 18M17 6h6v6"/></svg>
-      </div>
-      <div class="so-kpi-label">Annual Uplift Est.</div>
-      <div class="so-kpi-value" style="font-size:20px">฿500K–1.5M</div>
+      <div class="so-kpi-label">Est. Annual Leak</div>
+      <div class="so-kpi-value red" style="font-size:20px">฿500K–1.5M</div>
       <div class="so-kpi-sub">Conservative 12-month</div>
     </div>
   </div>
 
-  <section class="so-section" aria-labelledby="s01">
-    <div class="so-section-head">
-      <span class="so-section-num">01</span>
-      <h2 class="so-section-title" id="s01">Business Snapshot</h2>
-    </div>
-    <table class="so-table">
-      <tbody>
-        <tr><td>Business</td><td>Clinic ABC (Sample)</td></tr>
-        <tr><td>Location</td><td>[Street Address], Pattaya, Thailand</td></tr>
-        <tr><td>Years operating</td><td>~12 years</td></tr>
-        <tr><td>Specialty status</td><td>[Specialty Certification] — Pattaya Region</td></tr>
-        <tr><td>Languages</td><td>English · Thai · [3rd Language]</td></tr>
-        <tr><td>Lead dentists</td><td>Dr. [Name A] (Specialist) · Dr. [Name B] (Specialist)</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section class="so-section" aria-labelledby="s02">
+  <!-- 2 · Patient Journey — core diagnostic -->
+  <section class="so-section so-section--hero" aria-labelledby="s02">
     <div class="so-section-head">
       <span class="so-section-num">02</span>
       <h2 class="so-section-title" id="s02">Patient Journey Audit</h2>
@@ -155,36 +145,13 @@
     </div>
   </section>
 
-  <section class="so-section" aria-labelledby="s03">
+  <!-- 3 · Single chart — revenue gap donut -->
+  <section class="so-section" aria-labelledby="s-gap">
     <div class="so-section-head">
-      <span class="so-section-num">03</span>
-      <h2 class="so-section-title" id="s03">Intake &amp; Booking Friction</h2>
+      <span class="so-section-num">Gap</span>
+      <h2 class="so-section-title" id="s-gap">Where Revenue Leaks</h2>
     </div>
-    <div class="so-friction-grid">
-      <div class="so-pill"><span class="pill-label">No WhatsApp</span><span class="pill-sev">Critical</span></div>
-      <div class="so-pill"><span class="pill-label">No LINE</span><span class="pill-sev">Critical</span></div>
-      <div class="so-pill"><span class="pill-label">Reply: 12–18h</span><span class="pill-sev">Critical</span></div>
-      <div class="so-pill"><span class="pill-label">No Live Booking</span><span class="pill-sev">Critical</span></div>
-      <div class="so-pill orange"><span class="pill-label">No Cost Estimator</span><span class="pill-sev">High</span></div>
-      <div class="so-pill orange"><span class="pill-label">5-Step Booking</span><span class="pill-sev">High</span></div>
-    </div>
-    <p style="font-size:13px;color:var(--ink-2);line-height:1.5;margin:12px 0 0">
-      Every hour without a response is a booking lost to a competitor with a WhatsApp bot.
-      Industry benchmark: every additional friction step reduces conversion by ~20%.
-    </p>
-  </section>
-
-  <section class="so-section" aria-labelledby="s04">
-    <div class="so-section-head">
-      <span class="so-section-num">04 – 05</span>
-      <h2 class="so-section-title" id="s04">Reputation &amp; Review Gap</h2>
-    </div>
-    <div class="so-insight">
-      <strong>Urgent gap:</strong> [X,000+] procedures placed, 12 years of operation.
-      Publicly visible review volume is disproportionately low — not from dissatisfaction,
-      but from the complete absence of post-treatment follow-up automation.
-    </div>
-
+    <p class="so-chart-intro">Distribution of recoverable gaps from public signal analysis — hover to inspect each driver.</p>
     <p class="so-chart-label">Revenue Gap Distribution</p>
     <div id="soDonutChart" class="so-donut-wrap">
       <div class="so-donut-svg-wrap">
@@ -195,87 +162,144 @@
       </div>
       <div class="so-donut-legend"></div>
     </div>
-
-    <div class="so-divider"></div>
-
-    <div id="soReviewGap">
-      <p class="so-review-bars-label">Google Reviews / Month</p>
-      <div class="so-review-bars">
-        <div class="so-review-bar-col">
-          <span class="so-review-bar-caption" style="color:#dc2626">~2/mo</span>
-          <div class="so-review-bar-shell" style="background:#fef2f2;border:1px solid #dc262633">
-            <div class="so-review-bar-fill" style="background:#dc2626" data-height="13.3%"></div>
-          </div>
-          <span class="so-review-bar-label">Now</span>
-        </div>
-        <div class="so-review-bar-col">
-          <span class="so-review-bar-caption" style="color:#16a34a">~11/mo</span>
-          <div class="so-review-bar-shell" style="background:#f0fdf4;border:1px solid #16a34a33">
-            <div class="so-review-bar-fill" style="background:#16a34a" data-height="73.3%"></div>
-          </div>
-          <span class="so-review-bar-label">Automated</span>
-        </div>
-        <div class="so-review-aside">
-          <p><strong style="color:var(--ink)">5× more reviews/month</strong> with a single
-            automated post-treatment sequence. Zero extra staff time.</p>
-          <div class="so-review-trends">
-            <span class="down">↓ Current</span>
-            <span class="up">↑ Post-automation</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="so-platform-row">
-        <span class="so-platform-name">Google Maps</span>
-        <span class="so-star-row" aria-label="4 stars">★★★★☆</span>
-        <span class="so-platform-note">Est. below-market for 15yr tenure</span>
-        <span class="so-risk-badge action">Needs Action</span>
-      </div>
-      <div class="so-platform-row">
-        <span class="so-platform-name">[Review Platform A]</span>
-        <span class="so-star-row" aria-label="4 stars">★★★★☆</span>
-        <span class="so-platform-note">84 votes · 6 verified reviews</span>
-        <span class="so-risk-badge mod">Moderate</span>
-      </div>
-      <div class="so-platform-row">
-        <span class="so-platform-name">[Review Platform B]</span>
-        <span class="so-star-row" aria-label="5 stars">★★★★★</span>
-        <span class="so-platform-note">Featured Clinic 2022 · volume not quantified</span>
-        <span class="so-risk-badge low">Low</span>
-      </div>
-      <div class="so-platform-row">
-        <span class="so-platform-name">[Review Platform C]</span>
-        <span class="so-star-row" aria-label="1 star">★☆☆☆☆</span>
-        <span class="so-platform-note">1 major negative · no clinic reply</span>
-        <span class="so-risk-badge high">High Risk</span>
-      </div>
-    </div>
   </section>
 
+  <!-- 4 · Email gate + blurred full report -->
   <div class="so-gate">
-    <div class="so-gate-blur" aria-hidden="true">
-      <div style="height:12px;background:#e5e4df;border-radius:4px;width:60%;margin-bottom:10px"></div>
-      <div style="height:12px;background:#e5e4df;border-radius:4px;width:80%;margin-bottom:10px"></div>
-      <div style="height:12px;background:#e5e4df;border-radius:4px;width:50%"></div>
-    </div>
-    <div class="so-gate-overlay">
-      <form id="soGateForm" class="so-form">
-        <p class="so-gate-text">
-          <strong>9 more sections follow</strong> — Trust Signals, Follow-Up Gaps,
-          Multilingual Risks, AI Opportunities, 14-Day Quick Wins, 30-Day Plan and
-          estimated ROI. Enter your email to get the full report.
+    <div class="so-gate-blur" id="soGateHidden" aria-hidden="true">
+      <section class="so-section so-section--gated">
+        <div class="so-section-head">
+          <span class="so-section-num">01</span>
+          <h2 class="so-section-title">Business Snapshot</h2>
+        </div>
+        <table class="so-table">
+          <tbody>
+            <tr><td>Business</td><td>Clinic ABC (Sample)</td></tr>
+            <tr><td>Location</td><td>[Street Address], Pattaya, Thailand</td></tr>
+            <tr><td>Years operating</td><td>~12 years</td></tr>
+            <tr><td>Specialty status</td><td>[Specialty Certification] — Pattaya Region</td></tr>
+            <tr><td>Languages</td><td>English · Thai · [3rd Language]</td></tr>
+            <tr><td>Lead dentists</td><td>Dr. [Name A] (Specialist) · Dr. [Name B] (Specialist)</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="so-section so-section--gated" aria-labelledby="s03">
+        <div class="so-section-head">
+          <span class="so-section-num">03</span>
+          <h2 class="so-section-title" id="s03">Intake &amp; Booking Friction</h2>
+        </div>
+        <div class="so-friction-grid">
+          <div class="so-pill"><span class="pill-label">No WhatsApp</span><span class="pill-sev">Critical</span></div>
+          <div class="so-pill"><span class="pill-label">No LINE</span><span class="pill-sev">Critical</span></div>
+          <div class="so-pill"><span class="pill-label">Reply: 12–18h</span><span class="pill-sev">Critical</span></div>
+          <div class="so-pill"><span class="pill-label">No Live Booking</span><span class="pill-sev">Critical</span></div>
+          <div class="so-pill orange"><span class="pill-label">No Cost Estimator</span><span class="pill-sev">High</span></div>
+          <div class="so-pill orange"><span class="pill-label">5-Step Booking</span><span class="pill-sev">High</span></div>
+        </div>
+        <p class="so-gated-note">
+          Every hour without a response is a booking lost to a competitor with a WhatsApp bot.
+          Industry benchmark: every additional friction step reduces conversion by ~20%.
         </p>
-        <input class="so-input" type="email" name="email" placeholder="your@email.com" required autocomplete="email"/>
-        <button class="so-btn" type="submit">Get full report →</button>
-      </form>
-      <p id="soGateSuccess" class="so-gate-text" hidden><strong>Done.</strong> Check your inbox — the full report is on its way.</p>
+      </section>
+
+      <section class="so-section so-section--gated" aria-labelledby="s04">
+        <div class="so-section-head">
+          <span class="so-section-num">04 – 05</span>
+          <h2 class="so-section-title" id="s04">Reputation &amp; Review Gap</h2>
+        </div>
+        <div class="so-insight">
+          <strong>Urgent gap:</strong> [X,000+] procedures placed, 12 years of operation.
+          Publicly visible review volume is disproportionately low — not from dissatisfaction,
+          but from the complete absence of post-treatment follow-up automation.
+        </div>
+
+        <div id="soReviewGap">
+          <p class="so-review-bars-label">Google Reviews / Month</p>
+          <div class="so-review-bars">
+            <div class="so-review-bar-col">
+              <span class="so-review-bar-caption" style="color:#dc2626">~2/mo</span>
+              <div class="so-review-bar-shell" style="background:#fef2f2;border:1px solid #dc262633">
+                <div class="so-review-bar-fill" style="background:#dc2626" data-height="13.3%"></div>
+              </div>
+              <span class="so-review-bar-label">Now</span>
+            </div>
+            <div class="so-review-bar-col">
+              <span class="so-review-bar-caption" style="color:#16a34a">~11/mo</span>
+              <div class="so-review-bar-shell" style="background:#f0fdf4;border:1px solid #16a34a33">
+                <div class="so-review-bar-fill" style="background:#16a34a" data-height="73.3%"></div>
+              </div>
+              <span class="so-review-bar-label">Automated</span>
+            </div>
+            <div class="so-review-aside">
+              <p><strong style="color:var(--ink)">5× more reviews/month</strong> with a single
+                automated post-treatment sequence. Zero extra staff time.</p>
+              <div class="so-review-trends">
+                <span class="down">↓ Current</span>
+                <span class="up">↑ Post-automation</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="so-platform-row">
+            <span class="so-platform-name">Google Maps</span>
+            <span class="so-star-row" aria-label="4 stars">★★★★☆</span>
+            <span class="so-platform-note">Est. below-market for 15yr tenure</span>
+            <span class="so-risk-badge action">Needs Action</span>
+          </div>
+          <div class="so-platform-row">
+            <span class="so-platform-name">[Review Platform A]</span>
+            <span class="so-star-row" aria-label="4 stars">★★★★☆</span>
+            <span class="so-platform-note">84 votes · 6 verified reviews</span>
+            <span class="so-risk-badge mod">Moderate</span>
+          </div>
+          <div class="so-platform-row">
+            <span class="so-platform-name">[Review Platform B]</span>
+            <span class="so-star-row" aria-label="5 stars">★★★★★</span>
+            <span class="so-platform-note">Featured Clinic 2022 · volume not quantified</span>
+            <span class="so-risk-badge low">Low</span>
+          </div>
+          <div class="so-platform-row">
+            <span class="so-platform-name">[Review Platform C]</span>
+            <span class="so-star-row" aria-label="1 star">★☆☆☆☆</span>
+            <span class="so-platform-note">1 major negative · no clinic reply</span>
+            <span class="so-risk-badge high">High Risk</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="so-section so-section--gated so-section--placeholder" aria-hidden="true">
+        <div class="so-section-head">
+          <span class="so-section-num">06+</span>
+          <h2 class="so-section-title">Trust Signals · Follow-Up · Multilingual · AI Wins · ROI</h2>
+        </div>
+        <p class="so-gated-note">Nine additional sections in the full deliverable.</p>
+      </section>
+    </div>
+
+    <div class="so-gate-overlay">
+      <div
+        id="soGateInquiry"
+        class="so-gate-inquiry"
+        data-inquiry-form
+        data-inquiry-topic="48-hour private audit"
+        data-inquiry-sector-preset="clinics"
+        data-inquiry-source="/clinics/010/?from=sample"
+        data-inquiry-submit="Get full report →"
+      ></div>
+      <p class="so-gate-text">
+        <strong>9 more sections follow</strong> — Business Snapshot, Booking Friction, Review Gap,
+        Trust Signals, Follow-Up, Multilingual Risks, AI Opportunities, 14-Day Quick Wins, and ROI.
+      </p>
+      <p class="so-gate-alt">
+        <a href="/free-audit.html?from=sample">Or read about the free 48-hour audit →</a>
+      </p>
     </div>
   </div>
 
-  <p class="so-footnote">
-    Sample Report · ServiceOpera.to · <span id="soFootnoteDate">…</span> ·
-    All data in this sample is entirely fictional. For demonstration purposes only.
-    No real clinic is referenced. Any resemblance to existing businesses is coincidental.
+  <p class="so-footnote so-footnote--minimal">
+    ServiceOpera.to · <span id="soFootnoteDate">…</span> ·
+    No real clinic referenced; any resemblance to existing businesses is coincidental.
   </p>
 
 </div>

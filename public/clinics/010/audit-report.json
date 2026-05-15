@@ -5,8 +5,13 @@
     "prepared_by": "www.serviceopera.to",
     "audit_date": "2026-05",
     "report_type": "AI Automation Audit Teaser (Sample)",
-    "visibility": "admin-only",
-    "legacy_slug": "sample-audit-teaser"
+    "visibility": "public-sample",
+    "legacy_slug": "sample-audit-teaser",
+    "disclaimer": {
+      "en_lead": "SAMPLE REPORT — fictional clinic, real methodology.",
+      "it_body": "Questo è un esempio del formato che riceveresti per la tua attività. I numeri qui sono inventati; nel tuo audit sarebbero estratti dai tuoi canali pubblici reali in 48h.",
+      "legal_footnote": "No real clinic referenced; any resemblance to existing businesses is coincidental."
+    }
   },
   "business": {
     "name": "Clinic ABC (Sample)",
@@ -29,6 +34,13 @@
     { "label": "Slow Response", "percent": 12 },
     { "label": "Trust Signals", "percent": 5 }
   ],
-  "sections_teaser": ["01 Business Snapshot", "02 Patient Journey", "03 Booking Friction", "04–05 Reputation & Review Gap"],
-  "sections_gated": 9
+  "sections_teaser": ["KPI bar", "02 Patient Journey", "Revenue gap donut"],
+  "sections_gated": [
+    "01 Business Snapshot",
+    "03 Booking Friction",
+    "04–05 Reputation & Review Gap (review chart)",
+    "06+ Trust · Follow-Up · Multilingual · AI · ROI"
+  ],
+  "sections_gated_count": 9,
+  "funnel_cta": "/free-audit.html?from=sample"
 }
