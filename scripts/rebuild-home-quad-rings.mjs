@@ -10,11 +10,12 @@ let html = fs.readFileSync(indexPath, 'utf8');
 
 /** Ring geometry (viewBox 48×48). */
 const RING_R = 17.5;
-const RING_STROKE = 4.5;
+const RING_STROKE = 4;
 const GAP_DEG = 1.5;
 const ARC_DEG = 90 - GAP_DEG;
 const GAP_CENTERS = [45, 135, 225, 315];
-const CENTER_SCALE = 0.8;
+/** Option C — icon nearly flush with inner ring (viewBox 48, icon drawn in 24×24). */
+const CENTER_SCALE = 0.93;
 
 function arcPaths(cx, cy, r) {
   const toRad = (deg) => (deg * Math.PI) / 180;
