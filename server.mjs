@@ -790,6 +790,12 @@ const ADMIN_PASSWORD_HASH = (process.env.ADMIN_PASSWORD_HASH || '').trim();
 const RESEND_API_KEY = (process.env.RESEND_API_KEY || '').trim();
 const RESEND_FROM = (process.env.RESEND_FROM || 'ServiceOpera <onboarding@resend.dev>').trim();
 const RESEND_FROM_USES_TEST_SENDER = /@resend\.dev>/i.test(RESEND_FROM) || /onboarding@resend\.dev/i.test(RESEND_FROM);
+/** Sole operator identity string in portal email copy and user-facing contact errors. */
+const OPERATOR_IDENTITY = 'Jack from ServiceOpera.to';
+const OPERATOR_CONTACT_EMAIL = 'jack@serviceopera.to';
+function operatorContactForErrors() {
+  return OPERATOR_IDENTITY + ' (' + OPERATOR_CONTACT_EMAIL + ')';
+}
 /** Public sign-up is on by default; set PORTAL_SELF_REGISTER=false or legacy CLINIC_SELF_REGISTER=false for invite-only. */
 const PORTAL_SELF_REGISTER = (function () {
   const raw = process.env.PORTAL_SELF_REGISTER ?? process.env.CLINIC_SELF_REGISTER;
@@ -1315,6 +1321,16 @@ function escapeHtml(value) {
     .replace(/"/g, '&quot;');
 }
 
+/** Human-signed footer for outbound portal transactional mail (registration, OTP, password reset). */
+function portalTransactionalEmailHtml(bodyHtml) {
+  return (
+    bodyHtml +
+    '<p style="font-family:system-ui,sans-serif;font-size:13px;color:#444;margin-top:1.25em;padding-top:0.75em;border-top:1px solid #e5e7eb">— ' +
+    escapeHtml(OPERATOR_IDENTITY) +
+    '</p>'
+  );
+}
+
 async function sendResendEmail({ to, subject, html }) {
   const r = await fetch('https://api.resend.com/emails', {
     method: 'POST',
@@ -1616,12 +1632,14 @@ app.get('/api/auth/clinic-capabilities', sendPortalCapabilities);
 
 async function handlePortalRegister(req, res) {
   if (!PORTAL_SELF_REGISTER) {
-    return res.status(403).json({ error: 'Self-registration is disabled. Contact jack@serviceopera.to for access.' });
+    return res.status(403).json({ error: 'Self-registration is disabled. Contact ' + operatorContactForErrors() + ' for access.' });
   }
   if (!RESEND_API_KEY) {
     return res.status(503).json({
       error:
-        'Email confirmation requires RESEND_API_KEY on this server. Contact jack@serviceopera.to or ask your administrator to configure Resend.',
+        'Email confirmation requires RESEND_API_KEY on this server. Contact ' +
+        operatorContactForErrors() +
+        ' or ask your administrator to configure Resend.',
     });
   }
   const email = typeof req.body?.email === 'string' ? normalizeEmail(req.body.email) : '';
@@ -1663,12 +1681,13 @@ async function handlePortalRegister(req, res) {
     await sendResendEmail({
       to: pending.email,
       subject: 'ServiceOpera — continue your registration',
-      html:
+      html: portalTransactionalEmailHtml(
         '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">Thanks for starting an account on <strong>www.serviceopera.to</strong>.</p>' +
-        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111"><a href="' +
-        String(link).replace(/"/g, '&quot;') +
-        '" style="color:#1e3a5f;font-weight:600">Continue registration</a> — choose your password and business type (link expires in 48 hours).</p>' +
-        '<p style="font-family:system-ui,sans-serif;font-size:13px;color:#444">If you did not request this, you can ignore this email.</p>',
+          '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111"><a href="' +
+          String(link).replace(/"/g, '&quot;') +
+          '" style="color:#1e3a5f;font-weight:600">Continue registration</a> — choose your password and business type (link expires in 48 hours).</p>' +
+          '<p style="font-family:system-ui,sans-serif;font-size:13px;color:#444">If you did not request this, you can ignore this email.</p>'
+      ),
     });
     sends.push(Date.now());
     sendTimestampsByIp.set(ip, sends);
@@ -1677,7 +1696,7 @@ async function handlePortalRegister(req, res) {
     return res.status(status).json({
       error: resendFailureMessage(
         e,
-        'Could not send confirmation email. Try again later or contact jack@serviceopera.to.'
+        'Could not send confirmation email. Try again later or contact ' + operatorContactForErrors() + '.'
       ),
     });
   }
@@ -2270,12 +2289,13 @@ dualPost('/api/auth/user-otp/send', '/api/auth/clinic-otp/send', async (req, res
     await sendResendEmail({
       to: user.email,
       subject: 'ServiceOpera — your sign-in code',
-      html:
+      html: portalTransactionalEmailHtml(
         '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">Your sign-in code for <strong>www.serviceopera.to</strong>:</p>' +
-        '<p style="font-family:ui-monospace,monospace;font-size:28px;font-weight:700;letter-spacing:0.15em;color:#111">' +
-        code +
-        '</p>' +
-        '<p style="font-family:system-ui,sans-serif;font-size:13px;color:#444">This code expires in 10 minutes. If you did not request it, you can ignore this email.</p>',
+          '<p style="font-family:ui-monospace,monospace;font-size:28px;font-weight:700;letter-spacing:0.15em;color:#111">' +
+          code +
+          '</p>' +
+          '<p style="font-family:system-ui,sans-serif;font-size:13px;color:#444">This code expires in 10 minutes. If you did not request it, you can ignore this email.</p>'
+      ),
     });
     sends.push(Date.now());
     sendTimestampsByIp.set(ip, sends);
@@ -2328,12 +2348,14 @@ dualPost('/api/auth/user-login-otp', '/api/auth/clinic-login-otp', async (req, r
 
 dualPost('/api/auth/user-resend-confirmation', '/api/auth/clinic-resend-confirmation', async (req, res) => {
   if (!PORTAL_SELF_REGISTER) {
-    return res.status(403).json({ error: 'Self-registration is disabled. Contact jack@serviceopera.to for access.' });
+    return res.status(403).json({ error: 'Self-registration is disabled. Contact ' + operatorContactForErrors() + ' for access.' });
   }
   if (!RESEND_API_KEY) {
     return res.status(503).json({
       error:
-        'Email confirmation requires RESEND_API_KEY on this server. Contact jack@serviceopera.to or ask your administrator to configure Resend.',
+        'Email confirmation requires RESEND_API_KEY on this server. Contact ' +
+        operatorContactForErrors() +
+        ' or ask your administrator to configure Resend.',
     });
   }
   const email = typeof req.body?.email === 'string' ? normalizeEmail(req.body.email) : '';
@@ -2370,19 +2392,23 @@ dualPost('/api/auth/user-resend-confirmation', '/api/auth/clinic-resend-confirma
     await sendResendEmail({
       to: pending.email,
       subject: 'ServiceOpera — continue your registration',
-      html:
+      html: portalTransactionalEmailHtml(
         '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">Here is a fresh link to continue your <strong>www.serviceopera.to</strong> registration.</p>' +
-        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111"><a href="' +
-        String(link).replace(/"/g, '&quot;') +
-        '" style="color:#1e3a5f;font-weight:600">Continue registration</a> (link expires in 48 hours.)</p>' +
-        '<p style="font-family:system-ui,sans-serif;font-size:13px;color:#444">If you did not register, ignore this email.</p>',
+          '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111"><a href="' +
+          String(link).replace(/"/g, '&quot;') +
+          '" style="color:#1e3a5f;font-weight:600">Continue registration</a> (link expires in 48 hours.)</p>' +
+          '<p style="font-family:system-ui,sans-serif;font-size:13px;color:#444">If you did not register, ignore this email.</p>'
+      ),
     });
     sends.push(Date.now());
     sendTimestampsByIp.set(ip, sends);
   } catch (e) {
     const status = e.status || 502;
     return res.status(status).json({
-      error: resendFailureMessage(e, 'Could not send confirmation email. Try again later or contact jack@serviceopera.to.'),
+      error: resendFailureMessage(
+        e,
+        'Could not send confirmation email. Try again later or contact ' + operatorContactForErrors() + '.'
+      ),
     });
   }
   return res.json(generic);
@@ -2396,7 +2422,9 @@ dualPost('/api/auth/user-request-reset', '/api/auth/clinic-request-reset', async
   if (!RESEND_API_KEY) {
     return res.status(503).json({
       error:
-        'Password reset by email is not available on this server. Please contact your administrator (Jack) to set a new password.',
+        'Password reset by email is not available on this server. Please contact ' +
+        operatorContactForErrors() +
+        ' to set a new password.',
     });
   }
   const email = typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : '';
@@ -2425,19 +2453,23 @@ dualPost('/api/auth/user-request-reset', '/api/auth/clinic-request-reset', async
     await sendResendEmail({
       to: user.email,
       subject: 'ServiceOpera — reset your password',
-      html:
+      html: portalTransactionalEmailHtml(
         '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111">You asked to reset the password for your <strong>www.serviceopera.to</strong> account.</p>' +
-        '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111"><a href="' +
-        String(link).replace(/"/g, '&quot;') +
-        '" style="color:#1e3a5f;font-weight:600">Reset password</a> (link expires in one hour.)</p>' +
-        '<p style="font-family:system-ui,sans-serif;font-size:13px;color:#444">If you did not request this, ignore this email.</p>',
+          '<p style="font-family:system-ui,sans-serif;font-size:15px;color:#111"><a href="' +
+          String(link).replace(/"/g, '&quot;') +
+          '" style="color:#1e3a5f;font-weight:600">Reset password</a> (link expires in one hour.)</p>' +
+          '<p style="font-family:system-ui,sans-serif;font-size:13px;color:#444">If you did not request this, ignore this email.</p>'
+      ),
     });
     sends.push(Date.now());
     sendTimestampsByIp.set(ip, sends);
   } catch (e) {
     const status = e.status || 502;
     return res.status(status).json({
-      error: resendFailureMessage(e, 'Could not send email. Try again later or contact jack@serviceopera.to.'),
+      error: resendFailureMessage(
+        e,
+        'Could not send email. Try again later or contact ' + operatorContactForErrors() + '.'
+      ),
     });
   }
 
@@ -2683,13 +2715,15 @@ app.post('/api/marketing/pricing-inquiry', async (req, res) => {
   if (inquiryHoneypotTripped(req.body)) {
     return res.json({
       ok: true,
-      message: 'Thanks — your request was sent. Jack will follow up shortly.',
+      message: 'Thanks — your request was sent. ' + OPERATOR_IDENTITY + ' will follow up shortly.',
     });
   }
   if (!RESEND_API_KEY) {
     return res.status(503).json({
       error:
-        'Request delivery is not configured on this server (missing RESEND_API_KEY). Try again after deploy or email jack@serviceopera.to.',
+        'Request delivery is not configured on this server (missing RESEND_API_KEY). Try again after deploy or email ' +
+        operatorContactForErrors() +
+        '.',
     });
   }
 
@@ -2762,7 +2796,10 @@ app.post('/api/marketing/pricing-inquiry', async (req, res) => {
   } catch (e) {
     const status = e.status || 502;
     return res.status(status).json({
-      error: resendFailureMessage(e, 'Could not send your request. Try again later or contact jack@serviceopera.to.'),
+      error: resendFailureMessage(
+        e,
+        'Could not send your request. Try again later or contact ' + operatorContactForErrors() + '.'
+      ),
     });
   }
 
@@ -2783,7 +2820,7 @@ app.post('/api/marketing/pricing-inquiry', async (req, res) => {
   return res.json({
     ok: true,
     emailedAdmin,
-    message: 'Thanks — your request was sent. Jack will follow up shortly.',
+    message: 'Thanks — your request was sent. ' + OPERATOR_IDENTITY + ' will follow up shortly.',
   });
 });
 
@@ -2797,7 +2834,7 @@ app.post('/api/marketing/inquiry', async (req, res) => {
   if (inquiryHoneypotTripped(req.body)) {
     return res.json({
       ok: true,
-      message: 'Thanks — your inquiry was sent. Jack will follow up shortly.',
+      message: 'Thanks — your inquiry was sent. ' + OPERATOR_IDENTITY + ' will follow up shortly.',
     });
   }
   if (!RESEND_API_KEY) {
@@ -2879,7 +2916,7 @@ app.post('/api/marketing/inquiry', async (req, res) => {
 
   return res.json({
     ok: true,
-    message: 'Thanks — your inquiry was sent. Jack will follow up shortly.',
+    message: 'Thanks — your inquiry was sent. ' + OPERATOR_IDENTITY + ' will follow up shortly.',
   });
 });
 

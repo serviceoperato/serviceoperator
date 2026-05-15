@@ -13,6 +13,7 @@ Disallow: /places-leads.html
 
 # Demo and sample content (audits under these prefixes)
 Disallow: /clinics/
+Allow: /clinics/ai-automation-audit-sample-bangkok.html
 Disallow: /hotels/
 
 # Forms and internal catalogs
