@@ -13,7 +13,6 @@
       title: 'Overview',
       links: [
         { href: '/', label: 'Home' },
-        { href: '/pricing', label: 'Pricing' },
         { href: '/admin/report-catalog', label: 'Report catalog (operator)' },
       ],
     },

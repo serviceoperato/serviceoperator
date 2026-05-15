@@ -88,8 +88,6 @@
   function resolveLoginHref(root) {
     var href = root && root.getAttribute('data-login-href');
     if (href) return href;
-    var path = window.location.pathname || '/';
-    if (/\/clinics\//.test(path)) return '../login.html';
     return '/login.html';
   }
 
@@ -120,8 +118,6 @@
     var p = String(adminPath || '').trim();
     if (!p) return '/admin/users';
     if (p.charAt(0) !== '/') p = '/' + p;
-    var loc = window.location.pathname || '/';
-    if (/\/clinics\//.test(loc)) return '..' + p;
     return p;
   }
 

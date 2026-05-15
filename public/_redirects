@@ -3,6 +3,11 @@
 /ai-operations/ /ai-operations-for-hotels-clinics-property.html 200
 /ai-operations-for-hotels-clinics-property.html /ai-operations/ 301
 
+# Wrong relative admin links from /clinics/* pages → site-root admin (301)
+/clinics/admin/report-catalog /admin/report-catalog 301
+/clinics/admin/report-catalog/ /admin/report-catalog/ 301
+/clinics/admin/* /admin/:splat 301
+
 # Report catalog v2 — legacy slugs → numbered IDs (301)
 /clinics/sample-ai-automation-audit /clinics/001/ 301
 /clinics/sample-ai-automation-audit/ /clinics/001/ 301

@@ -3252,6 +3252,12 @@ for (const [from, to] of LEGACY_REPORT_REDIRECTS) {
   app.get([from, `${from}/`], (_req, res) => res.redirect(301, to));
 }
 
+/** Broken relative admin URLs from nested /clinics/* pages (e.g. ../admin/report-catalog). */
+app.get(/^\/clinics\/admin(\/.*)?$/, (req, res) => {
+  const suffix = (req.path || '').replace(/^\/clinics\/admin/, '') || '';
+  res.redirect(301, `/admin${suffix}`);
+});
+
 /** Numbered audit reports — admin session required on Node. 010 is public (home funnel “See what you'll get”). */
 const PRIVATE_CLINIC_REPORT_IDS = new Set(['001', '002', '003', '004', '005', '006', '007', '008', '011']);
 const PRIVATE_HOTEL_REPORT_IDS = new Set(['009']);

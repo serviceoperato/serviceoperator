@@ -8,13 +8,36 @@ import path from 'node:path';
 const indexPath = path.join(path.resolve(import.meta.dirname, '..'), 'public', 'index.html');
 let html = fs.readFileSync(indexPath, 'utf8');
 
-/** ~87° arcs, 3° gaps at 45° / 135° / 225° / 315° (r=16.5, viewBox 48×48). */
+/** Ring geometry (viewBox 48×48). */
+const RING_R = 17.5;
+const RING_STROKE = 4.5;
+const GAP_DEG = 1.5;
+const ARC_DEG = 90 - GAP_DEG;
+const GAP_CENTERS = [45, 135, 225, 315];
+const CENTER_SCALE = 0.8;
+
+function arcPaths(cx, cy, r) {
+  const toRad = (deg) => (deg * Math.PI) / 180;
+  const pt = (deg) => {
+    const a = toRad(deg);
+    return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+  };
+  return GAP_CENTERS.map((gap) => {
+    const start = gap + GAP_DEG / 2;
+    const end = start + ARC_DEG;
+    const [x1, y1] = pt(start);
+    const [x2, y2] = pt(end);
+    return `M${x1.toFixed(3)} ${y1.toFixed(3)}A${r} ${r} 0 0 1 ${x2.toFixed(3)} ${y2.toFixed(3)}`;
+  });
+}
+
+const arcD = arcPaths(24, 24, RING_R);
 const RING_SVG_BODY = `<circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
-    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="5" stroke-linecap="butt">
-      <path d="M35.358 35.969A16.5 16.5 0 0 1 12.642 35.969"/>
-      <path d="M12.031 35.358A16.5 16.5 0 0 1 12.031 12.642"/>
-      <path d="M12.642 12.031A16.5 16.5 0 0 1 35.358 12.031"/>
-      <path d="M35.969 12.642A16.5 16.5 0 0 1 35.969 35.358"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="${RING_STROKE}" stroke-linecap="butt">
+      <path d="${arcD[0]}"/>
+      <path d="${arcD[1]}"/>
+      <path d="${arcD[2]}"/>
+      <path d="${arcD[3]}"/>
     </g>`;
 
 const FOOTER_MARK =
@@ -22,7 +45,7 @@ const FOOTER_MARK =
 
 function centerIconGroup(iconInner) {
   const body = (iconInner || FOOTER_MARK).trim();
-  return `<g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.64) translate(-12 -12)">${body}</g>`;
+  return `<g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(${CENTER_SCALE}) translate(-12 -12)">${body}</g>`;
 }
 
 function buildRingSvg({ extraClass = '', iconInner = '', withIcon = true } = {}) {
@@ -58,4 +81,6 @@ html = html.replace(
 );
 
 fs.writeFileSync(indexPath, html);
-console.log('[rebuild-home-quad-rings] Patched', indexPath, '— ring SVGs rebuilt:', replaced);
+console.log(
+  `[rebuild-home-quad-rings] Patched ${indexPath} — ring SVGs rebuilt: ${replaced} (r=${RING_R}, gap=${GAP_DEG}°, scale=${CENTER_SCALE})`,
+);
