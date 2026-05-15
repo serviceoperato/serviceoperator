@@ -15,6 +15,7 @@ Disallow: /places-leads.html
 Disallow: /clinics/
 Allow: /clinics/sample-ai-automation-audit/
 Allow: /clinics/ai-automation-audit-sample-bangkok.html
+Allow: /clinics/case-study-lumina-dental-group/
 Disallow: /hotels/
 
 # Forms and internal catalogs

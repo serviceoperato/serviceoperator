@@ -34,6 +34,18 @@
     Cache-Control = "public, max-age=3600"
 
 [[headers]]
+  for = "/clinics/case-study-lumina-dental-group"
+  [headers.values]
+    X-Robots-Tag = "index, follow"
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/clinics/case-study-lumina-dental-group/*"
+  [headers.values]
+    X-Robots-Tag = "index, follow"
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
   for = "/clinics/*"
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"

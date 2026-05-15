@@ -3110,8 +3110,15 @@ app.get(['/clinics/sample-ai-automation-audit', '/clinics/sample-ai-automation-a
   res.sendFile(path.join(publicDir, 'clinics', 'sample-ai-automation-audit', 'index.html'));
 });
 
+/** Public fictional case study (indexable; static `index.html`; clean URL). */
+app.get(['/clinics/case-study-lumina-dental-group', '/clinics/case-study-lumina-dental-group/'], (_req, res) => {
+  res.setHeader('X-Robots-Tag', 'index, follow');
+  res.sendFile(path.join(publicDir, 'clinics', 'case-study-lumina-dental-group', 'index.html'));
+});
+
 function isNoindexClinicsOrHotelsPath(norm) {
   if (norm.includes('/clinics/sample-ai-automation-audit/')) return false;
+  if (norm.includes('/clinics/case-study-lumina-dental-group/')) return false;
   if (norm.endsWith('/clinics/ai-automation-audit-sample-bangkok.html')) return false;
   return norm.includes('/clinics/') || norm.includes('/hotels/');
 }
