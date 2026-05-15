@@ -14,9 +14,6 @@ export function SiteNav() {
         </a>
       </div>
       <div className="nav__links">
-        <a href="/pricing" className="nav__text">
-          Pricing
-        </a>
         <a
           href="/login.html"
           className="nav__login"
