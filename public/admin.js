@@ -2171,7 +2171,7 @@
     if (usersEl) usersEl.classList.toggle('is-hidden', routeId !== 'users');
     if (profilingEl) profilingEl.classList.toggle('is-hidden', routeId !== 'user-profiling');
     if (inboxEl) inboxEl.classList.toggle('is-hidden', routeId !== 'activity');
-    if (reportsEl) reportsEl.classList.toggle('is-hidden', routeId !== 'users' && routeId !== 'report-catalog');
+    if (reportsEl) reportsEl.classList.toggle('is-hidden', routeId !== 'report-catalog');
 
     buildTfNav(routeId);
     window.scrollTo(0, 0);
