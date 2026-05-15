@@ -85,7 +85,7 @@
 
   <section class="mkt-section" aria-labelledby="catalog-manifest">
     <h2 id="catalog-manifest">Published reports (<code class="mono">/reports/index.json</code>)</h2>
-    <p>These entries are maintained in the static manifest the server also reads for internal tooling. Counts update automatically when the file loads.</p>
+    <p>These entries are maintained in the static manifest the server also reads for internal tooling. The manifest includes published audit pages, methodology demos, self-contained HTML samples, the free-audit landing, and the <code class="mono">/ai-operations/</code> hub. Counts update when the file loads.</p>
     <div id="catalogManifestNote" class="report-catalog__callout" role="status" aria-live="polite"></div>
     <div id="catalogManifestClinics"></div>
     <div id="catalogManifestHotels"></div>
@@ -135,8 +135,14 @@
   var DESC = {
     '/clinics/demo.html': 'Published static page — interactive methodology walkthrough (demo).',
     '/clinics/dental-design-center-audit/': 'Published static page — full audit HTML; optional Markdown source below.',
+    '/clinics/dental-design-center-audit/audit-report.html': 'Same Dental Design Center audit — standalone HTML variant (export-style).',
     '/clinics/sample-ai-automation-audit/': 'Published static page — fictional clinic sample for format and methodology preview.',
     '/clinics/sea-clinic-audit/': 'Published static page — Thailand-style sample audit with charts and benchmarks.',
+    '/clinics/ai-automation-audit-sample-bangkok.html': 'Self-contained sample report — Bangkok fictional clinic, Chart.js + tabs (showcase).',
+    '/clinics/operato-clinic-audit-sample.html': 'Self-contained sample audit HTML (imported demo asset).',
+    '/free-audit.html': 'Marketing landing — free 48-hour private operational audit CTA.',
+    '/ai-operations/': 'SEO hub — AI operations across hotels, clinics, and property (single long-form page).',
+    '/ai-operations': 'SEO hub — AI operations across hotels, clinics, and property (single long-form page).',
     '/hotels/melia-pattaya-audit/': 'Published static page — hotel AI service audit (Meliá Pattaya).',
   };
 
@@ -185,11 +191,20 @@
       var hotels = Array.isArray(j.hotels) ? j.hotels : [];
       var properties = Array.isArray(j.properties) ? j.properties : [];
       var nClinic = clinics.length;
+      var nHotels = hotels.length;
+      var nProps = properties.length;
       if (noteEl) {
         noteEl.innerHTML =
-          '<strong>' + nClinic + ' clinic report link' + (nClinic === 1 ? '' : 's') + '</strong> in ' +
-          '<code class="mono">public/reports/index.json</code> right now. ' +
-          'The live operator catalog can add more rows from <code class="mono">public/clinics/data/&lt;slug&gt;.json</code> and portal users with a <code class="mono">reportSlug</code>.';
+          '<strong>' +
+          nClinic +
+          '</strong> clinic · <strong>' +
+          nHotels +
+          '</strong> hotel · <strong>' +
+          nProps +
+          '</strong> property entr' +
+          (nClinic + nHotels + nProps === 1 ? 'y' : 'ies') +
+          ' in <code class="mono">public/reports/index.json</code>. ' +
+          'The operator catalog also merges <code class="mono">public/clinics/data/&lt;slug&gt;.json</code> and portal users with a <code class="mono">reportSlug</code>.';
       }
       renderBucket('Clinic reports', clinics, elC);
       renderBucket('Hotel reports', hotels, elH);

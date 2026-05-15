@@ -15,6 +15,26 @@
     {
       "title": "Clinic methodology demo",
       "href": "/clinics/demo.html"
+    },
+    {
+      "title": "AI automation audit sample (Bangkok, fictional)",
+      "href": "/clinics/ai-automation-audit-sample-bangkok.html"
+    },
+    {
+      "title": "Operato clinic audit sample (self-contained demo)",
+      "href": "/clinics/operato-clinic-audit-sample.html"
+    },
+    {
+      "title": "Dental Design Center — alternate HTML export",
+      "href": "/clinics/dental-design-center-audit/audit-report.html"
+    },
+    {
+      "title": "Free 48-hour audit (landing)",
+      "href": "/free-audit.html"
+    },
+    {
+      "title": "AI operations hub (hotels, clinics, property)",
+      "href": "/ai-operations/"
     }
   ],
   "hotels": [
