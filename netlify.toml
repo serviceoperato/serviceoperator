@@ -16,42 +16,6 @@
     Cache-Control = "no-store"
 
 [[headers]]
-  for = "/clinics/001"
-  [headers.values]
-    X-Robots-Tag = "index, follow"
-    Cache-Control = "public, max-age=3600"
-
-[[headers]]
-  for = "/clinics/001/*"
-  [headers.values]
-    X-Robots-Tag = "index, follow"
-    Cache-Control = "public, max-age=3600"
-
-[[headers]]
-  for = "/clinics/006"
-  [headers.values]
-    X-Robots-Tag = "index, follow"
-    Cache-Control = "public, max-age=3600"
-
-[[headers]]
-  for = "/clinics/006/*"
-  [headers.values]
-    X-Robots-Tag = "index, follow"
-    Cache-Control = "public, max-age=3600"
-
-[[headers]]
-  for = "/clinics/008"
-  [headers.values]
-    X-Robots-Tag = "index, follow"
-    Cache-Control = "public, max-age=3600"
-
-[[headers]]
-  for = "/clinics/008/*"
-  [headers.values]
-    X-Robots-Tag = "index, follow"
-    Cache-Control = "public, max-age=3600"
-
-[[headers]]
   for = "/clinics/*"
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"

@@ -1,6 +1,7 @@
 {
   "schema": "report-catalog-v2",
-  "note": "Stable report IDs (001–009). URLs use /clinics/NNN/ or /hotels/NNN/. Legacy slugs redirect via public/_redirects and server.mjs.",
+  "note": "Stable report IDs (001–009). URLs use /clinics/NNN/ or /hotels/NNN/. Private: admin session required on Node server (not public). Legacy slugs redirect via public/_redirects.",
+  "visibility": "admin-only",
   "clinics": [
     {
       "id": "001",

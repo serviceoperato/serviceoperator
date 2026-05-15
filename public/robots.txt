@@ -11,11 +11,8 @@ Disallow: /admin
 Disallow: /operator/
 Disallow: /places-leads.html
 
-# Demo and sample content (audits under these prefixes)
+# All clinic/hotel audit reports (001–009) are private — admin only
 Disallow: /clinics/
-Allow: /clinics/001/
-Allow: /clinics/006/
-Allow: /clinics/008/
 Disallow: /hotels/
 
 # Forms and internal catalogs

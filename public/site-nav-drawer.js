@@ -14,7 +14,7 @@
       links: [
         { href: '/', label: 'Home' },
         { href: '/pricing', label: 'Pricing' },
-        { href: '/clinics/002/', label: 'Sample audit' },
+        { href: '/admin/report-catalog', label: 'Report catalog (operator)' },
       ],
     },
     {

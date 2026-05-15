@@ -1010,9 +1010,53 @@ function getBearer(req) {
   return m ? m[1].trim() : '';
 }
 
+const ADMIN_JWT_COOKIE = 'so_admin_jwt';
+
+function getCookie(req, name) {
+  const raw = req.headers.cookie;
+  if (typeof raw !== 'string' || !raw) return '';
+  for (const part of raw.split(';')) {
+    const idx = part.indexOf('=');
+    if (idx < 0) continue;
+    const k = part.slice(0, idx).trim();
+    if (k === name) return decodeURIComponent(part.slice(idx + 1).trim());
+  }
+  return '';
+}
+
+/** Admin JWT from Authorization header or HttpOnly cookie (HTML report pages). */
+function getAdminJwtFromRequest(req) {
+  const bearer = getBearer(req);
+  if (bearer) return bearer;
+  return getCookie(req, ADMIN_JWT_COOKIE);
+}
+
+function getVerifiedAdmin(req) {
+  const p = verifyJwt(getAdminJwtFromRequest(req));
+  if (!p || p.role !== 'admin' || typeof p.email !== 'string') return null;
+  return p;
+}
+
+function setAdminJwtCookie(res, token) {
+  const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
+  const maxAge = Math.floor(JWT_TTL_MS / 1000);
+  res.setHeader(
+    'Set-Cookie',
+    `${ADMIN_JWT_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${secure}`
+  );
+}
+
+function clearAdminJwtCookie(res) {
+  const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
+  res.setHeader(
+    'Set-Cookie',
+    `${ADMIN_JWT_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secure}`
+  );
+}
+
 function requireAdmin(req, res, next) {
-  const p = verifyJwt(getBearer(req));
-  if (!p || p.role !== 'admin' || typeof p.email !== 'string') {
+  const p = getVerifiedAdmin(req);
+  if (!p) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   req.admin = p;
@@ -1732,12 +1776,18 @@ app.post('/api/admin/login', (req, res) => {
   }
   adminLoginFailTimestampsByIp.delete(ip);
   const token = signJwt({ v: 1, role: 'admin', email: ADMIN_EMAIL, exp: Date.now() + JWT_TTL_MS });
+  setAdminJwtCookie(res, token);
   return res.json({ ok: true, token, expiresInMs: JWT_TTL_MS });
 });
 
+app.post('/api/admin/logout', (_req, res) => {
+  clearAdminJwtCookie(res);
+  return res.json({ ok: true });
+});
+
 app.get('/api/admin/session', (req, res) => {
-  const p = verifyJwt(getBearer(req));
-  if (!p || p.role !== 'admin') return res.status(401).json({ ok: false });
+  const p = getVerifiedAdmin(req);
+  if (!p) return res.status(401).json({ ok: false });
   return res.json({ ok: true, email: p.email });
 });
 
@@ -3120,17 +3170,38 @@ for (const [from, to] of LEGACY_REPORT_REDIRECTS) {
   app.get([from, `${from}/`], (_req, res) => res.redirect(301, to));
 }
 
-/** Public indexable clinic samples (numbered catalog). */
-const INDEXABLE_CLINIC_REPORT_IDS = ['001', '006', '008'];
-for (const id of INDEXABLE_CLINIC_REPORT_IDS) {
-  app.get([`/clinics/${id}`, `/clinics/${id}/`], (_req, res) => {
-    res.setHeader('X-Robots-Tag', 'index, follow');
-    res.sendFile(path.join(publicDir, 'clinics', id, 'index.html'));
-  });
+/** Numbered audit reports (catalog 001–009) — admin session only; not public. */
+const PRIVATE_CLINIC_REPORT_IDS = new Set(['001', '002', '003', '004', '005', '006', '007', '008']);
+const PRIVATE_HOTEL_REPORT_IDS = new Set(['009']);
+
+function matchPrivateNumberedReportPath(pathname) {
+  const c = pathname.match(/^\/clinics\/(\d{3})(\/.*)?$/);
+  if (c && PRIVATE_CLINIC_REPORT_IDS.has(c[1])) {
+    return { vertical: 'clinics', id: c[1] };
+  }
+  const h = pathname.match(/^\/hotels\/(\d{3})(\/.*)?$/);
+  if (h && PRIVATE_HOTEL_REPORT_IDS.has(h[1])) {
+    return { vertical: 'hotels', id: h[1] };
+  }
+  return null;
 }
 
+function sendPrivateReportNotFound(res) {
+  res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+  const p404 = path.join(publicDir, '404.html');
+  if (fs.existsSync(p404)) return res.status(404).sendFile(p404);
+  return res.status(404).type('text/plain').send('Not found');
+}
+
+app.use((req, res, next) => {
+  if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+  if (!matchPrivateNumberedReportPath(req.path)) return next();
+  if (!getVerifiedAdmin(req)) return sendPrivateReportNotFound(res);
+  return next();
+});
+
 function isNoindexClinicsOrHotelsPath(norm) {
-  if (INDEXABLE_CLINIC_REPORT_IDS.some((id) => norm.includes(`/clinics/${id}/`))) return false;
   return norm.includes('/clinics/') || norm.includes('/hotels/');
 }
 

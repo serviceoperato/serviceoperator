@@ -2358,6 +2358,14 @@
 
   function hideWorkspace() {
     sessionStorage.removeItem(SESSION_KEY);
+    var tok = getAdminBearer();
+    if (tok) {
+      fetch(api('/api/admin/logout'), {
+        method: 'POST',
+        credentials: apiCred(),
+        headers: { Authorization: 'Bearer ' + tok },
+      }).catch(function () {});
+    }
     clearStoredAdminJwt();
     if (workspace) workspace.classList.add('is-hidden');
     if (gate) gate.classList.remove('is-hidden');
