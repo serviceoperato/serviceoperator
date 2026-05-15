@@ -1880,6 +1880,7 @@ app.post('/api/admin/bootstrap-from-portal', (req, res) => {
     return res.status(403).json({ ok: false, error: 'Forbidden' });
   }
   const token = signJwt({ v: 1, role: 'admin', email: ADMIN_EMAIL, exp: Date.now() + JWT_TTL_MS });
+  setAdminJwtCookie(res, token);
   return res.json({ ok: true, token, expiresInMs: JWT_TTL_MS });
 });
 
@@ -3284,7 +3285,8 @@ function sendPrivateReportNotFound(res) {
 
 function denyPrivateNumberedReport(req, res) {
   const accept = String(req.headers.accept || '');
-  const wantsHtml = req.method === 'GET' && accept.includes('text/html');
+  const wantsHtml =
+    (req.method === 'GET' || req.method === 'HEAD') && accept.includes('text/html');
   const targetPath = req.originalUrl || req.path || '/';
   if (wantsHtml) {
     res.setHeader('Cache-Control', 'no-store');

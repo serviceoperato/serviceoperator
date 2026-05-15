@@ -1,3 +1,23 @@
+# Operator console path URLs → admin.html (Netlify/static edge; Node serves these directly when server.mjs runs)
+/admin /admin.html 200
+/admin/ /admin.html 200
+/admin/users /admin.html 200
+/admin/users/ /admin.html 200
+/admin/activity /admin.html 200
+/admin/activity/ /admin.html 200
+/admin/deploy-log /admin.html 200
+/admin/deploy-log/ /admin.html 200
+/admin/site-appearance /admin.html 200
+/admin/site-appearance/ /admin.html 200
+/admin/icons /admin.html 200
+/admin/icons/ /admin.html 200
+/admin/user-reports /admin.html 200
+/admin/user-reports/ /admin.html 200
+/admin/user-profiling /admin.html 200
+/admin/user-profiling/ /admin.html 200
+/admin/report-catalog /admin.html 200
+/admin/report-catalog/ /admin.html 200
+
 # Clean URL for AI operations SEO hub (same document; canonical in page head)
 /ai-operations /ai-operations-for-hotels-clinics-property.html 200
 /ai-operations/ /ai-operations-for-hotels-clinics-property.html 200

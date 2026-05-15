@@ -477,7 +477,10 @@
 
 .so-star-row { display: inline-flex; gap: 2px; align-items: center; }
 
-.so-gate { position: relative; margin-top: 8px; min-height: 420px; }
+.so-gate {
+  position: relative;
+  margin-top: 48px;
+}
 
 .so-gate-blur {
   filter: blur(5px);
@@ -493,25 +496,26 @@
 }
 
 .so-gate-overlay {
-  position: absolute;
-  inset: auto 0 0;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  justify-content: flex-end;
-  gap: 12px;
-  background: linear-gradient(to bottom, transparent 0%, var(--surface) 28%, var(--surface) 100%);
-  border-radius: 0 0 var(--radius) var(--radius);
-  padding: 48px 20px 22px;
+  gap: 16px;
+  margin-top: 32px;
+  padding: 0 4px 8px;
   text-align: center;
-  min-height: 100%;
 }
 
 .so-gate-inquiry {
   width: 100%;
   max-width: 420px;
   margin: 0 auto;
+  padding: 24px 22px;
   text-align: left;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 12px rgba(15, 15, 15, 0.04);
 }
 
 .so-gate-inquiry .inquiry-form {
@@ -568,6 +572,7 @@
   font-size: 14px;
   color: var(--ink-2);
   max-width: 380px;
+  margin: 0 auto;
   line-height: 1.5;
 }
 

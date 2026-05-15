@@ -35,10 +35,12 @@
       if (split) {
         return 'https://' + split[1] + '-backend' + (split[2] || '') + '.up.railway.app';
       }
-      /* Custom domain in front of static/marketing — same backend as Railway split (see README deploy). */
-      if (h === 'www.serviceopera.to' || h === 'serviceopera.to') {
-        return SO_PRODUCTION_API_ORIGIN;
-      }
+      /*
+       * serviceopera.to / www.serviceopera.to run Node (server.mjs) on the same host as HTML.
+       * Use same-origin /api so admin login sets the HttpOnly cookie on this host (required for
+       * private /clinics/NNN/ HTML after ?next= redirect). Static-only Netlify on a custom domain:
+       * add <meta name="so-api-origin" content="https://your-node-host"> before so-api.js.
+       */
     } catch (e2) {}
     return '';
   }
