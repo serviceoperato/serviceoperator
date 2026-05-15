@@ -101,8 +101,8 @@
     <p>Private-style reports resolved from a <code class="mono">reportSlug</code> on a portal user (same URL pattern the operator console uses).</p>
     <ul class="report-catalog__list">
       <li>
-        <a href="/clinics/report.html?slug=jack">jack · jack (jack)</a>
-        <span class="report-catalog__meta">Portal report — opens <code class="mono">/clinics/report.html?slug=…</code> for the slug tied to the account (example slug <code class="mono">jack</code>).</span>
+        <a href="/clinics/report.html?slug=jack">Report 100 — jack · jack (portal)</a>
+        <span class="report-catalog__meta">Portal-only slug <code class="mono">jack</code> — catalog ID <strong>100</strong> is assigned automatically when the slug is not a numbered report path (<code class="mono">/clinics/NNN/</code>).</span>
       </li>
     </ul>
   </section>
@@ -147,8 +147,8 @@
     '/clinics/008/': 'Private report — admin session required (Lumina case study, fictional).',
     '/clinics/010/': 'Public sample teaser (Clinic ABC, fictional) — warms leads; CTA to /free-audit.html?from=sample.',
     '/clinics/011/': 'Private report — admin session required (Clinic ABC teaser catalog copy; CTA from=sample_011).',
-    '/free-audit.html': 'Marketing landing — free 48-hour private operational audit CTA.',
-    '/ai-operations/': 'SEO hub — AI operations across hotels, clinics, and property (single long-form page).',
+    '/free-audit.html': 'Report 012 — marketing landing for the free 48-hour private operational audit CTA.',
+    '/ai-operations/': 'Report 013 — SEO hub for AI operations across hotels, clinics, and property.',
     '/ai-operations': 'SEO hub — AI operations across hotels, clinics, and property (single long-form page).',
     '/hotels/009/': 'Private report — admin session required (Meliá Pattaya hotel audit).',
   };
@@ -161,6 +161,23 @@
       .replace(/"/g, '&quot;');
   }
 
+  function catalogIdForItem(it) {
+    if (it && it.id != null && /^\d{3}$/.test(String(it.id))) return String(it.id);
+    var href = it && typeof it.href === 'string' ? it.href : '';
+    var m = href.match(/^\/(clinics|hotels)\/(\d{3})(?:\/|$)/i);
+    return m ? m[2] : '';
+  }
+
+  function catalogDisplayTitle(it) {
+    var href = it && typeof it.href === 'string' ? it.href : '';
+    var t = (it && typeof it.title === 'string' ? it.title : href) || href;
+    var id = catalogIdForItem(it);
+    if (!id) return t;
+    if (/^Report\s+\d{3}\b/i.test(t)) return t;
+    var stripped = t.replace(/^Report\s+\d{3}\s*[—–-]\s*/i, '').trim();
+    return 'Report ' + id + ' — ' + (stripped || t);
+  }
+
   function renderBucket(title, items, mount) {
     if (!mount) return;
     if (!items || !items.length) {
@@ -169,7 +186,7 @@
     }
     var rows = items.map(function (it) {
       var href = typeof it.href === 'string' ? it.href : '';
-      var t = typeof it.title === 'string' ? it.title : href;
+      var t = catalogDisplayTitle(it);
       var norm = href.replace(/\/?$/, '/');
       var blurb = DESC[href] || DESC[norm] || 'Published or linked report from the site manifest.';
       return (

@@ -346,7 +346,6 @@
     var label = displayNameFromEmail(email);
     var loginHref = resolveLoginHref(root);
     var settingsHref = resolveSettingsHref(loginHref);
-    var adminHref = resolveAdminHref(root);
     var showAdmin = adminOk || String(email).toLowerCase() === ADMIN_EMAIL;
 
     root.className = 'so-nav-account so-nav-account--authed';

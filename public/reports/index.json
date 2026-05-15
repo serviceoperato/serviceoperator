@@ -1,6 +1,6 @@
 {
   "schema": "report-catalog-v2",
-  "note": "Stable report IDs (001–011 clinics, 009 hotels). URLs use /clinics/NNN/ or /hotels/NNN/. Private reports require admin session on Node except public sample 010. Legacy slugs redirect via public/_redirects.",
+  "note": "Stable catalog IDs (001–013 clinics pages, 009 hotels). Every entry has a three-digit id. URLs use /clinics/NNN/ or /hotels/NNN/ where applicable. Private reports require admin session on Node except public sample 010. Legacy slugs redirect via public/_redirects.",
   "visibility": "admin-only",
   "clinics": [
     {
@@ -64,20 +64,23 @@
       "legacySlug": "sample-audit-teaser-011"
     },
     {
-      "id": null,
+      "id": "004",
       "title": "Report 004 — alternate HTML export",
       "href": "/clinics/004/audit-report.html",
-      "legacySlug": "dental-design-center-audit/audit-report.html"
+      "legacySlug": "dental-design-center-audit/audit-report.html",
+      "kind": "artifact"
     },
     {
-      "id": null,
-      "title": "Free 48-hour audit (landing)",
-      "href": "/free-audit.html"
+      "id": "012",
+      "title": "Report 012 — Free 48-hour audit (landing)",
+      "href": "/free-audit.html",
+      "kind": "landing"
     },
     {
-      "id": null,
-      "title": "AI operations hub (hotels, clinics, property)",
-      "href": "/ai-operations/"
+      "id": "013",
+      "title": "Report 013 — AI operations hub (hotels, clinics, property)",
+      "href": "/ai-operations/",
+      "kind": "hub"
     }
   ],
   "hotels": [

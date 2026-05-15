@@ -2799,6 +2799,19 @@ html.so-site-nav-open {
   opacity: 0.75;
   font-size: 0.82em;
 }
+.tf-admin-reports__id {
+  display: inline-block;
+  min-width: 2.1rem;
+  padding: 0.1rem 0.35rem;
+  margin-right: 0.15rem;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--amber) 18%, transparent);
+  color: var(--amber-2);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+}
 .tf-admin-reports__hint {
   margin: 0.85rem 0 0;
   font-size: 0.78rem;

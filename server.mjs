@@ -202,12 +202,36 @@ function readSlugReportMeta(slug) {
   return { title: slug, vertical: 'clinics' };
 }
 
+function extractCatalogReportId(href, slug, itemId) {
+  const rawId = itemId != null && itemId !== '' ? String(itemId).trim() : '';
+  if (/^\d{3}$/.test(rawId)) return rawId;
+  const slugRaw = typeof slug === 'string' ? slug.trim() : '';
+  if (/^\d{3}$/.test(slugRaw)) return slugRaw;
+  const m = String(href || '').match(/^\/(clinics|hotels)\/(\d{3})(?:\/|$)/i);
+  if (m) return m[2];
+  return null;
+}
+
+function formatReportCatalogTitle(catalogId, title) {
+  const t = String(title || '').trim();
+  if (!catalogId) return t || 'Untitled';
+  if (/^Report\s+\d{3}\b/i.test(t)) return t;
+  const stripped = t.replace(/^Report\s+\d{3}\s*[—–-]\s*/i, '').trim();
+  return `Report ${catalogId} — ${stripped || t || 'Untitled'}`;
+}
+
 function normalizeReportLink(item) {
   if (!item || typeof item.href !== 'string' || !item.href.trim()) return null;
+  const href = item.href.trim();
+  const slug = typeof item.slug === 'string' && item.slug.trim() ? item.slug.trim() : null;
+  const catalogId = extractCatalogReportId(href, slug, item.id);
+  const title = formatReportCatalogTitle(catalogId, item.title || href);
   return {
-    title: String(item.title || item.href).trim(),
-    href: item.href.trim(),
-    slug: typeof item.slug === 'string' && item.slug.trim() ? item.slug.trim() : null,
+    id: catalogId,
+    title,
+    href,
+    slug,
+    kind: typeof item.kind === 'string' && item.kind.trim() ? item.kind.trim() : null,
   };
 }
 
@@ -309,6 +333,14 @@ async function buildAuditReportsIndex() {
 
   const rows = [];
   const seenHref = new Set();
+  const usedCatalogIds = new Set();
+  for (const vertical of ['clinics', 'hotels', 'properties']) {
+    for (const item of catalog[vertical] || []) {
+      const id = extractCatalogReportId(item.href, item.slug, item.id);
+      if (id) usedCatalogIds.add(id);
+    }
+  }
+  let nextPortalCatalogId = 100;
 
   for (const vertical of ['clinics', 'hotels', 'properties']) {
     const items = catalog[vertical] || [];
@@ -318,10 +350,20 @@ async function buildAuditReportsIndex() {
       seenHref.add(href);
 
       const slug = item.slug || extractSlugFromReportHref(href);
+      let catalogId = extractCatalogReportId(href, slug, item.id);
+      if (!catalogId && href.includes('report.html') && slug && !/^\d{3}$/.test(slug)) {
+        while (usedCatalogIds.has(String(nextPortalCatalogId).padStart(3, '0'))) {
+          nextPortalCatalogId += 1;
+        }
+        catalogId = String(nextPortalCatalogId).padStart(3, '0');
+        usedCatalogIds.add(catalogId);
+        nextPortalCatalogId += 1;
+      }
       const jsonPath = slug ? path.join(clinicDataDir, `${slug}.json`) : null;
       const jsonExists = Boolean(jsonPath && fs.existsSync(jsonPath));
 
       const meta = slug ? readSlugReportMeta(slug) : { title: item.title, vertical };
+      const displayTitle = formatReportCatalogTitle(catalogId, item.title || href);
 
       const mtimeFromJson = jsonExists ? statMtimeMs(jsonPath) : null;
       const mtimeFromPublic = publicArtifactMtimeMs(href);
@@ -365,8 +407,9 @@ async function buildAuditReportsIndex() {
 
       rows.push({
         id: `${vertical}:${href}`,
+        catalogId,
         vertical,
-        title: item.title || href,
+        title: displayTitle,
         subject,
         slug: slug || null,
         status,
@@ -378,6 +421,10 @@ async function buildAuditReportsIndex() {
   }
 
   rows.sort((a, b) => {
+    const na = a.catalogId ? Number.parseInt(a.catalogId, 10) : Number.NaN;
+    const nb = b.catalogId ? Number.parseInt(b.catalogId, 10) : Number.NaN;
+    if (Number.isFinite(na) && Number.isFinite(nb) && na !== nb) return na - nb;
+    if (Number.isFinite(na) !== Number.isFinite(nb)) return Number.isFinite(na) ? -1 : 1;
     const ta = a.updatedAt ? Date.parse(a.updatedAt) : 0;
     const tb = b.updatedAt ? Date.parse(b.updatedAt) : 0;
     if (tb !== ta) return tb - ta;
@@ -3229,10 +3276,23 @@ function sendPrivateReportNotFound(res) {
   return res.status(404).type('text/plain').send('Not found');
 }
 
+function denyPrivateNumberedReport(req, res) {
+  const accept = String(req.headers.accept || '');
+  const wantsHtml = req.method === 'GET' && accept.includes('text/html');
+  const targetPath = req.originalUrl || req.path || '/';
+  if (wantsHtml) {
+    res.setHeader('Cache-Control', 'no-store');
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    const next = encodeURIComponent(targetPath);
+    return res.redirect(302, `/admin/users?next=${next}`);
+  }
+  return sendPrivateReportNotFound(res);
+}
+
 app.use((req, res, next) => {
   if (req.method !== 'GET' && req.method !== 'HEAD') return next();
   if (!matchPrivateNumberedReportPath(req.path)) return next();
-  if (!getVerifiedAdmin(req)) return sendPrivateReportNotFound(res);
+  if (!getVerifiedAdmin(req)) return denyPrivateNumberedReport(req, res);
   return next();
 });
 

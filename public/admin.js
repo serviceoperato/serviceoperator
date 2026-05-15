@@ -38,6 +38,33 @@
     writeStoredAdminJwt('');
   }
 
+  /** After sign-in, open a numbered report if the user was redirected from /clinics/NNN/ or /hotels/NNN/. */
+  function readAdminLoginNextPath() {
+    try {
+      var params = new URLSearchParams(window.location.search);
+      var next = (params.get('next') || '').trim();
+      if (!next || next.charAt(0) !== '/' || next.indexOf('//') === 0) return '';
+      var pathOnly = next.split('?')[0].split('#')[0];
+      if (!/^\/(clinics|hotels)\/\d{3}(\/.*)?$/.test(pathOnly)) return '';
+      return next;
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function redirectAdminLoginNextIfPresent() {
+    var next = readAdminLoginNextPath();
+    if (!next) return false;
+    try {
+      var u = new URL(next, window.location.origin);
+      if (u.origin !== window.location.origin) return false;
+      window.location.replace(u.pathname + u.search + u.hash);
+      return true;
+    } catch (e2) {
+      return false;
+    }
+  }
+
   var serverPasswordAuth = false;
   var capabilitiesHttpOk = false;
   var capabilitiesFromOurServer = false;
@@ -2208,6 +2235,9 @@
           .map(function (row) {
             var href = row.primaryHref || '#';
             var title = row.title || href;
+            var idPart = row.catalogId
+              ? '<span class="tf-admin-reports__id mono">' + escapeHtml(row.catalogId) + '</span> '
+              : '';
             var slug = row.slug ? ' <span class="tf-admin-reports__slug">(' + escapeHtml(row.slug) + ')</span>' : '';
             var showSubject =
               row.subject &&
@@ -2226,7 +2256,9 @@
               .join(' · ');
             var artsPart = arts ? ' · ' + arts : '';
             return (
-              '<li><a href="' +
+              '<li>' +
+              idPart +
+              '<a href="' +
               escapeHtml(href) +
               '">' +
               escapeHtml(title) +
@@ -2247,9 +2279,15 @@
           .map(function (item) {
             var href = item.href || '#';
             var title = item.title || href;
+            var idPart =
+              item.id && /^\d{3}$/.test(String(item.id))
+                ? '<span class="tf-admin-reports__id mono">' + escapeHtml(String(item.id)) + '</span> '
+                : '';
             var slug = item.slug ? ' <span class="tf-admin-reports__slug">(' + escapeHtml(item.slug) + ')</span>' : '';
             return (
-              '<li><a href="' +
+              '<li>' +
+              idPart +
+              '<a href="' +
               escapeHtml(href) +
               '">' +
               escapeHtml(title) +
@@ -2343,6 +2381,7 @@
   }
 
   function showWorkspace() {
+    if (redirectAdminLoginNextIfPresent()) return;
     if (gate) gate.classList.add('is-hidden');
     if (workspace) workspace.classList.remove('is-hidden');
     loadTfVersion();
