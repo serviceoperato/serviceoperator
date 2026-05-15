@@ -16,6 +16,15 @@ function parseTier(raw: string | null): "free" | "operator" | "white" {
   return "free";
 }
 
+function parseLeadSource(params: URLSearchParams): string {
+  let leadSource = (params.get("leadSource") || "").trim();
+  const from = (params.get("from") || "").trim();
+  const utm = (params.get("utm_source") || "").trim();
+  if (!leadSource && from === "sample") leadSource = "sample";
+  if (!leadSource && utm) leadSource = utm;
+  return leadSource;
+}
+
 function apiPath(path: string) {
   if (typeof window !== "undefined" && typeof window.soApiUrl === "function") {
     return window.soApiUrl(path);
@@ -84,6 +93,7 @@ function SoSectorIcon({ which }: { which: "hotels" | "clinics" | "property" | "o
 export function PricingInquiryClient() {
   const searchParams = useSearchParams();
   const tier = useMemo(() => parseTier(searchParams.get("plan")), [searchParams]);
+  const leadSource = useMemo(() => parseLeadSource(searchParams), [searchParams]);
   const [status, setStatus] = useState<{ msg: string; kind: "error" | "ok" | "" }>({ msg: "", kind: "" });
   const [submitting, setSubmitting] = useState(false);
 
@@ -131,6 +141,7 @@ export function PricingInquiryClient() {
           sector,
           improveFirst,
           source: typeof window !== "undefined" ? window.location.pathname + window.location.search : "/pricing/inquiry",
+          leadSource: leadSource || undefined,
           company_url,
         }),
       });
@@ -170,6 +181,7 @@ export function PricingInquiryClient() {
 
       <form className="inquiry-form so-pricing-inquiry__form" onSubmit={onSubmit} noValidate>
         <input type="hidden" name="plan" value={tier} />
+        {leadSource ? <input type="hidden" name="leadSource" value={leadSource} /> : null}
         <p className="so-pricing-inquiry__privacy">
           We collect your IP address, pages visited, and timestamps to deliver the audit or plan you requested and to protect the service.
           Questions: <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a>.

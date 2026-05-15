@@ -42,6 +42,7 @@
 
   <form id="pricing-inquiry-form" class="inquiry-form so-pricing-inquiry__form" novalidate>
     <input type="hidden" name="plan" id="field-plan" value="free" />
+    <input type="hidden" name="leadSource" id="field-lead-source" value="" />
     <p class="so-pricing-inquiry__privacy" id="inq-privacy">
       We collect your IP address, pages visited, and timestamps to deliver the audit or plan you requested and to protect the service. Questions: <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a>.
     </p>
@@ -123,11 +124,29 @@
     return typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin';
   }
 
+  function parseLeadAttribution() {
+    var leadSource = '';
+    try {
+      var params = new URLSearchParams(window.location.search);
+      leadSource = (params.get('leadSource') || '').trim();
+      var from = (params.get('from') || '').trim();
+      var utm = (params.get('utm_source') || '').trim();
+      if (!leadSource && from === 'sample') leadSource = 'sample';
+      if (!leadSource && utm) leadSource = utm;
+    } catch (e) {
+      leadSource = '';
+    }
+    return leadSource;
+  }
+
   var plan = parsePlan();
+  var leadSource = parseLeadAttribution();
   var planInput = document.getElementById('field-plan');
+  var leadInput = document.getElementById('field-lead-source');
   var titleEl = document.getElementById('inq-title');
   var subEl = document.getElementById('inq-sub');
   if (planInput) planInput.value = plan;
+  if (leadInput) leadInput.value = leadSource;
   if (titleEl) titleEl.textContent = 'Request · ' + (TIER_LABEL[plan] || 'Free Audit');
   if (subEl) {
     subEl.textContent =
@@ -187,6 +206,7 @@
           sector: sector,
           improveFirst: improveFirst,
           source: window.location.pathname + window.location.search,
+          leadSource: (leadInput && leadInput.value) || leadSource || undefined,
           company_url: String(companyUrl).trim(),
         }),
       })

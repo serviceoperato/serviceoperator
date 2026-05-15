@@ -1,6 +1,6 @@
 {
   "schema": "report-catalog-v2",
-  "note": "Stable report IDs (001–010 clinics, 009 hotels). URLs use /clinics/NNN/ or /hotels/NNN/. Private: admin session required on Node server (not public). Legacy slugs redirect via public/_redirects.",
+  "note": "Stable report IDs (001–011 clinics, 009 hotels). URLs use /clinics/NNN/ or /hotels/NNN/. Private reports require admin session on Node except public sample 010. Legacy slugs redirect via public/_redirects.",
   "visibility": "admin-only",
   "clinics": [
     {
@@ -56,6 +56,12 @@
       "title": "Report 010 — Clinic ABC automation audit teaser (Pattaya sample)",
       "href": "/clinics/010/",
       "legacySlug": "sample-audit-teaser"
+    },
+    {
+      "id": "011",
+      "title": "Report 011 — Clinic ABC automation audit teaser (Pattaya sample)",
+      "href": "/clinics/011/",
+      "legacySlug": "sample-audit-teaser-011"
     },
     {
       "id": null,
