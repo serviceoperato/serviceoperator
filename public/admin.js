@@ -2125,7 +2125,7 @@
     tfNav.appendChild(makeNavLink('Icons', '/admin/icons', 'icons', id));
     tfNav.appendChild(makeNavLink('Reports', '/operator/reports', 'reports', id));
     tfNav.appendChild(makePlacesLeadsNavControl());
-    tfNav.appendChild(makeNavLink('Report catalog', '/reports/catalog.html', 'report-catalog', id));
+    tfNav.appendChild(makeNavLink('Report catalog', '/admin/report-catalog', 'report-catalog', id));
     tfNav.appendChild(makeNavLink('User reports', '/admin/user-reports', 'user-reports', id));
   }
 

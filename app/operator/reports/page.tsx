@@ -30,7 +30,7 @@ export default function OperatorReportsPage() {
           <Link className="tf-admin-nav__pill is-active" href="/operator/reports" aria-current="page">
             Reports
           </Link>
-          <Link className="tf-admin-nav__pill" href="/reports/catalog.html">
+          <Link className="tf-admin-nav__pill" href="/admin/report-catalog">
             Report catalog
           </Link>
           <Link className="tf-admin-nav__pill" href="/admin/user-reports">
