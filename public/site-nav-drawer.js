@@ -14,7 +14,7 @@
       links: [
         { href: '/', label: 'Home' },
         { href: '/pricing', label: 'Pricing' },
-        { href: '/clinics/sea-clinic-audit/', label: 'Sample audit' },
+        { href: '/clinics/002/', label: 'Sample audit' },
       ],
     },
     {

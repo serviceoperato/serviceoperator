@@ -810,7 +810,7 @@ const CLINIC_JWT_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const CLINIC_RESET_JWT_MS = 60 * 60 * 1000;
 /** Email confirmation / onboarding link after self-registration (pending row consumed on completion). */
 const CLINIC_VERIFY_JWT_MS = 48 * 60 * 60 * 1000;
-const AUDIT_DDC_REPORT_SLUG = (process.env.AUDIT_DDC_REPORT_SLUG || 'dental-design-center-audit').trim() || 'dental-design-center-audit';
+const AUDIT_DDC_REPORT_SLUG = (process.env.AUDIT_DDC_REPORT_SLUG || '004').trim() || '004';
 const PORTAL_REGISTER_OK_RESPONSE = {
   ok: true,
   message:
@@ -1493,7 +1493,7 @@ app.get('/api/site-uploads/:id', async (req, res) => {
  */
 app.get('/api/public/audit-ddc-first-access', async (_req, res) => {
   res.setHeader('Cache-Control', 'no-store');
-  const reportPath = '/clinics/dental-design-center-audit/';
+  const reportPath = '/clinics/004/';
   const rawEmail = (process.env.AUDIT_DDC_EMAIL || '').trim();
   const tempPassword = (process.env.AUDIT_DDC_TEMP_PASSWORD || '').trim();
   if (!rawEmail || !rawEmail.includes('@') || !tempPassword) {
@@ -3104,22 +3104,33 @@ app.get(['/operator/places-leads.html', '/operator/places-leads', '/operator/pla
   return res.sendFile(placesLeadsOperatorHtmlPath);
 });
 
-/** Public sample clinic audit (indexable; static `index.html`; clean URL). */
-app.get(['/clinics/sample-ai-automation-audit', '/clinics/sample-ai-automation-audit/'], (_req, res) => {
-  res.setHeader('X-Robots-Tag', 'index, follow');
-  res.sendFile(path.join(publicDir, 'clinics', 'sample-ai-automation-audit', 'index.html'));
-});
+/** Legacy report slugs → numbered catalog IDs (301). */
+const LEGACY_REPORT_REDIRECTS = [
+  ['/clinics/sample-ai-automation-audit', '/clinics/001/'],
+  ['/clinics/sea-clinic-audit', '/clinics/002/'],
+  ['/clinics/2026-05-15-audit', '/clinics/003/'],
+  ['/clinics/dental-design-center-audit', '/clinics/004/'],
+  ['/clinics/demo.html', '/clinics/005/'],
+  ['/clinics/ai-automation-audit-sample-bangkok.html', '/clinics/006/'],
+  ['/clinics/operato-clinic-audit-sample.html', '/clinics/007/'],
+  ['/clinics/case-study-lumina-dental-group', '/clinics/008/'],
+  ['/hotels/melia-pattaya-audit', '/hotels/009/'],
+];
+for (const [from, to] of LEGACY_REPORT_REDIRECTS) {
+  app.get([from, `${from}/`], (_req, res) => res.redirect(301, to));
+}
 
-/** Public fictional case study (indexable; static `index.html`; clean URL). */
-app.get(['/clinics/case-study-lumina-dental-group', '/clinics/case-study-lumina-dental-group/'], (_req, res) => {
-  res.setHeader('X-Robots-Tag', 'index, follow');
-  res.sendFile(path.join(publicDir, 'clinics', 'case-study-lumina-dental-group', 'index.html'));
-});
+/** Public indexable clinic samples (numbered catalog). */
+const INDEXABLE_CLINIC_REPORT_IDS = ['001', '006', '008'];
+for (const id of INDEXABLE_CLINIC_REPORT_IDS) {
+  app.get([`/clinics/${id}`, `/clinics/${id}/`], (_req, res) => {
+    res.setHeader('X-Robots-Tag', 'index, follow');
+    res.sendFile(path.join(publicDir, 'clinics', id, 'index.html'));
+  });
+}
 
 function isNoindexClinicsOrHotelsPath(norm) {
-  if (norm.includes('/clinics/sample-ai-automation-audit/')) return false;
-  if (norm.includes('/clinics/case-study-lumina-dental-group/')) return false;
-  if (norm.endsWith('/clinics/ai-automation-audit-sample-bangkok.html')) return false;
+  if (INDEXABLE_CLINIC_REPORT_IDS.some((id) => norm.includes(`/clinics/${id}/`))) return false;
   return norm.includes('/clinics/') || norm.includes('/hotels/');
 }
 

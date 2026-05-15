@@ -13,9 +13,9 @@ Disallow: /places-leads.html
 
 # Demo and sample content (audits under these prefixes)
 Disallow: /clinics/
-Allow: /clinics/sample-ai-automation-audit/
-Allow: /clinics/ai-automation-audit-sample-bangkok.html
-Allow: /clinics/case-study-lumina-dental-group/
+Allow: /clinics/001/
+Allow: /clinics/006/
+Allow: /clinics/008/
 Disallow: /hotels/
 
 # Forms and internal catalogs

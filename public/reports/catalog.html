@@ -136,18 +136,19 @@
   'use strict';
 
   var DESC = {
-    '/clinics/demo.html': 'Published static page — interactive methodology walkthrough (demo).',
-    '/clinics/2026-05-15-audit/': 'Published static page — audit snapshot dated 2026-05-15 (DDC template instance).',
-    '/clinics/dental-design-center-audit/': 'Published static page — full audit HTML; optional Markdown source below.',
-    '/clinics/dental-design-center-audit/audit-report.html': 'Same Dental Design Center audit — standalone HTML variant (export-style).',
-    '/clinics/sample-ai-automation-audit/': 'Published static page — fictional clinic sample for format and methodology preview.',
-    '/clinics/sea-clinic-audit/': 'Published static page — Thailand-style sample audit with charts and benchmarks.',
-    '/clinics/ai-automation-audit-sample-bangkok.html': 'Self-contained sample report — Bangkok fictional clinic, Chart.js + tabs (showcase).',
-    '/clinics/operato-clinic-audit-sample.html': 'Self-contained sample audit HTML (imported demo asset).',
+    '/clinics/005/': 'Published static page — interactive methodology walkthrough (demo).',
+    '/clinics/003/': 'Published static page — audit snapshot dated 2026-05-15 (DDC template instance).',
+    '/clinics/004/': 'Published static page — full audit HTML; optional Markdown source below.',
+    '/clinics/004/audit-report.html': 'Same Dental Design Center audit — standalone HTML variant (export-style).',
+    '/clinics/001/': 'Published static page — fictional clinic sample for format and methodology preview.',
+    '/clinics/002/': 'Published static page — Thailand-style sample audit with charts and benchmarks.',
+    '/clinics/006/': 'Self-contained sample report — Bangkok fictional clinic, Chart.js + tabs (showcase).',
+    '/clinics/007/': 'Self-contained sample audit HTML (imported demo asset).',
+    '/clinics/008/': 'Published static page — Lumina Dental Group 90-day case study (fictional).',
     '/free-audit.html': 'Marketing landing — free 48-hour private operational audit CTA.',
     '/ai-operations/': 'SEO hub — AI operations across hotels, clinics, and property (single long-form page).',
     '/ai-operations': 'SEO hub — AI operations across hotels, clinics, and property (single long-form page).',
-    '/hotels/melia-pattaya-audit/': 'Published static page — hotel AI service audit (Meliá Pattaya).',
+    '/hotels/009/': 'Published static page — hotel AI service audit (Meliá Pattaya).',
   };
 
   function esc(s) {
@@ -216,12 +217,12 @@
 
       var dentalMd = document.createElement('li');
       dentalMd.innerHTML =
-        '<a href="/clinics/dental-design-center-audit/audit-report.md">Dental Design Center — Markdown source</a>' +
+        '<a href="/clinics/004/audit-report.md">Dental Design Center — Markdown source</a>' +
         '<span class="report-catalog__meta">Companion to the published HTML audit — raw Markdown for review or tooling.</span>';
       var ulDental = elC && elC.querySelector('.report-catalog__list');
       if (ulDental) {
         var hasDental = clinics.some(function (c) {
-          return String(c.href || '').indexOf('dental-design-center-audit') >= 0;
+          return String(c.href || '').indexOf('004') >= 0;
         });
         if (hasDental) ulDental.appendChild(dentalMd);
       }

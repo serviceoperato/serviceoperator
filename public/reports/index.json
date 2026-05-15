@@ -1,50 +1,78 @@
 {
+  "schema": "report-catalog-v2",
+  "note": "Stable report IDs (001–009). URLs use /clinics/NNN/ or /hotels/NNN/. Legacy slugs redirect via public/_redirects and server.mjs.",
   "clinics": [
     {
-      "title": "Sample AI automation audit (fictional clinic)",
-      "href": "/clinics/sample-ai-automation-audit/"
+      "id": "001",
+      "title": "Report 001 — Sample AI automation audit (fictional clinic)",
+      "href": "/clinics/001/",
+      "legacySlug": "sample-ai-automation-audit"
     },
     {
-      "title": "Sea clinic audit (sample)",
-      "href": "/clinics/sea-clinic-audit/"
+      "id": "002",
+      "title": "Report 002 — Sea clinic audit (sample)",
+      "href": "/clinics/002/",
+      "legacySlug": "sea-clinic-audit"
     },
     {
-      "title": "Audit 2026-05-15 (Dental Design Center)",
-      "href": "/clinics/2026-05-15-audit/"
+      "id": "003",
+      "title": "Report 003 — Dental Design Center snapshot (2026-05-15)",
+      "href": "/clinics/003/",
+      "legacySlug": "2026-05-15-audit"
     },
     {
-      "title": "Dental Design Center (Pattaya)",
-      "href": "/clinics/dental-design-center-audit/"
+      "id": "004",
+      "title": "Report 004 — Dental Design Center (Pattaya)",
+      "href": "/clinics/004/",
+      "legacySlug": "dental-design-center-audit"
     },
     {
-      "title": "Clinic methodology demo",
-      "href": "/clinics/demo.html"
+      "id": "005",
+      "title": "Report 005 — Clinic methodology demo",
+      "href": "/clinics/005/",
+      "legacySlug": "demo"
     },
     {
-      "title": "AI automation audit sample (Bangkok, fictional)",
-      "href": "/clinics/ai-automation-audit-sample-bangkok.html"
+      "id": "006",
+      "title": "Report 006 — AI automation audit sample (Bangkok, fictional)",
+      "href": "/clinics/006/",
+      "legacySlug": "ai-automation-audit-sample-bangkok"
     },
     {
-      "title": "Operato clinic audit sample (self-contained demo)",
-      "href": "/clinics/operato-clinic-audit-sample.html"
+      "id": "007",
+      "title": "Report 007 — Operato clinic audit sample (self-contained demo)",
+      "href": "/clinics/007/",
+      "legacySlug": "operato-clinic-audit-sample"
     },
     {
-      "title": "Dental Design Center — alternate HTML export",
-      "href": "/clinics/dental-design-center-audit/audit-report.html"
+      "id": "008",
+      "title": "Report 008 — Lumina Dental Group case study (90 days)",
+      "href": "/clinics/008/",
+      "legacySlug": "case-study-lumina-dental-group"
     },
     {
+      "id": null,
+      "title": "Report 004 — alternate HTML export",
+      "href": "/clinics/004/audit-report.html",
+      "legacySlug": "dental-design-center-audit/audit-report.html"
+    },
+    {
+      "id": null,
       "title": "Free 48-hour audit (landing)",
       "href": "/free-audit.html"
     },
     {
+      "id": null,
       "title": "AI operations hub (hotels, clinics, property)",
       "href": "/ai-operations/"
     }
   ],
   "hotels": [
     {
-      "title": "Meliá Pattaya Hotel — AI service audit",
-      "href": "/hotels/melia-pattaya-audit/"
+      "id": "009",
+      "title": "Report 009 — Meliá Pattaya Hotel — AI service audit",
+      "href": "/hotels/009/",
+      "legacySlug": "melia-pattaya-audit"
     }
   ],
   "properties": []

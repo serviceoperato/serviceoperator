@@ -11,7 +11,7 @@
  *   PORTAL_JWT_SECRET | ADMIN_JWT_SECRET — required (same as production API)
  *   PUBLIC_ORIGIN — optional; prefix for the printed URL (default https://www.serviceopera.to)
  *   AUDIT_DDC_MAGIC_TTL_MS — optional override (default 7d, max 30d enforced on mint)
- *   AUDIT_DDC_REPORT_SLUG — must match the portal user's reportSlug (default dental-design-center-audit)
+ *   AUDIT_DDC_REPORT_SLUG — must match the portal user's reportSlug (default 004)
  */
 import crypto from 'crypto';
 
@@ -42,7 +42,7 @@ if (!email || !email.includes('@')) {
   process.exit(1);
 }
 
-const slug = (process.env.AUDIT_DDC_REPORT_SLUG || 'dental-design-center-audit').trim() || 'dental-design-center-audit';
+const slug = (process.env.AUDIT_DDC_REPORT_SLUG || '004').trim() || '004';
 const ttlRaw = Number(process.env.AUDIT_DDC_MAGIC_TTL_MS || 7 * 24 * 60 * 60 * 1000);
 const ttl =
   Number.isFinite(ttlRaw) && ttlRaw >= 5 * 60 * 1000 && ttlRaw <= 30 * 24 * 60 * 60 * 1000

@@ -432,12 +432,12 @@ Footer: minimal. `© 2026 SERVICE OPERA · CLINICS VERTICAL · DATA REFRESHED <d
 
 The existing landing page already has (or will have, per prior spec) three vertical toggle pills: `🏥 Clinics`, `🏨 Hotels`, `🏡 Properties`.
 
-Update the Clinics pill so its CTA button now links to `./clinics/demo.html` instead of mailto. Hotels and Properties remain mailto until their demos are built. Keep the swap-hero JS untouched.
+Update the Clinics pill so its CTA button now links to `./clinics/005/` instead of mailto. Hotels and Properties remain mailto until their demos are built. Keep the swap-hero JS untouched.
 
 Add a small `mono` line below the CTA on the Clinics tab:
 > `Live audit · 47 Thailand clinics · updated weekly`
 
-Hyperlink that line to `/clinics/demo.html` too.
+Hyperlink that line to `/clinics/005/` too.
 
 ---
 
@@ -451,8 +451,8 @@ Hyperlink that line to `/clinics/demo.html` too.
    ```
 2. Netlify auto-deploys on push. Wait for the green check.
 3. Verify:
-   - `curl -sI https://serviceopera.to/clinics/demo.html` → 200, `X-Robots-Tag: noindex, nofollow` (already configured in `netlify.toml` — extend the rule to also cover `/clinics/*`).
-   - Browser test: open `https://serviceopera.to/clinics/demo.html`, confirm data loads, all charts render, all numbers are present (no `null`/`undefined` in DOM).
+   - `curl -sI https://serviceopera.to/clinics/005/` → 200, `X-Robots-Tag: noindex, nofollow` (already configured in `netlify.toml` — extend the rule to also cover `/clinics/*`).
+   - Browser test: open `https://serviceopera.to/clinics/005/`, confirm data loads, all charts render, all numbers are present (no `null`/`undefined` in DOM).
    - Browser test: `/` Clinics tab CTA now points to the demo page.
 
 **Update `netlify.toml`** to add:
@@ -473,8 +473,8 @@ Hyperlink that line to `/clinics/demo.html` too.
 - [ ] `scraper/analysis.json` exists with all signals populated per clinic (except `review_response_rate_estimate` which is `null` by design).
 - [ ] `clinics/_data.json` exists, committed to repo, contains `headline_stats`, `pain_themes_global` (5 themes), `leakage_distribution`, `fix_demand_ranking` (5 fixes).
 - [ ] `scraper/clinic_index.csv` exists locally (not committed) — Jack's prospect list.
-- [ ] `https://serviceopera.to/clinics/demo.html` loads in under 2 seconds, renders all 6 sections, all data hydrated, no console errors.
-- [ ] `/clinics/demo.html` is excluded from search engines (header + meta).
+- [ ] `https://serviceopera.to/clinics/005/` loads in under 2 seconds, renders all 6 sections, all data hydrated, no console errors.
+- [ ] `/clinics/005/` is excluded from search engines (header + meta).
 - [ ] Index page's Clinics tab CTA links to the demo page.
 - [ ] Lighthouse mobile: Performance ≥ 90, Accessibility ≥ 95, SEO ≥ 95.
 

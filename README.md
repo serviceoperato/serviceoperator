@@ -150,7 +150,7 @@ export PUBLIC_ORIGIN='https://www.serviceopera.to'   # optional
 node scripts/mint-audit-ddc-magic-link.mjs recipient@example.com
 ```
 
-The portal user must already exist and **`reportSlug`** must match **`AUDIT_DDC_REPORT_SLUG`** (default `dental-design-center-audit`). Optional **`AUDIT_DDC_MAGIC_TTL_MS`** sets link lifetime when minting (default seven days, capped at thirty days in the script).
+The portal user must already exist and **`reportSlug`** must match **`AUDIT_DDC_REPORT_SLUG`** (default `004`). Optional **`AUDIT_DDC_MAGIC_TTL_MS`** sets link lifetime when minting (default seven days, capped at thirty days in the script).
 
 **Railway checklist — persistent “Site appearance” images**
 

@@ -2,3 +2,20 @@
 /ai-operations /ai-operations-for-hotels-clinics-property.html 200
 /ai-operations/ /ai-operations-for-hotels-clinics-property.html 200
 /ai-operations-for-hotels-clinics-property.html /ai-operations/ 301
+
+# Report catalog v2 — legacy slugs → numbered IDs (301)
+/clinics/sample-ai-automation-audit /clinics/001/ 301
+/clinics/sample-ai-automation-audit/ /clinics/001/ 301
+/clinics/sea-clinic-audit /clinics/002/ 301
+/clinics/sea-clinic-audit/ /clinics/002/ 301
+/clinics/2026-05-15-audit /clinics/003/ 301
+/clinics/2026-05-15-audit/ /clinics/003/ 301
+/clinics/dental-design-center-audit /clinics/004/ 301
+/clinics/dental-design-center-audit/ /clinics/004/ 301
+/clinics/demo.html /clinics/005/ 301
+/clinics/ai-automation-audit-sample-bangkok.html /clinics/006/ 301
+/clinics/operato-clinic-audit-sample.html /clinics/007/ 301
+/clinics/case-study-lumina-dental-group /clinics/008/ 301
+/clinics/case-study-lumina-dental-group/ /clinics/008/ 301
+/hotels/melia-pattaya-audit /hotels/009/ 301
+/hotels/melia-pattaya-audit/ /hotels/009/ 301

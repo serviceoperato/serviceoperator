@@ -350,7 +350,7 @@ strong { color: var(--color-text-primary); }
   </div>
   <div class="nav__links">
     <a href="/pricing" class="nav__text">Pricing</a>
-    <a href="/login.html?next=/clinics/2026-05-15-audit/" class="nav__login mono" id="navPortalAuth" data-login-href="/login.html?next=/clinics/2026-05-15-audit/" aria-label="Login or Register">Login / Register</a>
+    <a href="/login.html?next=/clinics/003/" class="nav__login mono" id="navPortalAuth" data-login-href="/login.html?next=/clinics/003/" aria-label="Login or Register">Login / Register</a>
     <button type="button" class="theme-toggle" data-theme-toggle aria-label="Theme"></button>
   </div>
 </nav>
@@ -364,7 +364,7 @@ strong { color: var(--color-text-primary); }
     <dl class="audit-portal-access__dl">
       <div>
         <dt>Report page</dt>
-        <dd><a id="auditPortalReportLink" href="/clinics/2026-05-15-audit/">…</a></dd>
+        <dd><a id="auditPortalReportLink" href="/clinics/003/">…</a></dd>
       </div>
       <div>
         <dt>Username / email</dt>
@@ -1245,7 +1245,7 @@ strong { color: var(--color-text-primary); }
       var ban = document.getElementById('soAuditMagicBanner');
       if (ban) ban.hidden = true;
       if (lj.passwordMustChange) {
-        var nextPath = u.pathname || '/clinics/2026-05-15-audit/';
+        var nextPath = u.pathname || '/clinics/003/';
         window.location.replace('/login.html?next=' + encodeURIComponent(nextPath));
         return;
       }
@@ -1396,7 +1396,7 @@ strong { color: var(--color-text-primary); }
     var p =
       reportPath && String(reportPath).trim()
         ? String(reportPath).trim()
-        : '/clinics/2026-05-15-audit/';
+        : '/clinics/003/';
     if (linkEl) {
       linkEl.href = p;
       linkEl.textContent = (window.location.origin || '') + p;
@@ -1420,7 +1420,7 @@ strong { color: var(--color-text-primary); }
   Promise.all([fetchPublicAccess(), loadDemoPortalJson()]).then(function (results) {
     var pub = results[0] || {};
     var cfg = results[1] || {};
-    var reportPathDefault = '/clinics/2026-05-15-audit/';
+    var reportPathDefault = '/clinics/003/';
 
     function fillFromDemo() {
       var reportPath =

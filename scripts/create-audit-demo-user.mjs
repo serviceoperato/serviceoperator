@@ -15,7 +15,7 @@
  * Legacy aliases: AUDIT_DEMO_EMAIL, AUDIT_DEMO_TEMP_PASSWORD, AUDIT_DEMO_REPORT_SLUG
  *
  * Public paths for the report are still listed in:
- *   public/clinics/dental-design-center-audit/demo-portal.json
+ *   public/clinics/004/demo-portal.json
  * (no temporary password is stored in that file).
  *
  * Passwords use the same scrypt format as server.mjs (`hashPassword` in clinic-store.mjs).
@@ -38,7 +38,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.join(__dirname, '..');
 const DEMO_PORTAL_JSON = path.join(
   rootDir,
-  'public/clinics/dental-design-center-audit/demo-portal.json'
+  'public/clinics/004/demo-portal.json'
 );
 
 function randomTempPassword() {
@@ -81,7 +81,7 @@ function resolveDemoCredentials() {
       'info@dentaldesignpattaya.com'
   );
   const reportSlug = assertReportSlug(
-    envSlug || (file && String(file.reportSlug || '').trim()) || 'dental-design-center-audit'
+    envSlug || (file && String(file.reportSlug || '').trim()) || '004'
   );
   let tempPassword = envPw || (file && String(file.tempPassword || '').trim()) || '';
   if (!tempPassword) {
@@ -92,7 +92,7 @@ function resolveDemoCredentials() {
   }
   const loginNextPath =
     (file && String(file.loginNextPath || file.reportPath || '').trim()) ||
-    '/clinics/dental-design-center-audit/';
+    '/clinics/004/';
   return { email, reportSlug, tempPassword, loginNextPath };
 }
 

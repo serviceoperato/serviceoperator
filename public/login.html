@@ -190,7 +190,7 @@
         <p id="ddcAuditBannerTitle" style="margin:0 0 0.5rem;font-weight:600">Dental Design Center audit — first sign-in</p>
         <p style="margin:0 0 0.5rem;font-size:0.9rem;line-height:1.55;color:var(--mute-2)">
           Use <strong>Log in</strong> below with the email and temporary password shown on the
-          <a href="/clinics/dental-design-center-audit/">audit report page</a>. After you sign in you must choose your own password; the credential reminder is then removed from that page.
+          <a href="/clinics/004/">audit report page</a>. After you sign in you must choose your own password; the credential reminder is then removed from that page.
         </p>
       </div>
 
@@ -437,8 +437,8 @@
   var ddcAuditBanner = document.getElementById('ddcAuditFirstAccessBanner');
   if (ddcAuditBanner) {
     var openAudit =
-      (nextPath && nextPath.indexOf('dental-design-center-audit') >= 0) ||
-      slugHint === 'dental-design-center-audit';
+      (nextPath && nextPath.indexOf('004') >= 0) ||
+      slugHint === '004';
     if (openAudit) {
       ddcAuditBanner.classList.remove('is-hidden');
       var ddcUrl =

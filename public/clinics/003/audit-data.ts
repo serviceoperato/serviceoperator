@@ -243,7 +243,7 @@ export interface AuditData {
 export const audit20260515: AuditData = {
   meta: {
     businessName: "The Dental Design Center",
-    slug: "2026-05-15-audit",
+    slug: "003",
     location: "Pattaya, Thailand",
     category: "Dental Clinic",
     auditDate: "2026-05-15",
