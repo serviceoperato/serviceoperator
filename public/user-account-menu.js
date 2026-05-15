@@ -251,7 +251,7 @@
     root.className = 'so-nav-account';
     root.innerHTML = '';
     var login = document.createElement('a');
-    login.className = 'nav__login mono';
+    login.className = 'nav__login';
     login.href = resolveLoginHref(root);
     login.textContent = 'Login / Register';
     login.setAttribute('aria-label', 'Login or Register');

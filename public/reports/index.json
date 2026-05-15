@@ -1,6 +1,6 @@
 {
   "schema": "report-catalog-v2",
-  "note": "Stable report IDs (001–009). URLs use /clinics/NNN/ or /hotels/NNN/. Private: admin session required on Node server (not public). Legacy slugs redirect via public/_redirects.",
+  "note": "Stable report IDs (001–010 clinics, 009 hotels). URLs use /clinics/NNN/ or /hotels/NNN/. Private: admin session required on Node server (not public). Legacy slugs redirect via public/_redirects.",
   "visibility": "admin-only",
   "clinics": [
     {
@@ -50,6 +50,12 @@
       "title": "Report 008 — Lumina Dental Group case study (90 days)",
       "href": "/clinics/008/",
       "legacySlug": "case-study-lumina-dental-group"
+    },
+    {
+      "id": "010",
+      "title": "Report 010 — Clinic ABC automation audit teaser (Pattaya sample)",
+      "href": "/clinics/010/",
+      "legacySlug": "sample-audit-teaser"
     },
     {
       "id": null,

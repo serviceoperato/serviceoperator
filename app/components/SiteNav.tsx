@@ -19,7 +19,7 @@ export function SiteNav() {
         </a>
         <a
           href="/login.html"
-          className="nav__login mono"
+          className="nav__login"
           id="navPortalAuth"
           aria-label="Login or Register"
         >

@@ -54,6 +54,8 @@
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-btn: 10px;
+  --so-workflow-accent: #4f46e5;
+  --so-workflow-on-accent: #f8fafc;
   color-scheme: dark;
 }
 
@@ -462,17 +464,32 @@ html.so-site-nav-open {
 .nav__links .nav__text:hover {
   color: var(--paper);
 }
-.nav__login {
-  font-size: .72rem !important;
-  letter-spacing: 0.1em;
-  color: var(--mute-2) !important;
-  padding: .4rem .65rem;
-  border: 1px solid var(--line);
-  border-radius: 2px;
+.nav__login,
+.nav__login.mono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: normal;
+  text-transform: none;
+  text-decoration: none;
+  color: var(--so-workflow-on-accent) !important;
+  padding: 0.9rem 1.35rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-btn);
+  background: var(--so-workflow-accent);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--so-workflow-accent) 28%, transparent);
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
 }
-.nav__login:hover {
-  color: var(--amber-2) !important;
-  border-color: var(--amber);
+.nav__login:hover,
+.nav__login.mono:hover {
+  color: var(--so-workflow-on-accent) !important;
+  border-color: transparent;
+  filter: brightness(1.06);
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--so-workflow-accent) 38%, transparent);
 }
 .nav__cta {
   font-family: var(--font-mono);
@@ -680,8 +697,14 @@ html.so-site-nav-open {
     padding-left: 0.55rem;
     padding-right: 0.55rem;
   }
-  .nav__login {
-    padding: 0.35rem 0.5rem;
+  .nav__login,
+  .nav__login.mono {
+    padding: 0.65rem 0.9rem;
+    font-size: 0.8125rem;
+    max-width: min(11rem, 42vw);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
