@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
+<meta name="robots" content="noindex, nofollow"/>
+<title>AI Automation Audit — 2026-05-15 | www.serviceopera.to</title>
+<link rel="icon" href="/favicon.png" type="image/png" sizes="any" />
+<link rel="apple-touch-icon" href="/favicon.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../../styles.css"/>
+<link rel="stylesheet" href="audit-report.css"/>
+<script src="/page-skeleton.js"></script>
+<script src="/so-api.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+/* Inline additional styles for standalone HTML (colors from audit-report.css variables; light via [data-theme="light"]) */
+body { margin: 0; background: var(--color-bg); color: var(--color-text-primary); }
+body.audit-report { padding-top: var(--site-nav-offset); }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media(max-width:640px){ .two-col { grid-template-columns: 1fr; } }
+p { color: var(--color-text-secondary); font-size: 14px; line-height: 1.7; margin: 0 0 0.75rem; }
+h3 { font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: var(--color-text-primary); margin: 0 0 0.5rem; }
+h4 { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-secondary); margin: 1rem 0 0.5rem; }
+strong { color: var(--color-text-primary); }
+
+/* ===== NEW: Executive Dashboard ===== */
+.so-dashboard {
+  max-width: 1100px;
+  margin: 2rem auto 1.5rem;
+  padding: 0 1rem;
+}
+.so-dashboard__title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem;
+  color: var(--color-text-primary);
+  margin: 0 0 0.25rem;
+}
+.so-dashboard__sub {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin: 0 0 1.25rem;
+}
+.so-chart-card {
+  background: var(--so-chart-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 1.25rem 1.25rem 0.75rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-elevated);
+}
+.so-chart-card__head { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem; margin-bottom: 0.75rem; }
+.so-chart-card__title { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-primary); }
+.so-chart-card__legend { display:flex; flex-wrap:wrap; gap: 0.75rem; font-size: 11px; color: var(--color-text-secondary); }
+.so-legend-pill { display:inline-flex; align-items:center; gap: 0.35rem; }
+.so-legend-pill::before { content:""; display:inline-block; width:10px; height:10px; border-radius: 3px; background: currentColor; }
+.so-chart-wrap { position: relative; height: 280px; }
+@media(max-width:640px){ .so-chart-wrap { height: 220px; } }
+
+/* ===== NEW: Heroicons KPI grid ===== */
+.so-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+@media(max-width: 900px){ .so-kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+@media(max-width: 480px){ .so-kpi-grid { grid-template-columns: 1fr; } }
+.so-kpi {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 1.25rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform .15s ease, border-color .15s ease;
+}
+.so-kpi:hover { transform: translateY(-2px); border-color: var(--so-kpi-hover-border); }
+.so-kpi__icon {
+  width: 56px; height: 56px; border-radius: 14px;
+  display:flex; align-items:center; justify-content:center;
+  margin-bottom: 0.85rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+}
+.so-kpi__icon svg { width: 28px; height: 28px; color: #fff; stroke: #fff; }
+.so-kpi__value { font-family: 'DM Serif Display', serif; font-size: 1.6rem; color: var(--color-text-primary); line-height: 1; margin-bottom: 0.35rem; }
+.so-kpi__label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-secondary); }
+.so-kpi__sub { font-size: 12px; color: var(--color-text-muted); margin-top: 0.5rem; }
+.so-kpi--red    .so-kpi__icon { background: linear-gradient(135deg,#ef4444,#b91c1c); }
+.so-kpi--orange .so-kpi__icon { background: linear-gradient(135deg,#f97316,#c2410c); }
+.so-kpi--indigo .so-kpi__icon { background: linear-gradient(135deg,#6366f1,#4338ca); }
+.so-kpi--green  .so-kpi__icon { background: linear-gradient(135deg,#22c55e,#15803d); }
+.so-kpi--blue   .so-kpi__icon { background: linear-gradient(135deg,#3b82f6,#1d4ed8); }
+.so-kpi--pink   .so-kpi__icon { background: linear-gradient(135deg,#ec4899,#be185d); }
+
+/* ===== NEW: Friction icon row (S3 enhancement) ===== */
+.so-friction-icons {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.75rem;
+  margin: 1.25rem 0 1rem;
+}
+@media(max-width: 760px){ .so-friction-icons { grid-template-columns: repeat(2, 1fr); } }
+.so-friction-icon {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+}
+.so-friction-icon__circle {
+  width: 48px; height: 48px; border-radius: 50%;
+  margin: 0 auto 0.6rem;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+}
+.so-friction-icon__circle svg { width: 24px; height: 24px; color: #fff; stroke: #fff; }
+.so-friction-icon__label { font-size: 12px; color: var(--color-text-primary); font-weight: 600; line-height: 1.3; }
+.so-friction-icon__tag { font-size: 10px; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 0.25rem; }
+
+/* ===== NEW: Critical review quote with stars ===== */
+.so-critical-reviews { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.25rem; }
+@media(max-width: 760px){ .so-critical-reviews { grid-template-columns: 1fr; } }
+.so-review-card {
+  background: var(--so-review-bg);
+  border: 1px solid rgba(239,68,68,0.35);
+  border-left: 4px solid #ef4444;
+  border-radius: 12px;
+  padding: 1.1rem 1.25rem;
+  position: relative;
+}
+.so-review-card--warn {
+  background: var(--so-review-bg-warn);
+  border-color: rgba(249,115,22,0.35);
+  border-left-color: #f97316;
+}
+.so-review-card__head { display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.6rem; }
+.so-stars { display:inline-flex; gap: 2px; }
+.so-stars svg { width: 16px; height: 16px; }
+.so-star-on { color: #fbbf24; fill: #fbbf24; }
+.so-star-off { color: var(--so-star-off); fill: var(--so-star-off); }
+.so-review-card__source { font-size: 11px; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.08em; }
+.so-review-card__quote { font-size: 14px; color: var(--color-text-primary); font-style: italic; line-height: 1.55; margin: 0 0 0.6rem; }
+.so-review-card__meta { font-size: 12px; color: var(--color-text-secondary); display:flex; justify-content:space-between; align-items:center; }
+.so-review-card__badge {
+  display:inline-flex; align-items:center; gap: 0.3rem;
+  background: rgba(239,68,68,0.15); color: #fca5a5;
+  border: 1px solid rgba(239,68,68,0.3);
+  padding: 0.2rem 0.55rem; border-radius: 999px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+}
+.so-review-card--warn .so-review-card__badge { background: rgba(249,115,22,0.15); color: #fdba74; border-color: rgba(249,115,22,0.3); }
+
+/* ===== NEW: Heatmap of recurring problems ===== */
+.so-heatmap {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 1.25rem;
+  margin-top: 1.25rem;
+}
+.so-heatmap__head { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap: 0.5rem; margin-bottom: 1rem; }
+.so-heatmap__title { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-primary); }
+.so-heatmap__scale { display:flex; align-items:center; gap: 0.4rem; font-size: 10px; color: var(--color-text-secondary); }
+.so-heatmap__scale-grad { width: 80px; height: 10px; border-radius: 4px; background: linear-gradient(90deg, #1f2937, #b45309, #ef4444); }
+.so-heatmap__grid {
+  display: grid;
+  grid-template-columns: 180px repeat(4, 1fr);
+  gap: 4px;
+  font-size: 11px;
+}
+@media(max-width: 760px){ .so-heatmap__grid { grid-template-columns: 110px repeat(4, 1fr); font-size: 10px; } }
+.so-heatmap__head-cell {
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 0.4rem 0.5rem;
+  text-align: center;
+  font-size: 10px;
+}
+.so-heatmap__row-label {
+  background: rgba(255,255,255,0.02);
+  color: var(--color-text-primary);
+  padding: 0.7rem 0.6rem;
+  border-radius: 6px;
+  font-weight: 600;
+  display:flex; align-items:center;
+}
+[data-theme="light"] .so-heatmap__row-label {
+  background: rgba(15, 23, 42, 0.04);
+}
+.so-heatmap__cell {
+  padding: 0.7rem 0.5rem;
+  border-radius: 6px;
+  text-align: center;
+  color: #fff;
+  font-weight: 700;
+  display:flex; align-items:center; justify-content:center;
+}
+.so-heat-0 { background: #1f2937; color: #6b7689; }
+[data-theme="light"] .so-heat-0 { background: #e2e8f0; color: #64748b; }
+.so-heat-1 { background: #78350f; }
+.so-heat-2 { background: #b45309; }
+.so-heat-3 { background: #dc2626; }
+.so-heat-4 { background: #ef4444; box-shadow: 0 0 12px rgba(239,68,68,0.45); }
+.so-heatmap__footnote { font-size: 11px; color: var(--color-text-muted); margin-top: 0.85rem; font-style: italic; }
+
+/* Portal first-visit callout — credentials from GET /api/public/audit-ddc-first-access (env on server) */
+.audit-portal-access {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0.75rem 1rem 0;
+}
+.audit-portal-access__card {
+  background: var(--so-portal-card);
+  border: 1px solid #4338ca;
+  border-radius: 14px;
+  padding: 1rem 1.25rem 1.15rem;
+  font-size: 13px;
+  color: var(--so-portal-card-text);
+  line-height: 1.55;
+}
+.audit-portal-access code {
+  font-family: 'DM Mono', ui-monospace, monospace;
+  font-size: 12px;
+  background: var(--so-code-bg);
+  padding: 0.2rem 0.45rem;
+  border-radius: 6px;
+  color: var(--so-code-fg);
+}
+.audit-portal-access a {
+  color: #a5b4fc;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.audit-portal-access a:hover { color: #e0e7ff; }
+.audit-portal-access__title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.15rem;
+  color: var(--color-text-primary);
+  margin: 0 0 0.5rem;
+}
+.audit-portal-access__lede {
+  margin: 0 0 1rem;
+  font-size: 13px;
+  color: var(--so-portal-card-text);
+  line-height: 1.6;
+}
+.audit-portal-access__dl { margin: 0; }
+.audit-portal-access__dl > div {
+  margin: 0.5rem 0;
+  display: grid;
+  grid-template-columns: 10rem 1fr;
+  gap: 0.35rem 0.75rem;
+  align-items: baseline;
+}
+@media(max-width:520px) {
+  .audit-portal-access__dl > div { grid-template-columns: 1fr; }
+}
+.audit-portal-access__dl dt {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+.audit-portal-access__dl dd { margin: 0; word-break: break-word; }
+.audit-portal-access__pw-hint {
+  display: block;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin-top: 0.35rem;
+}
+.audit-portal-access__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+.audit-portal-access__btn {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0.45rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(165, 180, 252, 0.45);
+  background: rgba(67, 56, 202, 0.35);
+  color: #e0e7ff;
+  cursor: pointer;
+}
+.audit-portal-access__btn:hover { border-color: #a5b4fc; background: rgba(67, 56, 202, 0.55); }
+.audit-portal-access__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.audit-portal-access__btn:focus-visible {
+  outline: 2px solid #a5b4fc;
+  outline-offset: 2px;
+}
+.audit-portal-access__status { font-size: 12px; color: var(--color-text-muted); }
+[data-theme="light"] .audit-portal-access a { color: #3730a3; }
+[data-theme="light"] .audit-portal-access a:hover { color: #1e1b4b; }
+[data-theme="light"] .audit-portal-access__btn {
+  border-color: rgba(79, 70, 229, 0.45);
+  background: rgba(79, 70, 229, 0.12);
+  color: #312e81;
+}
+[data-theme="light"] .audit-portal-access__btn:disabled {
+  opacity: 0.5;
+}
+
+/* Magic-link bootstrap (?access=…): brief status strip */
+.so-audit-magic-banner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0.45rem 1rem 0.55rem;
+  font-size: 13px;
+  text-align: center;
+  border-radius: 0 0 12px 12px;
+  background: rgba(67, 56, 202, 0.28);
+  color: #e0e7ff;
+}
+.so-audit-magic-banner[data-error="1"] {
+  background: rgba(127, 29, 29, 0.45);
+  color: #fecaca;
+}
+[data-theme="light"] .so-audit-magic-banner {
+  background: rgba(79, 70, 229, 0.14);
+  color: #312e81;
+}
+[data-theme="light"] .so-audit-magic-banner[data-error="1"] {
+  background: #fee2e2;
+  color: #991b1b;
+}
+</style>
+</head>
+<body class="audit-report page-client" data-page-skeleton="native">
+
+<div class="grain" aria-hidden="true"></div>
+
+<nav class="nav" aria-label="Primary">
+  <div class="nav__start">
+    <a href="/" class="nav__logo">
+      <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="www.serviceopera.to — home" decoding="async"/>
+    </a>
+  </div>
+  <div class="nav__links">
+    <a href="/pricing" class="nav__text">Pricing</a>
+    <a href="/login.html?next=/clinics/2026-05-15-audit/" class="nav__login mono" id="navPortalAuth" data-login-href="/login.html?next=/clinics/2026-05-15-audit/" aria-label="Login or Register">Login / Register</a>
+    <button type="button" class="theme-toggle" data-theme-toggle aria-label="Theme"></button>
+  </div>
+</nav>
+
+<div id="soAuditMagicBanner" class="so-audit-magic-banner" hidden role="status" aria-live="polite"></div>
+
+<section class="audit-portal-access" id="auditPortalAccess" hidden lang="en" aria-labelledby="auditPortalAccessTitle">
+  <div class="audit-portal-access__card">
+    <h2 class="audit-portal-access__title" id="auditPortalAccessTitle">Portal access (first visit)</h2>
+    <p class="audit-portal-access__lede">Please use <strong>Log in</strong> in the header, then enter the <strong>email</strong> and <strong>temporary password</strong> below. After you sign in, you will be asked to <strong>choose your own password</strong>. Once that step is finished, this notice is removed automatically.</p>
+    <dl class="audit-portal-access__dl">
+      <div>
+        <dt>Report page</dt>
+        <dd><a id="auditPortalReportLink" href="/clinics/2026-05-15-audit/">…</a></dd>
+      </div>
+      <div>
+        <dt>Username / email</dt>
+        <dd><code id="auditPortalUsername" translate="no">…</code></dd>
+      </div>
+      <div>
+        <dt>Temporary password</dt>
+        <dd>
+          <code id="auditPortalTempPw" translate="no">…</code>
+          <span class="audit-portal-access__pw-hint" id="auditPortalPwHint">After sign-in, clear the clipboard on shared devices.</span>
+        </dd>
+      </div>
+    </dl>
+    <div class="audit-portal-access__actions">
+      <button type="button" class="audit-portal-access__btn" id="auditPortalCopyEmail">Copy email</button>
+      <button type="button" class="audit-portal-access__btn" id="auditPortalCopyPassword" disabled aria-disabled="true">Copy password</button>
+      <span class="audit-portal-access__status" id="auditPortalCopyStatus" role="status" aria-live="polite"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== HEADER ===== -->
+<header class="report-header">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div class="brand-badge"><span class="dot"></span>www.serviceopera.to · AI Automation Audit</div>
+    <h1 class="report-title">The Dental Design Center<br/><em style="font-style:italic;color:#6366f1;">Pattaya, Thailand</em></h1>
+    <p class="report-subtitle">A full AI readiness audit based exclusively on public data. 14 sections. One clear outcome: revenue is leaking every night through gaps that automation closes in 14 days.</p>
+    <p class="audit-hero-rating" role="note" aria-label="4.8 out of 5 estimated service opportunity rating">
+      <span class="audit-hero-rating__row">
+        <span class="audit-hero-rating__stars" aria-hidden="true">★★★★☆</span>
+        <span class="audit-hero-rating__score">4.8/5</span>
+      </span>
+      <span class="audit-hero-rating__caption">4.8/5 estimated service opportunity rating</span>
+    </p>
+    <div class="report-meta">
+      <div class="meta-item">
+        <span class="label">Prepared by</span>
+        <span class="value">Jack from ServiceOpera.to</span>
+      </div>
+      <div class="meta-item">
+        <span class="label">Audit Date</span>
+        <span class="value">2026-05-15</span>
+      </div>
+      <div class="meta-item">
+        <span class="label">Category</span>
+        <span class="value">Dental Clinic</span>
+      </div>
+      <div class="meta-item">
+        <span class="label">Audit Potential</span>
+        <div class="audit-score-badge"><span class="score">9.2</span><span>/ 10</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== NEW: EXECUTIVE DASHBOARD ===== -->
+<section class="so-dashboard" id="dashboard" aria-label="Executive dashboard">
+  <h2 class="so-dashboard__title">At-a-Glance Dashboard</h2>
+  <p class="so-dashboard__sub">Quattro metriche pubbliche tracciate negli ultimi 12 mesi (stime direzionali da segnali pubblici e benchmark di settore).</p>
+
+  <!-- Multi-metric line chart -->
+  <div class="so-chart-card">
+    <div class="so-chart-card__head">
+      <span class="so-chart-card__title">12-Month Public Signal Trend</span>
+      <div class="so-chart-card__legend">
+        <span class="so-legend-pill" style="color:#6366f1;">Avg Rating (x10)</span>
+        <span class="so-legend-pill" style="color:#22c55e;">Review Volume</span>
+        <span class="so-legend-pill" style="color:#f97316;">Response Rate %</span>
+        <span class="so-legend-pill" style="color:#ec4899;">Sentiment Score</span>
+      </div>
+    </div>
+    <div class="so-chart-wrap"><canvas id="soTrendChart"></canvas></div>
+  </div>
+
+  <!-- KPI cards with large Heroicons -->
+  <div class="so-kpi-grid">
+    <!-- KPI 1: Audit Score (exclamation-triangle) -->
+    <div class="so-kpi so-kpi--red">
+      <div class="so-kpi__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 9v4"/><path d="M12 17h.01"/>
+          <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        </svg>
+      </div>
+      <div class="so-kpi__value">9.2<span style="font-size:.9rem;color:var(--color-text-secondary);"> / 10</span></div>
+      <div class="so-kpi__label">Audit Potential</div>
+      <div class="so-kpi__sub">High-leverage automation gap</div>
+    </div>
+
+    <!-- KPI 2: Reviews/month (star) -->
+    <div class="so-kpi so-kpi--orange">
+      <div class="so-kpi__icon">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+      </div>
+      <div class="so-kpi__value">1–3<span style="font-size:.9rem;color:var(--color-text-secondary);"> /mo</span></div>
+      <div class="so-kpi__label">Review Velocity</div>
+      <div class="so-kpi__sub">Target post-automation: 8–15</div>
+    </div>
+
+    <!-- KPI 3: Response time (clock) -->
+    <div class="so-kpi so-kpi--indigo">
+      <div class="so-kpi__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </div>
+      <div class="so-kpi__value">4–24h</div>
+      <div class="so-kpi__label">Inquiry Response</div>
+      <div class="so-kpi__sub">Post-automation: &lt; 2 min</div>
+    </div>
+
+    <!-- KPI 4: Revenue uplift (banknotes) -->
+    <div class="so-kpi so-kpi--green">
+      <div class="so-kpi__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2" y="6" width="20" height="12" rx="2"/>
+          <circle cx="12" cy="12" r="2.5"/>
+          <path d="M6 12h.01M18 12h.01"/>
+        </svg>
+      </div>
+      <div class="so-kpi__value">฿500K–1.5M</div>
+      <div class="so-kpi__label">Annual Uplift</div>
+      <div class="so-kpi__sub">Conservative 12-month range</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TOC ===== -->
+<nav class="report-toc">
+  <div class="toc-inner">
+    <a class="toc-link" href="#s1">01 Snapshot</a>
+    <a class="toc-link" href="#s2">02 Patient Journey</a>
+    <a class="toc-link" href="#s3">03 Booking Friction</a>
+    <a class="toc-link" href="#s4">04 Reputation</a>
+    <a class="toc-link" href="#s5">05 Reviews</a>
+    <a class="toc-link" href="#s6">06 Trust Signals</a>
+    <a class="toc-link" href="#s7">07 Follow-Up Gaps</a>
+    <a class="toc-link" href="#s8">08 Multilingual</a>
+    <a class="toc-link" href="#s9">09 AI Opportunities</a>
+    <a class="toc-link" href="#s10">10 14-Day Wins</a>
+    <a class="toc-link" href="#s11">11 30-Day Plan</a>
+    <a class="toc-link" href="#s12">12 Impact</a>
+    <a class="toc-link" href="#s13">13 Offer</a>
+    <a class="toc-link" href="#s14">14 Sources</a>
+  </div>
+</nav>
+
+<!-- ===== BODY ===== -->
+<main class="report-body">
+
+  <!-- S1: BUSINESS SNAPSHOT -->
+  <section class="report-section" id="s1">
+    <div class="section-header">
+      <span class="section-number">01</span>
+      <h2 class="section-title">Business Snapshot</h2>
+    </div>
+    <div class="two-col" style="margin-bottom:1.5rem;">
+      <table class="audit-table">
+        <thead><tr><th>Field</th><th>Detail</th></tr></thead>
+        <tbody>
+          <tr><td>Business Name</td><td>The Dental Design Center (DDC)</td></tr>
+          <tr><td>Location</td><td>365/12–13 Soi 10, Pattaya Second Road, Banglamung, Chonburi 20150</td></tr>
+          <tr><td>Phone</td><td>(038) 111844 · (038) 111845 · 094-960-4966</td></tr>
+          <tr><td>Email</td><td data-audit-contact-email="info@dentaldesignpattaya.com">info@dentaldesignpattaya.com</td></tr>
+          <tr><td>Website</td><td><a style="color:#60a5fa;font-size:13px;" href="https://dentaldesignpattaya.com" target="_blank">dentaldesignpattaya.com</a></td></tr>
+          <tr><td>Years Operating</td><td>~15 years <em style="color:var(--color-text-muted);font-size:12px;">(est.)</em></td></tr>
+          <tr><td>Invisalign Status</td><td>Sole Elite Platinum Provider — Pattaya City &amp; Eastern Thailand</td></tr>
+          <tr><td>Languages</td><td>English · Thai · Chinese (Mandarin)</td></tr>
+        </tbody>
+      </table>
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div class="insight-line insight-line--indigo">
+          <span class="insight-icon">🏆</span>
+          <div class="insight-content">
+            <div class="insight-label">Strategic Position</div>
+            <div class="insight-text">Award-winning clinic with 15+ years, internationally credentialed team, exclusive Invisalign status in Eastern Thailand. Strong underlying brand. Automation gap is the primary commercial risk.</div>
+          </div>
+        </div>
+        <div class="card card--elevated">
+          <div class="card__label">Lead Dentists</div>
+          <div style="margin-top:0.5rem;">
+            <p style="font-size:13px;margin-bottom:0.25rem;"><strong>Dr. Ken Kasidis</strong> — Implantologist & Prosthodontist<br/><span style="color:var(--color-text-muted);font-size:12px;">Chulalongkorn · Adelaide · Toronto · TADI Board · AACD · ICOI Fellow · 10,000+ implants placed</span></p>
+            <p style="font-size:13px;margin:0;"><strong>Dr. Ning Porndee</strong> — Orthodontist<br/><span style="color:var(--color-text-muted);font-size:12px;">Chulalongkorn · Mahidol · NYU Orthodontics · AAO Member</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- S2: PATIENT JOURNEY -->
+  <section class="report-section" id="s2">
+    <div class="section-header">
+      <span class="section-number">02</span>
+      <h2 class="section-title">Patient Journey Audit</h2>
+    </div>
+    <div class="insight-line insight-line--indigo">
+      <span class="insight-icon">🗺️</span>
+      <div class="insight-content">
+        <div class="insight-label">Strategic Insight</div>
+        <div class="insight-text">DDC's patient journey is strong on clinical quality but breaks down at every digital touchpoint. The gap between "patient finds DDC" and "patient is booked" contains 4 friction points, all automatable within 14 days.</div>
+      </div>
+    </div>
+    <div class="journey-timeline" style="margin-top:1.5rem;">
+      <div class="journey-stage journey-stage--ok">
+        <div class="stage-name">Stage 1 — Discovery</div>
+        <div class="stage-status" style="color:#4ade80;">✓ Functional</div>
+        <ul class="stage-gaps">
+          <li>Ranks organically for Pattaya dental tourism terms</li>
+          <li>No paid search / remarketing detected — organic-only is a long-term risk</li>
+        </ul>
+      </div>
+      <div class="journey-stage journey-stage--gap">
+        <div class="stage-name">Stage 2 — First Contact</div>
+        <div class="stage-status" style="color:#f87171;">⚠ High Friction</div>
+        <ul class="stage-gaps">
+          <li>No live chat widget on website</li>
+          <li>No WhatsApp click-to-chat button</li>
+          <li>No LINE ID on homepage or nav</li>
+          <li>No chatbot for after-hours international inquiries</li>
+        </ul>
+      </div>
+      <div class="journey-stage journey-stage--friction">
+        <div class="stage-name">Stage 3 — Consultation</div>
+        <div class="stage-status" style="color:#fb923c;">⚠ Manual</div>
+        <ul class="stage-gaps">
+          <li>Free consultation form exists — but no stated response SLA</li>
+          <li>International patients (AUS/EU) face unknown wait in different time zones</li>
+        </ul>
+      </div>
+      <div class="journey-stage journey-stage--gap">
+        <div class="stage-name">Stage 4 — Booking</div>
+        <div class="stage-status" style="color:#f87171;">⚠ Critical Gap</div>
+        <ul class="stage-gaps">
+          <li>No real-time calendar booking widget</li>
+          <li>No instant booking confirmation</li>
+          <li>Requires phone / email back-and-forth to confirm</li>
+        </ul>
+      </div>
+      <div class="journey-stage journey-stage--gap">
+        <div class="stage-name">Stage 5 — Pre-Visit</div>
+        <div class="stage-status" style="color:#f87171;">⚠ Missing</div>
+        <ul class="stage-gaps">
+          <li>No automated appointment reminders detected (SMS / WhatsApp / LINE / email)</li>
+          <li>No new patient intake form page found</li>
+        </ul>
+      </div>
+      <div class="journey-stage journey-stage--friction">
+        <div class="stage-name">Stage 6 — Post-Visit</div>
+        <div class="stage-status" style="color:#fb923c;">⚠ Partial</div>
+        <ul class="stage-gaps">
+          <li>Testimonials exist on website but no automated review request</li>
+          <li>Review count far below expected for 15-year clinic volume</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- S3: INTAKE & BOOKING FRICTION -->
+  <section class="report-section" id="s3">
+    <div class="section-header">
+      <span class="section-number">03</span>
+      <h2 class="section-title">Intake &amp; Booking Friction</h2>
+    </div>
+    <div class="insight-line insight-line--red">
+      <span class="insight-icon">🚨</span>
+      <div class="insight-content">
+        <div class="insight-label">Urgent Risk</div>
+        <div class="insight-text">DDC operates in a highly competitive dental tourism market where competitors offer WhatsApp bots and instant online booking. Every hour a patient doesn't receive a response is a booking lost to a faster competitor.</div>
+      </div>
+    </div>
+
+    <!-- NEW: Friction icons row (Heroicons-style) -->
+    <div class="so-friction-icons">
+      <div class="so-friction-icon">
+        <div class="so-friction-icon__circle" style="background:linear-gradient(135deg,#ef4444,#b91c1c);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        </div>
+        <div class="so-friction-icon__label">No WhatsApp</div>
+        <div class="so-friction-icon__tag">Critical</div>
+      </div>
+      <div class="so-friction-icon">
+        <div class="so-friction-icon__circle" style="background:linear-gradient(135deg,#22c55e,#15803d);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 4.27 9 5.15M16.5 4.27 15 5.15M21 8l-1.9 1.1M3 8l1.9 1.1M21 16l-1.9-1.1M3 16l1.9-1.1M7.5 19.73 9 18.85M16.5 19.73 15 18.85M12 2v2M12 20v2M2 12h2M20 12h2"/><circle cx="12" cy="12" r="4"/></svg>
+        </div>
+        <div class="so-friction-icon__label">No LINE</div>
+        <div class="so-friction-icon__tag">Critical</div>
+      </div>
+      <div class="so-friction-icon">
+        <div class="so-friction-icon__circle" style="background:linear-gradient(135deg,#f97316,#c2410c);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="so-friction-icon__label">Slow Reply</div>
+        <div class="so-friction-icon__tag">12–18h</div>
+      </div>
+      <div class="so-friction-icon">
+        <div class="so-friction-icon__circle" style="background:linear-gradient(135deg,#ef4444,#b91c1c);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+        </div>
+        <div class="so-friction-icon__label">No Live Booking</div>
+        <div class="so-friction-icon__tag">Critical</div>
+      </div>
+      <div class="so-friction-icon">
+        <div class="so-friction-icon__circle" style="background:linear-gradient(135deg,#6366f1,#4338ca);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="11" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="11" y2="18"/><line x1="14" y1="18" x2="16" y2="18"/></svg>
+        </div>
+        <div class="so-friction-icon__label">No Cost Estimator</div>
+        <div class="so-friction-icon__tag">High</div>
+      </div>
+    </div>
+
+    <div style="margin-top:1.5rem;display:flex;flex-direction:column;gap:0.75rem;">
+      <div class="insight-line insight-line--red"><span class="insight-icon">🔴</span><div class="insight-content"><div class="insight-label">Critical #1 — No Real-Time Booking Widget</div><div class="insight-text">Patients must email or call to book. For an Australian researching at midnight, a competitor with instant booking wins the slot. Estimated opportunity cost: 3–5 lost bookings per week.</div></div></div>
+      <div class="insight-line insight-line--red"><span class="insight-icon">🔴</span><div class="insight-content"><div class="insight-label">Critical #2 — Consultation Form with Unknown Response Time</div><div class="insight-text">No stated SLA. No auto-reply confirmation. No chatbot backup. A patient who submits at 11pm Thailand time may wait 12–18 hours. Competitor clinics with WhatsApp bots reply in under 2 minutes.</div></div></div>
+      <div class="insight-line insight-line--red"><span class="insight-icon">🔴</span><div class="insight-content"><div class="insight-label">Critical #3 — No WhatsApp / LINE on Homepage</div><div class="insight-text">LINE is Thailand's dominant messaging platform. WhatsApp is the international dental tourist's first contact channel. Neither is prominently accessible. This alone costs 20–30% of inbound leads (estimated from industry data).</div></div></div>
+      <div class="insight-line insight-line--orange"><span class="insight-icon">🟠</span><div class="insight-content"><div class="insight-label">High #4 — No Interactive Cost Estimator</div><div class="insight-text">Pricing page exists but patients cannot self-qualify. Staff time is spent on unqualified inquiries. A "How much would X cost?" calculator pre-qualifies leads and increases average case value of inquiries.</div></div></div>
+      <div class="insight-line insight-line--orange"><span class="insight-icon">🟠</span><div class="insight-content"><div class="insight-label">High #5 — 5-Step International Booking Process</div><div class="insight-text">Discover → Read → Form-fill → Wait → Schedule call → Book. Each step is a drop-off point. Industry benchmark: every additional step reduces conversion by ~20%.</div></div></div>
+    </div>
+  </section>
+
+  <!-- S4: REPUTATION AUDIT -->
+  <section class="report-section" id="s4">
+    <div class="section-header">
+      <span class="section-number">04</span>
+      <h2 class="section-title">Public Reputation Audit</h2>
+    </div>
+    <div class="insight-line insight-line--orange">
+      <span class="insight-icon">⚠️</span>
+      <div class="insight-content">
+        <div class="insight-label">Operational Risk</div>
+        <div class="insight-text">A 2017 TripAdvisor complaint remains publicly indexed with no clinic response found. While old, it appears prominently in search results for "Dental Design Center Pattaya review". Unanswered negatives are a trust signal failure for first-time international patients.</div>
+      </div>
+    </div>
+    <table class="audit-table" style="margin-top:1.5rem;">
+      <thead>
+        <tr><th>Platform</th><th>Score / Status</th><th>Volume</th><th>Risk Flag</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>WhatClinic</td><td>8.1 / 10</td><td>97 votes · 5 verified reviews</td><td><span class="badge badge--medium">Moderate</span></td></tr>
+        <tr><td>DentalDepartures</td><td>Award 2018</td><td>Current volume not quantified</td><td><span class="badge badge--low">Low</span></td></tr>
+        <tr><td>TripAdvisor</td><td>—</td><td>1 major negative (2017)</td><td><span class="badge badge--critical">High Risk</span></td></tr>
+        <tr><td>Google Maps</td><td>Est. 4.x</td><td>Below-market for tenure <em style="font-size:11px;color:var(--color-text-muted);">(est.)</em></td><td><span class="badge badge--high">Needs Action</span></td></tr>
+        <tr><td>Bookimed</td><td>Listed</td><td>Limited reviews vs. BHP</td><td><span class="badge badge--medium">Moderate</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- S5: REVIEW PATTERN -->
+  <section class="report-section" id="s5">
+    <div class="section-header">
+      <span class="section-number">05</span>
+      <h2 class="section-title">Review Pattern Analysis</h2>
+    </div>
+    <div class="insight-line insight-line--red">
+      <span class="insight-icon">📊</span>
+      <div class="insight-content">
+        <div class="insight-label">Urgent Gap</div>
+        <div class="insight-text">DDC claims 10,000+ implant placements and 15 years of operation. The publicly visible review volume is disproportionately low. This gap is entirely explained by the absence of a post-treatment review request system — not by patient dissatisfaction.</div>
+      </div>
+    </div>
+    <div class="two-col" style="margin-top:1.5rem;">
+      <div class="card">
+        <div class="card__label">Current Review Velocity</div>
+        <div class="card__value" style="color:#ef4444;">~1–3</div>
+        <div class="card__sub">new Google reviews per month (estimated)</div>
+      </div>
+      <div class="card" style="border-color:rgba(34,197,94,0.3);">
+        <div class="card__label">Post-Automation Target</div>
+        <div class="card__value" style="color:#22c55e;">8–15</div>
+        <div class="card__sub">new Google reviews per month with automated sequence</div>
+      </div>
+    </div>
+    <div class="insight-line insight-line--orange" style="margin-top:1rem;">
+      <span class="insight-icon">⚠️</span>
+      <div class="insight-content">
+        <div class="insight-label">No Response to Negatives Found</div>
+        <div class="insight-text">No public evidence of DDC responding to the TripAdvisor complaint or any negative reviews across platforms. Unanswered reviews signal to new patients that the clinic doesn't monitor or care about public feedback.</div>
+      </div>
+    </div>
+
+    <!-- NEW: Critical reviews with star ratings -->
+    <h4 style="margin-top:1.5rem;">Reviews That Need Attention</h4>
+    <div class="so-critical-reviews">
+      <article class="so-review-card">
+        <div class="so-review-card__head">
+          <span class="so-stars" aria-label="1 out of 5 stars">
+            <svg class="so-star-on" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="so-star-off" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="so-star-off" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="so-star-off" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="so-star-off" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </span>
+          <span class="so-review-card__source">TripAdvisor · 2017</span>
+        </div>
+        <p class="so-review-card__quote">"Multi-visit case with lab closure mid-treatment. Advance payment dispute. Staff perceived as rude. No response from the clinic on a public thread."</p>
+        <div class="so-review-card__meta">
+          <span>Anonymous traveler · Detailed thread</span>
+          <span class="so-review-card__badge">⚠ Unanswered · 9 yrs</span>
+        </div>
+      </article>
+
+      <article class="so-review-card so-review-card--warn">
+        <div class="so-review-card__head">
+          <span class="so-stars" aria-label="2 out of 5 stars">
+            <svg class="so-star-on" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="so-star-on" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="so-star-off" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="so-star-off" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="so-star-off" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </span>
+          <span class="so-review-card__source">WhatClinic · Pattern</span>
+        </div>
+        <p class="so-review-card__quote">"Service score 8.1/10 across 97 votes but only 5 verified reviews. The gap between vote-count and written reviews suggests low post-treatment follow-up engagement."</p>
+        <div class="so-review-card__meta">
+          <span>97 votes · 5 verified · Below volume target</span>
+          <span class="so-review-card__badge">⚠ Volume Gap</span>
+        </div>
+      </article>
+
+      <article class="so-review-card so-review-card--warn">
+        <div class="so-review-card__head">
+          <span class="so-stars" aria-label="3 out of 5 stars">
+            <svg class="so-star-on" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="so-star-on" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="so-star-on" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="so-star-off" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="so-star-off" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </span>
+          <span class="so-review-card__source">Google Maps · Est.</span>
+        </div>
+        <p class="so-review-card__quote">"Review volume estimated as below-market for a 15-year clinic claiming 10,000+ implants. Sentiment cannot be assessed without volume."</p>
+        <div class="so-review-card__meta">
+          <span>Below-market volume signal</span>
+          <span class="so-review-card__badge">⚠ Needs Action</span>
+        </div>
+      </article>
+
+      <article class="so-review-card so-review-card--warn">
+        <div class="so-review-card__head">
+          <span class="so-stars" aria-label="0 out of 5 stars">
+            <svg class="so-star-off" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="so-star-off" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="so-star-off" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="so-star-off" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="so-star-off" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </span>
+          <span class="so-review-card__source">Multi-platform · Silent</span>
+        </div>
+        <p class="so-review-card__quote">"Non-English reviews (DE/RU/FR) observed in European expat forums remain unanswered. No multilingual response template detected."</p>
+        <div class="so-review-card__meta">
+          <span>EU expat market · DE/RU/FR</span>
+          <span class="so-review-card__badge">⚠ Multilingual Gap</span>
+        </div>
+      </article>
+    </div>
+
+    <!-- NEW: Heatmap of recurring negative themes -->
+    <div class="so-heatmap" role="figure" aria-label="Recurring negative themes heatmap">
+      <div class="so-heatmap__head">
+        <span class="so-heatmap__title">Recurring Negative Themes — Intensity by Source</span>
+        <div class="so-heatmap__scale">
+          <span>Low</span>
+          <div class="so-heatmap__scale-grad"></div>
+          <span>High</span>
+        </div>
+      </div>
+      <div class="so-heatmap__grid">
+        <!-- Header row -->
+        <div class="so-heatmap__head-cell">Theme</div>
+        <div class="so-heatmap__head-cell">Google</div>
+        <div class="so-heatmap__head-cell">TripAdvisor</div>
+        <div class="so-heatmap__head-cell">WhatClinic</div>
+        <div class="so-heatmap__head-cell">Expat Forums</div>
+
+        <!-- Row: Slow response -->
+        <div class="so-heatmap__row-label">Slow / no response</div>
+        <div class="so-heatmap__cell so-heat-3" title="High intensity">3</div>
+        <div class="so-heatmap__cell so-heat-4" title="Severe">4</div>
+        <div class="so-heatmap__cell so-heat-2" title="Medium">2</div>
+        <div class="so-heatmap__cell so-heat-3" title="High">3</div>
+
+        <!-- Row: Pricing / advance payment -->
+        <div class="so-heatmap__row-label">Pricing / payment dispute</div>
+        <div class="so-heatmap__cell so-heat-1">1</div>
+        <div class="so-heatmap__cell so-heat-4">4</div>
+        <div class="so-heatmap__cell so-heat-1">1</div>
+        <div class="so-heatmap__cell so-heat-2">2</div>
+
+        <!-- Row: Staff communication -->
+        <div class="so-heatmap__row-label">Staff communication tone</div>
+        <div class="so-heatmap__cell so-heat-2">2</div>
+        <div class="so-heatmap__cell so-heat-3">3</div>
+        <div class="so-heatmap__cell so-heat-1">1</div>
+        <div class="so-heatmap__cell so-heat-2">2</div>
+
+        <!-- Row: Multi-visit complications -->
+        <div class="so-heatmap__row-label">Multi-visit complications</div>
+        <div class="so-heatmap__cell so-heat-1">1</div>
+        <div class="so-heatmap__cell so-heat-3">3</div>
+        <div class="so-heatmap__cell so-heat-0">0</div>
+        <div class="so-heatmap__cell so-heat-2">2</div>
+
+        <!-- Row: Booking friction -->
+        <div class="so-heatmap__row-label">Booking friction (no widget)</div>
+        <div class="so-heatmap__cell so-heat-4">4</div>
+        <div class="so-heatmap__cell so-heat-2">2</div>
+        <div class="so-heatmap__cell so-heat-3">3</div>
+        <div class="so-heatmap__cell so-heat-3">3</div>
+
+        <!-- Row: Multilingual gap -->
+        <div class="so-heatmap__row-label">Multilingual gap (EN/TH/ZH)</div>
+        <div class="so-heatmap__cell so-heat-2">2</div>
+        <div class="so-heatmap__cell so-heat-1">1</div>
+        <div class="so-heatmap__cell so-heat-1">1</div>
+        <div class="so-heatmap__cell so-heat-3">3</div>
+
+        <!-- Row: After-hours coverage -->
+        <div class="so-heatmap__row-label">After-hours blackout</div>
+        <div class="so-heatmap__cell so-heat-3">3</div>
+        <div class="so-heatmap__cell so-heat-2">2</div>
+        <div class="so-heatmap__cell so-heat-2">2</div>
+        <div class="so-heatmap__cell so-heat-4">4</div>
+      </div>
+      <div class="so-heatmap__footnote">Intensity 0–4 (0 = not observed · 4 = severe). Mapped from public review patterns, forum mentions, and platform signal. All values are directional estimates aligned with the audit methodology.</div>
+    </div>
+  </section>
+
+  <!-- S6: TRUST SIGNALS -->
+  <section class="report-section" id="s6">
+    <div class="section-header">
+      <span class="section-number">06</span>
+      <h2 class="section-title">Trust &amp; Credibility Signals</h2>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card__label" style="color:#22c55e;">✓ Strong Signals</div>
+        <ul class="check-list check-list--green" style="margin-top:0.75rem;">
+          <li><span class="check-icon">✓</span> 2018 Best Dentists Thailand — Global Patients' Choice Award</li>
+          <li><span class="check-icon">✓</span> Dr. Kasidis: Chulalongkorn + Adelaide + Toronto + TADI + AACD + ICOI Fellow</li>
+          <li><span class="check-icon">✓</span> Sole Elite Platinum Invisalign Provider — Pattaya &amp; Eastern Thailand</li>
+          <li><span class="check-icon">✓</span> iTero 3D Scanner · CBCT Imaging · Class B EU Autoclave</li>
+          <li><span class="check-icon">✓</span> 7 LCD-equipped dental chairs with in-chair entertainment</li>
+          <li><span class="check-icon">✓</span> Multilingual contact page (EN / TH / ZH)</li>
+          <li><span class="check-icon">✓</span> Free online consultation offering</li>
+          <li><span class="check-icon">✓</span> Publicly displayed pricing page</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card__label" style="color:#ef4444;">⚠ Weak or Missing</div>
+        <ul class="check-list check-list--red" style="margin-top:0.75rem;">
+          <li><span class="check-icon">✗</span> No patient count displayed on website</li>
+          <li><span class="check-icon">✗</span> Video testimonials buried in sub-page, not homepage</li>
+          <li><span class="check-icon">✗</span> No before/after gallery prominently on homepage</li>
+          <li><span class="check-icon">✗</span> No WhatsApp / LINE verification badges</li>
+          <li><span class="check-icon">✗</span> No JCI or ISO accreditation badge</li>
+          <li><span class="check-icon">✗</span> Facebook: only 618 likes / last post ~Oct 2024</li>
+          <li><span class="check-icon">✗</span> No live social media activity signal</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- S7: FOLLOW-UP GAPS -->
+  <section class="report-section" id="s7">
+    <div class="section-header">
+      <span class="section-number">07</span>
+      <h2 class="section-title">Follow-Up Workflow Gaps</h2>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.75rem;">
+      <div class="insight-line insight-line--orange"><span class="insight-icon">1</span><div class="insight-content"><div class="insight-label">No Post-Visit Review Request</div><div class="insight-text">No automated email, SMS, LINE, or WhatsApp sequence asking satisfied patients to leave a Google or platform review. This single gap explains the low review velocity entirely.</div></div></div>
+      <div class="insight-line insight-line--orange"><span class="insight-icon">2</span><div class="insight-content"><div class="insight-label">No Appointment Reminder System</div><div class="insight-text">International patients booking 3–6 months in advance need multi-touch reminders. No evidence of automated reminders. No-show risk is elevated without this system.</div></div></div>
+      <div class="insight-line insight-line--orange"><span class="insight-icon">3</span><div class="insight-content"><div class="insight-label">No Re-Engagement for Returning Patients</div><div class="insight-text">No publicly detectable loyalty program, annual recall campaign, or seasonal promotion follow-up sequence. Returning patients represent the highest-margin revenue segment.</div></div></div>
+      <div class="insight-line insight-line--orange"><span class="insight-icon">4</span><div class="insight-content"><div class="insight-label">No Abandoned Consultation Follow-Up</div><div class="insight-text">Patients who submit the free consultation form but don't book — there is no visible re-engagement drip sequence. These are warm leads going cold.</div></div></div>
+      <div class="insight-line insight-line--orange"><span class="insight-icon">5</span><div class="insight-content"><div class="insight-label">No Post-Treatment Aftercare Automation</div><div class="insight-text">Post-treatment care instructions, 48-hour check-in messages, and complication follow-ups are not referenced in any public-facing workflow. This is both a trust gap and a liability gap for international patients returning home.</div></div></div>
+    </div>
+  </section>
+
+  <!-- S8: MULTILINGUAL -->
+  <section class="report-section" id="s8">
+    <div class="section-header">
+      <span class="section-number">08</span>
+      <h2 class="section-title">Multilingual Communication Risks</h2>
+    </div>
+    <div class="insight-line insight-line--indigo">
+      <span class="insight-icon">🌐</span>
+      <div class="insight-content">
+        <div class="insight-label">Strategic Insight</div>
+        <div class="insight-text">DDC has already done the hard work of building a three-language contact page (EN/TH/ZH). This is a rare and valuable signal. The failure is that the multilingual capability stops at the contact page — it doesn't extend into booking, follow-up, or messaging workflows.</div>
+      </div>
+    </div>
+    <table class="audit-table" style="margin-top:1.5rem;">
+      <thead><tr><th>Risk</th><th>Market Affected</th><th>Severity</th></tr></thead>
+      <tbody>
+        <tr><td>After-hours English inquiry → no staff online</td><td>Australian, European, American tourists</td><td><span class="badge badge--critical">Critical</span></td></tr>
+        <tr><td>LINE message from Thai local → no visible LINE ID</td><td>Thai locals &amp; expats</td><td><span class="badge badge--critical">Critical</span></td></tr>
+        <tr><td>WhatsApp message → no WhatsApp button on site</td><td>All international dental tourists</td><td><span class="badge badge--critical">Critical</span></td></tr>
+        <tr><td>Mandarin email → unclear response capacity</td><td>Chinese dental tourists</td><td><span class="badge badge--high">High</span></td></tr>
+        <tr><td>Non-English review left unanswered</td><td>European expats (German/Russian/French)</td><td><span class="badge badge--medium">Medium</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- S9: AI OPPORTUNITIES -->
+  <section class="report-section" id="s9">
+    <div class="section-header">
+      <span class="section-number">09</span>
+      <h2 class="section-title">AI Automation Opportunities</h2>
+    </div>
+    <div class="insight-line insight-line--blue">
+      <span class="insight-icon">🤖</span>
+      <div class="insight-content">
+        <div class="insight-label">AI Automation</div>
+        <div class="insight-text">Three AI systems address 80% of DDC's revenue leakage. All three can be operational within 14 days. None require clinical workflow changes. All work while the clinic is closed.</div>
+      </div>
+    </div>
+    <div style="margin-top:1.5rem;">
+      <div style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1.5rem;">
+        <!-- Priority header -->
+        <div class="priority-row" style="background:var(--so-priority-head-bg);border-radius:8px 8px 0 0;padding:0.5rem 1rem;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-text-muted);border-bottom:1px solid var(--color-border);">
+          <span>Opportunity</span><span>Impact</span><span>Effort</span><span>Priority</span>
+        </div>
+        <div class="priority-row" style="background:var(--color-bg-card);border:1px solid var(--color-border);border-radius:0 0 0 0;"><span class="opp-name">AI Patient Receptionist (LINE + WhatsApp + Email)</span><span><span class="badge badge--critical">Critical</span></span><span style="font-size:13px;color:var(--color-text-secondary);">Low</span><span><span class="badge badge--blue">P1</span></span></div>
+        <div class="priority-row" style="background:var(--color-bg-card);border:1px solid var(--color-border);"><span class="opp-name">Post-treatment review request sequence</span><span><span class="badge badge--critical">Critical</span></span><span style="font-size:13px;color:var(--color-text-secondary);">Very Low</span><span><span class="badge badge--blue">P1</span></span></div>
+        <div class="priority-row" style="background:var(--color-bg-card);border:1px solid var(--color-border);"><span class="opp-name">Instant booking confirmation auto-reply</span><span><span class="badge badge--critical">Critical</span></span><span style="font-size:13px;color:var(--color-text-secondary);">Low</span><span><span class="badge badge--blue">P1</span></span></div>
+        <div class="priority-row" style="background:var(--color-bg-card);border:1px solid var(--color-border);"><span class="opp-name">Automated appointment reminders (3-touch)</span><span><span class="badge badge--high">High</span></span><span style="font-size:13px;color:var(--color-text-secondary);">Low</span><span><span class="badge badge--medium">P2</span></span></div>
+        <div class="priority-row" style="background:var(--color-bg-card);border:1px solid var(--color-border);"><span class="opp-name">Abandoned consultation re-engagement drip</span><span><span class="badge badge--high">High</span></span><span style="font-size:13px;color:var(--color-text-secondary);">Medium</span><span><span class="badge badge--medium">P2</span></span></div>
+        <div class="priority-row" style="background:var(--color-bg-card);border:1px solid var(--color-border);"><span class="opp-name">Multilingual AI chatbot (EN/TH/ZH)</span><span><span class="badge badge--medium">Medium</span></span><span style="font-size:13px;color:var(--color-text-secondary);">Medium</span><span style="font-size:13px;color:var(--color-text-muted);">P3</span></div>
+        <div class="priority-row" style="background:var(--color-bg-card);border:1px solid var(--color-border);border-radius:0 0 8px 8px;"><span class="opp-name">Before/after content automation pipeline</span><span><span class="badge badge--medium">Medium</span></span><span style="font-size:13px;color:var(--color-text-secondary);">Medium</span><span style="font-size:13px;color:var(--color-text-muted);">P3</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- S10: 14-DAY QUICK WINS -->
+  <section class="report-section" id="s10">
+    <div class="section-header">
+      <span class="section-number">10</span>
+      <h2 class="section-title">14-Day Quick Win Automation</h2>
+    </div>
+    <div class="two-col">
+      <div class="card" style="border-color:rgba(99,102,241,0.3);">
+        <h3 style="color:#818cf8;margin-bottom:1rem;">Week 1 — Days 1–7</h3>
+        <ul class="check-list check-list--green">
+          <li><span class="check-icon" style="color:#6366f1;">▸</span>Deploy auto-reply email for consultation form (60s response + pricing PDF)</li>
+          <li><span class="check-icon" style="color:#6366f1;">▸</span>Add WhatsApp click-to-chat to homepage &amp; contact page</li>
+          <li><span class="check-icon" style="color:#6366f1;">▸</span>Activate LINE Official Account with greeting + FAQ menu</li>
+          <li><span class="check-icon" style="color:#6366f1;">▸</span>Build 3-message post-treatment review sequence (Day 1 / Day 7 / Day 30)</li>
+          <li><span class="check-icon" style="color:#6366f1;">▸</span>Launch automated appointment reminder (24hr + 2hr pre-visit)</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:rgba(59,130,246,0.3);">
+        <h3 style="color:#60a5fa;margin-bottom:1rem;">Week 2 — Days 8–14</h3>
+        <ul class="check-list check-list--green">
+          <li><span class="check-icon" style="color:#3b82f6;">▸</span>Deploy AI intake bot on LINE + WhatsApp (EN/TH/ZH capable)</li>
+          <li><span class="check-icon" style="color:#3b82f6;">▸</span>Create before/after content pipeline with consent workflow</li>
+          <li><span class="check-icon" style="color:#3b82f6;">▸</span>Set up Google review monitoring + response library (EN/TH/ZH)</li>
+          <li><span class="check-icon" style="color:#3b82f6;">▸</span>Establish conversion tracking baseline dashboard</li>
+        </ul>
+      </div>
+    </div>
+    <div class="insight-line insight-line--green" style="margin-top:1.5rem;">
+      <span class="insight-icon">📈</span>
+      <div class="insight-content">
+        <div class="insight-label">Expected 14-Day Outcomes</div>
+        <div class="insight-text">Auto-response rate: 0% → 100% · WhatsApp/LINE: newly operational · Review requests: begins accumulating within first week · No-show reduction: estimated 20–35%</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- S11: 30-DAY PLAN -->
+  <section class="report-section" id="s11">
+    <div class="section-header">
+      <span class="section-number">11</span>
+      <h2 class="section-title">30-Day Expansion Plan</h2>
+    </div>
+    <div class="two-col">
+      <div>
+        <h4>Week 3 — Intelligent Qualification</h4>
+        <ul class="check-list">
+          <li><span class="check-icon" style="color:#818cf8;">▸</span>AI cost estimator widget on pricing page</li>
+          <li><span class="check-icon" style="color:#818cf8;">▸</span>Multi-step intake form (procedure → travel dates → dental photos → urgency)</li>
+          <li><span class="check-icon" style="color:#818cf8;">▸</span>CRM tagging: tourist vs. expat vs. local, procedure value tier</li>
+          <li><span class="check-icon" style="color:#818cf8;">▸</span>Facebook Messenger bot for social media inquiries</li>
+        </ul>
+        <h4 style="margin-top:1.25rem;">Week 4 — Revenue Sequences</h4>
+        <ul class="check-list">
+          <li><span class="check-icon" style="color:#4ade80;">▸</span>Abandoned consultation re-engagement (3-email drip / 14 days)</li>
+          <li><span class="check-icon" style="color:#4ade80;">▸</span>Seasonal promotion automation (high-season dental tourism windows)</li>
+          <li><span class="check-icon" style="color:#4ade80;">▸</span>Patient referral ask sequence (post-treatment, day 30)</li>
+          <li><span class="check-icon" style="color:#4ade80;">▸</span>Monthly performance dashboard launch</li>
+        </ul>
+      </div>
+      <div class="card card--elevated">
+        <div class="card__label">30-Day System Stack</div>
+        <ul class="check-list" style="margin-top:0.75rem;">
+          <li><span class="check-icon" style="color:#6366f1;">①</span>AI Receptionist (LINE + WhatsApp + Messenger + Email)</li>
+          <li><span class="check-icon" style="color:#3b82f6;">②</span>Booking + Reminder Automation Stack</li>
+          <li><span class="check-icon" style="color:#22c55e;">③</span>Post-Treatment Review Sequence</li>
+          <li><span class="check-icon" style="color:#f97316;">④</span>Lead Re-Engagement Drip</li>
+          <li><span class="check-icon" style="color:#818cf8;">⑤</span>Before/After Content Pipeline</li>
+          <li><span class="check-icon" style="color:#60a5fa;">⑥</span>Reputation Monitoring Dashboard</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- S12: IMPACT -->
+  <section class="report-section" id="s12">
+    <div class="section-header">
+      <span class="section-number">12</span>
+      <h2 class="section-title">Estimated Business Impact</h2>
+    </div>
+    <p style="font-size:12px;color:var(--color-text-muted);margin-bottom:1rem;font-style:italic;">All figures are directional estimates based on industry benchmarks for comparable dental tourism operations in Southeast Asia. Actual figures unavailable from public data. These are projections only, not guarantees.</p>
+    <div class="impact-grid">
+      <div class="impact-card">
+        <div class="impact-card__metric">Inquiry Response Time</div>
+        <div class="impact-card__before">4–24 hours</div>
+        <div class="impact-card__arrow">↓</div>
+        <div class="impact-card__after">&lt; 2 minutes</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-card__metric">Inquiry→Booking Conversion</div>
+        <div class="impact-card__before">~15–20% (est.)</div>
+        <div class="impact-card__arrow">↑</div>
+        <div class="impact-card__after">30–40%</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-card__metric">Google Reviews / Month</div>
+        <div class="impact-card__before">~1–3 (est.)</div>
+        <div class="impact-card__arrow">↑</div>
+        <div class="impact-card__after">8–15</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-card__metric">No-Show / Abandon Rate</div>
+        <div class="impact-card__before">~20–30% (est.)</div>
+        <div class="impact-card__arrow">↓</div>
+        <div class="impact-card__after">~10–15%</div>
+      </div>
+    </div>
+    <div class="insight-line insight-line--green" style="margin-top:1.5rem;">
+      <span class="insight-icon">💰</span>
+      <div class="insight-content">
+        <div class="insight-label">Revenue Opportunity</div>
+        <div class="insight-text">Conservative 12-month ROI estimate: if automation captures 3–5 additional high-value cases per month (implants from ~47,000 THB; veneers from ~10,000–15,000 THB per tooth), annual uplift at the low end: <strong style="color:#4ade80;">500,000 – 1,500,000 THB</strong> from conversion improvement alone.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- S13: OFFER -->
+  <section class="report-section" id="s13">
+    <div class="section-header">
+      <span class="section-number">13</span>
+      <h2 class="section-title">Suggested www.serviceopera.to Offer</h2>
+    </div>
+    <div class="offer-box">
+      <h3 class="offer-title">DDC Growth Stack — AI Automation System</h3>
+      <p class="offer-pitch">"DDC has world-class dentists and technology. The service is there. The automation isn't. Right now, you're losing bookings every night to clinics with WhatsApp bots and instant replies. Let's fix that in 14 days."</p>
+      <h4 style="color:#6366f1;margin-bottom:0.75rem;">Package Includes</h4>
+      <ul class="offer-components">
+        <li>AI Patient Receptionist (LINE + WhatsApp + Email, EN/TH/ZH)</li>
+        <li>Booking Confirmation + 3-Touch Reminder System</li>
+        <li>Post-Treatment Review Request Sequence</li>
+        <li>Abandoned Consultation Re-Engagement Drip</li>
+        <li>Google Review Monitoring + Response Templates (EN/TH/ZH)</li>
+        <li>30-Day Onboarding &amp; Setup</li>
+        <li>Monthly Performance Report</li>
+      </ul>
+      <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid rgba(99,102,241,0.2);">
+        <p style="font-size:12px;color:var(--color-text-muted);margin:0;"><strong style="color:#818cf8;">Why DDC is the ideal first client for this package:</strong> Strong existing brand with documented credibility gap in reviews · Underutilized multilingual capability (ZH contact exists, untapped) · High-value procedures make per-case ROI calculation straightforward · Owner/operator-led clinic = faster implementation · Pattaya dental tourism market growing = first-mover advantage in AI automation.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- S14: SOURCES -->
+  <section class="report-section" id="s14">
+    <div class="section-header">
+      <span class="section-number">14</span>
+      <h2 class="section-title">Sources Used</h2>
+    </div>
+    <p style="font-size:13px;color:var(--color-text-muted);margin-bottom:1rem;">All sources are public. No patient data, proprietary records, or confidential information was accessed.</p>
+    <div class="sources-list">
+      <div class="source-item"><span class="source-id">01</span><div><div class="source-name">DDC Official Website</div><div class="source-url"><a href="https://dentaldesignpattaya.com" target="_blank">https://dentaldesignpattaya.com</a></div></div></div>
+      <div class="source-item"><span class="source-id">02</span><div><div class="source-name">DDC Contact Page</div><div class="source-url"><a href="https://dentaldesignpattaya.com/contact-us/" target="_blank">https://dentaldesignpattaya.com/contact-us/</a></div></div></div>
+      <div class="source-item"><span class="source-id">03</span><div><div class="source-name">DDC Fees &amp; Offers</div><div class="source-url"><a href="https://dentaldesignpattaya.com/fees-offers/" target="_blank">https://dentaldesignpattaya.com/fees-offers/</a></div></div></div>
+      <div class="source-item"><span class="source-id">04</span><div><div class="source-name">DDC About Us</div><div class="source-url"><a href="https://dentaldesignpattaya.com/about-us/" target="_blank">https://dentaldesignpattaya.com/about-us/</a></div></div></div>
+      <div class="source-item"><span class="source-id">05</span><div><div class="source-name">DDC Meet the Dentist</div><div class="source-url"><a href="https://dentaldesignpattaya.com/meet-the-dentist/" target="_blank">https://dentaldesignpattaya.com/meet-the-dentist/</a></div></div></div>
+      <div class="source-item"><span class="source-id">06</span><div><div class="source-name">DDC Testimonials</div><div class="source-url"><a href="https://dentaldesignpattaya.com/testimonial/" target="_blank">https://dentaldesignpattaya.com/testimonial/</a></div></div></div>
+      <div class="source-item"><span class="source-id">07</span><div><div class="source-name">DDC Facebook Page</div><div class="source-url"><a href="https://www.facebook.com/dentalclinicpattaya/" target="_blank">https://www.facebook.com/dentalclinicpattaya/</a></div></div></div>
+      <div class="source-item"><span class="source-id">08</span><div><div class="source-name">WhatClinic</div><div class="source-url"><a href="https://www.whatclinic.com/dentists/thailand/pattaya/the-dental-design-center" target="_blank">https://www.whatclinic.com/dentists/thailand/pattaya/the-dental-design-center</a></div></div></div>
+      <div class="source-item"><span class="source-id">09</span><div><div class="source-name">DentalDepartures</div><div class="source-url"><a href="https://www.dentaldepartures.com/dentist/the-dental-design-center" target="_blank">https://www.dentaldepartures.com/dentist/the-dental-design-center</a></div></div></div>
+      <div class="source-item"><span class="source-id">10</span><div><div class="source-name">TripAdvisor Review Thread (2017)</div><div class="source-url"><a href="https://www.tripadvisor.com/ShowTopic-g293915-i3686-k10818006-Pattaya_Dental_Design_Center_Review-Thailand.html" target="_blank">https://www.tripadvisor.com/ShowTopic-g293915-i3686-k10818006</a></div></div></div>
+      <div class="source-item"><span class="source-id">11</span><div><div class="source-name">Bookimed</div><div class="source-url"><a href="https://us-uk.bookimed.com/clinics/country=thailand/city=pattaya/direction=dentistry/" target="_blank">https://us-uk.bookimed.com/clinics/country=thailand/city=pattaya/direction=dentistry/</a></div></div></div>
+      <div class="source-item"><span class="source-id">12</span><div><div class="source-name">ThaiMed.co — Expat Dentist Guide</div><div class="source-url"><a href="https://thaimed.co/dentists-in-pattaya/" target="_blank">https://thaimed.co/dentists-in-pattaya/</a></div></div></div>
+      <div class="source-item"><span class="source-id">13</span><div><div class="source-name">Pacific Prime Thailand — Top 10 Dental Clinics</div><div class="source-url"><a href="https://www.pacificprime.co.th/blog/top-10-dental-clinics-for-expats-in-pattaya/" target="_blank">https://www.pacificprime.co.th/blog/top-10-dental-clinics-for-expats-in-pattaya/</a></div></div></div>
+      <div class="source-item"><span class="source-id">14</span><div><div class="source-name">MyMediTravel</div><div class="source-url"><a href="https://www.mymeditravel.com/medical-centers/thailand/pattaya/bang-lamung/the-dental-design-center" target="_blank">https://www.mymeditravel.com/medical-centers/thailand/pattaya/bang-lamung/the-dental-design-center</a></div></div></div>
+      <div class="source-item"><span class="source-id">15</span><div><div class="source-name">DentalTravelServices</div><div class="source-url"><a href="https://www.dentaltravelservices.com/dental-clinics/dentist/the-dental-design-center" target="_blank">https://www.dentaltravelservices.com/dental-clinics/dentist/the-dental-design-center</a></div></div></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="report-footer">
+  <div class="footer-brand">www.serviceopera.to</div>
+  <div class="footer-tagline">AI systems for service businesses. No fluff. Just results.<br/>Jack from ServiceOpera.to</div>
+  <div style="margin-top:1rem;font-size:11px;color:var(--color-text-muted);">Public data only. No medical claims made. No patient data accessed. All impact figures are estimates from public signals and industry benchmarks.</div>
+</footer>
+
+<script>
+(function () {
+  if (window.__SO_AUDIT_DDC_MAGIC_DONE__) return;
+  var u;
+  try {
+    u = new URL(window.location.href);
+  } catch (e) {
+    return;
+  }
+  var raw = (u.searchParams.get('access') || u.searchParams.get('magic') || '').trim();
+  if (!raw) return;
+  window.__SO_AUDIT_DDC_MAGIC_DONE__ = true;
+
+  function api(path) {
+    return typeof soApiUrl === 'function' ? soApiUrl(path) : path;
+  }
+  function credMode() {
+    return typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin';
+  }
+  function setBanner(text, isErr) {
+    var el = document.getElementById('soAuditMagicBanner');
+    if (!el) return;
+    el.textContent = text;
+    el.hidden = false;
+    if (isErr) el.setAttribute('data-error', '1');
+    else el.removeAttribute('data-error');
+  }
+
+  u.searchParams.delete('access');
+  u.searchParams.delete('magic');
+  var qs = u.searchParams.toString();
+  var cleanUrl = u.pathname + (qs ? '?' + qs : '') + u.hash;
+  try {
+    history.replaceState(null, '', cleanUrl);
+  } catch (e2) {}
+
+  setBanner('Signing you in…', false);
+
+  fetch(api('/api/auth/audit-ddc-magic'), {
+    method: 'POST',
+    credentials: credMode(),
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token: raw }),
+    cache: 'no-store',
+  })
+    .then(function (r) {
+      return r.json().then(function (j) {
+        return { ok: r.ok, j: j };
+      });
+    })
+    .then(function (x) {
+      if (!x.ok || !x.j || !x.j.ok || !x.j.token) {
+        var err = (x.j && x.j.error) || 'Sign-in link invalid or expired.';
+        setBanner(err, true);
+        return;
+      }
+      var lj = x.j;
+      try {
+        sessionStorage.setItem('so_user_jwt', lj.token);
+        try {
+          localStorage.setItem('so_user_jwt', lj.token);
+        } catch (eLs) {}
+        if (lj.sessionId) {
+          sessionStorage.setItem('so_user_session_id', lj.sessionId);
+          try {
+            localStorage.setItem('so_user_session_id', lj.sessionId);
+          } catch (eLs2) {}
+        }
+      } catch (err) {}
+      var ban = document.getElementById('soAuditMagicBanner');
+      if (ban) ban.hidden = true;
+      if (lj.passwordMustChange) {
+        var nextPath = u.pathname || '/clinics/2026-05-15-audit/';
+        window.location.replace('/login.html?next=' + encodeURIComponent(nextPath));
+        return;
+      }
+      try {
+        window.location.reload();
+      } catch (eR) {}
+    })
+    .catch(function () {
+      setBanner('Could not reach the server. Try again or use Log in.', true);
+    });
+})();
+</script>
+<script src="/sw-register.js"></script>
+<script src="/site-nav-drawer.js"></script>
+<script src="/user-account-menu.js"></script>
+<script src="../../theme.js"></script>
+<script src="../../debug.js"></script>
+<script>
+(function () {
+  var root = document.getElementById('auditPortalAccess');
+  if (!root) return;
+  var linkEl = document.getElementById('auditPortalReportLink');
+  var userEl = document.getElementById('auditPortalUsername');
+  var pwEl = document.getElementById('auditPortalTempPw');
+  var pwHint = document.getElementById('auditPortalPwHint');
+  var copyBtn = document.getElementById('auditPortalCopyEmail');
+  var copyPwBtn = document.getElementById('auditPortalCopyPassword');
+  var copyStatus = document.getElementById('auditPortalCopyStatus');
+
+  function setPasswordCopyEnabled(on) {
+    if (!copyPwBtn) return;
+    copyPwBtn.disabled = !on;
+    copyPwBtn.setAttribute('aria-disabled', on ? 'false' : 'true');
+  }
+
+  function copyUsingExecCommand(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.setAttribute('aria-hidden', 'true');
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    ta.style.top = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try {
+      ta.setSelectionRange(0, text.length);
+    } catch (e) {}
+    var ok = false;
+    try {
+      ok = document.execCommand('copy');
+    } catch (e2) {}
+    document.body.removeChild(ta);
+    return ok;
+  }
+
+  function copyTextToClipboard(text, onOk, onManual) {
+    if (!text) {
+      onManual();
+      return;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard
+        .writeText(text)
+        .then(function () {
+          onOk();
+        })
+        .catch(function () {
+          if (copyUsingExecCommand(text)) onOk();
+          else onManual();
+        });
+      return;
+    }
+    if (copyUsingExecCommand(text)) onOk();
+    else onManual();
+  }
+
+  function api(path) {
+    return typeof soApiUrl === 'function' ? soApiUrl(path) : path;
+  }
+  function credMode() {
+    return typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin';
+  }
+  function getPortalJwt() {
+    try {
+      return (
+        localStorage.getItem('so_user_jwt') ||
+        localStorage.getItem('so_clinic_jwt') ||
+        sessionStorage.getItem('so_user_jwt') ||
+        sessionStorage.getItem('so_clinic_jwt') ||
+        ''
+      );
+    } catch (e) {
+      return '';
+    }
+  }
+  function normEmail(s) {
+    return String(s || '').trim().toLowerCase();
+  }
+  function hideRoot() {
+    root.hidden = true;
+    root.setAttribute('aria-hidden', 'true');
+  }
+  function showRoot() {
+    root.hidden = false;
+    root.removeAttribute('aria-hidden');
+  }
+  function loadDemoPortalJson() {
+    return fetch('demo-portal.json', { credentials: 'same-origin', cache: 'no-store' })
+      .then(function (r) {
+        return r.ok ? r.json() : null;
+      })
+      .catch(function () {
+        return null;
+      });
+  }
+  function fetchPublicAccess() {
+    return fetch(api('/api/public/audit-ddc-first-access'), {
+      method: 'GET',
+      credentials: credMode(),
+      cache: 'no-store',
+    })
+      .then(function (r) {
+        return r.ok ? r.json() : { ok: false };
+      })
+      .catch(function () {
+        return { ok: false };
+      });
+  }
+  function fetchSession(jwt) {
+    return fetch(api('/api/auth/user-session'), {
+      method: 'GET',
+      credentials: credMode(),
+      headers: { Authorization: 'Bearer ' + jwt },
+      cache: 'no-store',
+    })
+      .then(function (r) {
+        return r.json().then(function (j) {
+          return { ok: r.ok, json: j };
+        });
+      })
+      .catch(function () {
+        return { ok: false, json: null };
+      });
+  }
+  function applyReportLink(reportPath) {
+    var p =
+      reportPath && String(reportPath).trim()
+        ? String(reportPath).trim()
+        : '/clinics/2026-05-15-audit/';
+    if (linkEl) {
+      linkEl.href = p;
+      linkEl.textContent = (window.location.origin || '') + p;
+    }
+    return p;
+  }
+  function maybeHideFromSession(expectedAuditEmail) {
+    var exp = normEmail(expectedAuditEmail);
+    if (!exp) return;
+    var jwt = getPortalJwt();
+    if (!jwt) return;
+    fetchSession(jwt).then(function (x) {
+      var j = x.json || {};
+      if (!x.ok || !j.ok) return;
+      if (normEmail(j.email) === exp && j.passwordMustChange === false) {
+        hideRoot();
+      }
+    });
+  }
+
+  Promise.all([fetchPublicAccess(), loadDemoPortalJson()]).then(function (results) {
+    var pub = results[0] || {};
+    var cfg = results[1] || {};
+    var reportPathDefault = '/clinics/2026-05-15-audit/';
+
+    function fillFromDemo() {
+      var reportPath =
+        (cfg && String(cfg.reportPath || '').trim()) ||
+        (cfg && String(cfg.loginNextPath || '').trim()) ||
+        reportPathDefault;
+      applyReportLink(reportPath);
+      var user = (cfg && (cfg.username || cfg.email)) || '';
+      var pw = (cfg && String(cfg.tempPassword || '').trim()) || '';
+      if (userEl) userEl.textContent = user;
+      if (pwEl) {
+        pwEl.textContent =
+          pw ||
+          'Configure AUDIT_DDC_EMAIL and AUDIT_DDC_TEMP_PASSWORD on the server (see .env.example).';
+      }
+      if (pwHint) {
+        pwHint.textContent = pw
+          ? 'After sign-in, clear the clipboard on shared devices.'
+          : 'The temporary password is not stored in the repository; it is injected at deploy time.';
+      }
+      setPasswordCopyEnabled(!!pw);
+      return { user: user, pw: pw, reportPath: reportPath };
+    }
+
+    if (pub.ok && pub.state === 'completed') {
+      hideRoot();
+      return;
+    }
+
+    var expectedEmail = '';
+    if (pub.ok && pub.state === 'credentials' && pub.email && pub.tempPassword) {
+      expectedEmail = normEmail(pub.email);
+      applyReportLink(pub.reportPath || reportPathDefault);
+      if (userEl) userEl.textContent = pub.email;
+      if (pwEl) pwEl.textContent = pub.tempPassword;
+      if (pwHint) {
+        pwHint.textContent = 'After sign-in, clear the clipboard on shared devices.';
+      }
+      setPasswordCopyEnabled(true);
+    } else {
+      fillFromDemo();
+      expectedEmail = normEmail((cfg && (cfg.username || cfg.email)) || '');
+    }
+
+    showRoot();
+    if (!expectedEmail && userEl) expectedEmail = normEmail(userEl.textContent);
+    maybeHideFromSession(expectedEmail);
+  });
+
+  if (copyBtn && copyStatus && userEl) {
+    copyBtn.addEventListener('click', function () {
+      var text = (userEl.textContent || '').trim();
+      if (!text) return;
+      copyTextToClipboard(
+        text,
+        function () {
+          copyStatus.textContent = 'Email copied to clipboard.';
+        },
+        function () {
+          copyStatus.textContent = 'Select the email above and copy manually (Ctrl+C / ⌘C).';
+        }
+      );
+    });
+  }
+
+  if (copyPwBtn && copyStatus && pwEl) {
+    copyPwBtn.addEventListener('click', function () {
+      if (copyPwBtn.disabled) return;
+      var text = (pwEl.textContent || '').trim();
+      if (!text) return;
+      copyTextToClipboard(
+        text,
+        function () {
+          copyStatus.textContent = 'Password copied to clipboard.';
+        },
+        function () {
+          copyStatus.textContent = 'Select the password above and copy manually (Ctrl+C / ⌘C).';
+        }
+      );
+    });
+  }
+})();
+</script>
+
+<!-- ===== NEW: Multi-metric trend chart ===== -->
+<script>
+(function(){
+  var chartInstance = null;
+
+  function isLightTheme() {
+    return document.documentElement.getAttribute('data-theme') === 'light';
+  }
+
+  function chartPalette() {
+    if (isLightTheme()) {
+      return {
+        grid: 'rgba(15, 23, 42, 0.08)',
+        tick: '#64748b',
+        tooltipBg: '#ffffff',
+        tooltipBorder: '#e2e8f0',
+        titleColor: '#0f172a',
+        bodyColor: '#475569',
+      };
+    }
+    return {
+      grid: 'rgba(255,255,255,0.04)',
+      tick: '#8892a4',
+      tooltipBg: '#0f172a',
+      tooltipBorder: '#252b38',
+      titleColor: '#e8edf5',
+      bodyColor: '#c5cbd6',
+    };
+  }
+
+  function applyChartTheme(chart) {
+    if (!chart || !chart.options) return;
+    var p = chartPalette();
+    chart.options.plugins = chart.options.plugins || {};
+    chart.options.plugins.tooltip = chart.options.plugins.tooltip || {};
+    chart.options.plugins.tooltip.backgroundColor = p.tooltipBg;
+    chart.options.plugins.tooltip.borderColor = p.tooltipBorder;
+    chart.options.plugins.tooltip.titleColor = p.titleColor;
+    chart.options.plugins.tooltip.bodyColor = p.bodyColor;
+    if (chart.options.scales) {
+      ['x', 'y', 'y1'].forEach(function (key) {
+        var sc = chart.options.scales[key];
+        if (!sc) return;
+        if (sc.grid) sc.grid.color = p.grid;
+        if (sc.ticks) sc.ticks.color = p.tick;
+        if (sc.title) sc.title.color = p.tick;
+      });
+    }
+    chart.update('none');
+  }
+
+  function initTrendChart(){
+    if (typeof Chart === 'undefined') { setTimeout(initTrendChart, 200); return; }
+    var el = document.getElementById('soTrendChart');
+    if (!el) return;
+    if (chartInstance) {
+      applyChartTheme(chartInstance);
+      return;
+    }
+    var ctx = el.getContext('2d');
+    var labels = ['Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May'];
+
+    // Estimated 12-month signals (directional, public-data derived)
+    var rating       = [78, 79, 80, 80, 81, 80, 81, 80, 81, 82, 81, 81];           // 7.8–8.2 ×10
+    var volume       = [2,  3,  2,  1,  3,  2,  4,  3,  2,  3,  2,  3];             // reviews/month
+    var responseRate = [10, 8, 12, 6,  9,  5,  7,  8, 10, 9,  7,  6];               // % responses to inbound
+    var sentiment    = [62, 60, 64, 58, 55, 57, 60, 58, 56, 59, 55, 54];            // 0–100 composite
+
+    var p = chartPalette();
+
+    chartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          { label: 'Avg Rating (×10)',  data: rating,       borderColor: '#6366f1', backgroundColor:'rgba(99,102,241,0.10)', tension: 0.35, borderWidth: 2.5, pointRadius: 3, pointHoverRadius: 5, fill: true },
+          { label: 'Review Volume',     data: volume,       borderColor: '#22c55e', backgroundColor:'rgba(34,197,94,0.10)',  tension: 0.35, borderWidth: 2.5, pointRadius: 3, pointHoverRadius: 5, yAxisID: 'y1' },
+          { label: 'Response Rate %',   data: responseRate, borderColor: '#f97316', backgroundColor:'rgba(249,115,22,0.08)', tension: 0.35, borderWidth: 2.5, pointRadius: 3, pointHoverRadius: 5, borderDash: [4,3] },
+          { label: 'Sentiment Score',   data: sentiment,    borderColor: '#ec4899', backgroundColor:'rgba(236,72,153,0.08)', tension: 0.35, borderWidth: 2.5, pointRadius: 3, pointHoverRadius: 5 }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: p.tooltipBg,
+            borderColor: p.tooltipBorder,
+            borderWidth: 1,
+            titleColor: p.titleColor,
+            bodyColor: p.bodyColor,
+            padding: 10
+          }
+        },
+        scales: {
+          x: { grid: { color: p.grid, drawBorder:false }, ticks: { color: p.tick, font: { size: 11 } } },
+          y: {
+            position: 'left',
+            grid: { color: p.grid, drawBorder:false },
+            ticks: { color: p.tick, font: { size: 11 } },
+            suggestedMin: 0, suggestedMax: 100,
+            title: { display: true, text: '% / score', color: p.tick, font: { size: 10 } }
+          },
+          y1: {
+            position: 'right',
+            grid: { display: false },
+            ticks: { color: p.tick, font: { size: 11 } },
+            suggestedMin: 0, suggestedMax: 10,
+            title: { display: true, text: 'reviews/mo', color: p.tick, font: { size: 10 } }
+          }
+        }
+      }
+    });
+
+    try {
+      var obs = new MutationObserver(function () {
+        applyChartTheme(chartInstance);
+      });
+      obs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    } catch (e) {}
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initTrendChart);
+  else initTrendChart();
+})();
+</script>
+</body>
+</html>

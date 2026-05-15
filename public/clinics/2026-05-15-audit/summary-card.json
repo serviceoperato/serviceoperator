@@ -1,0 +1,99 @@
+{
+  "summary_card": {
+    "business": "The Dental Design Center (DDC)",
+    "location": "Pattaya, Thailand",
+    "audit_by": "www.serviceopera.to",
+    "operator": "Jack from ServiceOpera.to",
+    "date": "2026-05-15",
+    "audit_score": 9.2,
+    "audit_score_label": "Audit Potential",
+    "category": "Dental Clinic",
+    "tagline": "Strong brand. Weak automation. Real revenue being left on the table every night.",
+    "top_risks": [
+      {
+        "label": "No WhatsApp / LINE",
+        "severity": "critical",
+        "color": "red"
+      },
+      {
+        "label": "No automated review requests",
+        "severity": "critical",
+        "color": "red"
+      },
+      {
+        "label": "No real-time booking",
+        "severity": "critical",
+        "color": "orange"
+      },
+      {
+        "label": "Unanswered TripAdvisor complaint",
+        "severity": "high",
+        "color": "orange"
+      },
+      {
+        "label": "Facebook inactive (last post Oct 2024 est.)",
+        "severity": "medium",
+        "color": "orange"
+      }
+    ],
+    "top_opportunities": [
+      {
+        "label": "AI Receptionist (LINE + WhatsApp + Email)",
+        "impact": "Critical",
+        "timeline": "14 days",
+        "color": "blue"
+      },
+      {
+        "label": "Post-treatment review sequence",
+        "impact": "Critical",
+        "timeline": "14 days",
+        "color": "green"
+      },
+      {
+        "label": "Instant booking confirmation",
+        "impact": "High",
+        "timeline": "7 days",
+        "color": "green"
+      }
+    ],
+    "key_metrics": {
+      "years_operating": "~15",
+      "implants_claimed": "10,000+",
+      "invisalign_status": "Sole Elite Platinum Provider — Pattaya",
+      "award": "Best Dentists Thailand 2018",
+      "review_volume": "Low relative to tenure",
+      "response_time_estimated": "4–24 hours",
+      "potential_response_time_post_automation": "< 2 minutes",
+      "estimated_revenue_uplift_thb_pa": "500,000 – 1,500,000"
+    },
+    "sections": [
+      "Business Snapshot",
+      "Patient Journey Audit",
+      "Intake & Booking Friction",
+      "Public Reputation Audit",
+      "Review Pattern Analysis",
+      "Trust & Credibility Signals",
+      "Follow-Up Workflow Gaps",
+      "Multilingual Communication Risks",
+      "AI Automation Opportunities",
+      "14-Day Quick Win Automation",
+      "30-Day Expansion Plan",
+      "Estimated Business Impact",
+      "Suggested www.serviceopera.to Offer",
+      "Sources Used"
+    ],
+    "files": {
+      "markdown": "audit-report.md",
+      "json": "audit-report.json",
+      "html": "audit-report.html",
+      "css": "audit-report.css",
+      "sources": "sources.csv",
+      "summary": "summary-card.json"
+    },
+    "branding": {
+      "brand": "www.serviceopera.to",
+      "tagline_brand": "AI systems for service businesses. No fluff. Just results.",
+      "contact": "serviceOpera.to"
+    }
+  }
+}
