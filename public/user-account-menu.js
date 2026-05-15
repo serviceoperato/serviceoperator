@@ -295,7 +295,6 @@
     panel.className = 'so-user-menu__panel is-hidden';
     panel.setAttribute('role', 'menu');
 
-    panel.appendChild(menuRow(loginHref, label, { accent: true }));
     panel.appendChild(menuRow(settingsHref, 'Settings'));
     if (showAdmin) {
       panel.appendChild(menuRow(adminHref, 'Admin', { accent: true }));
