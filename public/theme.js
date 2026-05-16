@@ -1,14 +1,30 @@
 /* www.serviceopera.to — light / dark theme toggle (icone monocrome SVG, currentColor) */
 (function (g) {
+  function siteUploadPathFromUrl(raw) {
+    var u = String(raw || '').trim();
+    if (!u) return '';
+    try {
+      if (/^https?:\/\//i.test(u)) {
+        var parsed = new URL(u);
+        var path = parsed.pathname + (parsed.search || '');
+        if (path.indexOf('/api/site-uploads/') === 0 || path.indexOf('/assets/site-uploads/') === 0) {
+          return path;
+        }
+        return '';
+      }
+      if (u.charAt(0) === '/' && (u.indexOf('/api/site-uploads/') === 0 || u.indexOf('/assets/site-uploads/') === 0)) {
+        return u;
+      }
+    } catch (e) {}
+    return '';
+  }
+
   g.__soResolveSitePublicAssetUrl = function (raw) {
     var u = String(raw || '').trim();
     if (!u) return '';
-    if (/^https?:\/\//i.test(u)) return u;
-    if (u.charAt(0) === '/') {
-      if (
-        (u.indexOf('/assets/site-uploads/') === 0 || u.indexOf('/api/site-uploads/') === 0) &&
-        typeof g.soApiOrigin === 'function'
-      ) {
+    var uploadPath = siteUploadPathFromUrl(u);
+    if (uploadPath) {
+      if (typeof g.soApiOrigin === 'function') {
         try {
           var apiOrigin = String(g.soApiOrigin() || '')
             .trim()
@@ -16,11 +32,16 @@
           if (apiOrigin && /^https?:\/\//i.test(apiOrigin)) {
             var pageOrigin = g.location && g.location.origin ? g.location.origin : '';
             if (pageOrigin && new URL(apiOrigin).origin !== new URL(pageOrigin).origin) {
-              return apiOrigin + u;
+              return apiOrigin + uploadPath;
             }
           }
-        } catch (e) {}
+        } catch (e2) {}
       }
+      /* Same-origin marketing host (soApiOrigin empty): keep /api/site-uploads/<uuid> relative. */
+      return uploadPath;
+    }
+    if (/^https?:\/\//i.test(u)) return u;
+    if (u.charAt(0) === '/') {
       return (g.location && g.location.origin ? g.location.origin : '') + u;
     }
     return u;

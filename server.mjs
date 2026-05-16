@@ -56,7 +56,13 @@ const ADMIN_PASSWORD_HASH = (process.env.ADMIN_PASSWORD_HASH || '').trim();
  * Split Railway: custom domain on *-frontend-* may run server.mjs without ADMIN_PASSWORD_HASH while the
  * sibling *-backend-* holds secrets. Proxy /api/* so so-api.js can stay same-origin (admin cookies).
  */
+function isMarketingPublicOrigin() {
+  const o = (process.env.PUBLIC_ORIGIN || '').trim().toLowerCase().replace(/\/+$/, '');
+  return o === 'https://serviceopera.to' || o === 'https://www.serviceopera.to';
+}
+
 function resolveApiUpstream() {
+  if (String(process.env.SERVICEOPERA_DISABLE_API_UPSTREAM || '').trim() === '1') return '';
   const explicit = (
     process.env.SERVICEOPERA_API_UPSTREAM ||
     process.env.SERVICEOPERATO_BACKEND_URL ||
@@ -66,16 +72,30 @@ function resolveApiUpstream() {
     .replace(/\/+$/, '');
   if (explicit) return explicit;
   if (ADMIN_PASSWORD_HASH) return '';
-  if (!String(process.env.RAILWAY_ENVIRONMENT || '').trim()) return '';
-  const svc = (process.env.RAILWAY_SERVICE_NAME || '').trim().toLowerCase();
-  let m = /^([\w-]+)-frontend(-[\w]+)?$/.exec(svc);
-  if (m) {
-    return `https://${m[1]}-backend${m[2] || ''}.up.railway.app`;
-  }
-  const pub = (process.env.RAILWAY_PUBLIC_DOMAIN || '').trim().toLowerCase();
-  m = /^([\w-]+)-frontend([\w.-]*)\.up\.railway\.app$/.exec(pub);
-  if (m) {
-    return `https://${m[1]}-backend${m[2] || ''}.up.railway.app`;
+  const onRailway = Boolean(String(process.env.RAILWAY_ENVIRONMENT || '').trim());
+  if (onRailway) {
+    const svc = (process.env.RAILWAY_SERVICE_NAME || '').trim().toLowerCase();
+    let m = /^([\w-]+)-frontend(-[\w]+)?$/.exec(svc);
+    if (m) {
+      return `https://${m[1]}-backend${m[2] || ''}.up.railway.app`;
+    }
+    const pub = (process.env.RAILWAY_PUBLIC_DOMAIN || '').trim().toLowerCase();
+    m = /^([\w-]+)-frontend([\w.-]*)\.up\.railway\.app$/.exec(pub);
+    if (m) {
+      return `https://${m[1]}-backend${m[2] || ''}.up.railway.app`;
+    }
+    /*
+     * Custom domain on a Railway frontend service that is not named *-frontend-*:
+     * Postgres + admin uploads live on the sibling backend; proxy /api/* so marketing HTML
+     * and GET /api/site-appearance share the same nav logo / heroes as admin saved.
+     */
+    if (isMarketingPublicOrigin()) {
+      const fallback = 'https://serviceoperato-backend-production.up.railway.app';
+      console.warn(
+        `[serviceopera] Marketing host (${process.env.PUBLIC_ORIGIN}) without *-frontend-* Railway name: proxying /api/* to ${fallback}. Set SERVICEOPERA_API_UPSTREAM to override.`
+      );
+      return fallback;
+    }
   }
   return '';
 }
@@ -603,8 +623,28 @@ function rewriteLegacyImagesUrl(url) {
   return t;
 }
 
+/** Same-origin paths for admin uploads saved as absolute backend URLs (split Railway deploy). */
+function canonicalizePublicAppearanceAssetUrl(url) {
+  const s = rewriteLegacyImagesUrl(typeof url === 'string' ? url.trim() : '');
+  if (!s) return s;
+  if (s.startsWith('/')) return s;
+  try {
+    const u = new URL(s);
+    const path = u.pathname + (u.search || '');
+    if (
+      /^\/api\/site-uploads\/[0-9a-f-]{36}/i.test(path.split('?')[0]) ||
+      path.startsWith('/assets/site-uploads/')
+    ) {
+      return path;
+    }
+  } catch {
+    /* ignore */
+  }
+  return s;
+}
+
 function normalizeNavLogoUrl(url) {
-  const u = rewriteLegacyImagesUrl(typeof url === 'string' ? url.trim() : '');
+  const u = canonicalizePublicAppearanceAssetUrl(url);
   if (u === '/logo.png') return '/assets/logo.png';
   return u;
 }
@@ -700,20 +740,20 @@ function mergeSiteAppearance(raw) {
   const heroDecoTopRightOpacity = mergeHeroDecoOpacity(raw, 'heroDecoTopRightOpacity');
   const heroDecoBottomLeftOpacity = mergeHeroDecoOpacity(raw, 'heroDecoBottomLeftOpacity');
   return {
-    propertyPageImageUrl: propUrl,
+    propertyPageImageUrl: canonicalizePublicAppearanceAssetUrl(propUrl),
     propertyPageImageAlt: propAlt,
-    clinicPageImageUrl: clinicUrl,
+    clinicPageImageUrl: canonicalizePublicAppearanceAssetUrl(clinicUrl),
     clinicPageImageAlt: clinicAlt,
-    hotelPageImageUrl: hotelUrl,
+    hotelPageImageUrl: canonicalizePublicAppearanceAssetUrl(hotelUrl),
     hotelPageImageAlt: hotelAlt,
-    homePageImageUrl: homeUrl,
+    homePageImageUrl: canonicalizePublicAppearanceAssetUrl(homeUrl),
     homePageImageAlt: homeAlt,
-    navLogoUrl,
+    navLogoUrl: canonicalizePublicAppearanceAssetUrl(navLogoUrl),
     navLogoAlt,
-    jackAvatarUrl,
+    jackAvatarUrl: canonicalizePublicAppearanceAssetUrl(jackAvatarUrl),
     jackAvatarAlt,
-    heroDecoTopRightUrl,
-    heroDecoBottomLeftUrl,
+    heroDecoTopRightUrl: canonicalizePublicAppearanceAssetUrl(heroDecoTopRightUrl),
+    heroDecoBottomLeftUrl: canonicalizePublicAppearanceAssetUrl(heroDecoBottomLeftUrl),
     heroDecoTopRightOpacity,
     heroDecoBottomLeftOpacity,
     icons,

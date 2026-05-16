@@ -949,7 +949,19 @@
     function siteAppearanceResolveUrl(raw) {
       var u = String(raw || '').trim();
       if (!u) return '';
-      if (/^https?:\/\//i.test(u)) return u;
+      if (/^https?:\/\//i.test(u)) {
+        try {
+          var abs = new URL(u);
+          var absPath = abs.pathname + (abs.search || '');
+          if (absPath.indexOf('/api/site-uploads/') === 0 || absPath.indexOf('/assets/site-uploads/') === 0) {
+            u = absPath;
+          } else {
+            return u;
+          }
+        } catch (eAbs) {
+          return u;
+        }
+      }
       if (u.charAt(0) === '/') {
         /*
          * Admin uploads: legacy disk files under /assets/site-uploads/, or Postgres-backed
@@ -976,6 +988,7 @@
             }
           } catch (e) {}
         }
+        if (needsApiOrigin) return u;
         return (window.location && window.location.origin ? window.location.origin : '') + u;
       }
       return u;

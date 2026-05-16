@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Voice recorder transcription batch job (faster-whisper, Italian).
+Voice recorder transcription batch job (faster-whisper, auto language).
 
 Usage:
   pip install faster-whisper
@@ -24,7 +24,6 @@ PROCESSED_JSON = PROCESSED_DIR / "processed_files.json"
 
 AUDIO_EXTENSIONS = {".mp3", ".wav", ".m4a", ".mp4", ".mkv", ".ogg", ".flac"}
 WHISPER_MODEL = "small"
-WHISPER_LANGUAGE = "it"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -104,6 +103,7 @@ def build_markdown(
     full_path: str,
     processed_at: str,
     language: str,
+    language_probability: float | None,
     segments: list[tuple[str, float, float]],
 ) -> str:
     lines = [
@@ -112,11 +112,11 @@ def build_markdown(
         f"- **Source file:** {source.name}",
         f"- **Source path:** `{full_path}`",
         f"- **Processed:** {processed_at}",
-        f"- **Language:** {language}",
-        "",
-        "## Transcription",
-        "",
+        f"- **Detected language:** {language}",
     ]
+    if language_probability is not None:
+        lines.append(f"- **Language probability:** {language_probability:.4f}")
+    lines.extend(["", "## Transcription", ""])
     for text, start, end in segments:
         start_s = format_timestamp(start)
         end_s = format_timestamp(end)
@@ -136,16 +136,16 @@ def discover_audio_files() -> list[Path]:
     return sorted(files, key=lambda p: p.stat().st_mtime)
 
 
-def transcribe_file(model, source: Path) -> list[tuple[str, float, float]]:
+def transcribe_file(
+    model, source: Path
+) -> tuple[list[tuple[str, float, float]], str, float | None]:
     segments_out: list[tuple[str, float, float]] = []
-    segments, _info = model.transcribe(
-        str(source),
-        language=WHISPER_LANGUAGE,
-        task="transcribe",
-    )
+    segments, info = model.transcribe(str(source), task="transcribe")
+    language = getattr(info, "language", None) or "unknown"
+    language_probability = getattr(info, "language_probability", None)
     for segment in segments:
         segments_out.append((segment.text, segment.start, segment.end))
-    return segments_out
+    return segments_out, language, language_probability
 
 
 def process_file(model, registry: dict, source: Path) -> bool:
@@ -161,10 +161,17 @@ def process_file(model, registry: dict, source: Path) -> bool:
 
     log.info("Transcribing: %s", source)
     try:
-        segment_rows = transcribe_file(model, source)
+        segment_rows, language, language_probability = transcribe_file(model, source)
     except Exception as exc:
         log.error("Transcription failed for %s: %s", source, exc)
         return False
+
+    prob_msg = (
+        f", probability={language_probability:.4f}"
+        if language_probability is not None
+        else ""
+    )
+    log.info("Detected language: %s%s", language, prob_msg)
 
     processed_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
     output_path = markdown_output_path(source)
@@ -174,7 +181,8 @@ def process_file(model, registry: dict, source: Path) -> bool:
                 source,
                 full_path,
                 processed_at,
-                WHISPER_LANGUAGE,
+                language,
+                language_probability,
                 segment_rows,
             ),
             encoding="utf-8",

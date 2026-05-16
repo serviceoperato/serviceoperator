@@ -66,6 +66,32 @@ assert.equal(
   'https://www.example.com/assets/hero-corner-arc.svg'
 );
 
+/** Absolute backend upload URL → same-origin path (marketing pages). */
+function canonicalizePublicAppearanceAssetUrlForTest(url) {
+  const s = String(url || '').trim();
+  if (!s || s.startsWith('/')) return s;
+  try {
+    const u = new URL(s);
+    const path = u.pathname + (u.search || '');
+    if (
+      /^\/api\/site-uploads\/[0-9a-f-]{36}/i.test(path.split('?')[0]) ||
+      path.startsWith('/assets/site-uploads/')
+    ) {
+      return path;
+    }
+  } catch {
+    /* ignore */
+  }
+  return s;
+}
+
+assert.equal(
+  canonicalizePublicAppearanceAssetUrlForTest(
+    'https://serviceoperato-backend-production.up.railway.app/api/site-uploads/71b1fdc0-34d1-4df4-9b9d-48be1d0121ed'
+  ),
+  '/api/site-uploads/71b1fdc0-34d1-4df4-9b9d-48be1d0121ed'
+);
+
 const cur = {
   heroDecoTopRightUrl: 'https://cdn.example/tr.png',
   heroDecoBottomLeftUrl: 'https://cdn.example/bl-old.png',

@@ -730,6 +730,29 @@
     setLoginErr('');
   }
 
+  function recordLoginProbe(apiPath, res, lj) {
+    try {
+      sessionStorage.setItem(
+        'so_auth_login_probe',
+        JSON.stringify({
+          at: new Date().toISOString(),
+          path: apiPath,
+          status: res && res.status != null ? res.status : 0,
+          okHttp: !!(res && res.okHttp),
+          hasToken: !!(lj && lj.token),
+          tokenLen: lj && lj.token ? String(lj.token).length : 0,
+          err: lj && lj.error ? String(lj.error).slice(0, 160) : '',
+          pageOrigin: window.location.origin,
+          pageHost: window.location.hostname || '',
+          apiOrigin:
+            typeof soApiOrigin === 'function' ? soApiOrigin() || '(same-origin)' : '(no soApiOrigin)',
+          next: nextPath || '',
+          slug: slugHint || '',
+        })
+      );
+    } catch (eProbe) {}
+  }
+
   function applyUserJwt(lj) {
     try {
       sessionStorage.setItem('so_user_jwt', lj.token);
@@ -1470,6 +1493,7 @@
           return;
         }
         var lj = res.json || {};
+        recordLoginProbe(path, res, lj);
         if (!res.okHttp || !lj.token) {
           var eLogin = (lj.error || 'Sign-in failed.') + '';
           if (res.status === 404) {

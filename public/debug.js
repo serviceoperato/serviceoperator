@@ -117,6 +117,49 @@
     }
   }
 
+  function looksLikeJwt(tok) {
+    var s = String(tok || '').trim();
+    if (!s) return false;
+    var parts = s.split('.');
+    return parts.length === 3 && parts[0].length > 0 && parts[1].length > 0 && parts[2].length > 0;
+  }
+
+  function readLoginProbe() {
+    try {
+      var raw = sessionStorage.getItem('so_auth_login_probe') || '';
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (eLp) {
+      return null;
+    }
+  }
+
+  function portalJwtStorageSites() {
+    var keys = ['so_user_jwt', 'so_clinic_jwt'];
+    var ss = false;
+    var ls = false;
+    for (var i = 0; i < keys.length; i++) {
+      try {
+        if (sessionStorage.getItem(keys[i])) ss = true;
+        if (localStorage.getItem(keys[i])) ls = true;
+      } catch (ePs) {}
+    }
+    return { ss: ss, ls: ls };
+  }
+
+  function decodeJwtReportSlug(token) {
+    try {
+      var parts = String(token || '').split('.');
+      if (parts.length < 2) return '';
+      var payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      while (payload.length % 4) payload += '=';
+      var json = JSON.parse(atob(payload));
+      return typeof json.reportSlug === 'string' ? json.reportSlug.trim() : '';
+    } catch (eRs) {
+      return '';
+    }
+  }
+
   async function timedJsonAuth(urlPath, token) {
     var t0 = performance.now();
     var url = typeof soApiUrl === 'function' ? soApiUrl(urlPath) : urlPath;
@@ -1014,6 +1057,202 @@
     text:
       '80 · admin routes: GET /api/admin/capabilities · POST /api/admin/login · POST /api/admin/bootstrap-from-portal · GET /api/admin/work-queue · GET/PUT /api/admin/site-appearance (body.icons optional map) · POST /api/admin/site-appearance/upload · POST /api/admin/site-appearance/delete-upload · PATCH /api/user-accounts/:id',
   });
+
+  /* —— AUTH/login diagnostics ([AUTH-L]) —— */
+  var urlAuthParams = new URLSearchParams(window.location.search);
+  var slugAuth = (urlAuthParams.get('slug') || '').trim();
+  var nextAuth = (urlAuthParams.get('next') || '').trim();
+  var loginProbe = readLoginProbe();
+  lines.push({
+    cat: 'AUTH-L',
+    text:
+      '01 · last login POST (this tab): ' +
+      (loginProbe
+        ? 'HTTP ' +
+          (loginProbe.status != null ? loginProbe.status : '?') +
+          ' · path=' +
+          (loginProbe.path || '?') +
+          ' · tokenLen=' +
+          (loginProbe.tokenLen != null ? loginProbe.tokenLen : 0) +
+          ' · okHttp=' +
+          (loginProbe.okHttp != null ? String(loginProbe.okHttp) : 'n/a') +
+          ' · at=' +
+          (loginProbe.at || '?') +
+          (loginProbe.err ? ' · err=' + loginProbe.err : '')
+        : '(none — sign in on login.html then reopen DEBUG here or on the report page)'),
+  });
+  var jwtSites = portalJwtStorageSites();
+  var jwtShape = portalJwt ? (looksLikeJwt(portalJwt) ? 'valid-shape' : 'malformed') : 'missing';
+  lines.push({
+    cat: 'AUTH-L',
+    text:
+      '02 · portal JWT now: len=' +
+      (portalJwt ? portalJwt.length : 0) +
+      ' · shape=' +
+      jwtShape +
+      ' · sessionStorage=' +
+      (jwtSites.ss ? 'yes' : 'no') +
+      ' · localStorage=' +
+      (jwtSites.ls ? 'yes' : 'no') +
+      (portalJwt ? ' · jwt.reportSlug=' + (decodeJwtReportSlug(portalJwt) || '(none in payload)') : ''),
+  });
+  var sessIdSs = false;
+  var sessIdLs = false;
+  try {
+    sessIdSs = !!sessionStorage.getItem('so_user_session_id');
+    sessIdLs = !!localStorage.getItem('so_user_session_id');
+  } catch (eSid) {}
+  lines.push({
+    cat: 'AUTH-L',
+    text:
+      '03 · so_user_session_id: sessionStorage=' +
+      (sessIdSs ? 'yes' : 'no') +
+      ' · localStorage=' +
+      (sessIdLs ? 'yes' : 'no'),
+  });
+  lines.push({
+    cat: 'AUTH-L',
+    text:
+      '04 · URL auth params: slug=' +
+      (slugAuth || '(none)') +
+      ' · next=' +
+      (nextAuth ? (nextAuth.length > 96 ? nextAuth.slice(0, 96) + '…' : nextAuth) : '(none)') +
+      ' · path=' +
+      path,
+  });
+  var reportSlugProbe = slugAuth || decodeJwtReportSlug(portalJwt);
+  var reportDataProbe = { ok: false, status: 0, ms: 0, json: null };
+  if (reportSlugProbe) {
+    reportDataProbe = await timedJsonAuth(
+      '/api/clinics/report-data?slug=' + encodeURIComponent(reportSlugProbe),
+      portalJwt
+    );
+  }
+  lines.push({
+    cat: 'AUTH-L',
+    text:
+      '05 · GET /api/clinics/report-data?slug=' +
+      (reportSlugProbe || '(no slug)') +
+      ': HTTP ' +
+      reportDataProbe.status +
+      ' · ' +
+      reportDataProbe.ms +
+      ' ms' +
+      (reportDataProbe.status === 401
+        ? ' · note=gate expected without JWT or slug mismatch'
+        : reportDataProbe.ok
+          ? ' · note=authorized'
+          : reportSlugProbe
+            ? ' · note=check slug file on server'
+            : ''),
+  });
+  var pageHost = '';
+  try {
+    pageHost = window.location.hostname ? String(window.location.hostname).toLowerCase() : '';
+  } catch (ePh) {}
+  var apiOriginFn = '';
+  try {
+    apiOriginFn =
+      typeof soApiOrigin === 'function' ? String(soApiOrigin() || '').trim() : '(no soApiOrigin)';
+  } catch (eAo) {
+    apiOriginFn = 'err';
+  }
+  var apiOriginHost = '';
+  if (apiOriginFn && apiOriginFn.indexOf('http') === 0) {
+    try {
+      apiOriginHost = new URL(apiOriginFn).hostname.toLowerCase();
+    } catch (eOh) {}
+  }
+  var credMode = typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin';
+  var crossApi =
+    apiOriginFn && apiOriginFn.indexOf('http') === 0
+      ? apiOriginHost !== pageHost
+        ? 'yes'
+        : 'no'
+      : 'no (same-origin /api)';
+  lines.push({
+    cat: 'AUTH-L',
+    text:
+      '06 · API client routing: pageOrigin=' +
+      origin +
+      ' · soApiOrigin()=' +
+      (apiOriginFn || '(empty → same-origin /api)') +
+      ' · soApiCredentials=' +
+      credMode +
+      ' · crossOriginApi=' +
+      crossApi,
+  });
+  var probeHost = loginProbe && loginProbe.pageHost ? String(loginProbe.pageHost).toLowerCase() : '';
+  var apexWww =
+    pageHost === 'serviceopera.to' || pageHost === 'www.serviceopera.to'
+      ? probeHost && probeHost !== pageHost
+        ? 'mismatch · loginHost=' + probeHost + ' · now=' + pageHost + ' (JWT is per-origin — use one hostname)'
+        : pageHost === 'www.serviceopera.to'
+          ? 'www'
+          : pageHost === 'serviceopera.to'
+            ? 'apex'
+            : pageHost
+      : pageHost || 'n/a';
+  lines.push({
+    cat: 'AUTH-L',
+    text: '07 · hostname (apex/www): ' + apexWww + ' · document.referrer=' + (document.referrer || '(none)'),
+  });
+  lines.push({
+    cat: 'AUTH-L',
+    text:
+      '08 · split Railway / proxy: proxiedApi=' +
+      (ac.proxiedApi != null ? String(ac.proxiedApi) : 'n/a') +
+      ' · apiUpstream=' +
+      (ac.apiUpstream
+        ? String(ac.apiUpstream).replace(/\/+$/, '')
+        : '(this Node serves /api locally)') +
+      (store && store.backend === 'json-files' && store.confirmedUserCount === 0
+        ? ' · warning=user-store on this origin is empty json-files — set SERVICEOPERA_API_UPSTREAM to the Postgres backend or DATABASE_URL here'
+        : storeSource && storeSource !== origin && store
+          ? ' · note=user-store read from reference ' + storeSource
+          : ''),
+  });
+  var loginLinkHref = '';
+  try {
+    var loginLinkEl = document.getElementById('demoAuthLoginLink');
+    if (loginLinkEl && loginLinkEl.getAttribute('href')) {
+      loginLinkHref = loginLinkEl.getAttribute('href');
+    }
+  } catch (eLl) {}
+  lines.push({
+    cat: 'AUTH-L',
+    text:
+      '09 · report gate login link: ' +
+      (loginLinkHref
+        ? loginLinkHref.length > 140
+          ? loginLinkHref.slice(0, 140) + '…'
+          : loginLinkHref
+        : path.indexOf('/clinics/report') >= 0
+          ? '(#demoAuthLoginLink missing)'
+          : '(n/a — not on clinics/report.html)'),
+  });
+  lines.push({
+    cat: 'AUTH-L',
+    text:
+      '10 · login→report handoff: probe.pageOrigin=' +
+      (loginProbe && loginProbe.pageOrigin ? loginProbe.pageOrigin : 'n/a') +
+      ' · probe.apiOrigin=' +
+      (loginProbe && loginProbe.apiOrigin ? loginProbe.apiOrigin : 'n/a') +
+      ' · probe.slug=' +
+      (loginProbe && loginProbe.slug ? loginProbe.slug : 'n/a') +
+      ' · probe.next=' +
+      (loginProbe && loginProbe.next
+        ? loginProbe.next.length > 72
+          ? loginProbe.next.slice(0, 72) + '…'
+          : loginProbe.next
+        : 'n/a') +
+      ' · user-session=' +
+      sessionProbe.status +
+      (sessionProbe.status === 401 && portalJwt
+        ? ' · likely=JWT from different API host/secret or user missing in this origin’s store'
+        : ''),
+  });
+
   lines.push({
     cat: 'OPS',
     text:
@@ -1160,7 +1399,7 @@
       '<span class="mono debug-panel__title" id="soDebugTitle">— DEBUG · … checks</span>' +
       '<button type="button" class="debug-panel__close mono" data-debug-close aria-label="Close panel"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg></button>' +
       '</div>' +
-      '<p class="debug-panel__sub mono">STORE = browser storage only · FE = browser · BE = same-origin HTTP · DB = server PostgreSQL / user store · OPS = deploy/Railway · AUTH = portal JWT/session. Rows 01–08b: localStorage/sessionStorage (not Railway tables). Rows 69–78: <code>/api/debug/user-store</code> plus reference Node probe when this host is static-only. On <code>login.html</code>, <strong>[PW]</strong> rows too. Select the text below and copy (Ctrl+C), or use the button.</p>' +
+      '<p class="debug-panel__sub mono">STORE = browser storage only · FE = browser · BE = same-origin HTTP · DB = server PostgreSQL / user store · OPS = deploy/Railway · AUTH = portal JWT/session · <strong>AUTH-L</strong> = login/report handoff (10 rows after sign-in). Rows 01–08b: localStorage/sessionStorage (not Railway tables). Rows 69–78: <code>/api/debug/user-store</code> plus reference Node probe when this host is static-only. On <code>login.html</code>, <strong>[PW]</strong> rows too. Select the text below and copy (Ctrl+C), or use the button.</p>' +
       '<div class="debug-panel__status mono" id="soDebugStatus">Running…</div>' +
       '<pre class="debug-panel__out mono" id="soDebugOut" tabindex="0"></pre>' +
       '<div class="debug-panel__actions">' +

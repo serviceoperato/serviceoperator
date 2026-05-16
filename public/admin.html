@@ -156,7 +156,21 @@
 
     <section id="voiceRecorderSection" class="tf-admin-table-card is-hidden" aria-label="Voice recorder">
       <h2 class="tf-admin-section-title">Voice Recorder</h2>
-      <p class="tf-admin-muted">Record and manage operator voice notes. This section is a placeholder — recording UI will be added in a follow-up.</p>
+      <p class="tf-admin-muted" style="margin-bottom:0.85rem">
+        Hub for operator voice notes. In-browser capture will live here; today transcriptions are produced by the batch job in the repo.
+      </p>
+      <div class="tf-admin-payout-card" style="margin-top:0">
+        <h3 class="tf-admin-section-title" style="margin-top:0">Transcription pipeline</h3>
+        <p class="tf-admin-muted" style="margin:0 0 0.5rem">
+          Reads audio from <code class="mono">G:\My Drive\Voice Recorder</code>. From the repository root:
+        </p>
+        <p class="mono" style="font-size:0.78rem;margin:0 0 0.75rem;padding:0.5rem 0.65rem;background:var(--ink-2,#1a1d24);border-radius:6px;border:1px solid var(--line,#2a2f3a)">python scripts/transcribe_voice_recorder.py</p>
+        <ul class="tf-admin-muted" style="margin:0;padding-left:1.1rem;line-height:1.55">
+          <li>Script: <code class="mono">scripts/transcribe_voice_recorder.py</code></li>
+          <li>Output: <code class="mono">content/transcriptions/</code></li>
+          <li>Registry: <code class="mono">content/processed/processed_files.json</code></li>
+        </ul>
+      </div>
     </section>
 
     <section id="reportCatalogSection" class="tf-admin-reports" aria-label="Report catalog">
