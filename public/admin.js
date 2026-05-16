@@ -2220,6 +2220,244 @@
     buildTfNav(routeId);
     window.scrollTo(0, 0);
     if (routeId === 'user-profiling') loadUserProfiling();
+    if (routeId === 'voice-recorder') initVoiceRecorderPipelineUi();
+  }
+
+  var voicePipelinePollTimer = null;
+
+  function voicePipelineAdminHeaders() {
+    return {
+      Authorization: 'Bearer ' + getAdminBearer(),
+    };
+  }
+
+  function voicePipelineDepsHint(text) {
+    var blob = String(text || '').toLowerCase();
+    if (
+      blob.indexOf('faster-whisper') !== -1 ||
+      blob.indexOf('faster_whisper') !== -1 ||
+      blob.indexOf('no module named') !== -1
+    ) {
+      return 'Missing Python dependency: run `pip install faster-whisper`';
+    }
+    if (blob.indexOf('ffmpeg') !== -1 || blob.indexOf('avconv') !== -1) {
+      return 'Missing FFmpeg: run `winget install Gyan.FFmpeg` (Windows) or install ffmpeg on your PATH';
+    }
+    return '';
+  }
+
+  function renderVoicePipelineStatus(payload) {
+    var badge = document.getElementById('voicePipelineStatusBadge');
+    var hint = document.getElementById('voicePipelineHint');
+    var statsEl = document.getElementById('voicePipelineStats');
+    var filesEl = document.getElementById('voicePipelineFiles');
+    var logEl = document.getElementById('voicePipelineLog');
+    var runBtn = document.getElementById('voicePipelineRunBtn');
+    if (!badge || !hint || !statsEl || !filesEl) return;
+
+    var status = payload && payload.status ? String(payload.status) : 'idle';
+    badge.textContent = status;
+    var running = Boolean(payload && (payload.running || status === 'running'));
+    if (runBtn) runBtn.disabled = running;
+
+    var parts = [];
+    if (payload && payload.startedAt) parts.push('Started: ' + formatAdminTs(payload.startedAt));
+    if (payload && payload.finishedAt) parts.push('Finished: ' + formatAdminTs(payload.finishedAt));
+    if (payload && payload.exitCode != null && !running) parts.push('Exit code: ' + payload.exitCode);
+    hint.textContent = parts.join(' · ');
+
+    var stats = (payload && payload.stats) || null;
+    if (stats) {
+      statsEl.innerHTML =
+        '<p style="margin:0 0 0.35rem"><strong>Latest stats</strong></p>' +
+        '<ul style="margin:0;padding-left:1.1rem">' +
+        '<li>Files scanned: ' +
+        escapeHtml(stats.filesScanned != null ? stats.filesScanned : '—') +
+        '</li>' +
+        '<li>New processed: ' +
+        escapeHtml(stats.newProcessed != null ? stats.newProcessed : '—') +
+        '</li>' +
+        '<li>Transcriptions: ' +
+        escapeHtml(stats.transcriptions != null ? stats.transcriptions : '—') +
+        '</li>' +
+        '<li>Notes: ' +
+        escapeHtml(stats.notes != null ? stats.notes : '—') +
+        '</li>' +
+        '<li>Meetings: ' +
+        escapeHtml(stats.meetings != null ? stats.meetings : '—') +
+        '</li>' +
+        '<li>Tasks: ' +
+        escapeHtml(stats.tasks != null ? stats.tasks : '—') +
+        '</li>' +
+        '<li>Calendar: ' +
+        escapeHtml(stats.calendar != null ? stats.calendar : '—') +
+        '</li>' +
+        '<li>Errors: ' +
+        escapeHtml(stats.errors != null ? stats.errors : '—') +
+        '</li>' +
+        '</ul>';
+    } else {
+      statsEl.innerHTML = '<p class="tf-admin-muted" style="margin:0">No pipeline stats yet.</p>';
+    }
+
+    var files = (payload && payload.files) || null;
+    var fileBlocks = [];
+    function fileList(label, items) {
+      if (!items || (Array.isArray(items) && !items.length)) return;
+      var rows = Array.isArray(items) ? items : [items];
+      fileBlocks.push(
+        '<p style="margin:0.35rem 0 0.15rem"><strong>' +
+          escapeHtml(label) +
+          '</strong></p><ul style="margin:0 0 0.35rem;padding-left:1.1rem">' +
+          rows
+            .map(function (p) {
+              return '<li><code class="mono">' + escapeHtml(p) + '</code></li>';
+            })
+            .join('') +
+          '</ul>'
+      );
+    }
+    if (files) {
+      fileList('Transcriptions', files.transcriptions);
+      if (files.dailyReport) fileList('Daily report', files.dailyReport);
+      if (files.tasks) fileList('Tasks', files.tasks);
+      if (files.calendar) fileList('Calendar', files.calendar);
+    }
+    filesEl.innerHTML = fileBlocks.length
+      ? '<p style="margin:0 0 0.35rem"><strong>Generated files</strong></p>' + fileBlocks.join('')
+      : '<p class="tf-admin-muted" style="margin:0">No generated file paths recorded yet.</p>';
+
+    if (logEl) {
+      var stderr = payload && payload.stderr ? String(payload.stderr) : '';
+      var stdout = payload && payload.stdout ? String(payload.stdout) : '';
+      var historyErrs =
+        payload &&
+        payload.historyRun &&
+        Array.isArray(payload.historyRun.errors) &&
+        payload.historyRun.errors.length
+          ? payload.historyRun.errors.join('\n')
+          : '';
+      var combined = [stderr, stdout, historyErrs].filter(Boolean).join('\n').trim();
+      var deps = voicePipelineDepsHint(combined);
+      if (status === 'error' || deps) {
+        var logText = deps ? deps + '\n\n' + combined : combined;
+        logEl.textContent = logText || 'Pipeline finished with an error.';
+        logEl.classList.remove('is-hidden');
+      } else if (running && combined) {
+        logEl.textContent = combined;
+        logEl.classList.remove('is-hidden');
+      } else {
+        logEl.textContent = '';
+        logEl.classList.add('is-hidden');
+      }
+    }
+
+    if (running) startVoicePipelinePolling();
+    else stopVoicePipelinePolling();
+  }
+
+  function stopVoicePipelinePolling() {
+    if (voicePipelinePollTimer) {
+      clearInterval(voicePipelinePollTimer);
+      voicePipelinePollTimer = null;
+    }
+  }
+
+  function startVoicePipelinePolling() {
+    if (voicePipelinePollTimer) return;
+    voicePipelinePollTimer = setInterval(function () {
+      refreshVoicePipelineStatus({ quiet: true });
+    }, 2500);
+  }
+
+  function refreshVoicePipelineStatus(opts) {
+    opts = opts || {};
+    var hint = document.getElementById('voicePipelineHint');
+    if (!opts.quiet && hint) hint.textContent = 'Loading pipeline status…';
+    return fetch(api('/api/admin/voice-recorder/status'), {
+      method: 'GET',
+      credentials: apiCred(),
+      headers: voicePipelineAdminHeaders(),
+      cache: 'no-store',
+    })
+      .then(function (r) {
+        return r.json().then(function (j) {
+          return { ok: r.ok, status: r.status, json: j };
+        });
+      })
+      .then(function (pack) {
+        if (!pack.ok) {
+          if (hint) {
+            hint.textContent =
+              pack.status === 401
+                ? 'Sign in with the operator password to run the pipeline.'
+                : (pack.json && pack.json.error) || 'Could not load pipeline status.';
+          }
+          stopVoicePipelinePolling();
+          return;
+        }
+        renderVoicePipelineStatus(pack.json);
+      })
+      .catch(function () {
+        if (hint) hint.textContent = 'Could not reach the API on this host.';
+        stopVoicePipelinePolling();
+      });
+  }
+
+  function runVoiceRecorderPipeline() {
+    var runBtn = document.getElementById('voicePipelineRunBtn');
+    var hint = document.getElementById('voicePipelineHint');
+    if (runBtn) runBtn.disabled = true;
+    if (hint) hint.textContent = 'Starting pipeline…';
+    return fetch(api('/api/admin/voice-recorder/run'), {
+      method: 'POST',
+      credentials: apiCred(),
+      headers: voicePipelineAdminHeaders(),
+      cache: 'no-store',
+    })
+      .then(function (r) {
+        return r.json().then(function (j) {
+          return { ok: r.ok, status: r.status, json: j };
+        });
+      })
+      .then(function (pack) {
+        if (pack.status === 401) {
+          if (hint) hint.textContent = 'Sign in with the operator password to run the pipeline.';
+          if (runBtn) runBtn.disabled = false;
+          return;
+        }
+        if (!pack.ok && pack.status !== 409) {
+          if (hint) hint.textContent = (pack.json && pack.json.error) || 'Could not start pipeline.';
+          if (runBtn) runBtn.disabled = false;
+          return;
+        }
+        renderVoicePipelineStatus(pack.json);
+        startVoicePipelinePolling();
+      })
+      .catch(function () {
+        if (hint) hint.textContent = 'Could not reach the API on this host.';
+        if (runBtn) runBtn.disabled = false;
+      });
+  }
+
+  var voicePipelineUiBound = false;
+
+  function initVoiceRecorderPipelineUi() {
+    refreshVoicePipelineStatus({ quiet: true });
+    if (voicePipelineUiBound) return;
+    voicePipelineUiBound = true;
+    var runBtn = document.getElementById('voicePipelineRunBtn');
+    var refreshBtn = document.getElementById('voicePipelineRefreshBtn');
+    if (runBtn) {
+      runBtn.addEventListener('click', function () {
+        runVoiceRecorderPipeline();
+      });
+    }
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', function () {
+        refreshVoicePipelineStatus();
+      });
+    }
   }
 
   function groupAuditReports(reports) {

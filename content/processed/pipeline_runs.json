@@ -1,0 +1,121 @@
+{
+  "runs": [
+    {
+      "run_datetime": "2026-05-16 17:21:43 UTC",
+      "stats": {
+        "files_scanned": 0,
+        "files_transcribed": 0,
+        "transcriptions_classified": 0,
+        "notes_created": 0,
+        "meetings_created": 0,
+        "tasks_extracted": 0,
+        "calendar_events": 0,
+        "project_updates": 0,
+        "ambiguous_items": 0,
+        "filesScanned": 0,
+        "newProcessed": 0,
+        "transcriptions": 0,
+        "notes": 0,
+        "meetings": 0,
+        "tasks": 0,
+        "calendar": 0,
+        "errors": 1
+      },
+      "files": {
+        "transcriptions": [],
+        "transcriptions_processed": []
+      },
+      "files_scanned": 0,
+      "files_transcribed": 0,
+      "transcriptions_created": 0,
+      "transcriptions_classified": 0,
+      "notes_created": 0,
+      "meetings_created": 0,
+      "tasks_extracted": 0,
+      "calendar_events": 0,
+      "project_updates": 0,
+      "ambiguous_items": 0,
+      "errors": [
+        "faster-whisper is not installed. Run: pip install faster-whisper"
+      ]
+    },
+    {
+      "run_datetime": "2026-05-16 17:21:55 UTC",
+      "stats": {
+        "files_scanned": 0,
+        "files_transcribed": 0,
+        "transcriptions_classified": 0,
+        "notes_created": 0,
+        "meetings_created": 0,
+        "tasks_extracted": 0,
+        "calendar_events": 0,
+        "project_updates": 0,
+        "ambiguous_items": 0,
+        "filesScanned": 0,
+        "newProcessed": 0,
+        "transcriptions": 0,
+        "notes": 0,
+        "meetings": 0,
+        "tasks": 0,
+        "calendar": 0,
+        "errors": 1
+      },
+      "files": {
+        "transcriptions": [],
+        "transcriptions_processed": []
+      },
+      "files_scanned": 0,
+      "files_transcribed": 0,
+      "transcriptions_created": 0,
+      "transcriptions_classified": 0,
+      "notes_created": 0,
+      "meetings_created": 0,
+      "tasks_extracted": 0,
+      "calendar_events": 0,
+      "project_updates": 0,
+      "ambiguous_items": 0,
+      "errors": [
+        "faster-whisper is not installed. Run: pip install faster-whisper"
+      ]
+    },
+    {
+      "run_datetime": "2026-05-16 17:22:18 UTC",
+      "stats": {
+        "files_scanned": 19,
+        "files_transcribed": 0,
+        "transcriptions_classified": 0,
+        "notes_created": 0,
+        "meetings_created": 0,
+        "tasks_extracted": 0,
+        "calendar_events": 0,
+        "project_updates": 0,
+        "ambiguous_items": 0,
+        "filesScanned": 19,
+        "newProcessed": 0,
+        "transcriptions": 0,
+        "notes": 0,
+        "meetings": 0,
+        "tasks": 0,
+        "calendar": 0,
+        "errors": 1
+      },
+      "files": {
+        "transcriptions": [],
+        "transcriptions_processed": []
+      },
+      "files_scanned": 19,
+      "files_transcribed": 0,
+      "transcriptions_created": 0,
+      "transcriptions_classified": 0,
+      "notes_created": 0,
+      "meetings_created": 0,
+      "tasks_extracted": 0,
+      "calendar_events": 0,
+      "project_updates": 0,
+      "ambiguous_items": 0,
+      "errors": [
+        "faster-whisper is not installed. Run: pip install faster-whisper"
+      ]
+    }
+  ]
+}

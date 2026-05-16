@@ -157,18 +157,28 @@
     <section id="voiceRecorderSection" class="tf-admin-table-card is-hidden" aria-label="Voice recorder">
       <h2 class="tf-admin-section-title">Voice Recorder</h2>
       <p class="tf-admin-muted" style="margin-bottom:0.85rem">
-        Hub for operator voice notes. In-browser capture will live here; today transcriptions are produced by the batch job in the repo.
+        Hub for operator voice notes. Run the full pipeline from here (transcribe, classify, write <code class="mono">/content</code> outputs).
       </p>
       <div class="tf-admin-payout-card" style="margin-top:0">
-        <h3 class="tf-admin-section-title" style="margin-top:0">Transcription pipeline</h3>
-        <p class="tf-admin-muted" style="margin:0 0 0.5rem">
-          Reads audio from <code class="mono">G:\My Drive\Voice Recorder</code>. From the repository root:
-        </p>
-        <p class="mono" style="font-size:0.78rem;margin:0 0 0.75rem;padding:0.5rem 0.65rem;background:var(--ink-2,#1a1d24);border-radius:6px;border:1px solid var(--line,#2a2f3a)">python scripts/transcribe_voice_recorder.py</p>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.65rem;margin-bottom:0.85rem">
+          <h3 class="tf-admin-section-title" style="margin:0">Voice pipeline</h3>
+          <span id="voicePipelineStatusBadge" class="mono" style="font-size:0.72rem;padding:0.2rem 0.55rem;border-radius:999px;border:1px solid var(--line,#2a2f3a);text-transform:uppercase;letter-spacing:0.06em">idle</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.85rem">
+          <button type="button" id="voicePipelineRunBtn" class="tf-admin-toolbar__btn">Run Voice Recorder Pipeline</button>
+          <button type="button" id="voicePipelineRefreshBtn" class="tf-admin-toolbar__btn">Refresh Pipeline Status</button>
+        </div>
+        <p id="voicePipelineHint" class="tf-admin-muted mono" style="margin:0 0 0.75rem"></p>
+        <div id="voicePipelineStats" class="tf-admin-muted" style="margin:0 0 0.85rem;line-height:1.55"></div>
+        <div id="voicePipelineFiles" style="margin:0 0 0.85rem"></div>
+        <pre id="voicePipelineLog" class="mono tf-admin-deploy-log is-hidden" style="max-height:14rem;overflow:auto;margin:0"></pre>
+        <p class="tf-admin-muted" style="margin:0.85rem 0 0.5rem;font-size:0.85rem">Manual (repo root)</p>
+        <p class="mono" style="font-size:0.78rem;margin:0 0 0.75rem;padding:0.5rem 0.65rem;background:var(--ink-2,#1a1d24);border-radius:6px;border:1px solid var(--line,#2a2f3a)">python scripts/process_voice_recorder_pipeline.py</p>
         <ul class="tf-admin-muted" style="margin:0;padding-left:1.1rem;line-height:1.55">
-          <li>Script: <code class="mono">scripts/transcribe_voice_recorder.py</code></li>
-          <li>Output: <code class="mono">content/transcriptions/</code></li>
+          <li>Input (Windows): <code class="mono">G:\My Drive\Voice Recorder</code></li>
+          <li>Transcribe: <code class="mono">scripts/transcribe_voice_recorder.py</code></li>
           <li>Registry: <code class="mono">content/processed/processed_files.json</code></li>
+          <li>Run log: <code class="mono">content/processed/pipeline_runs.json</code></li>
         </ul>
       </div>
     </section>

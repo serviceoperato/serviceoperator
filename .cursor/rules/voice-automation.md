@@ -1,40 +1,57 @@
-# Voice automation
+# Voice Automation Rules
 
-## Scope — files agents may modify
+Cursor may modify only:
 
-Agents working on voice notes and transcription automation **may modify only**:
+- `/content`
+- `/scripts`
+- `/.cursor/rules/voice-automation.md`
+- the existing admin voice recorder page
+- the API/backend route strictly required to start the voice pipeline from the admin button
 
-- `/content` (transcriptions, notes, meetings, tasks, calendar, processed registry, etc.)
-- `/scripts` (e.g. `transcribe_voice_recorder.py` and related helpers)
-- `/.cursor/rules/voice-automation.md` (this file)
+Cursor must not modify:
 
-## Scope — do not modify
+- `/app` unrelated files
+- `/components` unrelated files
+- `/pages` unrelated files
+- `package.json` unless absolutely necessary and explicitly explained
+- `.env`
+- `next.config.js`
+- deployment config files
+- authentication logic
+- payment logic
+- user account logic
 
-Do **not** modify application, deployment, or environment files, including:
+When processing voice notes:
 
-- `/app`, `/components`, `/pages`
-- `/package.json`, `/package-lock.json`
-- `/.env`, `/.env.example`
-- `/next.config.js`
-- Deployment configs (Dockerfile, CI, hosting redirects, etc.)
-
-## Voice notes content rules
-
-1. **Never delete** previous voice-derived content; preserve history.
-2. **Append** or use **dated files** when adding new material.
-3. Every derived document must include **source filename** and **date** (from recording or processing metadata when available).
-4. **Separate** content by purpose under `/content`:
-   - `transcriptions` — raw or timestamped speech-to-text
-   - `notes` — distilled personal or operational notes
-   - `meetings` — meeting-specific summaries and action items
-   - `tasks` — actionable items extracted from voice
-   - `calendar` — events and scheduling hints
-5. If date or time is **ambiguous**, label it as **"date/time to confirm"**; do not guess.
-6. **Do not invent** facts, names, numbers, or commitments not present in the source audio or transcription.
-7. Use **clean Markdown**: headings, lists, and short paragraphs; consistent filenames and cross-links where helpful.
+- never delete previous content
+- always append or create dated Markdown files
+- always include source filename and processing date
+- never invent missing facts
+- never invent missing dates
+- never invent names
+- if a date/time is ambiguous, write `date/time to confirm`
+- separate content into:
+  - `transcriptions`
+  - `notes`
+  - `meetings`
+  - `tasks`
+  - `calendar`
+  - `projects`
+  - `voice-reports`
+- keep Markdown clean and readable
+- prefer concise operational summaries
+- preserve the full transcription reference
 
 ## Transcription pipeline
 
 - Batch input: `G:\My Drive\Voice Recorder`
-- Runner: `python scripts/transcribe_voice_recorder.py`
-- Registry: `/content/processed/processed_files.json` — skip files already processed with unchanged path, size, and modified time.
+- Transcription runner: `python scripts/transcribe_voice_recorder.py`
+- Full pipeline: `python scripts/process_voice_recorder_pipeline.py`
+- Registry: `content/processed/processed_files.json` — stable identity: full path + file size + modified time
+- Run log: `content/processed/pipeline_runs.json`
+
+## Security
+
+- do not expose local Windows paths publicly except inside admin-only pages
+- do not expose secrets
+- do not add hardcoded tokens

@@ -2,6 +2,7 @@
  * Static site + admin password sign-in + portal users (JSON store in DATA_DIR).
  */
 import crypto from 'crypto';
+import { spawn } from 'child_process';
 import fs from 'fs';
 import { Readable } from 'stream';
 import express from 'express';
@@ -2102,6 +2103,187 @@ app.get('/api/admin/work-queue', requireAdmin, async (_req, res) => {
   } catch (e) {
     res.status(500).json({ error: e.message || 'Failed to build work queue' });
   }
+});
+
+const voiceProcessedDir = path.join(__dirname, 'content', 'processed');
+const voiceLatestPipelineRunPath = path.join(voiceProcessedDir, 'latest_pipeline_run.json');
+const voicePipelineRunsPath = path.join(voiceProcessedDir, 'pipeline_runs.json');
+const voicePipelineScriptPath = path.join(__dirname, 'scripts', 'process_voice_recorder_pipeline.py');
+
+/** @type {{ child: import('child_process').ChildProcess | null, startedAt: string | null, stdout: string, stderr: string }} */
+const voicePipelineActive = {
+  child: null,
+  startedAt: null,
+  stdout: '',
+  stderr: '',
+};
+
+function voiceRecorderPythonBin() {
+  return process.platform === 'win32' ? 'python' : 'python3';
+}
+
+function readVoiceJsonFile(filePath, fallback) {
+  try {
+    if (!fs.existsSync(filePath)) return fallback;
+    const raw = fs.readFileSync(filePath, 'utf8');
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function writeVoiceLatestPipelineRun(payload) {
+  try {
+    fs.mkdirSync(voiceProcessedDir, { recursive: true });
+    fs.writeFileSync(voiceLatestPipelineRunPath, `${JSON.stringify(payload, null, 2)}\n`, 'utf8');
+  } catch (e) {
+    console.warn('[serviceopera] voice pipeline state write failed:', e && e.message ? e.message : e);
+  }
+}
+
+function lastVoicePipelineRunFromHistory() {
+  const doc = readVoiceJsonFile(voicePipelineRunsPath, { runs: [] });
+  const runs = Array.isArray(doc.runs) ? doc.runs : [];
+  return runs.length ? runs[runs.length - 1] : null;
+}
+
+function isVoicePipelineChildRunning() {
+  return Boolean(voicePipelineActive.child && voicePipelineActive.child.exitCode == null);
+}
+
+function buildVoicePipelineStatusPayload() {
+  const latest = readVoiceJsonFile(voiceLatestPipelineRunPath, null);
+  const running = isVoicePipelineChildRunning();
+  const history = lastVoicePipelineRunFromHistory();
+  const stats = (latest && latest.stats) || (history && history.stats) || null;
+  const files = (latest && latest.files) || (history && history.files) || null;
+  let status = latest && typeof latest.status === 'string' ? latest.status : 'idle';
+  if (running) status = 'running';
+  return {
+    ok: true,
+    status,
+    running,
+    success: latest && typeof latest.success === 'boolean' ? latest.success : null,
+    startedAt: (running && voicePipelineActive.startedAt) || (latest && latest.startedAt) || null,
+    finishedAt: latest && latest.finishedAt ? latest.finishedAt : null,
+    exitCode: latest && latest.exitCode != null ? latest.exitCode : null,
+    stdout: running ? voicePipelineActive.stdout : (latest && latest.stdout) || '',
+    stderr: running ? voicePipelineActive.stderr : (latest && latest.stderr) || '',
+    stats,
+    files,
+    historyRun: history,
+  };
+}
+
+function startVoiceRecorderPipelineRun() {
+  if (isVoicePipelineChildRunning()) {
+    return {
+      ok: true,
+      status: 'already_running',
+      running: true,
+      startedAt: voicePipelineActive.startedAt,
+    };
+  }
+  if (!fs.existsSync(voicePipelineScriptPath)) {
+    return {
+      ok: false,
+      status: 'error',
+      error: `Pipeline script not found: ${voicePipelineScriptPath}`,
+    };
+  }
+
+  const startedAt = new Date().toISOString();
+  voicePipelineActive.stdout = '';
+  voicePipelineActive.stderr = '';
+  voicePipelineActive.startedAt = startedAt;
+
+  writeVoiceLatestPipelineRun({
+    status: 'running',
+    success: null,
+    startedAt,
+    finishedAt: null,
+    exitCode: null,
+    stdout: '',
+    stderr: '',
+    stats: null,
+    files: null,
+  });
+
+  const child = spawn(voiceRecorderPythonBin(), [voicePipelineScriptPath], {
+    cwd: __dirname,
+    env: process.env,
+    windowsHide: true,
+  });
+  voicePipelineActive.child = child;
+
+  child.stdout.on('data', (chunk) => {
+    voicePipelineActive.stdout += chunk.toString();
+  });
+  child.stderr.on('data', (chunk) => {
+    voicePipelineActive.stderr += chunk.toString();
+  });
+
+  child.on('close', (exitCode) => {
+    const finishedAt = new Date().toISOString();
+    const history = lastVoicePipelineRunFromHistory();
+    const success = exitCode === 0;
+    writeVoiceLatestPipelineRun({
+      status: success ? 'success' : 'error',
+      success,
+      startedAt,
+      finishedAt,
+      exitCode: exitCode == null ? -1 : exitCode,
+      stdout: voicePipelineActive.stdout,
+      stderr: voicePipelineActive.stderr,
+      stats: history && history.stats ? history.stats : null,
+      files: history && history.files ? history.files : null,
+    });
+    voicePipelineActive.child = null;
+    voicePipelineActive.startedAt = null;
+  });
+
+  child.on('error', (err) => {
+    const finishedAt = new Date().toISOString();
+    const message = err && err.message ? err.message : String(err);
+    writeVoiceLatestPipelineRun({
+      status: 'error',
+      success: false,
+      startedAt,
+      finishedAt,
+      exitCode: -1,
+      stdout: voicePipelineActive.stdout,
+      stderr: `${voicePipelineActive.stderr}\n${message}`.trim(),
+      stats: null,
+      files: null,
+    });
+    voicePipelineActive.child = null;
+    voicePipelineActive.startedAt = null;
+  });
+
+  return {
+    ok: true,
+    status: 'running',
+    running: true,
+    startedAt,
+  };
+}
+
+app.get('/api/admin/voice-recorder/status', requireAdmin, (_req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  return res.json(buildVoicePipelineStatusPayload());
+});
+
+app.post('/api/admin/voice-recorder/run', requireAdmin, (_req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  const result = startVoiceRecorderPipelineRun();
+  if (!result.ok) {
+    return res.status(500).json(result);
+  }
+  if (result.status === 'already_running') {
+    return res.status(409).json({ ...buildVoicePipelineStatusPayload(), status: 'already_running' });
+  }
+  return res.status(202).json({ ...buildVoicePipelineStatusPayload(), ...result });
 });
 
 app.get('/api/admin/site-appearance', requireAdmin, async (_req, res) => {

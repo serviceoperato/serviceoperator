@@ -65,9 +65,14 @@ def file_identity(path: Path) -> tuple[str, int, float]:
     return (str(path.resolve()), stat.st_size, stat.st_mtime)
 
 
+def format_mtime(mtime: float) -> str:
+    return datetime.fromtimestamp(mtime, tz=timezone.utc).strftime(
+        "%Y-%m-%d %H:%M:%S UTC"
+    )
+
+
 def is_already_processed(
     registry: dict,
-    path: Path,
     full_path: str,
     size: int,
     mtime: float,
@@ -101,6 +106,8 @@ def markdown_output_path(source: Path) -> Path:
 def build_markdown(
     source: Path,
     full_path: str,
+    size: int,
+    modified_at: str,
     processed_at: str,
     language: str,
     language_probability: float | None,
@@ -111,6 +118,8 @@ def build_markdown(
         "",
         f"- **Source file:** {source.name}",
         f"- **Source path:** `{full_path}`",
+        f"- **File size:** {size} bytes",
+        f"- **Modified:** {modified_at}",
         f"- **Processed:** {processed_at}",
         f"- **Detected language:** {language}",
     ]
@@ -129,6 +138,7 @@ def discover_audio_files() -> list[Path]:
     if not INPUT_DIR.is_dir():
         log.error("Input directory not found: %s", INPUT_DIR)
         return []
+    log.info("Scanning folder: %s", INPUT_DIR)
     files: list[Path] = []
     for path in INPUT_DIR.rglob("*"):
         if path.is_file() and path.suffix.lower() in AUDIO_EXTENSIONS:
@@ -155,11 +165,11 @@ def process_file(model, registry: dict, source: Path) -> bool:
         log.error("Cannot stat %s: %s", source, exc)
         return False
 
-    if is_already_processed(registry, source, full_path, size, mtime):
+    if is_already_processed(registry, full_path, size, mtime):
         log.info("Skip (already processed): %s", source.name)
         return False
 
-    log.info("Transcribing: %s", source)
+    log.info("Processing file: %s", source.name)
     try:
         segment_rows, language, language_probability = transcribe_file(model, source)
     except Exception as exc:
@@ -174,12 +184,15 @@ def process_file(model, registry: dict, source: Path) -> bool:
     log.info("Detected language: %s%s", language, prob_msg)
 
     processed_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+    modified_at = format_mtime(mtime)
     output_path = markdown_output_path(source)
     try:
         output_path.write_text(
             build_markdown(
                 source,
                 full_path,
+                size,
+                modified_at,
                 processed_at,
                 language,
                 language_probability,
@@ -196,35 +209,61 @@ def process_file(model, registry: dict, source: Path) -> bool:
         "full_path": full_path,
         "size": size,
         "modified_time": mtime,
+        "modified_datetime": modified_at,
         "output_markdown": str(output_path.resolve()),
         "processed_datetime": processed_at,
+        "detected_language": language,
+        "language_probability": language_probability,
     }
-    log.info("Saved: %s", output_path)
+    log.info("Output path: %s", output_path)
     return True
 
 
-def main() -> int:
+def run_transcription() -> tuple[int, int, list[str]]:
+    """Run transcription batch. Returns (audio_found, new_count, errors)."""
     ensure_directories()
     registry = load_processed_registry()
+    errors: list[str] = []
+
+    audio_files = discover_audio_files()
+    audio_found = len(audio_files)
+    log.info("Audio files found: %d", audio_found)
+
+    if not audio_files:
+        log.info("No audio files to process.")
+        save_processed_registry(registry)
+        return 0, 0, errors
+
+    pending = 0
+    for source in audio_files:
+        try:
+            full_path, size, mtime = file_identity(source)
+        except OSError:
+            continue
+        if not is_already_processed(registry, full_path, size, mtime):
+            pending += 1
+    log.info("New files to transcribe: %d", pending)
+
+    if pending == 0:
+        save_processed_registry(registry)
+        return audio_found, 0, errors
 
     try:
         from faster_whisper import WhisperModel
     except ImportError:
-        log.error("faster-whisper is not installed. Run: pip install faster-whisper")
-        return 1
-
-    audio_files = discover_audio_files()
-    if not audio_files:
-        log.info("No audio files to process.")
-        save_processed_registry(registry)
-        return 0
+        msg = "faster-whisper is not installed. Run: pip install faster-whisper"
+        log.error(msg)
+        errors.append(msg)
+        return audio_found, 0, errors
 
     log.info("Loading Whisper model %r (cpu, int8)...", WHISPER_MODEL)
     try:
         model = WhisperModel(WHISPER_MODEL, device="cpu", compute_type="int8")
     except Exception as exc:
-        log.error("Failed to load Whisper model: %s", exc)
-        return 1
+        msg = f"Failed to load Whisper model: {exc}"
+        log.error(msg)
+        errors.append(msg)
+        return audio_found, 0, errors
 
     processed_count = 0
     for source in audio_files:
@@ -233,12 +272,25 @@ def main() -> int:
                 processed_count += 1
                 save_processed_registry(registry)
         except Exception as exc:
-            log.error("Unexpected error for %s: %s", source, exc)
+            err = f"Unexpected error for {source.name}: {exc}"
+            log.error(err)
+            errors.append(err)
             continue
 
     save_processed_registry(registry)
-    log.info("Done. New transcriptions: %d", processed_count)
-    return 0
+    log.info("Transcription complete. New transcriptions: %d", processed_count)
+    return audio_found, processed_count, errors
+
+
+def main() -> int:
+    audio_found, processed_count, errors = run_transcription()
+    log.info(
+        "Final summary: scanned=%d, new_transcriptions=%d, errors=%d",
+        audio_found,
+        processed_count,
+        len(errors),
+    )
+    return 1 if errors and processed_count == 0 and audio_found > 0 else 0
 
 
 if __name__ == "__main__":
