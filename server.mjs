@@ -2110,6 +2110,62 @@ const voiceLatestPipelineRunPath = path.join(voiceProcessedDir, 'latest_pipeline
 const voicePipelineRunsPath = path.join(voiceProcessedDir, 'pipeline_runs.json');
 const voicePipelineScriptPath = path.join(__dirname, 'scripts', 'process_voice_recorder_pipeline.py');
 
+/** Strip host-specific paths from voice-pipeline API responses (admin JSON only). */
+function sanitizeVoicePipelineText(text) {
+  if (text == null) return '';
+  let s = String(text);
+  s = s.replace(/[A-Za-z]:\\(?:[^\\\s\n\r<>"]|\\[^\\\s\n\r<>"])+/g, '[path-redacted]');
+  s = s.replace(/\\\\[^\s\\]+(?:\\[^\s\\]+)+/g, '[path-redacted]');
+  s = s.replace(/\/app\/[^\s\n\r'"]+/g, '[path-redacted]');
+  s = s.replace(/\/(?:Users|home)\/[^\s\n\r'"]+/gi, '[path-redacted]');
+  return s;
+}
+
+function sanitizeVoicePipelineFileRef(filePath) {
+  if (typeof filePath !== 'string' || !filePath.trim()) return filePath;
+  const norm = filePath.replace(/\\/g, '/');
+  const contentIdx = norm.toLowerCase().indexOf('content/');
+  if (contentIdx >= 0) return norm.slice(contentIdx);
+  if (norm.startsWith('content/')) return norm;
+  const base = path.basename(norm);
+  return base ? `content/…/${base}` : '[path-redacted]';
+}
+
+function sanitizeVoicePipelineFiles(files) {
+  if (!files || typeof files !== 'object') return files;
+  const mapList = (value) => {
+    if (value == null) return value;
+    const list = Array.isArray(value) ? value : [value];
+    return list.map(sanitizeVoicePipelineFileRef);
+  };
+  return {
+    transcriptions: mapList(files.transcriptions),
+    dailyReport: mapList(files.dailyReport),
+    tasks: mapList(files.tasks),
+    calendar: mapList(files.calendar),
+  };
+}
+
+function sanitizeVoicePipelineHistoryRun(run) {
+  if (!run || typeof run !== 'object') return run;
+  const out = { ...run };
+  if (Array.isArray(out.errors)) {
+    out.errors = out.errors.map((e) => sanitizeVoicePipelineText(String(e)));
+  }
+  return out;
+}
+
+function sanitizeVoicePipelineClientPayload(payload) {
+  if (!payload || typeof payload !== 'object') return payload;
+  const out = { ...payload };
+  if (typeof out.error === 'string') out.error = sanitizeVoicePipelineText(out.error);
+  if (typeof out.stdout === 'string') out.stdout = sanitizeVoicePipelineText(out.stdout);
+  if (typeof out.stderr === 'string') out.stderr = sanitizeVoicePipelineText(out.stderr);
+  if (out.files) out.files = sanitizeVoicePipelineFiles(out.files);
+  if (out.historyRun) out.historyRun = sanitizeVoicePipelineHistoryRun(out.historyRun);
+  return out;
+}
+
 /** @type {{ child: import('child_process').ChildProcess | null, startedAt: string | null, stdout: string, stderr: string }} */
 const voicePipelineActive = {
   child: null,
@@ -2190,17 +2246,15 @@ function startVoiceRecorderPipelineRun() {
       ok: false,
       status: 'error',
       error:
-        'Voice pipeline runs on your Windows PC (Google Drive folder), not on Railway. ' +
-        'In PowerShell from the repo root: .\\scripts\\run-voice-pipeline.ps1',
+        'Voice pipeline is disabled on this host. Run it on your Windows PC (see admin Voice Recorder page).',
     };
   }
   if (!fs.existsSync(voicePipelineScriptPath)) {
+    console.warn('[voice-pipeline] script missing:', voicePipelineScriptPath);
     return {
       ok: false,
       status: 'error',
-      error:
-        `Pipeline script not found: ${voicePipelineScriptPath}. ` +
-        'Redeploy the Railway service (Dockerfile must COPY scripts/ and content/).',
+      error: 'Pipeline script is not available on this host. Run locally via scripts/run-voice-pipeline.ps1.',
     };
   }
 
@@ -2280,21 +2334,36 @@ function startVoiceRecorderPipelineRun() {
   };
 }
 
+app.all(/^\/api\/voice-recorder(\/.*)?$/, requireAdmin, (_req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  return res.status(404).json({ error: 'Not found' });
+});
+
 app.get('/api/admin/voice-recorder/status', requireAdmin, (_req, res) => {
   res.setHeader('Cache-Control', 'no-store');
-  return res.json(buildVoicePipelineStatusPayload());
+  return res.json(sanitizeVoicePipelineClientPayload(buildVoicePipelineStatusPayload()));
 });
 
 app.post('/api/admin/voice-recorder/run', requireAdmin, (_req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   const result = startVoiceRecorderPipelineRun();
   if (!result.ok) {
-    return res.status(500).json(result);
+    return res.status(500).json(sanitizeVoicePipelineClientPayload(result));
   }
   if (result.status === 'already_running') {
-    return res.status(409).json({ ...buildVoicePipelineStatusPayload(), status: 'already_running' });
+    return res.status(409).json(
+      sanitizeVoicePipelineClientPayload({
+        ...buildVoicePipelineStatusPayload(),
+        status: 'already_running',
+      })
+    );
   }
-  return res.status(202).json({ ...buildVoicePipelineStatusPayload(), ...result });
+  return res.status(202).json(
+    sanitizeVoicePipelineClientPayload({
+      ...buildVoicePipelineStatusPayload(),
+      ...result,
+    })
+  );
 });
 
 app.get('/api/admin/site-appearance', requireAdmin, async (_req, res) => {

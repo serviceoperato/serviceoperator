@@ -2233,15 +2233,25 @@
 
   function voicePipelineDepsHint(text) {
     var blob = String(text || '').toLowerCase();
+    var onRailway =
+      blob.indexOf('disabled on this host') !== -1 ||
+      blob.indexOf('not on railway') !== -1;
+    if (onRailway) {
+      return (
+        'Voice pipeline does not run on Railway. On this Windows PC, open PowerShell in the repo and run: .\\scripts\\run-voice-pipeline.ps1'
+      );
+    }
     if (
       blob.indexOf('faster-whisper') !== -1 ||
       blob.indexOf('faster_whisper') !== -1 ||
       blob.indexOf('no module named') !== -1
     ) {
-      return 'Missing Python dependency: run `pip install faster-whisper`';
+      return (
+        'Install on this Windows PC (not the cloud server): pip install -r requirements-voice.txt ; winget install Gyan.FFmpeg — then .\\scripts\\run-voice-pipeline.ps1'
+      );
     }
     if (blob.indexOf('ffmpeg') !== -1 || blob.indexOf('avconv') !== -1) {
-      return 'Missing FFmpeg: run `winget install Gyan.FFmpeg` (Windows) or install ffmpeg on your PATH';
+      return 'Missing FFmpeg on this PC: winget install Gyan.FFmpeg — then run .\\scripts\\run-voice-pipeline.ps1';
     }
     return '';
   }

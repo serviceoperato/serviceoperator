@@ -157,9 +157,10 @@
     <section id="voiceRecorderSection" class="tf-admin-table-card is-hidden" aria-label="Voice recorder">
       <h2 class="tf-admin-section-title">Voice Recorder</h2>
       <p class="tf-admin-muted" style="margin-bottom:0.85rem">
-        Voice pipeline runs on your <strong>Windows PC</strong> (Google Drive), not on Railway.
-        In PowerShell from the repo root: <code class="mono">.\scripts\run-voice-pipeline.ps1</code>
-        The button below only works when the Node server runs locally on that PC.
+        <strong>Do not install faster-whisper on Railway.</strong> Transcription runs only on this Windows PC
+        (Google Drive). In PowerShell: <code class="mono">.\scripts\run-voice-pipeline.ps1</code>
+        (installs deps from <code class="mono">requirements-voice.txt</code> if needed).
+        The admin button below works only when <code class="mono">node server.mjs</code> runs locally—not on production.
       </p>
       <div class="tf-admin-payout-card" style="margin-top:0">
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.65rem;margin-bottom:0.85rem">

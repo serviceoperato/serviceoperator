@@ -42,16 +42,20 @@ When processing voice notes:
 - prefer concise operational summaries
 - preserve the full transcription reference
 
-## Transcription pipeline
+## Transcription pipeline (local Windows only)
 
+- Do **not** add `faster-whisper` to the Railway Node Docker image
+- Local deps: `pip install -r requirements-voice.txt` and `winget install Gyan.FFmpeg`
 - Batch input: `G:\My Drive\Voice Recorder`
-- Transcription runner: `python scripts/transcribe_voice_recorder.py`
+- Preferred runner: `.\scripts\run-voice-pipeline.ps1`
 - Full pipeline: `python scripts/process_voice_recorder_pipeline.py`
 - Registry: `content/processed/processed_files.json` — stable identity: full path + file size + modified time
 - Run log: `content/processed/pipeline_runs.json`
 
 ## Security
 
-- do not expose local Windows paths publicly except inside admin-only pages
-- do not expose secrets
-- do not add hardcoded tokens
+- `/admin/voice-recorder` is **admin-only** (operator JWT / admin gate); `noindex, nofollow` on admin HTML
+- API: only `GET|POST /api/admin/voice-recorder/*` with `requireAdmin`; never add public `/api/voice-recorder/*`
+- Sanitize API JSON: no Windows paths, `/app/…`, or absolute host paths in `stdout`/`stderr`/`error` (log full detail server-side only)
+- Static admin HTML may document local paths; public marketing pages and unauthenticated responses must not
+- do not expose secrets or hardcoded tokens
