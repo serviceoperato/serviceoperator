@@ -17,6 +17,8 @@
 /admin/user-profiling/ /admin.html 200
 /admin/report-catalog /admin.html 200
 /admin/report-catalog/ /admin.html 200
+/admin/voice-recorder /admin.html 200
+/admin/voice-recorder/ /admin.html 200
 
 # Clean URL for AI operations SEO hub (same document; canonical in page head)
 /ai-operations /ai-operations-for-hotels-clinics-property.html 200

@@ -22,7 +22,6 @@ export function SiteNav() {
         >
           Login / Register
         </a>
-        <button type="button" className="theme-toggle" data-theme-toggle aria-label="Theme" />
       </div>
     </nav>
   );

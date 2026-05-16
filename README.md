@@ -124,11 +124,25 @@ Any static host (Vercel, GitHub Pages, S3). Publish the **`public/`** folder. No
 **Option D — Railway (Dockerfile recommended):**
 The `Dockerfile` runs **Node**: `server.mjs` serves **`public/`** and sets the same style of security headers as `netlify.toml` (including `Cache-Control` / `X-Robots-Tag` on `client.html`). Railway sets `PORT` automatically.
 
+**Railway — split frontend + backend (serviceopera.to on frontend)**
+
+Many projects run two Railway services from the same Dockerfile: `…-frontend-production` (custom domain `serviceopera.to`) and `…-backend-production` (API + Postgres). Since v1.5.37, `so-api.js` uses **same-origin** `/api` on `serviceopera.to` so admin **HttpOnly** cookies work for `/admin/*` and private `/clinics/NNN/` after `?next=`.
+
+| Where | Variables |
+|---|---|
+| **Backend** (`…-backend-production`) | `ADMIN_PASSWORD_HASH`, `PORTAL_JWT_SECRET`, `DATABASE_URL`, `RESEND_*`, `GOOGLE_MAPS_API_KEY`, etc. |
+| **Frontend** (`…-frontend-production`, custom domain) | `PUBLIC_ORIGIN=https://serviceopera.to`. **Do not** duplicate secrets unless you want two independent APIs. Instead, leave `ADMIN_PASSWORD_HASH` unset on the frontend: `server.mjs` **auto-proxies** `/api/*` to the sibling backend (`RAILWAY_SERVICE_NAME` `*-frontend-*` → `https://*-backend-*.up.railway.app`). Override with `SERVICEOPERA_API_UPSTREAM` if service names differ. |
+
+After deploy, `GET https://serviceopera.to/api/admin/capabilities` should show `adminPasswordConfigured: true` and `proxiedApi: true` (values come from the backend). Deploy logs on the frontend should include `API upstream proxy active`.
+
+**Alternative (single Node host):** attach `serviceopera.to` only to the **backend** service and put all variables there — no proxy needed.
+
 **Railway — variables for operator console + email**
 
 | Variable | Required | Purpose |
 |---|---|---|
-| `ADMIN_PASSWORD_HASH` | **Yes** for server-backed admin | scrypt password hash (`salt:hex`, same format as portal users). Generate locally: `node scripts/hash-admin-password.mjs "your-strong-password"` — set the printed `ADMIN_PASSWORD_HASH=…` on the Node service (never commit the hash). |
+| `ADMIN_PASSWORD_HASH` | **Yes** for server-backed admin (on the service that **handles** auth, or on backend when frontend proxies) | scrypt password hash (`salt:hex`, same format as portal users). Generate locally: `node scripts/hash-admin-password.mjs "your-strong-password"` — set the printed `ADMIN_PASSWORD_HASH=…` on the Node service (never commit the hash). |
+| `SERVICEOPERA_API_UPSTREAM` | Optional on frontend-only hosts | Full origin of the backend Node service (no trailing slash). Auto-inferred on Railway when `ADMIN_PASSWORD_HASH` is unset and the service name matches `*-frontend-*`. |
 | `ADMIN_EMAIL` | Optional | Defaults to `jack@serviceopera.to`. Only this address can obtain an admin JWT via password login or portal bootstrap. |
 | `PORTAL_JWT_SECRET` or `ADMIN_JWT_SECRET` | **Required on Railway** | One long random string (either variable name works; same key for admin and **portal** `/login.html` users). If omitted locally, a random secret is generated at each process start — on **Railway** the server **exits** until you set one of these, so sessions survive deploys and all replicas agree. |
 | `RESEND_API_KEY` | Recommended for portal email | [Resend](https://resend.com) API key. When set on **`server.mjs`**: **Create account** confirmation, **Forgot password?**, and optional **login OTP** on `/login.html`. Not used for operator console sign-in. |

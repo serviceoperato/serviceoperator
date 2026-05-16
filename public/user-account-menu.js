@@ -132,6 +132,7 @@
     { label: 'Places leads', path: '', placesLeads: true },
     { label: 'Report catalog', path: '/admin/report-catalog' },
     { label: 'User reports', path: '/admin/user-reports' },
+    { label: 'Voice Recorder', path: '/admin/voice-recorder' },
   ];
 
   function openPlacesLeadsFromMenu(e) {
@@ -233,6 +234,7 @@
     if (portalJwt) {
       jobs.push(
         fetchJson('/api/auth/user-session', portalJwt).then(function (x) {
+          if (getPortalJwt() !== portalJwt) return;
           if (x.ok && x.json && x.json.ok) {
             sessionCache = {
               email: x.json.email || '',
@@ -244,6 +246,7 @@
              dualGet user-session). A bare HTTP 401 from a proxy/static host often has no
              { ok: false } and must not wipe localStorage (e.g. cached / + wrong /api route). */
           if (x.status === 401 && x.json && x.json.ok === false) {
+            if (getPortalJwt() !== portalJwt) return;
             sessionCache = null;
             clearPortalJwt();
             return;

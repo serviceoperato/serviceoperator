@@ -107,12 +107,16 @@
 
   function initButtons() {
     document.querySelectorAll('[data-theme-toggle]').forEach(function (btn) {
+      if (btn.dataset.soThemeBound === '1') return;
+      btn.dataset.soThemeBound = '1';
       btn.addEventListener('click', function () {
         toggle();
       });
     });
     syncButtons();
   }
+
+  window.__soThemeBindToggles = initButtons;
 
   function boot() {
     initButtons();

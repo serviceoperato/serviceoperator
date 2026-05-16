@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="so-api-origin" content="https://serviceoperato-backend-production.up.railway.app" />
 <script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
 <title>Log in · www.serviceopera.to</title>
 <meta name="robots" content="noindex, nofollow" />
@@ -164,8 +163,6 @@
   </a>
   <div class="nav__links">
     <a href="/login.html" class="nav__login" id="navPortalAuth" aria-label="Login or Register">Login / Register</a>
-    <button type="button" class="theme-toggle" data-theme-toggle aria-label="Theme"></button>
-
   </div>
 </nav>
 
@@ -291,6 +288,7 @@
 </div>
 
 <script src="/sw-register.js"></script>
+<script src="/site-nav-drawer.js"></script>
 <script src="user-account-menu.js"></script>
 <script src="theme.js"></script>
 <script src="debug.js"></script>
@@ -1035,6 +1033,8 @@
       }
       if (!portalTok || !looksLikeJwt(portalTok)) return;
       return fetchPortalUserSession(portalTok).then(function (x) {
+        /* Stale probe must not wipe a JWT saved while this request was in flight (login submit or other tab). */
+        if (getPortalJwtLogin() !== portalTok) return;
         if (x.status === 401 && x.json && x.json.ok === false) {
           clearPortalJwtLogin();
           if (bannerSession) {
@@ -1142,9 +1142,10 @@
       accountPanelMeta.appendChild(loading);
     }
     var emailFb = decodeJwtEmailLogin(tok);
+    var tokAtProbe = tok;
     fetchPortalUserSession(tok).then(function (x) {
       if (!userAccountPanel || userAccountPanel.classList.contains('is-hidden')) return;
-      if (!getPortalJwtLogin()) return;
+      if (getPortalJwtLogin() !== tokAtProbe) return;
       /* Match user-account-menu.js: only clear JWT on explicit portal rejection (server.mjs user-session 401 JSON). */
       if (x.status === 401 && x.json && x.json.ok === false) {
         clearPortalJwtLogin();

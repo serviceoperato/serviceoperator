@@ -6,8 +6,19 @@
 (function (g) {
   'use strict';
 
+  function isMarketingNodeHost() {
+    try {
+      var h = g.location && g.location.hostname ? String(g.location.hostname).toLowerCase() : '';
+      return h === 'www.serviceopera.to' || h === 'serviceopera.to';
+    } catch (e) {
+      return false;
+    }
+  }
+
   function metaOrigin() {
     try {
+      /* Split Railway: frontend server.mjs proxies /api on this host — ignore page meta so login + report share same-origin /api (admin cookies + portal JWT). */
+      if (isMarketingNodeHost()) return '';
       var m = document.querySelector('meta[name="so-api-origin"]');
       if (m && m.getAttribute('content')) {
         var c = m.getAttribute('content').trim();

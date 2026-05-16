@@ -181,6 +181,20 @@
     header.appendChild(closeBtn);
     inner.appendChild(header);
 
+    var themeRow = document.createElement('div');
+    themeRow.className = 'so-site-nav-panel__theme';
+    var themeLabel = document.createElement('span');
+    themeLabel.className = 'so-site-nav-panel__theme-label';
+    themeLabel.textContent = 'Theme';
+    var themeBtn = document.createElement('button');
+    themeBtn.type = 'button';
+    themeBtn.className = 'theme-toggle theme-toggle--drawer';
+    themeBtn.setAttribute('data-theme-toggle', '');
+    themeBtn.setAttribute('aria-label', 'Theme');
+    themeRow.appendChild(themeLabel);
+    themeRow.appendChild(themeBtn);
+    inner.appendChild(themeRow);
+
     SECTIONS.forEach(function (section) {
       var sectionId = 'soSiteNavSection-' + section.id;
       var toggle = document.createElement('button');
@@ -249,6 +263,10 @@
     root.appendChild(backdrop);
     root.appendChild(panel);
     document.body.appendChild(root);
+
+    if (typeof window.__soThemeBindToggles === 'function') {
+      window.__soThemeBindToggles();
+    }
   }
 
   function ensureTrigger(nav) {

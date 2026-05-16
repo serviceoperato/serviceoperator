@@ -3,6 +3,7 @@
  */
 import crypto from 'crypto';
 import fs from 'fs';
+import { Readable } from 'stream';
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -49,22 +50,62 @@ try {
 const dataDir = process.env.DATA_DIR || path.join(__dirname, 'data');
 fs.mkdirSync(dataDir, { recursive: true });
 
+const ADMIN_PASSWORD_HASH = (process.env.ADMIN_PASSWORD_HASH || '').trim();
+
+/**
+ * Split Railway: custom domain on *-frontend-* may run server.mjs without ADMIN_PASSWORD_HASH while the
+ * sibling *-backend-* holds secrets. Proxy /api/* so so-api.js can stay same-origin (admin cookies).
+ */
+function resolveApiUpstream() {
+  const explicit = (
+    process.env.SERVICEOPERA_API_UPSTREAM ||
+    process.env.SERVICEOPERATO_BACKEND_URL ||
+    ''
+  )
+    .trim()
+    .replace(/\/+$/, '');
+  if (explicit) return explicit;
+  if (ADMIN_PASSWORD_HASH) return '';
+  if (!String(process.env.RAILWAY_ENVIRONMENT || '').trim()) return '';
+  const svc = (process.env.RAILWAY_SERVICE_NAME || '').trim().toLowerCase();
+  let m = /^([\w-]+)-frontend(-[\w]+)?$/.exec(svc);
+  if (m) {
+    return `https://${m[1]}-backend${m[2] || ''}.up.railway.app`;
+  }
+  const pub = (process.env.RAILWAY_PUBLIC_DOMAIN || '').trim().toLowerCase();
+  m = /^([\w-]+)-frontend([\w.-]*)\.up\.railway\.app$/.exec(pub);
+  if (m) {
+    return `https://${m[1]}-backend${m[2] || ''}.up.railway.app`;
+  }
+  return '';
+}
+
+const API_UPSTREAM = resolveApiUpstream();
+
 /** Fail fast on Railway before DB work so deploy logs show the real blocker. */
 const JWT_SECRET_FROM_ENV = (process.env.PORTAL_JWT_SECRET || process.env.ADMIN_JWT_SECRET || '').trim();
 const JWT_SECRET = JWT_SECRET_FROM_ENV || crypto.randomBytes(32).toString('hex');
 if (!JWT_SECRET_FROM_ENV) {
-  console.warn(
-    '[serviceopera] PORTAL_JWT_SECRET / ADMIN_JWT_SECRET is unset — using an ephemeral per-process JWT secret. ' +
-      'Portal and admin sessions break after every deploy/restart; multiple replicas would disagree on signatures. ' +
-      'Email confirmation links that still use JWT also fail across restarts. ' +
-      'Set PORTAL_JWT_SECRET (or ADMIN_JWT_SECRET) to one long random string shared by all instances.'
-  );
-  if (String(process.env.RAILWAY_ENVIRONMENT || '').trim()) {
-    console.error(
-      '[serviceopera] Refusing to start on Railway without PORTAL_JWT_SECRET or ADMIN_JWT_SECRET. ' +
-        'Railway → your Node service → Variables → add one secret (e.g. openssl rand -hex 32), redeploy.'
+  const onRailway = Boolean(String(process.env.RAILWAY_ENVIRONMENT || '').trim());
+  if (API_UPSTREAM && onRailway) {
+    console.warn(
+      '[serviceopera] PORTAL_JWT_SECRET unset on this host — OK while SERVICEOPERA_API_UPSTREAM proxies /api/* to the backend that holds secrets.'
     );
-    process.exit(1);
+  } else {
+    console.warn(
+      '[serviceopera] PORTAL_JWT_SECRET / ADMIN_JWT_SECRET is unset — using an ephemeral per-process JWT secret. ' +
+        'Portal and admin sessions break after every deploy/restart; multiple replicas would disagree on signatures. ' +
+        'Email confirmation links that still use JWT also fail across restarts. ' +
+        'Set PORTAL_JWT_SECRET (or ADMIN_JWT_SECRET) to one long random string shared by all instances.'
+    );
+    if (onRailway) {
+      console.error(
+        '[serviceopera] Refusing to start on Railway without PORTAL_JWT_SECRET or ADMIN_JWT_SECRET. ' +
+          'Railway → your Node service → Variables → add one secret (e.g. openssl rand -hex 32), redeploy. ' +
+          'On a split *-frontend-* deploy without local admin secrets, set SERVICEOPERA_API_UPSTREAM to the backend URL instead.'
+      );
+      process.exit(1);
+    }
   }
 }
 
@@ -832,8 +873,6 @@ function normalizePageImageAlt(s, fallback) {
 }
 
 const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'jack@serviceopera.to').trim().toLowerCase();
-/** scrypt hash in the same `salt:hex` format as portal passwords (`clinic-store.mjs` / `scripts/hash-admin-password.mjs`). */
-const ADMIN_PASSWORD_HASH = (process.env.ADMIN_PASSWORD_HASH || '').trim();
 const RESEND_API_KEY = (process.env.RESEND_API_KEY || '').trim();
 const RESEND_FROM = (process.env.RESEND_FROM || 'ServiceOpera <onboarding@resend.dev>').trim();
 const RESEND_FROM_USES_TEST_SENDER = /@resend\.dev>/i.test(RESEND_FROM) || /onboarding@resend\.dev/i.test(RESEND_FROM);
@@ -1513,10 +1552,101 @@ function publicOriginForEmail(req) {
   return publicOrigin(req);
 }
 
+const API_PROXY_HOP_BY_HOP = new Set([
+  'connection',
+  'keep-alive',
+  'proxy-authentication',
+  'proxy-authorization',
+  'te',
+  'trailer',
+  'transfer-encoding',
+  'upgrade',
+  'host',
+  'content-length',
+]);
+
+function stripSetCookieDomain(setCookieLine) {
+  return String(setCookieLine).replace(/;\s*Domain=[^;]*/gi, '');
+}
+
+function forwardedClientIp(req) {
+  const xf = req.headers['x-forwarded-for'];
+  if (typeof xf === 'string' && xf.length) return xf.split(',')[0].trim();
+  return req.socket?.remoteAddress || '';
+}
+
+async function proxyApiToUpstream(req, res) {
+  const targetUrl = new URL(req.originalUrl || req.url, `${API_UPSTREAM}/`);
+  const headers = new Headers();
+  for (const [k, v] of Object.entries(req.headers)) {
+    const lk = k.toLowerCase();
+    if (API_PROXY_HOP_BY_HOP.has(lk)) continue;
+    if (v === undefined) continue;
+    headers.set(k, Array.isArray(v) ? v.join(', ') : String(v));
+  }
+  if (req.headers.host) {
+    headers.set('x-forwarded-host', String(req.headers.host));
+    if (!headers.has('x-forwarded-for')) {
+      headers.set('x-forwarded-for', forwardedClientIp(req));
+    }
+    const proto =
+      req.secure || String(req.headers['x-forwarded-proto'] || '').toLowerCase() === 'https'
+        ? 'https'
+        : 'http';
+    headers.set('x-forwarded-proto', proto);
+  }
+
+  const hasBody = req.method !== 'GET' && req.method !== 'HEAD';
+  const upstream = await fetch(targetUrl, {
+    method: req.method,
+    headers,
+    redirect: 'manual',
+    body: hasBody ? req : undefined,
+    duplex: hasBody ? 'half' : undefined,
+  });
+
+  res.status(upstream.status);
+  upstream.headers.forEach((value, key) => {
+    const lk = key.toLowerCase();
+    if (API_PROXY_HOP_BY_HOP.has(lk) || lk === 'set-cookie') return;
+    res.setHeader(key, value);
+  });
+  const cookies =
+    typeof upstream.headers.getSetCookie === 'function' ? upstream.headers.getSetCookie() : [];
+  const legacyCookie = upstream.headers.get('set-cookie');
+  if (!cookies.length && legacyCookie) cookies.push(legacyCookie);
+  for (const c of cookies) {
+    res.appendHeader('Set-Cookie', stripSetCookieDomain(c));
+  }
+  if (upstream.body) {
+    Readable.fromWeb(upstream.body).pipe(res);
+  } else {
+    res.end();
+  }
+}
+
 const app = express();
 app.set('trust proxy', 1);
 app.disable('x-powered-by');
+
+/** Before body parsers: stream /api to the backend when this host is frontend-only (split Railway). */
+if (API_UPSTREAM) {
+  console.log(
+    `[serviceopera] API upstream proxy active → ${API_UPSTREAM} (/api/* on this host; admin cookies stay on the public origin).`
+  );
+  app.use((req, res, next) => {
+    if (!req.path.startsWith('/api/') || req.method === 'OPTIONS') return next();
+    proxyApiToUpstream(req, res).catch((err) => {
+      console.error('[serviceopera] API upstream proxy error:', err && err.message ? err.message : err);
+      if (!res.headersSent) {
+        res.status(502).json({ error: 'API upstream unavailable.' });
+      }
+    });
+  });
+}
+
 app.use((req, res, next) => {
+  if (API_UPSTREAM && req.path.startsWith('/api/')) return next();
   const bigJson =
     (req.method === 'POST' && req.path === '/api/admin/site-appearance/upload') ||
     (req.method === 'PUT' && req.path === '/api/admin/site-appearance');
@@ -1731,6 +1861,9 @@ app.get('/api/admin/capabilities', (_req, res) => {
     /** @deprecated Admin email OTP removed; always false. */
     otpEnabled: false,
     adminPasswordConfigured: Boolean(ADMIN_PASSWORD_HASH),
+    /** When set, this process proxies /api/* to the backend (capabilities may reflect upstream). */
+    apiUpstream: API_UPSTREAM || undefined,
+    proxiedApi: Boolean(API_UPSTREAM),
     userAccountsApi: true,
     userPasswordResetEmail: Boolean(RESEND_API_KEY),
     /** @deprecated */
@@ -3197,6 +3330,8 @@ app.get(
     '/admin/user-profiling/',
     '/admin/report-catalog',
     '/admin/report-catalog/',
+    '/admin/voice-recorder',
+    '/admin/voice-recorder/',
   ],
   sendAdminHtml
 );
@@ -3358,6 +3493,14 @@ app.use((req, res) => {
 const port = Number(process.env.PORT) || 8080;
 app.listen(port, '0.0.0.0', () => {
   console.log(`[serviceopera] v${appVersion} listening on ${port} · public=${publicDir} · data=${dataDir}`);
+  if (API_UPSTREAM) {
+    console.log(`[serviceopera] /api/* proxied to ${API_UPSTREAM} (local ADMIN_PASSWORD_HASH ${ADMIN_PASSWORD_HASH ? 'set' : 'unset'}).`);
+  } else if (String(process.env.RAILWAY_ENVIRONMENT || '').trim() && !ADMIN_PASSWORD_HASH) {
+    console.warn(
+      '[serviceopera] ADMIN_PASSWORD_HASH unset on this Railway service and no API upstream configured. ' +
+        'Set ADMIN_PASSWORD_HASH here, or SERVICEOPERA_API_UPSTREAM=https://your-backend.up.railway.app on *-frontend-* services.'
+    );
+  }
   console.log(
     `[serviceopera] User store: ${(process.env.DATABASE_URL || '').trim() ? 'PostgreSQL (DATABASE_URL)' : `JSON files (${dataDir})`}`
   );

@@ -336,6 +336,25 @@ html.so-site-nav-open {
 .so-site-nav-panel__close:hover {
   background: color-mix(in srgb, var(--paper) 12%, transparent);
 }
+.so-site-nav-panel__theme {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0 10px 10px;
+  padding: 0.5rem 0.65rem;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--ink-2) 88%, transparent);
+}
+.so-site-nav-panel__theme-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--paper);
+}
+.theme-toggle--drawer {
+  margin-left: auto;
+}
 .so-site-nav-section-label {
   margin: 0;
   font-size: 0.65rem;
