@@ -6,6 +6,7 @@ node_modules/
 .next/
 .env
 .env.*
+.secrets/
 !.env.example
 /data/
 test-data/
