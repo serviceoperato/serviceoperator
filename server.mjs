@@ -2152,6 +2152,18 @@ function sanitizeVoicePipelineHistoryRun(run) {
   if (Array.isArray(out.errors)) {
     out.errors = out.errors.map((e) => sanitizeVoicePipelineText(String(e)));
   }
+  if (out.stats && Array.isArray(out.stats.error_messages)) {
+    out.stats = {
+      ...out.stats,
+      error_messages: out.stats.error_messages.map((e) => sanitizeVoicePipelineText(String(e))),
+    };
+  }
+  if (Array.isArray(out.error_details)) {
+    out.error_details = out.error_details.map((row) => ({
+      ...row,
+      message: sanitizeVoicePipelineText(String(row.message || '')),
+    }));
+  }
   return out;
 }
 

@@ -21,6 +21,28 @@
       "processed_datetime": "2026-05-16 17:40:01 UTC",
       "detected_language": "it",
       "language_probability": 0.9377347230911255
+    },
+    "G:\\My Drive\\Voice Recorder\\Memo 002.m4a": {
+      "file_name": "Memo 002.m4a",
+      "full_path": "G:\\My Drive\\Voice Recorder\\Memo 002.m4a",
+      "size": 9910977,
+      "modified_time": 1671365175.0,
+      "modified_datetime": "2022-12-18 12:06:15 UTC",
+      "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Memo_002.md",
+      "processed_datetime": "2026-05-16 17:44:50 UTC",
+      "detected_language": "it",
+      "language_probability": 0.9923604130744934
+    },
+    "G:\\My Drive\\Voice Recorder\\Memo 003.m4a": {
+      "file_name": "Memo 003.m4a",
+      "full_path": "G:\\My Drive\\Voice Recorder\\Memo 003.m4a",
+      "size": 4147485,
+      "modified_time": 1671365464.0,
+      "modified_datetime": "2022-12-18 12:11:04 UTC",
+      "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Memo_003.md",
+      "processed_datetime": "2026-05-16 17:49:11 UTC",
+      "detected_language": "it",
+      "language_probability": 0.9913640022277832
     }
   }
 }

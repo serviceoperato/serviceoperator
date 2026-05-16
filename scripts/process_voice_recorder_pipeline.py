@@ -15,6 +15,7 @@ import json
 import logging
 import re
 import sys
+import traceback
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -96,6 +97,18 @@ def utc_now_str() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
 
 
+def record_error(stats: RunStats, context: str, exc: BaseException | None = None) -> None:
+    """Append a human-readable error plus traceback for pipeline_runs.json / admin UI."""
+    if exc is not None:
+        msg = f"{context}: {exc}"
+        stats.errors.append(msg)
+        stats.errors.append(traceback.format_exc().strip())
+        log.error("%s\n%s", msg, traceback.format_exc())
+    else:
+        stats.errors.append(context)
+        log.error("%s", context)
+
+
 def today_date() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
@@ -166,6 +179,7 @@ def append_pipeline_run(stats: RunStats, processed_files: list[str]) -> None:
         "tasks": stats.tasks_extracted,
         "calendar": stats.calendar_events,
         "errors": err_count,
+        "error_messages": list(stats.errors),
     }
     daily_report = f"content/voice-reports/{today_date()}-voice-report.md"
     run_files: dict = {
@@ -194,6 +208,10 @@ def append_pipeline_run(stats: RunStats, processed_files: list[str]) -> None:
             "project_updates": stats.project_updates,
             "ambiguous_items": stats.ambiguous_items,
             "errors": stats.errors,
+            "error_details": [
+                {"index": i + 1, "message": line}
+                for i, line in enumerate(stats.errors)
+            ],
         }
     )
     save_json(PIPELINE_RUNS_JSON, data)
@@ -218,9 +236,7 @@ def run_transcription_step(stats: RunStats) -> None:
         stats.files_transcribed = new_count
         stats.errors.extend(errors)
     except Exception as exc:
-        msg = f"Transcription step failed: {exc}"
-        log.error(msg)
-        stats.errors.append(msg)
+        record_error(stats, "Transcription step failed", exc)
 
 
 def parse_metadata_line(line: str, label: str) -> str | None:
@@ -763,9 +779,7 @@ def run_pipeline() -> RunStats:
             processed_names.append(md_path.name)
             save_processed_registry(registry)
         except Exception as exc:
-            err = f"Classification failed for {md_path.name}: {exc}"
-            log.error(err)
-            stats.errors.append(err)
+            record_error(stats, f"Classification failed for {md_path.name}", exc)
 
     save_processed_registry(registry)
     append_pipeline_run(stats, processed_names)
@@ -804,7 +818,14 @@ def print_summary(stats: RunStats) -> None:
 
 def main() -> int:
     log.info("Voice Recorder pipeline starting")
-    stats = run_pipeline()
+    stats = RunStats(run_datetime=utc_now_str())
+    try:
+        stats = run_pipeline()
+    except Exception as exc:
+        record_error(stats, "Pipeline crashed", exc)
+        append_pipeline_run(stats, [])
+        print_summary(stats)
+        return 1
     print_summary(stats)
     blocking = [e for e in stats.errors if "faster-whisper" in e.lower()]
     if blocking and stats.files_transcribed == 0 and stats.files_scanned > 0:

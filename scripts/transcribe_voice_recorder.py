@@ -14,6 +14,7 @@ import json
 import logging
 import os
 import sys
+import traceback
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -252,10 +253,11 @@ def run_transcription() -> tuple[int, int, list[str]]:
 
     try:
         from faster_whisper import WhisperModel
-    except ImportError:
-        msg = "faster-whisper is not installed. Run: pip install faster-whisper"
-        log.error(msg)
+    except ImportError as exc:
+        msg = "faster-whisper is not installed. Run: pip install -r requirements-voice.txt"
+        log.error("%s\n%s", msg, traceback.format_exc())
         errors.append(msg)
+        errors.append(traceback.format_exc().strip())
         return audio_found, 0, errors
 
     log.info("Loading Whisper model %r (cpu, int8)...", WHISPER_MODEL)
@@ -263,8 +265,9 @@ def run_transcription() -> tuple[int, int, list[str]]:
         model = WhisperModel(WHISPER_MODEL, device="cpu", compute_type="int8")
     except Exception as exc:
         msg = f"Failed to load Whisper model: {exc}"
-        log.error(msg)
+        log.error("%s\n%s", msg, traceback.format_exc())
         errors.append(msg)
+        errors.append(traceback.format_exc().strip())
         return audio_found, 0, errors
 
     processed_count = 0
@@ -275,8 +278,9 @@ def run_transcription() -> tuple[int, int, list[str]]:
                 save_processed_registry(registry)
         except Exception as exc:
             err = f"Unexpected error for {source.name}: {exc}"
-            log.error(err)
+            log.error("%s\n%s", err, traceback.format_exc())
             errors.append(err)
+            errors.append(traceback.format_exc().strip())
             continue
 
     save_processed_registry(registry)

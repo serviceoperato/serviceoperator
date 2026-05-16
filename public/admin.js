@@ -2306,6 +2306,31 @@
         escapeHtml(stats.errors != null ? stats.errors : '—') +
         '</li>' +
         '</ul>';
+      var errMsgs = [];
+      if (stats.error_messages && Array.isArray(stats.error_messages)) {
+        errMsgs = stats.error_messages;
+      } else if (
+        payload.historyRun &&
+        Array.isArray(payload.historyRun.errors) &&
+        payload.historyRun.errors.length
+      ) {
+        errMsgs = payload.historyRun.errors;
+      }
+      if (errMsgs.length) {
+        statsEl.innerHTML +=
+          '<p style="margin:0.65rem 0 0.25rem"><strong>Error details</strong></p>' +
+          '<ul style="margin:0;padding-left:1.1rem;max-height:10rem;overflow:auto">' +
+          errMsgs
+            .map(function (line) {
+              return (
+                '<li style="margin-bottom:0.35rem"><code class="mono" style="white-space:pre-wrap;word-break:break-word">' +
+                escapeHtml(String(line)) +
+                '</code></li>'
+              );
+            })
+            .join('') +
+          '</ul>';
+      }
     } else {
       statsEl.innerHTML = '<p class="tf-admin-muted" style="margin:0">No pipeline stats yet.</p>';
     }
