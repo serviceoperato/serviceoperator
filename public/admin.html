@@ -157,7 +157,9 @@
     <section id="voiceRecorderSection" class="tf-admin-table-card is-hidden" aria-label="Voice recorder">
       <h2 class="tf-admin-section-title">Voice Recorder</h2>
       <p class="tf-admin-muted" style="margin-bottom:0.85rem">
-        Hub for operator voice notes. Run the full pipeline from here (transcribe, classify, write <code class="mono">/content</code> outputs).
+        Hub for operator voice notes. API: <code class="mono">POST /api/admin/voice-recorder/run</code> (operator JWT).
+        After deploy, scripts live under <code class="mono">/app/scripts/</code> in the Docker image.
+        Audio input is <code class="mono">G:\My Drive\Voice Recorder</code> on Windows only — run the pipeline locally unless you set <code class="mono">VOICE_RECORDER_INPUT_DIR</code> on the server.
       </p>
       <div class="tf-admin-payout-card" style="margin-top:0">
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.65rem;margin-bottom:0.85rem">

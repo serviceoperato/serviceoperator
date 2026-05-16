@@ -13,6 +13,8 @@ RUN npm ci --omit=dev
 COPY server.mjs clinic-store.mjs postgres-user-store.mjs postgres-site-appearance.mjs user-telemetry.mjs lead-events.mjs ./
 COPY lib ./lib/
 COPY public ./public/
+COPY scripts ./scripts/
+COPY content ./content/
 
 RUN mkdir -p /app/data \
   && test -f /app/public/index.html \
@@ -20,7 +22,9 @@ RUN mkdir -p /app/data \
   && test -f /app/clinic-store.mjs \
   && test -f /app/postgres-user-store.mjs \
   && test -f /app/postgres-site-appearance.mjs \
-  && test -f /app/lead-events.mjs
+  && test -f /app/lead-events.mjs \
+  && test -f /app/scripts/process_voice_recorder_pipeline.py \
+  && test -f /app/scripts/transcribe_voice_recorder.py
 
 ENV DATA_DIR=/app/data
 

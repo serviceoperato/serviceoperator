@@ -12,12 +12,14 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-INPUT_DIR = Path(r"G:\My Drive\Voice Recorder")
+_DEFAULT_INPUT = r"G:\My Drive\Voice Recorder"
+INPUT_DIR = Path(os.environ.get("VOICE_RECORDER_INPUT_DIR", _DEFAULT_INPUT))
 TRANSCRIPTIONS_DIR = REPO_ROOT / "content" / "transcriptions"
 PROCESSED_DIR = REPO_ROOT / "content" / "processed"
 PROCESSED_JSON = PROCESSED_DIR / "processed_files.json"

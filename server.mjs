@@ -2189,7 +2189,9 @@ function startVoiceRecorderPipelineRun() {
     return {
       ok: false,
       status: 'error',
-      error: `Pipeline script not found: ${voicePipelineScriptPath}`,
+      error:
+        `Pipeline script not found: ${voicePipelineScriptPath}. ` +
+        'Redeploy the Railway service (Dockerfile must COPY scripts/ and content/).',
     };
   }
 
