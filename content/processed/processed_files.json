@@ -40,9 +40,20 @@
       "modified_time": 1671365464.0,
       "modified_datetime": "2022-12-18 12:11:04 UTC",
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Memo_003.md",
-      "processed_datetime": "2026-05-16 17:49:11 UTC",
+      "processed_datetime": "2026-05-16 17:47:23 UTC",
       "detected_language": "it",
       "language_probability": 0.9913640022277832
+    },
+    "G:\\My Drive\\Voice Recorder\\Memo 004.m4a": {
+      "file_name": "Memo 004.m4a",
+      "full_path": "G:\\My Drive\\Voice Recorder\\Memo 004.m4a",
+      "size": 9874855,
+      "modified_time": 1671366083.0,
+      "modified_datetime": "2022-12-18 12:21:23 UTC",
+      "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Memo_004.md",
+      "processed_datetime": "2026-05-16 17:52:02 UTC",
+      "detected_language": "it",
+      "language_probability": 0.9909849166870117
     }
   }
 }

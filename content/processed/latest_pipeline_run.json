@@ -1,11 +1,31 @@
 {
-  "status": "idle",
-  "success": null,
-  "startedAt": null,
-  "finishedAt": null,
-  "exitCode": null,
+  "status": "success",
+  "success": false,
+  "startedAt": "2026-05-16 17:22:18 UTC",
+  "finishedAt": "2026-05-16 17:22:18 UTC",
+  "exitCode": 1,
   "stdout": "",
-  "stderr": "",
-  "stats": null,
-  "files": null
+  "stderr": "faster-whisper is not installed. Run: pip install faster-whisper",
+  "stats": {
+    "filesScanned": 19,
+    "newProcessed": 0,
+    "transcriptions": 0,
+    "notes": 0,
+    "meetings": 0,
+    "tasks": 0,
+    "calendar": 0,
+    "errors": 1,
+    "error_messages": [
+      "faster-whisper is not installed. Run: pip install faster-whisper"
+    ]
+  },
+  "files": {
+    "transcriptions": [
+      "content/transcriptions/Memo_001.md",
+      "content/transcriptions/Memo_002.md",
+      "content/transcriptions/Memo_003.md",
+      "content/transcriptions/Memo_004.md",
+      "content/transcriptions/Voice_001.md"
+    ]
+  }
 }

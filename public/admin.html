@@ -160,7 +160,8 @@
         <strong>Do not install faster-whisper on Railway.</strong> Transcription runs only on this Windows PC
         (Google Drive). In PowerShell: <code class="mono">.\scripts\run-voice-pipeline.ps1</code>
         (installs deps from <code class="mono">requirements-voice.txt</code> if needed).
-        The admin button below works only when <code class="mono">node server.mjs</code> runs locally—not on production.
+        Open <code class="mono">http://localhost:8080/admin/voice-recorder</code> after <code class="mono">node server.mjs</code> on this PC
+        (default port <strong>8080</strong>, not 3000). Production URL shows Railway data only—not local transcriptions.
       </p>
       <div class="tf-admin-payout-card" style="margin-top:0">
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.65rem;margin-bottom:0.85rem">

@@ -26,6 +26,7 @@ TRANSCRIPTIONS_DIR = CONTENT / "transcriptions"
 PROCESSED_DIR = CONTENT / "processed"
 PROCESSED_JSON = PROCESSED_DIR / "processed_files.json"
 PIPELINE_RUNS_JSON = PROCESSED_DIR / "pipeline_runs.json"
+LATEST_PIPELINE_RUN_JSON = PROCESSED_DIR / "latest_pipeline_run.json"
 NOTES_DIR = CONTENT / "notes"
 MEETINGS_DIR = CONTENT / "meetings"
 TASKS_DIR = CONTENT / "tasks"
@@ -215,6 +216,64 @@ def append_pipeline_run(stats: RunStats, processed_files: list[str]) -> None:
         }
     )
     save_json(PIPELINE_RUNS_JSON, data)
+    write_latest_pipeline_run(stats, processed_files)
+
+
+def write_latest_pipeline_run(stats: RunStats, processed_files: list[str]) -> None:
+    """Mirror last run for local admin API (content/processed/latest_pipeline_run.json)."""
+    err_count = len(stats.errors)
+    success = err_count == 0 and (stats.files_transcribed > 0 or stats.transcriptions_classified > 0)
+    if err_count and stats.files_scanned > 0 and stats.files_transcribed == 0:
+        status = "error"
+    elif success:
+        status = "success"
+    else:
+        status = "idle"
+    daily_report = f"content/voice-reports/{today_date()}-voice-report.md"
+    run_files: dict = {
+        "transcriptions": [f"content/transcriptions/{n}" for n in processed_files]
+        if processed_files
+        and not str(processed_files[0]).startswith("content/")
+        else processed_files,
+    }
+    if processed_files:
+        if not run_files.get("transcriptions"):
+            run_files["transcriptions"] = processed_files
+        run_files["dailyReport"] = daily_report
+    if stats.tasks_extracted:
+        run_files["tasks"] = "content/tasks/todo.md"
+    if stats.calendar_events:
+        run_files["calendar"] = "content/calendar/events.md"
+    run_stats = {
+        "filesScanned": stats.files_scanned,
+        "newProcessed": stats.files_transcribed,
+        "transcriptions": stats.transcriptions_classified,
+        "notes": stats.notes_created,
+        "meetings": stats.meetings_created,
+        "tasks": stats.tasks_extracted,
+        "calendar": stats.calendar_events,
+        "errors": err_count,
+        "error_messages": list(stats.errors),
+    }
+    rel_trans = []
+    for name in processed_files:
+        rel_trans.append(
+            name if str(name).startswith("content/") else f"content/transcriptions/{name}"
+        )
+    if rel_trans:
+        run_files["transcriptions"] = rel_trans
+    payload = {
+        "status": status,
+        "success": success if status == "success" else False if status == "error" else None,
+        "startedAt": stats.run_datetime,
+        "finishedAt": stats.run_datetime if status != "idle" else None,
+        "exitCode": 0 if success else 1 if status == "error" else None,
+        "stdout": "",
+        "stderr": "\n".join(stats.errors) if stats.errors else "",
+        "stats": run_stats,
+        "files": run_files if run_files else None,
+    }
+    save_json(LATEST_PIPELINE_RUN_JSON, payload)
 
 
 def import_transcribe_module():
