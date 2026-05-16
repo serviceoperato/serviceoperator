@@ -2185,6 +2185,15 @@ function startVoiceRecorderPipelineRun() {
       startedAt: voicePipelineActive.startedAt,
     };
   }
+  if (process.env.RAILWAY_ENVIRONMENT) {
+    return {
+      ok: false,
+      status: 'error',
+      error:
+        'Voice pipeline runs on your Windows PC (Google Drive folder), not on Railway. ' +
+        'In PowerShell from the repo root: .\\scripts\\run-voice-pipeline.ps1',
+    };
+  }
   if (!fs.existsSync(voicePipelineScriptPath)) {
     return {
       ok: false,
