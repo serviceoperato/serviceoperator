@@ -267,6 +267,190 @@
     return safe;
   }
 
+  var TX_ROLE_NAMES = {
+    padre: 'Padre',
+    papa: 'Padre',
+    papà: 'Padre',
+    madre: 'Madre',
+    mamma: 'Mamma',
+    psicologa: 'Psicologa',
+    psicologo: 'Psicologo',
+    nonno: 'Nonno',
+    nonna: 'Nonna',
+  };
+  var TX_SPEAKER_ALREADY_RE = /^([\wÀ-ÿ][\wÀ-ÿ\s.'-]{0,48})\s*:\s+/u;
+  var TX_SPEECH_VERB_RE =
+    '(?:ha\\s+detto(?:\\s+che)?|ha\\s+chiesto|ha\\s+deciso|ha\\s+promesso|ha\\s+richiesto|ha\\s+confermato|ha\\s+spiegato|ha\\s+affermato|ha\\s+sostenuto|ha\\s+proposto|hanno\\s+discusso|hanno\\s+deciso|chiede|dice|disse|afferma|sostiene|vuole|vogliono)';
+  var TX_NAME_TOKEN = "[A-ZÀ-ÖØ-Ý][a-zà-öø-ÿ'’]+(?:\\s+[A-ZÀ-ÖØ-Ý][a-zà-öø-ÿ'’]+)?";
+  var TX_OWNER_SUFFIX_RE = /\s*\|\s*owner:\s*.+$/i;
+
+  function stripOwnerSuffix(text) {
+    return String(text || '')
+      .replace(TX_OWNER_SUFFIX_RE, '')
+      .trim();
+  }
+
+  function normalizeSpeakerName(raw, people) {
+    var token = String(raw || '').trim();
+    if (!token) return token;
+    var low = token.toLowerCase();
+    if (TX_ROLE_NAMES[low]) return TX_ROLE_NAMES[low];
+    if (people && people.length) {
+      for (var i = 0; i < people.length; i++) {
+        var p = people[i];
+        if (!p) continue;
+        if (p.toLowerCase() === low || p.toLowerCase().indexOf(low + ' ') === 0) {
+          return p.split(' ')[0];
+        }
+      }
+    }
+    return token.charAt(0).toUpperCase() + token.slice(1);
+  }
+
+  function nameAllowedForSpeaker(name, people) {
+    if (!name || name.length < 2) return false;
+    var low = name.toLowerCase();
+    if (TX_ROLE_NAMES[low]) return true;
+    for (var k in TX_ROLE_NAMES) {
+      if (TX_ROLE_NAMES[k] === name) return true;
+    }
+    if (!people || !people.length) return /^[A-ZÀ-ÖØ-Ý]/.test(name);
+    for (var i = 0; i < people.length; i++) {
+      var p = people[i];
+      if (!p) continue;
+      var pl = p.toLowerCase();
+      if (pl === low || pl.split(' ')[0] === low || pl.indexOf(low + ' ') === 0) return true;
+    }
+    return false;
+  }
+
+  function trimSpeechFraming(body) {
+    var out = String(body || '').trim();
+    var trimRe = new RegExp('^' + TX_SPEECH_VERB_RE + '\\s+(?:che\\s+)?', 'iu');
+    for (var n = 0; n < 2; n++) {
+      var next = out.replace(trimRe, '').trim();
+      if (next === out) break;
+      out = next;
+    }
+    return out;
+  }
+
+  function formatSpeakerLine(text, people) {
+    if (!text) return text || '';
+    people = people || [];
+    var raw = stripOwnerSuffix(text);
+    if (!raw) return raw;
+    var lead = raw.match(TX_SPEAKER_ALREADY_RE);
+    if (lead) {
+      var bodyLead = trimSpeechFraming(raw.slice(lead[0].length));
+      return bodyLead ? lead[1].trim() + ': ' + bodyLead : raw;
+    }
+    var patterns = [
+      {
+        re: new RegExp('^(?:[Hh]a\\s+detto|ha\\s+detto)\\s+(' + TX_NAME_TOKEN + ')\\s+che\\s+', 'u'),
+        groups: 1,
+      },
+      {
+        re: new RegExp(
+          '^(?:[Ll]a\\s+|[Ii]l\\s+|[Ll]o\\s+|[Ii]\\s+|[Gg]li\\s+|[Ll]e\\s+)?(padre|madre|mamma|papà|papa|psicologa|psicologo|nonno|nonna)\\s+' +
+            TX_SPEECH_VERB_RE +
+            '\\s+',
+          'iu'
+        ),
+        groups: 1,
+      },
+      {
+        re: new RegExp('^(?:[Tt]ua\\s+|[Ss]ua\\s+)?(madre|padre|mamma|papà)\\s+' + TX_SPEECH_VERB_RE + '\\s+', 'iu'),
+        groups: 1,
+      },
+      {
+        re: new RegExp(
+          '^(' + TX_NAME_TOKEN + ')\\s+e\\s+(' + TX_NAME_TOKEN + ')\\s+' + TX_SPEECH_VERB_RE + '\\s+',
+          'iu'
+        ),
+        groups: 2,
+      },
+      {
+        re: new RegExp('^(' + TX_NAME_TOKEN + ')\\s+' + TX_SPEECH_VERB_RE + '\\s+', 'iu'),
+        groups: 1,
+      },
+    ];
+    for (var pi = 0; pi < patterns.length; pi++) {
+      var spec = patterns[pi];
+      var m = raw.match(spec.re);
+      if (!m) continue;
+      var names;
+      var body;
+      if (spec.groups === 2) {
+        var n1 = normalizeSpeakerName(m[1], people);
+        var n2 = normalizeSpeakerName(m[2], people);
+        if (!nameAllowedForSpeaker(n1, people) || !nameAllowedForSpeaker(n2, people)) continue;
+        names = n1 + ' / ' + n2;
+        body = trimSpeechFraming(raw.slice(m[0].length));
+      } else {
+        names = normalizeSpeakerName(m[1], people);
+        if (!nameAllowedForSpeaker(names, people)) continue;
+        body = trimSpeechFraming(raw.slice(m[0].length));
+      }
+      if (!body) return raw;
+      return names + ': ' + body;
+    }
+    return raw;
+  }
+
+  function renderSpeakerText(text, people) {
+    if (!text) return '';
+    var formatted = formatSpeakerLine(text, people);
+    var m = formatted.match(TX_SPEAKER_ALREADY_RE);
+    if (!m) return highlightPeopleInText(formatted, people);
+    var names = m[1].trim();
+    var body = formatted.slice(m[0].length);
+    return (
+      '<strong class="tx-person tx-speaker">' +
+      esc(names) +
+      '</strong>: ' +
+      highlightPeopleInText(body, people)
+    );
+  }
+
+  function applySpeakerFormatToItem(item) {
+    if (!item) return item;
+    var people = extractPeopleFromItem(item);
+    var fmt = function (s) {
+      return s ? formatSpeakerLine(s, people) : s;
+    };
+    ['summary', 'preview', 'description', 'notes', 'decisionText', 'issue'].forEach(function (key) {
+      if (typeof item[key] === 'string') item[key] = fmt(item[key]);
+    });
+    [
+      'decisions',
+      'tasks',
+      'openPoints',
+      'open_points',
+      'nextSteps',
+      'next_steps',
+      'importantPoints',
+      'important_points',
+      'possibleActions',
+      'possible_actions',
+      'calendarEvents',
+      'calendar_events',
+      'blockers',
+      'bullets',
+    ].forEach(function (key) {
+      if (Array.isArray(item[key])) item[key] = item[key].map(fmt);
+    });
+    var ex = item.extracted_items || item.extractedItems;
+    if (ex && typeof ex === 'object') {
+      Object.keys(ex).forEach(function (key) {
+        if (Array.isArray(ex[key]) && ex[key].every(function (x) { return typeof x === 'string'; })) {
+          ex[key] = ex[key].map(fmt);
+        }
+      });
+    }
+    return item;
+  }
+
   function renderPersonBadge(name, extraClass) {
     return (
       '<span class="tx-person-badge' +
@@ -365,7 +549,7 @@
       '<ul>' +
       arr
         .map(function (x) {
-          var html = people && people.length ? highlightPeopleInText(x, people) : esc(x);
+          var html = renderSpeakerText(x, people);
           return '<li>' + html + '</li>';
         })
         .join('') +
@@ -1289,7 +1473,7 @@
     if (!text) return '';
     return (
       '<div class="tx-detail-page__prose tx-detail-prose">' +
-      (people && people.length ? highlightPeopleInText(text, people) : esc(text)) +
+      renderSpeakerText(text, people) +
       '</div>'
     );
   }
@@ -1784,7 +1968,7 @@
         '<h3 id="txDetailKeyPointsTitle">Top 3 key points</h3><ul>' +
         points
           .map(function (p) {
-            return '<li>' + highlightPeopleInText(p, people) + '</li>';
+            return '<li>' + renderSpeakerText(p, people) + '</li>';
           })
           .join('') +
         '</ul></section>'
@@ -1797,7 +1981,7 @@
     if (nextAction) {
       summaryBody +=
         '<p class="tx-detail-page__next-action"><strong>Next action:</strong> ' +
-        highlightPeopleInText(nextAction, people) +
+        renderSpeakerText(nextAction, people) +
         '</p>';
     }
 
@@ -3090,6 +3274,7 @@
       ),
       displayTitle: it.displayTitle || it.title,
     });
+    applySpeakerFormatToItem(merged);
     return applyCardCopyFields(merged);
   }
 
@@ -4248,7 +4433,7 @@
       ? '<div class="tx-dash-card__points-wrap"><h4 class="tx-dash-card__points-label">Key points</h4><ul class="tx-dash-card__points">' +
         points
           .map(function (p) {
-            return '<li>' + highlightPeopleInText(p, people) + '</li>';
+            return '<li>' + renderSpeakerText(p, people) + '</li>';
           })
           .join('') +
         '</ul></div>'

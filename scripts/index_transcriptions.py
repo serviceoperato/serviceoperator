@@ -23,6 +23,7 @@ _SCRIPTS_DIR = Path(__file__).resolve().parent
 if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
 
+from tx_speaker_format import apply_speaker_format_to_item  # noqa: E402
 from voice_registry import (  # noqa: E402
     ALLOWED_OUTPUT_PREFIXES,
     find_entry_by_raw_path,
@@ -1176,7 +1177,14 @@ def build_index() -> dict[str, Any]:
             continue
         visible.append(it)
     flat_operational = visible
+    for it in flat_operational:
+        apply_speaker_format_to_item(it)
     source_entries = group_items_by_source(flat_operational)
+    for entry in source_entries:
+        apply_speaker_format_to_item(entry)
+        for child in entry.get("sourceEntries") or []:
+            if isinstance(child, dict):
+                apply_speaker_format_to_item(child)
     compute_related_files(source_entries)
     extraction_totals, source_totals = compute_index_totals(source_entries)
     extraction_totals["needsReview"] = len(needs_review)
