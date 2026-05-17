@@ -1400,6 +1400,37 @@ function pruneAdminUserProfilingGets(ip) {
   return arr;
 }
 
+/** Rate-limit /admin/* HTML and /api/admin/* (and legacy voice-recorder API paths) by IP. */
+const ADMIN_ROUTE_RATE_WINDOW_MS = 60_000;
+const ADMIN_ROUTE_RATE_MAX = 100;
+/** @type {Map<string, number[]>} */
+const adminRouteTimestampsByIp = new Map();
+
+function pruneAdminRouteRequests(ip) {
+  const now = Date.now();
+  const arr = (adminRouteTimestampsByIp.get(ip) || []).filter((t) => now - t < ADMIN_ROUTE_RATE_WINDOW_MS);
+  adminRouteTimestampsByIp.set(ip, arr);
+  return arr;
+}
+
+function isAdminProtectedRequestPath(pathname) {
+  const p = pathname || '';
+  if (p === '/admin.html' || p === '/admin.js' || p === '/admin-transcriptions.js') return true;
+  if (p === '/admin-config.js' || p === '/transcriptions-admin.css') return true;
+  if (p.startsWith('/admin/') || p === '/admin') return true;
+  if (p.startsWith('/api/admin/')) return true;
+  return /^\/api\/voice-recorder(\/|$)/.test(p);
+}
+
+function isAdminRateLimitExemptPath(pathname) {
+  return pathname === '/api/admin/login';
+}
+
+/** Login shell only — other /admin/* sections require JWT before HTML is sent. */
+function isAdminLoginShellPath(pathname) {
+  return pathname === '/admin/users' || pathname === '/admin/users/';
+}
+
 const USER_PROFILING_ONLINE_MINUTES = 5;
 
 async function buildPortalUserProfilingRows() {
@@ -1725,6 +1756,39 @@ app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+  next();
+});
+
+/** Structured access log for operator console HTML and admin APIs. */
+app.use((req, res, next) => {
+  if (!isAdminProtectedRequestPath(req.path)) return next();
+  const admin = getVerifiedAdmin(req);
+  console.log(
+    JSON.stringify({
+      ts: new Date().toISOString(),
+      type: 'admin_access',
+      ip: clientIp(req),
+      method: req.method,
+      path: req.originalUrl || req.path,
+      adminEmail: admin ? admin.email : null,
+    })
+  );
+  next();
+});
+
+app.use((req, res, next) => {
+  if (!isAdminProtectedRequestPath(req.path) || isAdminRateLimitExemptPath(req.path)) return next();
+  const ip = clientIp(req);
+  const arr = pruneAdminRouteRequests(ip);
+  if (arr.length >= ADMIN_ROUTE_RATE_MAX) {
+    if (req.path.startsWith('/api/')) {
+      return res.status(429).json({ error: 'Too many requests. Try again later.' });
+    }
+    res.setHeader('Cache-Control', 'no-store');
+    return res.status(429).type('text/plain').send('Too many requests. Try again later.');
+  }
+  arr.push(Date.now());
+  adminRouteTimestampsByIp.set(ip, arr);
   next();
 });
 
@@ -3853,18 +3917,28 @@ app.get(['/engagement.html', '/engagement', '/engagement/'], (_req, res) => {
 
 /** Operator console: path-based sections (same document as admin.html; see public/admin.js). */
 const adminHtmlPath = path.join(publicDir, 'admin.html');
-const ADMIN_VOICE_TRANSCRIPTION_HTML_PATHS = [
+const ADMIN_HTML_PATHS = [
   '/admin/voice-recorder',
   '/admin/voice-recorder/',
   '/admin/transcriptions',
   '/admin/transcriptions/',
+  '/admin/users',
+  '/admin/users/',
+  '/admin/activity',
+  '/admin/activity/',
+  '/admin/deploy-log',
+  '/admin/deploy-log/',
+  '/admin/site-appearance',
+  '/admin/site-appearance/',
+  '/admin/icons',
+  '/admin/icons/',
+  '/admin/user-reports',
+  '/admin/user-reports/',
+  '/admin/user-profiling',
+  '/admin/user-profiling/',
+  '/admin/report-catalog',
+  '/admin/report-catalog/',
 ];
-
-function sendAdminHtml(_req, res) {
-  res.setHeader('Cache-Control', 'no-store');
-  res.setHeader('X-Robots-Tag', 'noindex, nofollow');
-  res.sendFile(adminHtmlPath);
-}
 
 /** Block crawlers/scrapers on sensitive operator pages (404, no HTML shell leak). */
 function isLikelyAutomatedScraper(req) {
@@ -3887,43 +3961,22 @@ function isLikelyAutomatedScraper(req) {
   return false;
 }
 
-function sendAdminVoiceTranscriptionHtml(req, res) {
+function sendAdminHtml(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   res.setHeader('X-Robots-Tag', 'noindex, nofollow');
   if (isLikelyAutomatedScraper(req)) {
     return sendPrivateReportNotFound(res);
   }
-  if (!getVerifiedAdmin(req)) {
+  if (!getVerifiedAdmin(req) && !isAdminLoginShellPath(req.path)) {
     return denyPrivateNumberedReport(req, res);
   }
-  return sendAdminHtml(req, res);
+  return res.sendFile(adminHtmlPath);
 }
 
 app.get(['/admin', '/admin/'], (_req, res) => {
   res.redirect(302, '/admin/users');
 });
-app.get(ADMIN_VOICE_TRANSCRIPTION_HTML_PATHS, sendAdminVoiceTranscriptionHtml);
-app.get(
-  [
-    '/admin/users',
-    '/admin/users/',
-    '/admin/activity',
-    '/admin/activity/',
-    '/admin/deploy-log',
-    '/admin/deploy-log/',
-    '/admin/site-appearance',
-    '/admin/site-appearance/',
-    '/admin/icons',
-    '/admin/icons/',
-    '/admin/user-reports',
-    '/admin/user-reports/',
-    '/admin/user-profiling',
-    '/admin/user-profiling/',
-    '/admin/report-catalog',
-    '/admin/report-catalog/',
-  ],
-  sendAdminHtml
-);
+app.get(ADMIN_HTML_PATHS, sendAdminHtml);
 
 const operatorReportsHtmlPath = path.join(publicDir, 'operator', 'reports.html');
 app.get(['/operator/reports', '/operator/reports/'], (_req, res) => {
@@ -4028,6 +4081,18 @@ app.use((req, res, next) => {
   return next();
 });
 
+/** Transcription admin script — not served without admin JWT (main admin.js is needed on the login shell). */
+const ADMIN_STATIC_REQUIRES_AUTH = new Set(['admin.html', 'admin-transcriptions.js']);
+
+app.use((req, res, next) => {
+  if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+  const base = path.basename(req.path || '');
+  if (!ADMIN_STATIC_REQUIRES_AUTH.has(base)) return next();
+  if (isLikelyAutomatedScraper(req)) return sendPrivateReportNotFound(res);
+  if (!getVerifiedAdmin(req)) return denyPrivateNumberedReport(req, res);
+  return next();
+});
+
 function isNoindexClinicsOrHotelsPath(norm) {
   return norm.includes('/clinics/') || norm.includes('/hotels/');
 }
@@ -4052,6 +4117,8 @@ app.use(
         filePath.endsWith('register.html') ||
         filePath.endsWith('admin.html') ||
         filePath.endsWith('admin.js') ||
+        filePath.endsWith('admin-transcriptions.js') ||
+        norm.endsWith('transcriptions-admin.css') ||
         norm.endsWith('app-version.json') ||
         norm.endsWith('operator/places-leads.html') ||
         filePath.endsWith('places-leads.html') ||

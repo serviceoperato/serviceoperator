@@ -7,6 +7,7 @@ Disallow: /client.html
 Disallow: /login.html
 Disallow: /register.html
 Disallow: /admin.html
+Disallow: /admin/
 Disallow: /admin
 Disallow: /admin/voice-recorder
 Disallow: /admin/transcriptions
