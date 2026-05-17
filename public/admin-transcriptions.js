@@ -5046,6 +5046,7 @@
         );
       })
       .join('');
+    bindTimelineLinks();
   }
 
   function bindTimelineLinks() {

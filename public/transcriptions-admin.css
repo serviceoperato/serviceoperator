@@ -539,16 +539,32 @@
   border-top: 1px solid var(--line, #2a2f3a);
 }
 
-.tx-timeline__item {
+a.tx-timeline__item {
   display: flex;
   gap: 0.5rem;
   padding: 0.45rem 0;
   font-size: 0.74rem;
   border-bottom: 1px solid color-mix(in srgb, var(--line) 50%, transparent);
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
 }
 
-.tx-timeline__item:last-child {
+a.tx-timeline__item:last-child {
   border-bottom: none;
+}
+
+a.tx-timeline__item:hover .tx-timeline__label,
+a.tx-timeline__item:focus-visible .tx-timeline__label {
+  color: var(--bone, #d8dce6);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a.tx-timeline__item:focus-visible {
+  outline: 2px solid var(--amber-2, #c9a227);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 .tx-timeline__time {

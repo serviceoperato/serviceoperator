@@ -4017,6 +4017,7 @@
         );
       })
       .join('');
+    bindTimelineLinks();
   }
 
   function bindTimelineLinks() {
