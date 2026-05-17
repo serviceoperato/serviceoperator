@@ -2,8 +2,9 @@
 """
 Build AI-ready transcriptions index for /admin/transcriptions.
 
-Indexes only processed outputs in content/{meetings,notes,tasks,calendar,projects,decisions,open-points}.
-Raw files under content/transcriptions/ are tracked as sources only (never main list items).
+Indexes grouped outputs in content/ai-ready-transcriptions/ (one card per source) and
+legacy folders content/{meetings,notes,...}. Raw files under content/transcriptions/
+are tracked as sources only (never main list items).
 """
 from __future__ import annotations
 
@@ -42,6 +43,7 @@ INDEX_PATH = PROCESSED / "transcriptions_index.json"
 SYNC_SETTINGS_PATH = PROCESSED / "sync_settings.json"
 LATEST_PIPELINE_PATH = PROCESSED / "latest_pipeline_run.json"
 TRANSCRIPTIONS_DIR = CONTENT / "transcriptions"
+AI_READY_DIR = CONTENT / "ai-ready-transcriptions"
 
 CATEGORIES = ("meetings", "notes", "tasks", "calendar", "projects", "decisions", "open-points")
 
@@ -79,6 +81,9 @@ SECTION_ALIASES = {
     "next steps": "Next Steps",
     "possible actions": "Possible Actions",
     "calendar events": "Calendar Events",
+    "top 3 key points": "Important Points",
+    "people involved": "People Involved",
+    "project updates": "Project Updates",
     "full transcription reference": "Full Transcription Reference",
 }
 
@@ -90,6 +95,7 @@ def utc_now_iso() -> str:
 def ensure_dirs() -> None:
     for name in SCAN_FOLDERS:
         (CONTENT / name).mkdir(parents=True, exist_ok=True)
+    AI_READY_DIR.mkdir(parents=True, exist_ok=True)
     PROCESSED.mkdir(parents=True, exist_ok=True)
     TRANSCRIPTIONS_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -256,17 +262,28 @@ def canonical_outputs_by_raw(registry: dict[str, Any]) -> dict[str, set[str]]:
     """Map normalized raw path -> set of primary output paths from canonical registry rows."""
     out: dict[str, set[str]] = {}
     for key, val in registry.get("processed", {}).items():
-        if not str(key).startswith("content/transcriptions/"):
-            continue
         entry = normalize_entry(key, val)
         raw_rel = normalize_raw_rel(str(entry.get("rawTranscriptionPath") or ""))
         if not raw_rel:
             continue
+        paths: set[str] = set()
+        grouped = entry.get("groupedOutputPath")
+        if grouped:
+            paths.add(str(grouped))
         ai = entry.get("aiOutputs") or {}
-        paths = {p for p in (ai.get("meeting"), ai.get("note")) if p}
+        for p in (ai.get("meeting"), ai.get("note")):
+            if p:
+                paths.add(str(p))
         if paths:
             out.setdefault(raw_rel, set()).update(paths)
     return out
+
+
+def raw_has_grouped_output(raw_rel: str | None, registry: dict[str, Any]) -> bool:
+    if not raw_rel:
+        return False
+    canonical = canonical_outputs_by_raw(registry).get(normalize_raw_rel(raw_rel), set())
+    return any(p.startswith("content/ai-ready-transcriptions/") for p in canonical)
 
 
 def output_is_canonical(filepath: str, source_transcription: str | None, registry: dict[str, Any]) -> bool:
@@ -432,6 +449,8 @@ def index_meeting_file(abs_path: Path, registry: dict[str, Any] | None = None) -
     )
     if is_chat_import_source(source_transcription):
         return None
+    if registry is not None and raw_has_grouped_output(source_transcription, registry):
+        return None
     if registry is not None and not output_is_canonical(rel, source_transcription, registry):
         return None
     summary = sections.get("Summary", "")
@@ -478,6 +497,80 @@ def index_meeting_file(abs_path: Path, registry: dict[str, Any] | None = None) -
     )
 
 
+def index_grouped_file(abs_path: Path, registry: dict[str, Any] | None = None) -> dict[str, Any] | None:
+    """One grouped AI-ready file per source transcription."""
+    rel = abs_path.relative_to(REPO_ROOT).as_posix()
+    if abs_path.name in LEGACY_SKIP_FILES:
+        return None
+    text, frontmatter, sections, source_meta = read_md(abs_path)
+    if is_header_only_file(text, sections):
+        return None
+    source_audio, source_transcription, project, date_val, processing_date = meta_from_file(
+        frontmatter, source_meta, abs_path
+    )
+    if registry is not None and not output_is_canonical(rel, source_transcription, registry):
+        return None
+    main_cat = str(frontmatter.get("main_category", "") or frontmatter.get("tags", "") or "").strip()
+    if not main_cat:
+        main_cat = str(frontmatter.get("category", "") or "voice-note")
+    primary_type = str(frontmatter.get("primary_type", "") or "note")
+    index_cat = "meetings" if primary_type == "meeting" else "notes"
+    summary = sections.get("Summary", "") or sections.get("Clean Summary", "")
+    important = [
+        b for b in bullets_from(sections.get("Important Points", "")) if is_meaningful_line(b)
+    ]
+    if not important:
+        important = [
+            b for b in bullets_from(sections.get("Top 3 Key Points", "")) if is_meaningful_line(b)
+        ]
+    decisions = [b for b in bullets_from(sections.get("Decisions", "")) if is_meaningful_line(b)]
+    tasks = [b for b in bullets_from(sections.get("Tasks", "")) if is_meaningful_line(b)]
+    open_pts = [b for b in bullets_from(sections.get("Open Points", "")) if is_meaningful_line(b)]
+    next_steps = [b for b in bullets_from(sections.get("Next Steps", "")) if is_meaningful_line(b)]
+    calendar = [b for b in bullets_from(sections.get("Calendar Events", "")) if is_meaningful_line(b)]
+    people = [b for b in bullets_from(sections.get("People Involved", "")) if is_meaningful_line(b)]
+    project_updates = [
+        b for b in bullets_from(sections.get("Project Updates", "")) if is_meaningful_line(b)
+    ]
+    if not summary and not important:
+        return None
+    needs_review = is_garbage_text(summary) or summary_looks_like_raw_paste(summary, source_transcription)
+    title = str(frontmatter.get("title", "") or sections.get("Title", "") or preview_of(summary, 60))
+    stats = {
+        "decisions_count": len(decisions),
+        "tasks_count": len(tasks),
+        "open_points_count": len(open_pts),
+        "calendar_events_count": len(calendar),
+        "next_steps_count": len(next_steps),
+    }
+    return base_item(
+        category=index_cat,
+        title=title.strip() or preview_of(summary, 60),
+        filepath=rel,
+        preview=summary or (important[0] if important else title),
+        source_audio=source_audio,
+        source_transcription=source_transcription,
+        project=project,
+        date_val=date_val,
+        processing_date=processing_date,
+        stats=stats,
+        extracted_items={
+            "decisions": decisions,
+            "tasks": tasks,
+            "open_points": open_pts,
+            "next_steps": next_steps,
+            "important_points": important,
+            "calendar_events": calendar,
+            "people": people,
+            "project_updates": project_updates,
+            "main_category": main_cat,
+        },
+        raw_sections={k: v for k, v in sections.items() if v and k != "Full Transcription Reference"},
+        needs_review=needs_review,
+        item_type="grouped",
+    )
+
+
 def index_note_file(abs_path: Path, registry: dict[str, Any] | None = None) -> dict[str, Any] | None:
     rel = abs_path.relative_to(REPO_ROOT).as_posix()
     if abs_path.name in LEGACY_SKIP_FILES:
@@ -489,6 +582,8 @@ def index_note_file(abs_path: Path, registry: dict[str, Any] | None = None) -> d
         frontmatter, source_meta, abs_path
     )
     if is_chat_import_source(source_transcription):
+        return None
+    if registry is not None and raw_has_grouped_output(source_transcription, registry):
         return None
     if registry is not None and not output_is_canonical(rel, source_transcription, registry):
         return None
@@ -738,7 +833,7 @@ def item_allowed_on_site(item: dict[str, Any], registry: dict[str, Any]) -> bool
     if raw:
         item["source_transcription"] = raw
         item["sourceTranscription"] = raw
-        if is_chat_import_source(raw):
+        if is_chat_import_source(raw) and item.get("item_type") != "grouped":
             return False
         return raw_source_allowed_for_site(raw, registry)
     return False
@@ -1117,6 +1212,13 @@ def build_index() -> dict[str, Any]:
             needs_review.append(entry)
         items.append(entry)
 
+    if AI_READY_DIR.is_dir():
+        for md in sorted(AI_READY_DIR.glob("*.md")):
+            try:
+                add_item(index_grouped_file(md, registry))
+            except Exception as exc:  # noqa: BLE001
+                errors.append(f"{md}: {exc}")
+
     for md in sorted((CONTENT / "meetings").glob("*.md")):
         try:
             add_item(index_meeting_file(md, registry))
@@ -1177,6 +1279,19 @@ def build_index() -> dict[str, Any]:
             continue
         visible.append(it)
     flat_operational = visible
+    grouped_raws: set[str] = set()
+    for it in flat_operational:
+        if it.get("item_type") == "grouped":
+            raw = resolve_source_transcription(it, registry)
+            if raw:
+                grouped_raws.add(normalize_raw_rel(raw))
+    if grouped_raws:
+        flat_operational = [
+            it
+            for it in flat_operational
+            if it.get("item_type") == "grouped"
+            or normalize_raw_rel(resolve_source_transcription(it, registry) or "") not in grouped_raws
+        ]
     for it in flat_operational:
         apply_speaker_format_to_item(it)
     source_entries = group_items_by_source(flat_operational)

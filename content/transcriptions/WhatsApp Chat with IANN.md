@@ -1,4 +1,4 @@
-<!-- PROCESSED: true | date: 2026-05-17T11:20:03Z | output: content/notes/2026-05-17-conversation-whatsapp-chat-with-iann-c52f33323d06.md | checksum: 1dc2a6e7e917cfe51ed5a6de1e3012fd28d7e607ac45c367a650cc254a3d95be -->
+<!-- PROCESSED: true | date: 2026-05-17T15:04:27Z | output: content/ai-ready-transcriptions/2026-05-17-conversation-whatsapp-chat-with-iann-c52f33323d06.md | checksum: 5cf2cb3c3312a614c55820e437379c8ccb642d28f3c567c330e5b82c391f288f -->
 2/14/22, 00:58 - Messages and calls are end-to-end encrypted. Only people in this chat can read, listen to, or share them. *Learn more*
 8/1/15, 00:22 - Group creator created group "IANNACE 🍋"
 2/14/22, 00:57 - Mamma added +39 329 966 7421

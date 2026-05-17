@@ -37,6 +37,7 @@ PENDING_STATUSES = frozenset(
 )
 
 ALLOWED_OUTPUT_PREFIXES = (
+    "content/ai-ready-transcriptions/",
     "content/meetings/",
     "content/notes/",
     "content/tasks/",
@@ -91,14 +92,30 @@ def normalize_ai_outputs(raw: Any) -> dict[str, str | None]:
     return out
 
 
-def has_primary_ai_output(ai_outputs: dict[str, str | None] | None) -> bool:
+def grouped_output_path(raw: dict[str, Any]) -> str | None:
+    rel = raw.get("groupedOutputPath")
+    if rel and isinstance(rel, str) and rel.startswith("content/ai-ready-transcriptions/"):
+        return rel
+    return None
+
+
+def grouped_output_exists(raw: dict[str, Any]) -> bool:
+    rel = grouped_output_path(raw)
+    return bool(rel and (REPO_ROOT / rel).is_file())
+
+
+def has_primary_ai_output(ai_outputs: dict[str, str | None] | None, raw: dict[str, Any] | None = None) -> bool:
+    if raw and grouped_output_path(raw):
+        return True
     if not ai_outputs:
         return False
     return bool(ai_outputs.get("meeting") or ai_outputs.get("note"))
 
 
-def primary_output_exists(ai_outputs: dict[str, str | None] | None) -> bool:
-    if not has_primary_ai_output(ai_outputs):
+def primary_output_exists(ai_outputs: dict[str, str | None] | None, raw: dict[str, Any] | None = None) -> bool:
+    if raw and grouped_output_exists(raw):
+        return True
+    if not has_primary_ai_output(ai_outputs, raw):
         return False
     rel = (ai_outputs or {}).get("meeting") or (ai_outputs or {}).get("note")
     return bool(rel and (REPO_ROOT / rel).is_file())
@@ -148,17 +165,24 @@ def normalize_entry(key: str, raw: dict[str, Any]) -> dict[str, Any]:
             status = STATUS_DETECTED
 
     ai_outputs = normalize_ai_outputs(raw.get("aiOutputs"))
+    grouped_rel = grouped_output_path(raw)
     legacy_out = raw.get("output_path") or raw.get("phase2_output_path")
     if legacy_out and isinstance(legacy_out, str):
         if "meetings/" in legacy_out and not ai_outputs["meeting"]:
             ai_outputs["meeting"] = legacy_out
         elif "notes/" in legacy_out and not ai_outputs["note"]:
             ai_outputs["note"] = legacy_out
+    if grouped_rel:
+        primary = str(raw.get("primary_type") or "")
+        if primary == "meeting":
+            ai_outputs["meeting"] = grouped_rel
+        else:
+            ai_outputs["note"] = grouped_rel
 
     ready = bool(raw.get("readyForSite")) and status == STATUS_READY
-    if ready and not primary_output_exists(ai_outputs):
+    if ready and not primary_output_exists(ai_outputs, raw):
         ready = False
-        status = STATUS_AI_PROCESSED if primary_output_exists(ai_outputs) else STATUS_AI_PENDING
+        status = STATUS_AI_PROCESSED if primary_output_exists(ai_outputs, raw) else STATUS_AI_PENDING
 
     lang = raw.get("detectedLanguage") or raw.get("detected_language")
     lang_prob = raw.get("languageProbability")
@@ -171,6 +195,7 @@ def normalize_entry(key: str, raw: dict[str, Any]) -> dict[str, Any]:
         "sourceAudio": raw.get("sourceAudio") or raw.get("file_name") or Path(full_path).name,
         "sourceAudioPath": full_path,
         "rawTranscriptionPath": raw_md,
+        "groupedOutputPath": grouped_rel,
         "aiOutputs": ai_outputs,
         "detectedLanguage": lang,
         "languageProbability": lang_prob,
@@ -279,7 +304,7 @@ def is_ready_for_site(entry: dict[str, Any]) -> bool:
     return (
         bool(entry.get("readyForSite"))
         and entry.get("status") == STATUS_READY
-        and primary_output_exists(entry.get("aiOutputs"))
+        and primary_output_exists(entry.get("aiOutputs"), entry)
     )
 
 

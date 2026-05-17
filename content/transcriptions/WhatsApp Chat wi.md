@@ -1,4 +1,4 @@
-<!-- PROCESSED: true | date: 2026-05-17T11:20:03Z | output: content/notes/2026-05-17-conversation-whatsapp-chat-wi-6aabaa09ab24.md | checksum: 246b648ac480210b7d974018b32055382d50c303ac07741e9b430e3837481c4b -->
+<!-- PROCESSED: true | date: 2026-05-17T15:04:27Z | output: content/ai-ready-transcriptions/2026-05-17-conversation-whatsapp-chat-wi-6aabaa09ab24.md | checksum: f7125340abece6f4dced026d4c9096e41b0112ed10e432bfa56faf0e86b64cea -->
 4/22/26, 14:16 - Koragon Gicos created group "30-13😍"
 5/9/26, 23:25 - Vincenzo Cammarrata added you
 5/10/26, 01:41 - Koragon Gicos: Tornate a casa

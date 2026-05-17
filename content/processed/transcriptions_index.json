@@ -1,49 +1,49 @@
 {
   "ok": true,
-  "generatedAt": "2026-05-17T14:52:49Z",
+  "generatedAt": "2026-05-17T15:05:08Z",
   "registryVersion": 2,
   "totals": {
-    "meetings": 2,
-    "notes": 17,
+    "meetings": 3,
+    "notes": 20,
     "tasks": 22,
     "calendar": 4,
     "projects": 0,
     "decisions": 2,
     "open-points": 0,
-    "total": 47,
-    "needsReview": 0
+    "total": 51,
+    "needsReview": 1
   },
   "counts": {
-    "meetings": 2,
-    "notes": 17,
+    "meetings": 3,
+    "notes": 20,
     "tasks": 22,
     "calendar": 4,
     "projects": 0,
     "decisions": 2,
     "open-points": 0,
-    "total": 47,
-    "needsReview": 0
+    "total": 51,
+    "needsReview": 1
   },
   "sourceTotals": {
-    "meetings": 2,
-    "notes": 17,
-    "tasks": 19,
-    "calendar": 19,
+    "meetings": 3,
+    "notes": 18,
+    "tasks": 20,
+    "calendar": 20,
     "projects": 0,
-    "decisions": 19,
-    "open-points": 19,
-    "total": 19,
-    "needsReview": 0
+    "decisions": 20,
+    "open-points": 20,
+    "total": 20,
+    "needsReview": 1
   },
-  "sourceCount": 19,
+  "sourceCount": 20,
   "rawSources": {
-    "total": 24,
-    "latestRawFile": "WhatsApp Chat wi.md",
-    "latestProcessedFile": "Voice_001.md",
+    "total": 25,
+    "latestRawFile": "Voice_260517_181446.md",
+    "latestProcessedFile": "Voice_260517_181446.md",
     "waitingForProcessing": 0,
     "pendingSources": []
   },
-  "rawTranscriptionCount": 24,
+  "rawTranscriptionCount": 25,
   "pipeline": {
     "lastRun": null,
     "status": "idle",
@@ -59,9 +59,285 @@
       "error_messages": []
     }
   },
-  "needsReview": [],
-  "needsReviewCount": 0,
+  "needsReview": [
+    {
+      "id": "53bdca7bb95c",
+      "category": "notes",
+      "categoryLabel": "Notes",
+      "title": "Christian.m4a · Self recap",
+      "filepath": "content/notes/2026-05-17-self-recap-christian-42d821331d94.md",
+      "path": "content/notes/2026-05-17-self-recap-christian-42d821331d94.md",
+      "source_audio": "Christian.m4a",
+      "source_transcription": "content/transcriptions/Christian.md",
+      "sourceAudio": "Christian.m4a",
+      "sourceTranscription": "content/transcriptions/Christian.md",
+      "project": "personal",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T09:46:21Z",
+      "processedDate": "2026-05-17T09:46:21Z",
+      "preview": "AI-ready note from Christian.m4a. Open for structured sections.",
+      "summary": "AI-ready note from Christian.m4a. Open for structured sections.",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 0,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {
+        "Source": "- **Source audio:** Christian.m4a\n- **Source transcription:** `Christian.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** self-recap (70%)\n- **Project:** personal",
+        "Summary": "Per esempio lui può dire, io non ho mai avuto niente, sulle vedidate vanno ancora a pittarsi 50.000 euro, quindi è una cortettezza.",
+        "Important Points": "- Per esempio lui può dire, io non ho mai avuto niente, sulle vedidate vanno ancora a pittarsi 50.000 euro, quindi è una cortettezza.\n- Questo è il punto 1.\n- Il punto 2 sarebbe, cioè i soldi sono i tuoi, i 50.000 euro, giusto?",
+        "Decisions": "- (none)",
+        "Tasks": "- (none)",
+        "Calendar Events": "- (none)",
+        "Open Points": "- Il punto 2 sarebbe, cioè i soldi sono i tuoi, i 50.000 euro, giusto? | owner: to confirm\n- Come finisce spegna la storia, visto che la casa è di tutti e due? | owner: to confirm\n- Come se potrebbe dire? | owner: to confirm",
+        "Next Steps": "- Sì, investi sulla casa, insomma, su quello che stai facendo.\n- Come se potrebbe dire?"
+      },
+      "extracted_items": {
+        "important_points": [
+          "Per esempio lui può dire, io non ho mai avuto niente, sulle vedidate vanno ancora a pittarsi 50.000 euro, quindi è una cortettezza.",
+          "Questo è il punto 1.",
+          "Il punto 2 sarebbe, cioè i soldi sono i tuoi, i 50.000 euro, giusto?"
+        ],
+        "possible_actions": []
+      },
+      "related_files": [],
+      "source_only": false,
+      "needs_review": true,
+      "item_type": "file",
+      "reviewed": false
+    }
+  ],
+  "needsReviewCount": 1,
   "items": [
+    {
+      "category": "meetings",
+      "categoryLabel": "Meetings",
+      "filepath": "content/ai-ready-transcriptions/2026-05-17-meeting-voice_260517_181446-85846b20bb26.md",
+      "path": "content/ai-ready-transcriptions/2026-05-17-meeting-voice_260517_181446-85846b20bb26.md",
+      "source_audio": "Voice 260517 181446.m4a",
+      "source_transcription": "content/transcriptions/Voice_260517_181446.md",
+      "sourceAudio": "Voice 260517 181446.m4a",
+      "sourceTranscription": "content/transcriptions/Voice_260517_181446.md",
+      "project": "thaifans",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T15:05:05Z",
+      "processedDate": "2026-05-17T15:05:05Z",
+      "preview": "Nota vocale del 2026-05-17: impostare un meeting ricorrente ogni martedì tramite Google Meet con G-Cos e Giovanni per il progetto della dating app Thai Fans.",
+      "summary": "Nota vocale del 2026-05-17: impostare un meeting ricorrente ogni martedì tramite Google Meet con G-Cos e Giovanni per il progetto della dating app Thai Fans.",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 1,
+        "open_points_count": 2,
+        "calendar_events_count": 1,
+        "next_steps_count": 1
+      },
+      "has_chart_data": true,
+      "raw_sections": {
+        "Title": "Thai Fans — meeting ricorrente martedì su Google Meet",
+        "Source": "- **Source audio:** Voice 260517 181446.m4a\n- **Source transcription:** `Voice_260517_181446.md`\n- **Processed date:** 2026-05-17T15:05:05Z\n- **Main category:** meeting\n- **Project:** thaifans",
+        "Summary": "Nota vocale del 2026-05-17: impostare un meeting ricorrente ogni martedì tramite Google Meet con G-Cos e Giovanni per il progetto della dating app Thai Fans.",
+        "Important Points": "- Riunione ricorrente prevista ogni martedì su Google Meet\n- Partecipanti indicati: G-Cos e Giovanni\n- Oggetto: progetto dating app Thai Fans",
+        "People Involved": "- G-Cos\n- Giovanni\n- owner to confirm",
+        "Tasks": "- [ ] Impostare meeting ricorrente martedì su Google Meet con G-Cos e Giovanni — owner to confirm",
+        "Calendar Events": "- Meeting ricorrente Thai Fans — ogni martedì — Google Meet — orario da confermare",
+        "Decisions": "- (none)",
+        "Open Points": "- Orario esatto e durata del meeting ricorrente — da confermare\n- Chi invia l'invito calendario — owner to confirm",
+        "Project Updates": "- Thai Fans: avvio coordinamento meeting settimanali con G-Cos e Giovanni",
+        "Next Steps": "- Creare serie Google Meet martedì e invitare G-Cos e Giovanni"
+      },
+      "extracted_items": {
+        "decisions": [],
+        "tasks": [
+          "Impostare meeting ricorrente martedì su Google Meet con G-Cos e Giovanni — owner to confirm"
+        ],
+        "open_points": [
+          "Orario esatto e durata del meeting ricorrente — da confermare",
+          "Chi invia l'invito calendario — owner to confirm"
+        ],
+        "next_steps": [
+          "Creare serie Google Meet martedì e invitare G-Cos e Giovanni"
+        ],
+        "important_points": [
+          "Riunione ricorrente prevista ogni martedì su Google Meet",
+          "Partecipanti indicati: G-Cos e Giovanni",
+          "Oggetto: progetto dating app Thai Fans"
+        ],
+        "calendar_events": [
+          "Meeting ricorrente Thai Fans — ogni martedì — Google Meet — orario da confermare"
+        ],
+        "people": [
+          "owner to confirm"
+        ],
+        "project_updates": [
+          "Thai Fans: avvio coordinamento meeting settimanali con G-Cos e Giovanni"
+        ],
+        "main_category": "meeting"
+      },
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "source_entry",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true,
+      "id": "67f7e4be489d",
+      "isSourceEntry": true,
+      "source_entry": true,
+      "primaryCategory": "meetings",
+      "categories": [
+        "meetings",
+        "tasks",
+        "calendar",
+        "decisions",
+        "open-points"
+      ],
+      "extractedCategories": [
+        "meetings",
+        "tasks",
+        "calendar",
+        "decisions",
+        "open-points"
+      ],
+      "extractions": {
+        "meetings": [
+          {
+            "id": "6a3aeffdad18",
+            "category": "meetings",
+            "title": "Thai Fans — meeting ricorrente martedì su Google Meet",
+            "path": "content/ai-ready-transcriptions/2026-05-17-meeting-voice_260517_181446-85846b20bb26.md",
+            "preview": "Nota vocale del 2026-05-17: impostare un meeting ricorrente ogni martedì tramite Google Meet con G-Cos e Giovanni per il progetto della dating app Thai Fans.",
+            "summary": "Nota vocale del 2026-05-17: impostare un meeting ricorrente ogni martedì tramite Google Meet con G-Cos e Giovanni per il progetto della dating app Thai Fans.",
+            "project": "thaifans",
+            "date": "2026-05-17",
+            "dueDate": null,
+            "eventDate": "2026-05-17",
+            "status": null,
+            "extracted_items": {
+              "decisions": [],
+              "tasks": [
+                "Impostare meeting ricorrente martedì su Google Meet con G-Cos e Giovanni — owner to confirm"
+              ],
+              "open_points": [
+                "Orario esatto e durata del meeting ricorrente — da confermare",
+                "Chi invia l'invito calendario — owner to confirm"
+              ],
+              "next_steps": [
+                "Creare serie Google Meet martedì e invitare G-Cos e Giovanni"
+              ],
+              "important_points": [
+                "Riunione ricorrente prevista ogni martedì su Google Meet",
+                "Partecipanti indicati: G-Cos e Giovanni",
+                "Oggetto: progetto dating app Thai Fans"
+              ],
+              "calendar_events": [
+                "Meeting ricorrente Thai Fans — ogni martedì — Google Meet — orario da confermare"
+              ],
+              "people": [
+                "owner to confirm"
+              ],
+              "project_updates": [
+                "Thai Fans: avvio coordinamento meeting settimanali con G-Cos e Giovanni"
+              ],
+              "main_category": "meeting"
+            }
+          }
+        ]
+      },
+      "sourceEntries": [
+        {
+          "id": "6a3aeffdad18",
+          "category": "meetings",
+          "title": "Thai Fans — meeting ricorrente martedì su Google Meet",
+          "path": "content/ai-ready-transcriptions/2026-05-17-meeting-voice_260517_181446-85846b20bb26.md",
+          "preview": "Nota vocale del 2026-05-17: impostare un meeting ricorrente ogni martedì tramite Google Meet con G-Cos e Giovanni per il progetto della dating app Thai Fans.",
+          "summary": "Nota vocale del 2026-05-17: impostare un meeting ricorrente ogni martedì tramite Google Meet con G-Cos e Giovanni per il progetto della dating app Thai Fans.",
+          "project": "thaifans",
+          "date": "2026-05-17",
+          "dueDate": null,
+          "eventDate": "2026-05-17",
+          "status": null,
+          "extracted_items": {
+            "decisions": [],
+            "tasks": [
+              "Impostare meeting ricorrente martedì su Google Meet con G-Cos e Giovanni — owner to confirm"
+            ],
+            "open_points": [
+              "Orario esatto e durata del meeting ricorrente — da confermare",
+              "Chi invia l'invito calendario — owner to confirm"
+            ],
+            "next_steps": [
+              "Creare serie Google Meet martedì e invitare G-Cos e Giovanni"
+            ],
+            "important_points": [
+              "Riunione ricorrente prevista ogni martedì su Google Meet",
+              "Partecipanti indicati: G-Cos e Giovanni",
+              "Oggetto: progetto dating app Thai Fans"
+            ],
+            "calendar_events": [
+              "Meeting ricorrente Thai Fans — ogni martedì — Google Meet — orario da confermare"
+            ],
+            "people": [
+              "owner to confirm"
+            ],
+            "project_updates": [
+              "Thai Fans: avvio coordinamento meeting settimanali con G-Cos e Giovanni"
+            ],
+            "main_category": "meeting"
+          }
+        }
+      ],
+      "groupedIds": [
+        "6a3aeffdad18"
+      ],
+      "decisions": [],
+      "tasks": [
+        "Impostare meeting ricorrente martedì su Google Meet con G-Cos e Giovanni — owner to confirm"
+      ],
+      "openPoints": [
+        "Orario esatto e durata del meeting ricorrente — da confermare",
+        "Chi invia l'invito calendario — owner to confirm"
+      ],
+      "open_points": [
+        "Orario esatto e durata del meeting ricorrente — da confermare",
+        "Chi invia l'invito calendario — owner to confirm"
+      ],
+      "nextSteps": [
+        "Creare serie Google Meet martedì e invitare G-Cos e Giovanni"
+      ],
+      "next_steps": [
+        "Creare serie Google Meet martedì e invitare G-Cos e Giovanni"
+      ],
+      "importantPoints": [
+        "Riunione ricorrente prevista ogni martedì su Google Meet",
+        "Partecipanti indicati: G-Cos e Giovanni",
+        "Oggetto: progetto dating app Thai Fans"
+      ],
+      "important_points": [
+        "Riunione ricorrente prevista ogni martedì su Google Meet",
+        "Partecipanti indicati: G-Cos e Giovanni",
+        "Oggetto: progetto dating app Thai Fans"
+      ],
+      "calendarEvents": [
+        "Meeting ricorrente Thai Fans — ogni martedì — Google Meet — orario da confermare"
+      ],
+      "calendar_events": [
+        "Meeting ricorrente Thai Fans — ogni martedì — Google Meet — orario da confermare"
+      ],
+      "possibleActions": [],
+      "possible_actions": [],
+      "childIds": [
+        "6a3aeffdad18"
+      ],
+      "related_files": [],
+      "sourceKey": "content/transcriptions/voice_260517_181446.md",
+      "sourceGroupKey": "content/transcriptions/voice_260517_181446.md",
+      "title": "Thai Fans — meeting ricorrente martedì su Google Meet",
+      "displayTitle": "Thai Fans — meeting ricorrente martedì su Google Meet"
+    },
     {
       "category": "notes",
       "categoryLabel": "Notes",
@@ -1451,218 +1727,6 @@
     {
       "category": "notes",
       "categoryLabel": "Notes",
-      "filepath": "content/notes/2026-05-17-conversation-voice_005-6921c6f5bc0a.md",
-      "path": "content/notes/2026-05-17-conversation-voice_005-6921c6f5bc0a.md",
-      "source_audio": "Voice 005",
-      "source_transcription": "content/transcriptions/Voice_005.md",
-      "sourceAudio": "Voice 005",
-      "sourceTranscription": "content/transcriptions/Voice_005.md",
-      "project": "personal",
-      "date": "2026-05-17",
-      "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T11:11:46Z",
-      "processedDate": "2026-05-17T11:11:46Z",
-      "preview": "AI-ready note from Voice 005. Open for structured sections.",
-      "summary": "AI-ready note from Voice 005. Open for structured sections.",
-      "stats": {
-        "decisions_count": 0,
-        "tasks_count": 1,
-        "open_points_count": 0,
-        "calendar_events_count": 0,
-        "next_steps_count": 0
-      },
-      "has_chart_data": false,
-      "raw_sections": {
-        "Source": "- **Source audio:** Voice 005\n- **Source transcription:** `Voice_005.md`\n- **Processing datetime:** 2026-05-17T11:11:46Z\n- **Category:** conversation (Composer)\n- **Project:** personal",
-        "Summary": "Sessione di registrazione/planning per contenuti del canale «Tanti Soldi» (crypto, personal finance, ChatGPT): intro, hook iniziali, consigli su telecamera e gesti, uso di ChatGPT per script e spiegazioni (Algorand, layer 1/2, intro video).",
-        "Important Points": "- Canale «Tanti Soldi»: temi crypto, bitcoin, finance, borsa\n- Intro: clap + saluto; primi secondi/minuto con hook chiaro (TikTok 3s, YouTube ~1 min)\n- ChatGPT utile per passato e spiegazioni, non per previsioni di mercato affidabili",
-        "Decisions": "- (none)",
-        "Tasks": "- [ ] Fare intro del canale e prove registrazione\n- [ ] Bloccare/finalizzare registrazione quando pronti",
-        "Calendar Events": "- (none)",
-        "Open Points": "- Formato intro definitivo (sigla breve vs solo hook)\n- Chi presenta (Marco/Leonardo/Fabio) — da confermare nei take",
-        "Next Steps": "- Prove davanti telecamera con microfono\n- Due video al prossimo incontro: intro + episodio spiegato",
-        "Possible Actions": "- Registrare intro canale e clip di prova a casa\n- Usare ChatGPT per punti positivi/negativi e script, non per price prediction\n- Preparare video intro e episodio crypto quando si rivedono"
-      },
-      "extracted_items": {
-        "important_points": [
-          "Canale «Tanti Soldi»: temi crypto, bitcoin, finance, borsa",
-          "Intro: clap + saluto; primi secondi/minuto con hook chiaro (TikTok 3s, YouTube ~1 min)",
-          "ChatGPT utile per passato e spiegazioni, non per previsioni di mercato affidabili"
-        ],
-        "possible_actions": [
-          "Registrare intro canale e clip di prova a casa",
-          "Usare ChatGPT per punti positivi/negativi e script, non per price prediction",
-          "Preparare video intro e episodio crypto quando si rivedono"
-        ],
-        "tasks": [
-          "Sì, allora prima di tutto dovresti fare tipo ciao a tutti e benvenuti sul canale TANTI SOLDI!"
-        ]
-      },
-      "source_only": false,
-      "needs_review": false,
-      "item_type": "source_entry",
-      "reviewed": false,
-      "pipelineStatus": "ready_for_site",
-      "readyForSite": true,
-      "id": "aa7c925f3269",
-      "isSourceEntry": true,
-      "source_entry": true,
-      "primaryCategory": "notes",
-      "categories": [
-        "notes",
-        "tasks",
-        "calendar",
-        "decisions",
-        "open-points"
-      ],
-      "extractedCategories": [
-        "notes",
-        "tasks",
-        "calendar",
-        "decisions",
-        "open-points"
-      ],
-      "extractions": {
-        "notes": [
-          {
-            "id": "01ec856cc92c",
-            "category": "notes",
-            "title": "Voice 005 · Conversation",
-            "path": "content/notes/2026-05-17-conversation-voice_005-6921c6f5bc0a.md",
-            "preview": "AI-ready note from Voice 005. Open for structured sections.",
-            "summary": "AI-ready note from Voice 005. Open for structured sections.",
-            "project": "personal",
-            "date": "2026-05-17",
-            "dueDate": null,
-            "eventDate": "2026-05-17",
-            "status": null,
-            "extracted_items": {
-              "important_points": [
-                "Canale «Tanti Soldi»: temi crypto, bitcoin, finance, borsa",
-                "Intro: clap + saluto; primi secondi/minuto con hook chiaro (TikTok 3s, YouTube ~1 min)",
-                "ChatGPT utile per passato e spiegazioni, non per previsioni di mercato affidabili"
-              ],
-              "possible_actions": [
-                "Registrare intro canale e clip di prova a casa",
-                "Usare ChatGPT per punti positivi/negativi e script, non per price prediction",
-                "Preparare video intro e episodio crypto quando si rivedono"
-              ]
-            }
-          }
-        ],
-        "tasks": [
-          {
-            "id": "86e1b1108f7e",
-            "category": "tasks",
-            "title": "Sì, allora prima di tutto dovresti fare tipo ciao a tutti e benvenuti sul canal…",
-            "path": "content/tasks/todo.md#task-f1c82f109f87",
-            "preview": "Sì, allora prima di tutto dovresti fare tipo ciao a tutti e benvenuti sul canale TANTI SOLDI!",
-            "summary": "Sì, allora prima di tutto dovresti fare tipo ciao a tutti e benvenuti sul canale TANTI SOLDI!",
-            "project": null,
-            "date": "2026-05-17",
-            "dueDate": null,
-            "eventDate": "2026-05-17",
-            "status": null,
-            "extracted_items": {
-              "tasks": [
-                "Sì, allora prima di tutto dovresti fare tipo ciao a tutti e benvenuti sul canale TANTI SOLDI!"
-              ]
-            }
-          }
-        ]
-      },
-      "sourceEntries": [
-        {
-          "id": "01ec856cc92c",
-          "category": "notes",
-          "title": "Voice 005 · Conversation",
-          "path": "content/notes/2026-05-17-conversation-voice_005-6921c6f5bc0a.md",
-          "preview": "AI-ready note from Voice 005. Open for structured sections.",
-          "summary": "AI-ready note from Voice 005. Open for structured sections.",
-          "project": "personal",
-          "date": "2026-05-17",
-          "dueDate": null,
-          "eventDate": "2026-05-17",
-          "status": null,
-          "extracted_items": {
-            "important_points": [
-              "Canale «Tanti Soldi»: temi crypto, bitcoin, finance, borsa",
-              "Intro: clap + saluto; primi secondi/minuto con hook chiaro (TikTok 3s, YouTube ~1 min)",
-              "ChatGPT utile per passato e spiegazioni, non per previsioni di mercato affidabili"
-            ],
-            "possible_actions": [
-              "Registrare intro canale e clip di prova a casa",
-              "Usare ChatGPT per punti positivi/negativi e script, non per price prediction",
-              "Preparare video intro e episodio crypto quando si rivedono"
-            ]
-          }
-        },
-        {
-          "id": "86e1b1108f7e",
-          "category": "tasks",
-          "title": "Sì, allora prima di tutto dovresti fare tipo ciao a tutti e benvenuti sul canal…",
-          "path": "content/tasks/todo.md#task-f1c82f109f87",
-          "preview": "Sì, allora prima di tutto dovresti fare tipo ciao a tutti e benvenuti sul canale TANTI SOLDI!",
-          "summary": "Sì, allora prima di tutto dovresti fare tipo ciao a tutti e benvenuti sul canale TANTI SOLDI!",
-          "project": null,
-          "date": "2026-05-17",
-          "dueDate": null,
-          "eventDate": "2026-05-17",
-          "status": null,
-          "extracted_items": {
-            "tasks": [
-              "Sì, allora prima di tutto dovresti fare tipo ciao a tutti e benvenuti sul canale TANTI SOLDI!"
-            ]
-          }
-        }
-      ],
-      "groupedIds": [
-        "01ec856cc92c",
-        "86e1b1108f7e"
-      ],
-      "decisions": [],
-      "tasks": [
-        "Sì, allora prima di tutto dovresti fare tipo ciao a tutti e benvenuti sul canale TANTI SOLDI!"
-      ],
-      "openPoints": [],
-      "open_points": [],
-      "nextSteps": [],
-      "next_steps": [],
-      "importantPoints": [
-        "Canale «Tanti Soldi»: temi crypto, bitcoin, finance, borsa",
-        "Intro: clap + saluto; primi secondi/minuto con hook chiaro (TikTok 3s, YouTube ~1 min)",
-        "ChatGPT utile per passato e spiegazioni, non per previsioni di mercato affidabili"
-      ],
-      "important_points": [
-        "Canale «Tanti Soldi»: temi crypto, bitcoin, finance, borsa",
-        "Intro: clap + saluto; primi secondi/minuto con hook chiaro (TikTok 3s, YouTube ~1 min)",
-        "ChatGPT utile per passato e spiegazioni, non per previsioni di mercato affidabili"
-      ],
-      "calendarEvents": [],
-      "calendar_events": [],
-      "possibleActions": [
-        "Registrare intro canale e clip di prova a casa",
-        "Usare ChatGPT per punti positivi/negativi e script, non per price prediction",
-        "Preparare video intro e episodio crypto quando si rivedono"
-      ],
-      "possible_actions": [
-        "Registrare intro canale e clip di prova a casa",
-        "Usare ChatGPT per punti positivi/negativi e script, non per price prediction",
-        "Preparare video intro e episodio crypto quando si rivedono"
-      ],
-      "childIds": [
-        "01ec856cc92c",
-        "86e1b1108f7e"
-      ],
-      "related_files": [],
-      "sourceKey": "content/transcriptions/voice_005.md",
-      "sourceGroupKey": "content/transcriptions/voice_005.md",
-      "title": "Voice 005 · Conversation",
-      "displayTitle": "Voice 005 · Conversation"
-    },
-    {
-      "category": "notes",
-      "categoryLabel": "Notes",
       "filepath": "content/notes/2026-05-17-voice-note-voice_004-d58c88f66165.md",
       "path": "content/notes/2026-05-17-voice-note-voice_004-d58c88f66165.md",
       "source_audio": "Voice 004",
@@ -1697,6 +1761,9 @@
       },
       "extracted_items": {
         "important_points": [
+          "Registri qui.",
+          "Perché il registro è lì?",
+          "Ah, ma invece è tutto arciato.",
           "Setup microfono e tracce per prova",
           "Preferenza per prova registrazione suoni senza video"
         ],
@@ -1733,6 +1800,27 @@
       ],
       "extractions": {
         "notes": [
+          {
+            "id": "29df35493553",
+            "category": "notes",
+            "title": "Registri qui.",
+            "path": "content/notes/2026-05-17-conversation-voice_004-d58c88f66165.md",
+            "preview": "Registri qui.",
+            "summary": "Registri qui.",
+            "project": "uncategorized",
+            "date": "2026-05-17",
+            "dueDate": null,
+            "eventDate": "2026-05-17",
+            "status": null,
+            "extracted_items": {
+              "important_points": [
+                "Registri qui.",
+                "Perché il registro è lì?",
+                "Ah, ma invece è tutto arciato."
+              ],
+              "possible_actions": []
+            }
+          },
           {
             "id": "82fa94044f5a",
             "category": "notes",
@@ -1779,6 +1867,27 @@
       },
       "sourceEntries": [
         {
+          "id": "29df35493553",
+          "category": "notes",
+          "title": "Registri qui.",
+          "path": "content/notes/2026-05-17-conversation-voice_004-d58c88f66165.md",
+          "preview": "Registri qui.",
+          "summary": "Registri qui.",
+          "project": "uncategorized",
+          "date": "2026-05-17",
+          "dueDate": null,
+          "eventDate": "2026-05-17",
+          "status": null,
+          "extracted_items": {
+            "important_points": [
+              "Registri qui.",
+              "Perché il registro è lì?",
+              "Ah, ma invece è tutto arciato."
+            ],
+            "possible_actions": []
+          }
+        },
+        {
           "id": "82fa94044f5a",
           "category": "notes",
           "title": "Prova registrazione audio/video",
@@ -1820,6 +1929,7 @@
         }
       ],
       "groupedIds": [
+        "29df35493553",
         "82fa94044f5a",
         "d9274514f65d"
       ],
@@ -1832,10 +1942,16 @@
       "nextSteps": [],
       "next_steps": [],
       "importantPoints": [
+        "Registri qui.",
+        "Perché il registro è lì?",
+        "Ah, ma invece è tutto arciato.",
         "Setup microfono e tracce per prova",
         "Preferenza per prova registrazione suoni senza video"
       ],
       "important_points": [
+        "Registri qui.",
+        "Perché il registro è lì?",
+        "Ah, ma invece è tutto arciato.",
         "Setup microfono e tracce per prova",
         "Preferenza per prova registrazione suoni senza video"
       ],
@@ -1848,14 +1964,15 @@
         "Ripetere prova con registrazione suoni"
       ],
       "childIds": [
+        "29df35493553",
         "82fa94044f5a",
         "d9274514f65d"
       ],
       "related_files": [],
       "sourceKey": "content/transcriptions/voice_004.md",
       "sourceGroupKey": "content/transcriptions/voice_004.md",
-      "title": "Prova registrazione audio/video",
-      "displayTitle": "Prova registrazione audio/video"
+      "title": "Registri qui.",
+      "displayTitle": "Registri qui."
     },
     {
       "category": "notes",
@@ -2013,635 +2130,6 @@
       "sourceGroupKey": "content/transcriptions/voice_003.md",
       "title": "Clip video: mettere registrazioni insieme",
       "displayTitle": "Clip video: mettere registrazioni insieme"
-    },
-    {
-      "category": "meetings",
-      "categoryLabel": "Meetings",
-      "filepath": "content/meetings/2026-05-17-conversation-seconda-86e8348fd2d4.md",
-      "path": "content/meetings/2026-05-17-conversation-seconda-86e8348fd2d4.md",
-      "source_audio": "Seconda",
-      "source_transcription": "content/transcriptions/Seconda.md",
-      "sourceAudio": "Seconda",
-      "sourceTranscription": "content/transcriptions/Seconda.md",
-      "project": "personal",
-      "date": "2026-05-17",
-      "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T11:11:46Z",
-      "processedDate": "2026-05-17T11:11:46Z",
-      "preview": "Conversazione familiare lunga tra genitori (Fabio/Silvana) e figli (Stefania e altri), con apertura su erogazione dei soldi promessi senza condizioni né ulteriori aspettative, poi chiarimenti su pass…",
-      "summary": "Conversazione familiare lunga tra genitori (Fabio/Silvana) e figli (Stefania e altri), con apertura su erogazione dei soldi promessi senza condizioni né ulteriori aspettative, poi chiarimenti su passati litigi (Natale, videochiamate, educazione di Christian), pattern comunicativo e desiderio di ambiente non ostile.",
-      "stats": {
-        "decisions_count": 5,
-        "tasks_count": 10,
-        "open_points_count": 4,
-        "calendar_events_count": 0,
-        "next_steps_count": 3
-      },
-      "has_chart_data": true,
-      "raw_sections": {
-        "Source": "- **Source audio:** Seconda\n- **Source transcription:** `Seconda.md`\n- **Processing datetime:** 2026-05-17T11:11:46Z\n- **Category:** conversation (Composer)\n- **Project:** personal",
-        "Summary": "Conversazione familiare lunga tra genitori (Fabio/Silvana) e figli (Stefania e altri), con apertura su erogazione dei soldi promessi senza condizioni né ulteriori aspettative, poi chiarimenti su passati litigi (Natale, videochiamate, educazione di Christian), pattern comunicativo e desiderio di ambiente non ostile.",
-        "Important Points": "- I soldi promessi saranno dati quando disponibili, senza postille; indicati come ultima distribuzione, con riserve per la vecchiaia dei genitori\n- Da entrambe le parti nessun vincolo né aspettativa futura reciproca\n- Discussione su passate tensioni (Natale, battesimo, auguri) e su cosa i genitori chiamavano «ingerenze» (civiltà/educazione)",
-        "Decisions": "- Soldi promessi da dare senza condizioni quando arriveranno; nessun ulteriore round di distribuzione annunciato\n- Libertà reciproca: nessuno vincolato, nessuna aspettativa futura da nessuna parte\n- Accordo di pace: presenza possibile a Natale/feste comandate nel rispetto degli altri, senza obbligo e senza che un Natale sì e uno no diventi motivo di litigio\n- Non usare Christian né minacciare di tagliare rapporti con il nipote; mai pensato di coinvolgere il giudice per questo\n- Da oggi evitare pressione su Silvana; non coinvolgerla nelle discussioni quando sta male",
-        "Tasks": "- (none)",
-        "Calendar Events": "- (none)",
-        "Open Points": "- Dettagli futuri su quali Natali/feste e con quale cadenza — da concordare senza obbligo\n- Educazione di Christian verso i nonni (desiderio vs obbligo) — visioni diverse\n- Christian dovrebbe esprimere il proprio punto di vista — da fare\n- Questioni vaccinara/Piacenza e percezioni contrastanti — parzialmente chiarite, sensibilità residua",
-        "Next Steps": "- Rispettare libertà e presenza non obbligatoria alle ricorrenze\n- Parlare con calma e chiedere tempo prima di richieste urgenti\n- Non coinvolgere Silvana nelle dispute familiari",
-        "Possible Actions": "- Comunicare stress e priorità prima di richieste urgenti (telefonate, compiti)\n- Evitare esplosioni di rabbia; segnalare disagio prima dell'esplosione\n- Non far litigare Christian né esporla a pressioni su presenze/obblighi\n- Ridurre pressione su Silvana nelle conversazioni familiari"
-      },
-      "extracted_items": {
-        "decisions": [
-          "Soldi promessi da dare senza condizioni quando arriveranno; nessun ulteriore round di distribuzione annunciato",
-          "Libertà reciproca: nessuno vincolato, nessuna aspettativa futura da nessuna parte",
-          "Accordo di pace: presenza possibile a Natale/feste comandate nel rispetto degli altri, senza obbligo e senza che un Natale sì e uno no diventi motivo di litigio",
-          "Non usare Christian né minacciare di tagliare rapporti con il nipote; mai pensato di coinvolgere il giudice per questo",
-          "Da oggi evitare pressione su Silvana; non coinvolgerla nelle discussioni quando sta male"
-        ],
-        "tasks": [
-          "Sentiamoci liberi tutti quanti di fare ciò che vogliamo, questo è quello che avevo pensato che fosse meglio perché nella realtà quello che si stava cercando di fare era per cercare di mettere in guardia da possibili situazioni forse non favorevoli però poi certe cose a volte p...",
-          "Nei soldi c'è un discorso come te ho fatto molto più ampio, il discorso era dei soldi, il discorso era dei soldi, ma in contemporanea per come mi sono pronunciato è stato nel senso che ognuno si senta libero di fare ciò che vuole.",
-          "Sì, sì, sono perché devo fare una cosa.",
-          "5/10/26, 14:08 - +971 58 512 7782: Mi devo fare la barba 5/10/26, 14:08 - +971 58 512 7782: <Media omitted> 5/10/26, 14:08 - +971 58 512 7782: Ci vediamo alle 4 chai doi?",
-          "🙋🏻‍♂️ 2/14/22, 18:56 - Frostan: Ottimo 👍 2/14/22, 19:23 - J: Mamma mi dai il numero di telefono che devo far mettere il caricabatterie alla reception 2/14/22, 19:23 - J: Perche Christian quando è venuto non ha trovato nessuno alla reception 2/14/22, 19:24 - Mamma: <Media omitt...",
-          "Fare intro del canale e prove registrazione",
-          "Bloccare/finalizzare registrazione quando pronti",
-          "Andare al water park con Khan — 19 May 2026",
-          "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre",
-          "Chiedere mutuo/rinegoziazione — opzione citata"
-        ],
-        "open_points": [
-          "Dettagli futuri su quali Natali/feste e con quale cadenza — da concordare senza obbligo",
-          "Educazione di Christian verso i nonni (desiderio vs obbligo) — visioni diverse",
-          "Christian dovrebbe esprimere il proprio punto di vista — da fare",
-          "Questioni vaccinara/Piacenza e percezioni contrastanti — parzialmente chiarite, sensibilità residua"
-        ],
-        "next_steps": [
-          "Rispettare libertà e presenza non obbligatoria alle ricorrenze",
-          "Parlare con calma e chiedere tempo prima di richieste urgenti",
-          "Non coinvolgere Silvana nelle dispute familiari"
-        ],
-        "important_points": [
-          "I soldi promessi saranno dati quando disponibili, senza postille; indicati come ultima distribuzione, con riserve per la vecchiaia dei genitori",
-          "Da entrambe le parti nessun vincolo né aspettativa futura reciproca",
-          "Discussione su passate tensioni (Natale, battesimo, auguri) e su cosa i genitori chiamavano «ingerenze» (civiltà/educazione)"
-        ]
-      },
-      "source_only": false,
-      "needs_review": false,
-      "item_type": "source_entry",
-      "reviewed": false,
-      "pipelineStatus": "ready_for_site",
-      "readyForSite": true,
-      "id": "2d994e9299fc",
-      "isSourceEntry": true,
-      "source_entry": true,
-      "primaryCategory": "meetings",
-      "categories": [
-        "meetings",
-        "tasks",
-        "calendar",
-        "decisions",
-        "open-points"
-      ],
-      "extractedCategories": [
-        "meetings",
-        "tasks",
-        "calendar",
-        "decisions",
-        "open-points"
-      ],
-      "extractions": {
-        "meetings": [
-          {
-            "id": "87beb2a027c1",
-            "category": "meetings",
-            "title": "Famiglia: soldi senza condizioni, libertà reciproca e pace",
-            "path": "content/meetings/2026-05-17-conversation-seconda-86e8348fd2d4.md",
-            "preview": "Conversazione familiare lunga tra genitori (Fabio/Silvana) e figli (Stefania e altri), con apertura su erogazione dei soldi promessi senza condizioni né ulteriori aspettative, poi chiarimenti su pass…",
-            "summary": "Conversazione familiare lunga tra genitori (Fabio/Silvana) e figli (Stefania e altri), con apertura su erogazione dei soldi promessi senza condizioni né ulteriori aspettative, poi chiarimenti su passati litigi (Natale, videochiamate, educazione di Christian), pattern comunicativo e desiderio di ambiente non ostile.",
-            "project": "personal",
-            "date": "2026-05-17",
-            "dueDate": null,
-            "eventDate": "2026-05-17",
-            "status": null,
-            "extracted_items": {
-              "decisions": [
-                "Soldi promessi da dare senza condizioni quando arriveranno; nessun ulteriore round di distribuzione annunciato",
-                "Libertà reciproca: nessuno vincolato, nessuna aspettativa futura da nessuna parte",
-                "Accordo di pace: presenza possibile a Natale/feste comandate nel rispetto degli altri, senza obbligo e senza che un Natale sì e uno no diventi motivo di litigio",
-                "Non usare Christian né minacciare di tagliare rapporti con il nipote; mai pensato di coinvolgere il giudice per questo",
-                "Da oggi evitare pressione su Silvana; non coinvolgerla nelle discussioni quando sta male"
-              ],
-              "tasks": [],
-              "open_points": [
-                "Dettagli futuri su quali Natali/feste e con quale cadenza — da concordare senza obbligo",
-                "Educazione di Christian verso i nonni (desiderio vs obbligo) — visioni diverse",
-                "Christian dovrebbe esprimere il proprio punto di vista — da fare",
-                "Questioni vaccinara/Piacenza e percezioni contrastanti — parzialmente chiarite, sensibilità residua"
-              ],
-              "next_steps": [
-                "Rispettare libertà e presenza non obbligatoria alle ricorrenze",
-                "Parlare con calma e chiedere tempo prima di richieste urgenti",
-                "Non coinvolgere Silvana nelle dispute familiari"
-              ],
-              "important_points": [
-                "I soldi promessi saranno dati quando disponibili, senza postille; indicati come ultima distribuzione, con riserve per la vecchiaia dei genitori",
-                "Da entrambe le parti nessun vincolo né aspettativa futura reciproca",
-                "Discussione su passate tensioni (Natale, battesimo, auguri) e su cosa i genitori chiamavano «ingerenze» (civiltà/educazione)"
-              ]
-            }
-          }
-        ],
-        "tasks": [
-          {
-            "id": "150a208bc778",
-            "category": "tasks",
-            "title": "Sentiamoci liberi tutti quanti di fare ciò che vogliamo, questo è quello che av…",
-            "path": "content/tasks/todo.md#task-d06634599974",
-            "preview": "Sentiamoci liberi tutti quanti di fare ciò che vogliamo, questo è quello che avevo pensato che fosse meglio perché nella realtà quello che si stava cercando di fare era per cercare di mettere in guar…",
-            "summary": "Sentiamoci liberi tutti quanti di fare ciò che vogliamo, questo è quello che avevo pensato che fosse meglio perché nella realtà quello che si stava cercando di fare era per cercare di mettere in guardia da possibili situazioni forse non favorevoli però poi certe cose a volte p...",
-            "project": null,
-            "date": "2026-05-17",
-            "dueDate": null,
-            "eventDate": "2026-05-17",
-            "status": null,
-            "extracted_items": {
-              "tasks": [
-                "Sentiamoci liberi tutti quanti di fare ciò che vogliamo, questo è quello che avevo pensato che fosse meglio perché nella realtà quello che si stava cercando di fare era per cercare di mettere in guardia da possibili situazioni forse non favorevoli però poi certe cose a volte p..."
-              ]
-            }
-          },
-          {
-            "id": "ee5f09440ace",
-            "category": "tasks",
-            "title": "Nei soldi c'è un discorso come te ho fatto molto più ampio, il discorso era dei…",
-            "path": "content/tasks/todo.md#task-1948ed4cd0be",
-            "preview": "Nei soldi c'è un discorso come te ho fatto molto più ampio, il discorso era dei soldi, il discorso era dei soldi, ma in contemporanea per come mi sono pronunciato è stato nel senso che ognuno si sent…",
-            "summary": "Nei soldi c'è un discorso come te ho fatto molto più ampio, il discorso era dei soldi, il discorso era dei soldi, ma in contemporanea per come mi sono pronunciato è stato nel senso che ognuno si senta libero di fare ciò che vuole.",
-            "project": null,
-            "date": "2026-05-17",
-            "dueDate": null,
-            "eventDate": "2026-05-17",
-            "status": null,
-            "extracted_items": {
-              "tasks": [
-                "Nei soldi c'è un discorso come te ho fatto molto più ampio, il discorso era dei soldi, il discorso era dei soldi, ma in contemporanea per come mi sono pronunciato è stato nel senso che ognuno si senta libero di fare ciò che vuole."
-              ]
-            }
-          },
-          {
-            "id": "d9274514f65d",
-            "category": "tasks",
-            "title": "Sì, sì, sono perché devo fare una cosa.",
-            "path": "content/tasks/todo.md#task-e6cefeb39f0f",
-            "preview": "Sì, sì, sono perché devo fare una cosa.",
-            "summary": "Sì, sì, sono perché devo fare una cosa.",
-            "project": null,
-            "date": "2026-05-17",
-            "dueDate": null,
-            "eventDate": "2026-05-17",
-            "status": null,
-            "extracted_items": {
-              "tasks": [
-                "Sì, sì, sono perché devo fare una cosa."
-              ]
-            }
-          },
-          {
-            "id": "a2f8bcd20b11",
-            "category": "tasks",
-            "title": "5/10/26, 14:08 - +971 58 512 7782: Mi devo fare la barba 5/10/26, 14:08 - +971 …",
-            "path": "content/tasks/todo.md#task-225f4d101942",
-            "preview": "5/10/26, 14:08 - +971 58 512 7782: Mi devo fare la barba 5/10/26, 14:08 - +971 58 512 7782: <Media omitted> 5/10/26, 14:08 - +971 58 512 7782: Ci vediamo alle 4 chai doi?",
-            "summary": "5/10/26, 14:08 - +971 58 512 7782: Mi devo fare la barba 5/10/26, 14:08 - +971 58 512 7782: <Media omitted> 5/10/26, 14:08 - +971 58 512 7782: Ci vediamo alle 4 chai doi?",
-            "project": null,
-            "date": "2026-05-17",
-            "dueDate": null,
-            "eventDate": "2026-05-17",
-            "status": null,
-            "extracted_items": {
-              "tasks": [
-                "5/10/26, 14:08 - +971 58 512 7782: Mi devo fare la barba 5/10/26, 14:08 - +971 58 512 7782: <Media omitted> 5/10/26, 14:08 - +971 58 512 7782: Ci vediamo alle 4 chai doi?"
-              ]
-            }
-          },
-          {
-            "id": "2fb27d209bdf",
-            "category": "tasks",
-            "title": "🙋🏻‍♂️ 2/14/22, 18:56 - Frostan: Ottimo 👍 2/14/22, 19:23 - J: Mamma mi dai il nu…",
-            "path": "content/tasks/todo.md#task-0f12a2a5d1a5",
-            "preview": "🙋🏻‍♂️ 2/14/22, 18:56 - Frostan: Ottimo 👍 2/14/22, 19:23 - J: Mamma mi dai il numero di telefono che devo far mettere il caricabatterie alla reception 2/14/22, 19:23 - J: Perche Christian quando è ven…",
-            "summary": "🙋🏻‍♂️ 2/14/22, 18:56 - Frostan: Ottimo 👍 2/14/22, 19:23 - J: Mamma mi dai il numero di telefono che devo far mettere il caricabatterie alla reception 2/14/22, 19:23 - J: Perche Christian quando è venuto non ha trovato nessuno alla reception 2/14/22, 19:24 - Mamma: <Media omitt...",
-            "project": null,
-            "date": "2026-05-17",
-            "dueDate": null,
-            "eventDate": "2026-05-17",
-            "status": null,
-            "extracted_items": {
-              "tasks": [
-                "🙋🏻‍♂️ 2/14/22, 18:56 - Frostan: Ottimo 👍 2/14/22, 19:23 - J: Mamma mi dai il numero di telefono che devo far mettere il caricabatterie alla reception 2/14/22, 19:23 - J: Perche Christian quando è venuto non ha trovato nessuno alla reception 2/14/22, 19:24 - Mamma: <Media omitt..."
-              ]
-            }
-          },
-          {
-            "id": "4da8b3d6dc55",
-            "category": "tasks",
-            "title": "Fare intro del canale e prove registrazione",
-            "path": "content/tasks/todo.md#task-135626095126",
-            "preview": "Fare intro del canale e prove registrazione",
-            "summary": "Fare intro del canale e prove registrazione",
-            "project": null,
-            "date": "2026-05-17",
-            "dueDate": null,
-            "eventDate": "2026-05-17",
-            "status": null,
-            "extracted_items": {
-              "tasks": [
-                "Fare intro del canale e prove registrazione"
-              ]
-            }
-          },
-          {
-            "id": "bce10f56adfa",
-            "category": "tasks",
-            "title": "Bloccare/finalizzare registrazione quando pronti",
-            "path": "content/tasks/todo.md#task-01f9caef4d58",
-            "preview": "Bloccare/finalizzare registrazione quando pronti",
-            "summary": "Bloccare/finalizzare registrazione quando pronti",
-            "project": null,
-            "date": "2026-05-17",
-            "dueDate": null,
-            "eventDate": "2026-05-17",
-            "status": null,
-            "extracted_items": {
-              "tasks": [
-                "Bloccare/finalizzare registrazione quando pronti"
-              ]
-            }
-          },
-          {
-            "id": "d1a2be3a6eff",
-            "category": "tasks",
-            "title": "Andare al water park con Khan — 19 May 2026",
-            "path": "content/tasks/todo.md#task-15ed42531b06",
-            "preview": "Andare al water park con Khan — 19 May 2026",
-            "summary": "Andare al water park con Khan — 19 May 2026",
-            "project": null,
-            "date": "2026-05-17",
-            "dueDate": null,
-            "eventDate": "2026-05-17",
-            "status": null,
-            "extracted_items": {
-              "tasks": [
-                "Andare al water park con Khan — 19 May 2026"
-              ]
-            }
-          },
-          {
-            "id": "ed2bf6b318dc",
-            "category": "tasks",
-            "title": "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre",
-            "path": "content/tasks/todo.md#task-13f425596c81",
-            "preview": "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre",
-            "summary": "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre",
-            "project": null,
-            "date": "2026-05-17",
-            "dueDate": null,
-            "eventDate": "2026-05-17",
-            "status": null,
-            "extracted_items": {
-              "tasks": [
-                "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre"
-              ]
-            }
-          },
-          {
-            "id": "4a3dbd5e0d0f",
-            "category": "tasks",
-            "title": "Chiedere mutuo/rinegoziazione — opzione citata",
-            "path": "content/tasks/todo.md#task-df21e5289f7e",
-            "preview": "Chiedere mutuo/rinegoziazione — opzione citata",
-            "summary": "Chiedere mutuo/rinegoziazione — opzione citata",
-            "project": null,
-            "date": "2026-05-17",
-            "dueDate": null,
-            "eventDate": "2026-05-17",
-            "status": null,
-            "extracted_items": {
-              "tasks": [
-                "Chiedere mutuo/rinegoziazione — opzione citata"
-              ]
-            }
-          }
-        ]
-      },
-      "sourceEntries": [
-        {
-          "id": "87beb2a027c1",
-          "category": "meetings",
-          "title": "Famiglia: soldi senza condizioni, libertà reciproca e pace",
-          "path": "content/meetings/2026-05-17-conversation-seconda-86e8348fd2d4.md",
-          "preview": "Conversazione familiare lunga tra genitori (Fabio/Silvana) e figli (Stefania e altri), con apertura su erogazione dei soldi promessi senza condizioni né ulteriori aspettative, poi chiarimenti su pass…",
-          "summary": "Conversazione familiare lunga tra genitori (Fabio/Silvana) e figli (Stefania e altri), con apertura su erogazione dei soldi promessi senza condizioni né ulteriori aspettative, poi chiarimenti su passati litigi (Natale, videochiamate, educazione di Christian), pattern comunicativo e desiderio di ambiente non ostile.",
-          "project": "personal",
-          "date": "2026-05-17",
-          "dueDate": null,
-          "eventDate": "2026-05-17",
-          "status": null,
-          "extracted_items": {
-            "decisions": [
-              "Soldi promessi da dare senza condizioni quando arriveranno; nessun ulteriore round di distribuzione annunciato",
-              "Libertà reciproca: nessuno vincolato, nessuna aspettativa futura da nessuna parte",
-              "Accordo di pace: presenza possibile a Natale/feste comandate nel rispetto degli altri, senza obbligo e senza che un Natale sì e uno no diventi motivo di litigio",
-              "Non usare Christian né minacciare di tagliare rapporti con il nipote; mai pensato di coinvolgere il giudice per questo",
-              "Da oggi evitare pressione su Silvana; non coinvolgerla nelle discussioni quando sta male"
-            ],
-            "tasks": [],
-            "open_points": [
-              "Dettagli futuri su quali Natali/feste e con quale cadenza — da concordare senza obbligo",
-              "Educazione di Christian verso i nonni (desiderio vs obbligo) — visioni diverse",
-              "Christian dovrebbe esprimere il proprio punto di vista — da fare",
-              "Questioni vaccinara/Piacenza e percezioni contrastanti — parzialmente chiarite, sensibilità residua"
-            ],
-            "next_steps": [
-              "Rispettare libertà e presenza non obbligatoria alle ricorrenze",
-              "Parlare con calma e chiedere tempo prima di richieste urgenti",
-              "Non coinvolgere Silvana nelle dispute familiari"
-            ],
-            "important_points": [
-              "I soldi promessi saranno dati quando disponibili, senza postille; indicati come ultima distribuzione, con riserve per la vecchiaia dei genitori",
-              "Da entrambe le parti nessun vincolo né aspettativa futura reciproca",
-              "Discussione su passate tensioni (Natale, battesimo, auguri) e su cosa i genitori chiamavano «ingerenze» (civiltà/educazione)"
-            ]
-          }
-        },
-        {
-          "id": "150a208bc778",
-          "category": "tasks",
-          "title": "Sentiamoci liberi tutti quanti di fare ciò che vogliamo, questo è quello che av…",
-          "path": "content/tasks/todo.md#task-d06634599974",
-          "preview": "Sentiamoci liberi tutti quanti di fare ciò che vogliamo, questo è quello che avevo pensato che fosse meglio perché nella realtà quello che si stava cercando di fare era per cercare di mettere in guar…",
-          "summary": "Sentiamoci liberi tutti quanti di fare ciò che vogliamo, questo è quello che avevo pensato che fosse meglio perché nella realtà quello che si stava cercando di fare era per cercare di mettere in guardia da possibili situazioni forse non favorevoli però poi certe cose a volte p...",
-          "project": null,
-          "date": "2026-05-17",
-          "dueDate": null,
-          "eventDate": "2026-05-17",
-          "status": null,
-          "extracted_items": {
-            "tasks": [
-              "Sentiamoci liberi tutti quanti di fare ciò che vogliamo, questo è quello che avevo pensato che fosse meglio perché nella realtà quello che si stava cercando di fare era per cercare di mettere in guardia da possibili situazioni forse non favorevoli però poi certe cose a volte p..."
-            ]
-          }
-        },
-        {
-          "id": "ee5f09440ace",
-          "category": "tasks",
-          "title": "Nei soldi c'è un discorso come te ho fatto molto più ampio, il discorso era dei…",
-          "path": "content/tasks/todo.md#task-1948ed4cd0be",
-          "preview": "Nei soldi c'è un discorso come te ho fatto molto più ampio, il discorso era dei soldi, il discorso era dei soldi, ma in contemporanea per come mi sono pronunciato è stato nel senso che ognuno si sent…",
-          "summary": "Nei soldi c'è un discorso come te ho fatto molto più ampio, il discorso era dei soldi, il discorso era dei soldi, ma in contemporanea per come mi sono pronunciato è stato nel senso che ognuno si senta libero di fare ciò che vuole.",
-          "project": null,
-          "date": "2026-05-17",
-          "dueDate": null,
-          "eventDate": "2026-05-17",
-          "status": null,
-          "extracted_items": {
-            "tasks": [
-              "Nei soldi c'è un discorso come te ho fatto molto più ampio, il discorso era dei soldi, il discorso era dei soldi, ma in contemporanea per come mi sono pronunciato è stato nel senso che ognuno si senta libero di fare ciò che vuole."
-            ]
-          }
-        },
-        {
-          "id": "d9274514f65d",
-          "category": "tasks",
-          "title": "Sì, sì, sono perché devo fare una cosa.",
-          "path": "content/tasks/todo.md#task-e6cefeb39f0f",
-          "preview": "Sì, sì, sono perché devo fare una cosa.",
-          "summary": "Sì, sì, sono perché devo fare una cosa.",
-          "project": null,
-          "date": "2026-05-17",
-          "dueDate": null,
-          "eventDate": "2026-05-17",
-          "status": null,
-          "extracted_items": {
-            "tasks": [
-              "Sì, sì, sono perché devo fare una cosa."
-            ]
-          }
-        },
-        {
-          "id": "a2f8bcd20b11",
-          "category": "tasks",
-          "title": "5/10/26, 14:08 - +971 58 512 7782: Mi devo fare la barba 5/10/26, 14:08 - +971 …",
-          "path": "content/tasks/todo.md#task-225f4d101942",
-          "preview": "5/10/26, 14:08 - +971 58 512 7782: Mi devo fare la barba 5/10/26, 14:08 - +971 58 512 7782: <Media omitted> 5/10/26, 14:08 - +971 58 512 7782: Ci vediamo alle 4 chai doi?",
-          "summary": "5/10/26, 14:08 - +971 58 512 7782: Mi devo fare la barba 5/10/26, 14:08 - +971 58 512 7782: <Media omitted> 5/10/26, 14:08 - +971 58 512 7782: Ci vediamo alle 4 chai doi?",
-          "project": null,
-          "date": "2026-05-17",
-          "dueDate": null,
-          "eventDate": "2026-05-17",
-          "status": null,
-          "extracted_items": {
-            "tasks": [
-              "5/10/26, 14:08 - +971 58 512 7782: Mi devo fare la barba 5/10/26, 14:08 - +971 58 512 7782: <Media omitted> 5/10/26, 14:08 - +971 58 512 7782: Ci vediamo alle 4 chai doi?"
-            ]
-          }
-        },
-        {
-          "id": "2fb27d209bdf",
-          "category": "tasks",
-          "title": "🙋🏻‍♂️ 2/14/22, 18:56 - Frostan: Ottimo 👍 2/14/22, 19:23 - J: Mamma mi dai il nu…",
-          "path": "content/tasks/todo.md#task-0f12a2a5d1a5",
-          "preview": "🙋🏻‍♂️ 2/14/22, 18:56 - Frostan: Ottimo 👍 2/14/22, 19:23 - J: Mamma mi dai il numero di telefono che devo far mettere il caricabatterie alla reception 2/14/22, 19:23 - J: Perche Christian quando è ven…",
-          "summary": "🙋🏻‍♂️ 2/14/22, 18:56 - Frostan: Ottimo 👍 2/14/22, 19:23 - J: Mamma mi dai il numero di telefono che devo far mettere il caricabatterie alla reception 2/14/22, 19:23 - J: Perche Christian quando è venuto non ha trovato nessuno alla reception 2/14/22, 19:24 - Mamma: <Media omitt...",
-          "project": null,
-          "date": "2026-05-17",
-          "dueDate": null,
-          "eventDate": "2026-05-17",
-          "status": null,
-          "extracted_items": {
-            "tasks": [
-              "🙋🏻‍♂️ 2/14/22, 18:56 - Frostan: Ottimo 👍 2/14/22, 19:23 - J: Mamma mi dai il numero di telefono che devo far mettere il caricabatterie alla reception 2/14/22, 19:23 - J: Perche Christian quando è venuto non ha trovato nessuno alla reception 2/14/22, 19:24 - Mamma: <Media omitt..."
-            ]
-          }
-        },
-        {
-          "id": "4da8b3d6dc55",
-          "category": "tasks",
-          "title": "Fare intro del canale e prove registrazione",
-          "path": "content/tasks/todo.md#task-135626095126",
-          "preview": "Fare intro del canale e prove registrazione",
-          "summary": "Fare intro del canale e prove registrazione",
-          "project": null,
-          "date": "2026-05-17",
-          "dueDate": null,
-          "eventDate": "2026-05-17",
-          "status": null,
-          "extracted_items": {
-            "tasks": [
-              "Fare intro del canale e prove registrazione"
-            ]
-          }
-        },
-        {
-          "id": "bce10f56adfa",
-          "category": "tasks",
-          "title": "Bloccare/finalizzare registrazione quando pronti",
-          "path": "content/tasks/todo.md#task-01f9caef4d58",
-          "preview": "Bloccare/finalizzare registrazione quando pronti",
-          "summary": "Bloccare/finalizzare registrazione quando pronti",
-          "project": null,
-          "date": "2026-05-17",
-          "dueDate": null,
-          "eventDate": "2026-05-17",
-          "status": null,
-          "extracted_items": {
-            "tasks": [
-              "Bloccare/finalizzare registrazione quando pronti"
-            ]
-          }
-        },
-        {
-          "id": "d1a2be3a6eff",
-          "category": "tasks",
-          "title": "Andare al water park con Khan — 19 May 2026",
-          "path": "content/tasks/todo.md#task-15ed42531b06",
-          "preview": "Andare al water park con Khan — 19 May 2026",
-          "summary": "Andare al water park con Khan — 19 May 2026",
-          "project": null,
-          "date": "2026-05-17",
-          "dueDate": null,
-          "eventDate": "2026-05-17",
-          "status": null,
-          "extracted_items": {
-            "tasks": [
-              "Andare al water park con Khan — 19 May 2026"
-            ]
-          }
-        },
-        {
-          "id": "ed2bf6b318dc",
-          "category": "tasks",
-          "title": "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre",
-          "path": "content/tasks/todo.md#task-13f425596c81",
-          "preview": "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre",
-          "summary": "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre",
-          "project": null,
-          "date": "2026-05-17",
-          "dueDate": null,
-          "eventDate": "2026-05-17",
-          "status": null,
-          "extracted_items": {
-            "tasks": [
-              "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre"
-            ]
-          }
-        },
-        {
-          "id": "4a3dbd5e0d0f",
-          "category": "tasks",
-          "title": "Chiedere mutuo/rinegoziazione — opzione citata",
-          "path": "content/tasks/todo.md#task-df21e5289f7e",
-          "preview": "Chiedere mutuo/rinegoziazione — opzione citata",
-          "summary": "Chiedere mutuo/rinegoziazione — opzione citata",
-          "project": null,
-          "date": "2026-05-17",
-          "dueDate": null,
-          "eventDate": "2026-05-17",
-          "status": null,
-          "extracted_items": {
-            "tasks": [
-              "Chiedere mutuo/rinegoziazione — opzione citata"
-            ]
-          }
-        }
-      ],
-      "groupedIds": [
-        "87beb2a027c1",
-        "150a208bc778",
-        "ee5f09440ace",
-        "d9274514f65d",
-        "a2f8bcd20b11",
-        "2fb27d209bdf",
-        "4da8b3d6dc55",
-        "bce10f56adfa",
-        "d1a2be3a6eff",
-        "ed2bf6b318dc",
-        "4a3dbd5e0d0f"
-      ],
-      "decisions": [
-        "Soldi promessi da dare senza condizioni quando arriveranno; nessun ulteriore round di distribuzione annunciato",
-        "Libertà reciproca: nessuno vincolato, nessuna aspettativa futura da nessuna parte",
-        "Accordo di pace: presenza possibile a Natale/feste comandate nel rispetto degli altri, senza obbligo e senza che un Natale sì e uno no diventi motivo di litigio",
-        "Non usare Christian né minacciare di tagliare rapporti con il nipote; mai pensato di coinvolgere il giudice per questo",
-        "Da oggi evitare pressione su Silvana; non coinvolgerla nelle discussioni quando sta male"
-      ],
-      "tasks": [
-        "Sentiamoci liberi tutti quanti di fare ciò che vogliamo, questo è quello che avevo pensato che fosse meglio perché nella realtà quello che si stava cercando di fare era per cercare di mettere in guardia da possibili situazioni forse non favorevoli però poi certe cose a volte p...",
-        "Nei soldi c'è un discorso come te ho fatto molto più ampio, il discorso era dei soldi, il discorso era dei soldi, ma in contemporanea per come mi sono pronunciato è stato nel senso che ognuno si senta libero di fare ciò che vuole.",
-        "Sì, sì, sono perché devo fare una cosa.",
-        "5/10/26, 14:08 - +971 58 512 7782: Mi devo fare la barba 5/10/26, 14:08 - +971 58 512 7782: <Media omitted> 5/10/26, 14:08 - +971 58 512 7782: Ci vediamo alle 4 chai doi?",
-        "🙋🏻‍♂️ 2/14/22, 18:56 - Frostan: Ottimo 👍 2/14/22, 19:23 - J: Mamma mi dai il numero di telefono che devo far mettere il caricabatterie alla reception 2/14/22, 19:23 - J: Perche Christian quando è venuto non ha trovato nessuno alla reception 2/14/22, 19:24 - Mamma: <Media omitt...",
-        "Fare intro del canale e prove registrazione",
-        "Bloccare/finalizzare registrazione quando pronti",
-        "Andare al water park con Khan — 19 May 2026",
-        "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre",
-        "Chiedere mutuo/rinegoziazione — opzione citata"
-      ],
-      "openPoints": [
-        "Dettagli futuri su quali Natali/feste e con quale cadenza — da concordare senza obbligo",
-        "Educazione di Christian verso i nonni (desiderio vs obbligo) — visioni diverse",
-        "Christian dovrebbe esprimere il proprio punto di vista — da fare",
-        "Questioni vaccinara/Piacenza e percezioni contrastanti — parzialmente chiarite, sensibilità residua"
-      ],
-      "open_points": [
-        "Dettagli futuri su quali Natali/feste e con quale cadenza — da concordare senza obbligo",
-        "Educazione di Christian verso i nonni (desiderio vs obbligo) — visioni diverse",
-        "Christian dovrebbe esprimere il proprio punto di vista — da fare",
-        "Questioni vaccinara/Piacenza e percezioni contrastanti — parzialmente chiarite, sensibilità residua"
-      ],
-      "nextSteps": [
-        "Rispettare libertà e presenza non obbligatoria alle ricorrenze",
-        "Parlare con calma e chiedere tempo prima di richieste urgenti",
-        "Non coinvolgere Silvana nelle dispute familiari"
-      ],
-      "next_steps": [
-        "Rispettare libertà e presenza non obbligatoria alle ricorrenze",
-        "Parlare con calma e chiedere tempo prima di richieste urgenti",
-        "Non coinvolgere Silvana nelle dispute familiari"
-      ],
-      "importantPoints": [
-        "I soldi promessi saranno dati quando disponibili, senza postille; indicati come ultima distribuzione, con riserve per la vecchiaia dei genitori",
-        "Da entrambe le parti nessun vincolo né aspettativa futura reciproca",
-        "Discussione su passate tensioni (Natale, battesimo, auguri) e su cosa i genitori chiamavano «ingerenze» (civiltà/educazione)"
-      ],
-      "important_points": [
-        "I soldi promessi saranno dati quando disponibili, senza postille; indicati come ultima distribuzione, con riserve per la vecchiaia dei genitori",
-        "Da entrambe le parti nessun vincolo né aspettativa futura reciproca",
-        "Discussione su passate tensioni (Natale, battesimo, auguri) e su cosa i genitori chiamavano «ingerenze» (civiltà/educazione)"
-      ],
-      "calendarEvents": [],
-      "calendar_events": [],
-      "possibleActions": [],
-      "possible_actions": [],
-      "childIds": [
-        "87beb2a027c1",
-        "150a208bc778",
-        "ee5f09440ace",
-        "d9274514f65d",
-        "a2f8bcd20b11",
-        "2fb27d209bdf",
-        "4da8b3d6dc55",
-        "bce10f56adfa",
-        "d1a2be3a6eff",
-        "ed2bf6b318dc",
-        "4a3dbd5e0d0f"
-      ],
-      "related_files": [],
-      "sourceKey": "content/transcriptions/seconda.md",
-      "sourceGroupKey": "content/transcriptions/seconda.md",
-      "title": "Famiglia: soldi senza condizioni, libertà reciproca e pace",
-      "displayTitle": "Famiglia: soldi senza condizioni, libertà reciproca e pace"
     },
     {
       "category": "notes",
@@ -4362,6 +3850,958 @@
       "sourceGroupKey": "content/transcriptions/christian.md",
       "title": "Dono ~50.000 €, casa cointestata e timori su separazione",
       "displayTitle": "Dono ~50.000 €, casa cointestata e timori su separazione"
+    },
+    {
+      "category": "notes",
+      "categoryLabel": "Notes",
+      "filepath": "content/notes/2026-05-17-self-recap-voice_005-6921c6f5bc0a.md",
+      "path": "content/notes/2026-05-17-self-recap-voice_005-6921c6f5bc0a.md",
+      "source_audio": "Voice 005.m4a",
+      "source_transcription": "content/transcriptions/Voice_005.md",
+      "sourceAudio": "Voice 005.m4a",
+      "sourceTranscription": "content/transcriptions/Voice_005.md",
+      "project": "uncategorized",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T09:46:21Z",
+      "processedDate": "2026-05-17T09:46:21Z",
+      "preview": "AI-ready note from Voice 005. Open for structured sections.",
+      "summary": "AI-ready note from Voice 005. Open for structured sections.",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 1,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {
+        "Source": "- **Source audio:** Voice 005.m4a\n- **Source transcription:** `Voice_005.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** self-recap (70%)\n- **Project:** uncategorized",
+        "Summary": "Registrazione, Michael Club Club.",
+        "Important Points": "- Registrazione, Michael Club Club.\n- Siamo in onda.\n- Siamo in onda, per credere, questo è un chat di...",
+        "Decisions": "- (none)",
+        "Tasks": "- (none)",
+        "Calendar Events": "- (none)",
+        "Open Points": "- come è che chiedete? | owner: to confirm",
+        "Next Steps": "- Ma, credo che ho un'ultima intro.\n- Però, sì, adesso io dico una qua, scusa.",
+        "Possible Actions": "- Registrare intro canale e clip di prova a casa\n- Usare ChatGPT per punti positivi/negativi e script, non per price prediction\n- Preparare video intro e episodio crypto quando si rivedono"
+      },
+      "extracted_items": {
+        "important_points": [
+          "Canale «Tanti Soldi»: temi crypto, bitcoin, finance, borsa",
+          "Intro: clap + saluto; primi secondi/minuto con hook chiaro (TikTok 3s, YouTube ~1 min)",
+          "ChatGPT utile per passato e spiegazioni, non per previsioni di mercato affidabili",
+          "Registrazione, Michael Club Club.",
+          "Siamo in onda.",
+          "Siamo in onda, per credere, questo è un chat di..."
+        ],
+        "possible_actions": [
+          "Registrare intro canale e clip di prova a casa",
+          "Usare ChatGPT per punti positivi/negativi e script, non per price prediction",
+          "Preparare video intro e episodio crypto quando si rivedono"
+        ],
+        "tasks": [
+          "Sì, allora prima di tutto dovresti fare tipo ciao a tutti e benvenuti sul canale TANTI SOLDI!"
+        ]
+      },
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "source_entry",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true,
+      "id": "aa7c925f3269",
+      "isSourceEntry": true,
+      "source_entry": true,
+      "primaryCategory": "notes",
+      "categories": [
+        "notes",
+        "tasks",
+        "calendar",
+        "decisions",
+        "open-points"
+      ],
+      "extractedCategories": [
+        "notes",
+        "tasks",
+        "calendar",
+        "decisions",
+        "open-points"
+      ],
+      "extractions": {
+        "notes": [
+          {
+            "id": "01ec856cc92c",
+            "category": "notes",
+            "title": "Voice 005 · Conversation",
+            "path": "content/notes/2026-05-17-conversation-voice_005-6921c6f5bc0a.md",
+            "preview": "AI-ready note from Voice 005. Open for structured sections.",
+            "summary": "AI-ready note from Voice 005. Open for structured sections.",
+            "project": "personal",
+            "date": "2026-05-17",
+            "dueDate": null,
+            "eventDate": "2026-05-17",
+            "status": null,
+            "extracted_items": {
+              "important_points": [
+                "Canale «Tanti Soldi»: temi crypto, bitcoin, finance, borsa",
+                "Intro: clap + saluto; primi secondi/minuto con hook chiaro (TikTok 3s, YouTube ~1 min)",
+                "ChatGPT utile per passato e spiegazioni, non per previsioni di mercato affidabili"
+              ],
+              "possible_actions": [
+                "Registrare intro canale e clip di prova a casa",
+                "Usare ChatGPT per punti positivi/negativi e script, non per price prediction",
+                "Preparare video intro e episodio crypto quando si rivedono"
+              ]
+            }
+          },
+          {
+            "id": "bd04c6a561ca",
+            "category": "notes",
+            "title": "Registrazione, Michael Club Club.",
+            "path": "content/notes/2026-05-17-self-recap-voice_005-6921c6f5bc0a.md",
+            "preview": "Registrazione, Michael Club Club.",
+            "summary": "Registrazione, Michael Club Club.",
+            "project": "uncategorized",
+            "date": "2026-05-17",
+            "dueDate": null,
+            "eventDate": "2026-05-17",
+            "status": null,
+            "extracted_items": {
+              "important_points": [
+                "Registrazione, Michael Club Club.",
+                "Siamo in onda.",
+                "Siamo in onda, per credere, questo è un chat di..."
+              ],
+              "possible_actions": []
+            }
+          }
+        ],
+        "tasks": [
+          {
+            "id": "86e1b1108f7e",
+            "category": "tasks",
+            "title": "Sì, allora prima di tutto dovresti fare tipo ciao a tutti e benvenuti sul canal…",
+            "path": "content/tasks/todo.md#task-f1c82f109f87",
+            "preview": "Sì, allora prima di tutto dovresti fare tipo ciao a tutti e benvenuti sul canale TANTI SOLDI!",
+            "summary": "Sì, allora prima di tutto dovresti fare tipo ciao a tutti e benvenuti sul canale TANTI SOLDI!",
+            "project": null,
+            "date": "2026-05-17",
+            "dueDate": null,
+            "eventDate": "2026-05-17",
+            "status": null,
+            "extracted_items": {
+              "tasks": [
+                "Sì, allora prima di tutto dovresti fare tipo ciao a tutti e benvenuti sul canale TANTI SOLDI!"
+              ]
+            }
+          }
+        ]
+      },
+      "sourceEntries": [
+        {
+          "id": "01ec856cc92c",
+          "category": "notes",
+          "title": "Voice 005 · Conversation",
+          "path": "content/notes/2026-05-17-conversation-voice_005-6921c6f5bc0a.md",
+          "preview": "AI-ready note from Voice 005. Open for structured sections.",
+          "summary": "AI-ready note from Voice 005. Open for structured sections.",
+          "project": "personal",
+          "date": "2026-05-17",
+          "dueDate": null,
+          "eventDate": "2026-05-17",
+          "status": null,
+          "extracted_items": {
+            "important_points": [
+              "Canale «Tanti Soldi»: temi crypto, bitcoin, finance, borsa",
+              "Intro: clap + saluto; primi secondi/minuto con hook chiaro (TikTok 3s, YouTube ~1 min)",
+              "ChatGPT utile per passato e spiegazioni, non per previsioni di mercato affidabili"
+            ],
+            "possible_actions": [
+              "Registrare intro canale e clip di prova a casa",
+              "Usare ChatGPT per punti positivi/negativi e script, non per price prediction",
+              "Preparare video intro e episodio crypto quando si rivedono"
+            ]
+          }
+        },
+        {
+          "id": "bd04c6a561ca",
+          "category": "notes",
+          "title": "Registrazione, Michael Club Club.",
+          "path": "content/notes/2026-05-17-self-recap-voice_005-6921c6f5bc0a.md",
+          "preview": "Registrazione, Michael Club Club.",
+          "summary": "Registrazione, Michael Club Club.",
+          "project": "uncategorized",
+          "date": "2026-05-17",
+          "dueDate": null,
+          "eventDate": "2026-05-17",
+          "status": null,
+          "extracted_items": {
+            "important_points": [
+              "Registrazione, Michael Club Club.",
+              "Siamo in onda.",
+              "Siamo in onda, per credere, questo è un chat di..."
+            ],
+            "possible_actions": []
+          }
+        },
+        {
+          "id": "86e1b1108f7e",
+          "category": "tasks",
+          "title": "Sì, allora prima di tutto dovresti fare tipo ciao a tutti e benvenuti sul canal…",
+          "path": "content/tasks/todo.md#task-f1c82f109f87",
+          "preview": "Sì, allora prima di tutto dovresti fare tipo ciao a tutti e benvenuti sul canale TANTI SOLDI!",
+          "summary": "Sì, allora prima di tutto dovresti fare tipo ciao a tutti e benvenuti sul canale TANTI SOLDI!",
+          "project": null,
+          "date": "2026-05-17",
+          "dueDate": null,
+          "eventDate": "2026-05-17",
+          "status": null,
+          "extracted_items": {
+            "tasks": [
+              "Sì, allora prima di tutto dovresti fare tipo ciao a tutti e benvenuti sul canale TANTI SOLDI!"
+            ]
+          }
+        }
+      ],
+      "groupedIds": [
+        "01ec856cc92c",
+        "bd04c6a561ca",
+        "86e1b1108f7e"
+      ],
+      "decisions": [],
+      "tasks": [
+        "Sì, allora prima di tutto dovresti fare tipo ciao a tutti e benvenuti sul canale TANTI SOLDI!"
+      ],
+      "openPoints": [],
+      "open_points": [],
+      "nextSteps": [],
+      "next_steps": [],
+      "importantPoints": [
+        "Canale «Tanti Soldi»: temi crypto, bitcoin, finance, borsa",
+        "Intro: clap + saluto; primi secondi/minuto con hook chiaro (TikTok 3s, YouTube ~1 min)",
+        "ChatGPT utile per passato e spiegazioni, non per previsioni di mercato affidabili",
+        "Registrazione, Michael Club Club.",
+        "Siamo in onda.",
+        "Siamo in onda, per credere, questo è un chat di..."
+      ],
+      "important_points": [
+        "Canale «Tanti Soldi»: temi crypto, bitcoin, finance, borsa",
+        "Intro: clap + saluto; primi secondi/minuto con hook chiaro (TikTok 3s, YouTube ~1 min)",
+        "ChatGPT utile per passato e spiegazioni, non per previsioni di mercato affidabili",
+        "Registrazione, Michael Club Club.",
+        "Siamo in onda.",
+        "Siamo in onda, per credere, questo è un chat di..."
+      ],
+      "calendarEvents": [],
+      "calendar_events": [],
+      "possibleActions": [
+        "Registrare intro canale e clip di prova a casa",
+        "Usare ChatGPT per punti positivi/negativi e script, non per price prediction",
+        "Preparare video intro e episodio crypto quando si rivedono"
+      ],
+      "possible_actions": [
+        "Registrare intro canale e clip di prova a casa",
+        "Usare ChatGPT per punti positivi/negativi e script, non per price prediction",
+        "Preparare video intro e episodio crypto quando si rivedono"
+      ],
+      "childIds": [
+        "01ec856cc92c",
+        "bd04c6a561ca",
+        "86e1b1108f7e"
+      ],
+      "related_files": [],
+      "sourceKey": "content/transcriptions/voice_005.md",
+      "sourceGroupKey": "content/transcriptions/voice_005.md",
+      "title": "Voice 005 · Conversation",
+      "displayTitle": "Voice 005 · Conversation"
+    },
+    {
+      "category": "notes",
+      "categoryLabel": "Notes",
+      "filepath": "content/notes/2026-05-17-conversation-seconda-86e8348fd2d4.md",
+      "path": "content/notes/2026-05-17-conversation-seconda-86e8348fd2d4.md",
+      "source_audio": "Seconda.m4a",
+      "source_transcription": "content/transcriptions/Seconda.md",
+      "sourceAudio": "Seconda.m4a",
+      "sourceTranscription": "content/transcriptions/Seconda.md",
+      "project": "personal",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T09:46:21Z",
+      "processedDate": "2026-05-17T09:46:21Z",
+      "preview": "Conversazione familiare lunga tra genitori (Fabio/Silvana) e figli (Stefania e altri), con apertura su erogazione dei soldi promessi senza condizioni né ulteriori aspettative, poi chiarimenti su pass…",
+      "summary": "Conversazione familiare lunga tra genitori (Fabio/Silvana) e figli (Stefania e altri), con apertura su erogazione dei soldi promessi senza condizioni né ulteriori aspettative, poi chiarimenti su passati litigi (Natale, videochiamate, educazione di Christian), pattern comunicativo e desiderio di ambiente non ostile.",
+      "stats": {
+        "decisions_count": 5,
+        "tasks_count": 10,
+        "open_points_count": 4,
+        "calendar_events_count": 0,
+        "next_steps_count": 3
+      },
+      "has_chart_data": true,
+      "raw_sections": {
+        "Source": "- **Source audio:** Seconda.m4a\n- **Source transcription:** `Seconda.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** conversation (72%)\n- **Project:** personal",
+        "Summary": "Ho preso la decisione che la realtà contrariamente a come stavamo facendo, dovevamo organizzare che abbiamo deciso che gli soldi che abbiamo promesso di dare li daremo e li daremo senza condizioni, nel senso che ve l'hanno dati e non ci saranno postille per quanto riguarda, so...",
+        "Important Points": "- Ho preso la decisione che la realtà contrariamente a come stavamo facendo, dovevamo organizzare che abbiamo deciso che gli soldi che abbiamo promesso di dare li daremo e li daremo senza condizioni, nel senso che ve l'hanno dati e non ci saranno postille per quanto riguarda, so...\n- Quindi si soldi li prenderete e ci fate quello che volete.\n- Nella realtà quindi non vi verrà chiesto nulla, è chiaro che come avevo detto ieri saranno gli ultimi soldi e che non ci saranno ulteriori soldi da distribuire perché quelli che poi cercheremo di metterci di la parte servono per la nostra vecchiaia e così vi sentite liberi di ...",
+        "Decisions": "- Ho preso la decisione che la realtà contrariamente a come stavamo facendo, dovevamo organizzare che abbiamo deciso che gli soldi che abbiamo promesso di dare li daremo e li daremo senza condizioni, nel senso che ve l'hanno dati e non ci saranno postille per quanto riguarda, so...",
+        "Tasks": "- (none)",
+        "Calendar Events": "- (none)",
+        "Open Points": "- (none)",
+        "Next Steps": "- Ma sinceramente ok, grazie, sono contento, in realtà pensavo che non parlassimo di soldi, o forse quello che vi aspettavate, o forse sembra che caosus belli sia di soldi.\n- Nei soldi c'è un discorso come te ho fatto molto più ampio, il discorso era dei soldi, il discorso era dei soldi, ma in contemporanea per come mi sono pronunciato è stato nel senso che ognuno si senta libero di fare ciò che vuole.",
+        "Possible Actions": "- Comunicare stress e priorità prima di richieste urgenti (telefonate, compiti)\n- Evitare esplosioni di rabbia; segnalare disagio prima dell'esplosione\n- Non far litigare Christian né esporla a pressioni su presenze/obblighi\n- Ridurre pressione su Silvana nelle conversazioni familiari"
+      },
+      "extracted_items": {
+        "decisions": [
+          "Soldi promessi da dare senza condizioni quando arriveranno; nessun ulteriore round di distribuzione annunciato",
+          "Libertà reciproca: nessuno vincolato, nessuna aspettativa futura da nessuna parte",
+          "Accordo di pace: presenza possibile a Natale/feste comandate nel rispetto degli altri, senza obbligo e senza che un Natale sì e uno no diventi motivo di litigio",
+          "Non usare Christian né minacciare di tagliare rapporti con il nipote; mai pensato di coinvolgere il giudice per questo",
+          "Da oggi evitare pressione su Silvana; non coinvolgerla nelle discussioni quando sta male"
+        ],
+        "tasks": [
+          "Sentiamoci liberi tutti quanti di fare ciò che vogliamo, questo è quello che avevo pensato che fosse meglio perché nella realtà quello che si stava cercando di fare era per cercare di mettere in guardia da possibili situazioni forse non favorevoli però poi certe cose a volte p...",
+          "Nei soldi c'è un discorso come te ho fatto molto più ampio, il discorso era dei soldi, il discorso era dei soldi, ma in contemporanea per come mi sono pronunciato è stato nel senso che ognuno si senta libero di fare ciò che vuole.",
+          "Sì, sì, sono perché devo fare una cosa.",
+          "5/10/26, 14:08 - +971 58 512 7782: Mi devo fare la barba 5/10/26, 14:08 - +971 58 512 7782: <Media omitted> 5/10/26, 14:08 - +971 58 512 7782: Ci vediamo alle 4 chai doi?",
+          "🙋🏻‍♂️ 2/14/22, 18:56 - Frostan: Ottimo 👍 2/14/22, 19:23 - J: Mamma mi dai il numero di telefono che devo far mettere il caricabatterie alla reception 2/14/22, 19:23 - J: Perche Christian quando è venuto non ha trovato nessuno alla reception 2/14/22, 19:24 - Mamma: <Media omitt...",
+          "Fare intro del canale e prove registrazione",
+          "Bloccare/finalizzare registrazione quando pronti",
+          "Andare al water park con Khan — 19 May 2026",
+          "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre",
+          "Chiedere mutuo/rinegoziazione — opzione citata"
+        ],
+        "open_points": [
+          "Dettagli futuri su quali Natali/feste e con quale cadenza — da concordare senza obbligo",
+          "Educazione di Christian verso i nonni (desiderio vs obbligo) — visioni diverse",
+          "Christian dovrebbe esprimere il proprio punto di vista — da fare",
+          "Questioni vaccinara/Piacenza e percezioni contrastanti — parzialmente chiarite, sensibilità residua"
+        ],
+        "next_steps": [
+          "Rispettare libertà e presenza non obbligatoria alle ricorrenze",
+          "Parlare con calma e chiedere tempo prima di richieste urgenti",
+          "Non coinvolgere Silvana nelle dispute familiari"
+        ],
+        "important_points": [
+          "I soldi promessi saranno dati quando disponibili, senza postille; indicati come ultima distribuzione, con riserve per la vecchiaia dei genitori",
+          "Da entrambe le parti nessun vincolo né aspettativa futura reciproca",
+          "Discussione su passate tensioni (Natale, battesimo, auguri) e su cosa i genitori chiamavano «ingerenze» (civiltà/educazione)",
+          "Ho preso la decisione che la realtà contrariamente a come stavamo facendo, dovevamo organizzare che abbiamo deciso che gli soldi che abbiamo promesso di dare li daremo e li daremo senza condizioni, nel senso che ve l'hanno dati e non ci saranno postille per quanto riguarda, so...",
+          "Quindi si soldi li prenderete e ci fate quello che volete.",
+          "Nella realtà quindi non vi verrà chiesto nulla, è chiaro che come avevo detto ieri saranno gli ultimi soldi e che non ci saranno ulteriori soldi da distribuire perché quelli che poi cercheremo di metterci di la parte servono per la nostra vecchiaia e così vi sentite liberi di ..."
+        ],
+        "possible_actions": []
+      },
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "source_entry",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true,
+      "id": "2d994e9299fc",
+      "isSourceEntry": true,
+      "source_entry": true,
+      "primaryCategory": "notes",
+      "categories": [
+        "meetings",
+        "notes",
+        "tasks",
+        "calendar",
+        "decisions",
+        "open-points"
+      ],
+      "extractedCategories": [
+        "meetings",
+        "notes",
+        "tasks",
+        "calendar",
+        "decisions",
+        "open-points"
+      ],
+      "extractions": {
+        "meetings": [
+          {
+            "id": "87beb2a027c1",
+            "category": "meetings",
+            "title": "Famiglia: soldi senza condizioni, libertà reciproca e pace",
+            "path": "content/meetings/2026-05-17-conversation-seconda-86e8348fd2d4.md",
+            "preview": "Conversazione familiare lunga tra genitori (Fabio/Silvana) e figli (Stefania e altri), con apertura su erogazione dei soldi promessi senza condizioni né ulteriori aspettative, poi chiarimenti su pass…",
+            "summary": "Conversazione familiare lunga tra genitori (Fabio/Silvana) e figli (Stefania e altri), con apertura su erogazione dei soldi promessi senza condizioni né ulteriori aspettative, poi chiarimenti su passati litigi (Natale, videochiamate, educazione di Christian), pattern comunicativo e desiderio di ambiente non ostile.",
+            "project": "personal",
+            "date": "2026-05-17",
+            "dueDate": null,
+            "eventDate": "2026-05-17",
+            "status": null,
+            "extracted_items": {
+              "decisions": [
+                "Soldi promessi da dare senza condizioni quando arriveranno; nessun ulteriore round di distribuzione annunciato",
+                "Libertà reciproca: nessuno vincolato, nessuna aspettativa futura da nessuna parte",
+                "Accordo di pace: presenza possibile a Natale/feste comandate nel rispetto degli altri, senza obbligo e senza che un Natale sì e uno no diventi motivo di litigio",
+                "Non usare Christian né minacciare di tagliare rapporti con il nipote; mai pensato di coinvolgere il giudice per questo",
+                "Da oggi evitare pressione su Silvana; non coinvolgerla nelle discussioni quando sta male"
+              ],
+              "tasks": [],
+              "open_points": [
+                "Dettagli futuri su quali Natali/feste e con quale cadenza — da concordare senza obbligo",
+                "Educazione di Christian verso i nonni (desiderio vs obbligo) — visioni diverse",
+                "Christian dovrebbe esprimere il proprio punto di vista — da fare",
+                "Questioni vaccinara/Piacenza e percezioni contrastanti — parzialmente chiarite, sensibilità residua"
+              ],
+              "next_steps": [
+                "Rispettare libertà e presenza non obbligatoria alle ricorrenze",
+                "Parlare con calma e chiedere tempo prima di richieste urgenti",
+                "Non coinvolgere Silvana nelle dispute familiari"
+              ],
+              "important_points": [
+                "I soldi promessi saranno dati quando disponibili, senza postille; indicati come ultima distribuzione, con riserve per la vecchiaia dei genitori",
+                "Da entrambe le parti nessun vincolo né aspettativa futura reciproca",
+                "Discussione su passate tensioni (Natale, battesimo, auguri) e su cosa i genitori chiamavano «ingerenze» (civiltà/educazione)"
+              ]
+            }
+          }
+        ],
+        "notes": [
+          {
+            "id": "cd949a2e1e98",
+            "category": "notes",
+            "title": "Seconda.m4a · Conversation",
+            "path": "content/notes/2026-05-17-conversation-seconda-86e8348fd2d4.md",
+            "preview": "AI-ready note from Seconda.m4a. Open for structured sections.",
+            "summary": "AI-ready note from Seconda.m4a. Open for structured sections.",
+            "project": "personal",
+            "date": "2026-05-17",
+            "dueDate": null,
+            "eventDate": "2026-05-17",
+            "status": null,
+            "extracted_items": {
+              "important_points": [
+                "Ho preso la decisione che la realtà contrariamente a come stavamo facendo, dovevamo organizzare che abbiamo deciso che gli soldi che abbiamo promesso di dare li daremo e li daremo senza condizioni, nel senso che ve l'hanno dati e non ci saranno postille per quanto riguarda, so...",
+                "Quindi si soldi li prenderete e ci fate quello che volete.",
+                "Nella realtà quindi non vi verrà chiesto nulla, è chiaro che come avevo detto ieri saranno gli ultimi soldi e che non ci saranno ulteriori soldi da distribuire perché quelli che poi cercheremo di metterci di la parte servono per la nostra vecchiaia e così vi sentite liberi di ..."
+              ],
+              "possible_actions": []
+            }
+          }
+        ],
+        "tasks": [
+          {
+            "id": "150a208bc778",
+            "category": "tasks",
+            "title": "Sentiamoci liberi tutti quanti di fare ciò che vogliamo, questo è quello che av…",
+            "path": "content/tasks/todo.md#task-d06634599974",
+            "preview": "Sentiamoci liberi tutti quanti di fare ciò che vogliamo, questo è quello che avevo pensato che fosse meglio perché nella realtà quello che si stava cercando di fare era per cercare di mettere in guar…",
+            "summary": "Sentiamoci liberi tutti quanti di fare ciò che vogliamo, questo è quello che avevo pensato che fosse meglio perché nella realtà quello che si stava cercando di fare era per cercare di mettere in guardia da possibili situazioni forse non favorevoli però poi certe cose a volte p...",
+            "project": null,
+            "date": "2026-05-17",
+            "dueDate": null,
+            "eventDate": "2026-05-17",
+            "status": null,
+            "extracted_items": {
+              "tasks": [
+                "Sentiamoci liberi tutti quanti di fare ciò che vogliamo, questo è quello che avevo pensato che fosse meglio perché nella realtà quello che si stava cercando di fare era per cercare di mettere in guardia da possibili situazioni forse non favorevoli però poi certe cose a volte p..."
+              ]
+            }
+          },
+          {
+            "id": "ee5f09440ace",
+            "category": "tasks",
+            "title": "Nei soldi c'è un discorso come te ho fatto molto più ampio, il discorso era dei…",
+            "path": "content/tasks/todo.md#task-1948ed4cd0be",
+            "preview": "Nei soldi c'è un discorso come te ho fatto molto più ampio, il discorso era dei soldi, il discorso era dei soldi, ma in contemporanea per come mi sono pronunciato è stato nel senso che ognuno si sent…",
+            "summary": "Nei soldi c'è un discorso come te ho fatto molto più ampio, il discorso era dei soldi, il discorso era dei soldi, ma in contemporanea per come mi sono pronunciato è stato nel senso che ognuno si senta libero di fare ciò che vuole.",
+            "project": null,
+            "date": "2026-05-17",
+            "dueDate": null,
+            "eventDate": "2026-05-17",
+            "status": null,
+            "extracted_items": {
+              "tasks": [
+                "Nei soldi c'è un discorso come te ho fatto molto più ampio, il discorso era dei soldi, il discorso era dei soldi, ma in contemporanea per come mi sono pronunciato è stato nel senso che ognuno si senta libero di fare ciò che vuole."
+              ]
+            }
+          },
+          {
+            "id": "d9274514f65d",
+            "category": "tasks",
+            "title": "Sì, sì, sono perché devo fare una cosa.",
+            "path": "content/tasks/todo.md#task-e6cefeb39f0f",
+            "preview": "Sì, sì, sono perché devo fare una cosa.",
+            "summary": "Sì, sì, sono perché devo fare una cosa.",
+            "project": null,
+            "date": "2026-05-17",
+            "dueDate": null,
+            "eventDate": "2026-05-17",
+            "status": null,
+            "extracted_items": {
+              "tasks": [
+                "Sì, sì, sono perché devo fare una cosa."
+              ]
+            }
+          },
+          {
+            "id": "a2f8bcd20b11",
+            "category": "tasks",
+            "title": "5/10/26, 14:08 - +971 58 512 7782: Mi devo fare la barba 5/10/26, 14:08 - +971 …",
+            "path": "content/tasks/todo.md#task-225f4d101942",
+            "preview": "5/10/26, 14:08 - +971 58 512 7782: Mi devo fare la barba 5/10/26, 14:08 - +971 58 512 7782: <Media omitted> 5/10/26, 14:08 - +971 58 512 7782: Ci vediamo alle 4 chai doi?",
+            "summary": "5/10/26, 14:08 - +971 58 512 7782: Mi devo fare la barba 5/10/26, 14:08 - +971 58 512 7782: <Media omitted> 5/10/26, 14:08 - +971 58 512 7782: Ci vediamo alle 4 chai doi?",
+            "project": null,
+            "date": "2026-05-17",
+            "dueDate": null,
+            "eventDate": "2026-05-17",
+            "status": null,
+            "extracted_items": {
+              "tasks": [
+                "5/10/26, 14:08 - +971 58 512 7782: Mi devo fare la barba 5/10/26, 14:08 - +971 58 512 7782: <Media omitted> 5/10/26, 14:08 - +971 58 512 7782: Ci vediamo alle 4 chai doi?"
+              ]
+            }
+          },
+          {
+            "id": "2fb27d209bdf",
+            "category": "tasks",
+            "title": "🙋🏻‍♂️ 2/14/22, 18:56 - Frostan: Ottimo 👍 2/14/22, 19:23 - J: Mamma mi dai il nu…",
+            "path": "content/tasks/todo.md#task-0f12a2a5d1a5",
+            "preview": "🙋🏻‍♂️ 2/14/22, 18:56 - Frostan: Ottimo 👍 2/14/22, 19:23 - J: Mamma mi dai il numero di telefono che devo far mettere il caricabatterie alla reception 2/14/22, 19:23 - J: Perche Christian quando è ven…",
+            "summary": "🙋🏻‍♂️ 2/14/22, 18:56 - Frostan: Ottimo 👍 2/14/22, 19:23 - J: Mamma mi dai il numero di telefono che devo far mettere il caricabatterie alla reception 2/14/22, 19:23 - J: Perche Christian quando è venuto non ha trovato nessuno alla reception 2/14/22, 19:24 - Mamma: <Media omitt...",
+            "project": null,
+            "date": "2026-05-17",
+            "dueDate": null,
+            "eventDate": "2026-05-17",
+            "status": null,
+            "extracted_items": {
+              "tasks": [
+                "🙋🏻‍♂️ 2/14/22, 18:56 - Frostan: Ottimo 👍 2/14/22, 19:23 - J: Mamma mi dai il numero di telefono che devo far mettere il caricabatterie alla reception 2/14/22, 19:23 - J: Perche Christian quando è venuto non ha trovato nessuno alla reception 2/14/22, 19:24 - Mamma: <Media omitt..."
+              ]
+            }
+          },
+          {
+            "id": "4da8b3d6dc55",
+            "category": "tasks",
+            "title": "Fare intro del canale e prove registrazione",
+            "path": "content/tasks/todo.md#task-135626095126",
+            "preview": "Fare intro del canale e prove registrazione",
+            "summary": "Fare intro del canale e prove registrazione",
+            "project": null,
+            "date": "2026-05-17",
+            "dueDate": null,
+            "eventDate": "2026-05-17",
+            "status": null,
+            "extracted_items": {
+              "tasks": [
+                "Fare intro del canale e prove registrazione"
+              ]
+            }
+          },
+          {
+            "id": "bce10f56adfa",
+            "category": "tasks",
+            "title": "Bloccare/finalizzare registrazione quando pronti",
+            "path": "content/tasks/todo.md#task-01f9caef4d58",
+            "preview": "Bloccare/finalizzare registrazione quando pronti",
+            "summary": "Bloccare/finalizzare registrazione quando pronti",
+            "project": null,
+            "date": "2026-05-17",
+            "dueDate": null,
+            "eventDate": "2026-05-17",
+            "status": null,
+            "extracted_items": {
+              "tasks": [
+                "Bloccare/finalizzare registrazione quando pronti"
+              ]
+            }
+          },
+          {
+            "id": "d1a2be3a6eff",
+            "category": "tasks",
+            "title": "Andare al water park con Khan — 19 May 2026",
+            "path": "content/tasks/todo.md#task-15ed42531b06",
+            "preview": "Andare al water park con Khan — 19 May 2026",
+            "summary": "Andare al water park con Khan — 19 May 2026",
+            "project": null,
+            "date": "2026-05-17",
+            "dueDate": null,
+            "eventDate": "2026-05-17",
+            "status": null,
+            "extracted_items": {
+              "tasks": [
+                "Andare al water park con Khan — 19 May 2026"
+              ]
+            }
+          },
+          {
+            "id": "ed2bf6b318dc",
+            "category": "tasks",
+            "title": "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre",
+            "path": "content/tasks/todo.md#task-13f425596c81",
+            "preview": "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre",
+            "summary": "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre",
+            "project": null,
+            "date": "2026-05-17",
+            "dueDate": null,
+            "eventDate": "2026-05-17",
+            "status": null,
+            "extracted_items": {
+              "tasks": [
+                "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre"
+              ]
+            }
+          },
+          {
+            "id": "4a3dbd5e0d0f",
+            "category": "tasks",
+            "title": "Chiedere mutuo/rinegoziazione — opzione citata",
+            "path": "content/tasks/todo.md#task-df21e5289f7e",
+            "preview": "Chiedere mutuo/rinegoziazione — opzione citata",
+            "summary": "Chiedere mutuo/rinegoziazione — opzione citata",
+            "project": null,
+            "date": "2026-05-17",
+            "dueDate": null,
+            "eventDate": "2026-05-17",
+            "status": null,
+            "extracted_items": {
+              "tasks": [
+                "Chiedere mutuo/rinegoziazione — opzione citata"
+              ]
+            }
+          }
+        ]
+      },
+      "sourceEntries": [
+        {
+          "id": "87beb2a027c1",
+          "category": "meetings",
+          "title": "Famiglia: soldi senza condizioni, libertà reciproca e pace",
+          "path": "content/meetings/2026-05-17-conversation-seconda-86e8348fd2d4.md",
+          "preview": "Conversazione familiare lunga tra genitori (Fabio/Silvana) e figli (Stefania e altri), con apertura su erogazione dei soldi promessi senza condizioni né ulteriori aspettative, poi chiarimenti su pass…",
+          "summary": "Conversazione familiare lunga tra genitori (Fabio/Silvana) e figli (Stefania e altri), con apertura su erogazione dei soldi promessi senza condizioni né ulteriori aspettative, poi chiarimenti su passati litigi (Natale, videochiamate, educazione di Christian), pattern comunicativo e desiderio di ambiente non ostile.",
+          "project": "personal",
+          "date": "2026-05-17",
+          "dueDate": null,
+          "eventDate": "2026-05-17",
+          "status": null,
+          "extracted_items": {
+            "decisions": [
+              "Soldi promessi da dare senza condizioni quando arriveranno; nessun ulteriore round di distribuzione annunciato",
+              "Libertà reciproca: nessuno vincolato, nessuna aspettativa futura da nessuna parte",
+              "Accordo di pace: presenza possibile a Natale/feste comandate nel rispetto degli altri, senza obbligo e senza che un Natale sì e uno no diventi motivo di litigio",
+              "Non usare Christian né minacciare di tagliare rapporti con il nipote; mai pensato di coinvolgere il giudice per questo",
+              "Da oggi evitare pressione su Silvana; non coinvolgerla nelle discussioni quando sta male"
+            ],
+            "tasks": [],
+            "open_points": [
+              "Dettagli futuri su quali Natali/feste e con quale cadenza — da concordare senza obbligo",
+              "Educazione di Christian verso i nonni (desiderio vs obbligo) — visioni diverse",
+              "Christian dovrebbe esprimere il proprio punto di vista — da fare",
+              "Questioni vaccinara/Piacenza e percezioni contrastanti — parzialmente chiarite, sensibilità residua"
+            ],
+            "next_steps": [
+              "Rispettare libertà e presenza non obbligatoria alle ricorrenze",
+              "Parlare con calma e chiedere tempo prima di richieste urgenti",
+              "Non coinvolgere Silvana nelle dispute familiari"
+            ],
+            "important_points": [
+              "I soldi promessi saranno dati quando disponibili, senza postille; indicati come ultima distribuzione, con riserve per la vecchiaia dei genitori",
+              "Da entrambe le parti nessun vincolo né aspettativa futura reciproca",
+              "Discussione su passate tensioni (Natale, battesimo, auguri) e su cosa i genitori chiamavano «ingerenze» (civiltà/educazione)"
+            ]
+          }
+        },
+        {
+          "id": "cd949a2e1e98",
+          "category": "notes",
+          "title": "Seconda.m4a · Conversation",
+          "path": "content/notes/2026-05-17-conversation-seconda-86e8348fd2d4.md",
+          "preview": "AI-ready note from Seconda.m4a. Open for structured sections.",
+          "summary": "AI-ready note from Seconda.m4a. Open for structured sections.",
+          "project": "personal",
+          "date": "2026-05-17",
+          "dueDate": null,
+          "eventDate": "2026-05-17",
+          "status": null,
+          "extracted_items": {
+            "important_points": [
+              "Ho preso la decisione che la realtà contrariamente a come stavamo facendo, dovevamo organizzare che abbiamo deciso che gli soldi che abbiamo promesso di dare li daremo e li daremo senza condizioni, nel senso che ve l'hanno dati e non ci saranno postille per quanto riguarda, so...",
+              "Quindi si soldi li prenderete e ci fate quello che volete.",
+              "Nella realtà quindi non vi verrà chiesto nulla, è chiaro che come avevo detto ieri saranno gli ultimi soldi e che non ci saranno ulteriori soldi da distribuire perché quelli che poi cercheremo di metterci di la parte servono per la nostra vecchiaia e così vi sentite liberi di ..."
+            ],
+            "possible_actions": []
+          }
+        },
+        {
+          "id": "150a208bc778",
+          "category": "tasks",
+          "title": "Sentiamoci liberi tutti quanti di fare ciò che vogliamo, questo è quello che av…",
+          "path": "content/tasks/todo.md#task-d06634599974",
+          "preview": "Sentiamoci liberi tutti quanti di fare ciò che vogliamo, questo è quello che avevo pensato che fosse meglio perché nella realtà quello che si stava cercando di fare era per cercare di mettere in guar…",
+          "summary": "Sentiamoci liberi tutti quanti di fare ciò che vogliamo, questo è quello che avevo pensato che fosse meglio perché nella realtà quello che si stava cercando di fare era per cercare di mettere in guardia da possibili situazioni forse non favorevoli però poi certe cose a volte p...",
+          "project": null,
+          "date": "2026-05-17",
+          "dueDate": null,
+          "eventDate": "2026-05-17",
+          "status": null,
+          "extracted_items": {
+            "tasks": [
+              "Sentiamoci liberi tutti quanti di fare ciò che vogliamo, questo è quello che avevo pensato che fosse meglio perché nella realtà quello che si stava cercando di fare era per cercare di mettere in guardia da possibili situazioni forse non favorevoli però poi certe cose a volte p..."
+            ]
+          }
+        },
+        {
+          "id": "ee5f09440ace",
+          "category": "tasks",
+          "title": "Nei soldi c'è un discorso come te ho fatto molto più ampio, il discorso era dei…",
+          "path": "content/tasks/todo.md#task-1948ed4cd0be",
+          "preview": "Nei soldi c'è un discorso come te ho fatto molto più ampio, il discorso era dei soldi, il discorso era dei soldi, ma in contemporanea per come mi sono pronunciato è stato nel senso che ognuno si sent…",
+          "summary": "Nei soldi c'è un discorso come te ho fatto molto più ampio, il discorso era dei soldi, il discorso era dei soldi, ma in contemporanea per come mi sono pronunciato è stato nel senso che ognuno si senta libero di fare ciò che vuole.",
+          "project": null,
+          "date": "2026-05-17",
+          "dueDate": null,
+          "eventDate": "2026-05-17",
+          "status": null,
+          "extracted_items": {
+            "tasks": [
+              "Nei soldi c'è un discorso come te ho fatto molto più ampio, il discorso era dei soldi, il discorso era dei soldi, ma in contemporanea per come mi sono pronunciato è stato nel senso che ognuno si senta libero di fare ciò che vuole."
+            ]
+          }
+        },
+        {
+          "id": "d9274514f65d",
+          "category": "tasks",
+          "title": "Sì, sì, sono perché devo fare una cosa.",
+          "path": "content/tasks/todo.md#task-e6cefeb39f0f",
+          "preview": "Sì, sì, sono perché devo fare una cosa.",
+          "summary": "Sì, sì, sono perché devo fare una cosa.",
+          "project": null,
+          "date": "2026-05-17",
+          "dueDate": null,
+          "eventDate": "2026-05-17",
+          "status": null,
+          "extracted_items": {
+            "tasks": [
+              "Sì, sì, sono perché devo fare una cosa."
+            ]
+          }
+        },
+        {
+          "id": "a2f8bcd20b11",
+          "category": "tasks",
+          "title": "5/10/26, 14:08 - +971 58 512 7782: Mi devo fare la barba 5/10/26, 14:08 - +971 …",
+          "path": "content/tasks/todo.md#task-225f4d101942",
+          "preview": "5/10/26, 14:08 - +971 58 512 7782: Mi devo fare la barba 5/10/26, 14:08 - +971 58 512 7782: <Media omitted> 5/10/26, 14:08 - +971 58 512 7782: Ci vediamo alle 4 chai doi?",
+          "summary": "5/10/26, 14:08 - +971 58 512 7782: Mi devo fare la barba 5/10/26, 14:08 - +971 58 512 7782: <Media omitted> 5/10/26, 14:08 - +971 58 512 7782: Ci vediamo alle 4 chai doi?",
+          "project": null,
+          "date": "2026-05-17",
+          "dueDate": null,
+          "eventDate": "2026-05-17",
+          "status": null,
+          "extracted_items": {
+            "tasks": [
+              "5/10/26, 14:08 - +971 58 512 7782: Mi devo fare la barba 5/10/26, 14:08 - +971 58 512 7782: <Media omitted> 5/10/26, 14:08 - +971 58 512 7782: Ci vediamo alle 4 chai doi?"
+            ]
+          }
+        },
+        {
+          "id": "2fb27d209bdf",
+          "category": "tasks",
+          "title": "🙋🏻‍♂️ 2/14/22, 18:56 - Frostan: Ottimo 👍 2/14/22, 19:23 - J: Mamma mi dai il nu…",
+          "path": "content/tasks/todo.md#task-0f12a2a5d1a5",
+          "preview": "🙋🏻‍♂️ 2/14/22, 18:56 - Frostan: Ottimo 👍 2/14/22, 19:23 - J: Mamma mi dai il numero di telefono che devo far mettere il caricabatterie alla reception 2/14/22, 19:23 - J: Perche Christian quando è ven…",
+          "summary": "🙋🏻‍♂️ 2/14/22, 18:56 - Frostan: Ottimo 👍 2/14/22, 19:23 - J: Mamma mi dai il numero di telefono che devo far mettere il caricabatterie alla reception 2/14/22, 19:23 - J: Perche Christian quando è venuto non ha trovato nessuno alla reception 2/14/22, 19:24 - Mamma: <Media omitt...",
+          "project": null,
+          "date": "2026-05-17",
+          "dueDate": null,
+          "eventDate": "2026-05-17",
+          "status": null,
+          "extracted_items": {
+            "tasks": [
+              "🙋🏻‍♂️ 2/14/22, 18:56 - Frostan: Ottimo 👍 2/14/22, 19:23 - J: Mamma mi dai il numero di telefono che devo far mettere il caricabatterie alla reception 2/14/22, 19:23 - J: Perche Christian quando è venuto non ha trovato nessuno alla reception 2/14/22, 19:24 - Mamma: <Media omitt..."
+            ]
+          }
+        },
+        {
+          "id": "4da8b3d6dc55",
+          "category": "tasks",
+          "title": "Fare intro del canale e prove registrazione",
+          "path": "content/tasks/todo.md#task-135626095126",
+          "preview": "Fare intro del canale e prove registrazione",
+          "summary": "Fare intro del canale e prove registrazione",
+          "project": null,
+          "date": "2026-05-17",
+          "dueDate": null,
+          "eventDate": "2026-05-17",
+          "status": null,
+          "extracted_items": {
+            "tasks": [
+              "Fare intro del canale e prove registrazione"
+            ]
+          }
+        },
+        {
+          "id": "bce10f56adfa",
+          "category": "tasks",
+          "title": "Bloccare/finalizzare registrazione quando pronti",
+          "path": "content/tasks/todo.md#task-01f9caef4d58",
+          "preview": "Bloccare/finalizzare registrazione quando pronti",
+          "summary": "Bloccare/finalizzare registrazione quando pronti",
+          "project": null,
+          "date": "2026-05-17",
+          "dueDate": null,
+          "eventDate": "2026-05-17",
+          "status": null,
+          "extracted_items": {
+            "tasks": [
+              "Bloccare/finalizzare registrazione quando pronti"
+            ]
+          }
+        },
+        {
+          "id": "d1a2be3a6eff",
+          "category": "tasks",
+          "title": "Andare al water park con Khan — 19 May 2026",
+          "path": "content/tasks/todo.md#task-15ed42531b06",
+          "preview": "Andare al water park con Khan — 19 May 2026",
+          "summary": "Andare al water park con Khan — 19 May 2026",
+          "project": null,
+          "date": "2026-05-17",
+          "dueDate": null,
+          "eventDate": "2026-05-17",
+          "status": null,
+          "extracted_items": {
+            "tasks": [
+              "Andare al water park con Khan — 19 May 2026"
+            ]
+          }
+        },
+        {
+          "id": "ed2bf6b318dc",
+          "category": "tasks",
+          "title": "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre",
+          "path": "content/tasks/todo.md#task-13f425596c81",
+          "preview": "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre",
+          "summary": "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre",
+          "project": null,
+          "date": "2026-05-17",
+          "dueDate": null,
+          "eventDate": "2026-05-17",
+          "status": null,
+          "extracted_items": {
+            "tasks": [
+              "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre"
+            ]
+          }
+        },
+        {
+          "id": "4a3dbd5e0d0f",
+          "category": "tasks",
+          "title": "Chiedere mutuo/rinegoziazione — opzione citata",
+          "path": "content/tasks/todo.md#task-df21e5289f7e",
+          "preview": "Chiedere mutuo/rinegoziazione — opzione citata",
+          "summary": "Chiedere mutuo/rinegoziazione — opzione citata",
+          "project": null,
+          "date": "2026-05-17",
+          "dueDate": null,
+          "eventDate": "2026-05-17",
+          "status": null,
+          "extracted_items": {
+            "tasks": [
+              "Chiedere mutuo/rinegoziazione — opzione citata"
+            ]
+          }
+        }
+      ],
+      "groupedIds": [
+        "87beb2a027c1",
+        "cd949a2e1e98",
+        "150a208bc778",
+        "ee5f09440ace",
+        "d9274514f65d",
+        "a2f8bcd20b11",
+        "2fb27d209bdf",
+        "4da8b3d6dc55",
+        "bce10f56adfa",
+        "d1a2be3a6eff",
+        "ed2bf6b318dc",
+        "4a3dbd5e0d0f"
+      ],
+      "decisions": [
+        "Soldi promessi da dare senza condizioni quando arriveranno; nessun ulteriore round di distribuzione annunciato",
+        "Libertà reciproca: nessuno vincolato, nessuna aspettativa futura da nessuna parte",
+        "Accordo di pace: presenza possibile a Natale/feste comandate nel rispetto degli altri, senza obbligo e senza che un Natale sì e uno no diventi motivo di litigio",
+        "Non usare Christian né minacciare di tagliare rapporti con il nipote; mai pensato di coinvolgere il giudice per questo",
+        "Da oggi evitare pressione su Silvana; non coinvolgerla nelle discussioni quando sta male"
+      ],
+      "tasks": [
+        "Sentiamoci liberi tutti quanti di fare ciò che vogliamo, questo è quello che avevo pensato che fosse meglio perché nella realtà quello che si stava cercando di fare era per cercare di mettere in guardia da possibili situazioni forse non favorevoli però poi certe cose a volte p...",
+        "Nei soldi c'è un discorso come te ho fatto molto più ampio, il discorso era dei soldi, il discorso era dei soldi, ma in contemporanea per come mi sono pronunciato è stato nel senso che ognuno si senta libero di fare ciò che vuole.",
+        "Sì, sì, sono perché devo fare una cosa.",
+        "5/10/26, 14:08 - +971 58 512 7782: Mi devo fare la barba 5/10/26, 14:08 - +971 58 512 7782: <Media omitted> 5/10/26, 14:08 - +971 58 512 7782: Ci vediamo alle 4 chai doi?",
+        "🙋🏻‍♂️ 2/14/22, 18:56 - Frostan: Ottimo 👍 2/14/22, 19:23 - J: Mamma mi dai il numero di telefono che devo far mettere il caricabatterie alla reception 2/14/22, 19:23 - J: Perche Christian quando è venuto non ha trovato nessuno alla reception 2/14/22, 19:24 - Mamma: <Media omitt...",
+        "Fare intro del canale e prove registrazione",
+        "Bloccare/finalizzare registrazione quando pronti",
+        "Andare al water park con Khan — 19 May 2026",
+        "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre",
+        "Chiedere mutuo/rinegoziazione — opzione citata"
+      ],
+      "openPoints": [
+        "Dettagli futuri su quali Natali/feste e con quale cadenza — da concordare senza obbligo",
+        "Educazione di Christian verso i nonni (desiderio vs obbligo) — visioni diverse",
+        "Christian dovrebbe esprimere il proprio punto di vista — da fare",
+        "Questioni vaccinara/Piacenza e percezioni contrastanti — parzialmente chiarite, sensibilità residua"
+      ],
+      "open_points": [
+        "Dettagli futuri su quali Natali/feste e con quale cadenza — da concordare senza obbligo",
+        "Educazione di Christian verso i nonni (desiderio vs obbligo) — visioni diverse",
+        "Christian dovrebbe esprimere il proprio punto di vista — da fare",
+        "Questioni vaccinara/Piacenza e percezioni contrastanti — parzialmente chiarite, sensibilità residua"
+      ],
+      "nextSteps": [
+        "Rispettare libertà e presenza non obbligatoria alle ricorrenze",
+        "Parlare con calma e chiedere tempo prima di richieste urgenti",
+        "Non coinvolgere Silvana nelle dispute familiari"
+      ],
+      "next_steps": [
+        "Rispettare libertà e presenza non obbligatoria alle ricorrenze",
+        "Parlare con calma e chiedere tempo prima di richieste urgenti",
+        "Non coinvolgere Silvana nelle dispute familiari"
+      ],
+      "importantPoints": [
+        "I soldi promessi saranno dati quando disponibili, senza postille; indicati come ultima distribuzione, con riserve per la vecchiaia dei genitori",
+        "Da entrambe le parti nessun vincolo né aspettativa futura reciproca",
+        "Discussione su passate tensioni (Natale, battesimo, auguri) e su cosa i genitori chiamavano «ingerenze» (civiltà/educazione)",
+        "Ho preso la decisione che la realtà contrariamente a come stavamo facendo, dovevamo organizzare che abbiamo deciso che gli soldi che abbiamo promesso di dare li daremo e li daremo senza condizioni, nel senso che ve l'hanno dati e non ci saranno postille per quanto riguarda, so...",
+        "Quindi si soldi li prenderete e ci fate quello che volete.",
+        "Nella realtà quindi non vi verrà chiesto nulla, è chiaro che come avevo detto ieri saranno gli ultimi soldi e che non ci saranno ulteriori soldi da distribuire perché quelli che poi cercheremo di metterci di la parte servono per la nostra vecchiaia e così vi sentite liberi di ..."
+      ],
+      "important_points": [
+        "I soldi promessi saranno dati quando disponibili, senza postille; indicati come ultima distribuzione, con riserve per la vecchiaia dei genitori",
+        "Da entrambe le parti nessun vincolo né aspettativa futura reciproca",
+        "Discussione su passate tensioni (Natale, battesimo, auguri) e su cosa i genitori chiamavano «ingerenze» (civiltà/educazione)",
+        "Ho preso la decisione che la realtà contrariamente a come stavamo facendo, dovevamo organizzare che abbiamo deciso che gli soldi che abbiamo promesso di dare li daremo e li daremo senza condizioni, nel senso che ve l'hanno dati e non ci saranno postille per quanto riguarda, so...",
+        "Quindi si soldi li prenderete e ci fate quello che volete.",
+        "Nella realtà quindi non vi verrà chiesto nulla, è chiaro che come avevo detto ieri saranno gli ultimi soldi e che non ci saranno ulteriori soldi da distribuire perché quelli che poi cercheremo di metterci di la parte servono per la nostra vecchiaia e così vi sentite liberi di ..."
+      ],
+      "calendarEvents": [],
+      "calendar_events": [],
+      "possibleActions": [],
+      "possible_actions": [],
+      "childIds": [
+        "87beb2a027c1",
+        "cd949a2e1e98",
+        "150a208bc778",
+        "ee5f09440ace",
+        "d9274514f65d",
+        "a2f8bcd20b11",
+        "2fb27d209bdf",
+        "4da8b3d6dc55",
+        "bce10f56adfa",
+        "d1a2be3a6eff",
+        "ed2bf6b318dc",
+        "4a3dbd5e0d0f"
+      ],
+      "related_files": [],
+      "sourceKey": "content/transcriptions/seconda.md",
+      "sourceGroupKey": "content/transcriptions/seconda.md",
+      "title": "Seconda.m4a · Conversation",
+      "displayTitle": "Seconda.m4a · Conversation"
     }
   ],
   "errors": []

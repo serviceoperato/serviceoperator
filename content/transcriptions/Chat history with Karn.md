@@ -1,4 +1,4 @@
-<!-- PROCESSED: true | date: 2026-05-17T11:20:03Z | output: content/notes/2026-05-17-conversation-chat-history-with-karn-37d2a3a4fa59.md | checksum: 2b22742b185f0f47a9c50ca2abab76570924487f726aec2d6c3a4bf0b27d48bb -->
+<!-- PROCESSED: true | date: 2026-05-17T15:04:27Z | output: content/ai-ready-transcriptions/2026-05-17-conversation-chat-history-with-karn-37d2a3a4fa59.md | checksum: 68081aac2d2f0a3a920213a889b5c09f3300e5250d0d97d2a7a4786b5fe32ebf -->
 ﻿Chat history with Karn
 Saved on: 5/14/2026, 23:44
 

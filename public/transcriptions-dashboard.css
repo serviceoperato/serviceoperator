@@ -922,6 +922,28 @@
   }
 }
 
+/* Detail: full text; dashboard cards: truncated preview */
+.tx-text--full,
+.tx-text--full li {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  overflow: visible;
+  text-overflow: unset;
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+  max-height: none;
+}
+
+.tx-text--preview li {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* Detail page: full text (list cards keep line-clamp in transcriptions-admin.css) */
 .tx-detail-page__prose,
 .tx-detail-prose {

@@ -828,11 +828,12 @@
     return t.slice(0, max - 1) + '\u2026';
   }
 
-  function uniquePoints(list) {
+  function uniquePoints(list, maxChars) {
+    var limit = maxChars === undefined ? KEY_POINT_MAX : maxChars;
     var seen = {};
     var out = [];
     list.forEach(function (p) {
-      var t = truncatePoint(p, KEY_POINT_MAX);
+      var t = limit > 0 ? truncatePoint(p, limit) : String(p || '').trim();
       if (!t) return;
       var k = t.toLowerCase();
       if (seen[k]) return;
@@ -860,7 +861,7 @@
     return false;
   }
 
-  function splitTextToPoints(text, max) {
+  function splitTextToPoints(text, max, maxChars) {
     var t = String(text || '').trim();
     if (!t || isGenericPlaceholderText(t)) return [];
     var parts = t
@@ -871,10 +872,10 @@
       .filter(function (s) {
         return s.length > 8 && !isGenericPlaceholderText(s);
       });
-    return uniquePoints(parts).slice(0, max || 3);
+    return uniquePoints(parts, maxChars).slice(0, max || 3);
   }
 
-  function itemKeyPoints(item) {
+  function buildKeyPoints(item, maxChars) {
     var cat = String(item.category || 'notes').toLowerCase();
     var pool = pointValuesForKeys(item, CATEGORY_POINT_KEYS[cat] || []);
     if (!pool.length) pool = pointValuesForKeys(item, KEY_POINT_FALLBACK_KEYS);
@@ -884,16 +885,20 @@
     if (!pool.length && item.taskText) pool.push(item.taskText);
     if (!pool.length && item.decisionText) pool.push(item.decisionText);
     if (!pool.length && item.issue) pool.push(item.issue);
-    if (!pool.length && item.summary) pool = pool.concat(splitTextToPoints(item.summary, 3));
-    if (!pool.length && item.preview) pool = pool.concat(splitTextToPoints(item.preview, 3));
+    if (!pool.length && item.summary) pool = pool.concat(splitTextToPoints(item.summary, 3, maxChars));
+    if (!pool.length && item.preview) pool = pool.concat(splitTextToPoints(item.preview, 3, maxChars));
     pool = pool.filter(function (p) {
       return !isGenericPlaceholderText(p);
     });
-    return uniquePoints(pool).slice(0, 3);
+    return uniquePoints(pool, maxChars).slice(0, 3);
+  }
+
+  function itemKeyPoints(item) {
+    return buildKeyPoints(item, KEY_POINT_MAX);
   }
 
   function itemDetailKeyPoints(item) {
-    return itemKeyPoints(item);
+    return buildKeyPoints(item, 0);
   }
 
   function txItemDetailPath(id) {
@@ -948,9 +953,9 @@
   function detailSectionCard(title, bodyHtml) {
     if (!bodyHtml) return '';
     return (
-      '<article class="tx-detail-page__card"><h3 class="tx-detail-page__card-title">' +
+      '<article class="tx-detail-page__card tx-text--full"><h3 class="tx-detail-page__card-title">' +
       esc(title) +
-      '</h3><div class="tx-detail-page__card-body">' +
+      '</h3><div class="tx-detail-page__card-body tx-text--full">' +
       bodyHtml +
       '</div></article>'
     );
@@ -1264,7 +1269,7 @@
     var cat = String(item.category || 'notes').toLowerCase();
     var theme = catTheme(cat);
     var people = extractPeopleFromItem(item);
-    var points = itemKeyPoints(item);
+    var points = itemDetailKeyPoints(item);
     var summary = itemSummaryParagraph(item);
     var nextAction = itemNextActionLine(item);
     var heroVisual = itemInsightVisual(item, {
@@ -1275,8 +1280,8 @@
     var audioName = audioBasename(item);
 
     var pointsBlock = points.length
-      ? '<section class="tx-detail-page__keypoints" aria-labelledby="txDetailKeyPointsTitle">' +
-        '<h3 id="txDetailKeyPointsTitle">Top 3 key points</h3><ul>' +
+      ? '<section class="tx-detail-page__keypoints tx-text--full" aria-labelledby="txDetailKeyPointsTitle">' +
+        '<h3 id="txDetailKeyPointsTitle">Top 3 key points</h3><ul class="tx-text--full">' +
         points
           .map(function (p) {
             return '<li>' + renderSpeakerText(p, people) + '</li>';
@@ -3429,7 +3434,7 @@
       ? ' role="checkbox" aria-checked="' + (isSelected ? 'true' : 'false') + '"'
       : '';
     var pointsHtml = points.length
-      ? '<div class="tx-dash-card__points-wrap"><h4 class="tx-dash-card__points-label">Key points</h4><ul class="tx-dash-card__points">' +
+      ? '<div class="tx-dash-card__points-wrap"><h4 class="tx-dash-card__points-label">Key points</h4><ul class="tx-dash-card__points tx-text--preview">' +
         points
           .map(function (p) {
             return '<li>' + renderSpeakerText(p, people) + '</li>';

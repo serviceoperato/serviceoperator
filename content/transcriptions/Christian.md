@@ -1,4 +1,4 @@
-<!-- PROCESSED: true | date: 2026-05-17T11:11:46Z | output: content/meetings/2026-05-17-conversation-christian-42d821331d94.md | checksum: ff852a4a84b386dd4bc4168fa6ebb344301d85f1fa8a3487cb218aac6bc3c227 -->
+<!-- PROCESSED: true | date: 2026-05-17T15:04:27Z | output: content/ai-ready-transcriptions/2026-05-17-conversation-christian-42d821331d94.md | checksum: e3c39f5af841bf51ba82491b48ac99ba434c89b962c1fe49f5153b4a069e2175 -->
 # Transcription: Christian.m4a
 
 - **Source file:** Christian.m4a
