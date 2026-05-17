@@ -230,6 +230,11 @@
         .concat(ex.important_points || it.importantPoints || [])
         .slice(0, 3);
     }
+    var srcAudio = it.sourceAudio || it.source_audio || null;
+    var srcTrans = it.sourceTranscription || it.source_transcription || null;
+    if (srcTrans && srcTrans.indexOf('content/') !== 0) {
+      srcTrans = 'content/transcriptions/' + String(srcTrans).replace(/^.*[\\/]/, '');
+    }
     return Object.assign({}, it, {
       categoryLabel: CATEGORY_LABELS[it.category] || it.categoryLabel || it.category,
       reviewed: !!(it.reviewed || it.isReviewed),
@@ -242,6 +247,14 @@
       nextSteps: ex.next_steps || it.nextSteps || [],
       importantPoints: ex.important_points || it.importantPoints || [],
       path: it.filepath || it.path,
+      sourceAudio: srcAudio,
+      source_audio: srcAudio,
+      sourceTranscription: srcTrans,
+      source_transcription: srcTrans,
+      processedDate: it.processedDate || it.processing_date || it.processed_date || null,
+      readyForSite:
+        it.readyForSite !== false &&
+        (!it.pipelineStatus || !!VISIBLE_PIPELINE_STATUSES[it.pipelineStatus]),
     });
   }
 
@@ -257,7 +270,7 @@
     return { hasChartData: chart.length > 1, chart: chart };
   }
 
-  var VISIBLE_PIPELINE_STATUSES = { ready_for_site: true };
+  var VISIBLE_PIPELINE_STATUSES = { ai_processed: true, ready_for_site: true };
   var ALLOWED_OUTPUT_PREFIXES = [
     'content/meetings/',
     'content/notes/',
@@ -666,10 +679,21 @@
     );
   }
 
+  function outputBasename(item) {
+    var p = item.path || item.filepath || '';
+    if (!p) return '';
+    var parts = p.split('/');
+    return parts[parts.length - 1] || p;
+  }
+
   function renderFeedCard(item) {
     var bullets = topBullets(item);
     var chips = statChips(item);
+    if (!chips.some(function (c) { return c.t === 'AI-ready'; })) {
+      chips.unshift({ t: 'AI-ready', ok: true });
+    }
     var unread = !item.reviewed ? ' is-unread' : '';
+    var outFile = outputBasename(item);
     return (
       '<article class="tx-card' +
       unread +
@@ -683,6 +707,7 @@
       esc(item.project || '—') +
       ' · ' +
       esc(relativeDate(item)) +
+      (outFile ? ' · ' + esc(outFile) : '') +
       '</p>' +
       (bullets.length
         ? '<ul class="tx-card__bullets">' +
@@ -883,9 +908,9 @@
           '</li><li><strong>Audio:</strong> ' +
           esc(item.sourceAudio || '—') +
           '</li><li><strong>Transcription:</strong> <code>' +
-          esc(item.sourceTranscription || '—') +
-          '</code></li><li><strong>File:</strong> <code>' +
-          esc(item.path || '—') +
+          esc(item.sourceTranscription || item.source_transcription || '—') +
+          '</code> <span class="tf-admin-muted">(raw source)</span></li><li><strong>Output file:</strong> <code>' +
+          esc(item.path || item.filepath || '—') +
           '</code></li></ul>'
       ) +
       sectionHtml('Summary', item.summary ? '<p>' + esc(item.summary) + '</p>' : '') +

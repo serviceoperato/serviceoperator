@@ -156,6 +156,16 @@
   color: var(--mute-2, #8b92a8);
 }
 
+.tx-section-hint {
+  margin: 0 0 0.5rem;
+  font-size: 0.7rem;
+  line-height: 1.45;
+}
+
+.tx-card__file {
+  color: var(--mute-2, #8b92a8);
+}
+
 .tx-raw-sources__note {
   margin: 0 0 0.5rem;
   font-size: 0.7rem;

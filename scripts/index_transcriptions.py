@@ -155,6 +155,19 @@ def bullets_from(section: str) -> list[str]:
     return out
 
 
+def category_label_from_path(rel: str) -> str:
+    name = Path(rel).stem
+    if "meeting" in name:
+        return "Meeting"
+    if "voice-note" in name or "voice_note" in name:
+        return "Voice note"
+    if "conversation" in name:
+        return "Conversation"
+    if "self-recap" in name:
+        return "Self recap"
+    return "Note"
+
+
 def preview_of(text: str, max_len: int = 200) -> str:
     t = re.sub(r"\s+", " ", (text or "").strip())
     if len(t) <= max_len:
@@ -421,12 +434,19 @@ def index_note_file(abs_path: Path) -> dict[str, Any] | None:
         return None
     if is_garbage_text(summary) and not important and not actions:
         return None
-    title = str(frontmatter.get("title", "") or preview_of(summary or (important[0] if important else rel), 60))
+    raw_title = str(frontmatter.get("title", "") or "").strip()
+    if source_audio and (not raw_title or len(raw_title) > 50):
+        title = f"{source_audio} · {category_label_from_path(rel)}"
+    else:
+        title = raw_title or preview_of(summary or (important[0] if important else rel), 60)
+    clean_preview = summary or (important[0] if important else "")
+    if clean_preview and len(clean_preview) > 120 and source_audio:
+        clean_preview = f"AI-ready note from {source_audio}. Open for structured sections."
     return base_item(
         category="notes",
         title=title,
         filepath=rel,
-        preview=summary or (important[0] if important else title),
+        preview=clean_preview or title,
         source_audio=source_audio,
         source_transcription=source_transcription,
         project=project,

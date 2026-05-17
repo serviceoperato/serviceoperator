@@ -39,4 +39,8 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 # Validate before any publish/commit
 python "$RepoRoot\scripts\validate_voice_publish.py"
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+# Phase 3 — git commit + push (mandatory end of pipeline)
+& "$RepoRoot\scripts\git_publish_voice_outputs.ps1"
 exit $LASTEXITCODE

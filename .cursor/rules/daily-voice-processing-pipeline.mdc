@@ -7,12 +7,15 @@ alwaysApply: true
 
 When the user asks to **launch**, **run**, or **process** the voice pipeline (Italian: *lancia la pipeline*, *esegui la pipeline*, *voice pipeline*, *pipeline vocale*), or when voice/transcription work is implied, follow this workflow end-to-end **without asking for confirmation**.
 
-**Always run both phases in sequence every time** (even if Phase 1 reports zero new audio files):
+**Always run the full pipeline end-to-end every time** (even if Phase 1 reports zero new audio files). **Do not stop early. Do not ask for confirmation between steps.**
 
 1. **Phase 1** — transcription (local script)
 2. **Phase 2** — AI processing per runbook (Steps 0–7)
+3. **Reindex** — `scripts/index_transcriptions.py`
+4. **Validate** — `scripts/validate_voice_publish.py` (must pass)
+5. **Git publish** — commit + push AI-ready outputs (mandatory final step)
 
-Do not stop after Phase 1. Do not ask whether to continue to Phase 2.
+Do not stop after Phase 1 or Phase 2. The pipeline is incomplete until **git push** succeeds (or there is nothing to commit after validation).
 
 ## Canonical prompt
 
@@ -25,7 +28,7 @@ Respect all constraints in **`.cursor/rules/voice-automation.md`** (allowed path
 
 ## Runners (local, Windows)
 
-**Single command (Phase 1 + 2 + reindex):**
+**Single command (full pipeline including git push):**
 
 - `.\scripts\run-voice-pipeline.ps1`
 
@@ -34,7 +37,8 @@ Or step by step:
 - Phase 1: `python scripts/transcribe_voice_recorder.py`
 - Phase 2: `python scripts/process_daily_voice_phase2.py` (AI-ready outputs; registry: `content/processed/processed_files.json` with per-file `status` / `readyForSite`)
 - Reindex: `python scripts/index_transcriptions.py` (main list = AI-ready only; pending/failed in `rawSources.pendingSources`)
-- Validate: `python scripts/validate_voice_publish.py` (run before commit/push)
+- Validate: `python scripts/validate_voice_publish.py` (must pass before git)
+- **Git publish (required):** `.\scripts\git_publish_voice_outputs.ps1` — commit message: `Update AI-ready voice transcription outputs`; only voice-related paths; then `git push`
 
 **Never publish raw-only transcriptions** to `/admin/transcriptions` or git as visible site items. Per-file sequence: detect audio → raw MD (`raw_created`) → immediate Phase 2 AI → outputs under `content/{meetings,notes,tasks,...}` → registry → index. **Main list visibility: ONLY `ready_for_site`** (not `ai_processed`). Pending box: `detected`, `raw_created`, `ai_processing_*`, `ai_processed`, `failed`, `needs_review`. Commit/push only when `readyForSite` and primary AI outputs exist.
 
@@ -42,10 +46,21 @@ Legacy orchestrator (old heuristic classify only): `python scripts/process_voice
 
 Wait for Phase 1 to finish before starting Phase 2.
 
+## Git publish (mandatory)
+
+After validation passes, **always** commit and push voice pipeline outputs:
+
+1. `git add` only AI-ready content + registry/index paths (see `scripts/git_publish_voice_outputs.ps1`)
+2. Commit: **`Update AI-ready voice transcription outputs`**
+3. **`git push`** to origin
+
+If validation fails, **do not** commit or push. Fix the pipeline first.
+
+Do **not** commit unrelated files. Do **not** skip git push when the pipeline was run to completion with valid outputs.
+
 ## Out of scope for this pipeline
 
-- Do **not** auto-push to Google or GitHub. Sync via frontend **`/admin/transcriptions`**.
-- Do **not** `git commit` / `git push` unless the user explicitly asks (separate step).
+- Do **not** auto-sync to Google Calendar/Tasks from git; use **`/admin/transcriptions`** for Google sync.
 
 ## Legacy prompt
 

@@ -220,8 +220,13 @@
         <p id="txLoadHint" class="tx-admin__status mono tf-admin-muted" role="status"></p>
       </header>
       <h3 class="tx-section-heading">AI-ready outputs</h3>
+      <p class="tx-section-hint tf-admin-muted">Main list = categorized outputs under <code>content/meetings</code>, <code>notes</code>, <code>tasks</code>, etc. Raw files stay in the section below.</p>
       <div id="txCatScroll" class="tx-cats" role="tablist" aria-label="Categories"></div>
       <div id="txStats" class="tx-stats" aria-label="AI-ready counts"></div>
+
+      <h3 class="tx-section-heading tx-section-heading--secondary">Raw / Pending / Failed Sources</h3>
+      <aside id="txRawSources" class="tx-raw-sources" aria-label="Raw, pending, and failed sources"></aside>
+
       <div id="txFilters" class="tx-filters" aria-label="Filters">
         <button type="button" class="tx-pill" data-tx-filter="today">Today</button>
         <button type="button" class="tx-pill" data-tx-filter="week">Week</button>
@@ -241,9 +246,6 @@
 
       <p id="txFeedHint" class="mono tf-admin-muted" style="margin:0 0 0.4rem;font-size:0.68rem"></p>
       <div id="txFeed" class="tx-feed" role="feed" aria-busy="false"></div>
-
-      <h3 class="tx-section-heading tx-section-heading--secondary">Raw / Pending / Failed Sources</h3>
-      <aside id="txRawSources" class="tx-raw-sources" aria-label="Raw, pending, and failed sources"></aside>
 
       <details id="txTimelineToday" class="tx-timeline">
         <summary>Timeline di oggi</summary>
@@ -287,7 +289,7 @@
 <script src="/site-nav-drawer.js"></script>
 <script src="/user-account-menu.js?v=1.5.53"></script>
 <script src="/theme.js"></script>
-<script src="/admin-transcriptions.js?v=1.5.57"></script>
+<script src="/admin-transcriptions.js?v=1.5.58"></script>
 <script src="/admin.js?v=1.5.57"></script>
 <script src="/debug.js"></script>
 </body>

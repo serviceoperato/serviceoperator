@@ -21,8 +21,8 @@ STATUS_READY = "ready_for_site"
 STATUS_FAILED = "failed"
 STATUS_NEEDS_REVIEW = "needs_review"
 
-# Main /admin/transcriptions list: ONLY ready_for_site
-VISIBLE_STATUSES = frozenset({STATUS_READY})
+# Main /admin/transcriptions list
+VISIBLE_STATUSES = frozenset({STATUS_AI_PROCESSED, STATUS_READY})
 
 # Secondary pending box: everything not published on main list
 PENDING_STATUSES = frozenset(
@@ -31,7 +31,6 @@ PENDING_STATUSES = frozenset(
         STATUS_RAW_CREATED,
         STATUS_AI_PENDING,
         STATUS_AI_RUNNING,
-        STATUS_AI_PROCESSED,
         STATUS_FAILED,
         STATUS_NEEDS_REVIEW,
     }
