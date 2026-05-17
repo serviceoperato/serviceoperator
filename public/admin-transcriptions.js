@@ -5,15 +5,24 @@
   'use strict';
 
   var CATEGORIES = [
-    { key: 'all', label: 'All', short: 'All' },
-    { key: 'meetings', label: 'Meetings', short: 'Meet' },
-    { key: 'notes', label: 'Notes', short: 'Notes' },
+    { key: 'meetings', label: 'Meeting summaries', short: 'Meetings' },
+    { key: 'notes', label: 'Personal notes', short: 'Notes' },
     { key: 'tasks', label: 'Tasks', short: 'Tasks' },
-    { key: 'calendar', label: 'Calendar', short: 'Cal' },
-    { key: 'projects', label: 'Projects', short: 'Proj' },
-    { key: 'decisions', label: 'Decisions', short: 'Dec' },
+    { key: 'calendar', label: 'Calendar events', short: 'Calendar' },
+    { key: 'projects', label: 'Project updates', short: 'Projects' },
+    { key: 'decisions', label: 'Decision log', short: 'Decisions' },
     { key: 'open-points', label: 'Open points', short: 'Open' },
   ];
+
+  var CATEGORY_LABELS = {
+    meetings: 'Meeting summary',
+    notes: 'Personal note',
+    tasks: 'Task',
+    calendar: 'Calendar event',
+    projects: 'Project update',
+    decisions: 'Decision',
+    'open-points': 'Open point',
+  };
 
   var CHART_COLORS = [
     '#c9a227',
@@ -30,7 +39,10 @@
     counts: {},
     filtered: [],
     searchResults: null,
-    category: 'all',
+    category: 'meetings',
+    rawSources: {},
+    pipeline: {},
+    needsReviewCount: 0,
     filters: { today: false, week: false, unreviewed: false, syncPending: false },
     project: '',
     searchQuery: '',
@@ -207,21 +219,29 @@
   }
 
   function normalizeItem(it) {
+    var ex = it.extracted_items || it.extractedItems || {};
     var bullets = it.bullets;
     if (!bullets || !bullets.length) {
       bullets = []
-        .concat(it.decisions || [])
-        .concat(it.tasks || [])
-        .concat(it.openPoints || [])
-        .concat(it.nextSteps || [])
-        .concat(it.importantPoints || [])
+        .concat(ex.decisions || it.decisions || [])
+        .concat(ex.tasks || it.tasks || [])
+        .concat(ex.open_points || it.openPoints || [])
+        .concat(ex.next_steps || it.nextSteps || [])
+        .concat(ex.important_points || it.importantPoints || [])
         .slice(0, 3);
     }
     return Object.assign({}, it, {
+      categoryLabel: CATEGORY_LABELS[it.category] || it.categoryLabel || it.category,
       reviewed: !!(it.reviewed || it.isReviewed),
       googleSyncPending: !!(it.googleSyncPending || it.syncPending),
       googleSynced: !!(it.googleSynced || it.synced),
       bullets: bullets,
+      decisions: ex.decisions || it.decisions || [],
+      tasks: ex.tasks || it.tasks || [],
+      openPoints: ex.open_points || it.openPoints || [],
+      nextSteps: ex.next_steps || it.nextSteps || [],
+      importantPoints: ex.important_points || it.importantPoints || [],
+      path: it.filepath || it.path,
     });
   }
 
@@ -229,19 +249,39 @@
     if (!counts) return { hasChartData: false, chart: [] };
     var chart = [];
     CATEGORIES.forEach(function (c, i) {
-      if (c.key === 'all') return;
-      var ck = c.key === 'open-points' ? 'openPoints' : c.key;
-      var n = counts[ck] != null ? counts[ck] : 0;
+      var n = counts[c.key] != null ? counts[c.key] : 0;
       if (n > 0) {
-        chart.push({ category: c.key, label: c.label, value: n, color: CHART_COLORS[i % CHART_COLORS.length] });
+        chart.push({ category: c.key, label: c.short, value: n, color: CHART_COLORS[i % CHART_COLORS.length] });
       }
     });
     return { hasChartData: chart.length > 1, chart: chart };
   }
 
+  var VISIBLE_PIPELINE_STATUSES = { ai_processed: true, ready_for_site: true };
+  var ALLOWED_OUTPUT_PREFIXES = [
+    'content/meetings/',
+    'content/notes/',
+    'content/tasks/',
+    'content/calendar/',
+    'content/projects/',
+    'content/decisions/',
+    'content/open-points/',
+  ];
+
+  function isAiReadyItem(it) {
+    if (!it || it.source_only || it.sourceOnly) return false;
+    var path = String(it.path || '');
+    if (path.indexOf('content/transcriptions/') === 0) return false;
+    if (path && !ALLOWED_OUTPUT_PREFIXES.some(function (p) { return path.indexOf(p) === 0; })) return false;
+    if (it.readyForSite === false) return false;
+    var st = it.pipelineStatus;
+    if (st && !VISIBLE_PIPELINE_STATUSES[st]) return false;
+    return true;
+  }
+
   function normalizeIndex(j) {
     var counts = j.counts || j.totals || {};
-    var items = (j.items || []).map(normalizeItem);
+    var items = (j.items || []).map(normalizeItem).filter(isAiReadyItem);
     var chartPack = j.has_chart_data != null ? { hasChartData: !!j.has_chart_data, chart: j.chart || [] } : buildChartFromCounts(counts);
     var projects = j.projects;
     if (!projects || !projects.length) {
@@ -253,9 +293,14 @@
     }
     var sync = j.sync_settings || j.syncSettings || {};
     return {
-      items: items,
+      items: items.filter(function (it) {
+        return !it.source_only && !it.sourceOnly;
+      }),
       counts: counts,
-      rawTranscriptionCount: j.rawTranscriptionCount || 0,
+      rawTranscriptionCount: (j.rawSources && j.rawSources.total) || j.rawTranscriptionCount || 0,
+      rawSources: j.rawSources || {},
+      pipeline: j.pipeline || {},
+      needsReviewCount: j.needsReviewCount != null ? j.needsReviewCount : 0,
       generatedAt: j.generatedAt || null,
       projects: projects,
       syncSettings: {
@@ -282,8 +327,27 @@
     return list.slice(0, 3);
   }
 
+  function pipelineStatusLabel(status, ready) {
+    if (ready || status === 'ready_for_site' || status === 'ai_processed') {
+      return { t: 'AI-ready', ok: true };
+    }
+    if (
+      status === 'detected' ||
+      status === 'raw_created' ||
+      status === 'ai_processing_pending' ||
+      status === 'ai_processing_running'
+    ) {
+      return { t: 'Waiting for AI processing', warn: true };
+    }
+    if (status === 'failed') return { t: 'Failed processing', warn: true };
+    if (status === 'needs_review') return { t: 'Needs review', warn: true };
+    return null;
+  }
+
   function statChips(item) {
     var chips = [];
+    var pipe = pipelineStatusLabel(item.pipelineStatus, item.readyForSite);
+    if (pipe) chips.push(pipe);
     if (item.status) chips.push({ t: item.status, ok: item.status === 'done' || item.status === 'closed' });
     if (item.priority) chips.push({ t: item.priority });
     if (item.reviewed) chips.push({ t: 'Reviewed', ok: true });
@@ -295,12 +359,10 @@
   }
 
   function applyClientFilters(list) {
-    var out = list.slice();
-    if (state.category !== 'all') {
-      out = out.filter(function (it) {
-        return it.category === state.category;
-      });
-    }
+    var out = list.slice().filter(isAiReadyItem);
+    out = out.filter(function (it) {
+      return it.category === state.category;
+    });
     if (state.project) {
       out = out.filter(function (it) {
         return (it.project || '') === state.project;
@@ -408,20 +470,117 @@
     el.setAttribute('aria-hidden', 'false');
   }
 
+  function renderStats() {
+    var el = byId('txStats');
+    if (!el) return;
+    var c = state.counts || {};
+    var rs = state.rawSources || {};
+    var pipe = state.pipeline || {};
+    var cards = [
+      { label: 'Meeting summaries', n: c.meetings || 0 },
+      { label: 'Personal notes', n: c.notes || 0 },
+      { label: 'Extracted tasks', n: c.tasks || 0 },
+      { label: 'Calendar events', n: c.calendar || 0 },
+      { label: 'Project updates', n: c.projects || 0 },
+      { label: 'Decisions', n: c.decisions || 0 },
+      { label: 'Open points', n: c['open-points'] || 0 },
+      { label: 'Raw sources waiting', n: rs.waitingForProcessing || 0, muted: true },
+      { label: 'Needs review', n: state.needsReviewCount || 0, muted: true },
+      {
+        label: 'Last pipeline run',
+        n: pipe.lastRun ? new Date(pipe.lastRun).toLocaleString() : '—',
+        text: true,
+      },
+    ];
+    el.innerHTML = cards
+      .map(function (card) {
+        var cls = 'tx-stat' + (card.muted ? ' tx-stat--muted' : '');
+        return (
+          '<div class="' +
+          cls +
+          '"><span class="tx-stat__n">' +
+          esc(String(card.n)) +
+          '</span><span class="tx-stat__l">' +
+          esc(card.label) +
+          '</span></div>'
+        );
+      })
+      .join('');
+  }
+
+  function formatPipelineStatus(status) {
+    var map = {
+      detected: 'Waiting for AI processing',
+      raw_created: 'Waiting for AI processing',
+      ai_processing_pending: 'Waiting for AI processing',
+      ai_processing_running: 'Waiting for AI processing',
+      ai_processed: 'AI-ready',
+      ready_for_site: 'AI-ready',
+      failed: 'Failed processing',
+      needs_review: 'Needs review',
+    };
+    return map[status] || status || 'Unknown';
+  }
+
+  function renderRawSourcesBox() {
+    var el = byId('txRawSources');
+    if (!el) return;
+    var rs = state.rawSources || {};
+    var total = rs.total != null ? rs.total : state.rawTranscriptionCount || 0;
+    var waiting = rs.waitingForProcessing || 0;
+    var pending = rs.pendingSources || [];
+    var rows = pending
+      .slice(0, 24)
+      .map(function (p) {
+        var name =
+          (p.rawTranscriptionPath && p.rawTranscriptionPath.split('/').pop()) ||
+          p.sourceAudio ||
+          p.id ||
+          '—';
+        var st = p.status || 'raw_created';
+        var chip =
+          st === 'failed' || st === 'needs_review'
+            ? ' tx-pending-row__status--warn'
+            : ' tx-pending-row__status--pending';
+        return (
+          '<li class="tx-pending-row"><span class="tx-pending-row__name mono">' +
+          esc(name) +
+          '</span><span class="tx-pending-row__status' +
+          chip +
+          '">' +
+          esc(formatPipelineStatus(st)) +
+          '</span></li>'
+        );
+      })
+      .join('');
+    el.innerHTML =
+      '<h3 class="tx-raw-sources__title">Raw / Pending / Failed Sources</h3>' +
+      '<p class="tx-raw-sources__note tf-admin-muted">Admin only. Shows detected, raw_created, ai_processing_pending, ai_processing_running, failed, and needs_review. Not mixed with AI-ready category lists above.</p>' +
+      '<ul class="tx-raw-sources__list mono">' +
+      '<li><strong>Total raw files:</strong> ' +
+      esc(total) +
+      '</li>' +
+      '<li><strong>Latest raw file:</strong> ' +
+      esc(rs.latestRawFile || '—') +
+      '</li>' +
+      '<li><strong>Latest AI-processed:</strong> ' +
+      esc(rs.latestProcessedFile || '—') +
+      '</li>' +
+      '<li><strong>Waiting for AI processing:</strong> ' +
+      esc(waiting) +
+      '</li>' +
+      '</ul>' +
+      (rows
+        ? '<ul class="tx-pending-list">' + rows + '</ul>'
+        : '<p class="tf-admin-muted" style="margin:0.5rem 0 0;font-size:0.74rem">No pending or failed sources.</p>');
+  }
+
   function renderCategoryCards() {
     var el = byId('txCatScroll');
     if (!el) return;
     var counts = state.counts || {};
-    var total = counts.total != null ? counts.total : state.items.length;
     el.innerHTML = CATEGORIES.map(function (c) {
-      var n =
-        c.key === 'all'
-          ? total
-          : counts[c.key] != null
-            ? counts[c.key]
-            : c.key === 'open-points'
-              ? counts.openPoints
-              : 0;
+      var n = counts[c.key] != null ? counts[c.key] : 0;
       var active = state.category === c.key ? ' is-active' : '';
       return (
         '<button type="button" class="tx-cat-card' +
@@ -441,9 +600,8 @@
     }).join('');
     el.querySelectorAll('[data-tx-cat]').forEach(function (btn) {
       btn.addEventListener('click', function () {
-        state.category = btn.getAttribute('data-tx-cat') || 'all';
+        state.category = btn.getAttribute('data-tx-cat') || 'meetings';
         renderCategoryCards();
-        renderHero();
         renderFeed();
       });
     });
@@ -477,12 +635,12 @@
   function emptyState(kind) {
     var map = {
       none: {
-        title: 'No processed outputs yet',
-        body: 'Run the Voice Recorder pipeline on this PC to generate meetings, notes, tasks, and more.',
+        title: 'No AI-ready transcription outputs found yet',
+        body: 'Run the Voice Recorder processing pipeline to convert raw transcriptions into meetings, notes, tasks, calendar events, project updates, decisions, and open points.',
       },
       raw: {
-        title: 'Raw transcriptions only',
-        body: 'Transcriptions exist on disk but no AI-ready outputs yet. Run the processing pipeline.',
+        title: 'Raw sources only',
+        body: 'Raw transcription sources exist, but they have not yet been converted into AI-ready outputs. Use Process raw transcriptions (Voice Recorder page).',
       },
       filter: {
         title: 'No matches',
@@ -496,7 +654,7 @@
     var e = map[kind] || map.filter;
     return (
       '<div class="tx-empty"><div class="tx-empty__icon">' +
-      iconSvg('all').replace('tx-cat-card__icon', '') +
+      iconSvg(state.category).replace('tx-cat-card__icon', '') +
       '</div><p class="tx-empty__title">' +
       esc(e.title) +
       '</p><p class="tf-admin-muted" style="margin:0;font-size:0.78rem">' +
@@ -595,7 +753,10 @@
     state.filtered = list;
 
     if (!state.items.length && !state.loading) {
-      feed.innerHTML = state.rawTranscriptionCount > 0 ? emptyState('raw') : emptyState('none');
+      feed.innerHTML =
+        (state.rawTranscriptionCount || 0) > 0 && !(state.counts.total || 0)
+          ? emptyState('raw')
+          : emptyState('none');
       if (hint) hint.textContent = '';
       renderTimeline();
       return;
@@ -683,7 +844,10 @@
     var catEl = byId('txDetailCat');
     var titleEl = byId('txDetailTitle');
     if (!el || !item) return;
-    if (catEl) catEl.textContent = item.categoryLabel || item.category || '';
+    if (catEl) {
+      catEl.textContent =
+        CATEGORY_LABELS[item.category] || item.categoryLabel || item.category || '';
+    }
     if (titleEl) titleEl.textContent = item.title || item.path || '';
 
     var rel = relatedItems(item);
@@ -726,12 +890,19 @@
       sectionHtml('Tasks', bulletsHtml(item.tasks)) +
       sectionHtml('Open points', bulletsHtml(item.openPoints)) +
       sectionHtml('Next steps', bulletsHtml(item.nextSteps)) +
-      sectionHtml('Body', '<pre class="mono" style="white-space:pre-wrap;font-size:0.72rem;max-height:12rem;overflow:auto">' + esc(item.body || '') + '</pre>') +
-      sectionHtml('Related files', relHtml) +
+      sectionHtml(
+        'Source transcription reference',
+        item.sourceTranscription || item.source_transcription
+          ? '<p class="mono" style="font-size:0.72rem">Raw source: <code>' +
+            esc(item.sourceTranscription || item.source_transcription) +
+            '</code> (not listed in the main feed)</p>'
+          : '<p class="tf-admin-muted">No linked raw transcription file.</p>'
+      ) +
+      sectionHtml('Related items', relHtml) +
       '<div class="tx-detail__actions">' +
-      '<button type="button" class="tf-admin-toolbar__btn" id="txDetailSyncBtn">Sync Google</button>' +
-      '<button type="button" class="tf-admin-toolbar__btn" id="txDetailBulkSyncBtn">Bulk sync related</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="txDetailCopyBtn">Copy item</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="txDetailMarkBtn">Mark reviewed</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="txDetailSyncBtn">Sync Google</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" disabled title="Coming soon">Reprocess</button>' +
       '</div>';
 
@@ -747,6 +918,20 @@
     if (bulkBtn) bulkBtn.addEventListener('click', function () { syncBulk(item.id); });
     var markBtn = byId('txDetailMarkBtn');
     if (markBtn) markBtn.addEventListener('click', function () { markReviewed(item.id); });
+    var copyBtn = byId('txDetailCopyBtn');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function () {
+        var text = [item.title, item.summary || item.preview].filter(Boolean).join('\n\n');
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(
+            function () { toast('Copied.'); },
+            function () { toast('Copy failed.'); }
+          );
+        } else {
+          toast('Clipboard not available.');
+        }
+      });
+    }
   }
 
   function openOverlay() {
@@ -955,6 +1140,9 @@
         state.items = norm.items;
         state.counts = norm.counts;
         state.rawTranscriptionCount = norm.rawTranscriptionCount;
+        state.rawSources = norm.rawSources || {};
+        state.pipeline = norm.pipeline || {};
+        state.needsReviewCount = norm.needsReviewCount || 0;
         state.generatedAt = norm.generatedAt;
         state.indexMeta.projects = norm.projects;
         state.syncSettings = norm.syncSettings;
@@ -966,15 +1154,18 @@
         if (tgl) tgl.checked = state.syncSettings.auto_sync_google;
 
         setLoadHint(
-          'Updated ' +
+          'Index ' +
             (norm.generatedAt ? new Date(norm.generatedAt).toLocaleString() : 'now') +
             ' · ' +
-            norm.rawTranscriptionCount +
-            ' raw transcription(s)'
+            (norm.counts.total || 0) +
+            ' AI-ready item(s) · ' +
+            (norm.rawSources.waitingForProcessing || 0) +
+            ' raw source(s) waiting'
         );
 
+        renderStats();
+        renderRawSourcesBox();
         renderCategoryCards();
-        renderHero();
         renderProjectSelect();
         syncFilterPills();
         renderFeed();
@@ -992,6 +1183,13 @@
 
     var reindex = byId('txReindexBtn');
     if (reindex) reindex.addEventListener('click', runReindex);
+
+    var processRaw = byId('txProcessRawBtn');
+    if (processRaw) {
+      processRaw.addEventListener('click', function () {
+        window.location.href = '/admin/voice-recorder';
+      });
+    }
 
     var tgl = byId('txAutoSyncToggle');
     if (tgl) {

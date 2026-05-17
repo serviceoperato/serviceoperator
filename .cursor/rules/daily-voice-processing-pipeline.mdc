@@ -32,8 +32,11 @@ Respect all constraints in **`.cursor/rules/voice-automation.md`** (allowed path
 Or step by step:
 
 - Phase 1: `python scripts/transcribe_voice_recorder.py`
-- Phase 2: `python scripts/process_daily_voice_phase2.py` (implements runbook Steps 0–7; registry: `content/processed/phase2_registry.json`)
-- Reindex: `python scripts/index_transcriptions.py`
+- Phase 2: `python scripts/process_daily_voice_phase2.py` (AI-ready outputs; registry: `content/processed/processed_files.json` with per-file `status` / `readyForSite`)
+- Reindex: `python scripts/index_transcriptions.py` (main list = AI-ready only; pending/failed in `rawSources.pendingSources`)
+- Validate: `python scripts/validate_voice_publish.py` (run before commit/push)
+
+**Never publish raw-only transcriptions** to `/admin/transcriptions` or git as visible site items. Pipeline: audio → raw MD → AI processing → AI-ready markdown → index → commit (only when `readyForSite` / `ready_for_site` or `ai_processed`).
 
 Legacy orchestrator (old heuristic classify only): `python scripts/process_voice_recorder_pipeline.py` — do not use for daily runs.
 

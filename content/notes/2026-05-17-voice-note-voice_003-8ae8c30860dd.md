@@ -3,11 +3,11 @@ title: metterli tutti insieme e non fa cazzate di fa così ogni v…
 category: voice-note
 project: uncategorized
 date: 2026-05-17
-processing_date: 2026-05-17T09:23:10Z
+processing_date: 2026-05-17T09:40:40Z
 source_audio: Voice 003.m4a
 source_transcription: content/transcriptions/Voice_003.md
 source_id: 8ae8c30860dd
-source_checksum: b309dad8279c0da4f54dbac5337e8ce502c400d9482a0ecf803f97168fa8437f
+source_checksum: 4c1416b13219e7d51f66e42c5fdf60b92b7b93c9e5d2f2a6c44706e8aae2dc43
 processed: true
 tags: []
 self_talk: false
@@ -24,7 +24,7 @@ visual:
 ## Source
 - **Source audio:** Voice 003.m4a
 - **Source transcription:** `Voice_003.md`
-- **Processing datetime:** 2026-05-17T09:23:10Z
+- **Processing datetime:** 2026-05-17T09:40:40Z
 - **Category:** voice-note (65%)
 - **Project:** uncategorized
 

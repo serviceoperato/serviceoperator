@@ -58,8 +58,12 @@ When the user asks to launch or run the voice pipeline (or voice processing is c
 
 ## Security
 
-- `/admin/voice-recorder` is **admin-only** (operator JWT / admin gate); `noindex, nofollow` on admin HTML
-- API: only `GET|POST /api/admin/voice-recorder/*` with `requireAdmin`; never add public `/api/voice-recorder/*`
+- `/admin/voice-recorder` and `/admin/transcriptions` are **admin-only**:
+  - Node serves HTML only with valid admin JWT (cookie or Bearer); otherwise redirect to `/admin/users?next=…`
+  - Known crawlers/scrapers get **404** (no HTML shell)
+  - `noindex, nofollow` + `robots.txt` Disallow on both paths
+- `/admin/users` stays the sign-in entry (no server JWT required for the login shell)
+- API: only `/api/admin/voice-recorder/*` and `/api/admin/transcriptions/*` with `requireAdmin`; never add public `/api/voice-recorder/*` or unauthenticated content paths
 - Sanitize API JSON: no Windows paths, `/app/…`, or absolute host paths in `stdout`/`stderr`/`error` (log full detail server-side only)
 - Static admin HTML may document local paths; public marketing pages and unauthenticated responses must not
 - do not expose secrets or hardcoded tokens

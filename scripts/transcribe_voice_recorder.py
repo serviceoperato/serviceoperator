@@ -27,6 +27,13 @@ from voice_pipeline_progress import (
     mark_running_scan,
     write_progress,
 )
+from voice_registry import (
+    STATUS_AI_PENDING,
+    STATUS_RAW_CREATED,
+    load_registry,
+    save_registry,
+    upsert_entry,
+)
 
 _SCRIPTS_DIR = Path(__file__).resolve().parent
 if str(_SCRIPTS_DIR) not in sys.path:
@@ -53,28 +60,6 @@ log = logging.getLogger(__name__)
 def ensure_directories() -> None:
     TRANSCRIPTIONS_DIR.mkdir(parents=True, exist_ok=True)
     PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
-
-
-def load_processed_registry() -> dict:
-    default = {"processed": {}}
-    if not PROCESSED_JSON.exists():
-        return default
-    try:
-        data = json.loads(PROCESSED_JSON.read_text(encoding="utf-8"))
-        if not isinstance(data, dict) or not isinstance(data.get("processed"), dict):
-            log.warning("Invalid processed_files.json; resetting registry.")
-            return default
-        return data
-    except (json.JSONDecodeError, OSError) as exc:
-        log.warning("Could not read processed_files.json (%s); resetting registry.", exc)
-        return default
-
-
-def save_processed_registry(data: dict) -> None:
-    PROCESSED_JSON.write_text(
-        json.dumps(data, indent=2, ensure_ascii=False) + "\n",
-        encoding="utf-8",
-    )
 
 
 def file_identity(path: Path) -> tuple[str, int, float]:
@@ -222,25 +207,35 @@ def process_file(model, registry: dict, source: Path) -> bool:
         log.error("Could not write %s: %s", output_path, exc)
         return False
 
-    registry["processed"][full_path] = {
-        "file_name": source.name,
-        "full_path": full_path,
-        "size": size,
-        "modified_time": mtime,
-        "modified_datetime": modified_at,
-        "output_markdown": str(output_path.resolve()),
-        "processed_datetime": processed_at,
-        "detected_language": language,
-        "language_probability": language_probability,
-    }
-    log.info("Output path: %s", output_path)
+    raw_rel = output_path.relative_to(REPO_ROOT).as_posix()
+    upsert_entry(
+        registry,
+        full_path,
+        file_name=source.name,
+        full_path=full_path,
+        size=size,
+        modified_time=mtime,
+        modified_datetime=modified_at,
+        output_markdown=str(output_path.resolve()),
+        rawTranscriptionPath=raw_rel,
+        processed_datetime=processed_at,
+        rawCreatedAt=processed_at,
+        detected_language=language,
+        language_probability=language_probability,
+        status=STATUS_RAW_CREATED,
+        readyForSite=False,
+        error=None,
+        aiOutputs={},
+    )
+    upsert_entry(registry, full_path, status=STATUS_AI_PENDING)
+    log.info("Raw transcription created (AI pending): %s", output_path)
     return True
 
 
 def run_transcription() -> tuple[int, int, list[str]]:
     """Run transcription batch. Returns (audio_found, new_count, errors)."""
     ensure_directories()
-    registry = load_processed_registry()
+    registry = load_registry()
     errors: list[str] = []
 
     audio_files = discover_audio_files()
@@ -249,7 +244,7 @@ def run_transcription() -> tuple[int, int, list[str]]:
 
     if not audio_files:
         log.info("No audio files to process.")
-        save_processed_registry(registry)
+        save_registry(registry)
         return 0, 0, errors
 
     queue: list[tuple[Path, str, int, float]] = []
@@ -271,7 +266,7 @@ def run_transcription() -> tuple[int, int, list[str]]:
 
     if pending == 0:
         write_progress(status="success", phase="done", message="All audio files already transcribed.")
-        save_processed_registry(registry)
+        save_registry(registry)
         return audio_found, 0, errors
 
     try:
@@ -311,7 +306,7 @@ def run_transcription() -> tuple[int, int, list[str]]:
         try:
             if process_file(model, registry, source):
                 processed_count += 1
-                save_processed_registry(registry)
+                save_registry(registry)
                 mark_file_done(processed_count, total)
         except Exception as exc:
             err = f"Unexpected error for {source.name}: {exc}"
@@ -321,7 +316,7 @@ def run_transcription() -> tuple[int, int, list[str]]:
             write_progress(message=err)
             continue
 
-    save_processed_registry(registry)
+    save_registry(registry)
     if errors:
         write_progress(
             status="error",

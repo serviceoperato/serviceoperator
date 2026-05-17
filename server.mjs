@@ -3853,14 +3853,56 @@ app.get(['/engagement.html', '/engagement', '/engagement/'], (_req, res) => {
 
 /** Operator console: path-based sections (same document as admin.html; see public/admin.js). */
 const adminHtmlPath = path.join(publicDir, 'admin.html');
+const ADMIN_VOICE_TRANSCRIPTION_HTML_PATHS = [
+  '/admin/voice-recorder',
+  '/admin/voice-recorder/',
+  '/admin/transcriptions',
+  '/admin/transcriptions/',
+];
+
 function sendAdminHtml(_req, res) {
   res.setHeader('Cache-Control', 'no-store');
   res.setHeader('X-Robots-Tag', 'noindex, nofollow');
   res.sendFile(adminHtmlPath);
 }
+
+/** Block crawlers/scrapers on sensitive operator pages (404, no HTML shell leak). */
+function isLikelyAutomatedScraper(req) {
+  const ua = String(req.headers['user-agent'] || '').trim();
+  if (!ua) return true;
+  const lower = ua.toLowerCase();
+  if (
+    /\b(bot|spider|crawl|slurp|archiver|scrap|preview|facebookexternalhit|whatsapp|telegram|discord|linkedinbot|twitterbot|embedly|quora|pinterest|gptbot|chatgpt-user|claudebot|anthropic-ai|bytespider|semrush|ahrefs|mj12bot|dotbot|petalbot|yandex|baidu|googlebot|bingpreview|applebot)\b/i.test(
+      lower
+    )
+  ) {
+    return true;
+  }
+  if (/^(curl|wget|python-|go-http|java\/|libwww|httpie|postman|insomnia)/i.test(lower)) {
+    return true;
+  }
+  if (/headless|phantom|selenium|playwright|puppeteer/i.test(lower)) {
+    return true;
+  }
+  return false;
+}
+
+function sendAdminVoiceTranscriptionHtml(req, res) {
+  res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+  if (isLikelyAutomatedScraper(req)) {
+    return sendPrivateReportNotFound(res);
+  }
+  if (!getVerifiedAdmin(req)) {
+    return denyPrivateNumberedReport(req, res);
+  }
+  return sendAdminHtml(req, res);
+}
+
 app.get(['/admin', '/admin/'], (_req, res) => {
   res.redirect(302, '/admin/users');
 });
+app.get(ADMIN_VOICE_TRANSCRIPTION_HTML_PATHS, sendAdminVoiceTranscriptionHtml);
 app.get(
   [
     '/admin/users',
@@ -3879,10 +3921,6 @@ app.get(
     '/admin/user-profiling/',
     '/admin/report-catalog',
     '/admin/report-catalog/',
-    '/admin/voice-recorder',
-    '/admin/voice-recorder/',
-    '/admin/transcriptions',
-    '/admin/transcriptions/',
   ],
   sendAdminHtml
 );

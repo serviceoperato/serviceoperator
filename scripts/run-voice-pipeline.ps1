@@ -35,4 +35,8 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 # Rebuild admin index
 python "$RepoRoot\scripts\index_transcriptions.py"
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+# Validate before any publish/commit
+python "$RepoRoot\scripts\validate_voice_publish.py"
 exit $LASTEXITCODE

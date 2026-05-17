@@ -3,11 +3,11 @@ title: come imparare a morire 60 anni, sì un corso accelerato pe…
 category: conversation
 project: uncategorized
 date: 2026-05-17
-processing_date: 2026-05-17T09:23:10Z
+processing_date: 2026-05-17T09:40:40Z
 source_audio: Memo 006.m4a
 source_transcription: content/transcriptions/Memo_006.md
 source_id: 4a7e2f8a8406
-source_checksum: 65620e949a861ccfa7f9665387885b26ba289c20ad526e81fb480d5c3d5a80a6
+source_checksum: 6006128d351e6923020d985c040f2a78673f9d8a34b02d93c821c6f6bddbb3e9
 processed: true
 tags: [conversation]
 self_talk: false
@@ -22,7 +22,7 @@ visual:
 ## Source
 - **Source audio:** Memo 006.m4a
 - **Source transcription:** `Memo_006.md`
-- **Processing datetime:** 2026-05-17T09:23:10Z
+- **Processing datetime:** 2026-05-17T09:40:40Z
 - **Category:** conversation (72%)
 - **Project:** uncategorized
 

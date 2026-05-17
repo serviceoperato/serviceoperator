@@ -3,11 +3,11 @@ title: Registrazione, Michael Club Club.
 category: self-recap
 project: uncategorized
 date: 2026-05-17
-processing_date: 2026-05-17T09:23:10Z
+processing_date: 2026-05-17T09:40:40Z
 source_audio: Voice 005.m4a
 source_transcription: content/transcriptions/Voice_005.md
 source_id: 6921c6f5bc0a
-source_checksum: fbbd35eda50093d63e9e9a8ac04ccac7807c338dada3209e0c26a415af548251
+source_checksum: 5d18796df97dc161906d27888fdd924fa0caa8111cb73cfada316b9329d4b39e
 processed: true
 tags: []
 self_talk: false
@@ -22,7 +22,7 @@ visual:
 ## Source
 - **Source audio:** Voice 005.m4a
 - **Source transcription:** `Voice_005.md`
-- **Processing datetime:** 2026-05-17T09:23:10Z
+- **Processing datetime:** 2026-05-17T09:40:40Z
 - **Category:** self-recap (70%)
 - **Project:** uncategorized
 

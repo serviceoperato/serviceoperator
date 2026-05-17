@@ -68,7 +68,10 @@
 <div id="adminWorkspace" class="admin-workspace admin-workspace--tf is-hidden">
   <nav id="tfAdminNav" class="tf-admin-nav" aria-label="Admin sections">
     <div class="tf-admin-nav__bar">
-      <div id="tfAdminNavPills" class="tf-admin-nav__pills"></div>
+      <div id="tfAdminNavPills" class="tf-admin-nav__pills">
+        <a class="tf-admin-nav__pill" href="/admin/voice-recorder">Voice Recorder</a>
+        <a class="tf-admin-nav__pill" href="/admin/transcriptions">Transcriptions</a>
+      </div>
       <div class="tf-admin-version">Build <strong id="tfAdminVersionNum">?</strong></div>
     </div>
   </nav>
@@ -156,7 +159,10 @@
     </section>
 
     <section id="voiceRecorderSection" class="tf-admin-table-card is-hidden" aria-label="Voice recorder">
-      <h2 class="tf-admin-section-title">Voice Recorder</h2>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.75rem;margin-bottom:0.35rem">
+        <h2 class="tf-admin-section-title" style="margin:0">Voice Recorder</h2>
+        <a href="/admin/transcriptions" class="tf-admin-nav__pill">Transcriptions ?</a>
+      </div>
       <p class="tf-admin-muted" style="margin-bottom:0.85rem">
         <strong>Do not install faster-whisper on Railway.</strong> Transcription runs only on this Windows PC
         (Google Drive). In PowerShell: <code class="mono">.\scripts\run-voice-pipeline.ps1</code>
@@ -195,11 +201,16 @@
           <div>
             <h2 class="tx-admin__title">Transcriptions</h2>
             <p class="tx-admin__subtitle tf-admin-muted">
-              AI-ready outputs from voice: meetings, notes, tasks, calendar, projects, decisions, open points.
+              AI-ready operational outputs from voice workflows ? not a raw file browser.
+            </p>
+            <p class="tx-admin__warn tf-admin-muted" role="note">
+              Raw transcriptions are not published here until they are processed into AI-ready outputs.
             </p>
           </div>
           <div class="tx-admin__header-actions">
-            <button type="button" id="txReindexBtn" class="tf-admin-toolbar__btn">Reindex</button>
+            <button type="button" id="txProcessRawBtn" class="tf-admin-toolbar__btn">Process raw transcriptions</button>
+            <button type="button" id="txReindexBtn" class="tf-admin-toolbar__btn">Rebuild AI-ready index</button>
+            <button type="button" id="txViewRawBtn" class="tf-admin-toolbar__btn" disabled title="Coming soon">View raw sources</button>
             <label class="tx-admin__toggle mono" title="Auto-sync extracted items to Google">
               <input type="checkbox" id="txAutoSyncToggle" />
               <span>Auto-sync Google</span>
@@ -209,7 +220,8 @@
         <p id="txLoadHint" class="tx-admin__status mono tf-admin-muted" role="status"></p>
       </header>
       <div id="txCatScroll" class="tx-cats" role="tablist" aria-label="Categories"></div>
-      <div id="txHero" class="tx-hero" aria-hidden="true"></div>
+      <div id="txStats" class="tx-stats" aria-label="AI-ready counts"></div>
+      <aside id="txRawSources" class="tx-raw-sources" aria-label="Raw, pending, and failed sources"></aside>
 
       <div id="txFilters" class="tx-filters" aria-label="Filters">
         <button type="button" class="tx-pill" data-tx-filter="today">Today</button>
@@ -230,6 +242,9 @@
 
       <p id="txFeedHint" class="mono tf-admin-muted" style="margin:0 0 0.4rem;font-size:0.68rem"></p>
       <div id="txFeed" class="tx-feed" role="feed" aria-busy="false"></div>
+
+      <h3 class="tx-section-heading tx-section-heading--secondary">Raw / Pending / Failed Sources</h3>
+      <aside id="txRawSources" class="tx-raw-sources" aria-label="Raw, pending, and failed sources"></aside>
 
       <details id="txTimelineToday" class="tx-timeline">
         <summary>Timeline di oggi</summary>
@@ -271,10 +286,10 @@
 
 <script src="/sw-register.js"></script>
 <script src="/site-nav-drawer.js"></script>
-<script src="/user-account-menu.js"></script>
+<script src="/user-account-menu.js?v=1.5.53"></script>
 <script src="/theme.js"></script>
-<script src="/admin-transcriptions.js"></script>
-<script src="/admin.js"></script>
+<script src="/admin-transcriptions.js?v=1.5.57"></script>
+<script src="/admin.js?v=1.5.57"></script>
 <script src="/debug.js"></script>
 </body>
 </html>

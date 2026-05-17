@@ -3,14 +3,13 @@
 Phase 2 — Daily voice processing (runbook: content/voice-reports/daily-voice-processing-pipeline.md).
 
 Scans content/transcriptions/*.md, writes AI-ready outputs under content/{notes,meetings,...},
-idempotent via content/processed/phase2_registry.json + PROCESSED header on raw files.
+Updates content/processed/processed_files.json (readyForSite gate) + PROCESSED header on raw files.
 """
 
 from __future__ import annotations
 
 import hashlib
 import importlib.util
-import json
 import logging
 import re
 import sys
@@ -18,12 +17,28 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 
+from voice_registry import (
+    STATUS_AI_PENDING,
+    STATUS_AI_PROCESSED,
+    STATUS_AI_RUNNING,
+    STATUS_FAILED,
+    STATUS_NEEDS_REVIEW,
+    STATUS_READY,
+    empty_ai_outputs,
+    find_entry_by_raw_path,
+    has_primary_ai_output,
+    load_registry,
+    primary_output_exists,
+    save_registry,
+    upsert_entry,
+    utc_now_iso,
+)
+
 _SCRIPTS = Path(__file__).resolve().parent
 REPO = _SCRIPTS.parent
 CONTENT = REPO / "content"
 TRANSCRIPTIONS = CONTENT / "transcriptions"
 PROCESSED = CONTENT / "processed"
-REGISTRY_PATH = PROCESSED / "phase2_registry.json"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -33,6 +48,13 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 CATEGORIES = ("meeting", "conversation", "self-recap", "voice-note", "self-talk")
+
+CHAT_IMPORT_MARKERS = ("whatsapp", "chat export", "conversation export")
+
+
+def is_chat_import_source(source: str | None) -> bool:
+    s = (source or "").lower()
+    return any(m in s for m in CHAT_IMPORT_MARKERS)
 
 ICON_MAP = (
     (("riflett", "introspe", "pensiero profondo"), "Brain", "#8B5CF6", "Riflessione"),
@@ -70,10 +92,6 @@ class Phase2Result:
     icon_label: str = "Nota vocale"
 
 
-def utc_now_iso() -> str:
-    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
-
-
 def today_str() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
@@ -101,20 +119,6 @@ def load_pipeline_module():
     return mod
 
 
-def load_registry() -> dict:
-    if REGISTRY_PATH.is_file():
-        try:
-            return json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
-        except json.JSONDecodeError:
-            pass
-    return {"entries": {}}
-
-
-def save_registry(data: dict) -> None:
-    PROCESSED.mkdir(parents=True, exist_ok=True)
-    REGISTRY_PATH.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-
-
 def strip_processed_header(text: str) -> str:
     lines = text.splitlines()
     if lines and lines[0].strip().startswith("<!-- PROCESSED:"):
@@ -128,9 +132,42 @@ def write_processed_header(path: Path, *, iso: str, output_rel: str, checksum: s
     path.write_text(header + text, encoding="utf-8")
 
 
-def should_skip(registry: dict, source_id: str, checksum: str) -> bool:
-    entry = registry.get("entries", {}).get(source_id)
-    return bool(entry and entry.get("processed") and entry.get("source_checksum") == checksum)
+def should_skip_phase2(audio_key: str | None, entry: dict | None, checksum: str) -> bool:
+    if not entry or not audio_key:
+        return False
+    if not entry.get("readyForSite") or entry.get("status") != STATUS_READY:
+        return False
+    prev = entry.get("source_checksum") or entry.get("raw_checksum")
+    return prev == checksum and primary_output_exists(entry.get("aiOutputs"))
+
+
+def build_ai_outputs(result: Phase2Result, out_rel: str, parsed) -> dict[str, str | None]:
+    outputs = empty_ai_outputs()
+    if result.category == "meeting":
+        outputs["meeting"] = out_rel
+    else:
+        outputs["note"] = out_rel
+    if result.tasks:
+        outputs["tasks"] = "content/tasks/todo.md"
+    if result.calendar_events:
+        outputs["calendar"] = "content/calendar/events.md"
+    if result.project and result.project != "uncategorized":
+        outputs["project"] = f"content/projects/{result.project}.md"
+    elif result.project:
+        outputs["project"] = "content/projects/uncategorized.md"
+    if result.decisions:
+        outputs["decisions"] = f"content/decisions/{today_str()}.md"
+    if result.open_points:
+        outputs["openPoints"] = f"content/open-points/{today_str()}.md"
+    return outputs
+
+
+def resolve_final_status(result: Phase2Result, ai_outputs: dict[str, str | None]) -> tuple[str, bool]:
+    if not has_primary_ai_output(ai_outputs) or not primary_output_exists(ai_outputs):
+        return STATUS_FAILED, False
+    if result.confidence < 0.6:
+        return STATUS_NEEDS_REVIEW, False
+    return STATUS_READY, True
 
 
 def classify_daily(mod, parsed) -> Phase2Result:
@@ -384,84 +421,146 @@ def process_file(mod, md_path: Path, registry: dict, stats: dict) -> None:
     source_id = short_id(rel)
     checksum = file_sha256(md_path)
 
-    if should_skip(registry, source_id, checksum):
+    audio_match = find_entry_by_raw_path(registry, rel)
+    audio_key = audio_match[0] if audio_match else None
+    audio_entry = audio_match[1] if audio_match else None
+
+    if should_skip_phase2(audio_key, audio_entry, checksum):
         stats["skipped"] += 1
         return
 
-    parsed = mod.parse_transcription_md(md_path)
-    if not parsed:
+    if audio_key:
+        upsert_entry(
+            registry,
+            audio_key,
+            status=STATUS_AI_RUNNING,
+            readyForSite=False,
+            source_checksum=checksum,
+        )
+
+    try:
+        parsed = mod.parse_transcription_md(md_path)
+        if not parsed:
+            raise ValueError("parse failed")
+
+        if is_chat_import_source(rel) or is_chat_import_source(parsed.md_path.name):
+            if audio_key:
+                upsert_entry(
+                    registry,
+                    audio_key,
+                    status=STATUS_NEEDS_REVIEW,
+                    readyForSite=False,
+                    error="chat import — not published to site",
+                )
+            stats["skipped"] += 1
+            return
+
+        result = classify_daily(mod, parsed)
+        out_path = output_path_for(result, source_id, parsed.md_path.stem)
+        processing_date = utc_now_iso()
+        body = build_output_md(
+            parsed, result, source_id=source_id, checksum=checksum, processing_date=processing_date
+        )
+        out_path.write_text(body, encoding="utf-8")
+        out_rel = out_path.relative_to(REPO).as_posix()
+
+        write_processed_header(md_path, iso=processing_date, output_rel=out_rel, checksum=checksum)
+        append_aggregates(result, parsed, source_id)
+
+        ai_outputs = build_ai_outputs(result, out_rel, parsed)
+        final_status, ready = resolve_final_status(result, ai_outputs)
+
+        if audio_key:
+            upsert_entry(
+                registry,
+                audio_key,
+                rawTranscriptionPath=rel,
+                source_checksum=checksum,
+                aiOutputs=ai_outputs,
+                aiProcessedAt=processing_date,
+                status=final_status,
+                readyForSite=ready,
+                error=None,
+                category=result.category,
+                project=result.project,
+            )
+        else:
+            log.warning("No audio registry entry for %s — marked needs_review only in raw file", rel)
+
+        stats["processed"] += 1
+        log.info(
+            "Phase2 %s → %s (%s) → %s [%s]",
+            md_path.name,
+            result.category,
+            result.project,
+            out_path.name,
+            final_status,
+        )
+        if not ready:
+            stats["warnings"].append(md_path.name)
+    except Exception as exc:
         stats["errors"] += 1
-        log.warning("Parse failed: %s", md_path.name)
-        return
+        log.exception("AI processing failed for %s", md_path.name)
+        if audio_key:
+            upsert_entry(
+                registry,
+                audio_key,
+                status=STATUS_FAILED,
+                readyForSite=False,
+                error=str(exc)[:500],
+            )
 
-    result = classify_daily(mod, parsed)
-    out_path = output_path_for(result, source_id, parsed.md_path.stem)
-    processing_date = utc_now_iso()
-    body = build_output_md(
-        parsed, result, source_id=source_id, checksum=checksum, processing_date=processing_date
-    )
-    out_path.write_text(body, encoding="utf-8")
-    out_rel = out_path.relative_to(REPO).as_posix()
 
-    write_processed_header(md_path, iso=processing_date, output_rel=out_rel, checksum=checksum)
-    append_aggregates(result, parsed, source_id)
+def migrate_legacy_ready_flags(registry: dict) -> None:
+    """Normalize legacy entries; only ready_for_site when primary AI output exists."""
+    from voice_registry import normalize_ai_outputs, normalize_entry
 
-    stat_counts = (
-        len(result.decisions),
-        len(result.tasks),
-        len(result.calendar_events),
-        len(result.open_points),
-        len(result.next_steps),
-    )
-    chart_slices = sum(1 for n in stat_counts if n > 0)
-    registry.setdefault("entries", {})[source_id] = {
-        "id": source_id,
-        "source_path": rel,
-        "source_checksum": checksum,
-        "output_path": out_rel,
-        "processed": True,
-        "processing_date": processing_date,
-        "category": result.category,
-        "project": result.project,
-        "has_chart_data": chart_slices >= 2,
-        "visual_type": "ring" if chart_slices >= 2 else "icon",
-        "stats": {
-            "decisions": stat_counts[0],
-            "tasks": stat_counts[1],
-            "events": stat_counts[2],
-            "open_points": stat_counts[3],
-            "next_steps": stat_counts[4],
-        },
-    }
+    for key, val in list(registry.get("processed", {}).items()):
+        entry = normalize_entry(key, val if isinstance(val, dict) else {})
+        raw_rel = entry.get("rawTranscriptionPath") or ""
+        if not raw_rel and entry.get("output_markdown"):
+            try:
+                raw_rel = Path(entry["output_markdown"]).relative_to(REPO).as_posix()
+            except ValueError:
+                raw_rel = ""
+        ai_outputs = normalize_ai_outputs(entry.get("aiOutputs"))
+        ready = primary_output_exists(ai_outputs)
+        if raw_rel and (REPO / raw_rel).is_file() and val.get("pipeline_classified") and ready:
+            upsert_entry(
+                registry,
+                key,
+                rawTranscriptionPath=raw_rel,
+                aiOutputs=ai_outputs,
+                status=STATUS_READY,
+                readyForSite=True,
+                aiProcessedAt=entry.get("aiProcessedAt") or utc_now_iso(),
+            )
 
-    stats["processed"] += 1
-    log.info(
-        "Phase2 %s → %s (%s) → %s",
-        md_path.name,
-        result.category,
-        result.project,
-        out_path.name,
-    )
-    if result.confidence < 0.6:
-        stats["warnings"].append(md_path.name)
+
+def process_single_raw(md_path: Path, registry: dict | None = None, *, save: bool = True) -> dict:
+    """Process one raw transcription immediately (per-file pipeline)."""
+    mod = load_pipeline_module()
+    reg = registry if registry is not None else load_registry()
+    stats = {"processed": 0, "skipped": 0, "errors": 0, "warnings": []}
+    process_file(mod, md_path, reg, stats)
+    if save:
+        save_registry(reg)
+    return stats
 
 
 def main() -> int:
     mod = load_pipeline_module()
     registry = load_registry()
+    migrate_legacy_ready_flags(registry)
     stats = {"total": 0, "skipped": 0, "processed": 0, "errors": 0, "warnings": []}
 
     files = sorted(TRANSCRIPTIONS.glob("*.md"))
     stats["total"] = len(files)
-    log.info("Phase 2: %d raw transcript(s)", len(files))
+    log.info("Phase 2 (AI processing): %d raw transcript(s)", len(files))
 
     for md in files:
-        try:
-            process_file(mod, md, registry, stats)
-            save_registry(registry)
-        except Exception as exc:
-            stats["errors"] += 1
-            log.exception("Failed %s: %s", md.name, exc)
+        process_file(mod, md, registry, stats)
+        save_registry(registry)
 
     save_registry(registry)
 

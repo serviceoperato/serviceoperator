@@ -9,6 +9,7 @@ Disallow: /register.html
 Disallow: /admin.html
 Disallow: /admin
 Disallow: /admin/voice-recorder
+Disallow: /admin/transcriptions
 Disallow: /operator/
 Disallow: /places-leads.html
 
