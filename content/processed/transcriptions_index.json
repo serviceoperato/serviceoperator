@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "generatedAt": "2026-05-17T15:05:08Z",
+  "generatedAt": "2026-05-17T15:05:26Z",
   "registryVersion": 2,
   "totals": {
     "meetings": 3,
@@ -125,8 +125,8 @@
       "project": "thaifans",
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T15:05:05Z",
-      "processedDate": "2026-05-17T15:05:05Z",
+      "processing_date": "2026-05-17T15:05:12Z",
+      "processedDate": "2026-05-17T15:05:12Z",
       "preview": "Nota vocale del 2026-05-17: impostare un meeting ricorrente ogni martedì tramite Google Meet con G-Cos e Giovanni per il progetto della dating app Thai Fans.",
       "summary": "Nota vocale del 2026-05-17: impostare un meeting ricorrente ogni martedì tramite Google Meet con G-Cos e Giovanni per il progetto della dating app Thai Fans.",
       "stats": {
@@ -139,7 +139,7 @@
       "has_chart_data": true,
       "raw_sections": {
         "Title": "Thai Fans — meeting ricorrente martedì su Google Meet",
-        "Source": "- **Source audio:** Voice 260517 181446.m4a\n- **Source transcription:** `Voice_260517_181446.md`\n- **Processed date:** 2026-05-17T15:05:05Z\n- **Main category:** meeting\n- **Project:** thaifans",
+        "Source": "- **Source audio:** Voice 260517 181446.m4a\n- **Source transcription:** `Voice_260517_181446.md`\n- **Processed date:** 2026-05-17T15:05:12Z\n- **Main category:** meeting\n- **Project:** thaifans",
         "Summary": "Nota vocale del 2026-05-17: impostare un meeting ricorrente ogni martedì tramite Google Meet con G-Cos e Giovanni per il progetto della dating app Thai Fans.",
         "Important Points": "- Riunione ricorrente prevista ogni martedì su Google Meet\n- Partecipanti indicati: G-Cos e Giovanni\n- Oggetto: progetto dating app Thai Fans",
         "People Involved": "- G-Cos\n- Giovanni\n- owner to confirm",
