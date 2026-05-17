@@ -236,12 +236,36 @@ def normalize_raw_rel(raw_rel: str) -> str:
 
 
 def find_entry_by_raw_path(registry: dict[str, Any], raw_rel: str) -> tuple[str, dict[str, Any]] | None:
+    """Return the canonical registry row for a raw transcription (dedupes drive-path duplicates)."""
     target = normalize_raw_rel(raw_rel)
     if not target:
         return None
+    matches: list[tuple[str, dict[str, Any]]] = []
     for key, val in registry.get("processed", {}).items():
         entry = normalize_entry(key, val)
         if normalize_raw_rel(str(entry.get("rawTranscriptionPath") or "")) == target:
+            matches.append((key, entry))
+    if not matches:
+        return None
+    for key, entry in matches:
+        if key == target or key.startswith("content/transcriptions/"):
+            return key, entry
+    matches.sort(key=lambda pair: str(pair[1].get("aiProcessedAt") or ""), reverse=True)
+    return matches[0]
+
+
+def find_entry_by_source_id(registry: dict[str, Any], source_id: str) -> tuple[str, dict[str, Any]] | None:
+    sid = (source_id or "").strip().lower()
+    if not sid:
+        return None
+    for key, val in registry.get("processed", {}).items():
+        entry = normalize_entry(key, val)
+        if str(entry.get("id") or "").lower() == sid:
+            if key.startswith("content/transcriptions/"):
+                return key, entry
+    for key, val in registry.get("processed", {}).items():
+        entry = normalize_entry(key, val)
+        if str(entry.get("id") or "").lower() == sid:
             return key, entry
     return None
 
@@ -261,8 +285,17 @@ def is_ready_for_site(entry: dict[str, Any]) -> bool:
 
 def list_pending_sources(registry: dict[str, Any]) -> list[dict[str, Any]]:
     out: list[dict[str, Any]] = []
+    seen_raw: set[str] = set()
     for key, val in registry.get("processed", {}).items():
         entry = normalize_entry(key, val)
+        raw_rel = normalize_raw_rel(str(entry.get("rawTranscriptionPath") or ""))
+        if raw_rel:
+            if raw_rel in seen_raw:
+                continue
+            canonical = find_entry_by_raw_path(registry, raw_rel)
+            if canonical:
+                entry = canonical[1]
+            seen_raw.add(raw_rel)
         if is_ready_for_site(entry):
             continue
         if entry.get("status") in PENDING_STATUSES or not entry.get("aiProcessedAt"):

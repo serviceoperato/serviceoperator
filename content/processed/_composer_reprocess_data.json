@@ -1,0 +1,475 @@
+[
+  {
+    "raw_name": "Memo_001.md",
+    "category": "conversation",
+    "project": "serviceopera",
+    "title": "Idea servizio riassunti e registrazione per AI",
+    "clean_summary": "Conversazione familiare iniziale su tablet e WhatsApp, poi registrazione esplicita per sperimentare l'intelligenza artificiale sui punti focali. Si discute un possibile servizio in abbonamento con riassunti audio quotidiani di libri, già esistente in inglese e italiano, e si valuta di non replicarlo per concorrenza. Si sposta l'attenzione verso riassunti di contenuti lunghi (libri specialistici, congressi UE di ore) con voce automatizzata, distinguendosi dai telegiornali per meno soggettività e per la necessità umana di leggere anche tra le righe.",
+    "important_points": [
+      "Registrazione della conversazione per testare elaborazione AI dei punti focali",
+      "Servizio tipo riassunto libri in abbonamento già coperto da competitor",
+      "Pivot verso riassunti di congressi/contenuti lunghi con rischio bias e ruolo umano"
+    ],
+    "possible_actions": [
+      "Definire un MVP di riassunto congressi/contenuti lunghi con revisione umana",
+      "Mappare competitor esistenti (servizi libro del giorno, telegiornali)",
+      "Testare pipeline AI su questa registrazione per estrarre punti focali"
+    ],
+    "decisions": [
+      "Non procedere con il servizio analogo ai riassunti-libro in abbonamento perché esiste già la concorrenza"
+    ],
+    "tasks": [],
+    "calendar": [],
+    "open_points": [
+      "Quale differenziazione concreta rispetto a servizi esistenti e all'AI che già risponde sui libri",
+      "Quanto l'umano è necessario per cogliere omissioni e bias nei congressi"
+    ],
+    "next_steps": [
+      "Affinare l'idea verso riassunti di eventi lunghi (congressi, contenuti specialistici)",
+      "Valutare automazione voce più controllo qualità umano"
+    ],
+    "primary_type": "note"
+  },
+  {
+    "raw_name": "Memo_002.md",
+    "category": "conversation",
+    "project": "serviceopera",
+    "title": "Dibattiti politici e informazione bilanciata",
+    "clean_summary": "Prosegue il dialogo su congressi e dibattiti europei: senza contraddittorio resta un punto di vista, con dibattito emergono domande incrociate. Si ipotizza un servizio che sintetizzi dibattiti lunghi con punti destra/sinistra, sintesi e pro/contro, oltre al telegiornale. L'interlocutore segue soprattutto politica, legge testate diverse anche di controparte per cogliere omissioni. Si definisce l'esigenza di un'informazione che dia strumenti di giudizio (par condicio) su benefici e rischi, non solo la valutazione del comunicatore.",
+    "important_points": [
+      "Interesse principale: politica e dibattiti pre-decisionali",
+      "Lettura di giornali da punti di vista diversi per trovare omissioni",
+      "Proposta servizio news con lati positivi/negativi in versione lunga e breve"
+    ],
+    "possible_actions": [
+      "Prototipare formato 'tre punti destra / tre sinistra / sintesi / pro-contro' per un dibattito",
+      "Intervistare utenti interessati a politica su formati di sintesi bilanciata",
+      "Confrontare offerta con telegiornali e replay lunghi"
+    ],
+    "decisions": [],
+    "tasks": [],
+    "calendar": [],
+    "open_points": [
+      "Quanto pubblico è disposto a un approfondimento oltre il telegiornale",
+      "Come garantire equilibrio senza sostituire il giudizio del lettore"
+    ],
+    "next_steps": [
+      "Validare il bisogno di 'par condicio' su notizie politiche e vaccini",
+      "Definire template editoriale per sintesi con pro/contro verificabili"
+    ],
+    "primary_type": "note"
+  },
+  {
+    "raw_name": "Memo_003.md",
+    "category": "conversation",
+    "project": "serviceopera",
+    "title": "Contraddittorio TV e servizi di sunto",
+    "clean_summary": "Si parla di trasmissioni con contraddittorio che danno poco spazio all'opposizione, con preferenza per conduttori/percorsi considerati più schietti. Si discute frequenza settimanale vs quotidiana e recupero tramite replay (Rai Play, Mediaset Play), ma anche il vincolo di tempo per chi lavora molte ore. Si ipotizza un servizio a pagamento che riassuma posizioni di destra, sinistra, scienziati e politica su temi come i vaccini. Vengono citati esempi di sintesi online (Dagospia, Huffington Post con contributi in italiano).",
+    "important_points": [
+      "Contraddittorio televisivo utile ma con spazio limitato all'opposizione",
+      "Replay esistenti ma richiedono comunque molto tempo",
+      "Mercato parziale già coperto da testate/servizi di sunto online"
+    ],
+    "possible_actions": [
+      "Analizzare Dagospia e Huffington Post come benchmark di sintesi",
+      "Progettare sunto breve multiperspettiva per chi non ha 1–3 ore",
+      "Testare pricing/abbonamento per sintesi giornaliera"
+    ],
+    "decisions": [],
+    "tasks": [],
+    "calendar": [],
+    "open_points": [
+      "Fattibilità economica di un servizio a pagamento rispetto a fonti gratuite",
+      "Frequenza ideale (giornaliera vs settimanale) per il target"
+    ],
+    "next_steps": [
+      "Confrontare formati brevi 'short news' con approfondimento opzionale",
+      "Verificare gap rispetto a replay TV e giornali cartacei"
+    ],
+    "primary_type": "note"
+  },
+  {
+    "raw_name": "Memo_004.md",
+    "category": "conversation",
+    "project": "personal",
+    "title": "Paywall giornalismo, pranzo e raggi UV",
+    "clean_summary": "Breve confronto sul modello a due righe più abbonamento per leggere il corpo della notizia; si ribadisce che i giornali hanno tagli editoriali di destra/centro/sinistra. Poi conversazione domestica su lasagna/pasta al forno e quantità di sugo per più persone. Infine discussione su esposizione solare dietro vetri: alcuni raggi UV vengono filtrati, altri no; vecchie creme solari bloccavano il calore ma non tutti i raggi associati al rischio; si accenna a vetri e creme più recenti.",
+    "important_points": [
+      "Modello notizie brevi + paywall per il dettaglio",
+      "Pianificazione pasto (lasagna, sugo, porzioni)",
+      "Rischio UV attraverso finestre e differenza tra tipi di raggi/creme"
+    ],
+    "possible_actions": [
+      "Verificare su fonti attendibili le affermazioni su UV e vetri/creme",
+      "Chiarire quantità sugo/pasta per il numero di commensali previsto"
+    ],
+    "decisions": [],
+    "tasks": [],
+    "calendar": [],
+    "open_points": [
+      "Affidabilità delle informazioni su vetri, creme e rischio tumori cutanei",
+      "Stato preparazione del pasto ('è già pronto?')"
+    ],
+    "next_steps": [
+      "Riprendere eventuale filo sul servizio informativo se necessario",
+      "Consultare dermatologo/fonti mediche se si vuole approfondire UV indoor"
+    ],
+    "primary_type": "note"
+  },
+  {
+    "raw_name": "Memo_005.md",
+    "category": "conversation",
+    "project": "personal",
+    "title": "Scuola, YouTube minori e salute",
+    "clean_summary": "Dialogo su compiti estivi e riassunti scolastici (critica ai 'promessi sposi' e compiti estivi), confronto con letture passate. Acceso dibattito sulla pubblicazione online di video con minori (esempio Silvano/sciroppo, canali famiglia su YouTube) con forte disaccordo etico. Poi conversazione da cucina su broccoli, ossidazione/limone, sale nell'acqua di cottura. Chiusura su pressione bassa, restrizioni sale/caffè, cardiologo che definisce condizione non risolutiva, mani fredde e limiti allo sport.",
+    "important_points": [
+      "Critica al modello scolastico di letture/riassunti estivi",
+      "Disaccordo su video di minori pubblicati online",
+      "Pressione bassa gestita con dieta e parere cardiologico non risolutivo"
+    ],
+    "possible_actions": [
+      "Evitare pubblicazione non consensuale di contenuti con minori",
+      "Seguire indicazioni del cardiologo su sale, caffè e stile di vita",
+      "Chiedere chiarimenti al cardiologo su sport e microcircolazione"
+    ],
+    "decisions": [],
+    "tasks": [],
+    "calendar": [],
+    "open_points": [
+      "Cosa consiglia esattamente il cardiologo oltre alle restrizioni già note",
+      "Equilibrio tra monitoraggio pressione e qualità di vita"
+    ],
+    "next_steps": [
+      "Ripetere visita o contatto con cardiologo per mani fredde e attività fisica",
+      "Allineamento familiare su policy per foto/video dei minori"
+    ],
+    "primary_type": "note"
+  },
+  {
+    "raw_name": "Memo_006.md",
+    "category": "conversation",
+    "project": "personal",
+    "title": "Vita, Marte, tempo e libro in scrittura",
+    "clean_summary": "Conversazione ironica e filosofica su età, figli, eredità, fine del mondo e colonizzazione di Marte (Proxima Centauri b citato a parte). Si parla di fisica quantistica, percezione del tempo, sogni, déjà vu, riferimenti a Inception e Einstein. Si accenna a un regalo/libro e all'opera dell'autore intitolata 'nulla è come sembra', con ricerca su narcisismo patologico e scena di violenza coniugale descritta in scrittura.",
+    "important_points": [
+      "Temi esistenziali: tempo, realtà, sogni, possibile 'pianeta B'",
+      "Riferimenti a fisica quantistica e percezione soggettiva del tempo",
+      "Work in progress letterario con personaggio narcisista e ricerca documentale"
+    ],
+    "possible_actions": [
+      "Continuare documentazione per la scena sul narcisismo patologico",
+      "Valutare letture consigliate (fisica quantistica / Einstein) se si vuole approfondire"
+    ],
+    "decisions": [],
+    "tasks": [],
+    "calendar": [],
+    "open_points": [
+      "Contenuto e struttura finale del libro 'nulla è come sembra'",
+      "Quanto integrare riferimenti scientifici vs narrativa fantastica"
+    ],
+    "next_steps": [
+      "Proseguire scrittura e revisione senza spoilerare troppo l'intreccio",
+      "Chiarire target lettore per il regalo/libro discussa"
+    ],
+    "primary_type": "note"
+  },
+  {
+    "raw_name": "Seconda.md",
+    "category": "conversation",
+    "project": "personal",
+    "title": "Famiglia: soldi senza condizioni, libertà reciproca e pace",
+    "clean_summary": "Conversazione familiare lunga tra genitori (Fabio/Silvana) e figli (Stefania e altri), con apertura su erogazione dei soldi promessi senza condizioni né ulteriori aspettative, poi chiarimenti su passati litigi (Natale, videochiamate, educazione di Christian), pattern comunicativo e desiderio di ambiente non ostile.",
+    "important_points": [
+      "I soldi promessi saranno dati quando disponibili, senza postille; indicati come ultima distribuzione, con riserve per la vecchiaia dei genitori",
+      "Da entrambe le parti nessun vincolo né aspettativa futura reciproca",
+      "Discussione su passate tensioni (Natale, battesimo, auguri) e su cosa i genitori chiamavano «ingerenze» (civiltà/educazione)",
+      "Christian descritta felice in casa dei nonni; preoccupazione per ambiente ostile e pressioni su Silvana",
+      "Spiegazione del «pattern tossico»: mancata comunicazione di stress/priorità (es. videochiamata durante coda alla vaccinara)",
+      "Silvana in difficoltà (anche legata a situazione di Christian/104); richiesta di non coinvolgerla nelle litigate"
+    ],
+    "possible_actions": [
+      "Comunicare stress e priorità prima di richieste urgenti (telefonate, compiti)",
+      "Evitare esplosioni di rabbia; segnalare disagio prima dell'esplosione",
+      "Non far litigare Christian né esporla a pressioni su presenze/obblighi",
+      "Ridurre pressione su Silvana nelle conversazioni familiari"
+    ],
+    "decisions": [
+      "Soldi promessi da dare senza condizioni quando arriveranno; nessun ulteriore round di distribuzione annunciato",
+      "Libertà reciproca: nessuno vincolato, nessuna aspettativa futura da nessuna parte",
+      "Accordo di pace: presenza possibile a Natale/feste comandate nel rispetto degli altri, senza obbligo e senza che un Natale sì e uno no diventi motivo di litigio",
+      "Non usare Christian né minacciare di tagliare rapporti con il nipote; mai pensato di coinvolgere il giudice per questo",
+      "Da oggi evitare pressione su Silvana; non coinvolgerla nelle discussioni quando sta male"
+    ],
+    "tasks": [],
+    "calendar": [],
+    "open_points": [
+      "Dettagli futuri su quali Natali/feste e con quale cadenza — da concordare senza obbligo",
+      "Educazione di Christian verso i nonni (desiderio vs obbligo) — visioni diverse",
+      "Christian dovrebbe esprimere il proprio punto di vista — da fare",
+      "Questioni vaccinara/Piacenza e percezioni contrastanti — parzialmente chiarite, sensibilità residua"
+    ],
+    "next_steps": [
+      "Rispettare libertà e presenza non obbligatoria alle ricorrenze",
+      "Parlare con calma e chiedere tempo prima di richieste urgenti",
+      "Non coinvolgere Silvana nelle dispute familiari"
+    ],
+    "primary_type": "meeting"
+  },
+  {
+    "raw_name": "Voice_001.md",
+    "category": "voice-note",
+    "project": "uncategorized",
+    "title": "Registrazione non intellegibile",
+    "clean_summary": "[Bassa qualità trascrizione — revisione manuale] Trascrizione brevissima in lingua non italiana (probabile singalese), senza contenuto analizzabile in italiano.",
+    "important_points": [],
+    "possible_actions": [],
+    "decisions": [],
+    "tasks": [],
+    "calendar": [],
+    "open_points": [],
+    "next_steps": [],
+    "primary_type": "note"
+  },
+  {
+    "raw_name": "Voice_002.md",
+    "category": "voice-note",
+    "project": "uncategorized",
+    "title": "Trascrizione vuota",
+    "clean_summary": "[Bassa qualità trascrizione — revisione manuale] File audio trascritto senza testo nel corpo della trascrizione.",
+    "important_points": [],
+    "possible_actions": [],
+    "decisions": [],
+    "tasks": [],
+    "calendar": [],
+    "open_points": [],
+    "next_steps": [],
+    "primary_type": "note"
+  },
+  {
+    "raw_name": "Voice_003.md",
+    "category": "voice-note",
+    "project": "uncategorized",
+    "title": "Clip video: mettere registrazioni insieme",
+    "clean_summary": "Nota su come registrare con telecamera e raggruppare le clip (menzione di montaggio automatico); speaker si definisce «un coglione» per come ha registrato.",
+    "important_points": [
+      "Suggerimento di portare la telecamera ogni volta e mettere tutte le riprese insieme",
+      "Riferimento a montaggio/trascodifica automatica"
+    ],
+    "possible_actions": [
+      "Ripetere registrazione con telecamera secondo il metodo descritto"
+    ],
+    "decisions": [],
+    "tasks": [],
+    "calendar": [],
+    "open_points": [],
+    "next_steps": [],
+    "primary_type": "note"
+  },
+  {
+    "raw_name": "Voice_004.md",
+    "category": "voice-note",
+    "project": "uncategorized",
+    "title": "Prova registrazione audio/video",
+    "clean_summary": "Prova tecnica di registrazione: microfono, tracce, ripartenza per test suoni; confronto tra registrazione video e solo audio.",
+    "important_points": [
+      "Setup microfono e tracce per prova",
+      "Preferenza per prova registrazione suoni senza video"
+    ],
+    "possible_actions": [
+      "Ripetere prova con registrazione suoni"
+    ],
+    "decisions": [],
+    "tasks": [],
+    "calendar": [],
+    "open_points": [],
+    "next_steps": [],
+    "primary_type": "note"
+  },
+  {
+    "raw_name": "Voice_005.md",
+    "category": "conversation",
+    "project": "personal",
+    "title": "Riprese canale YouTube «Tanti Soldi» e prove ChatGPT",
+    "clean_summary": "Sessione di registrazione/planning per contenuti del canale «Tanti Soldi» (crypto, personal finance, ChatGPT): intro, hook iniziali, consigli su telecamera e gesti, uso di ChatGPT per script e spiegazioni (Algorand, layer 1/2, intro video).",
+    "important_points": [
+      "Canale «Tanti Soldi»: temi crypto, bitcoin, finance, borsa",
+      "Intro: clap + saluto; primi secondi/minuto con hook chiaro (TikTok 3s, YouTube ~1 min)",
+      "ChatGPT utile per passato e spiegazioni, non per previsioni di mercato affidabili",
+      "Consigli performance: guardare telecamera, mani in tasca se si gesticola troppo",
+      "Esempi contenuto: Algorand, Polygon su Ethereum, differenza layer 1 e 2"
+    ],
+    "possible_actions": [
+      "Registrare intro canale e clip di prova a casa",
+      "Usare ChatGPT per punti positivi/negativi e script, non per price prediction",
+      "Preparare video intro e episodio crypto quando si rivedono"
+    ],
+    "decisions": [],
+    "tasks": [
+      "Fare intro del canale e prove registrazione",
+      "Bloccare/finalizzare registrazione quando pronti"
+    ],
+    "calendar": [],
+    "open_points": [
+      "Formato intro definitivo (sigla breve vs solo hook)",
+      "Chi presenta (Marco/Leonardo/Fabio) — da confermare nei take"
+    ],
+    "next_steps": [
+      "Prove davanti telecamera con microfono",
+      "Due video al prossimo incontro: intro + episodio spiegato"
+    ],
+    "primary_type": "note"
+  },
+  {
+    "raw_name": "Voice_006.md",
+    "category": "voice-note",
+    "project": "personal",
+    "title": "Condropatia: infiltrazione acido ialuronico",
+    "clean_summary": "Frammento medico su condropatia (ginocchio; riferimento a condropatia medio-astragalica) e soluzione con infiltrazione di acido ialuronico.",
+    "important_points": [
+      "Diagnosi/contesto: condropatia",
+      "Trattamento proposto: infiltrazione con acido ialuronico"
+    ],
+    "possible_actions": [
+      "Procedere con infiltrazione acido ialuronico — da confermare con medico"
+    ],
+    "decisions": [],
+    "tasks": [],
+    "calendar": [],
+    "open_points": [
+      "Dettagli clinici e conferma trattamento — owner to confirm"
+    ],
+    "next_steps": [],
+    "primary_type": "note"
+  },
+  {
+    "raw_name": "Voice_007.md",
+    "category": "voice-note",
+    "project": "uncategorized",
+    "title": "Domanda su cosa si ricorda",
+    "clean_summary": "Scambio brevissimo: «Cosa si ricorda?» / reazione ironica; qualcuno sta facendo un «ricordi».",
+    "important_points": [
+      "Domanda su memoria/ricordi",
+      "Attività «ricordi» in corso"
+    ],
+    "possible_actions": [],
+    "decisions": [],
+    "tasks": [],
+    "calendar": [],
+    "open_points": [],
+    "next_steps": [],
+    "primary_type": "note"
+  },
+  {
+    "raw_name": "Voice_250621_185357.md",
+    "category": "voice-note",
+    "project": "uncategorized",
+    "title": "Audio non decodificabile",
+    "clean_summary": "[Bassa qualità trascrizione — revisione manuale] Trascrizione con caratteri non leggibili; lingua non identificata (nn). Nessun contenuto semantico affidabile.",
+    "important_points": [],
+    "possible_actions": [],
+    "decisions": [],
+    "tasks": [],
+    "calendar": [],
+    "open_points": [],
+    "next_steps": [],
+    "primary_type": "note"
+  },
+  {
+    "raw_name": "Voice_250621_185410.md",
+    "category": "voice-note",
+    "project": "uncategorized",
+    "title": "Frase in spagnolo (limpio)",
+    "clean_summary": "Una frase in spagnolo: «¡Ande, sí encuentre el limpio!» — contenuto isolato senza contesto.",
+    "important_points": [
+      "Frase: cercare/trovare «el limpio»"
+    ],
+    "possible_actions": [],
+    "decisions": [],
+    "tasks": [],
+    "calendar": [],
+    "open_points": [],
+    "next_steps": [],
+    "primary_type": "note"
+  },
+  {
+    "raw_name": "Voice_260516_191818.md",
+    "category": "voice-note",
+    "project": "uncategorized",
+    "title": "Prova registrazione audio → testo",
+    "clean_summary": "Prova per verificare se la registrazione audio viene convertita correttamente in testo.",
+    "important_points": [
+      "Test pipeline trascrizione"
+    ],
+    "possible_actions": [],
+    "decisions": [],
+    "tasks": [],
+    "calendar": [],
+    "open_points": [],
+    "next_steps": [],
+    "primary_type": "note"
+  },
+  {
+    "raw_name": "Voice_260516_235502.md",
+    "category": "voice-note",
+    "project": "personal",
+    "title": "Promemoria parco acquatico con Khan",
+    "clean_summary": "Promemoria vocale in inglese: andare al water park la settimana prossima con Khan, riferimento al 19 maggio 2026.",
+    "important_points": [
+      "Appuntamento: water park con Khan",
+      "Data citata: 19 May 2026"
+    ],
+    "possible_actions": [
+      "Andare al water park con Khan"
+    ],
+    "decisions": [],
+    "tasks": [
+      "Andare al water park con Khan — 19 May 2026"
+    ],
+    "calendar": [
+      "Water park con Khan — 19 May 2026"
+    ],
+    "open_points": [],
+    "next_steps": [],
+    "primary_type": "note"
+  },
+  {
+    "raw_name": "Christian.md",
+    "category": "conversation",
+    "project": "personal",
+    "title": "Dono ~50.000 €, casa cointestata e timori su separazione",
+    "clean_summary": "Discussione familiare (genitori–figlio Christian) su erogazione di circa 50.000 € per investimento sulla casa in costruzione/cointestata. Nei primi minuti: madre esprime timore che, in caso di separazione futura, il figlio resti svantaggiato sulla casa; padre spiega che gli immobili sono pensati per la figlia, rifiuta di cambiare direzione, cita ~57.000 € verso banca e mutuo; serve un accordo condiviso. File lungo: anche tensioni con Silvana, comunicazione assertiva, eredità/comunione, senza accordo formale finale chiaro nel estratto.",
+    "important_points": [
+      "Tema centrale (~0–5 min): 50.000 € «cortesia» / investimento casa; soldi «tuoi» ma serve accordo tra tutti",
+      "Timore madre: separazione futura → figlio senza casa; casa cointestata 50/50",
+      "Padre: case acquistate anche per i figli; ~57.000 € da estinguere verso banca; mutuo con quota capitale/interessi",
+      "Padre non intende cambiare idea sull'uso degli immobili a favore della figlia",
+      "Suggerimento comunicazione assertiva; Silvana non presente (voluto dal padre per il confronto)",
+      "Testamento senza notaio citato come non valido in quel formato"
+    ],
+    "possible_actions": [
+      "Definire accordo scritto su come intestare/gestire i 50.000 € e la casa",
+      "Estinguere/ristrutturare mutuo (~57.000 €) — da confermare in banca",
+      "Coinvolgere Silvana in modo concordato se necessario"
+    ],
+    "decisions": [
+      "Padre dichiara volontà di non cambiare direzione: case/risorse orientate a Christian/figli, nonostante i timori espressi",
+      "Vendita casa Anzio menzionata nel contesto familiare — stato decisionale nel file: da confermare"
+    ],
+    "tasks": [
+      "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre",
+      "Chiedere mutuo/rinegoziazione — opzione citata"
+    ],
+    "calendar": [],
+    "open_points": [
+      "Accordo formale su 50.000 €, cointestazione e scenario separazione — da definire",
+      "Presenza/partecipazione Silvana al dialogo — non presente",
+      "Distribuzione ereditaria/comunione e lettere/testamenti — dibattito aperto",
+      "Clausole legali obbligo assistenza genitori anziani — citate, non approfondite come decisione"
+    ],
+    "next_steps": [
+      "Arrivare a accordo condiviso prima dell'erogazione",
+      "Chiarire con banca importi e estinzione mutuo"
+    ],
+    "primary_type": "meeting"
+  }
+]

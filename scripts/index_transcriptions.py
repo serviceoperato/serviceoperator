@@ -26,6 +26,7 @@ if str(_SCRIPTS_DIR) not in sys.path:
 from voice_registry import (  # noqa: E402
     ALLOWED_OUTPUT_PREFIXES,
     find_entry_by_raw_path,
+    find_entry_by_source_id,
     is_visible_on_main_page,
     list_pending_sources,
     load_registry,
@@ -57,6 +58,7 @@ LEGACY_SKIP_FILES = frozenset(
     {
         "2026-05-17-voice-note.md",
         "2026-05-17-meeting-voice-note.md",
+        "2026-05-17-meeting-memo_003-c890c918890b.md",
         "todo.md",
         "events.md",
     }
@@ -249,6 +251,70 @@ def is_chat_import_source(source_transcription: str | None) -> bool:
     return any(m in s for m in CHAT_IMPORT_MARKERS)
 
 
+def canonical_outputs_by_raw(registry: dict[str, Any]) -> dict[str, set[str]]:
+    """Map normalized raw path -> set of primary output paths from canonical registry rows."""
+    out: dict[str, set[str]] = {}
+    for key, val in registry.get("processed", {}).items():
+        if not str(key).startswith("content/transcriptions/"):
+            continue
+        entry = normalize_entry(key, val)
+        raw_rel = normalize_raw_rel(str(entry.get("rawTranscriptionPath") or ""))
+        if not raw_rel:
+            continue
+        ai = entry.get("aiOutputs") or {}
+        paths = {p for p in (ai.get("meeting"), ai.get("note")) if p}
+        if paths:
+            out.setdefault(raw_rel, set()).update(paths)
+    return out
+
+
+def output_is_canonical(filepath: str, source_transcription: str | None, registry: dict[str, Any]) -> bool:
+    rel = filepath.replace("\\", "/")
+    raw = normalize_raw_rel(source_transcription or "")
+    if not raw:
+        return True
+    canonical = canonical_outputs_by_raw(registry).get(raw)
+    if not canonical:
+        return True
+    return rel in canonical
+
+
+def summary_looks_like_raw_paste(summary: str, source_transcription: str | None) -> bool:
+    if not summary or not source_transcription:
+        return False
+    raw_path = REPO_ROOT / normalize_raw_rel(source_transcription)
+    if not raw_path.is_file():
+        return False
+    raw_text = raw_path.read_text(encoding="utf-8")
+    snippet = re.sub(r"\s+", " ", summary.strip())[:120].lower()
+    if len(snippet) < 40:
+        return False
+    raw_norm = re.sub(r"\s+", " ", raw_text).lower()
+    return snippet in raw_norm
+
+
+def resolve_source_transcription(
+    item: dict[str, Any], registry: dict[str, Any]
+) -> str | None:
+    raw = item.get("source_transcription")
+    if raw:
+        return normalize_raw_rel(raw)
+    audio = item.get("source_audio")
+    if audio:
+        for key, val in registry.get("processed", {}).items():
+            entry = normalize_entry(key, val)
+            if entry.get("sourceAudio") == audio or audio in key:
+                return normalize_raw_rel(str(entry.get("rawTranscriptionPath") or "")) or None
+    extracted = item.get("extracted_items") or {}
+    blob = json.dumps(extracted, ensure_ascii=False)
+    m = re.search(r"src:\s*([a-f0-9]{8,16})", blob, re.I)
+    if m:
+        match = find_entry_by_source_id(registry, m.group(1))
+        if match:
+            return normalize_raw_rel(str(match[1].get("rawTranscriptionPath") or "")) or None
+    return None
+
+
 def is_header_only_file(text: str, sections: dict[str, str]) -> bool:
     body = re.sub(r"^#+\s+.+$", "", text, flags=re.M).strip()
     body = re.sub(r"^---[\s\S]*?---", "", body).strip()
@@ -353,7 +419,7 @@ def meta_from_file(
     return source_audio, source_transcription, project, date_val, processing_date
 
 
-def index_meeting_file(abs_path: Path) -> dict[str, Any] | None:
+def index_meeting_file(abs_path: Path, registry: dict[str, Any] | None = None) -> dict[str, Any] | None:
     rel = abs_path.relative_to(REPO_ROOT).as_posix()
     if abs_path.name in LEGACY_SKIP_FILES:
         return None
@@ -364,6 +430,8 @@ def index_meeting_file(abs_path: Path) -> dict[str, Any] | None:
         frontmatter, source_meta, abs_path
     )
     if is_chat_import_source(source_transcription):
+        return None
+    if registry is not None and not output_is_canonical(rel, source_transcription, registry):
         return None
     summary = sections.get("Summary", "")
     decisions = [b for b in bullets_from(sections.get("Decisions", "")) if is_meaningful_line(b)]
@@ -377,6 +445,7 @@ def index_meeting_file(abs_path: Path) -> dict[str, Any] | None:
         return None
     if is_garbage_text(summary) and not important:
         return None
+    needs_review = is_garbage_text(summary) or summary_looks_like_raw_paste(summary, source_transcription)
     title = str(frontmatter.get("title", "") or preview_of(summary or important[0], 60))
     stats = {
         "decisions_count": len(decisions),
@@ -404,11 +473,11 @@ def index_meeting_file(abs_path: Path) -> dict[str, Any] | None:
             "important_points": important,
         },
         raw_sections={k: v for k, v in sections.items() if v and k != "Full Transcription Reference"},
-        needs_review=is_garbage_text(summary),
+        needs_review=needs_review,
     )
 
 
-def index_note_file(abs_path: Path) -> dict[str, Any] | None:
+def index_note_file(abs_path: Path, registry: dict[str, Any] | None = None) -> dict[str, Any] | None:
     rel = abs_path.relative_to(REPO_ROOT).as_posix()
     if abs_path.name in LEGACY_SKIP_FILES:
         return None
@@ -420,10 +489,12 @@ def index_note_file(abs_path: Path) -> dict[str, Any] | None:
     )
     if is_chat_import_source(source_transcription):
         return None
+    if registry is not None and not output_is_canonical(rel, source_transcription, registry):
+        return None
     conv = str(frontmatter.get("conversation", "")).lower() == "true"
     if conv and is_chat_import_source(source_transcription or abs_path.name):
         return None
-    summary = sections.get("Summary", "")
+    summary = sections.get("Summary", "") or sections.get("Clean Summary", "")
     important = [
         b for b in bullets_from(sections.get("Important Points", "")) if is_meaningful_line(b)
     ]
@@ -461,7 +532,7 @@ def index_note_file(abs_path: Path) -> dict[str, Any] | None:
         },
         extracted_items={"important_points": important, "possible_actions": actions},
         raw_sections={k: v for k, v in sections.items() if v and k != "Full Transcription Reference"},
-        needs_review=is_garbage_text(summary),
+        needs_review=is_garbage_text(summary) or summary_looks_like_raw_paste(summary, source_transcription),
     )
 
 
@@ -598,7 +669,9 @@ def index_calendar_lines(events_path: Path) -> list[dict[str, Any]]:
     return items
 
 
-def index_decision_open_files(category: str, folder: Path) -> list[dict[str, Any]]:
+def index_decision_open_files(
+    category: str, folder: Path, registry: dict[str, Any] | None = None
+) -> list[dict[str, Any]]:
     items: list[dict[str, Any]] = []
     section_key = "Decisions" if category == "decisions" else "Open Points"
     for md in sorted(folder.glob("*.md")):
@@ -608,13 +681,23 @@ def index_decision_open_files(category: str, folder: Path) -> list[dict[str, Any
             bullets = [b for b in bullets_from(text) if is_meaningful_line(b)]
         for bullet in bullets:
             rel = f"{md.relative_to(REPO_ROOT).as_posix()}#line-{short_id(bullet)}"
+            src_audio: str | None = None
+            src_trans: str | None = None
             src_id_m = re.search(r"src:\s*([a-f0-9]+)", bullet, re.I)
+            if src_id_m and registry is not None:
+                match = find_entry_by_source_id(registry, src_id_m.group(1))
+                if match:
+                    entry = match[1]
+                    src_audio = entry.get("sourceAudio")
+                    src_trans = normalize_raw_rel(str(entry.get("rawTranscriptionPath") or "")) or None
             items.append(
                 base_item(
                     category=category,
                     title=preview_of(strip_html_comment(bullet), 80),
                     filepath=rel,
                     preview=strip_html_comment(bullet),
+                    source_audio=src_audio,
+                    source_transcription=src_trans,
                     date_val=parse_iso_date(md.stem) or parse_iso_date(str(frontmatter.get("date", ""))),
                     item_type=category.rstrip("s"),
                     extracted_items={
@@ -650,19 +733,14 @@ def item_allowed_on_site(item: dict[str, Any], registry: dict[str, Any]) -> bool
     cat = item.get("category")
     if cat not in CATEGORIES:
         return False
-    raw = item.get("source_transcription")
+    raw = resolve_source_transcription(item, registry)
     if raw:
+        item["source_transcription"] = raw
+        item["sourceTranscription"] = raw
         if is_chat_import_source(raw):
             return False
         return raw_source_allowed_for_site(raw, registry)
-    audio = item.get("source_audio")
-    if audio:
-        for key, val in registry.get("processed", {}).items():
-            entry = normalize_entry(key, val)
-            if entry.get("sourceAudio") == audio or audio in key:
-                return is_visible_on_main_page(entry)
-        return False
-    return True
+    return False
 
 
 def collect_pending_with_orphans(registry: dict[str, Any], raw_files: list[Path]) -> list[dict[str, Any]]:
@@ -762,13 +840,13 @@ def build_index() -> dict[str, Any]:
 
     for md in sorted((CONTENT / "meetings").glob("*.md")):
         try:
-            add_item(index_meeting_file(md))
+            add_item(index_meeting_file(md, registry))
         except Exception as exc:  # noqa: BLE001
             errors.append(f"{md}: {exc}")
 
     for md in sorted((CONTENT / "notes").glob("*.md")):
         try:
-            add_item(index_note_file(md))
+            add_item(index_note_file(md, registry))
         except Exception as exc:  # noqa: BLE001
             errors.append(f"{md}: {exc}")
 
@@ -789,12 +867,12 @@ def build_index() -> dict[str, Any]:
             errors.append(f"{md}: {exc}")
 
     try:
-        items.extend(index_decision_open_files("decisions", CONTENT / "decisions"))
+        items.extend(index_decision_open_files("decisions", CONTENT / "decisions", registry))
     except Exception as exc:  # noqa: BLE001
         errors.append(f"decisions: {exc}")
 
     try:
-        items.extend(index_decision_open_files("open-points", CONTENT / "open-points"))
+        items.extend(index_decision_open_files("open-points", CONTENT / "open-points", registry))
     except Exception as exc:  # noqa: BLE001
         errors.append(f"open-points: {exc}")
 
@@ -805,20 +883,18 @@ def build_index() -> dict[str, Any]:
     ]
     visible: list[dict[str, Any]] = []
     for it in operational:
-        raw = it.get("source_transcription")
-        if raw:
-            match = find_entry_by_raw_path(registry, raw)
-            if match:
-                entry = match[1]
-                it["pipelineStatus"] = entry.get("status")
-                it["readyForSite"] = is_visible_on_main_page(entry)
-                if not it["readyForSite"]:
-                    continue
-            else:
-                continue
-        elif it.get("source_audio"):
+        raw = resolve_source_transcription(it, registry)
+        if not raw:
             continue
-        else:
+        it["source_transcription"] = raw
+        it["sourceTranscription"] = raw
+        match = find_entry_by_raw_path(registry, raw)
+        if not match:
+            continue
+        entry = match[1]
+        it["pipelineStatus"] = entry.get("status")
+        it["readyForSite"] = is_visible_on_main_page(entry)
+        if not it["readyForSite"]:
             continue
         visible.append(it)
     operational = visible

@@ -1,34 +1,34 @@
 {
   "ok": true,
-  "generatedAt": "2026-05-17T11:11:51Z",
+  "generatedAt": "2026-05-17T11:14:44Z",
   "registryVersion": 2,
   "totals": {
-    "meetings": 3,
-    "notes": 21,
+    "meetings": 2,
+    "notes": 14,
     "tasks": 22,
-    "calendar": 0,
+    "calendar": 4,
     "projects": 0,
-    "decisions": 0,
-    "open-points": 0,
+    "decisions": 2,
+    "open-points": 4,
     "needsReview": 0,
-    "total": 46
+    "total": 48
   },
   "counts": {
-    "meetings": 3,
-    "notes": 21,
+    "meetings": 2,
+    "notes": 14,
     "tasks": 22,
-    "calendar": 0,
+    "calendar": 4,
     "projects": 0,
-    "decisions": 0,
-    "open-points": 0,
+    "decisions": 2,
+    "open-points": 4,
     "needsReview": 0,
-    "total": 46
+    "total": 48
   },
   "rawSources": {
     "total": 24,
     "latestRawFile": "Christian.md",
     "latestProcessedFile": "Memo_001.md",
-    "waitingForProcessing": 5,
+    "waitingForProcessing": 8,
     "pendingSources": [
       {
         "id": "69216cdbadfb",
@@ -362,7 +362,12 @@
         ]
       },
       "related_files": [
-        "53bdca7bb95c"
+        "0bb2ff077566",
+        "e5e907611199",
+        "eda9377e1c8b",
+        "e4a57405f25d",
+        "e490ca72475e",
+        "ab25bb874c77"
       ],
       "source_only": false,
       "needs_review": false,
@@ -435,69 +440,14 @@
         ]
       },
       "related_files": [
-        "cd949a2e1e98"
-      ],
-      "source_only": false,
-      "needs_review": false,
-      "item_type": "file",
-      "reviewed": false,
-      "pipelineStatus": "ready_for_site",
-      "readyForSite": true
-    },
-    {
-      "id": "13146386216e",
-      "category": "meetings",
-      "categoryLabel": "Meetings",
-      "title": "Ora è chiaro, sono delle trasmissioni, ad esempio che fan…",
-      "filepath": "content/meetings/2026-05-17-meeting-memo_003-c890c918890b.md",
-      "path": "content/meetings/2026-05-17-meeting-memo_003-c890c918890b.md",
-      "source_audio": "Memo 003.m4a",
-      "source_transcription": "content/transcriptions/Memo_003.md",
-      "sourceAudio": "Memo 003.m4a",
-      "sourceTranscription": "content/transcriptions/Memo_003.md",
-      "project": "uncategorized",
-      "date": "2026-05-16",
-      "eventDate": "2026-05-16",
-      "processing_date": "2026-05-17T09:46:21Z",
-      "processedDate": "2026-05-17T09:46:21Z",
-      "preview": "Ora è chiaro, sono delle trasmissioni, ad esempio che fanno il contraddittorio, però danno sempre poco spazio all'opposizione, quindi a quello che poi, come a volte, succede su rete 4, ad esempio, ci…",
-      "summary": "Ora è chiaro, sono delle trasmissioni, ad esempio che fanno il contraddittorio, però danno sempre poco spazio all'opposizione, quindi a quello che poi, come a volte, succede su rete 4, ad esempio, ci sono altre trasmissioni, invece, che danno pure più spazio alla contrapposizi...",
-      "stats": {
-        "decisions_count": 0,
-        "tasks_count": 0,
-        "open_points_count": 1,
-        "calendar_events_count": 0,
-        "next_steps_count": 2
-      },
-      "has_chart_data": true,
-      "raw_sections": {
-        "Source": "- **Source audio:** Memo 003.m4a\n- **Source transcription:** `Memo_003.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** meeting (75%)\n- **Project:** uncategorized",
-        "Summary": "Ora è chiaro, sono delle trasmissioni, ad esempio che fanno il contraddittorio, però danno sempre poco spazio all'opposizione, quindi a quello che poi, come a volte, succede su rete 4, ad esempio, ci sono altre trasmissioni, invece, che danno pure più spazio alla contrapposizi...",
-        "Important Points": "- Ora è chiaro, sono delle trasmissioni, ad esempio che fanno il contraddittorio, però danno sempre poco spazio all'opposizione, quindi a quello che poi, come a volte, succede su rete 4, ad esempio, ci sono altre trasmissioni, invece, che danno pure più spazio alla contrapposizi...\n- Ok, quindi, diciamo, se tu ti svegli stamattina prendi un giornale, c'è una news relativamente a, non so, i vaccini, no?\n- Poi sai che la sera fanno sta trasmissione, dove dico, non si ha i lati positivi e i lati negativi.",
-        "Decisions": "- (none)",
-        "Tasks": "- (none)",
-        "Calendar Events": "- (none)",
-        "Open Points": "- Ok, quindi, diciamo, se tu ti svegli stamattina prendi un giornale, c'è una news relativamente a, non so, i vaccini, no? | owner: to confirm",
-        "Next Steps": "- Ok, e mettiamo che queste trasmissioni, mo, le fanno una volta a settimana, tu, a resti a necessità di...\n- se le facessero ogni giorno sarebbe anche meglio, perché ci sarebbe più informazioni, va beh..."
-      },
-      "extracted_items": {
-        "decisions": [],
-        "tasks": [],
-        "open_points": [
-          "Ok, quindi, diciamo, se tu ti svegli stamattina prendi un giornale, c'è una news relativamente a, non so, i vaccini, no? | owner: to confirm"
-        ],
-        "next_steps": [
-          "Ok, e mettiamo che queste trasmissioni, mo, le fanno una volta a settimana, tu, a resti a necessità di...",
-          "se le facessero ogni giorno sarebbe anche meglio, perché ci sarebbe più informazioni, va beh..."
-        ],
-        "important_points": [
-          "Ora è chiaro, sono delle trasmissioni, ad esempio che fanno il contraddittorio, però danno sempre poco spazio all'opposizione, quindi a quello che poi, come a volte, succede su rete 4, ad esempio, ci sono altre trasmissioni, invece, che danno pure più spazio alla contrapposizi...",
-          "Ok, quindi, diciamo, se tu ti svegli stamattina prendi un giornale, c'è una news relativamente a, non so, i vaccini, no?",
-          "Poi sai che la sera fanno sta trasmissione, dove dico, non si ha i lati positivi e i lati negativi."
-        ]
-      },
-      "related_files": [
-        "d0e98a4a3189"
+        "150a208bc778",
+        "ee5f09440ace",
+        "d9274514f65d",
+        "a2f8bcd20b11",
+        "2fb27d209bdf",
+        "4da8b3d6dc55",
+        "bce10f56adfa",
+        "d1a2be3a6eff"
       ],
       "source_only": false,
       "needs_review": false,
@@ -555,7 +505,11 @@
           "Testare pipeline AI su questa registrazione per estrarre punti focali"
         ]
       },
-      "related_files": [],
+      "related_files": [
+        "bd08d17b19cb",
+        "89001eb77610",
+        "2f49b1cbde12"
+      ],
       "source_only": false,
       "needs_review": false,
       "item_type": "file",
@@ -612,7 +566,11 @@
           "Confrontare offerta con telegiornali e replay lunghi"
         ]
       },
-      "related_files": [],
+      "related_files": [
+        "8f48535fdca9",
+        "dd496468ac1b",
+        "a9ad44e8e35a"
+      ],
       "source_only": false,
       "needs_review": false,
       "item_type": "file",
@@ -669,9 +627,7 @@
           "Testare pricing/abbonamento per sintesi giornaliera"
         ]
       },
-      "related_files": [
-        "13146386216e"
-      ],
+      "related_files": [],
       "source_only": false,
       "needs_review": false,
       "item_type": "file",
@@ -784,7 +740,11 @@
           "Chiedere chiarimenti al cardiologo su sport e microcircolazione"
         ]
       },
-      "related_files": [],
+      "related_files": [
+        "292fe57f5ecd",
+        "1e8ec63a1469",
+        "a94fe0d397b3"
+      ],
       "source_only": false,
       "needs_review": false,
       "item_type": "file",
@@ -840,122 +800,8 @@
           "Valutare letture consigliate (fisica quantistica / Einstein) se si vuole approfondire"
         ]
       },
-      "related_files": [],
-      "source_only": false,
-      "needs_review": false,
-      "item_type": "file",
-      "reviewed": false,
-      "pipelineStatus": "ready_for_site",
-      "readyForSite": true
-    },
-    {
-      "id": "cd949a2e1e98",
-      "category": "notes",
-      "categoryLabel": "Notes",
-      "title": "Seconda.m4a · Conversation",
-      "filepath": "content/notes/2026-05-17-conversation-seconda-86e8348fd2d4.md",
-      "path": "content/notes/2026-05-17-conversation-seconda-86e8348fd2d4.md",
-      "source_audio": "Seconda.m4a",
-      "source_transcription": "content/transcriptions/Seconda.md",
-      "sourceAudio": "Seconda.m4a",
-      "sourceTranscription": "content/transcriptions/Seconda.md",
-      "project": "personal",
-      "date": "2026-05-17",
-      "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T09:46:21Z",
-      "processedDate": "2026-05-17T09:46:21Z",
-      "preview": "AI-ready note from Seconda.m4a. Open for structured sections.",
-      "summary": "AI-ready note from Seconda.m4a. Open for structured sections.",
-      "stats": {
-        "decisions_count": 0,
-        "tasks_count": 0,
-        "open_points_count": 0,
-        "calendar_events_count": 0,
-        "next_steps_count": 0
-      },
-      "has_chart_data": false,
-      "raw_sections": {
-        "Source": "- **Source audio:** Seconda.m4a\n- **Source transcription:** `Seconda.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** conversation (72%)\n- **Project:** personal",
-        "Summary": "Ho preso la decisione che la realtà contrariamente a come stavamo facendo, dovevamo organizzare che abbiamo deciso che gli soldi che abbiamo promesso di dare li daremo e li daremo senza condizioni, nel senso che ve l'hanno dati e non ci saranno postille per quanto riguarda, so...",
-        "Important Points": "- Ho preso la decisione che la realtà contrariamente a come stavamo facendo, dovevamo organizzare che abbiamo deciso che gli soldi che abbiamo promesso di dare li daremo e li daremo senza condizioni, nel senso che ve l'hanno dati e non ci saranno postille per quanto riguarda, so...\n- Quindi si soldi li prenderete e ci fate quello che volete.\n- Nella realtà quindi non vi verrà chiesto nulla, è chiaro che come avevo detto ieri saranno gli ultimi soldi e che non ci saranno ulteriori soldi da distribuire perché quelli che poi cercheremo di metterci di la parte servono per la nostra vecchiaia e così vi sentite liberi di ...",
-        "Decisions": "- Ho preso la decisione che la realtà contrariamente a come stavamo facendo, dovevamo organizzare che abbiamo deciso che gli soldi che abbiamo promesso di dare li daremo e li daremo senza condizioni, nel senso che ve l'hanno dati e non ci saranno postille per quanto riguarda, so...",
-        "Tasks": "- (none)",
-        "Calendar Events": "- (none)",
-        "Open Points": "- (none)",
-        "Next Steps": "- Ma sinceramente ok, grazie, sono contento, in realtà pensavo che non parlassimo di soldi, o forse quello che vi aspettavate, o forse sembra che caosus belli sia di soldi.\n- Nei soldi c'è un discorso come te ho fatto molto più ampio, il discorso era dei soldi, il discorso era dei soldi, ma in contemporanea per come mi sono pronunciato è stato nel senso che ognuno si senta libero di fare ciò che vuole."
-      },
-      "extracted_items": {
-        "important_points": [
-          "Ho preso la decisione che la realtà contrariamente a come stavamo facendo, dovevamo organizzare che abbiamo deciso che gli soldi che abbiamo promesso di dare li daremo e li daremo senza condizioni, nel senso che ve l'hanno dati e non ci saranno postille per quanto riguarda, so...",
-          "Quindi si soldi li prenderete e ci fate quello che volete.",
-          "Nella realtà quindi non vi verrà chiesto nulla, è chiaro che come avevo detto ieri saranno gli ultimi soldi e che non ci saranno ulteriori soldi da distribuire perché quelli che poi cercheremo di metterci di la parte servono per la nostra vecchiaia e così vi sentite liberi di ..."
-        ],
-        "possible_actions": []
-      },
       "related_files": [
-        "87beb2a027c1",
-        "150a208bc778",
-        "ee5f09440ace",
-        "d9274514f65d",
-        "a2f8bcd20b11",
-        "2fb27d209bdf",
-        "4da8b3d6dc55",
-        "bce10f56adfa"
-      ],
-      "source_only": false,
-      "needs_review": false,
-      "item_type": "file",
-      "reviewed": false,
-      "pipelineStatus": "ready_for_site",
-      "readyForSite": true
-    },
-    {
-      "id": "29df35493553",
-      "category": "notes",
-      "categoryLabel": "Notes",
-      "title": "Registri qui.",
-      "filepath": "content/notes/2026-05-17-conversation-voice_004-d58c88f66165.md",
-      "path": "content/notes/2026-05-17-conversation-voice_004-d58c88f66165.md",
-      "source_audio": "Voice 004.m4a",
-      "source_transcription": "content/transcriptions/Voice_004.md",
-      "sourceAudio": "Voice 004.m4a",
-      "sourceTranscription": "content/transcriptions/Voice_004.md",
-      "project": "uncategorized",
-      "date": "2026-05-17",
-      "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T09:46:21Z",
-      "processedDate": "2026-05-17T09:46:21Z",
-      "preview": "Registri qui.",
-      "summary": "Registri qui.",
-      "stats": {
-        "decisions_count": 0,
-        "tasks_count": 0,
-        "open_points_count": 0,
-        "calendar_events_count": 0,
-        "next_steps_count": 0
-      },
-      "has_chart_data": false,
-      "raw_sections": {
-        "Source": "- **Source audio:** Voice 004.m4a\n- **Source transcription:** `Voice_004.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** conversation (72%)\n- **Project:** uncategorized",
-        "Summary": "Registri qui.",
-        "Important Points": "- Registri qui.\n- Perché il registro è lì?\n- Ah, ma invece è tutto arciato.",
-        "Decisions": "- (none)",
-        "Tasks": "- [ ] Sì, sì, sono perché devo fare una cosa. | due: null | priority: m",
-        "Calendar Events": "- (none)",
-        "Open Points": "- Perché il registro è lì? | owner: to confirm",
-        "Next Steps": "- Sì, sì, sono perché devo fare una cosa."
-      },
-      "extracted_items": {
-        "important_points": [
-          "Registri qui.",
-          "Perché il registro è lì?",
-          "Ah, ma invece è tutto arciato."
-        ],
-        "possible_actions": []
-      },
-      "related_files": [
-        "82fa94044f5a",
-        "d9274514f65d"
+        "0131b42b4070"
       ],
       "source_only": false,
       "needs_review": false,
@@ -1014,215 +860,8 @@
         ]
       },
       "related_files": [
-        "bd04c6a561ca"
-      ],
-      "source_only": false,
-      "needs_review": false,
-      "item_type": "file",
-      "reviewed": false,
-      "pipelineStatus": "ready_for_site",
-      "readyForSite": true
-    },
-    {
-      "id": "53bdca7bb95c",
-      "category": "notes",
-      "categoryLabel": "Notes",
-      "title": "Christian.m4a · Self recap",
-      "filepath": "content/notes/2026-05-17-self-recap-christian-42d821331d94.md",
-      "path": "content/notes/2026-05-17-self-recap-christian-42d821331d94.md",
-      "source_audio": "Christian.m4a",
-      "source_transcription": "content/transcriptions/Christian.md",
-      "sourceAudio": "Christian.m4a",
-      "sourceTranscription": "content/transcriptions/Christian.md",
-      "project": "personal",
-      "date": "2026-05-17",
-      "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T09:46:21Z",
-      "processedDate": "2026-05-17T09:46:21Z",
-      "preview": "AI-ready note from Christian.m4a. Open for structured sections.",
-      "summary": "AI-ready note from Christian.m4a. Open for structured sections.",
-      "stats": {
-        "decisions_count": 0,
-        "tasks_count": 0,
-        "open_points_count": 0,
-        "calendar_events_count": 0,
-        "next_steps_count": 0
-      },
-      "has_chart_data": false,
-      "raw_sections": {
-        "Source": "- **Source audio:** Christian.m4a\n- **Source transcription:** `Christian.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** self-recap (70%)\n- **Project:** personal",
-        "Summary": "Per esempio lui può dire, io non ho mai avuto niente, sulle vedidate vanno ancora a pittarsi 50.000 euro, quindi è una cortettezza.",
-        "Important Points": "- Per esempio lui può dire, io non ho mai avuto niente, sulle vedidate vanno ancora a pittarsi 50.000 euro, quindi è una cortettezza.\n- Questo è il punto 1.\n- Il punto 2 sarebbe, cioè i soldi sono i tuoi, i 50.000 euro, giusto?",
-        "Decisions": "- (none)",
-        "Tasks": "- (none)",
-        "Calendar Events": "- (none)",
-        "Open Points": "- Il punto 2 sarebbe, cioè i soldi sono i tuoi, i 50.000 euro, giusto? | owner: to confirm\n- Come finisce spegna la storia, visto che la casa è di tutti e due? | owner: to confirm\n- Come se potrebbe dire? | owner: to confirm",
-        "Next Steps": "- Sì, investi sulla casa, insomma, su quello che stai facendo.\n- Come se potrebbe dire?"
-      },
-      "extracted_items": {
-        "important_points": [
-          "Per esempio lui può dire, io non ho mai avuto niente, sulle vedidate vanno ancora a pittarsi 50.000 euro, quindi è una cortettezza.",
-          "Questo è il punto 1.",
-          "Il punto 2 sarebbe, cioè i soldi sono i tuoi, i 50.000 euro, giusto?"
-        ],
-        "possible_actions": []
-      },
-      "related_files": [
-        "1478d3df5d65"
-      ],
-      "source_only": false,
-      "needs_review": false,
-      "item_type": "file",
-      "reviewed": false,
-      "pipelineStatus": "ready_for_site",
-      "readyForSite": true
-    },
-    {
-      "id": "bd04c6a561ca",
-      "category": "notes",
-      "categoryLabel": "Notes",
-      "title": "Registrazione, Michael Club Club.",
-      "filepath": "content/notes/2026-05-17-self-recap-voice_005-6921c6f5bc0a.md",
-      "path": "content/notes/2026-05-17-self-recap-voice_005-6921c6f5bc0a.md",
-      "source_audio": "Voice 005.m4a",
-      "source_transcription": "content/transcriptions/Voice_005.md",
-      "sourceAudio": "Voice 005.m4a",
-      "sourceTranscription": "content/transcriptions/Voice_005.md",
-      "project": "uncategorized",
-      "date": "2026-05-17",
-      "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T09:46:21Z",
-      "processedDate": "2026-05-17T09:46:21Z",
-      "preview": "Registrazione, Michael Club Club.",
-      "summary": "Registrazione, Michael Club Club.",
-      "stats": {
-        "decisions_count": 0,
-        "tasks_count": 0,
-        "open_points_count": 0,
-        "calendar_events_count": 0,
-        "next_steps_count": 0
-      },
-      "has_chart_data": false,
-      "raw_sections": {
-        "Source": "- **Source audio:** Voice 005.m4a\n- **Source transcription:** `Voice_005.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** self-recap (70%)\n- **Project:** uncategorized",
-        "Summary": "Registrazione, Michael Club Club.",
-        "Important Points": "- Registrazione, Michael Club Club.\n- Siamo in onda.\n- Siamo in onda, per credere, questo è un chat di...",
-        "Decisions": "- (none)",
-        "Tasks": "- (none)",
-        "Calendar Events": "- (none)",
-        "Open Points": "- come è che chiedete? | owner: to confirm",
-        "Next Steps": "- Ma, credo che ho un'ultima intro.\n- Però, sì, adesso io dico una qua, scusa."
-      },
-      "extracted_items": {
-        "important_points": [
-          "Registrazione, Michael Club Club.",
-          "Siamo in onda.",
-          "Siamo in onda, per credere, questo è un chat di..."
-        ],
-        "possible_actions": []
-      },
-      "related_files": [
-        "01ec856cc92c",
         "86e1b1108f7e"
       ],
-      "source_only": false,
-      "needs_review": false,
-      "item_type": "file",
-      "reviewed": false,
-      "pipelineStatus": "ready_for_site",
-      "readyForSite": true
-    },
-    {
-      "id": "54a9a939b5b6",
-      "category": "notes",
-      "categoryLabel": "Notes",
-      "title": "Registrazione non intellegibile",
-      "filepath": "content/notes/2026-05-17-voice-note-voice_001-c8091515a34f.md",
-      "path": "content/notes/2026-05-17-voice-note-voice_001-c8091515a34f.md",
-      "source_audio": "Voice 001",
-      "source_transcription": "content/transcriptions/Voice_001.md",
-      "sourceAudio": "Voice 001",
-      "sourceTranscription": "content/transcriptions/Voice_001.md",
-      "project": "uncategorized",
-      "date": "2026-05-17",
-      "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T11:11:46Z",
-      "processedDate": "2026-05-17T11:11:46Z",
-      "preview": "AI-ready note from Voice 001. Open for structured sections.",
-      "summary": "AI-ready note from Voice 001. Open for structured sections.",
-      "stats": {
-        "decisions_count": 0,
-        "tasks_count": 0,
-        "open_points_count": 0,
-        "calendar_events_count": 0,
-        "next_steps_count": 0
-      },
-      "has_chart_data": false,
-      "raw_sections": {
-        "Source": "- **Source audio:** Voice 001\n- **Source transcription:** `Voice_001.md`\n- **Processing datetime:** 2026-05-17T11:11:46Z\n- **Category:** voice-note (Composer)\n- **Project:** uncategorized",
-        "Summary": "[Bassa qualità trascrizione — revisione manuale] Trascrizione brevissima in lingua non italiana (probabile singalese), senza contenuto analizzabile in italiano.",
-        "Important Points": "- (none)",
-        "Decisions": "- (none)",
-        "Tasks": "- (none)",
-        "Calendar Events": "- (none)",
-        "Open Points": "- (none)",
-        "Next Steps": "- (none)",
-        "Possible Actions": "- (none)"
-      },
-      "extracted_items": {
-        "important_points": [],
-        "possible_actions": []
-      },
-      "related_files": [],
-      "source_only": false,
-      "needs_review": false,
-      "item_type": "file",
-      "reviewed": false,
-      "pipelineStatus": "ready_for_site",
-      "readyForSite": true
-    },
-    {
-      "id": "610fba25e32d",
-      "category": "notes",
-      "categoryLabel": "Notes",
-      "title": "Trascrizione vuota",
-      "filepath": "content/notes/2026-05-17-voice-note-voice_002-f0dc2085112e.md",
-      "path": "content/notes/2026-05-17-voice-note-voice_002-f0dc2085112e.md",
-      "source_audio": "Voice 002",
-      "source_transcription": "content/transcriptions/Voice_002.md",
-      "sourceAudio": "Voice 002",
-      "sourceTranscription": "content/transcriptions/Voice_002.md",
-      "project": "uncategorized",
-      "date": "2026-05-17",
-      "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T11:11:46Z",
-      "processedDate": "2026-05-17T11:11:46Z",
-      "preview": "[Bassa qualità trascrizione — revisione manuale] File audio trascritto senza testo nel corpo della trascrizione.",
-      "summary": "[Bassa qualità trascrizione — revisione manuale] File audio trascritto senza testo nel corpo della trascrizione.",
-      "stats": {
-        "decisions_count": 0,
-        "tasks_count": 0,
-        "open_points_count": 0,
-        "calendar_events_count": 0,
-        "next_steps_count": 0
-      },
-      "has_chart_data": false,
-      "raw_sections": {
-        "Source": "- **Source audio:** Voice 002\n- **Source transcription:** `Voice_002.md`\n- **Processing datetime:** 2026-05-17T11:11:46Z\n- **Category:** voice-note (Composer)\n- **Project:** uncategorized",
-        "Summary": "[Bassa qualità trascrizione — revisione manuale] File audio trascritto senza testo nel corpo della trascrizione.",
-        "Important Points": "- (none)",
-        "Decisions": "- (none)",
-        "Tasks": "- (none)",
-        "Calendar Events": "- (none)",
-        "Open Points": "- (none)",
-        "Next Steps": "- (none)",
-        "Possible Actions": "- (none)"
-      },
-      "extracted_items": {
-        "important_points": [],
-        "possible_actions": []
-      },
-      "related_files": [],
       "source_only": false,
       "needs_review": false,
       "item_type": "file",
@@ -1331,7 +970,7 @@
         ]
       },
       "related_files": [
-        "29df35493553"
+        "d9274514f65d"
       ],
       "source_only": false,
       "needs_review": false,
@@ -1436,55 +1075,6 @@
           "Domanda su memoria/ricordi",
           "Attività «ricordi» in corso"
         ],
-        "possible_actions": []
-      },
-      "related_files": [],
-      "source_only": false,
-      "needs_review": false,
-      "item_type": "file",
-      "reviewed": false,
-      "pipelineStatus": "ready_for_site",
-      "readyForSite": true
-    },
-    {
-      "id": "80c98b9de050",
-      "category": "notes",
-      "categoryLabel": "Notes",
-      "title": "Audio non decodificabile",
-      "filepath": "content/notes/2026-05-17-voice-note-voice_250621_185357-69216cdbadfb.md",
-      "path": "content/notes/2026-05-17-voice-note-voice_250621_185357-69216cdbadfb.md",
-      "source_audio": "Voice 250621 185357",
-      "source_transcription": "content/transcriptions/Voice_250621_185357.md",
-      "sourceAudio": "Voice 250621 185357",
-      "sourceTranscription": "content/transcriptions/Voice_250621_185357.md",
-      "project": "uncategorized",
-      "date": "2026-05-17",
-      "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T11:11:46Z",
-      "processedDate": "2026-05-17T11:11:46Z",
-      "preview": "AI-ready note from Voice 250621 185357. Open for structured sections.",
-      "summary": "AI-ready note from Voice 250621 185357. Open for structured sections.",
-      "stats": {
-        "decisions_count": 0,
-        "tasks_count": 0,
-        "open_points_count": 0,
-        "calendar_events_count": 0,
-        "next_steps_count": 0
-      },
-      "has_chart_data": false,
-      "raw_sections": {
-        "Source": "- **Source audio:** Voice 250621 185357\n- **Source transcription:** `Voice_250621_185357.md`\n- **Processing datetime:** 2026-05-17T11:11:46Z\n- **Category:** voice-note (Composer)\n- **Project:** uncategorized",
-        "Summary": "[Bassa qualità trascrizione — revisione manuale] Trascrizione con caratteri non leggibili; lingua non identificata (nn). Nessun contenuto semantico affidabile.",
-        "Important Points": "- (none)",
-        "Decisions": "- (none)",
-        "Tasks": "- (none)",
-        "Calendar Events": "- (none)",
-        "Open Points": "- (none)",
-        "Next Steps": "- (none)",
-        "Possible Actions": "- (none)"
-      },
-      "extracted_items": {
-        "important_points": [],
         "possible_actions": []
       },
       "related_files": [],
@@ -1643,7 +1233,12 @@
           "Andare al water park con Khan"
         ]
       },
-      "related_files": [],
+      "related_files": [
+        "ce6dd8c606c1",
+        "c43c9ff273a6",
+        "a2c055236cd5",
+        "bb9a60e53ee0"
+      ],
       "source_only": false,
       "needs_review": false,
       "item_type": "file",
@@ -1659,9 +1254,9 @@
       "filepath": "content/tasks/todo.md#task-68cb5e5ba78b",
       "path": "content/tasks/todo.md#task-68cb5e5ba78b",
       "source_audio": "Memo 001.m4a",
-      "source_transcription": "Memo_001.md",
+      "source_transcription": "content/transcriptions/Memo_001.md",
       "sourceAudio": "Memo 001.m4a",
-      "sourceTranscription": "Memo_001.md",
+      "sourceTranscription": "content/transcriptions/Memo_001.md",
       "project": null,
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
@@ -1684,6 +1279,7 @@
         ]
       },
       "related_files": [
+        "a1c89f895aba",
         "89001eb77610",
         "2f49b1cbde12"
       ],
@@ -1702,9 +1298,9 @@
       "filepath": "content/tasks/todo.md#task-3d4551d6a460",
       "path": "content/tasks/todo.md#task-3d4551d6a460",
       "source_audio": "Memo 001.m4a",
-      "source_transcription": "Memo_001.md",
+      "source_transcription": "content/transcriptions/Memo_001.md",
       "sourceAudio": "Memo 001.m4a",
-      "sourceTranscription": "Memo_001.md",
+      "sourceTranscription": "content/transcriptions/Memo_001.md",
       "project": null,
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
@@ -1727,6 +1323,7 @@
         ]
       },
       "related_files": [
+        "a1c89f895aba",
         "bd08d17b19cb",
         "2f49b1cbde12"
       ],
@@ -1745,9 +1342,9 @@
       "filepath": "content/tasks/todo.md#task-5ae1790bf918",
       "path": "content/tasks/todo.md#task-5ae1790bf918",
       "source_audio": "Memo 001.m4a",
-      "source_transcription": "Memo_001.md",
+      "source_transcription": "content/transcriptions/Memo_001.md",
       "sourceAudio": "Memo 001.m4a",
-      "sourceTranscription": "Memo_001.md",
+      "sourceTranscription": "content/transcriptions/Memo_001.md",
       "project": null,
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
@@ -1770,6 +1367,7 @@
         ]
       },
       "related_files": [
+        "a1c89f895aba",
         "bd08d17b19cb",
         "89001eb77610"
       ],
@@ -1788,9 +1386,9 @@
       "filepath": "content/tasks/todo.md#task-d32973dcbd54",
       "path": "content/tasks/todo.md#task-d32973dcbd54",
       "source_audio": "Memo 002.m4a",
-      "source_transcription": "Memo_002.md",
+      "source_transcription": "content/transcriptions/Memo_002.md",
       "sourceAudio": "Memo 002.m4a",
-      "sourceTranscription": "Memo_002.md",
+      "sourceTranscription": "content/transcriptions/Memo_002.md",
       "project": null,
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
@@ -1813,6 +1411,7 @@
         ]
       },
       "related_files": [
+        "8cdc56affa0f",
         "dd496468ac1b",
         "a9ad44e8e35a"
       ],
@@ -1831,9 +1430,9 @@
       "filepath": "content/tasks/todo.md#task-f833d210730c",
       "path": "content/tasks/todo.md#task-f833d210730c",
       "source_audio": "Memo 002.m4a",
-      "source_transcription": "Memo_002.md",
+      "source_transcription": "content/transcriptions/Memo_002.md",
       "sourceAudio": "Memo 002.m4a",
-      "sourceTranscription": "Memo_002.md",
+      "sourceTranscription": "content/transcriptions/Memo_002.md",
       "project": null,
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
@@ -1856,6 +1455,7 @@
         ]
       },
       "related_files": [
+        "8cdc56affa0f",
         "8f48535fdca9",
         "a9ad44e8e35a"
       ],
@@ -1874,9 +1474,9 @@
       "filepath": "content/tasks/todo.md#task-13f0ef9e6eaf",
       "path": "content/tasks/todo.md#task-13f0ef9e6eaf",
       "source_audio": "Memo 002.m4a",
-      "source_transcription": "Memo_002.md",
+      "source_transcription": "content/transcriptions/Memo_002.md",
       "sourceAudio": "Memo 002.m4a",
-      "sourceTranscription": "Memo_002.md",
+      "sourceTranscription": "content/transcriptions/Memo_002.md",
       "project": null,
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
@@ -1899,6 +1499,7 @@
         ]
       },
       "related_files": [
+        "8cdc56affa0f",
         "8f48535fdca9",
         "dd496468ac1b"
       ],
@@ -1917,9 +1518,9 @@
       "filepath": "content/tasks/todo.md#task-dace84a968a6",
       "path": "content/tasks/todo.md#task-dace84a968a6",
       "source_audio": "Memo 005.m4a",
-      "source_transcription": "Memo_005.md",
+      "source_transcription": "content/transcriptions/Memo_005.md",
       "sourceAudio": "Memo 005.m4a",
-      "sourceTranscription": "Memo_005.md",
+      "sourceTranscription": "content/transcriptions/Memo_005.md",
       "project": null,
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
@@ -1942,6 +1543,7 @@
         ]
       },
       "related_files": [
+        "cd874136e601",
         "1e8ec63a1469",
         "a94fe0d397b3"
       ],
@@ -1960,9 +1562,9 @@
       "filepath": "content/tasks/todo.md#task-80058e2f9d4e",
       "path": "content/tasks/todo.md#task-80058e2f9d4e",
       "source_audio": "Memo 005.m4a",
-      "source_transcription": "Memo_005.md",
+      "source_transcription": "content/transcriptions/Memo_005.md",
       "sourceAudio": "Memo 005.m4a",
-      "sourceTranscription": "Memo_005.md",
+      "sourceTranscription": "content/transcriptions/Memo_005.md",
       "project": null,
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
@@ -1985,6 +1587,7 @@
         ]
       },
       "related_files": [
+        "cd874136e601",
         "292fe57f5ecd",
         "a94fe0d397b3"
       ],
@@ -2003,9 +1606,9 @@
       "filepath": "content/tasks/todo.md#task-0d71e01d0b36",
       "path": "content/tasks/todo.md#task-0d71e01d0b36",
       "source_audio": "Memo 005.m4a",
-      "source_transcription": "Memo_005.md",
+      "source_transcription": "content/transcriptions/Memo_005.md",
       "sourceAudio": "Memo 005.m4a",
-      "sourceTranscription": "Memo_005.md",
+      "sourceTranscription": "content/transcriptions/Memo_005.md",
       "project": null,
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
@@ -2028,6 +1631,7 @@
         ]
       },
       "related_files": [
+        "cd874136e601",
         "292fe57f5ecd",
         "1e8ec63a1469"
       ],
@@ -2046,9 +1650,9 @@
       "filepath": "content/tasks/todo.md#task-3a73994a27c8",
       "path": "content/tasks/todo.md#task-3a73994a27c8",
       "source_audio": "Memo 006.m4a",
-      "source_transcription": "Memo_006.md",
+      "source_transcription": "content/transcriptions/Memo_006.md",
       "sourceAudio": "Memo 006.m4a",
-      "sourceTranscription": "Memo_006.md",
+      "sourceTranscription": "content/transcriptions/Memo_006.md",
       "project": null,
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
@@ -2070,7 +1674,9 @@
           "come imparare a morire 60 anni, sì un corso accelerato per come morire come imparare a morire musta il pieno della vita in te stai agotendo di niente ok, mi sto godendo la vita ma come hai detto a me che mi vivo in vacanza?"
         ]
       },
-      "related_files": [],
+      "related_files": [
+        "53d366f5383a"
+      ],
       "source_only": false,
       "needs_review": false,
       "item_type": "task",
@@ -2086,9 +1692,9 @@
       "filepath": "content/tasks/todo.md#task-e6cefeb39f0f",
       "path": "content/tasks/todo.md#task-e6cefeb39f0f",
       "source_audio": "Voice 004.m4a",
-      "source_transcription": "Voice_004.md",
+      "source_transcription": "content/transcriptions/Voice_004.md",
       "sourceAudio": "Voice 004.m4a",
-      "sourceTranscription": "Voice_004.md",
+      "sourceTranscription": "content/transcriptions/Voice_004.md",
       "project": null,
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
@@ -2111,7 +1717,7 @@
         ]
       },
       "related_files": [
-        "29df35493553"
+        "82fa94044f5a"
       ],
       "source_only": false,
       "needs_review": false,
@@ -2128,9 +1734,9 @@
       "filepath": "content/tasks/todo.md#task-f1c82f109f87",
       "path": "content/tasks/todo.md#task-f1c82f109f87",
       "source_audio": "Voice 005.m4a",
-      "source_transcription": "Voice_005.md",
+      "source_transcription": "content/transcriptions/Voice_005.md",
       "sourceAudio": "Voice 005.m4a",
-      "sourceTranscription": "Voice_005.md",
+      "sourceTranscription": "content/transcriptions/Voice_005.md",
       "project": null,
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
@@ -2153,7 +1759,7 @@
         ]
       },
       "related_files": [
-        "bd04c6a561ca"
+        "01ec856cc92c"
       ],
       "source_only": false,
       "needs_review": false,
@@ -2170,9 +1776,9 @@
       "filepath": "content/tasks/todo.md#task-d06634599974",
       "path": "content/tasks/todo.md#task-d06634599974",
       "source_audio": "Seconda.m4a",
-      "source_transcription": "Seconda.md",
+      "source_transcription": "content/transcriptions/Seconda.md",
       "sourceAudio": "Seconda.m4a",
-      "sourceTranscription": "Seconda.md",
+      "sourceTranscription": "content/transcriptions/Seconda.md",
       "project": null,
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
@@ -2195,7 +1801,7 @@
         ]
       },
       "related_files": [
-        "cd949a2e1e98",
+        "87beb2a027c1",
         "ee5f09440ace",
         "d9274514f65d",
         "a2f8bcd20b11",
@@ -2219,9 +1825,9 @@
       "filepath": "content/tasks/todo.md#task-1948ed4cd0be",
       "path": "content/tasks/todo.md#task-1948ed4cd0be",
       "source_audio": "Seconda.m4a",
-      "source_transcription": "Seconda.md",
+      "source_transcription": "content/transcriptions/Seconda.md",
       "sourceAudio": "Seconda.m4a",
-      "sourceTranscription": "Seconda.md",
+      "sourceTranscription": "content/transcriptions/Seconda.md",
       "project": null,
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
@@ -2244,7 +1850,7 @@
         ]
       },
       "related_files": [
-        "cd949a2e1e98",
+        "87beb2a027c1",
         "150a208bc778",
         "d9274514f65d",
         "a2f8bcd20b11",
@@ -2268,9 +1874,9 @@
       "filepath": "content/tasks/todo.md#task-e6cefeb39f0f",
       "path": "content/tasks/todo.md#task-e6cefeb39f0f",
       "source_audio": "Seconda.m4a",
-      "source_transcription": "Seconda.md",
+      "source_transcription": "content/transcriptions/Seconda.md",
       "sourceAudio": "Seconda.m4a",
-      "sourceTranscription": "Seconda.md",
+      "sourceTranscription": "content/transcriptions/Seconda.md",
       "project": null,
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
@@ -2293,7 +1899,7 @@
         ]
       },
       "related_files": [
-        "cd949a2e1e98",
+        "87beb2a027c1",
         "150a208bc778",
         "ee5f09440ace",
         "a2f8bcd20b11",
@@ -2317,9 +1923,9 @@
       "filepath": "content/tasks/todo.md#task-225f4d101942",
       "path": "content/tasks/todo.md#task-225f4d101942",
       "source_audio": "Seconda.m4a",
-      "source_transcription": "Seconda.md",
+      "source_transcription": "content/transcriptions/Seconda.md",
       "sourceAudio": "Seconda.m4a",
-      "sourceTranscription": "Seconda.md",
+      "sourceTranscription": "content/transcriptions/Seconda.md",
       "project": null,
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
@@ -2342,7 +1948,7 @@
         ]
       },
       "related_files": [
-        "cd949a2e1e98",
+        "87beb2a027c1",
         "150a208bc778",
         "ee5f09440ace",
         "d9274514f65d",
@@ -2366,9 +1972,9 @@
       "filepath": "content/tasks/todo.md#task-0f12a2a5d1a5",
       "path": "content/tasks/todo.md#task-0f12a2a5d1a5",
       "source_audio": "Seconda.m4a",
-      "source_transcription": "Seconda.md",
+      "source_transcription": "content/transcriptions/Seconda.md",
       "sourceAudio": "Seconda.m4a",
-      "sourceTranscription": "Seconda.md",
+      "sourceTranscription": "content/transcriptions/Seconda.md",
       "project": null,
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
@@ -2391,7 +1997,7 @@
         ]
       },
       "related_files": [
-        "cd949a2e1e98",
+        "87beb2a027c1",
         "150a208bc778",
         "ee5f09440ace",
         "d9274514f65d",
@@ -2415,9 +2021,9 @@
       "filepath": "content/tasks/todo.md#task-135626095126",
       "path": "content/tasks/todo.md#task-135626095126",
       "source_audio": "Seconda.m4a",
-      "source_transcription": "Seconda.md",
+      "source_transcription": "content/transcriptions/Seconda.md",
       "sourceAudio": "Seconda.m4a",
-      "sourceTranscription": "Seconda.md",
+      "sourceTranscription": "content/transcriptions/Seconda.md",
       "project": null,
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
@@ -2440,7 +2046,7 @@
         ]
       },
       "related_files": [
-        "cd949a2e1e98",
+        "87beb2a027c1",
         "150a208bc778",
         "ee5f09440ace",
         "d9274514f65d",
@@ -2464,9 +2070,9 @@
       "filepath": "content/tasks/todo.md#task-01f9caef4d58",
       "path": "content/tasks/todo.md#task-01f9caef4d58",
       "source_audio": "Seconda.m4a",
-      "source_transcription": "Seconda.md",
+      "source_transcription": "content/transcriptions/Seconda.md",
       "sourceAudio": "Seconda.m4a",
-      "sourceTranscription": "Seconda.md",
+      "sourceTranscription": "content/transcriptions/Seconda.md",
       "project": null,
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
@@ -2489,7 +2095,7 @@
         ]
       },
       "related_files": [
-        "cd949a2e1e98",
+        "87beb2a027c1",
         "150a208bc778",
         "ee5f09440ace",
         "d9274514f65d",
@@ -2513,9 +2119,9 @@
       "filepath": "content/tasks/todo.md#task-15ed42531b06",
       "path": "content/tasks/todo.md#task-15ed42531b06",
       "source_audio": "Seconda.m4a",
-      "source_transcription": "Seconda.md",
+      "source_transcription": "content/transcriptions/Seconda.md",
       "sourceAudio": "Seconda.m4a",
-      "sourceTranscription": "Seconda.md",
+      "sourceTranscription": "content/transcriptions/Seconda.md",
       "project": null,
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
@@ -2538,7 +2144,7 @@
         ]
       },
       "related_files": [
-        "cd949a2e1e98",
+        "87beb2a027c1",
         "150a208bc778",
         "ee5f09440ace",
         "d9274514f65d",
@@ -2562,9 +2168,9 @@
       "filepath": "content/tasks/todo.md#task-13f425596c81",
       "path": "content/tasks/todo.md#task-13f425596c81",
       "source_audio": "Seconda.m4a",
-      "source_transcription": "Seconda.md",
+      "source_transcription": "content/transcriptions/Seconda.md",
       "sourceAudio": "Seconda.m4a",
-      "sourceTranscription": "Seconda.md",
+      "sourceTranscription": "content/transcriptions/Seconda.md",
       "project": null,
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
@@ -2587,7 +2193,7 @@
         ]
       },
       "related_files": [
-        "cd949a2e1e98",
+        "87beb2a027c1",
         "150a208bc778",
         "ee5f09440ace",
         "d9274514f65d",
@@ -2611,9 +2217,9 @@
       "filepath": "content/tasks/todo.md#task-df21e5289f7e",
       "path": "content/tasks/todo.md#task-df21e5289f7e",
       "source_audio": "Seconda.m4a",
-      "source_transcription": "Seconda.md",
+      "source_transcription": "content/transcriptions/Seconda.md",
       "sourceAudio": "Seconda.m4a",
-      "sourceTranscription": "Seconda.md",
+      "sourceTranscription": "content/transcriptions/Seconda.md",
       "project": null,
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
@@ -2636,7 +2242,7 @@
         ]
       },
       "related_files": [
-        "cd949a2e1e98",
+        "87beb2a027c1",
         "150a208bc778",
         "ee5f09440ace",
         "d9274514f65d",
@@ -2648,6 +2254,468 @@
       "source_only": false,
       "needs_review": false,
       "item_type": "task",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
+      "id": "ce6dd8c606c1",
+      "category": "calendar",
+      "categoryLabel": "Calendar",
+      "title": "Senti ma domani che il mondo inizia c'è questa? | confidence: low",
+      "filepath": "content/calendar/events.md#event-2e9df7b4b7ac",
+      "path": "content/calendar/events.md#event-2e9df7b4b7ac",
+      "source_audio": "Voice 260516_235502.m4a",
+      "source_transcription": "content/transcriptions/Voice_260516_235502.md",
+      "sourceAudio": "Voice 260516_235502.m4a",
+      "sourceTranscription": "content/transcriptions/Voice_260516_235502.md",
+      "project": null,
+      "date": null,
+      "eventDate": null,
+      "processing_date": null,
+      "processedDate": null,
+      "preview": "Senti ma domani che il mondo inizia c'è questa? | confidence: low",
+      "summary": "Senti ma domani che il mondo inizia c'è questa? | confidence: low",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 0,
+        "open_points_count": 0,
+        "calendar_events_count": 1,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {},
+      "extracted_items": {
+        "calendar_events": [
+          "Senti ma domani che il mondo inizia c'è questa? | confidence: low"
+        ]
+      },
+      "related_files": [
+        "1a40023b5e03",
+        "c43c9ff273a6",
+        "a2c055236cd5",
+        "bb9a60e53ee0"
+      ],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "calendar_event",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
+      "id": "c43c9ff273a6",
+      "category": "calendar",
+      "categoryLabel": "Calendar",
+      "title": "I have to remember that I have to go to water park next week with Khan number 1…",
+      "filepath": "content/calendar/events.md#event-2a2fc80a333d",
+      "path": "content/calendar/events.md#event-2a2fc80a333d",
+      "source_audio": "Voice 260516_235502.m4a",
+      "source_transcription": "content/transcriptions/Voice_260516_235502.md",
+      "sourceAudio": "Voice 260516_235502.m4a",
+      "sourceTranscription": "content/transcriptions/Voice_260516_235502.md",
+      "project": null,
+      "date": null,
+      "eventDate": null,
+      "processing_date": null,
+      "processedDate": null,
+      "preview": "I have to remember that I have to go to water park next week with Khan number 19 May 2026 | confidence: low",
+      "summary": "I have to remember that I have to go to water park next week with Khan number 19 May 2026 | confidence: low",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 0,
+        "open_points_count": 0,
+        "calendar_events_count": 1,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {},
+      "extracted_items": {
+        "calendar_events": [
+          "I have to remember that I have to go to water park next week with Khan number 19 May 2026 | confidence: low"
+        ]
+      },
+      "related_files": [
+        "1a40023b5e03",
+        "ce6dd8c606c1",
+        "a2c055236cd5",
+        "bb9a60e53ee0"
+      ],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "calendar_event",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
+      "id": "a2c055236cd5",
+      "category": "calendar",
+      "categoryLabel": "Calendar",
+      "title": "5/10/26, 14:08 - +971 58 512 7782: Mi devo fare la barba 5/10/26, 14:08 - +971 …",
+      "filepath": "content/calendar/events.md#event-f43c992c36e8",
+      "path": "content/calendar/events.md#event-f43c992c36e8",
+      "source_audio": "Voice 260516_235502.m4a",
+      "source_transcription": "content/transcriptions/Voice_260516_235502.md",
+      "sourceAudio": "Voice 260516_235502.m4a",
+      "sourceTranscription": "content/transcriptions/Voice_260516_235502.md",
+      "project": null,
+      "date": null,
+      "eventDate": null,
+      "processing_date": null,
+      "processedDate": null,
+      "preview": "5/10/26, 14:08 - +971 58 512 7782: Mi devo fare la barba 5/10/26, 14:08 - +971 58 512 7782: <Media omitted> 5/10/26, 14:08 - +971 58 512 7782: Ci vediamo alle 4 chai doi? | confidence: low",
+      "summary": "5/10/26, 14:08 - +971 58 512 7782: Mi devo fare la barba 5/10/26, 14:08 - +971 58 512 7782: <Media omitted> 5/10/26, 14:08 - +971 58 512 7782: Ci vediamo alle 4 chai doi? | confidence: low",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 0,
+        "open_points_count": 0,
+        "calendar_events_count": 1,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {},
+      "extracted_items": {
+        "calendar_events": [
+          "5/10/26, 14:08 - +971 58 512 7782: Mi devo fare la barba 5/10/26, 14:08 - +971 58 512 7782: <Media omitted> 5/10/26, 14:08 - +971 58 512 7782: Ci vediamo alle 4 chai doi? | confidence: low"
+        ]
+      },
+      "related_files": [
+        "1a40023b5e03",
+        "ce6dd8c606c1",
+        "c43c9ff273a6",
+        "bb9a60e53ee0"
+      ],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "calendar_event",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
+      "id": "bb9a60e53ee0",
+      "category": "calendar",
+      "categoryLabel": "Calendar",
+      "title": "Apre alle 14,30 2/14/22, 19:51 - J: Buono! | confidence: low",
+      "filepath": "content/calendar/events.md#event-95c02b365af5",
+      "path": "content/calendar/events.md#event-95c02b365af5",
+      "source_audio": "Voice 260516_235502.m4a",
+      "source_transcription": "content/transcriptions/Voice_260516_235502.md",
+      "sourceAudio": "Voice 260516_235502.m4a",
+      "sourceTranscription": "content/transcriptions/Voice_260516_235502.md",
+      "project": null,
+      "date": null,
+      "eventDate": null,
+      "processing_date": null,
+      "processedDate": null,
+      "preview": "Apre alle 14,30 2/14/22, 19:51 - J: Buono! | confidence: low",
+      "summary": "Apre alle 14,30 2/14/22, 19:51 - J: Buono! | confidence: low",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 0,
+        "open_points_count": 0,
+        "calendar_events_count": 1,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {},
+      "extracted_items": {
+        "calendar_events": [
+          "Apre alle 14,30 2/14/22, 19:51 - J: Buono! | confidence: low"
+        ]
+      },
+      "related_files": [
+        "1a40023b5e03",
+        "ce6dd8c606c1",
+        "c43c9ff273a6",
+        "a2c055236cd5"
+      ],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "calendar_event",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
+      "id": "0bb2ff077566",
+      "category": "decisions",
+      "categoryLabel": "Decisions",
+      "title": "Padre dichiara volontà di non cambiare direzione: case/risorse orientate a Chri…",
+      "filepath": "content/decisions/2026-05-17.md#line-4d075210b9f9",
+      "path": "content/decisions/2026-05-17.md#line-4d075210b9f9",
+      "source_audio": "Christian.m4a",
+      "source_transcription": "content/transcriptions/Christian.md",
+      "sourceAudio": "Christian.m4a",
+      "sourceTranscription": "content/transcriptions/Christian.md",
+      "project": null,
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": null,
+      "processedDate": null,
+      "preview": "Padre dichiara volontà di non cambiare direzione: case/risorse orientate a Christian/figli, nonostante i timori espressi",
+      "summary": "Padre dichiara volontà di non cambiare direzione: case/risorse orientate a Christian/figli, nonostante i timori espressi",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 0,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {},
+      "extracted_items": {
+        "decisions": [
+          "Padre dichiara volontà di non cambiare direzione: case/risorse orientate a Christian/figli, nonostante i timori espressi"
+        ]
+      },
+      "related_files": [
+        "1478d3df5d65",
+        "e5e907611199",
+        "eda9377e1c8b",
+        "e4a57405f25d",
+        "e490ca72475e",
+        "ab25bb874c77"
+      ],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "decision",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
+      "id": "e5e907611199",
+      "category": "decisions",
+      "categoryLabel": "Decisions",
+      "title": "Vendita casa Anzio menzionata nel contesto familiare — stato decisionale nel fi…",
+      "filepath": "content/decisions/2026-05-17.md#line-f3293e657eed",
+      "path": "content/decisions/2026-05-17.md#line-f3293e657eed",
+      "source_audio": "Christian.m4a",
+      "source_transcription": "content/transcriptions/Christian.md",
+      "sourceAudio": "Christian.m4a",
+      "sourceTranscription": "content/transcriptions/Christian.md",
+      "project": null,
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": null,
+      "processedDate": null,
+      "preview": "Vendita casa Anzio menzionata nel contesto familiare — stato decisionale nel file: da confermare",
+      "summary": "Vendita casa Anzio menzionata nel contesto familiare — stato decisionale nel file: da confermare",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 0,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {},
+      "extracted_items": {
+        "decisions": [
+          "Vendita casa Anzio menzionata nel contesto familiare — stato decisionale nel file: da confermare"
+        ]
+      },
+      "related_files": [
+        "1478d3df5d65",
+        "0bb2ff077566",
+        "eda9377e1c8b",
+        "e4a57405f25d",
+        "e490ca72475e",
+        "ab25bb874c77"
+      ],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "decision",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
+      "id": "eda9377e1c8b",
+      "category": "open-points",
+      "categoryLabel": "Open Points",
+      "title": "Accordo formale su 50.000 €, cointestazione e scenario separazione — da definire",
+      "filepath": "content/open-points/2026-05-17.md#line-681a20bb4ce5",
+      "path": "content/open-points/2026-05-17.md#line-681a20bb4ce5",
+      "source_audio": "Christian.m4a",
+      "source_transcription": "content/transcriptions/Christian.md",
+      "sourceAudio": "Christian.m4a",
+      "sourceTranscription": "content/transcriptions/Christian.md",
+      "project": null,
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": null,
+      "processedDate": null,
+      "preview": "Accordo formale su 50.000 €, cointestazione e scenario separazione — da definire",
+      "summary": "Accordo formale su 50.000 €, cointestazione e scenario separazione — da definire",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 0,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {},
+      "extracted_items": {
+        "open_points": [
+          "Accordo formale su 50.000 €, cointestazione e scenario separazione — da definire"
+        ]
+      },
+      "related_files": [
+        "1478d3df5d65",
+        "0bb2ff077566",
+        "e5e907611199",
+        "e4a57405f25d",
+        "e490ca72475e",
+        "ab25bb874c77"
+      ],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "open-point",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
+      "id": "e4a57405f25d",
+      "category": "open-points",
+      "categoryLabel": "Open Points",
+      "title": "Presenza/partecipazione Silvana al dialogo — non presente",
+      "filepath": "content/open-points/2026-05-17.md#line-d078c9db111d",
+      "path": "content/open-points/2026-05-17.md#line-d078c9db111d",
+      "source_audio": "Christian.m4a",
+      "source_transcription": "content/transcriptions/Christian.md",
+      "sourceAudio": "Christian.m4a",
+      "sourceTranscription": "content/transcriptions/Christian.md",
+      "project": null,
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": null,
+      "processedDate": null,
+      "preview": "Presenza/partecipazione Silvana al dialogo — non presente",
+      "summary": "Presenza/partecipazione Silvana al dialogo — non presente",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 0,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {},
+      "extracted_items": {
+        "open_points": [
+          "Presenza/partecipazione Silvana al dialogo — non presente"
+        ]
+      },
+      "related_files": [
+        "1478d3df5d65",
+        "0bb2ff077566",
+        "e5e907611199",
+        "eda9377e1c8b",
+        "e490ca72475e",
+        "ab25bb874c77"
+      ],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "open-point",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
+      "id": "e490ca72475e",
+      "category": "open-points",
+      "categoryLabel": "Open Points",
+      "title": "Distribuzione ereditaria/comunione e lettere/testamenti — dibattito aperto",
+      "filepath": "content/open-points/2026-05-17.md#line-42e1f51d5f66",
+      "path": "content/open-points/2026-05-17.md#line-42e1f51d5f66",
+      "source_audio": "Christian.m4a",
+      "source_transcription": "content/transcriptions/Christian.md",
+      "sourceAudio": "Christian.m4a",
+      "sourceTranscription": "content/transcriptions/Christian.md",
+      "project": null,
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": null,
+      "processedDate": null,
+      "preview": "Distribuzione ereditaria/comunione e lettere/testamenti — dibattito aperto",
+      "summary": "Distribuzione ereditaria/comunione e lettere/testamenti — dibattito aperto",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 0,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {},
+      "extracted_items": {
+        "open_points": [
+          "Distribuzione ereditaria/comunione e lettere/testamenti — dibattito aperto"
+        ]
+      },
+      "related_files": [
+        "1478d3df5d65",
+        "0bb2ff077566",
+        "e5e907611199",
+        "eda9377e1c8b",
+        "e4a57405f25d",
+        "ab25bb874c77"
+      ],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "open-point",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
+      "id": "ab25bb874c77",
+      "category": "open-points",
+      "categoryLabel": "Open Points",
+      "title": "Clausole legali obbligo assistenza genitori anziani — citate, non approfondite …",
+      "filepath": "content/open-points/2026-05-17.md#line-b89346b5d8de",
+      "path": "content/open-points/2026-05-17.md#line-b89346b5d8de",
+      "source_audio": "Christian.m4a",
+      "source_transcription": "content/transcriptions/Christian.md",
+      "sourceAudio": "Christian.m4a",
+      "sourceTranscription": "content/transcriptions/Christian.md",
+      "project": null,
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": null,
+      "processedDate": null,
+      "preview": "Clausole legali obbligo assistenza genitori anziani — citate, non approfondite come decisione",
+      "summary": "Clausole legali obbligo assistenza genitori anziani — citate, non approfondite come decisione",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 0,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {},
+      "extracted_items": {
+        "open_points": [
+          "Clausole legali obbligo assistenza genitori anziani — citate, non approfondite come decisione"
+        ]
+      },
+      "related_files": [
+        "1478d3df5d65",
+        "0bb2ff077566",
+        "e5e907611199",
+        "eda9377e1c8b",
+        "e4a57405f25d",
+        "e490ca72475e"
+      ],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "open-point",
       "reviewed": false,
       "pipelineStatus": "ready_for_site",
       "readyForSite": true

@@ -500,7 +500,8 @@
       { label: 'Project updates', n: c.projects || 0 },
       { label: 'Decisions', n: c.decisions || 0 },
       { label: 'Open points', n: c['open-points'] || 0 },
-      { label: 'Raw sources waiting', n: rs.waitingForProcessing || 0, muted: true },
+      { label: 'Sources waiting for AI', n: rs.waitingForProcessing || 0, muted: true },
+      { label: 'Raw files on disk', n: rs.total != null ? rs.total : state.rawTranscriptionCount || 0, muted: true },
       { label: 'Needs review', n: state.needsReviewCount || 0, muted: true },
       {
         label: 'Last pipeline run',
@@ -573,17 +574,17 @@
       '<h3 class="tx-raw-sources__title">Raw / Pending / Failed Sources</h3>' +
       '<p class="tx-raw-sources__note tf-admin-muted">Admin only. Shows detected, raw_created, ai_processing_pending, ai_processing_running, failed, and needs_review. Not mixed with AI-ready category lists above.</p>' +
       '<ul class="tx-raw-sources__list mono">' +
-      '<li><strong>Total raw files:</strong> ' +
+      '<li><strong>Raw files on disk:</strong> ' +
       esc(total) +
+      ' <span class="tf-admin-muted">(archived sources, not the main feed)</span></li>' +
+      '<li><strong>Waiting for AI / review:</strong> ' +
+      esc(waiting) +
       '</li>' +
       '<li><strong>Latest raw file:</strong> ' +
       esc(rs.latestRawFile || '—') +
       '</li>' +
       '<li><strong>Latest AI-processed:</strong> ' +
       esc(rs.latestProcessedFile || '—') +
-      '</li>' +
-      '<li><strong>Waiting for AI processing:</strong> ' +
-      esc(waiting) +
       '</li>' +
       '</ul>' +
       (rows
@@ -1181,14 +1182,18 @@
         var tgl = byId('txAutoSyncToggle');
         if (tgl) tgl.checked = state.syncSettings.auto_sync_google;
 
+        var rsHint = norm.rawSources || {};
+        var waiting = rsHint.waitingForProcessing || 0;
+        var rawOnDisk = rsHint.total != null ? rsHint.total : norm.rawTranscriptionCount || 0;
         setLoadHint(
           'Index ' +
             (norm.generatedAt ? new Date(norm.generatedAt).toLocaleString() : 'now') +
             ' · ' +
             (norm.counts.total || 0) +
-            ' AI-ready item(s) · ' +
-            (norm.rawSources.waitingForProcessing || 0) +
-            ' raw source(s) waiting'
+            ' AI-ready output(s) · ' +
+            waiting +
+            ' source(s) waiting for AI' +
+            (rawOnDisk ? ' · ' + rawOnDisk + ' raw file(s) archived' : '')
         );
 
         renderStats();
