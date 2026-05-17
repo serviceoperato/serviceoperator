@@ -2620,18 +2620,34 @@ app.get('/api/admin/transcriptions/index', requireAdmin, (_req, res) => {
   }
 });
 
+function sendTranscriptionItemJson(res, id) {
+  const item = getIndexItem(id);
+  if (!item) return res.status(404).json({ error: 'Item not found.' });
+  return res.json({
+    ok: true,
+    item: sanitizeIndexItemForClient(item),
+    related: (item.related || []).map(sanitizeIndexItemForClient),
+  });
+}
+
+app.get('/api/admin/transcriptions/item/:id', requireAdmin, (req, res) => {
+  transcriptionsApiNoStore(res);
+  const id = String(req.params.id || '').trim();
+  if (!id) return res.status(400).json({ error: 'Item id is required.' });
+  try {
+    return sendTranscriptionItemJson(res, id);
+  } catch (e) {
+    console.warn('[transcriptions/item]', e && e.message ? e.message : e);
+    return res.status(500).json({ error: 'Could not load transcription item.' });
+  }
+});
+
 app.get('/api/admin/transcriptions/item', requireAdmin, (req, res) => {
   transcriptionsApiNoStore(res);
   const id = String(req.query.id || '').trim();
   if (!id) return res.status(400).json({ error: 'Query parameter id is required.' });
   try {
-    const item = getIndexItem(id);
-    if (!item) return res.status(404).json({ error: 'Item not found.' });
-    return res.json({
-      ok: true,
-      item: sanitizeIndexItemForClient(item),
-      related: (item.related || []).map(sanitizeIndexItemForClient),
-    });
+    return sendTranscriptionItemJson(res, id);
   } catch (e) {
     console.warn('[transcriptions/item]', e && e.message ? e.message : e);
     return res.status(500).json({ error: 'Could not load transcription item.' });
@@ -4035,6 +4051,9 @@ const ADMIN_HTML_PATHS = [
   '/admin/voice-recorder/',
   '/admin/transcriptions',
   '/admin/transcriptions/',
+  /^\/admin\/transcriptions\/item\/[A-Za-z0-9_-]+$/,
+  '/admin/transcriptions/item/:id',
+  '/admin/transcriptions/item/:id/',
   '/admin/users',
   '/admin/users/',
   '/admin/activity',

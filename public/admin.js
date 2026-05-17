@@ -69,7 +69,8 @@
       norm === '/admin/user-reports' ||
       norm === '/admin/user-profiling' ||
       norm === '/admin/voice-recorder' ||
-      norm === '/admin/transcriptions'
+      norm === '/admin/transcriptions' ||
+      /^\/admin\/transcriptions\/item\/[^/]+$/.test(norm)
     );
   }
 
@@ -114,6 +115,7 @@
     if (path === '/admin/user-reports') return 'user-reports';
     if (path === '/admin/user-profiling') return 'user-profiling';
     if (path === '/admin/voice-recorder') return 'voice-recorder';
+    if (/^\/admin\/transcriptions\/item\/[^/]+$/.test(path)) return 'transcriptions-detail';
     if (path === '/admin/transcriptions') return 'transcriptions';
     if (path === '/admin/users') return 'users';
     if (/\/admin\.html$/i.test(path)) return 'users';
@@ -2289,6 +2291,8 @@
     var reportsEl = document.getElementById('reportCatalogSection');
     var voiceRecorderEl = document.getElementById('voiceRecorderSection');
     var transcriptionsEl = document.getElementById('transcriptionsSection');
+    var transcriptionDetailEl = document.getElementById('transcriptionDetailSection');
+    var transcriptionsDetailEl = document.getElementById('transcriptionsDetailSection');
 
     if (routeId === 'deploy-log') {
       if (main) main.classList.add('is-hidden');
@@ -2327,13 +2331,24 @@
     if (reportsEl) reportsEl.classList.toggle('is-hidden', routeId !== 'report-catalog');
     if (voiceRecorderEl) voiceRecorderEl.classList.toggle('is-hidden', routeId !== 'voice-recorder');
     if (transcriptionsEl) transcriptionsEl.classList.toggle('is-hidden', routeId !== 'transcriptions');
+    if (transcriptionsDetailEl) {
+      transcriptionsDetailEl.classList.toggle('is-hidden', routeId !== 'transcriptions-detail');
+    }
 
     buildTfNav(routeId);
     window.scrollTo(0, 0);
     if (routeId === 'user-profiling') loadUserProfiling();
     if (routeId === 'voice-recorder') initVoiceRecorderPipelineUi();
-    if (routeId === 'transcriptions') {
+    if (routeId === 'transcriptions' || routeId === 'transcriptions-detail') {
       ensureTranscriptionsDashboard(function () {
+        if (routeId === 'transcriptions-detail') {
+          if (typeof window.initAdminTranscriptionDetail === 'function') {
+            window.initAdminTranscriptionDetail();
+          } else {
+            console.error('[transcriptions] initAdminTranscriptionDetail missing after dashboard load');
+          }
+          return;
+        }
         if (typeof window.initAdminTranscriptions === 'function') {
           window.initAdminTranscriptions();
         } else {

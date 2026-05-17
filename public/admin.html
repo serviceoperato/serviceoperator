@@ -275,6 +275,13 @@
             </label>
             <button type="button" class="tx-pill" data-tx-filter="unreviewed">Unreviewed only</button>
             <button type="button" class="tx-pill" data-tx-filter="sync-pending">Google sync pending</button>
+            <label class="tx-pill" id="txSortPill">
+              <span class="mono">Sort</span>
+              <select id="txSortSelect" aria-label="Sort transcriptions">
+                <option value="recent">Newest first</option>
+                <option value="oldest">Oldest first</option>
+              </select>
+            </label>
           </div>
         </div>
       </div>
@@ -298,18 +305,23 @@
       </details>
     </section>
 
-    <div id="txOverlay" class="tx-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="txDetailTitle">
-      <div class="tx-overlay__backdrop" data-tx-close></div>
-      <div class="tx-overlay__sheet">
-        <div class="tx-overlay__handle" aria-hidden="true"></div>
-        <header class="tx-detail__head">
-          <button type="button" class="tf-admin-toolbar__btn tx-detail__close" data-tx-close aria-label="Close">Close</button>
-          <p id="txDetailCat" class="mono tf-admin-muted" style="margin:0 0 0.25rem;font-size:0.68rem"></p>
-          <h3 id="txDetailTitle" style="margin:0;font-size:0.95rem;line-height:1.35"></h3>
-        </header>
-        <div id="txDetailScroll" class="tx-detail__scroll"></div>
-      </div>
-    </div>
+    <section id="transcriptionsDetailSection" class="tx-admin tx-admin--dashboard tx-detail-page tf-admin-table-card is-hidden" aria-label="Transcription detail">
+      <nav class="tx-detail-page__nav" aria-label="Detail navigation">
+        <a href="/admin/transcriptions" class="tf-admin-toolbar__btn tx-detail-page__back" data-tx-detail-back>? Back to Transcriptions</a>
+        <div class="tx-detail-page__pager">
+          <button type="button" class="tf-admin-toolbar__btn" id="txDetailPrevBtn" disabled>? Previous</button>
+          <button type="button" class="tf-admin-toolbar__btn" id="txDetailNextBtn" disabled>Next ?</button>
+        </div>
+        <div class="tx-detail-page__tools">
+          <button type="button" class="tf-admin-toolbar__btn" id="txDetailCopySummaryBtn">Copy summary</button>
+          <button type="button" class="tf-admin-toolbar__btn" id="txDetailCopyPromptBtn" disabled title="Coming soon">Copy AI prompt</button>
+        </div>
+      </nav>
+      <p id="txDetailPageHint" class="tx-admin__status mono tf-admin-muted" role="status"></p>
+      <div id="txDetailPageRoot" class="tx-detail-page__root"></div>
+    </section>
+
+    <div id="txOverlay" class="tx-overlay is-hidden" hidden aria-hidden="true" inert data-tx-overlay-disabled="1"></div>
     <p id="txToast" class="tx-toast mono" role="status" aria-live="polite"></p>
 
     <section id="reportCatalogSection" class="tf-admin-reports" aria-label="Report catalog">
