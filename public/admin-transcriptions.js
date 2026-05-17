@@ -645,6 +645,22 @@
     return 'path:' + (it.path || it.filepath || it.id || '');
   }
 
+  function mergeStringList(a, b) {
+    var seen = {};
+    var out = [];
+    function add(val) {
+      var t = String(val || '').trim();
+      if (!t) return;
+      var k = t.toLowerCase();
+      if (seen[k]) return;
+      seen[k] = true;
+      out.push(t);
+    }
+    (a || []).forEach(add);
+    (b || []).forEach(add);
+    return out;
+  }
+
   function mergeExtractedItems(a, b) {
     var out = Object.assign({}, a || {});
     Object.keys(b || {}).forEach(function (key) {
@@ -736,10 +752,32 @@
         raw_sections: mergedRawSections,
         rawSections: mergedRawSections,
         childIds: childIds,
-        related_files: childIds.slice(0, 8),
+        related_files: [],
         sourceKey: key,
+        sourceGroupKey: key,
+        reviewed: group.every(function (c) {
+          return !!c.reviewed;
+        }),
       });
-      entries.push(entry);
+      group.forEach(function (child) {
+        entry.decisions = mergeStringList(entry.decisions, child.decisions);
+        entry.tasks = mergeStringList(entry.tasks, child.tasks);
+        entry.openPoints = mergeStringList(entry.openPoints, child.open_points || child.openPoints);
+        entry.nextSteps = mergeStringList(entry.nextSteps, child.next_steps || child.nextSteps);
+        entry.importantPoints = mergeStringList(
+          entry.importantPoints,
+          child.important_points || child.importantPoints
+        );
+        entry.calendarEvents = mergeStringList(
+          entry.calendarEvents,
+          child.calendar_events || child.calendarEvents
+        );
+        entry.possibleActions = mergeStringList(
+          entry.possibleActions,
+          child.possible_actions || child.possibleActions
+        );
+      });
+      entries.push(applyCardCopyFields(entry));
     });
     return sortItemsNewestFirst(entries, false);
   }
@@ -957,6 +995,18 @@
   function itemDisplayTitle(item) {
     if (!item) return '';
     if (isLowQualityTranscriptionItem(item)) return UNCLEAR_ITEM_TITLE;
+    if (isSourceEntry(item)) {
+      var extractions = item.extractions || {};
+      var pickOrder = ['notes', 'meetings', 'tasks', 'calendar', 'projects', 'decisions', 'open-points'];
+      var i;
+      for (i = 0; i < pickOrder.length; i++) {
+        var kids = extractions[pickOrder[i]];
+        if (kids && kids.length && kids[0].title) {
+          var picked = shortenToWords(stripTrailingDate(kids[0].title), TITLE_MAX_WORDS);
+          if (picked && !isGenericPlaceholderText(picked)) return picked;
+        }
+      }
+    }
     var cat = String(item.category || 'notes').toLowerCase();
     var raw = String(item.rawTitle || item.title || item.path || '').trim();
     if (cat === 'tasks') {
@@ -2456,7 +2506,7 @@
       );
     }
     var topicHtml = itemInsightVisual(item, { size: 'list' });
-    return '<motion class="tx-dash-card__visual tx-dash-card__visual--topic">' + topicHtml + '</motion>';
+    return '<div class="tx-dash-card__visual tx-dash-card__visual--topic">' + topicHtml + '</div>';
   }
 
   function renderFeedSectionHeader(cat, count) {

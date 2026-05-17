@@ -5,7 +5,7 @@
   'use strict';
 
   /** Bumped when dashboard markup/behavior changes (cache-bust aid). */
-  window.TX_DASHBOARD_UI_REV = 11;
+  window.TX_DASHBOARD_UI_REV = 13;
 
   /** Detail page: collapsed preview length for full transcription reference (chars). */
   var DETAIL_REF_PREVIEW_CHARS = 650;

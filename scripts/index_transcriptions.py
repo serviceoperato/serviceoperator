@@ -809,11 +809,234 @@ def build_pipeline_meta() -> dict[str, Any]:
     }
 
 
+PRIMARY_CATEGORY_ORDER: tuple[str, ...] = (
+    "notes",
+    "meetings",
+    "projects",
+    "tasks",
+    "calendar",
+    "decisions",
+    "open-points",
+)
+
+
+def item_source_key(item: dict[str, Any]) -> str:
+    raw = item.get("source_transcription") or item.get("sourceTranscription")
+    if raw:
+        return normalize_raw_rel(str(raw)).lower()
+    audio = item.get("source_audio") or item.get("sourceAudio")
+    if audio:
+        return f"audio:{str(audio).strip().lower()}"
+    path = str(item.get("path") or item.get("filepath") or item.get("id") or "")
+    return f"path:{path}"
+
+
+def merge_string_lists(a: list[Any], b: list[Any]) -> list[Any]:
+    seen: set[str] = set()
+    out: list[Any] = []
+    for val in (a or []) + (b or []):
+        key = json.dumps(val, sort_keys=True, ensure_ascii=False) if isinstance(val, dict) else str(val).strip()
+        if not key or key in seen:
+            continue
+        seen.add(key)
+        out.append(val)
+    return out
+
+
+def merge_extracted_items(a: dict[str, Any], b: dict[str, Any]) -> dict[str, Any]:
+    out = dict(a or {})
+    for key, val in (b or {}).items():
+        if key not in out:
+            out[key] = list(val) if isinstance(val, list) else val
+        elif isinstance(out[key], list) and isinstance(val, list):
+            out[key] = merge_string_lists(out[key], val)
+    return out
+
+
+def pick_primary_item(group: list[dict[str, Any]]) -> dict[str, Any]:
+    by_cat = {str(it.get("category") or ""): it for it in group}
+    for cat in PRIMARY_CATEGORY_ORDER:
+        if cat in by_cat:
+            return by_cat[cat]
+    return group[0]
+
+
+def extraction_snapshot(child: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "id": child.get("id"),
+        "category": child.get("category"),
+        "title": child.get("title"),
+        "path": child.get("path") or child.get("filepath"),
+        "preview": child.get("preview"),
+        "summary": child.get("summary"),
+        "project": child.get("project"),
+        "date": child.get("date"),
+        "dueDate": child.get("dueDate"),
+        "eventDate": child.get("eventDate"),
+        "status": child.get("status"),
+        "extracted_items": child.get("extracted_items") or {},
+    }
+
+
+def merge_stats(group: list[dict[str, Any]]) -> dict[str, int]:
+    keys = (
+        "decisions_count",
+        "tasks_count",
+        "open_points_count",
+        "calendar_events_count",
+        "next_steps_count",
+    )
+    merged = {k: 0 for k in keys}
+    for child in group:
+        stats = child.get("stats") or {}
+        for key in keys:
+            merged[key] += int(stats.get(key) or 0)
+    return merged
+
+
+def truncate_title_words(text: str, max_words: int = 12) -> str:
+    words = re.sub(r"\s+", " ", (text or "").strip()).split()
+    if len(words) <= max_words:
+        return " ".join(words)
+    return " ".join(words[:max_words]) + "…"
+
+
+def is_low_quality_item(item: dict[str, Any]) -> bool:
+    if item.get("needs_review"):
+        return True
+    blob = f"{item.get('title', '')} {item.get('preview', '')} {item.get('summary', '')}".lower()
+    return "confidence: low" in blob
+
+
+def pick_display_title(group: list[dict[str, Any]]) -> str:
+    if any(is_low_quality_item(it) for it in group):
+        return "Unclear audio / Needs review"
+    for cat in PRIMARY_CATEGORY_ORDER:
+        for it in group:
+            if it.get("category") == cat:
+                title = str(it.get("title") or "").strip()
+                if title and len(title) > 8 and not title.lower().startswith("ai-ready"):
+                    return truncate_title_words(title, 12)
+    for it in group:
+        title = str(it.get("title") or "").strip()
+        if title:
+            return truncate_title_words(title, 12)
+    audio = group[0].get("sourceAudio") or group[0].get("source_audio")
+    return str(audio or "Voice source")
+
+
+def group_items_by_source(flat_items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """One dashboard card per source audio/transcription."""
+    groups: dict[str, list[dict[str, Any]]] = {}
+    for item in flat_items:
+        groups.setdefault(item_source_key(item), []).append(item)
+
+    source_entries: list[dict[str, Any]] = []
+    for source_key, group in groups.items():
+        primary = pick_primary_item(group)
+        categories = sorted({str(it.get("category") or "") for it in group if it.get("category")})
+        extractions: dict[str, list[dict[str, Any]]] = {}
+        for child in group:
+            cat = str(child.get("category") or "")
+            if not cat:
+                continue
+            extractions.setdefault(cat, []).append(extraction_snapshot(child))
+
+        merged_extracted: dict[str, Any] = {}
+        merged_raw_sections: dict[str, str] = {}
+        for child in group:
+            merged_extracted = merge_extracted_items(
+                merged_extracted, child.get("extracted_items") or {}
+            )
+            merged_raw_sections.update(child.get("raw_sections") or {})
+
+        stats = merge_stats(group)
+        chart_values = [
+            stats["decisions_count"],
+            stats["tasks_count"],
+            stats["open_points_count"],
+            stats["calendar_events_count"],
+            stats["next_steps_count"],
+        ]
+        child_ids = [str(it.get("id")) for it in group if it.get("id")]
+        display_title = pick_display_title(group)
+        summaries = [
+            str(it.get("summary") or it.get("preview") or "").strip()
+            for it in group
+            if it.get("summary") or it.get("preview")
+        ]
+        summary = ""
+        for s in summaries:
+            if s and s.lower() not in display_title.lower():
+                summary = s
+                break
+        if not summary and summaries:
+            summary = summaries[0]
+        source_id = short_id(f"source:{source_key}")
+        entry: dict[str, Any] = {
+            **{k: v for k, v in primary.items() if k not in ("id", "related_files", "title")},
+            "id": source_id,
+            "item_type": "source_entry",
+            "isSourceEntry": True,
+            "source_entry": True,
+            "category": primary.get("category"),
+            "primaryCategory": primary.get("category"),
+            "categories": categories,
+            "extractions": extractions,
+            "extracted_items": merged_extracted,
+            "raw_sections": merged_raw_sections,
+            "childIds": child_ids,
+            "related_files": [],
+            "stats": stats,
+            "has_chart_data": sum(1 for c in chart_values if c > 0) >= 2,
+            "sourceKey": source_key,
+            "sourceGroupKey": source_key,
+            "title": display_title,
+            "displayTitle": display_title,
+            "summary": preview_of(summary, 400) if summary else primary.get("summary"),
+            "preview": preview_of(summary or display_title, 200),
+            "reviewed": all(bool(it.get("reviewed")) for it in group),
+        }
+        source_entries.append(entry)
+
+    source_entries.sort(
+        key=lambda it: (
+            str(it.get("processing_date") or it.get("processedDate") or it.get("date") or ""),
+            str(it.get("source_transcription") or ""),
+        ),
+        reverse=True,
+    )
+    return source_entries
+
+
+def compute_index_totals(source_entries: list[dict[str, Any]]) -> tuple[dict[str, int], dict[str, int]]:
+    """Return (extraction_totals, source_totals)."""
+    extraction_totals = {cat: 0 for cat in CATEGORIES}
+    source_totals = {cat: 0 for cat in CATEGORIES}
+    for entry in source_entries:
+        cats = entry.get("categories") or []
+        for cat in cats:
+            if cat in source_totals:
+                source_totals[cat] += 1
+        for cat, children in (entry.get("extractions") or {}).items():
+            if cat in extraction_totals:
+                extraction_totals[cat] += len(children or [])
+    extraction_totals["total"] = sum(extraction_totals[c] for c in CATEGORIES)
+    source_totals["total"] = len(source_entries)
+    return extraction_totals, source_totals
+
+
 def compute_related_files(items: list[dict[str, Any]]) -> None:
+    child_ids: set[str] = set()
+    for item in items:
+        for cid in item.get("childIds") or []:
+            child_ids.add(str(cid))
     for item in items:
         related: list[str] = []
         for other in items:
             if other["id"] == item["id"]:
+                continue
+            if other["id"] in child_ids and other.get("sourceKey") == item.get("sourceKey"):
                 continue
             if item.get("source_audio") and other.get("source_audio") == item.get("source_audio"):
                 related.append(other["id"])
@@ -897,16 +1120,12 @@ def build_index() -> dict[str, Any]:
         if not it["readyForSite"]:
             continue
         visible.append(it)
-    operational = visible
-    compute_related_files(operational)
-
-    totals = {cat: 0 for cat in CATEGORIES}
-    for it in operational:
-        cat = it.get("category")
-        if cat in totals:
-            totals[cat] += 1
-    totals["needsReview"] = len(needs_review)
-    totals["total"] = len(operational)
+    flat_operational = visible
+    source_entries = group_items_by_source(flat_operational)
+    compute_related_files(source_entries)
+    extraction_totals, source_totals = compute_index_totals(source_entries)
+    extraction_totals["needsReview"] = len(needs_review)
+    source_totals["needsReview"] = len(needs_review)
 
     raw_sources = build_raw_sources(registry)
     pipeline = build_pipeline_meta()
@@ -915,14 +1134,16 @@ def build_index() -> dict[str, Any]:
         "ok": True,
         "generatedAt": utc_now_iso(),
         "registryVersion": registry.get("version", 2),
-        "totals": totals,
-        "counts": totals,
+        "totals": extraction_totals,
+        "counts": extraction_totals,
+        "sourceTotals": source_totals,
+        "sourceCount": len(source_entries),
         "rawSources": raw_sources,
         "rawTranscriptionCount": raw_sources["total"],
         "pipeline": pipeline,
         "needsReview": needs_review,
         "needsReviewCount": len(needs_review),
-        "items": operational,
+        "items": source_entries,
         "errors": errors,
     }
 
@@ -934,9 +1155,10 @@ def main() -> int:
     INDEX_PATH.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     elapsed = time.perf_counter() - started
     log.info(
-        "Wrote %s — %d operational, %d needs-review, %d raw source(s), %.2fs",
+        "Wrote %s — %d source entries (%d extractions), %d needs-review, %d raw file(s), %.2fs",
         INDEX_PATH,
-        len(data["items"]),
+        data.get("sourceCount", len(data["items"])),
+        data["totals"].get("total", 0),
         data["needsReviewCount"],
         data["rawSources"]["total"],
         elapsed,
