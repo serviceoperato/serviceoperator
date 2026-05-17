@@ -42,6 +42,10 @@ When processing voice notes:
 - prefer concise operational summaries
 - preserve the full transcription reference
 
+## Daily pipeline (Cursor)
+
+When the user asks to launch or run the voice pipeline, follow **`.cursor/rules/daily-voice-processing-pipeline.mdc`** and execute the full runbook in **`content/voice-reports/daily-voice-processing-pipeline.md`** (Phase 1 transcription + Phase 2 AI processing, Steps 0–7). Do not auto-push to Google/GitHub; sync via `/admin/transcriptions`. Git push only if explicitly requested.
+
 ## Transcription pipeline (local Windows only)
 
 - Do **not** add `faster-whisper` to the Railway Node Docker image

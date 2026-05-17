@@ -51,11 +51,15 @@
   var bound = false;
 
   function api(path) {
-    return typeof window.__soApiUrl === 'function' ? window.__soApiUrl(path) : path;
+    if (typeof soApiUrl === 'function') return soApiUrl(path);
+    if (typeof window.__soApiUrl === 'function') return window.__soApiUrl(path);
+    return path;
   }
 
   function apiCred() {
-    return typeof window.__soApiCredentials === 'function' ? window.__soApiCredentials() : 'same-origin';
+    if (typeof soApiCredentials === 'function') return soApiCredentials();
+    if (typeof window.__soApiCredentials === 'function') return window.__soApiCredentials();
+    return 'same-origin';
   }
 
   function adminJwt() {

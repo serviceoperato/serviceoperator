@@ -2950,12 +2950,24 @@
 
   /** Defer one frame past layout/paint so the workspace shell is not revealed mid-paint. */
   function revealAdminBootAfterPaint() {
+    if (revealAdminBootAfterPaint._done) return;
+    revealAdminBootAfterPaint._done = true;
+    if (revealAdminBootAfterPaint._safetyTimer) {
+      clearTimeout(revealAdminBootAfterPaint._safetyTimer);
+      revealAdminBootAfterPaint._safetyTimer = null;
+    }
     requestAnimationFrame(function () {
       requestAnimationFrame(function () {
         hideAdminBoot();
       });
     });
   }
+
+  revealAdminBootAfterPaint._safetyTimer = setTimeout(function () {
+    try {
+      hideAdminBoot();
+    } catch (eBoot) {}
+  }, 12000);
 
   Promise.all([fetchCapabilitiesData(), fetchAdminVersionProbe()])
     .then(function () {
@@ -2984,6 +2996,9 @@
       try {
         showAdminLoginGate();
       } catch (e) {}
+      revealAdminBootAfterPaint();
+    })
+    .finally(function () {
       revealAdminBootAfterPaint();
     });
 

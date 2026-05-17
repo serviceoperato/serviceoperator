@@ -1,30 +1,46 @@
 {
   "status": "success",
   "success": true,
-  "startedAt": "2026-05-16 17:22:18 UTC",
-  "finishedAt": "2026-05-16T18:02:17.313Z",
+  "startedAt": "2026-05-17 05:05:38 UTC",
+  "finishedAt": "2026-05-17 05:05:38 UTC",
   "exitCode": 0,
-  "stdout": "Local sync: 6 transcription(s) on disk; registry 6 entry/entries.",
+  "stdout": "",
   "stderr": "",
   "stats": {
     "filesScanned": 19,
-    "newProcessed": 6,
-    "transcriptions": 6,
-    "notes": 0,
-    "meetings": 0,
-    "tasks": 0,
-    "calendar": 0,
+    "newProcessed": 13,
+    "transcriptions": 19,
+    "notes": 16,
+    "meetings": 4,
+    "tasks": 14,
+    "calendar": 4,
     "errors": 0,
     "error_messages": []
   },
   "files": {
     "transcriptions": [
+      "content/transcriptions/Voice_001.md",
       "content/transcriptions/Memo_001.md",
       "content/transcriptions/Memo_002.md",
       "content/transcriptions/Memo_003.md",
       "content/transcriptions/Memo_004.md",
       "content/transcriptions/Memo_005.md",
-      "content/transcriptions/Voice_001.md"
-    ]
+      "content/transcriptions/Memo_006.md",
+      "content/transcriptions/Voice_002.md",
+      "content/transcriptions/Voice_003.md",
+      "content/transcriptions/Voice_004.md",
+      "content/transcriptions/Voice_005.md",
+      "content/transcriptions/Voice_006.md",
+      "content/transcriptions/Voice_007.md",
+      "content/transcriptions/Voice_250621_185357.md",
+      "content/transcriptions/Voice_250621_185410.md",
+      "content/transcriptions/Christian.md",
+      "content/transcriptions/Seconda.md",
+      "content/transcriptions/Voice_260516_191818.md",
+      "content/transcriptions/Voice_260516_235502.md"
+    ],
+    "dailyReport": "content/voice-reports/2026-05-17-voice-report.md",
+    "tasks": "content/tasks/todo.md",
+    "calendar": "content/calendar/events.md"
   }
 }

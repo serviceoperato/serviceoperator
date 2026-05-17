@@ -1,0 +1,35 @@
+---
+description: Run daily ServiceOpera voice processing pipeline when user asks to launch/run the pipeline
+alwaysApply: false
+---
+
+# Daily voice processing pipeline
+
+When the user asks to **launch**, **run**, or **process** the voice pipeline (Italian: *lancia la pipeline*, *esegui la pipeline*, *voice pipeline*, *pipeline vocale*), follow this workflow end-to-end.
+
+## Canonical prompt
+
+Read and execute **`content/voice-reports/daily-voice-processing-pipeline.md`** verbatim as the runbook:
+
+- **Phase 1** — Voice Recorder transcription into `content/transcriptions/`
+- **Phase 2** — AI processing per raw transcript (Steps 0–7: idempotency, classification, routing, YAML frontmatter, visual header, index updates, console output)
+
+Respect all constraints in **`.cursor/rules/voice-automation.md`** (allowed paths, no invented facts, security).
+
+## Phase 1 runner (local)
+
+Preferred local commands (Windows):
+
+- `.\scripts\run-voice-pipeline.ps1`
+- or `python scripts/process_voice_recorder_pipeline.py`
+
+Wait for Phase 1 to finish before starting Phase 2.
+
+## Out of scope for this pipeline
+
+- Do **not** auto-push to Google or GitHub. Sync via frontend **`/admin/transcriptions`**.
+- Do **not** `git commit` / `git push` unless the user explicitly asks (separate step).
+
+## Legacy prompt
+
+`content/voice-reports/cursor-voice-pipeline-prompt.md` is an older Phase 2-only variant (Steps 1–7, no Step 0). Prefer **`daily-voice-processing-pipeline.md`** for daily runs.

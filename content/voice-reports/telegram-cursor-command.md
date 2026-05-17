@@ -1,11 +1,11 @@
-Full pipeline: see cursor-voice-pipeline-prompt.md
+Full daily pipeline: see daily-voice-processing-pipeline.md (Phase 1 + Phase 2, Steps 0–7). Legacy Phase 2-only: cursor-voice-pipeline-prompt.md
 
 Process the Voice Recorder pipeline.
 
 Run the automation engine.
 
 Steps:
-1. Run scripts/process_voice_recorder_pipeline.py
+1. Run the daily pipeline per content/voice-reports/daily-voice-processing-pipeline.md (Phase 1: scripts/process_voice_recorder_pipeline.py or .\scripts\run-voice-pipeline.ps1)
 2. Read new files from G:\My Drive\Voice Recorder
 3. Transcribe new audio with faster-whisper
 4. Auto-detect spoken language

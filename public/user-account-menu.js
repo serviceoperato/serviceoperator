@@ -301,7 +301,7 @@
     if (e.key === 'Escape') closeOpenMenu();
   }
 
-  document.addEventListener('mousedown', onDocPointer);
+  document.addEventListener('click', onDocPointer);
   document.addEventListener('keydown', onDocKey);
 
   function menuRow(href, label, opts) {
@@ -341,6 +341,7 @@
   }
 
   function renderAuthed(root) {
+    closeOpenMenu();
     var email = portalEmail();
     var label = displayNameFromEmail(email);
     var loginHref = resolveLoginHref(root);
@@ -395,7 +396,14 @@
       })
     );
 
-    toggle.addEventListener('click', function () {
+    toggle.addEventListener('mousedown', function (e) {
+      e.stopPropagation();
+    });
+    panel.addEventListener('mousedown', function (e) {
+      e.stopPropagation();
+    });
+    toggle.addEventListener('click', function (e) {
+      e.stopPropagation();
       var isOpen = !panel.classList.contains('is-hidden');
       closeOpenMenu();
       if (!isOpen) {

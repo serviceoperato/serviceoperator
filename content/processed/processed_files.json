@@ -9,7 +9,13 @@
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_001.md",
       "processed_datetime": "2026-05-16 17:33:54 UTC",
       "detected_language": "nn",
-      "language_probability": 0.8789923191070557
+      "language_probability": 0.8789923191070557,
+      "pipeline_classified": true,
+      "pipeline_classified_datetime": "2026-05-17 06:22:15 UTC",
+      "pipeline_categories": [
+        "unclear"
+      ],
+      "pipeline_confidence": 0.35
     },
     "G:\\My Drive\\Voice Recorder\\Memo 001.m4a": {
       "file_name": "Memo 001.m4a",
@@ -20,7 +26,14 @@
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Memo_001.md",
       "processed_datetime": "2026-05-16 17:40:01 UTC",
       "detected_language": "it",
-      "language_probability": 0.9377347230911255
+      "language_probability": 0.9377347230911255,
+      "pipeline_classified": true,
+      "pipeline_classified_datetime": "2026-05-17 06:22:15 UTC",
+      "pipeline_categories": [
+        "task",
+        "business idea"
+      ],
+      "pipeline_confidence": 0.69
     },
     "G:\\My Drive\\Voice Recorder\\Memo 002.m4a": {
       "file_name": "Memo 002.m4a",
@@ -31,7 +44,14 @@
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Memo_002.md",
       "processed_datetime": "2026-05-16 17:44:50 UTC",
       "detected_language": "it",
-      "language_probability": 0.9923604130744934
+      "language_probability": 0.9923604130744934,
+      "pipeline_classified": true,
+      "pipeline_classified_datetime": "2026-05-17 06:22:15 UTC",
+      "pipeline_categories": [
+        "meeting",
+        "task"
+      ],
+      "pipeline_confidence": 0.69
     },
     "G:\\My Drive\\Voice Recorder\\Memo 003.m4a": {
       "file_name": "Memo 003.m4a",
@@ -42,7 +62,13 @@
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Memo_003.md",
       "processed_datetime": "2026-05-16 17:49:11 UTC",
       "detected_language": "it",
-      "language_probability": 0.9913640022277832
+      "language_probability": 0.9913640022277832,
+      "pipeline_classified": true,
+      "pipeline_classified_datetime": "2026-05-17 06:22:15 UTC",
+      "pipeline_categories": [
+        "meeting"
+      ],
+      "pipeline_confidence": 0.69
     },
     "G:\\My Drive\\Voice Recorder\\Memo 004.m4a": {
       "file_name": "Memo 004.m4a",
@@ -53,7 +79,14 @@
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Memo_004.md",
       "processed_datetime": "2026-05-16 17:53:50 UTC",
       "detected_language": "it",
-      "language_probability": 0.9909849166870117
+      "language_probability": 0.9909849166870117,
+      "pipeline_classified": true,
+      "pipeline_classified_datetime": "2026-05-17 06:22:15 UTC",
+      "pipeline_categories": [
+        "calendar event",
+        "personal note"
+      ],
+      "pipeline_confidence": 0.69
     },
     "G:\\My Drive\\Voice Recorder\\Memo 005.m4a": {
       "file_name": "Memo 005.m4a",
@@ -64,7 +97,13 @@
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Memo_005.md",
       "processed_datetime": "2026-05-16 18:02:14 UTC",
       "detected_language": "it",
-      "language_probability": 0.989618718624115
+      "language_probability": 0.989618718624115,
+      "pipeline_classified": true,
+      "pipeline_classified_datetime": "2026-05-17 06:22:15 UTC",
+      "pipeline_categories": [
+        "task"
+      ],
+      "pipeline_confidence": 0.81
     },
     "G:\\My Drive\\Voice Recorder\\Memo 006.m4a": {
       "file_name": "Memo 006.m4a",
@@ -75,7 +114,14 @@
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Memo_006.md",
       "processed_datetime": "2026-05-17 05:09:22 UTC",
       "detected_language": "it",
-      "language_probability": 0.9780745506286621
+      "language_probability": 0.9780745506286621,
+      "pipeline_classified": true,
+      "pipeline_classified_datetime": "2026-05-17 06:22:15 UTC",
+      "pipeline_categories": [
+        "task",
+        "project update"
+      ],
+      "pipeline_confidence": 0.69
     },
     "G:\\My Drive\\Voice Recorder\\Voice 002.m4a": {
       "file_name": "Voice 002.m4a",
@@ -86,7 +132,13 @@
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_002.md",
       "processed_datetime": "2026-05-17 05:09:26 UTC",
       "detected_language": "ru",
-      "language_probability": 0.35724231600761414
+      "language_probability": 0.35724231600761414,
+      "pipeline_classified": true,
+      "pipeline_classified_datetime": "2026-05-17 06:22:16 UTC",
+      "pipeline_categories": [
+        "unclear"
+      ],
+      "pipeline_confidence": 0.35
     },
     "G:\\My Drive\\Voice Recorder\\Voice 003.m4a": {
       "file_name": "Voice 003.m4a",
@@ -97,7 +149,13 @@
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_003.md",
       "processed_datetime": "2026-05-17 05:09:32 UTC",
       "detected_language": "it",
-      "language_probability": 0.9884478449821472
+      "language_probability": 0.9884478449821472,
+      "pipeline_classified": true,
+      "pipeline_classified_datetime": "2026-05-17 06:22:16 UTC",
+      "pipeline_categories": [
+        "unclear"
+      ],
+      "pipeline_confidence": 0.35
     },
     "G:\\My Drive\\Voice Recorder\\Voice 004.m4a": {
       "file_name": "Voice 004.m4a",
@@ -108,7 +166,13 @@
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_004.md",
       "processed_datetime": "2026-05-17 05:09:52 UTC",
       "detected_language": "it",
-      "language_probability": 0.9791030287742615
+      "language_probability": 0.9791030287742615,
+      "pipeline_classified": true,
+      "pipeline_classified_datetime": "2026-05-17 06:22:16 UTC",
+      "pipeline_categories": [
+        "task"
+      ],
+      "pipeline_confidence": 0.69
     },
     "G:\\My Drive\\Voice Recorder\\Voice 005.m4a": {
       "file_name": "Voice 005.m4a",
@@ -119,7 +183,14 @@
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_005.md",
       "processed_datetime": "2026-05-17 05:21:55 UTC",
       "detected_language": "it",
-      "language_probability": 0.9681119918823242
+      "language_probability": 0.9681119918823242,
+      "pipeline_classified": true,
+      "pipeline_classified_datetime": "2026-05-17 06:22:16 UTC",
+      "pipeline_categories": [
+        "task",
+        "calendar event"
+      ],
+      "pipeline_confidence": 0.81
     },
     "G:\\My Drive\\Voice Recorder\\Voice 006.m4a": {
       "file_name": "Voice 006.m4a",
@@ -130,7 +201,13 @@
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_006.md",
       "processed_datetime": "2026-05-17 05:22:07 UTC",
       "detected_language": "it",
-      "language_probability": 0.9962931275367737
+      "language_probability": 0.9962931275367737,
+      "pipeline_classified": true,
+      "pipeline_classified_datetime": "2026-05-17 06:22:16 UTC",
+      "pipeline_categories": [
+        "unclear"
+      ],
+      "pipeline_confidence": 0.35
     },
     "G:\\My Drive\\Voice Recorder\\Voice 007.m4a": {
       "file_name": "Voice 007.m4a",
@@ -141,7 +218,13 @@
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_007.md",
       "processed_datetime": "2026-05-17 05:22:13 UTC",
       "detected_language": "it",
-      "language_probability": 0.887336254119873
+      "language_probability": 0.887336254119873,
+      "pipeline_classified": true,
+      "pipeline_classified_datetime": "2026-05-17 06:22:16 UTC",
+      "pipeline_categories": [
+        "personal note"
+      ],
+      "pipeline_confidence": 0.57
     },
     "G:\\My Drive\\Voice Recorder\\Voice 250621_185357.m4a": {
       "file_name": "Voice 250621_185357.m4a",
@@ -152,7 +235,13 @@
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_250621_185357.md",
       "processed_datetime": "2026-05-17 05:23:10 UTC",
       "detected_language": "nn",
-      "language_probability": 0.5088310837745667
+      "language_probability": 0.5088310837745667,
+      "pipeline_classified": true,
+      "pipeline_classified_datetime": "2026-05-17 06:22:16 UTC",
+      "pipeline_categories": [
+        "unclear"
+      ],
+      "pipeline_confidence": 0.35
     },
     "G:\\My Drive\\Voice Recorder\\Voice 250621_185410.m4a": {
       "file_name": "Voice 250621_185410.m4a",
@@ -163,7 +252,84 @@
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_250621_185410.md",
       "processed_datetime": "2026-05-17 05:23:14 UTC",
       "detected_language": "es",
-      "language_probability": 0.4350312352180481
+      "language_probability": 0.4350312352180481,
+      "pipeline_classified": true,
+      "pipeline_classified_datetime": "2026-05-17 06:22:16 UTC",
+      "pipeline_categories": [
+        "unclear"
+      ],
+      "pipeline_confidence": 0.35
+    },
+    "G:\\My Drive\\Voice Recorder\\Christian.m4a": {
+      "file_name": "Christian.m4a",
+      "full_path": "G:\\My Drive\\Voice Recorder\\Christian.m4a",
+      "size": 58840556,
+      "modified_time": 1750529128.505,
+      "modified_datetime": "2025-06-21 18:05:28 UTC",
+      "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Christian.md",
+      "processed_datetime": "2026-05-17 05:53:53 UTC",
+      "detected_language": "it",
+      "language_probability": 0.9727195501327515,
+      "pipeline_classified": true,
+      "pipeline_classified_datetime": "2026-05-17 06:22:16 UTC",
+      "pipeline_categories": [
+        "meeting",
+        "personal note"
+      ],
+      "pipeline_confidence": 0.93
+    },
+    "G:\\My Drive\\Voice Recorder\\Seconda.m4a": {
+      "file_name": "Seconda.m4a",
+      "full_path": "G:\\My Drive\\Voice Recorder\\Seconda.m4a",
+      "size": 63073224,
+      "modified_time": 1750587990.712,
+      "modified_datetime": "2025-06-22 10:26:30 UTC",
+      "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Seconda.md",
+      "processed_datetime": "2026-05-17 06:22:04 UTC",
+      "detected_language": "it",
+      "language_probability": 0.9865317940711975,
+      "pipeline_classified": true,
+      "pipeline_classified_datetime": "2026-05-17 06:22:16 UTC",
+      "pipeline_categories": [
+        "calendar event",
+        "meeting"
+      ],
+      "pipeline_confidence": 0.81
+    },
+    "G:\\My Drive\\Voice Recorder\\Voice 260516_191818.m4a": {
+      "file_name": "Voice 260516_191818.m4a",
+      "full_path": "G:\\My Drive\\Voice Recorder\\Voice 260516_191818.m4a",
+      "size": 122399,
+      "modified_time": 1778933907.574,
+      "modified_datetime": "2026-05-16 12:18:27 UTC",
+      "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_260516_191818.md",
+      "processed_datetime": "2026-05-17 06:22:09 UTC",
+      "detected_language": "it",
+      "language_probability": 0.9917218089103699,
+      "pipeline_classified": true,
+      "pipeline_classified_datetime": "2026-05-17 06:22:16 UTC",
+      "pipeline_categories": [
+        "unclear"
+      ],
+      "pipeline_confidence": 0.35
+    },
+    "G:\\My Drive\\Voice Recorder\\Voice 260516_235502.m4a": {
+      "file_name": "Voice 260516_235502.m4a",
+      "full_path": "G:\\My Drive\\Voice Recorder\\Voice 260516_235502.m4a",
+      "size": 275560,
+      "modified_time": 1778950520.114,
+      "modified_datetime": "2026-05-16 16:55:20 UTC",
+      "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_260516_235502.md",
+      "processed_datetime": "2026-05-17 06:22:15 UTC",
+      "detected_language": "en",
+      "language_probability": 0.7901437878608704,
+      "pipeline_classified": true,
+      "pipeline_classified_datetime": "2026-05-17 06:22:16 UTC",
+      "pipeline_categories": [
+        "calendar event",
+        "personal note"
+      ],
+      "pipeline_confidence": 0.57
     }
   }
 }

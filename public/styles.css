@@ -205,7 +205,8 @@ a:hover { color: var(--amber-2); }
 .nav {
   position: fixed;
   top: 0; left: 0; right: 0;
-  z-index: 50;
+  /* Above .admin-boot (60) so account menu + hamburger work while console loads */
+  z-index: 70;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -2643,7 +2644,7 @@ html.so-site-nav-open {
 
 .so-nav-account { display: inline-flex; align-items: center; gap: 0.75rem; }
 .so-nav-account--authed { flex-wrap: wrap; justify-content: flex-end; }
-.so-user-menu { position: relative; display: inline-flex; align-items: center; }
+.so-user-menu { position: relative; display: inline-flex; align-items: center; z-index: 1; }
 .so-user-menu__toggle {
   display: inline-flex;
   align-items: center;

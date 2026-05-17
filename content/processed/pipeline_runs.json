@@ -116,6 +116,88 @@
       "errors": [
         "faster-whisper is not installed. Run: pip install faster-whisper"
       ]
+    },
+    {
+      "run_datetime": "2026-05-17 05:05:38 UTC",
+      "stats": {
+        "files_scanned": 19,
+        "files_transcribed": 13,
+        "transcriptions_classified": 19,
+        "notes_created": 16,
+        "meetings_created": 4,
+        "tasks_extracted": 14,
+        "calendar_events": 4,
+        "project_updates": 2,
+        "ambiguous_items": 7,
+        "filesScanned": 19,
+        "newProcessed": 13,
+        "transcriptions": 19,
+        "notes": 16,
+        "meetings": 4,
+        "tasks": 14,
+        "calendar": 4,
+        "errors": 0,
+        "error_messages": []
+      },
+      "files": {
+        "transcriptions": [
+          "Voice_001.md",
+          "Memo_001.md",
+          "Memo_002.md",
+          "Memo_003.md",
+          "Memo_004.md",
+          "Memo_005.md",
+          "Memo_006.md",
+          "Voice_002.md",
+          "Voice_003.md",
+          "Voice_004.md",
+          "Voice_005.md",
+          "Voice_006.md",
+          "Voice_007.md",
+          "Voice_250621_185357.md",
+          "Voice_250621_185410.md",
+          "Christian.md",
+          "Seconda.md",
+          "Voice_260516_191818.md",
+          "Voice_260516_235502.md"
+        ],
+        "transcriptions_processed": [
+          "Voice_001.md",
+          "Memo_001.md",
+          "Memo_002.md",
+          "Memo_003.md",
+          "Memo_004.md",
+          "Memo_005.md",
+          "Memo_006.md",
+          "Voice_002.md",
+          "Voice_003.md",
+          "Voice_004.md",
+          "Voice_005.md",
+          "Voice_006.md",
+          "Voice_007.md",
+          "Voice_250621_185357.md",
+          "Voice_250621_185410.md",
+          "Christian.md",
+          "Seconda.md",
+          "Voice_260516_191818.md",
+          "Voice_260516_235502.md"
+        ],
+        "dailyReport": "content/voice-reports/2026-05-17-voice-report.md",
+        "tasks": "content/tasks/todo.md",
+        "calendar": "content/calendar/events.md"
+      },
+      "files_scanned": 19,
+      "files_transcribed": 13,
+      "transcriptions_created": 13,
+      "transcriptions_classified": 19,
+      "notes_created": 16,
+      "meetings_created": 4,
+      "tasks_extracted": 14,
+      "calendar_events": 4,
+      "project_updates": 2,
+      "ambiguous_items": 7,
+      "errors": [],
+      "error_details": []
     }
   ]
 }
