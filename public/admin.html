@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
-<title>Admin ? www.serviceopera.to</title>
+<title>Admin — www.serviceopera.to</title>
 <meta name="robots" content="noindex, nofollow" />
 <meta name="so-app-version" content="1.5.72" />
 <link rel="icon" href="/favicon.png" type="image/png" sizes="any" />
@@ -32,7 +32,7 @@
 <nav class="nav" aria-label="Primary">
   <div class="nav__start">
     <a href="/" class="nav__logo">
-      <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="www.serviceopera.to ? home" decoding="async" />
+      <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="www.serviceopera.to — home" decoding="async" />
     </a>
   </div>
   <div class="nav__links">
@@ -48,7 +48,7 @@
       </span>
     </div>
     <p class="mono tf-admin-muted admin-boot__eyebrow">Operator console</p>
-    <p class="mono tf-admin-muted admin-boot__msg">Loading?</p>
+    <p class="mono tf-admin-muted admin-boot__msg">Loading…</p>
   </div>
 </div>
 
@@ -81,7 +81,7 @@
         <a class="tf-admin-nav__pill" href="/admin/voice-recorder">Voice Recorder</a>
         <a class="tf-admin-nav__pill" href="/admin/transcriptions">Transcriptions</a>
       </div>
-      <div class="tf-admin-version">Build <strong id="tfAdminVersionNum">?</strong></div>
+      <div class="tf-admin-version">Build <strong id="tfAdminVersionNum">—</strong></div>
     </div>
   </nav>
 
@@ -89,7 +89,7 @@
     <section id="usersSection" class="tf-admin-table-card">
       <h2 class="tf-admin-section-title" id="portal-users">Portal users</h2>
       <div class="tf-admin-toolbar">
-        <input type="search" id="adminUsersSearch" placeholder="Search email, slug, id?" autocomplete="off" />
+        <input type="search" id="adminUsersSearch" placeholder="Search email, slug, id…" autocomplete="off" />
         <select id="adminUsersFilter" aria-label="Filter users">
           <option value="all">All users</option>
           <option value="active">Active only</option>
@@ -97,7 +97,7 @@
         </select>
         <select id="adminUsersSort" aria-label="Sort users">
           <option value="recent">Newest first</option>
-          <option value="name">Name A?Z</option>
+          <option value="name">Name A–Z</option>
         </select>
         <button type="button" id="adminUsersCsvBtn" class="tf-admin-toolbar__btn">Export CSV</button>
       </div>
@@ -177,7 +177,7 @@
         (Google Drive). In PowerShell: <code class="mono">.\scripts\run-voice-pipeline.ps1</code>
         (installs deps from <code class="mono">requirements-voice.txt</code> if needed).
         Open <code class="mono">http://localhost:8080/admin/voice-recorder</code> after <code class="mono">node server.mjs</code> on this PC
-        (default port <strong>8080</strong>, not 3000). Production URL shows Railway data only?not local transcriptions.
+        (default port <strong>8080</strong>, not 3000). Production URL shows Railway data only — not local transcriptions.
       </p>
       <div class="tf-admin-payout-card" style="margin-top:0">
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.65rem;margin-bottom:0.85rem">
@@ -210,7 +210,7 @@
           <div>
             <h2 class="tx-admin__title">Transcriptions</h2>
             <p class="tx-admin__subtitle tf-admin-muted">
-              AI-ready operational outputs from voice workflows ? not a raw file browser.
+              AI-ready operational outputs from voice workflows — not a raw file browser.
             </p>
             <p class="tx-admin__warn tf-admin-muted" role="note">
               Raw transcriptions are not published here until they are processed into AI-ready outputs.
@@ -298,7 +298,7 @@
         <div class="tx-sheet__panel tx-sheet__panel--compact">
           <h4 id="txSearchSheetTitle" class="tx-sheet__title">Search</h4>
           <div class="tx-search-wrap">
-            <input type="search" id="txSearch" placeholder="Search titles, projects, audio, text?" autocomplete="off" aria-label="Search transcriptions" />
+            <input type="search" id="txSearch" placeholder="Search titles, projects, audio, text…" autocomplete="off" aria-label="Search transcriptions" />
           </div>
         </div>
       </div>
