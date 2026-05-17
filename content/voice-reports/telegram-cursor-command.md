@@ -1,3 +1,5 @@
+Full pipeline: see cursor-voice-pipeline-prompt.md
+
 Process the Voice Recorder pipeline.
 
 Run the automation engine.
