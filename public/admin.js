@@ -37,6 +37,7 @@
   function clearStoredAdminJwt() {
     writeStoredAdminJwt('');
   }
+  window.readStoredAdminJwt = readStoredAdminJwt;
 
   /** Safe same-origin `?next=` from login handoff or server redirect (path must start with /, no //). */
   function readAdminLoginNextParam() {
@@ -2338,10 +2339,18 @@
           window.initAdminTranscriptions();
         } else {
           console.error('[transcriptions] initAdminTranscriptions missing after dashboard load');
-          var txHint = document.getElementById('txLoadHint');
-          if (txHint) {
-            txHint.textContent =
-              'Transcriptions dashboard script did not load. Hard refresh (Ctrl+Shift+R) or sign out and back in.';
+          if (typeof window.soTxSetLoadHint === 'function') {
+            window.soTxSetLoadHint(
+              'Transcriptions dashboard script did not load. Hard refresh (Ctrl+Shift+R) or sign out and back in.',
+              'error'
+            );
+          } else {
+            var txHint = document.getElementById('txLoadHint');
+            if (txHint) {
+              txHint.textContent =
+                'Transcriptions dashboard script did not load. Hard refresh (Ctrl+Shift+R) or sign out and back in.';
+              txHint.classList.add('is-error');
+            }
           }
         }
       });

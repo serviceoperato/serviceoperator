@@ -96,8 +96,15 @@
     return 'same-origin';
   }
 
+  var ADMIN_JWT_KEY = 'so_admin_jwt';
+
   function adminJwt() {
-    return typeof readStoredAdminJwt === 'function' ? readStoredAdminJwt() : '';
+    if (typeof readStoredAdminJwt === 'function') return readStoredAdminJwt() || '';
+    try {
+      return localStorage.getItem(ADMIN_JWT_KEY) || sessionStorage.getItem(ADMIN_JWT_KEY) || '';
+    } catch (eJwt) {
+      return '';
+    }
   }
 
   function esc(s) {
@@ -1111,10 +1118,16 @@
     };
   }
 
-  function setLoadHint(text) {
+  function setLoadHint(text, kind) {
     var el = byId('txLoadHint');
-    if (el) el.textContent = text || '';
+    if (!el) return;
+    el.textContent = text || '';
+    el.classList.remove('is-error', 'is-warn', 'is-ok');
+    if (kind === 'error') el.classList.add('is-error');
+    else if (kind === 'warn') el.classList.add('is-warn');
+    else if (kind === 'ok') el.classList.add('is-ok');
   }
+  window.soTxSetLoadHint = setLoadHint;
 
   function getLoadHintText() {
     var el = byId('txLoadHint');
@@ -2761,7 +2774,7 @@
 
   function loadIndex() {
     state.loading = true;
-    setLoadHint('Loading…');
+    setLoadHint('Loading transcriptions index…', 'warn');
     var feed = byId('txFeed');
     if (feed) feed.setAttribute('aria-busy', 'true');
 
@@ -2779,7 +2792,8 @@
             apiErrorMessage(
               pack,
               'Could not load transcriptions (HTTP ' + (pack.status || '?') + ').'
-            )
+            ),
+            'error'
           );
           renderOverview();
           renderCategoryHeader();
@@ -2815,7 +2829,8 @@
             ' AI-ready output(s) · ' +
             waiting +
             ' source(s) waiting for AI' +
-            (rawOnDisk ? ' · ' + rawOnDisk + ' raw file(s) archived' : '')
+            (rawOnDisk ? ' · ' + rawOnDisk + ' raw file(s) archived' : ''),
+          'ok'
         );
 
         renderStats();
@@ -2830,7 +2845,10 @@
         state.loading = false;
         if (feed) feed.setAttribute('aria-busy', 'false');
         console.error('[transcriptions] loadIndex failed', err);
-        setLoadHint('Network error loading transcriptions. Check console and retry Rebuild index.');
+        setLoadHint(
+          'Network error loading transcriptions. Check console and retry Rebuild index.',
+          'error'
+        );
         renderOverview();
         renderCategoryHeader();
         renderCategoryCards();
@@ -2948,6 +2966,7 @@
   }
 
   window.initAdminTranscriptions = function () {
+    if (window.__txDashboardInitComplete) return;
     var section = byId('transcriptionsSection');
     if (section) {
       section.classList.add('tx-admin--dashboard');
@@ -2958,6 +2977,47 @@
     renderOverview();
     renderCategoryHeader();
     renderDistribution();
+    window.__txDashboardInitComplete = true;
     loadIndex();
   };
+
+  function txShellPath() {
+    return String(window.location.pathname || '').replace(/\/+$/, '') || '/';
+  }
+
+  function isTranscriptionsAdminRoute() {
+    return txShellPath() === '/admin/transcriptions';
+  }
+
+  function txWorkspaceVisible() {
+    var w = byId('adminWorkspace');
+    return w && !w.classList.contains('is-hidden');
+  }
+
+  function scheduleTxDashboardSelfInit() {
+    function trySelfInit() {
+      if (window.__txDashboardInitComplete) return;
+      if (!isTranscriptionsAdminRoute()) return;
+      if (!txWorkspaceVisible()) return;
+      if (typeof window.initAdminTranscriptions !== 'function') return;
+      window.initAdminTranscriptions();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', trySelfInit);
+    } else {
+      trySelfInit();
+    }
+
+    var workspace = byId('adminWorkspace');
+    if (workspace && typeof MutationObserver === 'function') {
+      var obs = new MutationObserver(function () {
+        trySelfInit();
+      });
+      obs.observe(workspace, { attributes: true, attributeFilter: ['class'] });
+    }
+    window.addEventListener('popstate', trySelfInit);
+  }
+
+  scheduleTxDashboardSelfInit();
 })();

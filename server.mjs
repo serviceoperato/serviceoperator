@@ -2202,6 +2202,9 @@ app.post('/api/admin/logout', (_req, res) => {
 app.get('/api/admin/session', (req, res) => {
   const p = getVerifiedAdmin(req);
   if (!p) return res.status(401).json({ ok: false });
+  /** Bearer-only restore (localStorage JWT): mint HttpOnly cookie so <script src> assets load. */
+  const bearer = getBearer(req);
+  if (bearer) setAdminJwtCookie(res, bearer);
   return res.json({ ok: true, email: p.email });
 });
 
@@ -4191,12 +4194,12 @@ app.use((req, res, next) => {
   return next();
 });
 
-/** Transcription admin script — not served without admin JWT (main admin.js is needed on the login shell). */
-const ADMIN_STATIC_REQUIRES_AUTH = new Set([
-  'admin.html',
-  'admin-transcriptions.js',
-  'admin-tx-dashboard.js',
-]);
+/**
+ * HTML shell gated by admin JWT. Dashboard JS/CSS are public static assets (no secrets);
+ * APIs remain requireAdmin. Script tags cannot send Authorization, so gating
+ * admin-transcriptions.js broke init when only localStorage JWT was present.
+ */
+const ADMIN_STATIC_REQUIRES_AUTH = new Set(['admin.html']);
 
 app.use((req, res, next) => {
   if (req.method !== 'GET' && req.method !== 'HEAD') return next();

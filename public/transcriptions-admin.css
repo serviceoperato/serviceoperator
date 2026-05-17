@@ -74,6 +74,33 @@
   font-size: 0.68rem;
 }
 
+.tx-admin__status.is-error {
+  color: #b91c1c;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.tx-admin__status.is-warn {
+  color: #b45309;
+  font-weight: 500;
+}
+
+.tx-admin__status.is-ok {
+  color: #166534;
+}
+
+[data-theme='dark'] .tx-admin__status.is-error {
+  color: #fca5a5;
+}
+
+[data-theme='dark'] .tx-admin__status.is-warn {
+  color: #fdba74;
+}
+
+[data-theme='dark'] .tx-admin__status.is-ok {
+  color: #86efac;
+}
+
 .tx-stats {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
