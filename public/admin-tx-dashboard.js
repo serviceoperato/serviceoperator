@@ -2792,10 +2792,17 @@
         renderDistribution();
         renderFeed();
       })
-      .catch(function () {
+      .catch(function (err) {
         state.loading = false;
         if (feed) feed.setAttribute('aria-busy', 'false');
-        setLoadHint('Network error loading transcriptions.');
+        console.error('[transcriptions] loadIndex failed', err);
+        setLoadHint('Network error loading transcriptions. Check console and retry Rebuild index.');
+        renderOverview();
+        renderCategoryHeader();
+        renderCategoryCards();
+        var feedEl = byId('txFeed');
+        if (feedEl) feedEl.innerHTML = emptyState('none');
+        renderTimeline();
       });
   }
 

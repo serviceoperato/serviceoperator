@@ -2338,16 +2338,26 @@
           window.initAdminTranscriptions();
         } else {
           console.error('[transcriptions] initAdminTranscriptions missing after dashboard load');
+          var txHint = document.getElementById('txLoadHint');
+          if (txHint) {
+            txHint.textContent =
+              'Transcriptions dashboard script did not load. Hard refresh (Ctrl+Shift+R) or sign out and back in.';
+          }
         }
       });
     }
   }
 
   function ensureTranscriptionsDashboard(done) {
+    var TX_DASH_MAX_RETRIES = 2;
+
     function isDashboardReady() {
       return window.TX_DASHBOARD_UI_REV >= 6 && typeof window.initAdminTranscriptions === 'function';
     }
     if (isDashboardReady()) {
+      try {
+        sessionStorage.removeItem('so_tx_dash_reload_attempts');
+      } catch (eReady) {}
       done();
       return;
     }
@@ -2382,7 +2392,7 @@
         done();
         return;
       }
-      if (attempts >= 2) {
+      if (attempts >= TX_DASH_MAX_RETRIES) {
         console.error('[transcriptions] dashboard UI rev still < 6 after reload attempts');
         done();
         return;
@@ -2390,7 +2400,7 @@
       attempts += 1;
       try {
         sessionStorage.setItem(attemptKey, String(attempts));
-      } catch (e) {}
+      } catch (e2) {}
       stripDashboardScripts();
       injectDashboardScript();
     }
@@ -2419,36 +2429,41 @@
       document.head.appendChild(s);
     }
 
-    var existing = document.querySelector('script[data-tx-dashboard-bundle]');
-    if (existing) {
-      if (existing.readyState === 'complete' || existing.readyState === 'loaded') {
+    function waitForDashboardScript(el) {
+      if (!el) {
+        injectDashboardScript();
+        return;
+      }
+      if (!el.getAttribute('data-tx-dashboard-bundle')) {
+        el.setAttribute('data-tx-dashboard-bundle', '1');
+      }
+      if (el.readyState === 'complete' || el.readyState === 'loaded') {
         finishOrRetryAfterLoad();
         return;
       }
-      existing.addEventListener('load', finishOrRetryAfterLoad);
-      existing.addEventListener('error', function () {
-        console.error('[transcriptions] dashboard script failed:', existing.src);
-        done();
-      });
-      return;
+      el.addEventListener(
+        'load',
+        function () {
+          finishOrRetryAfterLoad();
+        },
+        { once: true }
+      );
+      el.addEventListener(
+        'error',
+        function () {
+          console.error('[transcriptions] dashboard script failed:', el.src);
+          finishOrRetryAfterLoad();
+        },
+        { once: true }
+      );
     }
 
-    if (
-      document.querySelector('script[src*="admin-transcriptions.js"], script[src*="admin-tx-dashboard.js"]')
-    ) {
-      if (attempts >= 2) {
-        console.error('[transcriptions] stale dashboard bundle; reload attempts exhausted');
-        done();
-        return;
-      }
-      attempts += 1;
-      try {
-        sessionStorage.setItem(attemptKey, String(attempts));
-      } catch (e) {}
-      stripDashboardScripts();
-    }
-
-    injectDashboardScript();
+    var existing =
+      document.querySelector('script[data-tx-dashboard-bundle]') ||
+      document.querySelector(
+        'script[src*="admin-transcriptions.js"], script[src*="admin-tx-dashboard.js"]'
+      );
+    waitForDashboardScript(existing);
   }
 
   var voicePipelinePollTimer = null;
