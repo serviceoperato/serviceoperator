@@ -2350,25 +2350,27 @@
 
   function ensureTranscriptionsDashboard(done) {
     var TX_DASH_MAX_RETRIES = 2;
+    var attemptKey = 'so_tx_dash_reload_attempts';
 
     function isDashboardReady() {
       return window.TX_DASHBOARD_UI_REV >= 6 && typeof window.initAdminTranscriptions === 'function';
     }
     if (isDashboardReady()) {
       try {
-        sessionStorage.removeItem('so_tx_dash_reload_attempts');
+        sessionStorage.removeItem(attemptKey);
       } catch (eReady) {}
       done();
       return;
     }
 
+    /* Legacy: stale sessionStorage blocked init after earlier cache-bust reloads. */
+    try {
+      sessionStorage.removeItem(attemptKey);
+    } catch (eLegacy) {}
+
     var versionMeta = document.querySelector('meta[name="so-app-version"]');
     var version = (versionMeta && versionMeta.getAttribute('content')) || '';
-    var attemptKey = 'so_tx_dash_reload_attempts';
     var attempts = 0;
-    try {
-      attempts = parseInt(sessionStorage.getItem(attemptKey) || '0', 10) || 0;
-    } catch (e) {}
 
     function stripDashboardScripts() {
       document
@@ -2398,9 +2400,6 @@
         return;
       }
       attempts += 1;
-      try {
-        sessionStorage.setItem(attemptKey, String(attempts));
-      } catch (e2) {}
       stripDashboardScripts();
       injectDashboardScript();
     }

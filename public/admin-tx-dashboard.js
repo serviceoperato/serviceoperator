@@ -1053,10 +1053,36 @@
     return true;
   }
 
+  function countsFromItems(items, serverCounts) {
+    var counts = {
+      meetings: 0,
+      notes: 0,
+      tasks: 0,
+      calendar: 0,
+      projects: 0,
+      decisions: 0,
+      'open-points': 0,
+      total: 0,
+    };
+    items.forEach(function (it) {
+      var cat = String(it.category || '').toLowerCase();
+      if (counts[cat] != null) counts[cat] += 1;
+    });
+    counts.total = items.length;
+    if (serverCounts && serverCounts.needsReview != null) {
+      counts.needsReview = serverCounts.needsReview;
+    }
+    return counts;
+  }
+
   function normalizeIndex(j) {
-    var counts = j.counts || j.totals || {};
+    var serverCounts = j.counts || j.totals || {};
     var items = (j.items || []).map(normalizeItem).filter(isAiReadyItem);
-    var chartPack = j.has_chart_data != null ? { hasChartData: !!j.has_chart_data, chart: j.chart || [] } : buildChartFromCounts(counts);
+    var counts = countsFromItems(items, serverCounts);
+    var chartPack =
+      j.has_chart_data != null
+        ? { hasChartData: !!j.has_chart_data, chart: j.chart || [] }
+        : buildChartFromCounts(counts);
     var projects = j.projects;
     if (!projects || !projects.length) {
       var set = {};
@@ -2747,10 +2773,18 @@
         if (feed) feed.setAttribute('aria-busy', 'false');
         if (!pack.ok) {
           state.apiUnavailable = pack.status === 404;
-          setLoadHint(apiErrorMessage(pack, 'Could not load transcriptions.'));
+          state.items = [];
+          state.counts = {};
+          setLoadHint(
+            apiErrorMessage(
+              pack,
+              'Could not load transcriptions (HTTP ' + (pack.status || '?') + ').'
+            )
+          );
           renderOverview();
           renderCategoryHeader();
-          byId('txFeed').innerHTML = emptyState('none');
+          renderCategoryCards();
+          renderFeed();
           return;
         }
         var norm = normalizeIndex(pack.j);
