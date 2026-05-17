@@ -604,7 +604,14 @@ def main() -> int:
 
     if os.environ.get("VOICE_PHASE2_HEURISTIC") == "1":
         return main_heuristic()
-    return run_cursor_composer_phase2()
+    if os.environ.get("CURSOR_API_KEY"):
+        return run_cursor_composer_phase2()
+    log.error(
+        "Phase 2 is Chat Composer only. Run AI processing in Cursor chat "
+        "(content/voice-reports/cursor-voice-ai-prompt.md). "
+        "Or set VOICE_PHASE2_HEURISTIC=1 for legacy keyword mode."
+    )
+    return 2
 
 
 if __name__ == "__main__":

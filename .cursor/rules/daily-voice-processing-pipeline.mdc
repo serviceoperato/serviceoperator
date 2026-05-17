@@ -1,67 +1,50 @@
 ---
-description: Daily voice pipeline — always run Phase 1 + Phase 2 without asking
+description: Daily voice pipeline — Phase 1 script + Phase 2 Chat Composer (full auto)
 alwaysApply: true
 ---
 
 # Daily voice processing pipeline
 
-When the user asks to **launch**, **run**, or **process** the voice pipeline (Italian: *lancia la pipeline*, *esegui la pipeline*, *voice pipeline*, *pipeline vocale*), or when voice/transcription work is implied, follow this workflow end-to-end **without asking for confirmation**.
+When the user asks to **launch**, **run**, or **process** the voice pipeline (Italian: *lancia la pipeline*, *esegui la pipeline*, *voice pipeline*, *pipeline vocale*, *processa voice*), or when voice/transcription work is implied:
 
-**Always run the full pipeline end-to-end every time** (even if Phase 1 reports zero new audio files). **Do not stop early. Do not ask for confirmation between steps.**
+**Run the complete pipeline yourself in one go. Do not ask the user to run Phase 1 in PowerShell separately. Do not stop after Phase 1.**
 
-1. **Phase 1** — transcription (local script)
-2. **Phase 2** — AI processing per runbook (Steps 0–7)
-3. **Reindex** — `scripts/index_transcriptions.py`
-4. **Validate** — `scripts/validate_voice_publish.py` (must pass)
-5. **Git publish** — commit + push AI-ready outputs (mandatory final step)
+## Full sequence (every time)
 
-Do not stop after Phase 1 or Phase 2. The pipeline is incomplete until **git push** succeeds (or there is nothing to commit after validation).
+1. **Phase 1 — Transcribe (terminal)**  
+   `python scripts/transcribe_voice_recorder.py`  
+   Input: `G:\My Drive\Voice Recorder` → `content/transcriptions/*.md`
 
-## Canonical prompt
+2. **Phase 2 — AI structuring (this Chat Composer)**  
+   For each raw not yet `ready_for_site`, follow **`content/voice-reports/cursor-voice-ai-prompt.md`**:  
+   read raw → classify → write outputs under `content/{meetings,notes,tasks,calendar,projects,decisions,open-points}` → update `processed_files.json` → `<!-- PROCESSED: true -->` on raw.
 
-Read and execute **`content/voice-reports/daily-voice-processing-pipeline.md`** verbatim as the runbook:
+3. **Reindex** — `python scripts/index_transcriptions.py`
 
-- **Phase 1** — Voice Recorder transcription into `content/transcriptions/`
-- **Phase 2** — AI processing per raw transcript (Steps 0–7: idempotency, classification, routing, YAML frontmatter, visual header, index updates, console output)
+4. **Validate** — `python scripts/validate_voice_publish.py` (must pass)
 
-Respect all constraints in **`.cursor/rules/voice-automation.md`** (allowed paths, no invented facts, security).
+5. **Git publish** — `.\scripts\git_publish_voice_outputs.ps1` then `git push`  
+   Message: **`Update AI-ready voice transcription outputs`**
 
-## Runners (local, Windows)
+Pipeline is **incomplete** until Phase 2 + index + validate + push finish (or nothing to commit after validation).
 
-**Single command (full pipeline including git push):**
+## Phase 2 rules
 
-- `.\scripts\run-voice-pipeline.ps1`
+- **Chat Composer only** — not `OPENAI_API_KEY`, not `CURSOR_API_KEY` / SDK, not heuristic `classify_daily` unless user explicitly requests legacy mode.
+- Skip files already `ready_for_site` with unchanged output (registry + disk).
+- Main `/admin/transcriptions`: only AI-ready outputs; raw only in pending box.
 
-Or step by step:
+## Optional local shortcut (Phase 1 only)
 
-- Phase 1: `python scripts/transcribe_voice_recorder.py`
-- Phase 2: `python scripts/process_daily_voice_phase2.py` → **Cursor Composer** via `scripts/cursor_voice_phase2.mjs` (`@cursor/sdk`, `CURSOR_API_KEY` from [Cursor Dashboard](https://cursor.com/dashboard) — **not** `OPENAI_API_KEY`). Runs on the **local repo**. Install once: `cd telegram-cursor-bot && npm install`. Heuristic fallback only if `VOICE_PHASE2_HEURISTIC=1`.
-- Reindex: `python scripts/index_transcriptions.py` (main list = AI-ready only; pending/failed in `rawSources.pendingSources`)
-- Validate: `python scripts/validate_voice_publish.py` (must pass before git)
-- **Git publish (required):** `.\scripts\git_publish_voice_outputs.ps1` — commit message: `Update AI-ready voice transcription outputs`; only voice-related paths; then `git push`
+`.\scripts\run-voice-pipeline.ps1` transcribes only; if the user ran it alone, still run Phase 2–5 in chat when they next ask to process voice.
 
-**Never publish raw-only transcriptions** to `/admin/transcriptions` or git as visible site items. Per-file sequence: detect audio → raw MD (`raw_created`) → immediate Phase 2 AI → outputs under `content/{meetings,notes,tasks,...}` → registry → index. **Main list visibility: ONLY `ready_for_site`** (not `ai_processed`). Pending box: `detected`, `raw_created`, `ai_processing_*`, `ai_processed`, `failed`, `needs_review`. Commit/push only when `readyForSite` and primary AI outputs exist.
+## Constraints
 
-Legacy orchestrator (old heuristic classify only): `python scripts/process_voice_recorder_pipeline.py` — do not use for daily runs.
+- `.cursor/rules/voice-automation.md`
+- Do not commit unrelated files
+- Do not invent facts in outputs
 
-Wait for Phase 1 to finish before starting Phase 2.
+## Legacy (do not use daily)
 
-## Git publish (mandatory)
-
-After validation passes, **always** commit and push voice pipeline outputs:
-
-1. `git add` only AI-ready content + registry/index paths (see `scripts/git_publish_voice_outputs.ps1`)
-2. Commit: **`Update AI-ready voice transcription outputs`**
-3. **`git push`** to origin
-
-If validation fails, **do not** commit or push. Fix the pipeline first.
-
-Do **not** commit unrelated files. Do **not** skip git push when the pipeline was run to completion with valid outputs.
-
-## Out of scope for this pipeline
-
-- Do **not** auto-sync to Google Calendar/Tasks from git; use **`/admin/transcriptions`** for Google sync.
-
-## Legacy prompt
-
-`content/voice-reports/cursor-voice-pipeline-prompt.md` is an older Phase 2-only variant (Steps 1–7, no Step 0). Prefer **`daily-voice-processing-pipeline.md`** for daily runs.
+- `python scripts/process_voice_recorder_pipeline.py`
+- `VOICE_PHASE2_HEURISTIC=1`

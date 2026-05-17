@@ -25,22 +25,13 @@ if ($LASTEXITCODE -ne 0) {
   exit 1
 }
 
-# Phase 1 — transcription + immediate per-file Phase 2
+# Phase 1 — transcription only (Whisper → content/transcriptions/)
 python "$RepoRoot\scripts\transcribe_voice_recorder.py"
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-# Phase 2 — daily AI-ready processing (runbook Steps 0–7)
-python "$RepoRoot\scripts\process_daily_voice_phase2.py"
-if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
-# Rebuild admin index
-python "$RepoRoot\scripts\index_transcriptions.py"
-if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
-# Validate before any publish/commit
-python "$RepoRoot\scripts\validate_voice_publish.py"
-if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
-# Phase 3 — git commit + push (mandatory end of pipeline)
-& "$RepoRoot\scripts\git_publish_voice_outputs.ps1"
-exit $LASTEXITCODE
+Write-Host ""
+Write-Host "Phase 1 complete. For Phase 2–5 (AI + index + git), ask in Cursor chat:"
+Write-Host "  lancia pipeline voice / processa voice"
+Write-Host "(Composer runs transcribe + AI + commit in one go when you ask there.)"
+Write-Host ""
+exit 0
