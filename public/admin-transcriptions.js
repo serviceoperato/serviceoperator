@@ -1,27 +1,54 @@
 /**
- * Admin /admin/transcriptions — AI-ready voice outputs browser.
+ * Admin /admin/transcriptions — mobile-first feed UI for AI-ready voice outputs.
  */
 (function () {
   'use strict';
 
+  var CATEGORIES = [
+    { key: 'all', label: 'All', short: 'All' },
+    { key: 'meetings', label: 'Meetings', short: 'Meet' },
+    { key: 'notes', label: 'Notes', short: 'Notes' },
+    { key: 'tasks', label: 'Tasks', short: 'Tasks' },
+    { key: 'calendar', label: 'Calendar', short: 'Cal' },
+    { key: 'projects', label: 'Projects', short: 'Proj' },
+    { key: 'decisions', label: 'Decisions', short: 'Dec' },
+    { key: 'open-points', label: 'Open points', short: 'Open' },
+  ];
+
+  var CHART_COLORS = [
+    '#c9a227',
+    '#6bcb8a',
+    '#7eb8da',
+    '#d4846a',
+    '#a78bfa',
+    '#f472b6',
+    '#94a3b8',
+  ];
+
   var state = {
     items: [],
+    counts: {},
     filtered: [],
-    selectedId: null,
+    searchResults: null,
     category: 'all',
-    sort: 'newest',
-    search: '',
+    filters: { today: false, week: false, unreviewed: false, syncPending: false },
+    project: '',
+    searchQuery: '',
+    searchLoading: false,
+    selectedId: null,
+    detailItem: null,
+    indexMeta: {},
+    syncSettings: { auto_sync_google: false },
+    chart: null,
+    hasChartData: false,
+    rawTranscriptionCount: 0,
+    generatedAt: null,
+    loading: false,
+    apiUnavailable: false,
   };
 
-  var CATEGORIES = [
-    { key: 'meetings', label: 'Meeting Summaries' },
-    { key: 'notes', label: 'Personal Notes' },
-    { key: 'tasks', label: 'Tasks' },
-    { key: 'calendar', label: 'Calendar Events' },
-    { key: 'projects', label: 'Project Updates' },
-    { key: 'decisions', label: 'Decision Log' },
-    { key: 'open-points', label: 'Open Points / Questions' },
-  ];
+  var searchTimer = null;
+  var bound = false;
 
   function api(path) {
     return typeof window.__soApiUrl === 'function' ? window.__soApiUrl(path) : path;
@@ -36,305 +63,984 @@
   }
 
   function esc(s) {
+    if (s == null) return '';
     return typeof escapeHtml === 'function'
       ? escapeHtml(s)
       : String(s)
           .replace(/&/g, '&amp;')
           .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;');
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
   }
 
   function byId(id) {
     return document.getElementById(id);
   }
 
-  function parseDate(item) {
-    var d = item.processedDate || item.eventDate || item.title || '';
-    var t = Date.parse(d);
-    return Number.isNaN(t) ? 0 : t;
+  function toast(msg) {
+    var el = byId('txToast');
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.add('is-visible');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function () {
+      el.classList.remove('is-visible');
+    }, 2800);
   }
 
-  function applyFilters() {
-    var q = state.search.trim().toLowerCase();
-    var list = state.items.slice();
+  function adminFetch(path, opts) {
+    opts = opts || {};
+    var headers = Object.assign(
+      { Authorization: 'Bearer ' + adminJwt() },
+      opts.headers || {}
+    );
+    if (opts.body && typeof opts.body === 'object' && !(opts.body instanceof FormData)) {
+      headers['Content-Type'] = 'application/json';
+      opts.body = JSON.stringify(opts.body);
+    }
+    return fetch(api(path), {
+      method: opts.method || 'GET',
+      credentials: apiCred(),
+      cache: 'no-store',
+      headers: headers,
+      body: opts.body,
+    }).then(function (r) {
+      return r
+        .json()
+        .catch(function () {
+          return {};
+        })
+        .then(function (j) {
+          return { ok: r.ok, status: r.status, j: j };
+        });
+    });
+  }
+
+  function tryApi(paths, opts) {
+    var i = 0;
+    function next() {
+      if (i >= paths.length) {
+        return Promise.resolve({ ok: false, status: 404, j: { error: 'API not available' } });
+      }
+      return adminFetch(paths[i], opts).then(function (pack) {
+        if (pack.status === 404 && i < paths.length - 1) {
+          i += 1;
+          return next();
+        }
+        return pack;
+      });
+    }
+    return next();
+  }
+
+  function iconSvg(key) {
+    var paths = {
+      all: '<circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/>',
+      meetings:
+        '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+      notes: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+      tasks: '<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',
+      calendar:
+        '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+      projects: '<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>',
+      decisions: '<path d="M12 3v18"/><path d="M5 8h14M5 16h14"/>',
+      'open-points': '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
+    };
+    var d = paths[key] || paths.all;
+    return (
+      '<svg class="tx-cat-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      d +
+      '</svg>'
+    );
+  }
+
+  function parseItemDate(item) {
+    var d = item.processedDate || item.eventDate || item.title || '';
+    var t = Date.parse(d);
+    if (!Number.isNaN(t)) return t;
+    var m = String(d).match(/(\d{4})-(\d{2})-(\d{2})/);
+    if (m) return Date.parse(m[1] + '-' + m[2] + '-' + m[3]);
+    return 0;
+  }
+
+  function relativeDate(item) {
+    var t = parseItemDate(item);
+    if (!t) return '—';
+    var diff = Date.now() - t;
+    var sec = Math.floor(diff / 1000);
+    if (sec < 60) return 'just now';
+    var min = Math.floor(sec / 60);
+    if (min < 60) return min + 'm ago';
+    var hr = Math.floor(min / 60);
+    if (hr < 24) return hr + 'h ago';
+    var day = Math.floor(hr / 24);
+    if (day < 7) return day + 'd ago';
+    if (day < 30) return Math.floor(day / 7) + 'w ago';
+    try {
+      return new Date(t).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    } catch (e) {
+      return '—';
+    }
+  }
+
+  function isToday(ts) {
+    if (!ts) return false;
+    var d = new Date(ts);
+    var n = new Date();
+    return (
+      d.getFullYear() === n.getFullYear() &&
+      d.getMonth() === n.getMonth() &&
+      d.getDate() === n.getDate()
+    );
+  }
+
+  function isThisWeek(ts) {
+    if (!ts) return false;
+    var start = new Date();
+    start.setHours(0, 0, 0, 0);
+    start.setDate(start.getDate() - 6);
+    return ts >= start.getTime();
+  }
+
+  function normalizeItem(it) {
+    var bullets = it.bullets;
+    if (!bullets || !bullets.length) {
+      bullets = []
+        .concat(it.decisions || [])
+        .concat(it.tasks || [])
+        .concat(it.openPoints || [])
+        .concat(it.nextSteps || [])
+        .concat(it.importantPoints || [])
+        .slice(0, 3);
+    }
+    return Object.assign({}, it, {
+      reviewed: !!(it.reviewed || it.isReviewed),
+      googleSyncPending: !!(it.googleSyncPending || it.syncPending),
+      googleSynced: !!(it.googleSynced || it.synced),
+      bullets: bullets,
+    });
+  }
+
+  function buildChartFromCounts(counts) {
+    if (!counts) return { hasChartData: false, chart: [] };
+    var chart = [];
+    CATEGORIES.forEach(function (c, i) {
+      if (c.key === 'all') return;
+      var ck = c.key === 'open-points' ? 'openPoints' : c.key;
+      var n = counts[ck] != null ? counts[ck] : 0;
+      if (n > 0) {
+        chart.push({ category: c.key, label: c.label, value: n, color: CHART_COLORS[i % CHART_COLORS.length] });
+      }
+    });
+    return { hasChartData: chart.length > 1, chart: chart };
+  }
+
+  function normalizeIndex(j) {
+    var counts = j.counts || j.totals || {};
+    var items = (j.items || []).map(normalizeItem);
+    var chartPack = j.has_chart_data != null ? { hasChartData: !!j.has_chart_data, chart: j.chart || [] } : buildChartFromCounts(counts);
+    var projects = j.projects;
+    if (!projects || !projects.length) {
+      var set = {};
+      items.forEach(function (it) {
+        if (it.project) set[it.project] = true;
+      });
+      projects = Object.keys(set).sort();
+    }
+    var sync = j.sync_settings || j.syncSettings || {};
+    return {
+      items: items,
+      counts: counts,
+      rawTranscriptionCount: j.rawTranscriptionCount || 0,
+      generatedAt: j.generatedAt || null,
+      projects: projects,
+      syncSettings: {
+        auto_sync_google: !!(sync.auto_sync_google || sync.autoSyncGoogle),
+      },
+      hasChartData: chartPack.hasChartData,
+      chart: chartPack.chart,
+    };
+  }
+
+  function setLoadHint(text) {
+    var el = byId('txLoadHint');
+    if (el) el.textContent = text || '';
+  }
+
+  function topBullets(item) {
+    var list = item.bullets || [];
+    if (!list.length) {
+      if (item.summary) list = [item.summary];
+      else if (item.taskText) list = [item.taskText];
+      else if (item.decisionText) list = [item.decisionText];
+      else if (item.issue) list = [item.issue];
+    }
+    return list.slice(0, 3);
+  }
+
+  function statChips(item) {
+    var chips = [];
+    if (item.status) chips.push({ t: item.status, ok: item.status === 'done' || item.status === 'closed' });
+    if (item.priority) chips.push({ t: item.priority });
+    if (item.reviewed) chips.push({ t: 'Reviewed', ok: true });
+    else chips.push({ t: 'Unreviewed', warn: true });
+    if (item.googleSyncPending) chips.push({ t: 'Sync pending', warn: true });
+    else if (item.googleSynced) chips.push({ t: 'Synced', ok: true });
+    if (item.category === 'tasks' && item.dueDate) chips.push({ t: item.dueDate });
+    return chips;
+  }
+
+  function applyClientFilters(list) {
+    var out = list.slice();
     if (state.category !== 'all') {
-      list = list.filter(function (it) {
+      out = out.filter(function (it) {
         return it.category === state.category;
       });
     }
-    if (q) {
-      list = list.filter(function (it) {
-        var blob = [
-          it.title,
-          it.preview,
-          it.summary,
-          it.path,
-          it.sourceAudio,
-          it.sourceTranscription,
-          it.project,
-          it.taskText,
-          it.decisionText,
-          it.issue,
-          it.body,
-        ]
-          .filter(Boolean)
-          .join(' ')
-          .toLowerCase();
-        return blob.indexOf(q) !== -1;
+    if (state.project) {
+      out = out.filter(function (it) {
+        return (it.project || '') === state.project;
       });
     }
-    list.sort(function (a, b) {
-      if (state.sort === 'oldest') return parseDate(a) - parseDate(b);
-      if (state.sort === 'category') return (a.category || '').localeCompare(b.category || '');
-      if (state.sort === 'project') return (a.project || '').localeCompare(b.project || '');
-      if (state.sort === 'filename') return (a.path || '').localeCompare(b.path || '');
-      return parseDate(b) - parseDate(a);
+    if (state.filters.today) {
+      out = out.filter(function (it) {
+        return isToday(parseItemDate(it));
+      });
+    }
+    if (state.filters.week) {
+      out = out.filter(function (it) {
+        return isThisWeek(parseItemDate(it));
+      });
+    }
+    if (state.filters.unreviewed) {
+      out = out.filter(function (it) {
+        return !it.reviewed;
+      });
+    }
+    if (state.filters.syncPending) {
+      out = out.filter(function (it) {
+        return it.googleSyncPending;
+      });
+    }
+    out.sort(function (a, b) {
+      return parseItemDate(b) - parseItemDate(a);
     });
-    state.filtered = list;
+    return out;
   }
 
-  function renderCounters(counts) {
-    var el = byId('txCounts');
-    if (!el || !counts) return;
-    el.innerHTML = CATEGORIES.map(function (c) {
-      return (
-        '<div class="tx-count-card"><span class="tx-count-card__n">' +
-        esc(counts[c.key] != null ? counts[c.key] : 0) +
-        '</span><span class="tx-count-card__l">' +
-        esc(c.label) +
-        '</span></div>'
-      );
-    }).join('');
-  }
-
-  function renderList() {
-    var listEl = byId('txList');
-    var hint = byId('txListHint');
-    if (!listEl) return;
-    applyFilters();
-    if (!state.items.length) {
-      listEl.innerHTML = '';
-      if (hint) hint.textContent = '';
-      return;
-    }
-    if (!state.filtered.length) {
-      listEl.innerHTML = '';
-      if (hint) hint.textContent = 'No items match your filters.';
-      return;
-    }
-    if (hint) hint.textContent = state.filtered.length + ' item(s)';
-    listEl.innerHTML = state.filtered
-      .map(function (it) {
-        var active = it.id === state.selectedId ? ' is-active' : '';
+  function renderRingChart(chart) {
+    var total = chart.reduce(function (s, c) {
+      return s + c.value;
+    }, 0);
+    if (!total) return '';
+    var r = 42;
+    var cx = 50;
+    var cy = 50;
+    var circ = 2 * Math.PI * r;
+    var offset = 0;
+    var segs = chart
+      .map(function (c) {
+        var frac = c.value / total;
+        var len = circ * frac;
+        var dash = len + ' ' + (circ - len);
+        var rot = (offset / circ) * 360 - 90;
+        offset += len;
         return (
-          '<button type="button" class="tx-list-item' +
-          active +
-          '" data-tx-id="' +
-          esc(it.id) +
-          '">' +
-          '<span class="tx-list-item__cat mono">' +
-          esc(it.categoryLabel || it.category) +
-          '</span>' +
-          '<strong class="tx-list-item__title">' +
-          esc(it.title || it.path) +
-          '</strong>' +
-          '<span class="tx-list-item__meta mono">' +
-          esc(it.sourceAudio || '—') +
-          (it.processedDate ? ' · ' + esc(it.processedDate) : '') +
-          '</span>' +
-          '<span class="tx-list-item__preview">' +
-          esc(it.preview || '') +
-          '</span>' +
-          '</button>'
+          '<circle cx="' +
+          cx +
+          '" cy="' +
+          cy +
+          '" r="' +
+          r +
+          '" fill="none" stroke="' +
+          esc(c.color) +
+          '" stroke-width="10" stroke-dasharray="' +
+          dash +
+          '" transform="rotate(' +
+          rot +
+          ' ' +
+          cx +
+          ' ' +
+          cy +
+          ')" />'
         );
       })
       .join('');
-    listEl.querySelectorAll('[data-tx-id]').forEach(function (btn) {
+    var legend = chart
+      .map(function (c) {
+        return (
+          '<span><span class="tx-ring__dot" style="background:' +
+          esc(c.color) +
+          '"></span>' +
+          esc(c.label) +
+          ' ' +
+          esc(c.value) +
+          '</span>'
+        );
+      })
+      .join('');
+    return (
+      '<div class="tx-ring"><svg viewBox="0 0 100 100" role="img" aria-label="Category distribution">' +
+      '<circle cx="50" cy="50" r="42" fill="none" stroke="var(--line,#2a2f3a)" stroke-width="10"/>' +
+      segs +
+      '<text x="50" y="52" text-anchor="middle" font-size="14" fill="currentColor" font-weight="700">' +
+      esc(total) +
+      '</text></svg><div class="tx-ring__legend">' +
+      legend +
+      '</div></div>'
+    );
+  }
+
+  function renderHero() {
+    var el = byId('txHero');
+    if (!el) return;
+    if (state.hasChartData && state.chart && state.chart.length) {
+      el.innerHTML = renderRingChart(state.chart);
+      el.setAttribute('aria-hidden', 'false');
+      return;
+    }
+    var cat = state.category === 'all' ? 'meetings' : state.category;
+    el.innerHTML = iconSvg(cat).replace('tx-cat-card__icon', 'tx-hero__icon');
+    el.setAttribute('aria-hidden', 'false');
+  }
+
+  function renderCategoryCards() {
+    var el = byId('txCatScroll');
+    if (!el) return;
+    var counts = state.counts || {};
+    var total = counts.total != null ? counts.total : state.items.length;
+    el.innerHTML = CATEGORIES.map(function (c) {
+      var n =
+        c.key === 'all'
+          ? total
+          : counts[c.key] != null
+            ? counts[c.key]
+            : c.key === 'open-points'
+              ? counts.openPoints
+              : 0;
+      var active = state.category === c.key ? ' is-active' : '';
+      return (
+        '<button type="button" class="tx-cat-card' +
+        active +
+        '" data-tx-cat="' +
+        esc(c.key) +
+        '" role="tab" aria-selected="' +
+        (active ? 'true' : 'false') +
+        '">' +
+        iconSvg(c.key) +
+        '<span class="tx-cat-card__n">' +
+        esc(n) +
+        '</span><span class="tx-cat-card__l">' +
+        esc(c.short) +
+        '</span></button>'
+      );
+    }).join('');
+    el.querySelectorAll('[data-tx-cat]').forEach(function (btn) {
       btn.addEventListener('click', function () {
-        state.selectedId = btn.getAttribute('data-tx-id');
-        renderList();
-        renderDetail();
+        state.category = btn.getAttribute('data-tx-cat') || 'all';
+        renderCategoryCards();
+        renderHero();
+        renderFeed();
       });
     });
   }
 
-  function relatedItems(item, cat) {
+  function renderProjectSelect() {
+    var sel = byId('txProjectSelect');
+    if (!sel) return;
+    var cur = state.project;
+    var opts = '<option value="">All</option>';
+    (state.indexMeta.projects || []).forEach(function (p) {
+      opts += '<option value="' + esc(p) + '"' + (p === cur ? ' selected' : '') + '>' + esc(p) + '</option>';
+    });
+    sel.innerHTML = opts;
+  }
+
+  function syncFilterPills() {
+    var wrap = byId('txFilters');
+    if (!wrap) return;
+    wrap.querySelectorAll('[data-tx-filter]').forEach(function (btn) {
+      var key = btn.getAttribute('data-tx-filter');
+      var on = false;
+      if (key === 'today') on = state.filters.today;
+      if (key === 'week') on = state.filters.week;
+      if (key === 'unreviewed') on = state.filters.unreviewed;
+      if (key === 'sync-pending') on = state.filters.syncPending;
+      btn.classList.toggle('is-active', on);
+    });
+  }
+
+  function emptyState(kind) {
+    var map = {
+      none: {
+        title: 'No processed outputs yet',
+        body: 'Run the Voice Recorder pipeline on this PC to generate meetings, notes, tasks, and more.',
+      },
+      raw: {
+        title: 'Raw transcriptions only',
+        body: 'Transcriptions exist on disk but no AI-ready outputs yet. Run the processing pipeline.',
+      },
+      filter: {
+        title: 'No matches',
+        body: 'Try clearing filters or choosing another category.',
+      },
+      search: {
+        title: 'No search results',
+        body: 'Try different keywords or clear the search field.',
+      },
+    };
+    var e = map[kind] || map.filter;
+    return (
+      '<div class="tx-empty"><div class="tx-empty__icon">' +
+      iconSvg('all').replace('tx-cat-card__icon', '') +
+      '</div><p class="tx-empty__title">' +
+      esc(e.title) +
+      '</p><p class="tf-admin-muted" style="margin:0;font-size:0.78rem">' +
+      esc(e.body) +
+      '</p></div>'
+    );
+  }
+
+  function renderFeedCard(item) {
+    var bullets = topBullets(item);
+    var chips = statChips(item);
+    var unread = !item.reviewed ? ' is-unread' : '';
+    return (
+      '<article class="tx-card' +
+      unread +
+      '" data-tx-id="' +
+      esc(item.id) +
+      '"><div class="tx-card__head">' +
+      iconSvg(item.category).replace('tx-cat-card__icon', 'tx-card__icon') +
+      '<div class="tx-card__main"><h3 class="tx-card__title">' +
+      esc(item.title || item.path) +
+      '</h3><p class="tx-card__meta mono">' +
+      esc(item.project || '—') +
+      ' · ' +
+      esc(relativeDate(item)) +
+      '</p>' +
+      (bullets.length
+        ? '<ul class="tx-card__bullets">' +
+          bullets
+            .map(function (b) {
+              return '<li>' + esc(b) + '</li>';
+            })
+            .join('') +
+          '</ul>'
+        : '') +
+      '<p class="tx-card__preview">' +
+      esc(item.preview || '') +
+      '</p><div class="tx-card__chips">' +
+      chips
+        .map(function (c) {
+          var cls = 'tx-chip';
+          if (c.ok) cls += ' tx-chip--ok';
+          if (c.warn) cls += ' tx-chip--warn';
+          return '<span class="' + cls + '">' + esc(c.t) + '</span>';
+        })
+        .join('') +
+      '</div></div></div><div class="tx-card__actions">' +
+      '<button type="button" class="tf-admin-toolbar__btn" data-tx-action="sync" data-tx-id="' +
+      esc(item.id) +
+      '">Sync Google</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn" data-tx-action="read" data-tx-id="' +
+      esc(item.id) +
+      '">Mark read</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn" data-tx-action="open" data-tx-id="' +
+      esc(item.id) +
+      '">Open</button></div></article>'
+    );
+  }
+
+  function bindFeedActions(root) {
+    if (!root) return;
+    root.querySelectorAll('[data-tx-action]').forEach(function (btn) {
+      btn.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        var id = btn.getAttribute('data-tx-id');
+        var action = btn.getAttribute('data-tx-action');
+        if (action === 'open') openDetail(id);
+        else if (action === 'read') markReviewed(id);
+        else if (action === 'sync') syncItem(id);
+      });
+    });
+    root.querySelectorAll('.tx-card').forEach(function (card) {
+      card.addEventListener('click', function (ev) {
+        if (ev.target.closest('[data-tx-action]')) return;
+        openDetail(card.getAttribute('data-tx-id'));
+      });
+    });
+  }
+
+  function renderFeed() {
+    var feed = byId('txFeed');
+    var hint = byId('txFeedHint');
+    if (!feed) return;
+
+    var list;
+    if (state.searchQuery.trim() && state.searchResults) {
+      list = state.searchResults;
+    } else if (state.searchQuery.trim() && state.searchLoading) {
+      feed.innerHTML = '<p class="tf-admin-muted">Searching…</p>';
+      if (hint) hint.textContent = '';
+      return;
+    } else {
+      list = applyClientFilters(state.items);
+    }
+
+    state.filtered = list;
+
+    if (!state.items.length && !state.loading) {
+      feed.innerHTML = state.rawTranscriptionCount > 0 ? emptyState('raw') : emptyState('none');
+      if (hint) hint.textContent = '';
+      renderTimeline();
+      return;
+    }
+
+    if (!list.length) {
+      feed.innerHTML = state.searchQuery.trim() ? emptyState('search') : emptyState('filter');
+      if (hint) hint.textContent = '0 items';
+      renderTimeline();
+      return;
+    }
+
+    if (hint) hint.textContent = list.length + ' item' + (list.length === 1 ? '' : 's');
+    feed.innerHTML = list.map(renderFeedCard).join('');
+    bindFeedActions(feed);
+    renderTimeline();
+  }
+
+  function renderTimeline() {
+    var body = byId('txTimelineBody');
+    if (!body) return;
+    var todayItems = state.items
+      .filter(function (it) {
+        return isToday(parseItemDate(it));
+      })
+      .sort(function (a, b) {
+        return parseItemDate(b) - parseItemDate(a);
+      });
+    if (!todayItems.length) {
+      body.innerHTML = '<p class="tf-admin-muted" style="margin:0;font-size:0.74rem">Nessuna voce per oggi.</p>';
+      return;
+    }
+    body.innerHTML = todayItems
+      .map(function (it) {
+        var t = parseItemDate(it);
+        var time = t
+          ? new Date(t).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
+          : '—';
+        return (
+          '<div class="tx-timeline__item">' +
+          '<span class="tx-timeline__time mono">' +
+          esc(time) +
+          '</span><span><strong>' +
+          esc(it.categoryLabel || it.category) +
+          '</strong> — ' +
+          esc(it.title || '') +
+          '</span></div>'
+        );
+      })
+      .join('');
+  }
+
+  function relatedItems(item) {
     if (!item) return [];
     var audio = item.sourceAudio || '';
     var trans = item.sourceTranscription || '';
-    return state.items.filter(function (it) {
-      if (it.category !== cat) return false;
-      if (it.id === item.id) return false;
-      if (audio && it.sourceAudio === audio) return true;
-      if (trans && it.sourceTranscription === trans) return true;
-      return false;
-    });
+    return state.items
+      .filter(function (it) {
+        if (it.id === item.id) return false;
+        if (audio && it.sourceAudio === audio) return true;
+        if (trans && it.sourceTranscription === trans) return true;
+        return false;
+      })
+      .slice(0, 12);
   }
 
-  function renderDetail() {
-    var el = byId('txDetail');
-    if (!el) return;
-    var item = state.items.find(function (it) {
-      return it.id === state.selectedId;
-    });
-    if (!item) {
-      el.innerHTML = '<p class="tf-admin-muted">Select an item to view details.</p>';
-      return;
-    }
-    var bullets = function (label, arr) {
-      if (!arr || !arr.length) return '';
-      return (
-        '<p><strong>' +
-        esc(label) +
-        '</strong></p><ul>' +
-        arr.map(function (x) {
-          return '<li>' + esc(x) + '</li>';
-        }).join('') +
-        '</ul>'
-      );
-    };
+  function sectionHtml(title, content) {
+    if (!content) return '';
+    return (
+      '<details class="tx-detail__section" open><summary>' +
+      esc(title) +
+      '</summary><div>' +
+      content +
+      '</div></details>'
+    );
+  }
+
+  function bulletsHtml(arr) {
+    if (!arr || !arr.length) return '';
+    return '<ul>' + arr.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
+  }
+
+  function renderDetailContent(item) {
+    var el = byId('txDetailScroll');
+    var catEl = byId('txDetailCat');
+    var titleEl = byId('txDetailTitle');
+    if (!el || !item) return;
+    if (catEl) catEl.textContent = item.categoryLabel || item.category || '';
+    if (titleEl) titleEl.textContent = item.title || item.path || '';
+
+    var rel = relatedItems(item);
+    var relHtml = rel.length
+      ? '<div class="tx-detail__related">' +
+        rel
+          .map(function (r) {
+            return (
+              '<button type="button" class="tx-detail__related-card" data-tx-rel-id="' +
+              esc(r.id) +
+              '"><strong>' +
+              esc(r.categoryLabel || r.category) +
+              '</strong><br>' +
+              esc(r.title || '') +
+              '</button>'
+            );
+          })
+          .join('') +
+        '</div>'
+      : '<p class="tf-admin-muted">No related files.</p>';
+
     el.innerHTML =
-      '<div class="tx-detail">' +
-      '<p class="mono" style="margin:0 0 0.5rem">' +
-      esc(item.categoryLabel) +
-      '</p>' +
-      '<h3 style="margin:0 0 0.75rem">' +
-      esc(item.title) +
-      '</h3>' +
-      '<ul class="tx-detail__meta">' +
-      '<li><strong>Source audio:</strong> ' +
-      esc(item.sourceAudio || '—') +
-      '</li>' +
-      '<li><strong>Source transcription:</strong> <code>' +
-      esc(item.sourceTranscription || '—') +
-      '</code></li>' +
-      '<li><strong>File:</strong> <code>' +
-      esc(item.path) +
-      '</code></li>' +
-      '<li><strong>Processed:</strong> ' +
-      esc(item.processedDate || '—') +
-      '</li>' +
-      (item.project ? '<li><strong>Project:</strong> ' + esc(item.project) + '</li>' : '') +
-      '</ul>' +
-      (item.summary ? '<p><strong>Summary</strong></p><p>' + esc(item.summary) + '</p>' : '') +
-      bullets('Decisions', item.decisions) +
-      bullets('Tasks', item.tasks) +
-      bullets('Open points', item.openPoints) +
-      bullets('Next steps', item.nextSteps) +
-      bullets('Important points', item.importantPoints) +
-      bullets('Possible actions', item.possibleActions) +
-      '<pre class="mono tx-detail__body">' +
-      esc(item.body || '') +
-      '</pre>' +
-      '<div class="tx-actions">' +
-      '<button type="button" class="tf-admin-toolbar__btn" id="txCopyBtn">Copy content</button>' +
-      '<button type="button" class="tf-admin-toolbar__btn" disabled title="Coming soon">Mark reviewed</button>' +
+      sectionHtml(
+        'Meta',
+        '<ul class="tf-admin-muted" style="margin:0;padding-left:1rem;font-size:0.74rem;line-height:1.5">' +
+          '<li><strong>Project:</strong> ' +
+          esc(item.project || '—') +
+          '</li><li><strong>Processed:</strong> ' +
+          esc(item.processedDate || '—') +
+          '</li><li><strong>Audio:</strong> ' +
+          esc(item.sourceAudio || '—') +
+          '</li><li><strong>Transcription:</strong> <code>' +
+          esc(item.sourceTranscription || '—') +
+          '</code></li><li><strong>File:</strong> <code>' +
+          esc(item.path || '—') +
+          '</code></li></ul>'
+      ) +
+      sectionHtml('Summary', item.summary ? '<p>' + esc(item.summary) + '</p>' : '') +
+      sectionHtml('Decisions', bulletsHtml(item.decisions)) +
+      sectionHtml('Tasks', bulletsHtml(item.tasks)) +
+      sectionHtml('Open points', bulletsHtml(item.openPoints)) +
+      sectionHtml('Next steps', bulletsHtml(item.nextSteps)) +
+      sectionHtml('Body', '<pre class="mono" style="white-space:pre-wrap;font-size:0.72rem;max-height:12rem;overflow:auto">' + esc(item.body || '') + '</pre>') +
+      sectionHtml('Related files', relHtml) +
+      '<div class="tx-detail__actions">' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="txDetailSyncBtn">Sync Google</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="txDetailBulkSyncBtn">Bulk sync related</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="txDetailMarkBtn">Mark reviewed</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" disabled title="Coming soon">Reprocess</button>' +
-      '</div>' +
       '</div>';
-    var copyBtn = byId('txCopyBtn');
-    if (copyBtn) {
-      copyBtn.addEventListener('click', function () {
-        var text = item.body || item.preview || '';
-        navigator.clipboard.writeText(text).catch(function () {});
+
+    el.querySelectorAll('[data-tx-rel-id]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        openDetail(btn.getAttribute('data-tx-rel-id'));
       });
-    }
+    });
+
+    var syncBtn = byId('txDetailSyncBtn');
+    if (syncBtn) syncBtn.addEventListener('click', function () { syncItem(item.id); });
+    var bulkBtn = byId('txDetailBulkSyncBtn');
+    if (bulkBtn) bulkBtn.addEventListener('click', function () { syncBulk(item.id); });
+    var markBtn = byId('txDetailMarkBtn');
+    if (markBtn) markBtn.addEventListener('click', function () { markReviewed(item.id); });
   }
 
-  function renderEmpty(index) {
-    var el = byId('txEmpty');
-    if (!el) return;
-    if (index.counts && index.counts.total > 0) {
-      el.classList.add('is-hidden');
+  function openOverlay() {
+    var ov = byId('txOverlay');
+    if (!ov) return;
+    ov.classList.add('is-open');
+    ov.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeOverlay() {
+    var ov = byId('txOverlay');
+    if (!ov) return;
+    ov.classList.remove('is-open');
+    ov.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    state.selectedId = null;
+    state.detailItem = null;
+  }
+
+  function openDetail(id) {
+    if (!id) return;
+    state.selectedId = id;
+    var local = state.items.find(function (it) {
+      return it.id === id;
+    });
+    if (local) {
+      state.detailItem = local;
+      renderDetailContent(local);
+      openOverlay();
+    }
+    tryApi(['/api/admin/transcriptions/item?id=' + encodeURIComponent(id)], { method: 'GET' }).then(
+      function (pack) {
+        if (pack.ok && pack.j && (pack.j.item || pack.j.id)) {
+          var item = normalizeItem(pack.j.item || pack.j);
+          state.detailItem = item;
+          var idx = state.items.findIndex(function (it) {
+            return it.id === id;
+          });
+          if (idx >= 0) state.items[idx] = Object.assign(state.items[idx], item);
+          renderDetailContent(item);
+          openOverlay();
+        } else if (!local && pack.status !== 404) {
+          toast((pack.j && pack.j.error) || 'Could not load item.');
+        }
+      }
+    );
+  }
+
+  function markReviewed(id) {
+    tryApi(['/api/admin/transcriptions/mark-reviewed'], {
+      method: 'POST',
+      body: { id: id },
+    }).then(function (pack) {
+      if (pack.ok) {
+        state.items.forEach(function (it) {
+          if (it.id === id) it.reviewed = true;
+        });
+        if (state.detailItem && state.detailItem.id === id) state.detailItem.reviewed = true;
+        renderFeed();
+        if (state.detailItem) renderDetailContent(state.detailItem);
+        toast('Marked as reviewed.');
+      } else if (pack.status === 404) {
+        toast('Mark reviewed API not available yet.');
+      } else {
+        toast((pack.j && pack.j.error) || 'Could not mark reviewed.');
+      }
+    });
+  }
+
+  function syncItem(id) {
+    tryApi(['/api/admin/transcriptions/sync-item'], {
+      method: 'POST',
+      body: { id: id },
+    }).then(function (pack) {
+      if (pack.ok) {
+        state.items.forEach(function (it) {
+          if (it.id === id) {
+            it.googleSyncPending = false;
+            it.googleSynced = true;
+          }
+        });
+        renderFeed();
+        toast('Google sync queued.');
+      } else if (pack.status === 404) {
+        toast('Google sync API not available yet.');
+      } else {
+        toast((pack.j && pack.j.error) || 'Sync failed.');
+      }
+    });
+  }
+
+  function syncBulk(id) {
+    tryApi(['/api/admin/transcriptions/sync-bulk'], {
+      method: 'POST',
+      body: { id: id },
+    }).then(function (pack) {
+      if (pack.ok) {
+        toast('Bulk sync started.');
+      } else if (pack.status === 404) {
+        toast('Bulk sync API not available yet.');
+      } else {
+        toast((pack.j && pack.j.error) || 'Bulk sync failed.');
+      }
+    });
+  }
+
+  function runReindex() {
+    var btn = byId('txReindexBtn');
+    if (btn) btn.disabled = true;
+    setLoadHint('Reindexing…');
+    tryApi(['/api/admin/transcriptions/reindex'], { method: 'POST' }).then(function (pack) {
+      if (btn) btn.disabled = false;
+      if (pack.ok) {
+        toast('Reindex complete.');
+        loadIndex();
+      } else if (pack.status === 404) {
+        setLoadHint('Reindex API not available — reload index only.');
+        loadIndex();
+        toast('Reindex endpoint not ready; refreshed index.');
+      } else {
+        setLoadHint((pack.j && pack.j.error) || 'Reindex failed.');
+        toast((pack.j && pack.j.error) || 'Reindex failed.');
+      }
+    });
+  }
+
+  function saveSyncSettings(enabled) {
+    tryApi(['/api/admin/transcriptions/sync-settings'], {
+      method: 'PUT',
+      body: { auto_sync_google: enabled },
+    }).then(function (pack) {
+      if (pack.ok) {
+        state.syncSettings.auto_sync_google = enabled;
+        toast(enabled ? 'Auto-sync enabled.' : 'Auto-sync disabled.');
+      } else if (pack.status === 404) {
+        state.syncSettings.auto_sync_google = enabled;
+        toast('Sync settings API not available — preference kept locally.');
+      } else {
+        toast((pack.j && pack.j.error) || 'Could not save sync settings.');
+        var tgl = byId('txAutoSyncToggle');
+        if (tgl) tgl.checked = state.syncSettings.auto_sync_google;
+      }
+    });
+  }
+
+  function runSearch(q) {
+    if (!q.trim()) {
+      state.searchResults = null;
+      state.searchLoading = false;
+      renderFeed();
       return;
     }
-    el.classList.remove('is-hidden');
-    if (index.rawTranscriptionCount > 0) {
-      el.textContent =
-        'Raw transcriptions exist, but no processed AI-ready outputs have been generated yet. Run the processing pipeline to create meetings, notes, tasks, calendar events, project updates, decisions, and open points.';
-    } else {
-      el.textContent =
-        'No processed transcription outputs found yet. Run the Voice Recorder pipeline first.';
-    }
+    state.searchLoading = true;
+    renderFeed();
+    tryApi(['/api/admin/transcriptions/search?q=' + encodeURIComponent(q)], { method: 'GET' }).then(
+      function (pack) {
+        state.searchLoading = false;
+        if (pack.ok && pack.j) {
+          state.searchResults = (pack.j.items || pack.j.results || []).map(normalizeItem);
+        } else if (pack.status === 404) {
+          var ql = q.trim().toLowerCase();
+          state.searchResults = state.items.filter(function (it) {
+            var blob = [
+              it.title,
+              it.preview,
+              it.summary,
+              it.path,
+              it.sourceAudio,
+              it.project,
+              it.body,
+            ]
+              .filter(Boolean)
+              .join(' ')
+              .toLowerCase();
+            return blob.indexOf(ql) !== -1;
+          });
+        } else {
+          state.searchResults = [];
+          toast((pack.j && pack.j.error) || 'Search failed.');
+        }
+        renderFeed();
+      }
+    );
   }
 
   function loadIndex() {
-    var hint = byId('txLoadHint');
-    if (hint) hint.textContent = 'Loading…';
-    return fetch(api('/api/admin/transcriptions-index'), {
+    state.loading = true;
+    setLoadHint('Loading…');
+    var feed = byId('txFeed');
+    if (feed) feed.setAttribute('aria-busy', 'true');
+
+    return tryApi(['/api/admin/transcriptions/index', '/api/admin/transcriptions-index'], {
       method: 'GET',
-      credentials: apiCred(),
-      cache: 'no-store',
-      headers: { Authorization: 'Bearer ' + adminJwt() },
     })
-      .then(function (r) {
-        return r.json().then(function (j) {
-          return { ok: r.ok, j: j };
-        });
-      })
       .then(function (pack) {
+        state.loading = false;
+        if (feed) feed.setAttribute('aria-busy', 'false');
         if (!pack.ok) {
-          if (hint) hint.textContent = (pack.j && pack.j.error) || 'Could not load index.';
+          state.apiUnavailable = pack.status === 404;
+          setLoadHint((pack.j && pack.j.error) || 'Could not load transcriptions.');
+          byId('txFeed').innerHTML = emptyState('none');
           return;
         }
-        state.items = pack.j.items || [];
-        renderCounters(pack.j.counts);
-        renderEmpty(pack.j);
-        if (hint) {
-          hint.textContent =
-            'Updated ' +
-            (pack.j.generatedAt ? new Date(pack.j.generatedAt).toLocaleString() : 'now') +
+        var norm = normalizeIndex(pack.j);
+        state.items = norm.items;
+        state.counts = norm.counts;
+        state.rawTranscriptionCount = norm.rawTranscriptionCount;
+        state.generatedAt = norm.generatedAt;
+        state.indexMeta.projects = norm.projects;
+        state.syncSettings = norm.syncSettings;
+        state.hasChartData = norm.hasChartData;
+        state.chart = norm.chart;
+        state.searchResults = null;
+
+        var tgl = byId('txAutoSyncToggle');
+        if (tgl) tgl.checked = state.syncSettings.auto_sync_google;
+
+        setLoadHint(
+          'Updated ' +
+            (norm.generatedAt ? new Date(norm.generatedAt).toLocaleString() : 'now') +
             ' · ' +
-            (pack.j.rawTranscriptionCount || 0) +
-            ' raw transcription(s) on disk';
-        }
-        if (state.items.length && !state.selectedId) state.selectedId = state.items[0].id;
-        renderList();
-        renderDetail();
+            norm.rawTranscriptionCount +
+            ' raw transcription(s)'
+        );
+
+        renderCategoryCards();
+        renderHero();
+        renderProjectSelect();
+        syncFilterPills();
+        renderFeed();
       })
       .catch(function () {
-        if (hint) hint.textContent = 'Network error loading transcriptions index.';
+        state.loading = false;
+        if (feed) feed.setAttribute('aria-busy', 'false');
+        setLoadHint('Network error loading transcriptions.');
       });
   }
 
   function bindControls() {
-    var search = byId('txSearch');
-    if (search) {
-      search.addEventListener('input', function () {
-        state.search = search.value;
-        renderList();
+    if (bound) return;
+    bound = true;
+
+    var reindex = byId('txReindexBtn');
+    if (reindex) reindex.addEventListener('click', runReindex);
+
+    var tgl = byId('txAutoSyncToggle');
+    if (tgl) {
+      tgl.addEventListener('change', function () {
+        saveSyncSettings(tgl.checked);
       });
     }
-    var sort = byId('txSort');
-    if (sort) {
-      sort.addEventListener('change', function () {
-        state.sort = sort.value;
-        renderList();
-      });
-    }
-    var tabs = byId('txTabs');
-    if (tabs) {
-      tabs.querySelectorAll('[data-tx-cat]').forEach(function (btn) {
+
+    var filters = byId('txFilters');
+    if (filters) {
+      filters.querySelectorAll('[data-tx-filter]').forEach(function (btn) {
         btn.addEventListener('click', function () {
-          state.category = btn.getAttribute('data-tx-cat') || 'all';
-          tabs.querySelectorAll('[data-tx-cat]').forEach(function (b) {
-            b.classList.toggle('is-active', b === btn);
-          });
-          renderList();
+          var key = btn.getAttribute('data-tx-filter');
+          if (key === 'today') state.filters.today = !state.filters.today;
+          if (key === 'week') state.filters.week = !state.filters.week;
+          if (key === 'unreviewed') state.filters.unreviewed = !state.filters.unreviewed;
+          if (key === 'sync-pending') state.filters.syncPending = !state.filters.syncPending;
+          syncFilterPills();
+          renderFeed();
         });
       });
     }
-    var refresh = byId('txRefreshBtn');
-    if (refresh) refresh.addEventListener('click', loadIndex);
-  }
 
-  var bound = false;
+    var proj = byId('txProjectSelect');
+    if (proj) {
+      proj.addEventListener('change', function () {
+        state.project = proj.value || '';
+        renderFeed();
+      });
+    }
+
+    var search = byId('txSearch');
+    if (search) {
+      search.addEventListener('input', function () {
+        state.searchQuery = search.value;
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(function () {
+          runSearch(state.searchQuery);
+        }, 300);
+      });
+    }
+
+    document.querySelectorAll('[data-tx-close]').forEach(function (el) {
+      el.addEventListener('click', closeOverlay);
+    });
+
+    document.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Escape') closeOverlay();
+    });
+  }
 
   window.initAdminTranscriptions = function () {
     bindControls();
-    if (!bound) {
-      bound = true;
-    }
     loadIndex();
   };
 })();

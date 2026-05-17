@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
-<title>Admin · www.serviceopera.to</title>
+<title>Admin ? www.serviceopera.to</title>
 <meta name="robots" content="noindex, nofollow" />
 <link rel="icon" href="/favicon.png" type="image/png" sizes="any" />
 <link rel="apple-touch-icon" href="/favicon.png" />
@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles.css" />
+<link rel="stylesheet" href="/transcriptions-admin.css" />
 <script src="/page-skeleton.js"></script>
 <script src="/so-api.js"></script>
 </head>
@@ -22,7 +23,7 @@
 <nav class="nav" aria-label="Primary">
   <div class="nav__start">
     <a href="/" class="nav__logo">
-      <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="www.serviceopera.to — home" decoding="async" />
+      <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="www.serviceopera.to ? home" decoding="async" />
     </a>
   </div>
   <div class="nav__links">
@@ -38,7 +39,7 @@
       </span>
     </div>
     <p class="mono tf-admin-muted admin-boot__eyebrow">Operator console</p>
-    <p class="mono tf-admin-muted admin-boot__msg">Loading…</p>
+    <p class="mono tf-admin-muted admin-boot__msg">Loading?</p>
   </div>
 </div>
 
@@ -68,7 +69,7 @@
   <nav id="tfAdminNav" class="tf-admin-nav" aria-label="Admin sections">
     <div class="tf-admin-nav__bar">
       <div id="tfAdminNavPills" class="tf-admin-nav__pills"></div>
-      <div class="tf-admin-version">Build <strong id="tfAdminVersionNum">—</strong></div>
+      <div class="tf-admin-version">Build <strong id="tfAdminVersionNum">?</strong></div>
     </div>
   </nav>
 
@@ -76,7 +77,7 @@
     <section id="usersSection" class="tf-admin-table-card">
       <h2 class="tf-admin-section-title" id="portal-users">Portal users</h2>
       <div class="tf-admin-toolbar">
-        <input type="search" id="adminUsersSearch" placeholder="Search email, slug, id…" autocomplete="off" />
+        <input type="search" id="adminUsersSearch" placeholder="Search email, slug, id?" autocomplete="off" />
         <select id="adminUsersFilter" aria-label="Filter users">
           <option value="all">All users</option>
           <option value="active">Active only</option>
@@ -84,7 +85,7 @@
         </select>
         <select id="adminUsersSort" aria-label="Sort users">
           <option value="recent">Newest first</option>
-          <option value="name">Name A–Z</option>
+          <option value="name">Name A?Z</option>
         </select>
         <button type="button" id="adminUsersCsvBtn" class="tf-admin-toolbar__btn">Export CSV</button>
       </div>
@@ -161,7 +162,7 @@
         (Google Drive). In PowerShell: <code class="mono">.\scripts\run-voice-pipeline.ps1</code>
         (installs deps from <code class="mono">requirements-voice.txt</code> if needed).
         Open <code class="mono">http://localhost:8080/admin/voice-recorder</code> after <code class="mono">node server.mjs</code> on this PC
-        (default port <strong>8080</strong>, not 3000). Production URL shows Railway data only—not local transcriptions.
+        (default port <strong>8080</strong>, not 3000). Production URL shows Railway data only?not local transcriptions.
       </p>
       <div class="tf-admin-payout-card" style="margin-top:0">
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.65rem;margin-bottom:0.85rem">
@@ -188,54 +189,67 @@
       </div>
     </section>
 
-    <section id="transcriptionsSection" class="tf-admin-table-card is-hidden" aria-label="Transcriptions">
-      <h2 class="tf-admin-section-title">Transcriptions</h2>
-      <p class="tf-admin-muted" style="margin:0 0 1rem;max-width:52rem">
-        Review AI-ready outputs extracted from voice recordings: meetings, notes, tasks, calendar events, project updates, decisions, and open points.
-      </p>
-      <p id="txEmpty" class="tf-admin-muted is-hidden" style="margin:0 0 1rem;padding:0.75rem;border:1px solid var(--line,#2a2f3a);border-radius:8px"></p>
-      <p id="txLoadHint" class="mono tf-admin-muted" style="margin:0 0 0.75rem"></p>
-      <div id="txCounts" class="tx-counts" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(9rem,1fr));gap:0.5rem;margin-bottom:1rem"></div>
-      <div class="tx-toolbar" style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;align-items:center">
-        <input type="search" id="txSearch" placeholder="Search text, file, audio, project…" style="min-width:14rem;flex:1" />
-        <select id="txSort" aria-label="Sort">
-          <option value="newest">Newest first</option>
-          <option value="oldest">Oldest first</option>
-          <option value="category">Category</option>
-          <option value="project">Project</option>
-          <option value="filename">Filename</option>
-        </select>
-        <button type="button" id="txRefreshBtn" class="tf-admin-toolbar__btn">Refresh</button>
+    <section id="transcriptionsSection" class="tx-admin tf-admin-table-card is-hidden" aria-label="Transcriptions">
+      <header class="tx-admin__header">
+        <div class="tx-admin__title-row">
+          <div>
+            <h2 class="tx-admin__title">Transcriptions</h2>
+            <p class="tx-admin__subtitle tf-admin-muted">
+              AI-ready outputs from voice: meetings, notes, tasks, calendar, projects, decisions, open points.
+            </p>
+          </div>
+          <div class="tx-admin__header-actions">
+            <button type="button" id="txReindexBtn" class="tf-admin-toolbar__btn">Reindex</button>
+            <label class="tx-admin__toggle mono" title="Auto-sync extracted items to Google">
+              <input type="checkbox" id="txAutoSyncToggle" />
+              <span>Auto-sync Google</span>
+            </label>
+          </div>
+        </div>
+        <p id="txLoadHint" class="tx-admin__status mono tf-admin-muted" role="status"></p>
+      </header>
+      <div id="txCatScroll" class="tx-cats" role="tablist" aria-label="Categories"></div>
+      <div id="txHero" class="tx-hero" aria-hidden="true"></div>
+
+      <div id="txFilters" class="tx-filters" aria-label="Filters">
+        <button type="button" class="tx-pill" data-tx-filter="today">Today</button>
+        <button type="button" class="tx-pill" data-tx-filter="week">Week</button>
+        <label class="tx-pill" id="txProjectPill">
+          <span class="mono">Project</span>
+          <select id="txProjectSelect" aria-label="Filter by project">
+            <option value="">All</option>
+          </select>
+        </label>
+        <button type="button" class="tx-pill" data-tx-filter="unreviewed">Unreviewed only</button>
+        <button type="button" class="tx-pill" data-tx-filter="sync-pending">Google sync pending</button>
       </div>
-      <div id="txTabs" class="tf-admin-reports__tabs" role="tablist" style="margin-bottom:0.75rem">
-        <button type="button" class="tf-admin-reports__tab is-active" data-tx-cat="all">All</button>
-        <button type="button" class="tf-admin-reports__tab" data-tx-cat="meetings">Meetings</button>
-        <button type="button" class="tf-admin-reports__tab" data-tx-cat="notes">Notes</button>
-        <button type="button" class="tf-admin-reports__tab" data-tx-cat="tasks">Tasks</button>
-        <button type="button" class="tf-admin-reports__tab" data-tx-cat="calendar">Calendar</button>
-        <button type="button" class="tf-admin-reports__tab" data-tx-cat="projects">Projects</button>
-        <button type="button" class="tf-admin-reports__tab" data-tx-cat="decisions">Decisions</button>
-        <button type="button" class="tf-admin-reports__tab" data-tx-cat="open-points">Open Points</button>
+
+      <div class="tx-search-wrap">
+        <input type="search" id="txSearch" placeholder="Search titles, projects, audio, text?" autocomplete="off" aria-label="Search transcriptions" />
       </div>
-      <p id="txListHint" class="tf-admin-muted mono" style="margin:0 0 0.35rem"></p>
-      <div class="tx-layout" style="display:grid;grid-template-columns:minmax(16rem,1fr) minmax(20rem,1.4fr);gap:1rem;align-items:start">
-        <div id="txList" class="tx-list" style="display:flex;flex-direction:column;gap:0.35rem;max-height:28rem;overflow:auto"></div>
-        <div id="txDetail" class="tx-detail-wrap tf-admin-payout-card" style="margin:0;padding:0.85rem;min-height:12rem"></div>
-      </div>
-      <style>
-        .tx-count-card{display:flex;flex-direction:column;gap:0.15rem;padding:0.55rem 0.65rem;border:1px solid var(--line,#2a2f3a);border-radius:8px;background:var(--ink-2,#1a1d24)}
-        .tx-count-card__n{font-size:1.25rem;font-weight:700}
-        .tx-count-card__l{font-size:0.72rem;opacity:0.85}
-        .tx-list-item{display:block;width:100%;text-align:left;padding:0.55rem 0.65rem;border:1px solid var(--line,#2a2f3a);border-radius:8px;background:var(--ink-2,#1a1d24);cursor:pointer}
-        .tx-list-item.is-active{border-color:var(--accent,#6366f1)}
-        .tx-list-item__cat{font-size:0.68rem;opacity:0.8;display:block}
-        .tx-list-item__title{display:block;font-size:0.9rem}
-        .tx-list-item__meta{display:block;font-size:0.72rem;opacity:0.75;margin-top:0.15rem}
-        .tx-list-item__preview{display:block;font-size:0.78rem;opacity:0.9;margin-top:0.25rem}
-        .tx-detail__body{max-height:14rem;overflow:auto;white-space:pre-wrap;font-size:0.75rem;margin-top:0.75rem}
-        .tx-actions{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.75rem}
-      </style>
+
+      <p id="txFeedHint" class="mono tf-admin-muted" style="margin:0 0 0.4rem;font-size:0.68rem"></p>
+      <div id="txFeed" class="tx-feed" role="feed" aria-busy="false"></div>
+
+      <details id="txTimelineToday" class="tx-timeline">
+        <summary>Timeline di oggi</summary>
+        <div id="txTimelineBody" class="tx-timeline__body"></div>
+      </details>
     </section>
+
+    <div id="txOverlay" class="tx-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="txDetailTitle">
+      <div class="tx-overlay__backdrop" data-tx-close></div>
+      <div class="tx-overlay__sheet">
+        <div class="tx-overlay__handle" aria-hidden="true"></div>
+        <header class="tx-detail__head">
+          <button type="button" class="tf-admin-toolbar__btn tx-detail__close" data-tx-close aria-label="Close">Close</button>
+          <p id="txDetailCat" class="mono tf-admin-muted" style="margin:0 0 0.25rem;font-size:0.68rem"></p>
+          <h3 id="txDetailTitle" style="margin:0;font-size:0.95rem;line-height:1.35"></h3>
+        </header>
+        <div id="txDetailScroll" class="tx-detail__scroll"></div>
+      </div>
+    </div>
+    <p id="txToast" class="tx-toast mono" role="status" aria-live="polite"></p>
 
     <section id="reportCatalogSection" class="tf-admin-reports" aria-label="Report catalog">
       <h2 class="tf-admin-section-title">Report catalog</h2>
