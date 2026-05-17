@@ -49,7 +49,7 @@ log = logging.getLogger(__name__)
 
 CATEGORIES = ("meeting", "conversation", "self-recap", "voice-note", "self-talk")
 
-CHAT_IMPORT_MARKERS = ("whatsapp", "chat export", "conversation export")
+CHAT_IMPORT_MARKERS = ("whatsapp", "chat export", "conversation export", "chat history")
 
 
 def is_chat_import_source(source: str | None) -> bool:
@@ -450,6 +450,7 @@ def process_file(mod, md_path: Path, registry: dict, stats: dict) -> None:
                     audio_key,
                     status=STATUS_NEEDS_REVIEW,
                     readyForSite=False,
+                    aiProcessedAt=utc_now_iso(),
                     error="chat import — not published to site",
                 )
             stats["skipped"] += 1

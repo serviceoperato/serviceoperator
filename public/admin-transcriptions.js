@@ -257,7 +257,7 @@
     return { hasChartData: chart.length > 1, chart: chart };
   }
 
-  var VISIBLE_PIPELINE_STATUSES = { ai_processed: true, ready_for_site: true };
+  var VISIBLE_PIPELINE_STATUSES = { ready_for_site: true };
   var ALLOWED_OUTPUT_PREFIXES = [
     'content/meetings/',
     'content/notes/',

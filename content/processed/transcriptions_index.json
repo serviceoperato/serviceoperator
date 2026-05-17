@@ -1,28 +1,28 @@
 {
   "ok": true,
-  "generatedAt": "2026-05-17T09:44:32Z",
+  "generatedAt": "2026-05-17T09:46:22Z",
   "registryVersion": 2,
   "totals": {
     "meetings": 1,
     "notes": 15,
     "tasks": 17,
     "calendar": 0,
-    "projects": 1,
-    "decisions": 1,
+    "projects": 0,
+    "decisions": 0,
     "open-points": 0,
     "needsReview": 0,
-    "total": 35
+    "total": 33
   },
   "counts": {
     "meetings": 1,
     "notes": 15,
     "tasks": 17,
     "calendar": 0,
-    "projects": 1,
-    "decisions": 1,
+    "projects": 0,
+    "decisions": 0,
     "open-points": 0,
     "needsReview": 0,
-    "total": 35
+    "total": 33
   },
   "rawSources": {
     "total": 24,
@@ -105,8 +105,8 @@
       "project": "uncategorized",
       "date": "2026-05-16",
       "eventDate": "2026-05-16",
-      "processing_date": "2026-05-17T09:40:40Z",
-      "processedDate": "2026-05-17T09:40:40Z",
+      "processing_date": "2026-05-17T09:46:21Z",
+      "processedDate": "2026-05-17T09:46:21Z",
       "preview": "Ora è chiaro, sono delle trasmissioni, ad esempio che fanno il contraddittorio, però danno sempre poco spazio all'opposizione, quindi a quello che poi, come a volte, succede su rete 4, ad esempio, ci…",
       "summary": "Ora è chiaro, sono delle trasmissioni, ad esempio che fanno il contraddittorio, però danno sempre poco spazio all'opposizione, quindi a quello che poi, come a volte, succede su rete 4, ad esempio, ci sono altre trasmissioni, invece, che danno pure più spazio alla contrapposizi...",
       "stats": {
@@ -118,7 +118,7 @@
       },
       "has_chart_data": true,
       "raw_sections": {
-        "Source": "- **Source audio:** Memo 003.m4a\n- **Source transcription:** `Memo_003.md`\n- **Processing datetime:** 2026-05-17T09:40:40Z\n- **Category:** meeting (75%)\n- **Project:** uncategorized",
+        "Source": "- **Source audio:** Memo 003.m4a\n- **Source transcription:** `Memo_003.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** meeting (75%)\n- **Project:** uncategorized",
         "Summary": "Ora è chiaro, sono delle trasmissioni, ad esempio che fanno il contraddittorio, però danno sempre poco spazio all'opposizione, quindi a quello che poi, come a volte, succede su rete 4, ad esempio, ci sono altre trasmissioni, invece, che danno pure più spazio alla contrapposizi...",
         "Important Points": "- Ora è chiaro, sono delle trasmissioni, ad esempio che fanno il contraddittorio, però danno sempre poco spazio all'opposizione, quindi a quello che poi, come a volte, succede su rete 4, ad esempio, ci sono altre trasmissioni, invece, che danno pure più spazio alla contrapposizi...\n- Ok, quindi, diciamo, se tu ti svegli stamattina prendi un giornale, c'è una news relativamente a, non so, i vaccini, no?\n- Poi sai che la sera fanno sta trasmissione, dove dico, non si ha i lati positivi e i lati negativi.",
         "Decisions": "- (none)",
@@ -165,8 +165,8 @@
       "project": "uncategorized",
       "date": "2026-05-16",
       "eventDate": "2026-05-16",
-      "processing_date": "2026-05-17T09:40:40Z",
-      "processedDate": "2026-05-17T09:40:40Z",
+      "processing_date": "2026-05-17T09:46:21Z",
+      "processedDate": "2026-05-17T09:46:21Z",
       "preview": "Allora, oggi sto lavorando un nuovo progetto, un nuovo progetto milionario.",
       "summary": "Allora, oggi sto lavorando un nuovo progetto, un nuovo progetto milionario.",
       "stats": {
@@ -178,7 +178,7 @@
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Memo 001.m4a\n- **Source transcription:** `Memo_001.md`\n- **Processing datetime:** 2026-05-17T09:40:40Z\n- **Category:** conversation (72%)\n- **Project:** uncategorized",
+        "Source": "- **Source audio:** Memo 001.m4a\n- **Source transcription:** `Memo_001.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** conversation (72%)\n- **Project:** uncategorized",
         "Summary": "Allora, oggi sto lavorando un nuovo progetto, un nuovo progetto milionario.",
         "Important Points": "- Allora, oggi sto lavorando un nuovo progetto, un nuovo progetto milionario.\n- Guarda comunque, quali anni l'ho venerdì, ci sono un po' di radia.\n- Ah, ma stavete la Fonsu Whatsapp?",
         "Decisions": "- (none)",
@@ -221,8 +221,8 @@
       "project": "uncategorized",
       "date": "2026-05-16",
       "eventDate": "2026-05-16",
-      "processing_date": "2026-05-17T09:40:40Z",
-      "processedDate": "2026-05-17T09:40:40Z",
+      "processing_date": "2026-05-17T09:46:21Z",
+      "processedDate": "2026-05-17T09:46:21Z",
       "preview": "Ma quindi tu mi dici che non c'è la possibilità, durante un congresso europeo, durante un video di un Parlamento europeo, di sentire sia le notizie positive che i negativi a seconda di quello?",
       "summary": "Ma quindi tu mi dici che non c'è la possibilità, durante un congresso europeo, durante un video di un Parlamento europeo, di sentire sia le notizie positive che i negativi a seconda di quello?",
       "stats": {
@@ -234,7 +234,7 @@
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Memo 002.m4a\n- **Source transcription:** `Memo_002.md`\n- **Processing datetime:** 2026-05-17T09:40:40Z\n- **Category:** conversation (72%)\n- **Project:** uncategorized",
+        "Source": "- **Source audio:** Memo 002.m4a\n- **Source transcription:** `Memo_002.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** conversation (72%)\n- **Project:** uncategorized",
         "Summary": "Ma quindi tu mi dici che non c'è la possibilità, durante un congresso europeo, durante un video di un Parlamento europeo, di sentire sia le notizie positive che i negativi a seconda di quello?",
         "Important Points": "- Ma quindi tu mi dici che non c'è la possibilità, durante un congresso europeo, durante un video di un Parlamento europeo, di sentire sia le notizie positive che i negativi a seconda di quello?\n- A meno che non c'è un dibattito, a meno che insieme al congresso c'è un dibattito, allora il dibattito è chiaro che c'è chi dall'altra parte vuole approfondire e dice ci sono delle cose che non mi sono ghiare, vorrei capire e allora li deve spiegare, allora in quel caso si.\n- Ok, vabbè adesso non so esperto di come funziona il dibattito, il congresso, il Parlamento europeo.",
         "Decisions": "- Quindi in quel caso è quando c'è stata presa una decisione il Presidente deve solo esternarla.",
@@ -277,8 +277,8 @@
       "project": "uncategorized",
       "date": "2026-05-16",
       "eventDate": "2026-05-16",
-      "processing_date": "2026-05-17T09:40:40Z",
-      "processedDate": "2026-05-17T09:40:40Z",
+      "processing_date": "2026-05-17T09:46:21Z",
+      "processedDate": "2026-05-17T09:46:21Z",
       "preview": "oppure la stessa lentica cosa, perché l'olio te dà delle notizie in due ricche, tu scuri le notizie in due ricche, lì è poi quella che ti interessa, però lì paghi l'abbonamento se puoi entrare nel co…",
       "summary": "oppure la stessa lentica cosa, perché l'olio te dà delle notizie in due ricche, tu scuri le notizie in due ricche, lì è poi quella che ti interessa, però lì paghi l'abbonamento se puoi entrare nel corpo della notizia, ti dà proprio un brevissimo accenno e poi ti dice segue, se...",
       "stats": {
@@ -290,7 +290,7 @@
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Memo 004.m4a\n- **Source transcription:** `Memo_004.md`\n- **Processing datetime:** 2026-05-17T09:40:40Z\n- **Category:** conversation (72%)\n- **Project:** uncategorized",
+        "Source": "- **Source audio:** Memo 004.m4a\n- **Source transcription:** `Memo_004.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** conversation (72%)\n- **Project:** uncategorized",
         "Summary": "oppure la stessa lentica cosa, perché l'olio te dà delle notizie in due ricche, tu scuri le notizie in due ricche, lì è poi quella che ti interessa, però lì paghi l'abbonamento se puoi entrare nel corpo della notizia, ti dà proprio un brevissimo accenno e poi ti dice segue, se...",
         "Important Points": "- oppure la stessa lentica cosa, perché l'olio te dà delle notizie in due ricche, tu scuri le notizie in due ricche, lì è poi quella che ti interessa, però lì paghi l'abbonamento se puoi entrare nel corpo della notizia, ti dà proprio un brevissimo accenno e poi ti dice segue, se...\n- No perché io compro il giornale direttamente quindi quello che sta lì sopra su un online poi lo leggo sul giornale.\n- Ok e se è il lavoro che fanno i giornalisti?",
         "Decisions": "- (none)",
@@ -329,8 +329,8 @@
       "project": "uncategorized",
       "date": "2026-05-16",
       "eventDate": "2026-05-16",
-      "processing_date": "2026-05-17T09:40:40Z",
-      "processedDate": "2026-05-17T09:40:40Z",
+      "processing_date": "2026-05-17T09:46:21Z",
+      "processedDate": "2026-05-17T09:46:21Z",
       "preview": "Cosa vuoi a scuola dei corpi alla medica?",
       "summary": "Cosa vuoi a scuola dei corpi alla medica?",
       "stats": {
@@ -342,7 +342,7 @@
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Memo 005.m4a\n- **Source transcription:** `Memo_005.md`\n- **Processing datetime:** 2026-05-17T09:40:40Z\n- **Category:** conversation (72%)\n- **Project:** uncategorized",
+        "Source": "- **Source audio:** Memo 005.m4a\n- **Source transcription:** `Memo_005.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** conversation (72%)\n- **Project:** uncategorized",
         "Summary": "Cosa vuoi a scuola dei corpi alla medica?",
         "Important Points": "- Cosa vuoi a scuola dei corpi alla medica?\n- Mi dà un libro da leggere durante l'estate, poi dovrate portare un sundo.\n- Quella è proprio la truffa più grande della scuola, però invece quando abbiamo letto l'illigia, l'odissea, poi ci stanno...",
         "Decisions": "- (none)",
@@ -385,8 +385,8 @@
       "project": "uncategorized",
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T09:40:40Z",
-      "processedDate": "2026-05-17T09:40:40Z",
+      "processing_date": "2026-05-17T09:46:21Z",
+      "processedDate": "2026-05-17T09:46:21Z",
       "preview": "come imparare a morire 60 anni, sì un corso accelerato per come morire come imparare a morire musta il pieno della vita in te stai agotendo di niente ok, mi sto godendo la vita ma come hai detto a me…",
       "summary": "come imparare a morire 60 anni, sì un corso accelerato per come morire come imparare a morire musta il pieno della vita in te stai agotendo di niente ok, mi sto godendo la vita ma come hai detto a me che mi vivo in vacanza?",
       "stats": {
@@ -398,7 +398,7 @@
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Memo 006.m4a\n- **Source transcription:** `Memo_006.md`\n- **Processing datetime:** 2026-05-17T09:40:40Z\n- **Category:** conversation (72%)\n- **Project:** uncategorized",
+        "Source": "- **Source audio:** Memo 006.m4a\n- **Source transcription:** `Memo_006.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** conversation (72%)\n- **Project:** uncategorized",
         "Summary": "come imparare a morire 60 anni, sì un corso accelerato per come morire come imparare a morire musta il pieno della vita in te stai agotendo di niente ok, mi sto godendo la vita ma come hai detto a me che mi vivo in vacanza?",
         "Important Points": "- come imparare a morire 60 anni, sì un corso accelerato per come morire come imparare a morire musta il pieno della vita in te stai agotendo di niente ok, mi sto godendo la vita ma come hai detto a me che mi vivo in vacanza?\n- però non mi coto la vita adesso in vacanza ma non mi coto la vita ma come ti dico a me che mi dico a te?\n- quelle sono fottile di tonto cose serie per costruire allora c'è l'energia per costruire tutta una casa, una famiglia, un figlio poi dov'o farlo figlio si stanno che se non vado io che fanno figlio no io fanno figlio non vuoi?",
         "Decisions": "- (none)",
@@ -439,8 +439,8 @@
       "project": "personal",
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T09:40:40Z",
-      "processedDate": "2026-05-17T09:40:40Z",
+      "processing_date": "2026-05-17T09:46:21Z",
+      "processedDate": "2026-05-17T09:46:21Z",
       "preview": "Ho preso la decisione che la realtà contrariamente a come stavamo facendo, dovevamo organizzare che abbiamo deciso che gli soldi che abbiamo promesso di dare li daremo e li daremo senza condizioni, n…",
       "summary": "Ho preso la decisione che la realtà contrariamente a come stavamo facendo, dovevamo organizzare che abbiamo deciso che gli soldi che abbiamo promesso di dare li daremo e li daremo senza condizioni, nel senso che ve l'hanno dati e non ci saranno postille per quanto riguarda, so...",
       "stats": {
@@ -452,7 +452,7 @@
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Seconda.m4a\n- **Source transcription:** `Seconda.md`\n- **Processing datetime:** 2026-05-17T09:40:40Z\n- **Category:** conversation (72%)\n- **Project:** personal",
+        "Source": "- **Source audio:** Seconda.m4a\n- **Source transcription:** `Seconda.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** conversation (72%)\n- **Project:** personal",
         "Summary": "Ho preso la decisione che la realtà contrariamente a come stavamo facendo, dovevamo organizzare che abbiamo deciso che gli soldi che abbiamo promesso di dare li daremo e li daremo senza condizioni, nel senso che ve l'hanno dati e non ci saranno postille per quanto riguarda, so...",
         "Important Points": "- Ho preso la decisione che la realtà contrariamente a come stavamo facendo, dovevamo organizzare che abbiamo deciso che gli soldi che abbiamo promesso di dare li daremo e li daremo senza condizioni, nel senso che ve l'hanno dati e non ci saranno postille per quanto riguarda, so...\n- Quindi si soldi li prenderete e ci fate quello che volete.\n- Nella realtà quindi non vi verrà chiesto nulla, è chiaro che come avevo detto ieri saranno gli ultimi soldi e che non ci saranno ulteriori soldi da distribuire perché quelli che poi cercheremo di metterci di la parte servono per la nostra vecchiaia e così vi sentite liberi di ...",
         "Decisions": "- Ho preso la decisione che la realtà contrariamente a come stavamo facendo, dovevamo organizzare che abbiamo deciso che gli soldi che abbiamo promesso di dare li daremo e li daremo senza condizioni, nel senso che ve l'hanno dati e non ci saranno postille per quanto riguarda, so...",
@@ -497,8 +497,8 @@
       "project": "uncategorized",
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T09:40:40Z",
-      "processedDate": "2026-05-17T09:40:40Z",
+      "processing_date": "2026-05-17T09:46:21Z",
+      "processedDate": "2026-05-17T09:46:21Z",
       "preview": "Registri qui.",
       "summary": "Registri qui.",
       "stats": {
@@ -510,7 +510,7 @@
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Voice 004.m4a\n- **Source transcription:** `Voice_004.md`\n- **Processing datetime:** 2026-05-17T09:40:40Z\n- **Category:** conversation (72%)\n- **Project:** uncategorized",
+        "Source": "- **Source audio:** Voice 004.m4a\n- **Source transcription:** `Voice_004.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** conversation (72%)\n- **Project:** uncategorized",
         "Summary": "Registri qui.",
         "Important Points": "- Registri qui.\n- Perché il registro è lì?\n- Ah, ma invece è tutto arciato.",
         "Decisions": "- (none)",
@@ -551,8 +551,8 @@
       "project": "personal",
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T09:40:40Z",
-      "processedDate": "2026-05-17T09:40:40Z",
+      "processing_date": "2026-05-17T09:46:21Z",
+      "processedDate": "2026-05-17T09:46:21Z",
       "preview": "Per esempio lui può dire, io non ho mai avuto niente, sulle vedidate vanno ancora a pittarsi 50.000 euro, quindi è una cortettezza.",
       "summary": "Per esempio lui può dire, io non ho mai avuto niente, sulle vedidate vanno ancora a pittarsi 50.000 euro, quindi è una cortettezza.",
       "stats": {
@@ -564,7 +564,7 @@
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Christian.m4a\n- **Source transcription:** `Christian.md`\n- **Processing datetime:** 2026-05-17T09:40:40Z\n- **Category:** self-recap (70%)\n- **Project:** personal",
+        "Source": "- **Source audio:** Christian.m4a\n- **Source transcription:** `Christian.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** self-recap (70%)\n- **Project:** personal",
         "Summary": "Per esempio lui può dire, io non ho mai avuto niente, sulle vedidate vanno ancora a pittarsi 50.000 euro, quindi è una cortettezza.",
         "Important Points": "- Per esempio lui può dire, io non ho mai avuto niente, sulle vedidate vanno ancora a pittarsi 50.000 euro, quindi è una cortettezza.\n- Questo è il punto 1.\n- Il punto 2 sarebbe, cioè i soldi sono i tuoi, i 50.000 euro, giusto?",
         "Decisions": "- (none)",
@@ -603,8 +603,8 @@
       "project": "uncategorized",
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T09:40:40Z",
-      "processedDate": "2026-05-17T09:40:40Z",
+      "processing_date": "2026-05-17T09:46:21Z",
+      "processedDate": "2026-05-17T09:46:21Z",
       "preview": "Registrazione, Michael Club Club.",
       "summary": "Registrazione, Michael Club Club.",
       "stats": {
@@ -616,7 +616,7 @@
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Voice 005.m4a\n- **Source transcription:** `Voice_005.md`\n- **Processing datetime:** 2026-05-17T09:40:40Z\n- **Category:** self-recap (70%)\n- **Project:** uncategorized",
+        "Source": "- **Source audio:** Voice 005.m4a\n- **Source transcription:** `Voice_005.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** self-recap (70%)\n- **Project:** uncategorized",
         "Summary": "Registrazione, Michael Club Club.",
         "Important Points": "- Registrazione, Michael Club Club.\n- Siamo in onda.\n- Siamo in onda, per credere, questo è un chat di...",
         "Decisions": "- (none)",
@@ -657,8 +657,8 @@
       "project": "uncategorized",
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T09:40:40Z",
-      "processedDate": "2026-05-17T09:40:40Z",
+      "processing_date": "2026-05-17T09:46:21Z",
+      "processedDate": "2026-05-17T09:46:21Z",
       "preview": "metterli tutti insieme e non fa cazzate di fa così ogni volta che inizi porti da telecamera e fai così così ti vedrai la raccia che fa così e le puoi mettere tutte insieme perché tragancio automatica…",
       "summary": "metterli tutti insieme e non fa cazzate di fa così ogni volta che inizi porti da telecamera e fai così così ti vedrai la raccia che fa così e le puoi mettere tutte insieme perché tragancio automaticamente quindi adesso ah sono un coglione perché ho registrato",
       "stats": {
@@ -670,7 +670,7 @@
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Voice 003.m4a\n- **Source transcription:** `Voice_003.md`\n- **Processing datetime:** 2026-05-17T09:40:40Z\n- **Category:** voice-note (65%)\n- **Project:** uncategorized",
+        "Source": "- **Source audio:** Voice 003.m4a\n- **Source transcription:** `Voice_003.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** voice-note (65%)\n- **Project:** uncategorized",
         "Summary": "metterli tutti insieme e non fa cazzate di fa così ogni volta che inizi porti da telecamera e fai così così ti vedrai la raccia che fa così e le puoi mettere tutte insieme perché tragancio automaticamente quindi adesso ah sono un coglione perché ho registrato",
         "Important Points": "- metterli tutti insieme e non fa cazzate di fa così ogni volta che inizi porti da telecamera e fai così così ti vedrai la raccia che fa così e le puoi mettere tutte insieme perché tragancio automaticamente quindi adesso ah sono un coglione perché ho registrato",
         "Decisions": "- (none)",
@@ -707,8 +707,8 @@
       "project": "uncategorized",
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T09:40:40Z",
-      "processedDate": "2026-05-17T09:40:40Z",
+      "processing_date": "2026-05-17T09:46:21Z",
+      "processedDate": "2026-05-17T09:46:21Z",
       "preview": "Condropatia, condropatia, condropatia, vedete?",
       "summary": "Condropatia, condropatia, condropatia, vedete?",
       "stats": {
@@ -720,7 +720,7 @@
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Voice 006.m4a\n- **Source transcription:** `Voice_006.md`\n- **Processing datetime:** 2026-05-17T09:40:40Z\n- **Category:** voice-note (65%)\n- **Project:** uncategorized",
+        "Source": "- **Source audio:** Voice 006.m4a\n- **Source transcription:** `Voice_006.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** voice-note (65%)\n- **Project:** uncategorized",
         "Summary": "Condropatia, condropatia, condropatia, vedete?",
         "Important Points": "- Condropatia, condropatia, condropatia, vedete?\n- Questa praticamente è questa, in un momento con la matida, no?\n- Ho finito la vivenza.",
         "Decisions": "- (none)",
@@ -759,8 +759,8 @@
       "project": "uncategorized",
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T09:40:40Z",
-      "processedDate": "2026-05-17T09:40:40Z",
+      "processing_date": "2026-05-17T09:46:21Z",
+      "processedDate": "2026-05-17T09:46:21Z",
       "preview": "Cosa si ricorda?",
       "summary": "Cosa si ricorda?",
       "stats": {
@@ -772,7 +772,7 @@
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Voice 007.m4a\n- **Source transcription:** `Voice_007.md`\n- **Processing datetime:** 2026-05-17T09:40:40Z\n- **Category:** voice-note (65%)\n- **Project:** uncategorized",
+        "Source": "- **Source audio:** Voice 007.m4a\n- **Source transcription:** `Voice_007.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** voice-note (65%)\n- **Project:** uncategorized",
         "Summary": "Cosa si ricorda?",
         "Important Points": "- Cosa si ricorda?\n- No, no, come è così?\n- Dice ricordi?",
         "Decisions": "- (none)",
@@ -811,8 +811,8 @@
       "project": "uncategorized",
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T09:40:40Z",
-      "processedDate": "2026-05-17T09:40:40Z",
+      "processing_date": "2026-05-17T09:46:21Z",
+      "processedDate": "2026-05-17T09:46:21Z",
       "preview": "¡Ande, sí encuentre el limpio!",
       "summary": "¡Ande, sí encuentre el limpio!",
       "stats": {
@@ -824,7 +824,7 @@
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Voice 250621_185410.m4a\n- **Source transcription:** `Voice_250621_185410.md`\n- **Processing datetime:** 2026-05-17T09:40:40Z\n- **Category:** voice-note (65%)\n- **Project:** uncategorized",
+        "Source": "- **Source audio:** Voice 250621_185410.m4a\n- **Source transcription:** `Voice_250621_185410.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** voice-note (65%)\n- **Project:** uncategorized",
         "Summary": "¡Ande, sí encuentre el limpio!",
         "Important Points": "- ¡Ande, sí encuentre el limpio!",
         "Decisions": "- (none)",
@@ -861,8 +861,8 @@
       "project": "uncategorized",
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T09:40:40Z",
-      "processedDate": "2026-05-17T09:40:40Z",
+      "processing_date": "2026-05-17T09:46:21Z",
+      "processedDate": "2026-05-17T09:46:21Z",
       "preview": "Facciamo una prova di questa registrazione audio per vedere se riusciamo a metterlo in testo.",
       "summary": "Facciamo una prova di questa registrazione audio per vedere se riusciamo a metterlo in testo.",
       "stats": {
@@ -874,7 +874,7 @@
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Voice 260516_191818.m4a\n- **Source transcription:** `Voice_260516_191818.md`\n- **Processing datetime:** 2026-05-17T09:40:40Z\n- **Category:** voice-note (65%)\n- **Project:** uncategorized",
+        "Source": "- **Source audio:** Voice 260516_191818.m4a\n- **Source transcription:** `Voice_260516_191818.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** voice-note (65%)\n- **Project:** uncategorized",
         "Summary": "Facciamo una prova di questa registrazione audio per vedere se riusciamo a metterlo in testo.",
         "Important Points": "- Facciamo una prova di questa registrazione audio per vedere se riusciamo a metterlo in testo.",
         "Decisions": "- (none)",
@@ -911,8 +911,8 @@
       "project": "uncategorized",
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T09:40:40Z",
-      "processedDate": "2026-05-17T09:40:40Z",
+      "processing_date": "2026-05-17T09:46:21Z",
+      "processedDate": "2026-05-17T09:46:21Z",
       "preview": "I have to remember that I have to go to water park next week with Khan number 19 May 2026",
       "summary": "I have to remember that I have to go to water park next week with Khan number 19 May 2026",
       "stats": {
@@ -924,7 +924,7 @@
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Voice 260516_235502.m4a\n- **Source transcription:** `Voice_260516_235502.md`\n- **Processing datetime:** 2026-05-17T09:40:40Z\n- **Category:** voice-note (65%)\n- **Project:** uncategorized",
+        "Source": "- **Source audio:** Voice 260516_235502.m4a\n- **Source transcription:** `Voice_260516_235502.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** voice-note (65%)\n- **Project:** uncategorized",
         "Summary": "I have to remember that I have to go to water park next week with Khan number 19 May 2026",
         "Important Points": "- I have to remember that I have to go to water park next week with Khan number 19 May 2026",
         "Decisions": "- (none)",
@@ -1698,82 +1698,6 @@
       "reviewed": false,
       "pipelineStatus": "ready_for_site",
       "readyForSite": true
-    },
-    {
-      "id": "73fe5680baa8",
-      "category": "projects",
-      "categoryLabel": "Projects",
-      "title": "Project update · Uncategorized",
-      "filepath": "content/projects/uncategorized.md",
-      "path": "content/projects/uncategorized.md",
-      "source_audio": null,
-      "source_transcription": null,
-      "sourceAudio": null,
-      "sourceTranscription": null,
-      "project": "uncategorized",
-      "date": "2026-05-17",
-      "eventDate": "2026-05-17",
-      "processing_date": null,
-      "processedDate": null,
-      "preview": "- **Source audio:** Memo 001.m4a - **Source transcription:** `Memo_001.md` - **Processing datetime:** 2026-05-17 06:22:15 UTC - **Detected language:** it - **Category:** task, business idea - **Confi…",
-      "summary": "- **Source audio:** Memo 001.m4a - **Source transcription:** `Memo_001.md` - **Processing datetime:** 2026-05-17 06:22:15 UTC - **Detected language:** it - **Category:** task, business idea - **Confidence:** 0.69 Allora, oggi sto lavorando…",
-      "stats": {
-        "decisions_count": 0,
-        "tasks_count": 0,
-        "open_points_count": 0,
-        "calendar_events_count": 0,
-        "next_steps_count": 0
-      },
-      "has_chart_data": false,
-      "raw_sections": {},
-      "extracted_items": {},
-      "related_files": [],
-      "source_only": false,
-      "needs_review": false,
-      "item_type": "file",
-      "reviewed": false,
-      "readyForSite": true,
-      "pipelineStatus": "ready_for_site"
-    },
-    {
-      "id": "b0733f0cd862",
-      "category": "decisions",
-      "categoryLabel": "Decisions",
-      "title": "Ho preso la decisione che la realtà contrariamente a come stavamo facendo, dove…",
-      "filepath": "content/decisions/2026-05-17.md#line-b4f2622159d0",
-      "path": "content/decisions/2026-05-17.md#line-b4f2622159d0",
-      "source_audio": null,
-      "source_transcription": null,
-      "sourceAudio": null,
-      "sourceTranscription": null,
-      "project": null,
-      "date": "2026-05-17",
-      "eventDate": "2026-05-17",
-      "processing_date": null,
-      "processedDate": null,
-      "preview": "Ho preso la decisione che la realtà contrariamente a come stavamo facendo, dovevamo organizzare che abbiamo deciso che gli soldi che abbiamo promesso di dare li daremo e li daremo senza condizioni, n…",
-      "summary": "Ho preso la decisione che la realtà contrariamente a come stavamo facendo, dovevamo organizzare che abbiamo deciso che gli soldi che abbiamo promesso di dare li daremo e li daremo senza condizioni, nel senso che ve l'hanno dati e non ci saranno postille per quanto riguarda, so...",
-      "stats": {
-        "decisions_count": 0,
-        "tasks_count": 0,
-        "open_points_count": 0,
-        "calendar_events_count": 0,
-        "next_steps_count": 0
-      },
-      "has_chart_data": false,
-      "raw_sections": {},
-      "extracted_items": {
-        "decisions": [
-          "Ho preso la decisione che la realtà contrariamente a come stavamo facendo, dovevamo organizzare che abbiamo deciso che gli soldi che abbiamo promesso di dare li daremo e li daremo senza condizioni, nel senso che ve l'hanno dati e non ci saranno postille per quanto riguarda, so..."
-        ]
-      },
-      "related_files": [],
-      "source_only": false,
-      "needs_review": false,
-      "item_type": "decision",
-      "reviewed": false,
-      "readyForSite": true,
-      "pipelineStatus": "ready_for_site"
     }
   ],
   "errors": []

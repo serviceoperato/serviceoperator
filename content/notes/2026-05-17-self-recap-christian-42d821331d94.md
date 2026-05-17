@@ -3,11 +3,11 @@ title: Per esempio lui può dire, io non ho mai avuto niente, sul…
 category: self-recap
 project: personal
 date: 2026-05-17
-processing_date: 2026-05-17T09:40:40Z
+processing_date: 2026-05-17T09:46:21Z
 source_audio: Christian.m4a
 source_transcription: content/transcriptions/Christian.md
 source_id: 42d821331d94
-source_checksum: f39737abf4bd75ccacc38242e00990f16b85c22361233ccf935c99c0d952079e
+source_checksum: e7867a0da02cd0e91b115a9aeca2f6e20a2badfe395f86652f68a20ada7fb14a
 processed: true
 tags: [personal]
 self_talk: false
@@ -22,7 +22,7 @@ visual:
 ## Source
 - **Source audio:** Christian.m4a
 - **Source transcription:** `Christian.md`
-- **Processing datetime:** 2026-05-17T09:40:40Z
+- **Processing datetime:** 2026-05-17T09:46:21Z
 - **Category:** self-recap (70%)
 - **Project:** personal
 

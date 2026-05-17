@@ -3,11 +3,11 @@ title: Allora, oggi sto lavorando un nuovo progetto, un nuovo pr…
 category: conversation
 project: uncategorized
 date: 2026-05-16
-processing_date: 2026-05-17T09:40:40Z
+processing_date: 2026-05-17T09:46:21Z
 source_audio: Memo 001.m4a
 source_transcription: content/transcriptions/Memo_001.md
 source_id: 5c1e4449ab12
-source_checksum: e79afe90ea69efaefd95582183c5851fff320d8c7e00aedc9f27ae382f03de97
+source_checksum: 798732a7820af4f01ac30e4b1175c23a307498a7ddd2b2b1440b4f733865b023
 processed: true
 tags: [conversation]
 self_talk: false
@@ -22,7 +22,7 @@ visual:
 ## Source
 - **Source audio:** Memo 001.m4a
 - **Source transcription:** `Memo_001.md`
-- **Processing datetime:** 2026-05-17T09:40:40Z
+- **Processing datetime:** 2026-05-17T09:46:21Z
 - **Category:** conversation (72%)
 - **Project:** uncategorized
 

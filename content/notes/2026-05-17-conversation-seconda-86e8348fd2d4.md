@@ -3,11 +3,11 @@ title: Ho preso la decisione che la realtà contrariamente a come…
 category: conversation
 project: personal
 date: 2026-05-17
-processing_date: 2026-05-17T09:40:40Z
+processing_date: 2026-05-17T09:46:21Z
 source_audio: Seconda.m4a
 source_transcription: content/transcriptions/Seconda.md
 source_id: 86e8348fd2d4
-source_checksum: fd3072b5a64fae89f3c388de776de83682cd5d5b20dcd954b3ee51458dbd7c64
+source_checksum: 49c1ffcd8c77893afa1cce2b4f00e6994c79d06ca212a2405c6765a2f64cc487
 processed: true
 tags: [conversation, personal]
 self_talk: false
@@ -22,7 +22,7 @@ visual:
 ## Source
 - **Source audio:** Seconda.m4a
 - **Source transcription:** `Seconda.md`
-- **Processing datetime:** 2026-05-17T09:40:40Z
+- **Processing datetime:** 2026-05-17T09:46:21Z
 - **Category:** conversation (72%)
 - **Project:** personal
 

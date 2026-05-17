@@ -3,11 +3,11 @@ title: Ma quindi tu mi dici che non c'è la possibilità, durante …
 category: conversation
 project: uncategorized
 date: 2026-05-16
-processing_date: 2026-05-17T09:40:40Z
+processing_date: 2026-05-17T09:46:21Z
 source_audio: Memo 002.m4a
 source_transcription: content/transcriptions/Memo_002.md
 source_id: ea440a9f313e
-source_checksum: 0937faeddfa51e416570c4c0901ba12425e857227918ca5450550dc51dd4c28c
+source_checksum: 4bd236f3b0db5b06743e2f763e12b350df828338d3a2d3d0b12693840ed6388a
 processed: true
 tags: [conversation]
 self_talk: false
@@ -23,7 +23,7 @@ visual:
 ## Source
 - **Source audio:** Memo 002.m4a
 - **Source transcription:** `Memo_002.md`
-- **Processing datetime:** 2026-05-17T09:40:40Z
+- **Processing datetime:** 2026-05-17T09:46:21Z
 - **Category:** conversation (72%)
 - **Project:** uncategorized
 

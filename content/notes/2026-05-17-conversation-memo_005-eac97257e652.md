@@ -3,11 +3,11 @@ title: Cosa vuoi a scuola dei corpi alla medica?
 category: conversation
 project: uncategorized
 date: 2026-05-16
-processing_date: 2026-05-17T09:40:40Z
+processing_date: 2026-05-17T09:46:21Z
 source_audio: Memo 005.m4a
 source_transcription: content/transcriptions/Memo_005.md
 source_id: eac97257e652
-source_checksum: fd4bad7400d16a031dac941e1662607a9485dc2960d1054003f439b1cbb3cd3f
+source_checksum: 2d7f50ae8b1d5cd15f9ac84485d09744f5334650ab7b53d9f8aa6d7e25447ce6
 processed: true
 tags: [conversation]
 self_talk: false
@@ -22,7 +22,7 @@ visual:
 ## Source
 - **Source audio:** Memo 005.m4a
 - **Source transcription:** `Memo_005.md`
-- **Processing datetime:** 2026-05-17T09:40:40Z
+- **Processing datetime:** 2026-05-17T09:46:21Z
 - **Category:** conversation (72%)
 - **Project:** uncategorized
 

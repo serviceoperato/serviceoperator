@@ -32,6 +32,7 @@ from voice_pipeline_progress import (
 from voice_registry import (
     STATUS_AI_PENDING,
     STATUS_DETECTED,
+    STATUS_FAILED,
     STATUS_RAW_CREATED,
     STATUS_READY,
     load_registry,
@@ -218,7 +219,7 @@ def process_file(model, registry: dict, source: Path) -> bool:
         upsert_entry(
             registry,
             full_path,
-            status="failed",
+            status=STATUS_FAILED,
             readyForSite=False,
             error=str(exc)[:500],
         )
@@ -253,7 +254,7 @@ def process_file(model, registry: dict, source: Path) -> bool:
         upsert_entry(
             registry,
             full_path,
-            status="failed",
+            status=STATUS_FAILED,
             readyForSite=False,
             error=str(exc)[:500],
         )
