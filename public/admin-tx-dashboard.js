@@ -36,6 +36,45 @@
     'open-points': 'Open point',
   };
 
+  var PRIMARY_CATEGORY_ALIASES = {
+    meeting: 'meetings',
+    meetings: 'meetings',
+    note: 'notes',
+    notes: 'notes',
+    'voice-note': 'notes',
+    conversation: 'notes',
+    task: 'tasks',
+    tasks: 'tasks',
+    calendar: 'calendar',
+    project: 'projects',
+    projects: 'projects',
+    decision: 'decisions',
+    decisions: 'decisions',
+    'open-point': 'open-points',
+    'open-points': 'open-points',
+  };
+
+  function normalizePrimaryCategory(value, fallback) {
+    var raw = String(value || '')
+      .trim()
+      .toLowerCase();
+    if (PRIMARY_CATEGORY_ALIASES[raw]) return PRIMARY_CATEGORY_ALIASES[raw];
+    var fb = String(fallback || 'notes').toLowerCase();
+    var keys = CATEGORIES.map(function (c) {
+      return c.key;
+    });
+    if (keys.indexOf(fb) !== -1) return fb;
+    return PRIMARY_CATEGORY_ALIASES[fb] || 'notes';
+  }
+
+  function itemPrimaryCategory(item) {
+    if (!item) return 'notes';
+    return normalizePrimaryCategory(
+      item.primaryCategory || item.mainCategory || item.category,
+      'notes'
+    );
+  }
+
   var HIDE_JUNK_STORAGE_KEY = 'tf.tx.hideJunk';
   var BULK_ONBOARDED_KEY = 'tf.tx.bulkOnboarded';
   var BULK_SYNC_CONCURRENCY = 5;
@@ -818,8 +857,14 @@
 
   function categoryItems(cat) {
     return aiReadyItems().filter(function (it) {
-      return it.category === cat;
+      return itemPrimaryCategory(it) === cat;
     });
+  }
+
+  function categoryCount(key) {
+    var sourceCounts = state.sourceCounts || {};
+    if (sourceCounts[key] != null) return sourceCounts[key];
+    return categoryItems(key).length;
   }
 
   function truncatePoint(s, max) {
@@ -2598,8 +2643,18 @@
     return true;
   }
 
-  function countsFromItems(items, serverCounts) {
-    var counts = {
+  function countsFromItems(items, serverCounts, serverSourceCounts) {
+    var sourceCounts = {
+      meetings: 0,
+      notes: 0,
+      tasks: 0,
+      calendar: 0,
+      projects: 0,
+      decisions: 0,
+      'open-points': 0,
+      total: items.length,
+    };
+    var extractionCounts = {
       meetings: 0,
       notes: 0,
       tasks: 0,
@@ -2610,24 +2665,49 @@
       total: 0,
     };
     items.forEach(function (it) {
-      var cat = String(it.category || '').toLowerCase();
-      if (counts[cat] != null) counts[cat] += 1;
+      var primary = itemPrimaryCategory(it);
+      if (sourceCounts[primary] != null) sourceCounts[primary] += 1;
+      var st = it.stats || {};
+      extractionCounts.tasks += st.tasks_count || 0;
+      extractionCounts.calendar += st.calendar_events_count || 0;
+      extractionCounts.decisions += st.decisions_count || 0;
+      extractionCounts['open-points'] += st.open_points_count || 0;
+      var updates = (it.extracted_items || {}).project_updates;
+      if (Array.isArray(updates)) extractionCounts.projects += updates.length;
     });
-    counts.total = items.length;
-    if (serverCounts && serverCounts.needsReview != null) {
-      counts.needsReview = serverCounts.needsReview;
+    extractionCounts.total =
+      extractionCounts.tasks +
+      extractionCounts.calendar +
+      extractionCounts.projects +
+      extractionCounts.decisions +
+      extractionCounts['open-points'];
+    if (serverCounts) {
+      CATEGORIES.forEach(function (c) {
+        if (serverCounts[c.key] != null) extractionCounts[c.key] = serverCounts[c.key];
+      });
+      if (serverCounts.total != null) extractionCounts.total = serverCounts.total;
+      if (serverCounts.needsReview != null) extractionCounts.needsReview = serverCounts.needsReview;
     }
-    return counts;
+    if (serverSourceCounts) {
+      CATEGORIES.forEach(function (c) {
+        if (serverSourceCounts[c.key] != null) sourceCounts[c.key] = serverSourceCounts[c.key];
+      });
+      if (serverSourceCounts.total != null) sourceCounts.total = serverSourceCounts.total;
+    }
+    return { extraction: extractionCounts, source: sourceCounts };
   }
 
   function normalizeIndex(j) {
     var serverCounts = j.counts || j.totals || {};
+    var serverSourceCounts = j.sourceTotals || {};
     var items = (j.items || []).map(normalizeItem).filter(isAiReadyItem);
-    var counts = countsFromItems(items, serverCounts);
+    var countPack = countsFromItems(items, serverCounts, serverSourceCounts);
+    var counts = countPack.extraction;
+    var sourceCounts = countPack.source;
     var chartPack =
       j.has_chart_data != null
         ? { hasChartData: !!j.has_chart_data, chart: j.chart || [] }
-        : buildChartFromCounts(counts);
+        : buildChartFromCounts(countPack.source);
     var projects = j.projects;
     if (!projects || !projects.length) {
       var set = {};
@@ -3998,12 +4078,83 @@
     });
   }
 
+  function findItemById(id) {
+    for (var i = 0; i < state.items.length; i++) {
+      if (state.items[i].id === id) return state.items[i];
+    }
+    return null;
+  }
+
+  function resolveSyncIndexId(item, fallbackId) {
+    if (!item) return String(fallbackId || '').trim();
+    var id = String(item.id || fallbackId || '').trim();
+    if (/^src_/i.test(id) && item.childIds && item.childIds.length) {
+      return String(item.childIds[0]).trim();
+    }
+    return id;
+  }
+
+  function syncExtractionCount(item) {
+    if (!item) return 0;
+    return (
+      meaningfulEntries(item.tasks).length +
+      meaningfulEntries(item.calendarEvents || item.calendar_events).length
+    );
+  }
+
+  function isSourceEntryItem(item) {
+    return !!(
+      item &&
+      (item.isSourceEntry ||
+        item.source_entry ||
+        item.item_type === 'source_entry' ||
+        (item.extractedCategories && item.extractedCategories.length))
+    );
+  }
+
+  function shouldUseBulkSync(item) {
+    if (!item) return true;
+    if (isSourceEntryItem(item)) return true;
+    if (/^src_/i.test(String(item.id || ''))) return true;
+    var tasks = meaningfulEntries(item.tasks);
+    var events = meaningfulEntries(item.calendarEvents || item.calendar_events);
+    if (tasks.length + events.length !== 1) return true;
+    if (item.item_type === 'task' && tasks.length === 1 && !events.length) return false;
+    if (
+      (item.item_type === 'calendar_event' || item.item_type === 'event') &&
+      events.length === 1 &&
+      !tasks.length
+    ) {
+      return false;
+    }
+    return true;
+  }
+
   function syncItemRequest(id) {
+    var item = findItemById(id);
+    var targetId = resolveSyncIndexId(item, id);
+    if (item && syncExtractionCount(item) === 0) {
+      return Promise.resolve({
+        id: id,
+        ok: false,
+        status: 0,
+        j: { error: 'No tasks or calendar events to sync for this source.' },
+      });
+    }
+    if (shouldUseBulkSync(item)) {
+      return tryApi(['/api/admin/transcriptions/sync-bulk'], {
+        method: 'POST',
+        body: { id: targetId },
+      }).then(function (pack) {
+        return { id: id, ok: pack.ok, status: pack.status, j: pack.j, mode: 'bulk' };
+      });
+    }
+    var itemType = item.item_type === 'calendar_event' ? 'event' : 'task';
     return tryApi(['/api/admin/transcriptions/sync-item'], {
       method: 'POST',
-      body: { id: id },
+      body: { id: targetId, item_type: itemType, item_index: 0 },
     }).then(function (pack) {
-      return { id: id, ok: pack.ok, status: pack.status, j: pack.j };
+      return { id: id, ok: pack.ok, status: pack.status, j: pack.j, mode: 'item' };
     });
   }
 
@@ -4019,7 +4170,17 @@
           }
         });
         if (!opts.skipFeedRender) renderFeed();
-        if (!opts.quiet) toast('Google sync queued.');
+        if (!opts.quiet) {
+          toast(
+            result.mode === 'bulk'
+              ? 'Google bulk sync queued.'
+              : 'Google sync queued.'
+          );
+        }
+      } else if (result.status === 0) {
+        if (!opts.quiet) {
+          toastPersist((result.j && result.j.error) || 'Nothing to sync to Google.');
+        }
       } else if (result.status === 404) {
         if (!opts.quiet) toastPersist('Google sync API not available yet.');
       } else if (!opts.quiet) {

@@ -5,7 +5,7 @@
   'use strict';
 
   /** Bumped when dashboard markup/behavior changes (cache-bust aid). */
-  window.TX_DASHBOARD_UI_REV = 15;
+  window.TX_DASHBOARD_UI_REV = 16;
 
   /** Detail page: collapsed preview length for full transcription reference (chars). */
   var DETAIL_REF_PREVIEW_CHARS = 650;
@@ -35,6 +35,45 @@
     decisions: 'Decision',
     'open-points': 'Open point',
   };
+
+  var PRIMARY_CATEGORY_ALIASES = {
+    meeting: 'meetings',
+    meetings: 'meetings',
+    note: 'notes',
+    notes: 'notes',
+    'voice-note': 'notes',
+    conversation: 'notes',
+    task: 'tasks',
+    tasks: 'tasks',
+    calendar: 'calendar',
+    project: 'projects',
+    projects: 'projects',
+    decision: 'decisions',
+    decisions: 'decisions',
+    'open-point': 'open-points',
+    'open-points': 'open-points',
+  };
+
+  function normalizePrimaryCategory(value, fallback) {
+    var raw = String(value || '')
+      .trim()
+      .toLowerCase();
+    if (PRIMARY_CATEGORY_ALIASES[raw]) return PRIMARY_CATEGORY_ALIASES[raw];
+    var fb = String(fallback || 'notes').toLowerCase();
+    var keys = CATEGORIES.map(function (c) {
+      return c.key;
+    });
+    if (keys.indexOf(fb) !== -1) return fb;
+    return PRIMARY_CATEGORY_ALIASES[fb] || 'notes';
+  }
+
+  function itemPrimaryCategory(item) {
+    if (!item) return 'notes';
+    return normalizePrimaryCategory(
+      item.primaryCategory || item.mainCategory || item.category,
+      'notes'
+    );
+  }
 
   var HIDE_JUNK_STORAGE_KEY = 'tf.tx.hideJunk';
   var SHOW_EMPTY_CATEGORIES_KEY = 'tf.tx.showEmptyCategories';
@@ -790,6 +829,10 @@
     return window.TxTopicVisuals || null;
   }
 
+  function txContentNumbers() {
+    return window.TxContentNumbers || null;
+  }
+
   /** Numeric breakdowns per category (≥2 states → donut). Colors align with catTheme accents. */
   var CATEGORY_SEGMENT_DEFS = {
     meetings: [
@@ -943,31 +986,59 @@
     Object.keys(groups).forEach(function (key) {
       var group = groups[key];
       var primary = pickPrimaryFromGroup(group);
+      var primaryCat = itemPrimaryCategory(primary);
+      group.forEach(function (child) {
+        var mc =
+          (child.extracted_items && child.extracted_items.main_category) ||
+          child.main_category ||
+          child.mainCategory;
+        if (mc) primaryCat = normalizePrimaryCategory(mc, child.category);
+      });
       var categories = [];
       var extractions = {};
       var mergedExtracted = {};
       var mergedRawSections = {};
+      var mergedStats = {
+        tasks_count: 0,
+        calendar_events_count: 0,
+        decisions_count: 0,
+        open_points_count: 0,
+      };
       var childIds = [];
       group.forEach(function (child) {
         var cat = String(child.category || '');
-        if (cat && categories.indexOf(cat) === -1) categories.push(cat);
         if (cat) {
           if (!extractions[cat]) extractions[cat] = [];
           extractions[cat].push(extractionSnapshot(child));
         }
         mergedExtracted = mergeExtractedItems(mergedExtracted, child.extracted_items || child.extractedItems || {});
         mergedRawSections = Object.assign(mergedRawSections, child.raw_sections || child.rawSections || {});
+        var st = child.stats || {};
+        mergedStats.tasks_count += st.tasks_count || 0;
+        mergedStats.calendar_events_count += st.calendar_events_count || 0;
+        mergedStats.decisions_count += st.decisions_count || 0;
+        mergedStats.open_points_count += st.open_points_count || 0;
         if (child.id) childIds.push(child.id);
       });
-      categories.sort();
+      if (mergedStats.tasks_count > 0) categories.push('tasks');
+      if (mergedStats.calendar_events_count > 0) categories.push('calendar');
+      if (mergedStats.decisions_count > 0) categories.push('decisions');
+      if (mergedStats.open_points_count > 0) categories.push('open-points');
       var entry = Object.assign({}, primary, {
         id: 'src_' + key.replace(/[^a-z0-9]+/gi, '').slice(0, 8) + '_' + String(primary.id || '').slice(0, 8),
         item_type: 'source_entry',
         isSourceEntry: true,
         source_entry: true,
-        category: primary.category,
-        primaryCategory: primary.category,
+        category: primaryCat,
+        primaryCategory: primaryCat,
+        mainCategory: primaryCat,
         categories: categories,
+        extractedCategories: categories,
+        hasTasks: mergedStats.tasks_count > 0,
+        hasCalendar: mergedStats.calendar_events_count > 0,
+        hasDecisions: mergedStats.decisions_count > 0,
+        hasOpenPoints: mergedStats.open_points_count > 0,
+        stats: mergedStats,
         extractions: extractions,
         extracted_items: mergedExtracted,
         extractedItems: mergedExtracted,
@@ -1006,15 +1077,41 @@
 
   function sourceHasCategory(item, cat) {
     if (!item || !cat) return false;
-    var categories = item.extractedCategories || item.categories || [];
-    if (categories.length) return categories.indexOf(cat) !== -1;
-    return String(item.category || '').toLowerCase() === cat;
+    return itemPrimaryCategory(item) === cat;
   }
 
   function extractionCountForCategory(item, cat) {
-    var extractions = item.extractions || {};
-    if (extractions[cat] && extractions[cat].length) return extractions[cat].length;
-    return sourceHasCategory(item, cat) ? 1 : 0;
+    var st = item.stats || {};
+    if (cat === 'tasks') return sectionCountFrom(item.tasks, st.tasks_count);
+    if (cat === 'calendar') {
+      return sectionCountFrom(item.calendarEvents || item.calendar_events, st.calendar_events_count);
+    }
+    if (cat === 'decisions') return sectionCountFrom(item.decisions, st.decisions_count);
+    if (cat === 'open-points') {
+      return sectionCountFrom(item.openPoints || item.open_points, st.open_points_count);
+    }
+    if (cat === 'projects') {
+      var updates =
+        (item.extracted_items && item.extracted_items.project_updates) ||
+        (item.extractedItems && item.extractedItems.project_updates) ||
+        [];
+      return Array.isArray(updates) ? updates.length : 0;
+    }
+    return 0;
+  }
+
+  function itemSecondaryExtractionBadges(item) {
+    var badges = [];
+    var cats = item.extractedCategories || item.categories || [];
+    function has(cat) {
+      return cats.indexOf(cat) !== -1;
+    }
+    if (item.hasTasks || has('tasks')) badges.push('Tasks');
+    if (item.hasCalendar || has('calendar')) badges.push('Calendar');
+    if (item.hasDecisions || has('decisions')) badges.push('Decisions');
+    if (item.hasOpenPoints || has('open-points')) badges.push('Open points');
+    if (item.hasProjects || has('projects')) badges.push('Projects');
+    return badges;
   }
 
   function categoryItems(cat) {
@@ -1033,7 +1130,7 @@
     var pack = countsFromItems(aiReadyItems());
     state.counts = pack.extraction;
     state.sourceCounts = pack.source;
-    var chartPack = buildChartFromCounts(pack.extraction);
+    var chartPack = buildChartFromCounts(pack.source);
     state.chart = chartPack.chart;
     state.hasChartData = chartPack.hasChartData;
     ensureActiveCategory();
@@ -2161,7 +2258,7 @@
               '"></span><span class="tx-ring__legend-label">' +
               esc(s.label) +
               '</span><span class="tx-ring__legend-val">' +
-              esc(s.value != null ? s.value : 0) +
+              esc(s.raw != null ? s.raw : s.value != null ? s.value : 0) +
               '</span></li>'
             );
           })
@@ -2216,7 +2313,10 @@
   function itemFeedChips(item) {
     var chips = [{ t: 'AI-ready', ok: true }];
     if (!item.reviewed) chips.push({ t: 'Needs review', warn: true });
-    chips.push({ t: categoryShortLabel(item.category), accent: true });
+    chips.push({ t: categoryShortLabel(itemPrimaryCategory(item)), accent: true });
+    itemSecondaryExtractionBadges(item).forEach(function (label) {
+      chips.push({ t: label });
+    });
     return chips;
   }
 
@@ -2543,113 +2643,82 @@
     opts = opts || {};
     var TV = txTopicVisuals();
     if (TV) {
-      var key = opts.item ? TV.inferTopicVisualKey(opts.item) : TV.categoryVisualKey(catKey);
+      if (opts.item && TV.renderTopicVisualForItem) {
+        return TV.renderTopicVisualForItem(opts.item, {
+          size: opts.size === 'hero' ? 'hero' : 'list',
+          extraClass: iconExtraClass,
+        });
+      }
+      var key = TV.categoryVisualKey(catKey);
       var size = opts.size === 'hero' ? 'hero' : 'list';
-      return TV.renderTopicVisual(key, { size: size, extraClass: iconExtraClass });
+      return TV.renderTopicVisual(key, { size: size, extraClass: iconExtraClass, seed: TV.itemSeed ? TV.itemSeed({ id: catKey }) : 0 });
     }
     return renderLargeCategoryIcon(catKey, iconExtraClass);
   }
 
-  /** Per-item status breakdown (≥2 nonzero parts → donut on cards/detail). */
-  function itemInsightSegments(item) {
-    var cat = String(item.category || 'notes').toLowerCase();
-
-    if (cat === 'meetings' || cat === 'notes') {
-      return mergeInsightSegments([
-        countStatusSegments(meaningfulEntries(item.tasks), entryTaskStatus, TASK_STATUS_DEFS),
-        countStatusSegments(meaningfulEntries(item.decisions), function (e) {
-          return entryDecisionStatus(e, item);
-        }, DECISION_STATUS_DEFS),
-        countStatusSegments(meaningfulEntries(item.openPoints || item.open_points), entryOpenPointStatus, OPEN_POINT_STATUS_DEFS),
-        countStatusSegments(meaningfulEntries(item.nextSteps || item.next_steps), entryNextStepStatus, NEXT_STEP_STATUS_DEFS),
-      ]);
+  function itemTopicVisual(item, opts) {
+    opts = opts || {};
+    var TV = txTopicVisuals();
+    if (TV && TV.renderTopicVisualForItem) {
+      return TV.renderTopicVisualForItem(item, {
+        size: opts.size === 'hero' ? 'hero' : 'list',
+        extraClass: opts.extraClass,
+      });
     }
+    var cat = String((item && item.category) || 'notes').toLowerCase();
+    return categoryCounterVisual(cat, opts.extraClass, { item: item, size: opts.size });
+  }
 
-    if (cat === 'tasks') {
-      var subs = item.subtasks || item.checklist || [];
-      if (subs.length >= 2) {
-        var done = countWhere(subs, function (s) {
-          return entryTaskStatus(s) === 'done';
-        });
-        var unclear = countWhere(subs, function (s) {
-          return entryTaskStatus(s) === 'unclear';
-        });
-        var open = subs.length - done - unclear;
-        return compactInsightSegments([
-          { label: 'Completed', value: done, color: '#10b981' },
-          { label: 'Open', value: open, color: '#f59e0b' },
-          { label: 'Unclear / to confirm', value: unclear, color: '#94a3b8' },
-        ]);
-      }
-      var taskLines = meaningfulEntries(item.tasks);
-      if (taskLines.length >= 2) {
-        return compactInsightSegments(
-          countStatusSegments(taskLines, entryTaskStatus, TASK_STATUS_DEFS)
-        );
-      }
-      return null;
+  /** Content numbers from transcription text → donut | stat cards | topic SVG. */
+  function itemContentInsight(item) {
+    var CN = txContentNumbers();
+    if (!CN) return { mode: 'topic', numbers: [] };
+    var numbers = CN.extractContentNumbers(item);
+    if (!numbers.length) return { mode: 'topic', numbers: [] };
+    var donutSegs = CN.toDonutSegments(numbers);
+    if (donutSegs && donutSegs.length >= 2) {
+      return { mode: 'donut', segments: donutSegs, numbers: numbers };
     }
+    return { mode: 'stats', numbers: numbers };
+  }
 
-    if (cat === 'decisions') {
-      var decLines = meaningfulEntries(item.decisions);
-      if (!decLines.length && item.decisionText && isMeaningfulEntry(item.decisionText)) {
-        decLines = [item.decisionText];
-      }
-      return compactInsightSegments(
-        countStatusSegments(decLines, function (e) {
-          return entryDecisionStatus(e, item);
-        }, DECISION_STATUS_DEFS)
+  function renderContentStatCards(numbers, opts) {
+    opts = opts || {};
+    if (!numbers || !numbers.length) return '';
+    var CN = txContentNumbers();
+    var max = opts.size === 'hero' ? 6 : 4;
+    var cards = numbers.slice(0, max).map(function (seg, idx) {
+      var color = CN && CN.kindColor ? CN.kindColor(seg.kind, idx) : CHART_COLORS[idx % CHART_COLORS.length];
+      var val = seg.raw != null ? String(seg.raw) : String(seg.value != null ? seg.value : '');
+      var lbl = seg.label || seg.kind || 'Value';
+      return (
+        '<div class="tx-content-stat" style="--tx-stat-accent:' +
+        esc(color) +
+        '">' +
+        '<span class="tx-content-stat__val">' +
+        esc(val) +
+        '</span>' +
+        '<span class="tx-content-stat__lbl">' +
+        esc(lbl) +
+        '</span></div>'
       );
-    }
-
-    if (cat === 'open-points') {
-      var opLines = meaningfulEntries(item.openPoints || item.open_points);
-      if (!opLines.length && item.issue && isMeaningfulEntry(item.issue)) opLines = [item.issue];
-      return compactInsightSegments(
-        countStatusSegments(opLines, entryOpenPointStatus, OPEN_POINT_STATUS_DEFS)
-      );
-    }
-
-    if (cat === 'calendar') {
-      var evs = meaningfulEntries(item.calendarEvents || item.calendar_events);
-      if (evs.length >= 2) {
-        return compactInsightSegments(
-          countStatusSegments(
-            evs,
-            function (e) {
-              return calendarDateState(typeof e === 'object' ? e : { summary: entryText(e) });
-            },
-            CALENDAR_STATUS_DEFS
-          )
-        );
-      }
-      return null;
-    }
-
-    if (cat === 'projects') {
-      var steps = meaningfulEntries(item.nextSteps || item.next_steps);
-      if (steps.length >= 2) {
-        return compactInsightSegments(
-          countStatusSegments(steps, entryNextStepStatus, NEXT_STEP_STATUS_DEFS)
-        );
-      }
-      return null;
-    }
-
-    return null;
+    });
+    var sizeCls = opts.size === 'hero' ? ' tx-content-stats--hero' : opts.size === 'card' ? ' tx-content-stats--card' : '';
+    return '<div class="tx-content-stats' + sizeCls + '" role="list">' + cards.join('') + '</div>';
   }
 
   function itemInsightVisual(item, opts) {
     opts = opts || {};
-    var cat = String(item.category || 'notes').toLowerCase();
-    var segs = itemInsightSegments(item);
-    if (segs && segs.length >= 2) {
-      var total = segs.reduce(function (s, c) {
-        return s + (c.value || 0);
-      }, 0);
-      return renderCompactRing(segs, total, opts);
+    var insight = itemContentInsight(item);
+    if (insight.mode === 'donut') {
+      var CN = txContentNumbers();
+      var center = CN && CN.donutCenterLabel ? CN.donutCenterLabel(insight.segments) : insight.segments.length;
+      return renderCompactRing(insight.segments, center, opts);
     }
-    return categoryCounterVisual(cat, opts.extraClass, { item: item, size: opts.size });
+    if (insight.mode === 'stats') {
+      return renderContentStatCards(insight.numbers, opts);
+    }
+    return itemTopicVisual(item, opts);
   }
 
   function categoryVisualFromStats(stats, catKey, total, iconExtraClass, opts) {
@@ -2948,7 +3017,8 @@
   }
 
   function itemCardVisual(item) {
-    var segs = itemInsightSegments(item);
+    var insight = itemContentInsight(item);
+    if (false) var segs = null;
     if (segs && segs.length >= 2) {
       var total = segs.reduce(function (s, c) {
         return s + (c.value || 0);
@@ -3494,8 +3564,25 @@
       readyForSite:
         it.readyForSite !== false &&
         (!it.pipelineStatus || !!VISIBLE_PIPELINE_STATUSES[it.pipelineStatus]),
-      extractedCategories: it.extractedCategories || it.categories || (it.category ? [it.category] : []),
-      categories: it.extractedCategories || it.categories || (it.category ? [it.category] : []),
+      primaryCategory: normalizePrimaryCategory(
+        it.primaryCategory || it.mainCategory || it.category,
+        'notes'
+      ),
+      mainCategory: normalizePrimaryCategory(
+        it.mainCategory || it.primaryCategory || it.category,
+        'notes'
+      ),
+      category: normalizePrimaryCategory(
+        it.primaryCategory || it.mainCategory || it.category,
+        it.category || 'notes'
+      ),
+      extractedCategories: it.extractedCategories || it.categories || [],
+      categories: it.extractedCategories || it.categories || [],
+      hasTasks: !!it.hasTasks,
+      hasCalendar: !!it.hasCalendar,
+      hasDecisions: !!it.hasDecisions,
+      hasOpenPoints: !!it.hasOpenPoints,
+      hasProjects: !!it.hasProjects,
       sourceEntries: it.sourceEntries || [],
       sourceGroupKey: it.sourceGroupKey || it.sourceKey || null,
       isSourceEntry: !!(
@@ -3572,14 +3659,15 @@
       total: 0,
     };
     items.forEach(function (it) {
-      CATEGORIES.forEach(function (c) {
-        if (sourceHasCategory(it, c.key)) sourceCounts[c.key] += 1;
-        extractionCounts[c.key] += extractionCountForCategory(it, c.key);
-      });
+      var primary = itemPrimaryCategory(it);
+      if (sourceCounts[primary] != null) sourceCounts[primary] += 1;
+      extractionCounts.tasks += extractionCountForCategory(it, 'tasks');
+      extractionCounts.calendar += extractionCountForCategory(it, 'calendar');
+      extractionCounts.decisions += extractionCountForCategory(it, 'decisions');
+      extractionCounts['open-points'] += extractionCountForCategory(it, 'open-points');
+      extractionCounts.projects += extractionCountForCategory(it, 'projects');
     });
     extractionCounts.total =
-      extractionCounts.meetings +
-      extractionCounts.notes +
       extractionCounts.tasks +
       extractionCounts.calendar +
       extractionCounts.projects +
@@ -4067,17 +4155,19 @@
   function renderStats() {
     var el = byId('txStats');
     if (!el) return;
-    var c = state.counts || {};
+    var sc = state.sourceCounts || {};
+    var ex = state.counts || {};
     var rs = state.rawSources || {};
     var pipe = state.pipeline || {};
     var cards = [
-      { label: 'Meeting summaries', n: categoryCount('meetings'), catKey: 'meetings' },
-      { label: 'Personal notes', n: categoryCount('notes'), catKey: 'notes' },
-      { label: 'Extracted tasks', n: categoryCount('tasks'), catKey: 'tasks' },
-      { label: 'Calendar events', n: categoryCount('calendar'), catKey: 'calendar' },
-      { label: 'Project updates', n: categoryCount('projects'), catKey: 'projects' },
-      { label: 'Decisions', n: categoryCount('decisions'), catKey: 'decisions' },
-      { label: 'Open points', n: categoryCount('open-points'), catKey: 'open-points' },
+      { label: 'Sources · Meetings', n: sc.meetings != null ? sc.meetings : categoryCount('meetings'), catKey: 'meetings' },
+      { label: 'Sources · Notes', n: sc.notes != null ? sc.notes : categoryCount('notes'), catKey: 'notes' },
+      { label: 'Sources · Projects', n: sc.projects != null ? sc.projects : categoryCount('projects'), catKey: 'projects' },
+      { label: 'Extracted · Tasks', n: ex.tasks || 0, extraction: true },
+      { label: 'Extracted · Calendar', n: ex.calendar || 0, extraction: true },
+      { label: 'Extracted · Decisions', n: ex.decisions || 0, extraction: true },
+      { label: 'Extracted · Open points', n: ex['open-points'] || 0, extraction: true },
+      { label: 'Extracted · Project lines', n: ex.projects || 0, extraction: true },
       { label: 'Sources waiting for AI', n: rs.waitingForProcessing || 0, muted: true },
       { label: 'Raw files on disk', n: rs.total != null ? rs.total : state.rawTranscriptionCount || 0, muted: true },
       { label: 'Needs review', n: state.needsReviewCount || 0, muted: true },
@@ -4089,12 +4179,13 @@
     ];
     el.innerHTML = cards
       .filter(function (card) {
-        if (!card.catKey) return true;
+        if (!card.catKey && !card.extraction) return true;
         if (state.showEmptyCategories) return true;
         return (card.n || 0) > 0;
       })
       .map(function (card) {
         var cls = 'tx-stat' + (card.muted ? ' tx-stat--muted' : '');
+        if (card.extraction) cls += ' tx-stat--extraction';
         if (card.catKey && (card.n || 0) === 0) cls += ' tx-stat--empty';
         return (
           '<div class="' +
@@ -4640,13 +4731,13 @@
     var people = extractPeopleFromItem(item);
     var unread = !item.reviewed ? ' is-unread' : '';
     var junk = isJunkCard(item);
-    var catKey = String(item.category || 'notes').toLowerCase();
+    var catKey = itemPrimaryCategory(item);
     var theme = catTheme(catKey);
     var audioName = audioBasename(item);
     var datesHtml = renderCardDatesHtml(item);
     var metaRows =
       '<span class="tx-dash-card__meta-row"><span class="tx-dash-card__cat">' +
-      esc(categoryShortLabel(item.category)) +
+      esc(categoryShortLabel(itemPrimaryCategory(item))) +
       '</span>' +
       (item.project
         ? '<span class="tx-dash-card__sep">·</span><span class="tx-dash-card__proj">' + esc(item.project) + '</span>'
@@ -5000,12 +5091,73 @@
     });
   }
 
+  function findItemById(id) {
+    for (var i = 0; i < state.items.length; i++) {
+      if (state.items[i].id === id) return state.items[i];
+    }
+    return null;
+  }
+
+  function resolveSyncIndexId(item, fallbackId) {
+    if (!item) return String(fallbackId || '').trim();
+    var id = String(item.id || fallbackId || '').trim();
+    if (/^src_/i.test(id) && item.childIds && item.childIds.length) {
+      return String(item.childIds[0]).trim();
+    }
+    return id;
+  }
+
+  function syncExtractionCount(item) {
+    if (!item) return 0;
+    return (
+      meaningfulEntries(item.tasks).length +
+      meaningfulEntries(item.calendarEvents || item.calendar_events).length
+    );
+  }
+
+  function shouldUseBulkSync(item) {
+    if (!item) return true;
+    if (isSourceEntry(item) || item.item_type === 'source_entry') return true;
+    if (/^src_/i.test(String(item.id || ''))) return true;
+    var tasks = meaningfulEntries(item.tasks);
+    var events = meaningfulEntries(item.calendarEvents || item.calendar_events);
+    if (tasks.length + events.length !== 1) return true;
+    if (item.item_type === 'task' && tasks.length === 1 && !events.length) return false;
+    if (
+      (item.item_type === 'calendar_event' || item.item_type === 'event') &&
+      events.length === 1 &&
+      !tasks.length
+    ) {
+      return false;
+    }
+    return true;
+  }
+
   function syncItemRequest(id) {
+    var item = findItemById(id);
+    var targetId = resolveSyncIndexId(item, id);
+    if (item && syncExtractionCount(item) === 0) {
+      return Promise.resolve({
+        id: id,
+        ok: false,
+        status: 0,
+        j: { error: 'No tasks or calendar events to sync for this source.' },
+      });
+    }
+    if (shouldUseBulkSync(item)) {
+      return tryApi(['/api/admin/transcriptions/sync-bulk'], {
+        method: 'POST',
+        body: { id: targetId },
+      }).then(function (pack) {
+        return { id: id, ok: pack.ok, status: pack.status, j: pack.j, mode: 'bulk' };
+      });
+    }
+    var itemType = item.item_type === 'calendar_event' ? 'event' : 'task';
     return tryApi(['/api/admin/transcriptions/sync-item'], {
       method: 'POST',
-      body: { id: id },
+      body: { id: targetId, item_type: itemType, item_index: 0 },
     }).then(function (pack) {
-      return { id: id, ok: pack.ok, status: pack.status, j: pack.j };
+      return { id: id, ok: pack.ok, status: pack.status, j: pack.j, mode: 'item' };
     });
   }
 
@@ -5021,7 +5173,17 @@
           }
         });
         if (!opts.skipFeedRender) renderFeed();
-        if (!opts.quiet) toast('Google sync queued.');
+        if (!opts.quiet) {
+          toast(
+            result.mode === 'bulk'
+              ? 'Google bulk sync queued.'
+              : 'Google sync queued.'
+          );
+        }
+      } else if (result.status === 0) {
+        if (!opts.quiet) {
+          toastPersist((result.j && result.j.error) || 'Nothing to sync to Google.');
+        }
       } else if (result.status === 404) {
         if (!opts.quiet) toastPersist('Google sync API not available yet.');
       } else if (!opts.quiet) {

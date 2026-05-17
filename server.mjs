@@ -2724,18 +2724,31 @@ app.post('/api/admin/transcriptions/sync-item', requireAdmin, async (req, res) =
   transcriptionsApiNoStore(res);
   const body = req.body && typeof req.body === 'object' ? req.body : {};
   const id = typeof body.id === 'string' ? body.id.trim() : '';
+  if (!id) return res.status(400).json({ error: 'Body field id is required.' });
+  const item = getIndexItem(id);
+  if (!item) return res.status(404).json({ error: 'Item not found.' });
   const itemType = typeof body.item_type === 'string' ? body.item_type.trim() : '';
   const itemIndex = Number(body.item_index);
-  if (!id || !itemType || !Number.isInteger(itemIndex) || itemIndex < 0) {
+  const hasItemRef =
+    (itemType === 'task' || itemType === 'event') &&
+    Number.isInteger(itemIndex) &&
+    itemIndex >= 0;
+  const isSourceEntry =
+    item.item_type === 'source_entry' || item.isSourceEntry || item.source_entry;
+  if (!hasItemRef) {
+    if (isSourceEntry) {
+      try {
+        const result = await syncTranscriptionBulk(item);
+        return res.status(result.status).json(result.body);
+      } catch (e) {
+        console.warn('[transcriptions/sync-item→bulk]', e && e.message ? e.message : e);
+        return res.status(500).json({ error: 'Sync failed.' });
+      }
+    }
     return res.status(400).json({
       error: 'Body fields id, item_type (task|event), and item_index (non-negative integer) are required.',
     });
   }
-  if (itemType !== 'task' && itemType !== 'event') {
-    return res.status(400).json({ error: 'item_type must be "task" or "event".' });
-  }
-  const item = getIndexItem(id);
-  if (!item) return res.status(404).json({ error: 'Item not found.' });
   try {
     const result = await syncTranscriptionItem(item, itemType, itemIndex);
     return res.status(result.status).json(result.body);
