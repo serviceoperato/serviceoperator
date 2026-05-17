@@ -2577,6 +2577,7 @@
 
   var VISIBLE_PIPELINE_STATUSES = { ai_processed: true, ready_for_site: true };
   var ALLOWED_OUTPUT_PREFIXES = [
+    'content/ai-ready-transcriptions/',
     'content/meetings/',
     'content/notes/',
     'content/tasks/',

@@ -5,7 +5,7 @@
   'use strict';
 
   /** Bumped when dashboard markup/behavior changes (cache-bust aid). */
-  window.TX_DASHBOARD_UI_REV = 14;
+  window.TX_DASHBOARD_UI_REV = 15;
 
   /** Detail page: collapsed preview length for full transcription reference (chars). */
   var DETAIL_REF_PREVIEW_CHARS = 650;
@@ -3529,6 +3529,7 @@
 
   var VISIBLE_PIPELINE_STATUSES = { ai_processed: true, ready_for_site: true };
   var ALLOWED_OUTPUT_PREFIXES = [
+    'content/ai-ready-transcriptions/',
     'content/meetings/',
     'content/notes/',
     'content/tasks/',
@@ -5206,6 +5207,8 @@
           return;
         }
         state.items = norm.items;
+        state.counts = norm.counts;
+        state.sourceCounts = norm.sourceCounts;
         state.rawTranscriptionCount = norm.rawTranscriptionCount;
         state.rawSources = norm.rawSources || {};
         applyIndexSort();
