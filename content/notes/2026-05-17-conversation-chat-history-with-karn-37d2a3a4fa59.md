@@ -1,38 +1,42 @@
 ---
-title: <!-- PROCESSED: true | date: 2026-05-17T09:46:13Z | outpu…
+title: Chat history with Karn
 category: conversation
 project: personal
 date: 2026-05-17
-processing_date: 2026-05-17T09:46:21Z
-source_audio: Chat history with Karn
+processing_date: 2026-05-17T10:57:01Z
+source_audio: null
 source_transcription: content/transcriptions/Chat history with Karn.md
 source_id: 37d2a3a4fa59
-source_checksum: 6f85e8ee699a79d03b77c66fa04f9e2207a52578da235411e9d60897472f27d6
+source_checksum: 5a2fa8ab3259b3818fa02b1a70673b9a497b8ac99ff9c7dfe85458bbadda4d8a
 processed: true
-tags: [conversation, personal]
+tags: [conversation, chat-import, needs-review]
 self_talk: false
 conversation: true
 visual:
-  type: ring
-  ring_data:
-    - { label: "Open", value: 1, color: "#EF4444" }
-    - { label: "Next", value: 2, color: "#8B5CF6" }
+  type: icon
+  icon:
+    name: MessageCircle
+    color: "#06B6D4"
+    bg_color: "#06B6D426"
+    label: Chat import
 ---
 
 ## Source
-- **Source audio:** Chat history with Karn
+- **Source type:** WhatsApp chat export (not voice audio)
 - **Source transcription:** `Chat history with Karn.md`
-- **Processing datetime:** 2026-05-17T09:46:21Z
-- **Category:** conversation (85%)
+- **Processing datetime:** 2026-05-17T10:57:01Z
+- **Category:** conversation (chat import)
 - **Project:** personal
 
-## Summary
-<!-- PROCESSED: true | date: 2026-05-17T09:46:13Z | output: content/notes/2026-05-17-conversation-chat-history-with-karn-37d2a3a4fa59.md | checksum: 645e763c9e5294d57c5f594db51dade2594abbad5b2340825c9d86831b04940f --> ﻿Chat history with Karn Saved on: 5/14/2026, 23:44 Thu, 5/1...
+## Clean Summary
+WhatsApp chat archive with Karn (export saved 2026-05-14). Long personal thread; not a voice recording.
 
-## Top 3 Important Points
-- <!-- PROCESSED: true | date: 2026-05-17T09:46:13Z | output: content/notes/2026-05-17-conversation-chat-history-with-karn-37d2a3a4fa59.md | checksum: 645e763c9e5294d57c5f594db51dade2594abbad5b2340825c9d86831b04940f --> ﻿Chat history with Karn Saved on: 5/14/2026, 23:44 Thu, 5/1...
-- 03:32 Karn [Sticker] 03:33 Jack I'm little bit shy 03:34 Jack How much for ST and LT?
-- 03:35 Karn I just came to visit.
+## Important Points
+- Chat import — not auto-extracted as meeting/task pipeline
+- Review manually only if operational items are required
+
+## Possible Actions
+- (none auto-extracted)
 
 ## Decisions
 - (none)
@@ -44,11 +48,7 @@ visual:
 - (none)
 
 ## Open Points
-- 03:32 Karn [Sticker] 03:33 Jack I'm little bit shy 03:34 Jack How much for ST and LT? | owner: to confirm
-
-## Next Steps
-- 22:08 Jack You don't deserve 1% of my attention.
-- You should create a relationship with somebody that want to create relationship based on your lies.
+- Whether to extract tasks/events from this chat — owner to confirm
 
 ## Full Transcription Reference
 See `content/transcriptions/Chat history with Karn.md`.

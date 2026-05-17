@@ -645,6 +645,106 @@
       "source_checksum": "5001ad06425b6be6204c50c93310525f89bf31bc97913dfc377eae70edd37358",
       "category": "voice-note",
       "project": "uncategorized"
+    },
+    "chat-import:content/transcriptions/Chat history with Karn.md": {
+      "id": "37d2a3a4fa59",
+      "sourceAudio": null,
+      "sourceAudioPath": "chat-import:content/transcriptions/Chat history with Karn.md",
+      "rawTranscriptionPath": "content/transcriptions/Chat history with Karn.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-conversation-chat-history-with-karn-37d2a3a4fa59.md",
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/personal.md",
+        "decisions": null,
+        "openPoints": null
+      },
+      "status": "needs_review",
+      "readyForSite": false,
+      "rawCreatedAt": "2026-05-17T10:57:01Z",
+      "aiProcessedAt": "2026-05-17T10:57:01Z",
+      "error": "chat import — excluded from main transcriptions feed"
+    },
+    "chat-import:content/transcriptions/WhatsApp Chat wi.md": {
+      "id": "6aabaa09ab24",
+      "sourceAudio": null,
+      "sourceAudioPath": "chat-import:content/transcriptions/WhatsApp Chat wi.md",
+      "rawTranscriptionPath": "content/transcriptions/WhatsApp Chat wi.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-conversation-whatsapp-chat-wi-6aabaa09ab24.md",
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/personal.md",
+        "decisions": null,
+        "openPoints": null
+      },
+      "status": "needs_review",
+      "readyForSite": false,
+      "rawCreatedAt": "2026-05-17T10:57:01Z",
+      "aiProcessedAt": "2026-05-17T10:57:01Z",
+      "error": "chat import — excluded from main transcriptions feed"
+    },
+    "chat-import:content/transcriptions/WhatsApp Chat with IANN.md": {
+      "id": "c52f33323d06",
+      "sourceAudio": null,
+      "sourceAudioPath": "chat-import:content/transcriptions/WhatsApp Chat with IANN.md",
+      "rawTranscriptionPath": "content/transcriptions/WhatsApp Chat with IANN.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-conversation-whatsapp-chat-with-iann-c52f33323d06.md",
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/personal.md",
+        "decisions": null,
+        "openPoints": null
+      },
+      "status": "needs_review",
+      "readyForSite": false,
+      "rawCreatedAt": "2026-05-17T10:57:01Z",
+      "aiProcessedAt": "2026-05-17T10:57:01Z",
+      "error": "chat import — excluded from main transcriptions feed"
+    },
+    "chat-import:content/transcriptions/WhatsApp Chat with italiani a Patta.md": {
+      "id": "9c47ef78ab53",
+      "sourceAudio": null,
+      "sourceAudioPath": "chat-import:content/transcriptions/WhatsApp Chat with italiani a Patta.md",
+      "rawTranscriptionPath": "content/transcriptions/WhatsApp Chat with italiani a Patta.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-conversation-whatsapp-chat-with-italiani-a-patta-9c47ef78ab53.md",
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/thaifans.md",
+        "decisions": null,
+        "openPoints": null
+      },
+      "status": "needs_review",
+      "readyForSite": false,
+      "rawCreatedAt": "2026-05-17T10:57:01Z",
+      "aiProcessedAt": "2026-05-17T10:57:01Z",
+      "error": "chat import — excluded from main transcriptions feed"
+    },
+    "chat-import:content/transcriptions/WhatsApp Chat with Koragon Gi.md": {
+      "id": "f97895de6fd3",
+      "sourceAudio": null,
+      "sourceAudioPath": "chat-import:content/transcriptions/WhatsApp Chat with Koragon Gi.md",
+      "rawTranscriptionPath": "content/transcriptions/WhatsApp Chat with Koragon Gi.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-conversation-whatsapp-chat-with-koragon-gi-f97895de6fd3.md",
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/personal.md",
+        "decisions": null,
+        "openPoints": null
+      },
+      "status": "needs_review",
+      "readyForSite": false,
+      "rawCreatedAt": "2026-05-17T10:57:01Z",
+      "aiProcessedAt": "2026-05-17T10:57:01Z",
+      "error": "chat import — excluded from main transcriptions feed"
     }
   },
   "version": 2
