@@ -5,7 +5,10 @@
   'use strict';
 
   /** Bumped when dashboard markup/behavior changes (cache-bust aid). */
-  window.TX_DASHBOARD_UI_REV = 9;
+  window.TX_DASHBOARD_UI_REV = 10;
+
+  /** Detail page: collapsed preview length for full transcription reference (chars). */
+  var DETAIL_REF_PREVIEW_CHARS = 650;
 
   function txLog() {
     if (typeof console !== 'undefined' && console.log) {
@@ -1182,15 +1185,16 @@
     });
   }
 
-  function renderCompactRing(segments, centerLabel) {
+  function renderCompactRing(segments, centerLabel, opts) {
+    opts = opts && typeof opts === 'object' ? opts : {};
     var chart = segments.filter(function (s) {
       return s.value > 0;
     });
     if (!chart.length) return '';
-    var total = chart.reduce(function (s, c) {
+    var chartTotal = chart.reduce(function (s, c) {
       return s + c.value;
     }, 0);
-    if (!total) return '';
+    if (!chartTotal) return '';
     var r = 18;
     var cx = 24;
     var cy = 24;
@@ -1211,7 +1215,7 @@
     } else {
       arcs = chart
         .map(function (c) {
-          var frac = c.value / total;
+          var frac = c.value / chartTotal;
           var len = circ * frac;
           var dash = len + ' ' + (circ - len);
           var rot = (offset / circ) * 360 - 90;
@@ -1238,16 +1242,44 @@
         })
         .join('');
     }
+    var center = centerLabel != null ? centerLabel : chartTotal;
+    var sizeCls = opts.size === 'hero' ? ' tx-ring--hero' : opts.size === 'card' ? ' tx-ring--card' : '';
+    var ringCls = opts.legend ? ' tx-ring--legend' : ' tx-ring--compact';
+    var legendHtml = '';
+    if (opts.legend && segments.some(function (s) {
+      return s.label;
+    })) {
+      legendHtml =
+        '<ul class="tx-ring__legend">' +
+        segments
+          .map(function (s) {
+            return (
+              '<li class="tx-ring__legend-item"><span class="tx-ring__legend-swatch" style="background:' +
+              esc(s.color) +
+              '"></span><span class="tx-ring__legend-label">' +
+              esc(s.label) +
+              '</span><span class="tx-ring__legend-val">' +
+              esc(s.value != null ? s.value : 0) +
+              '</span></li>'
+            );
+          })
+          .join('') +
+        '</ul>';
+    }
     return (
-      '<div class="tx-mini-ring tx-ring--compact" aria-hidden="true"><svg viewBox="0 0 48 48">' +
+      '<div class="tx-mini-ring' +
+      ringCls +
+      sizeCls +
+      '" aria-hidden="true"><svg viewBox="0 0 48 48" class="tx-ring__svg">' +
       '<circle cx="24" cy="24" r="18" fill="none" stroke="var(--tx-dash-line,#e2e8f0)" stroke-width="5"/>' +
       arcs +
       '<text x="24" y="26" text-anchor="middle" font-size="9" fill="currentColor" font-weight="700">' +
-      esc(centerLabel != null ? centerLabel : total) +
-      '</text></svg></div>'
+      esc(center) +
+      '</text></svg>' +
+      legendHtml +
+      '</div>'
     );
   }
-
   function renderLargeCategoryIcon(cat, extraClass) {
     var theme = catTheme(cat);
     var cls = 'tx-dash-card__icon' + (extraClass ? ' ' + extraClass : '');
@@ -1333,48 +1365,22 @@
     return 'unresolved';
   }
 
-  function categoryDonutSegments(cat, items) {
+
+  function categoryBreakdownStats(cat, items) {
     var n = items.length;
-    if (n < 1) return null;
-    var segs = [];
+    if (!n || !CATEGORY_SEGMENT_DEFS[cat]) return null;
     switch (cat) {
       case 'meetings': {
-        var rev = countWhere(items, function (it) {
+        var reviewed = countWhere(items, function (it) {
           return it.reviewed;
         });
-        var unrev = n - rev;
-        if (rev && unrev) {
-          segs = [
-            { value: rev, color: '#10b981' },
-            { value: unrev, color: '#f59e0b' },
-          ];
-        }
-        break;
+        return { reviewed: reviewed, needsReview: n - reviewed };
       }
       case 'notes': {
-        var personal = countWhere(items, function (it) {
-          var p = String(it.project || '').toLowerCase();
-          return !p || p === 'personal';
+        var processed = countWhere(items, function (it) {
+          return it.reviewed;
         });
-        var work = n - personal;
-        if (personal && work) {
-          segs = [
-            { value: personal, color: '#0ea5e9' },
-            { value: work, color: '#4f46e5' },
-          ];
-        } else {
-          var reviewed = countWhere(items, function (it) {
-            return it.reviewed;
-          });
-          var pending = n - reviewed;
-          if (reviewed && pending) {
-            segs = [
-              { value: reviewed, color: '#10b981' },
-              { value: pending, color: '#94a3b8' },
-            ];
-          }
-        }
-        break;
+        return { processed: processed, pending: n - processed };
       }
       case 'tasks': {
         var open = countWhere(items, function (it) {
@@ -1383,71 +1389,28 @@
         var done = countWhere(items, function (it) {
           return taskStatusBucket(it) === 'done';
         });
-        var unclear = n - open - done;
-        if ([open, done, unclear].filter(function (x) {
-          return x > 0;
-        }).length >= 2) {
-          segs = [];
-          if (open) segs.push({ value: open, color: '#f59e0b' });
-          if (done) segs.push({ value: done, color: '#10b981' });
-          if (unclear) segs.push({ value: unclear, color: '#94a3b8' });
-        } else {
-          var withDue = countWhere(items, function (it) {
-            return !!(it.dueDate || it.eventDate);
-          });
-          var noDue = n - withDue;
-          if (withDue && noDue) {
-            segs = [
-              { value: withDue, color: '#4f46e5' },
-              { value: noDue, color: '#cbd5e1' },
-            ];
-          }
-        }
-        break;
+        return { open: open, done: done, unclear: n - open - done };
       }
       case 'calendar': {
         var dated = countWhere(items, function (it) {
           return calendarDateState(it) === 'dated';
         });
-        var confirm = countWhere(items, function (it) {
+        var toConfirm = countWhere(items, function (it) {
           return calendarDateState(it) === 'confirm';
         });
-        var unclearC = n - dated - confirm;
-        if ([dated, confirm, unclearC].filter(function (x) {
-          return x > 0;
-        }).length >= 2) {
-          segs = [];
-          if (dated) segs.push({ value: dated, color: '#f59e0b' });
-          if (confirm) segs.push({ value: confirm, color: '#ef4444' });
-          if (unclearC) segs.push({ value: unclearC, color: '#94a3b8' });
-        }
-        break;
+        return { dated: dated, toConfirm: toConfirm, unclear: n - dated - toConfirm };
       }
       case 'projects': {
-        var catd = countWhere(items, function (it) {
+        var categorized = countWhere(items, function (it) {
           return projectBucket(it) === 'categorized';
         });
-        var uncat = n - catd;
-        if (catd && uncat) {
-          segs = [
-            { value: catd, color: '#8b5cf6' },
-            { value: uncat, color: '#cbd5e1' },
-          ];
-        }
-        break;
+        return { categorized: categorized, uncategorized: n - categorized };
       }
       case 'decisions': {
-        var conf = countWhere(items, function (it) {
+        var confirmed = countWhere(items, function (it) {
           return it.reviewed;
         });
-        var review = n - conf;
-        if (conf && review) {
-          segs = [
-            { value: conf, color: '#10b981' },
-            { value: review, color: '#ec4899' },
-          ];
-        }
-        break;
+        return { confirmed: confirmed, needsReview: n - confirmed };
       }
       case 'open-points': {
         var unresolved = countWhere(items, function (it) {
@@ -1456,21 +1419,45 @@
         var assigned = countWhere(items, function (it) {
           return openPointBucket(it) === 'assigned';
         });
-        var unclearO = n - unresolved - assigned;
-        if ([unresolved, assigned, unclearO].filter(function (x) {
-          return x > 0;
-        }).length >= 2) {
-          segs = [];
-          if (unresolved) segs.push({ value: unresolved, color: '#64748b' });
-          if (assigned) segs.push({ value: assigned, color: '#4f46e5' });
-          if (unclearO) segs.push({ value: unclearO, color: '#f59e0b' });
-        }
-        break;
+        return { unresolved: unresolved, assigned: assigned, unclear: n - unresolved - assigned };
       }
       default:
-        break;
+        return null;
     }
-    return segs && segs.length >= 2 ? segs : null;
+  }
+
+  function buildSegmentsFromStats(stats, catKey) {
+    if (!stats) return [];
+    var defs = CATEGORY_SEGMENT_DEFS[catKey];
+    if (!defs || defs.length < 2) return [];
+    return defs.map(function (d) {
+      return {
+        label: d.label,
+        value: stats[d.key] != null ? stats[d.key] : 0,
+        color: d.color,
+      };
+    });
+  }
+
+  function categoryVisualFromStats(stats, catKey, total, iconExtraClass, opts) {
+    opts = opts || {};
+    var segs = buildSegmentsFromStats(stats, catKey);
+    var sum = segs.reduce(function (s, c) {
+      return s + (c.value || 0);
+    }, 0);
+    var center = total != null ? total : sum;
+    if (segs.length >= 2 && center > 0) {
+      return renderCompactRing(segs, center, opts);
+    }
+    return renderLargeCategoryIcon(catKey, iconExtraClass);
+  }
+
+  function categoryDonutSegments(cat, items) {
+    if (!items.length) return null;
+    var stats = categoryBreakdownStats(cat, items);
+    var segs = buildSegmentsFromStats(stats, cat);
+    if (segs.length >= 2 && items.length > 0) return segs;
+    return null;
   }
 
   function categorySecondaryStats(cat, items) {
@@ -1601,10 +1588,11 @@
       var n = items.length;
       var theme = catTheme(c.key);
       var active = state.category === c.key ? ' is-active' : '';
-      var segs = categoryDonutSegments(c.key, items);
-      var visual = segs
-        ? '<div class="tx-overview-card__visual">' + renderCompactRing(segs, n) + '</div>'
-        : '<div class="tx-overview-card__visual">' + renderLargeCategoryIcon(c.key, 'tx-overview-card__icon') + '</div>';
+      var oStats = categoryBreakdownStats(c.key, items);
+      var visual =
+        '<div class="tx-overview-card__visual">' +
+        categoryVisualFromStats(oStats, c.key, n, 'tx-overview-card__icon', { legend: true }) +
+        '</div>';
       var stats = categorySecondaryStats(c.key, items)
         .map(function (s) {
           return '<span><strong>' + esc(s.split(' ')[0]) + '</strong> ' + esc(s.replace(/^\d+\s*/, '')) + '</span>';
@@ -1651,16 +1639,14 @@
     var items = categoryItems(cat);
     var theme = catTheme(cat);
     var label = categoryShortLabel(cat);
-    var segs = categoryDonutSegments(cat, items);
-    var visual = segs
-      ? renderCompactRing(segs, items.length)
-      : iconSvg(cat).replace('tx-cat-card__icon', '');
+    var hStats = categoryBreakdownStats(cat, items);
+    var visual = categoryVisualFromStats(hStats, cat, items.length, null, { legend: false });
     var meta = categorySecondaryStats(cat, items).join(' · ');
     el.innerHTML =
-      '<div class="tx-category-header__icon-wrap" style="--tx-cat-accent:' +
+      '<div class="tx-category-header__visual" style="--tx-cat-accent:' +
       esc(theme.accent) +
       '">' +
-      (segs ? visual : visual) +
+      visual +
       '</div>' +
       '<div class="tx-category-header__body">' +
       '<h2 class="tx-category-header__title">' +
@@ -1702,32 +1688,19 @@
 
   function itemCardVisual(item) {
     var cat = String(item.category || 'notes').toLowerCase();
-    var st = item.stats || {};
-    var segs = [];
-    if (cat === 'meetings' || cat === 'notes') {
-      var d = st.decisions_count || (item.decisions || []).length;
-      var t = st.tasks_count || (item.tasks || []).length;
-      var o = st.open_points_count || (item.openPoints || []).length;
-      if (d) segs.push({ value: d, color: catTheme('decisions').accent });
-      if (t) segs.push({ value: t, color: catTheme('tasks').accent });
-      if (o) segs.push({ value: o, color: catTheme('open-points').accent });
-    } else if (cat === 'tasks') {
-      var bucket = taskStatusBucket(item);
-      if (bucket === 'open') segs.push({ value: 1, color: '#f59e0b' });
-      else if (bucket === 'done') segs.push({ value: 1, color: '#10b981' });
-      else segs.push({ value: 1, color: '#94a3b8' });
-    }
-    var ring = segs.length ? renderCompactRing(segs) : '';
-    var icon = renderLargeCategoryIcon(cat);
-    if (!ring) {
-      return '<div class="tx-dash-card__visual tx-dash-card__visual--icon">' + icon + '</div>';
+    var stats = categoryBreakdownStats(cat, [item]);
+    var segs = buildSegmentsFromStats(stats, cat);
+    if (segs.length >= 2) {
+      return (
+        '<div class="tx-dash-card__visual tx-dash-card__visual--ring">' +
+        renderCompactRing(segs, 1, { legend: false, size: 'card' }) +
+        '</div>'
+      );
     }
     return (
       '<div class="tx-dash-card__visual tx-dash-card__visual--icon">' +
-      icon +
-      '<div class="tx-dash-card__ring-overlay" aria-hidden="true">' +
-      ring +
-      '</div></div>'
+      renderLargeCategoryIcon(cat) +
+      '</div>'
     );
   }
 

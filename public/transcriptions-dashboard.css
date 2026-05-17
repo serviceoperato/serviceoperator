@@ -129,6 +129,12 @@
   min-height: 4.5rem;
 }
 
+.tx-overview-card__visual .tx-ring--legend {
+  flex-direction: column;
+  gap: 0.35rem;
+  width: 100%;
+}
+
 .tx-overview-card__icon {
   width: 4rem;
   height: 4rem;
@@ -163,10 +169,11 @@
   box-shadow: var(--tx-dash-shadow);
 }
 
-.tx-category-header__icon-wrap {
+.tx-category-header__icon-wrap,
+.tx-category-header__visual {
   flex-shrink: 0;
-  width: 3.25rem;
-  height: 3.25rem;
+  min-width: 3.25rem;
+  min-height: 3.25rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -178,6 +185,11 @@
   width: 1.85rem;
   height: 1.85rem;
   stroke: var(--tx-cat-accent, #4f46e5);
+}
+
+.tx-category-header__visual .tx-mini-ring {
+  width: 3rem;
+  height: 3rem;
 }
 
 .tx-category-header__body {
@@ -257,6 +269,16 @@
 
 .tx-dash-card__visual--icon {
   position: relative;
+}
+
+.tx-dash-card__visual--ring {
+  align-items: center;
+  justify-content: center;
+}
+
+.tx-dash-card__visual--ring .tx-ring--card {
+  width: 3.25rem;
+  height: 3.25rem;
 }
 
 .tx-dash-card__ring-overlay {
@@ -930,81 +952,6 @@
   .tx-detail-page__hero {
     grid-template-columns: 1fr;
   }
-}
-
-/* Full-page transcription item detail (/admin/transcriptions/item/:id) */
-.tx-detail-page {
-  padding: 1rem 1rem 2rem;
-}
-
-.tx-detail-page__nav {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem 0.75rem;
-  margin-bottom: 0.75rem;
-}
-
-.tx-detail-page__pager {
-  display: flex;
-  gap: 0.35rem;
-  margin-right: auto;
-}
-
-.tx-detail-page__root {
-  max-width: 52rem;
-}
-
-.tx-detail-page__hero {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.85rem;
-  padding: 0.85rem 1rem;
-  margin-bottom: 1rem;
-  border-radius: 12px;
-  border: 1px solid var(--tx-dash-line);
-  background: color-mix(in srgb, var(--tx-cat-accent, #4f46e5) 6%, var(--tx-dash-card));
-}
-
-.tx-detail-page__title {
-  margin: 0.15rem 0 0.5rem;
-  font-size: 1.05rem;
-  line-height: 1.35;
-}
-
-.tx-detail-page__keypoints {
-  margin: 0 0 1rem;
-  padding: 0.65rem 0.75rem;
-  border-radius: 10px;
-  border: 1px solid var(--tx-dash-line);
-  background: var(--tx-dash-bg);
-}
-
-.tx-detail-page__card {
-  margin-bottom: 0.75rem;
-  padding: 0.75rem 0.85rem;
-  border-radius: 10px;
-  border: 1px solid var(--tx-dash-line);
-  background: var(--tx-dash-card);
-}
-
-.tx-detail-page__related-link {
-  display: block;
-  padding: 0.5rem 0.65rem;
-  margin-bottom: 0.35rem;
-  border-radius: 8px;
-  border: 1px solid var(--tx-dash-line);
-  text-decoration: none;
-  color: inherit;
-}
-
-.tx-detail-page__related-link:hover {
-  border-color: var(--tx-cat-accent, #4f46e5);
-}
-
-.tx-detail-page__empty {
-  padding: 1.5rem 1rem;
-  text-align: center;
 }
 
 .tx-dash-card__actions a.tf-admin-toolbar__btn {
