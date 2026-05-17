@@ -4003,6 +4003,30 @@ app.get(['/engagement.html', '/engagement', '/engagement/'], (_req, res) => {
 
 /** Operator console: path-based sections (same document as admin.html; see public/admin.js). */
 const adminHtmlPath = path.join(publicDir, 'admin.html');
+let adminHtmlTemplate = null;
+
+function loadAdminHtmlTemplate() {
+  if (adminHtmlTemplate) return adminHtmlTemplate;
+  adminHtmlTemplate = fs.readFileSync(adminHtmlPath, 'utf8');
+  return adminHtmlTemplate;
+}
+
+function renderAdminHtml() {
+  let html = loadAdminHtmlTemplate();
+  html = html.replace(/\?v=[^"'&\s>]+/g, '?v=' + appVersion);
+  if (!/<meta\s+name=["']so-app-version["']/i.test(html)) {
+    html = html.replace(
+      /<head([^>]*)>/i,
+      '<head$1>\n<meta name="so-app-version" content="' + appVersion + '" />'
+    );
+  } else {
+    html = html.replace(
+      /<meta\s+name=["']so-app-version["'][^>]*>/i,
+      '<meta name="so-app-version" content="' + appVersion + '" />'
+    );
+  }
+  return html;
+}
 const ADMIN_HTML_PATHS = [
   '/admin/voice-recorder',
   '/admin/voice-recorder/',
@@ -4056,7 +4080,7 @@ function sendAdminHtml(req, res) {
   if (!getVerifiedAdmin(req) && !isAdminLoginShellPath(req.path)) {
     return denyPrivateNumberedReport(req, res);
   }
-  return res.sendFile(adminHtmlPath);
+  return res.type('html').send(renderAdminHtml());
 }
 
 app.get(['/admin', '/admin/'], (_req, res) => {

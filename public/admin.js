@@ -2239,43 +2239,111 @@
   }
 
   function ensureTranscriptionsDashboard(done) {
-    if (window.TX_DASHBOARD_UI_REV >= 6 && typeof window.initAdminTranscriptions === 'function') {
+    function isDashboardReady() {
+      return window.TX_DASHBOARD_UI_REV >= 6 && typeof window.initAdminTranscriptions === 'function';
+    }
+    if (isDashboardReady()) {
       done();
       return;
     }
-    var version = '1.5.67';
+
+    var versionMeta = document.querySelector('meta[name="so-app-version"]');
+    var version = (versionMeta && versionMeta.getAttribute('content')) || '';
+    var attemptKey = 'so_tx_dash_reload_attempts';
+    var attempts = 0;
+    try {
+      attempts = parseInt(sessionStorage.getItem(attemptKey) || '0', 10) || 0;
+    } catch (e) {}
+
+    function stripDashboardScripts() {
+      document
+        .querySelectorAll(
+          'script[data-tx-dashboard-bundle], script[src*="admin-transcriptions.js"], script[src*="admin-tx-dashboard.js"]'
+        )
+        .forEach(function (el) {
+          el.remove();
+        });
+      try {
+        delete window.TX_DASHBOARD_UI_REV;
+        delete window.initAdminTranscriptions;
+      } catch (err) {}
+    }
+
+    function finishOrRetryAfterLoad() {
+      if (isDashboardReady()) {
+        try {
+          sessionStorage.removeItem(attemptKey);
+        } catch (e) {}
+        done();
+        return;
+      }
+      if (attempts >= 2) {
+        console.error('[transcriptions] dashboard UI rev still < 6 after reload attempts');
+        done();
+        return;
+      }
+      attempts += 1;
+      try {
+        sessionStorage.setItem(attemptKey, String(attempts));
+      } catch (e) {}
+      stripDashboardScripts();
+      injectDashboardScript();
+    }
+
+    function injectDashboardScript() {
+      var bust =
+        (version ? encodeURIComponent(version) + '&' : '') + '_=' + String(Date.now());
+      var s = document.createElement('script');
+      s.src = '/admin-transcriptions.js?v=' + bust;
+      s.async = false;
+      s.setAttribute('data-tx-dashboard-bundle', '1');
+      s.onload = finishOrRetryAfterLoad;
+      s.onerror = function () {
+        console.error('[transcriptions] could not load admin-transcriptions.js');
+        var fallback = document.createElement('script');
+        fallback.src = '/admin-tx-dashboard.js?v=' + bust;
+        fallback.async = false;
+        fallback.setAttribute('data-tx-dashboard-bundle', '1');
+        fallback.onload = finishOrRetryAfterLoad;
+        fallback.onerror = function () {
+          console.error('[transcriptions] could not load admin-tx-dashboard.js');
+          done();
+        };
+        document.head.appendChild(fallback);
+      };
+      document.head.appendChild(s);
+    }
+
     var existing = document.querySelector('script[data-tx-dashboard-bundle]');
     if (existing) {
-      existing.addEventListener('load', function () {
-        done();
-      });
+      if (existing.readyState === 'complete' || existing.readyState === 'loaded') {
+        finishOrRetryAfterLoad();
+        return;
+      }
+      existing.addEventListener('load', finishOrRetryAfterLoad);
       existing.addEventListener('error', function () {
         console.error('[transcriptions] dashboard script failed:', existing.src);
+        done();
       });
       return;
     }
-    var s = document.createElement('script');
-    s.src = '/admin-transcriptions.js?v=' + encodeURIComponent(version) + '&_=' + Date.now();
-    s.async = false;
-    s.setAttribute('data-tx-dashboard-bundle', '1');
-    s.onload = function () {
-      done();
-    };
-    s.onerror = function () {
-      console.error('[transcriptions] could not load admin-transcriptions.js');
-      var fallback = document.createElement('script');
-      fallback.src = '/admin-tx-dashboard.js?v=' + encodeURIComponent(version) + '&_=' + Date.now();
-      fallback.async = false;
-      fallback.setAttribute('data-tx-dashboard-bundle', '1');
-      fallback.onload = function () {
+
+    if (
+      document.querySelector('script[src*="admin-transcriptions.js"], script[src*="admin-tx-dashboard.js"]')
+    ) {
+      if (attempts >= 2) {
+        console.error('[transcriptions] stale dashboard bundle; reload attempts exhausted');
         done();
-      };
-      fallback.onerror = function () {
-        console.error('[transcriptions] could not load admin-tx-dashboard.js');
-      };
-      document.head.appendChild(fallback);
-    };
-    document.head.appendChild(s);
+        return;
+      }
+      attempts += 1;
+      try {
+        sessionStorage.setItem(attemptKey, String(attempts));
+      } catch (e) {}
+      stripDashboardScripts();
+    }
+
+    injectDashboardScript();
   }
 
   var voicePipelinePollTimer = null;
