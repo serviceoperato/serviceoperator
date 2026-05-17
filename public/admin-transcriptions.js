@@ -1,8 +1,11 @@
 /**
- * Admin /admin/transcriptions — mobile-first feed UI for AI-ready voice outputs.
+ * Admin /admin/transcriptions — visual dashboard for AI-ready voice outputs.
  */
 (function () {
   'use strict';
+
+  /** Bumped when dashboard markup/behavior changes (cache-bust aid). */
+  window.TX_DASHBOARD_UI_REV = 2;
 
   var CATEGORIES = [
     { key: 'meetings', label: 'Meeting summaries', short: 'Meetings' },
@@ -188,14 +191,35 @@
   }
 
 
+  var KEY_POINT_MAX = 60;
+
+  var CATEGORY_POINT_KEYS = {
+    meetings: ['decisions', 'openPoints', 'nextSteps', 'tasks'],
+    notes: ['bullets', 'importantPoints', 'summary'],
+    tasks: ['tasks', 'nextSteps'],
+    calendar: ['bullets', 'summary'],
+    decisions: ['decisions', 'importantPoints'],
+    'open-points': ['openPoints', 'issue'],
+    projects: ['nextSteps', 'bullets', 'openPoints'],
+  };
+
+  var KEY_POINT_FALLBACK_KEYS = [
+    'decisions',
+    'tasks',
+    'openPoints',
+    'nextSteps',
+    'importantPoints',
+    'bullets',
+  ];
+
   var CATEGORY_THEME = {
-    meetings: { accent: '#4f46e5', subtitle: 'Discussions, decisions, and follow-ups' },
-    notes: { accent: '#0ea5e9', subtitle: 'Ideas, reminders, and personal takeaways' },
+    meetings: { accent: '#2563eb', subtitle: 'Discussions, decisions, and follow-ups' },
+    notes: { accent: '#4f46e5', subtitle: 'Ideas, reminders, and personal takeaways' },
     tasks: { accent: '#10b981', subtitle: 'Action items and checklists' },
-    calendar: { accent: '#f59e0b', subtitle: 'Dates, events, and scheduling' },
-    projects: { accent: '#8b5cf6', subtitle: 'Project updates and blockers' },
-    decisions: { accent: '#ec4899', subtitle: 'Confirmed choices and commitments' },
-    'open-points': { accent: '#64748b', subtitle: 'Unresolved questions and owners' },
+    calendar: { accent: '#8b5cf6', subtitle: 'Dates, events, and scheduling' },
+    projects: { accent: '#f59e0b', subtitle: 'Project updates and blockers' },
+    decisions: { accent: '#ef4444', subtitle: 'Confirmed choices and commitments' },
+    'open-points': { accent: '#eab308', subtitle: 'Unresolved questions and owners' },
   };
 
   function catTheme(cat) {
@@ -226,7 +250,7 @@
     var seen = {};
     var out = [];
     list.forEach(function (p) {
-      var t = truncatePoint(p, 160);
+      var t = truncatePoint(p, KEY_POINT_MAX);
       if (!t) return;
       var k = t.toLowerCase();
       if (seen[k]) return;
@@ -236,19 +260,31 @@
     return out;
   }
 
+  function pointValuesForKeys(item, keys) {
+    var pool = [];
+    keys.forEach(function (key) {
+      var val = item[key];
+      if (Array.isArray(val)) pool = pool.concat(val);
+      else if (val != null && String(val).trim()) pool.push(val);
+    });
+    return pool;
+  }
+
   function itemKeyPoints(item) {
-    var pool = []
-      .concat(item.decisions || [])
-      .concat(item.tasks || [])
-      .concat(item.openPoints || [])
-      .concat(item.nextSteps || [])
-      .concat(item.importantPoints || [])
-      .concat(item.bullets || []);
+    var cat = String(item.category || 'notes').toLowerCase();
+    var pool = pointValuesForKeys(item, CATEGORY_POINT_KEYS[cat] || []);
+    if (!pool.length) pool = pointValuesForKeys(item, KEY_POINT_FALLBACK_KEYS);
     if (!pool.length && item.taskText) pool.push(item.taskText);
     if (!pool.length && item.decisionText) pool.push(item.decisionText);
     if (!pool.length && item.issue) pool.push(item.issue);
-    if (!pool.length && item.summary) pool.push(item.summary);
-    if (!pool.length && item.preview) pool.push(item.preview);
+    return uniquePoints(pool).slice(0, 3);
+  }
+
+  function itemDetailKeyPoints(item) {
+    var pool = itemKeyPoints(item).slice();
+    if (pool.length >= 3) return pool;
+    if (!pool.length && item.summary) pool.push(truncatePoint(item.summary, KEY_POINT_MAX));
+    if (pool.length < 3 && item.preview) pool.push(truncatePoint(item.preview, KEY_POINT_MAX));
     return uniquePoints(pool).slice(0, 3);
   }
 
@@ -256,7 +292,7 @@
     var chart = segments.filter(function (s) {
       return s.value > 0;
     });
-    if (chart.length < 2) return '';
+    if (!chart.length) return '';
     var total = chart.reduce(function (s, c) {
       return s + c.value;
     }, 0);
@@ -266,34 +302,48 @@
     var cy = 24;
     var circ = 2 * Math.PI * r;
     var offset = 0;
-    var segs = chart
-      .map(function (c) {
-        var frac = c.value / total;
-        var len = circ * frac;
-        var dash = len + ' ' + (circ - len);
-        var rot = (offset / circ) * 360 - 90;
-        offset += len;
-        return (
-          '<circle cx="' +
-          cx +
-          '" cy="' +
-          cy +
-          '" r="' +
-          r +
-          '" fill="none" stroke="' +
-          esc(c.color) +
-          '" stroke-width="5" stroke-dasharray="' +
-          dash +
-          '" transform="rotate(' +
-          rot +
-          ' ' +
-          cx +
-          ' ' +
-          cy +
-          ')" />'
-        );
-      })
-      .join('');
+    var segs;
+    if (chart.length === 1) {
+      segs =
+        '<circle cx="' +
+        cx +
+        '" cy="' +
+        cy +
+        '" r="' +
+        r +
+        '" fill="none" stroke="' +
+        esc(chart[0].color) +
+        '" stroke-width="5" opacity="0.92"/>';
+    } else {
+      segs = chart
+        .map(function (c) {
+          var frac = c.value / total;
+          var len = circ * frac;
+          var dash = len + ' ' + (circ - len);
+          var rot = (offset / circ) * 360 - 90;
+          offset += len;
+          return (
+            '<circle cx="' +
+            cx +
+            '" cy="' +
+            cy +
+            '" r="' +
+            r +
+            '" fill="none" stroke="' +
+            esc(c.color) +
+            '" stroke-width="5" stroke-dasharray="' +
+            dash +
+            '" transform="rotate(' +
+            rot +
+            ' ' +
+            cx +
+            ' ' +
+            cy +
+            ')" />'
+          );
+        })
+        .join('');
+    }
     return (
       '<div class="tx-mini-ring tx-ring--compact" aria-hidden="true"><svg viewBox="0 0 48 48">' +
       '<circle cx="24" cy="24" r="18" fill="none" stroke="var(--tx-dash-line,#e2e8f0)" stroke-width="5"/>' +
@@ -316,6 +366,40 @@
       iconSvg(cat).replace('tx-cat-card__icon', '') +
       '</div>'
     );
+  }
+
+  function audioBasename(item) {
+    var a = item.sourceAudio || item.source_audio || '';
+    if (!a || a === '—') return '';
+    var parts = String(a).split(/[/\\]/);
+    return parts[parts.length - 1] || a;
+  }
+
+  function formatProcessedDate(item) {
+    var raw = item.processedDate || item.processed_at || '';
+    if (!raw) return '';
+    var t = Date.parse(raw);
+    if (Number.isNaN(t)) {
+      var m = String(raw).match(/(\d{4})-(\d{2})-(\d{2})/);
+      if (m) t = Date.parse(m[1] + '-' + m[2] + '-' + m[3]);
+    }
+    if (Number.isNaN(t)) return String(raw).slice(0, 16);
+    try {
+      return new Date(t).toLocaleDateString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
+    } catch (e) {
+      return String(raw).slice(0, 16);
+    }
+  }
+
+  function itemFeedChips(item) {
+    var chips = [{ t: 'AI-ready', ok: true }];
+    if (!item.reviewed) chips.push({ t: 'Needs review', warn: true });
+    chips.push({ t: categoryShortLabel(item.category), accent: true });
+    return chips;
   }
 
   function countWhere(items, fn) {
@@ -621,9 +705,6 @@
         esc(n) +
         '</span></div>' +
         visual +
-        '<p class="tx-overview-card__sub">' +
-        esc(theme.subtitle) +
-        '</p>' +
         (stats ? '<div class="tx-overview-card__stats">' + stats + '</div>' : '') +
         '</button>'
       );
@@ -656,7 +737,9 @@
       '<div class="tx-category-header__body">' +
       '<h2 class="tx-category-header__title">' +
       esc(label) +
-      '</h2>' +
+      ' <span class="tx-category-header__count">' +
+      esc(items.length) +
+      '</span></h2>' +
       '<p class="tx-category-header__sub">' +
       esc(theme.subtitle) +
       '</p>' +
@@ -690,25 +773,82 @@
   }
 
   function itemCardVisual(item) {
-    var cat = item.category;
+    var cat = String(item.category || 'notes').toLowerCase();
     var st = item.stats || {};
     var segs = [];
     if (cat === 'meetings' || cat === 'notes') {
       var d = st.decisions_count || (item.decisions || []).length;
       var t = st.tasks_count || (item.tasks || []).length;
       var o = st.open_points_count || (item.openPoints || []).length;
-      if (d) segs.push({ value: d, color: '#ec4899' });
-      if (t) segs.push({ value: t, color: '#10b981' });
-      if (o) segs.push({ value: o, color: '#64748b' });
+      if (d) segs.push({ value: d, color: catTheme('decisions').accent });
+      if (t) segs.push({ value: t, color: catTheme('tasks').accent });
+      if (o) segs.push({ value: o, color: catTheme('open-points').accent });
     } else if (cat === 'tasks') {
       var bucket = taskStatusBucket(item);
       if (bucket === 'open') segs.push({ value: 1, color: '#f59e0b' });
       else if (bucket === 'done') segs.push({ value: 1, color: '#10b981' });
       else segs.push({ value: 1, color: '#94a3b8' });
     }
-    var ring = segs.length >= 2 ? renderCompactRing(segs) : '';
-    if (ring) return '<div class="tx-dash-card__visual">' + ring + '</div>';
-    return '<div class="tx-dash-card__visual">' + renderLargeCategoryIcon(cat) + '</div>';
+    var ring = segs.length ? renderCompactRing(segs) : '';
+    var icon = renderLargeCategoryIcon(cat);
+    if (!ring) {
+      return '<div class="tx-dash-card__visual tx-dash-card__visual--icon">' + icon + '</div>';
+    }
+    return (
+      '<div class="tx-dash-card__visual tx-dash-card__visual--icon">' +
+      icon +
+      '<div class="tx-dash-card__ring-overlay" aria-hidden="true">' +
+      ring +
+      '</div></div>'
+    );
+  }
+
+  function renderFeedSectionHeader(cat, count) {
+    var theme = catTheme(cat);
+    return (
+      '<header class="tx-feed-section__head" style="--tx-cat-accent:' +
+      esc(theme.accent) +
+      '">' +
+      '<span class="tx-feed-section__icon">' +
+      iconSvg(cat).replace('tx-cat-card__icon', '') +
+      '</span>' +
+      '<span class="tx-feed-section__label">' +
+      esc(categoryShortLabel(cat)) +
+      '</span>' +
+      '<span class="tx-feed-section__count">' +
+      esc(count) +
+      '</span></header>'
+    );
+  }
+
+  function renderFeedBody(list) {
+    var inSearch = !!(state.searchQuery.trim() && state.searchResults);
+    if (!inSearch) {
+      return list.map(renderFeedCard).join('');
+    }
+    var groups = {};
+    list.forEach(function (it) {
+      var c = String(it.category || 'notes').toLowerCase();
+      if (!groups[c]) groups[c] = [];
+      groups[c].push(it);
+    });
+    return CATEGORIES.map(function (c) {
+        return c.key;
+      })
+      .filter(function (key) {
+        return groups[key] && groups[key].length;
+      })
+      .map(function (key) {
+        var items = groups[key];
+        return (
+          '<section class="tx-feed-section">' +
+          renderFeedSectionHeader(key, items.length) +
+          '<div class="tx-feed-section__items">' +
+          items.map(renderFeedCard).join('') +
+          '</div></section>'
+        );
+      })
+      .join('');
   }
 
   function renderDashChip(c) {
@@ -1512,12 +1652,16 @@
         title: 'Raw sources only',
         body: 'Sources exist but are not yet converted into structured outputs.',
       },
-      filter: { title: 'No matches in this category', body: 'Try another category or clear filters.' },
+      filter: { title: '', body: 'Try another category or clear filters.' },
+      category: { title: '', body: 'Process voice recordings to publish AI-ready outputs here.' },
       search: { title: 'No search results', body: 'Try different keywords or clear search.' },
     };
-    var e = map[kind] || map.filter;
     var cat = state.category || 'notes';
     var theme = catTheme(cat);
+    var e = map[kind] || map.filter;
+    if (kind === 'category' || (kind === 'filter' && !e.title)) {
+      e = { title: 'No ' + categoryShortLabel(cat) + ' yet', body: e.body || map.category.body };
+    }
     return (
       '<div class="tx-empty tx-empty--visual" style="--tx-cat-accent:' +
       esc(theme.accent) +
@@ -1831,15 +1975,30 @@
 
   function renderFeedCard(item) {
     var points = itemKeyPoints(item);
-    var chips = dashStatChips(item);
+    var chips = itemFeedChips(item);
     var unread = !item.reviewed ? ' is-unread' : '';
     var junk = isJunkCard(item);
     var title = item.title || item.path || '';
     var catKey = String(item.category || 'notes').toLowerCase();
     var theme = catTheme(catKey);
-    var outFile = outputBasename(item);
-    var ts = relativeDate(item);
-    var srcAudio = item.sourceAudio || '—';
+    var audioName = audioBasename(item);
+    var processed = formatProcessedDate(item);
+    var metaRows =
+      '<span class="tx-dash-card__meta-row"><span class="tx-dash-card__cat">' +
+      esc(categoryShortLabel(item.category)) +
+      '</span>' +
+      (item.project
+        ? '<span class="tx-dash-card__sep">·</span><span class="tx-dash-card__proj">' + esc(item.project) + '</span>'
+        : '') +
+      '</span>';
+    if (audioName) {
+      metaRows +=
+        '<span class="tx-dash-card__meta-row tx-dash-card__meta--muted">from ' + esc(audioName) + '</span>';
+    }
+    if (processed) {
+      metaRows +=
+        '<span class="tx-dash-card__meta-row tx-dash-card__meta--muted">' + esc(processed) + '</span>';
+    }
     var syncSt = state.itemSyncState[item.id] || '';
     var syncCls = syncSt ? ' tx-card--sync-' + syncSt : '';
     var isSelected = !!state.selectedIds[item.id];
@@ -1877,14 +2036,8 @@
       esc(title) +
       '</h3></div>' +
       '<p class="tx-dash-card__meta">' +
-      esc(categoryShortLabel(item.category)) +
-      (item.project ? ' · ' + esc(item.project) : '') +
-      ' · ' +
-      esc(ts) +
-      (outFile ? ' · ' + esc(outFile) : '') +
-      '<br><span class="mono">Audio: ' +
-      esc(srcAudio) +
-      '</span></p>' +
+      metaRows +
+      '</p>' +
       pointsHtml +
       '<div class="tx-dash-card__chips">' +
       chips.map(renderDashChip).join('') +
@@ -1895,14 +2048,12 @@
       '">Open</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" data-tx-action="read" data-tx-id="' +
       esc(item.id) +
-      '">Mark reviewed</button>' +
+      '"' +
+      (item.reviewed ? ' disabled' : '') +
+      '>Mark read</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" data-tx-action="sync" data-tx-id="' +
       esc(item.id) +
       '">Sync Google</button>' +
-      '<button type="button" class="tf-admin-toolbar__btn" data-tx-action="copy" data-tx-id="' +
-      esc(item.id) +
-      '">Copy</button>' +
-      '<button type="button" class="tf-admin-toolbar__btn" disabled title="Coming soon">Reprocess</button>' +
       '</div></div></article>'
     );
   }
@@ -2031,14 +2182,14 @@
     }
 
     if (!list.length) {
-      feed.innerHTML = state.searchQuery.trim() ? emptyState('search') : emptyState('filter');
+      feed.innerHTML = state.searchQuery.trim() ? emptyState('search') : emptyState('category');
       if (hint) hint.textContent = '0 items';
       renderTimeline();
       return;
     }
 
     if (hint) hint.textContent = list.length + ' item' + (list.length === 1 ? '' : 's');
-    feed.innerHTML = list.map(renderFeedCard).join('');
+    feed.innerHTML = renderFeedBody(list);
     bindFeedActions(feed);
     renderTimeline();
   }
@@ -2120,7 +2271,7 @@
     }
     if (titleEl) titleEl.textContent = item.title || item.path || '';
 
-    var points = itemKeyPoints(item);
+    var points = itemDetailKeyPoints(item);
     var chips = dashStatChips(item);
     var segs = categoryDonutSegments(cat, [item]);
     var heroVisual = segs
@@ -2207,7 +2358,6 @@
       '<button type="button" class="tf-admin-toolbar__btn" disabled title="Coming soon">Reprocess</button>' +
       '</div>';
 
-    el.innerHTML = el.innerHTML.replace('</div>', '</div>').replace('<div', '<div');
 
     el.querySelectorAll('[data-tx-rel-id]').forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -2477,6 +2627,8 @@
         if (!pack.ok) {
           state.apiUnavailable = pack.status === 404;
           setLoadHint((pack.j && pack.j.error) || 'Could not load transcriptions.');
+          renderOverview();
+          renderCategoryHeader();
           byId('txFeed').innerHTML = emptyState('none');
           return;
         }
@@ -2634,6 +2786,8 @@
 
   window.initAdminTranscriptions = function () {
     bindControls();
+    renderOverview();
+    renderCategoryHeader();
     loadIndex();
   };
 })();
