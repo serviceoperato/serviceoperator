@@ -745,6 +745,367 @@
       "rawCreatedAt": "2026-05-17T10:57:01Z",
       "aiProcessedAt": "2026-05-17T10:57:01Z",
       "error": "chat import — excluded from main transcriptions feed"
+    },
+    "content/transcriptions/Memo_001.md": {
+      "id": "5c1e4449ab12",
+      "sourceAudio": "Memo 001.m4a",
+      "rawTranscriptionPath": "content/transcriptions/Memo_001.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-conversation-memo_001-5c1e4449ab12.md",
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/serviceopera.md",
+        "decisions": "content/decisions/2026-05-17.md",
+        "openPoints": "content/open-points/2026-05-17.md"
+      },
+      "status": "ready_for_site",
+      "readyForSite": true,
+      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "error": null,
+      "source_checksum": "28bf2ce39c70bd3f77dbdccb4b7d14ccbe1ffb0e2eb01305faa00438f7b8f4d6"
+    },
+    "content/transcriptions/Memo_002.md": {
+      "id": "ea440a9f313e",
+      "sourceAudio": "Memo 002.m4a",
+      "rawTranscriptionPath": "content/transcriptions/Memo_002.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-conversation-memo_002-ea440a9f313e.md",
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/serviceopera.md",
+        "decisions": null,
+        "openPoints": "content/open-points/2026-05-17.md"
+      },
+      "status": "ready_for_site",
+      "readyForSite": true,
+      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "error": null,
+      "source_checksum": "82f3f5e390fcb2a01e3ea042a1470a9ae6ffb84d4690eadaedc925de7cd8a92c"
+    },
+    "content/transcriptions/Memo_003.md": {
+      "id": "c890c918890b",
+      "sourceAudio": "Memo 003.m4a",
+      "rawTranscriptionPath": "content/transcriptions/Memo_003.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-conversation-memo_003-c890c918890b.md",
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/serviceopera.md",
+        "decisions": null,
+        "openPoints": "content/open-points/2026-05-17.md"
+      },
+      "status": "ready_for_site",
+      "readyForSite": true,
+      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "error": null,
+      "source_checksum": "af2b5fd7f01090d95950f7175eb8b6192d54270b49ffa2681a1d6c7388b57610"
+    },
+    "content/transcriptions/Memo_004.md": {
+      "id": "8320a9a4414c",
+      "sourceAudio": "Memo 004.m4a",
+      "rawTranscriptionPath": "content/transcriptions/Memo_004.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-conversation-memo_004-8320a9a4414c.md",
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/personal.md",
+        "decisions": null,
+        "openPoints": "content/open-points/2026-05-17.md"
+      },
+      "status": "ready_for_site",
+      "readyForSite": true,
+      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "error": null,
+      "source_checksum": "6768bdbe9dd0bedd14fc17e421741e600949263f748e8d664208a0298fc9f01c"
+    },
+    "content/transcriptions/Memo_005.md": {
+      "id": "eac97257e652",
+      "sourceAudio": "Memo 005.m4a",
+      "rawTranscriptionPath": "content/transcriptions/Memo_005.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-conversation-memo_005-eac97257e652.md",
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/personal.md",
+        "decisions": null,
+        "openPoints": "content/open-points/2026-05-17.md"
+      },
+      "status": "ready_for_site",
+      "readyForSite": true,
+      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "error": null,
+      "source_checksum": "ff8d3ed652a946228f5d0c920e5646fa26421cf7dc6e237d90da49ff42ebbdfd"
+    },
+    "content/transcriptions/Memo_006.md": {
+      "id": "4a7e2f8a8406",
+      "sourceAudio": "Memo 006.m4a",
+      "rawTranscriptionPath": "content/transcriptions/Memo_006.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-conversation-memo_006-4a7e2f8a8406.md",
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/personal.md",
+        "decisions": null,
+        "openPoints": "content/open-points/2026-05-17.md"
+      },
+      "status": "ready_for_site",
+      "readyForSite": true,
+      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "error": null,
+      "source_checksum": "ec19a81b268e3ba943c0a6375057863d2c7578ea26f3ab8a0fadaf2f3ea16b9e"
+    },
+    "content/transcriptions/Seconda.md": {
+      "id": "86e8348fd2d4",
+      "sourceAudio": "Seconda.m4a",
+      "rawTranscriptionPath": "content/transcriptions/Seconda.md",
+      "aiOutputs": {
+        "meeting": "content/meetings/2026-05-17-conversation-seconda-86e8348fd2d4.md",
+        "note": null,
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/personal.md",
+        "decisions": "content/decisions/2026-05-17.md",
+        "openPoints": "content/open-points/2026-05-17.md"
+      },
+      "status": "ready_for_site",
+      "readyForSite": true,
+      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "error": null,
+      "source_checksum": "9b8780f94518c25cabfd279631689c94b2907aad69add0ffedf7f204fed78e5e"
+    },
+    "content/transcriptions/Voice_001.md": {
+      "id": "c8091515a34f",
+      "sourceAudio": "Voice 001.m4a",
+      "rawTranscriptionPath": "content/transcriptions/Voice_001.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-voice-note-voice_001-c8091515a34f.md",
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/uncategorized.md",
+        "decisions": null,
+        "openPoints": null
+      },
+      "status": "needs_review",
+      "readyForSite": false,
+      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "error": null,
+      "source_checksum": "22f206b4f2254fa1004594a1f55a52f3ef97e0182e708abd52b2c6b101710b5b"
+    },
+    "content/transcriptions/Voice_002.md": {
+      "id": "f0dc2085112e",
+      "sourceAudio": "Voice 002.m4a",
+      "rawTranscriptionPath": "content/transcriptions/Voice_002.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-voice-note-voice_002-f0dc2085112e.md",
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/uncategorized.md",
+        "decisions": null,
+        "openPoints": null
+      },
+      "status": "needs_review",
+      "readyForSite": false,
+      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "error": null,
+      "source_checksum": "74610ee0acfeb19c8f99adbe4d79e84820a2cabe99cad280fc7155b01701c329"
+    },
+    "content/transcriptions/Voice_003.md": {
+      "id": "8ae8c30860dd",
+      "sourceAudio": "Voice 003.m4a",
+      "rawTranscriptionPath": "content/transcriptions/Voice_003.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-voice-note-voice_003-8ae8c30860dd.md",
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/uncategorized.md",
+        "decisions": null,
+        "openPoints": null
+      },
+      "status": "ready_for_site",
+      "readyForSite": true,
+      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "error": null,
+      "source_checksum": "3482878b0f12b7efa5c15415e9b38396a79da45f7298b9de02744ec0b575d2c8"
+    },
+    "content/transcriptions/Voice_004.md": {
+      "id": "d58c88f66165",
+      "sourceAudio": "Voice 004.m4a",
+      "rawTranscriptionPath": "content/transcriptions/Voice_004.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-voice-note-voice_004-d58c88f66165.md",
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/uncategorized.md",
+        "decisions": null,
+        "openPoints": null
+      },
+      "status": "ready_for_site",
+      "readyForSite": true,
+      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "error": null,
+      "source_checksum": "5c02c319992c12cb89e6fdbc7a28ca6d7ebc2226042981329adcffb8a3f41aa2"
+    },
+    "content/transcriptions/Voice_005.md": {
+      "id": "6921c6f5bc0a",
+      "sourceAudio": "Voice 005.m4a",
+      "rawTranscriptionPath": "content/transcriptions/Voice_005.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-conversation-voice_005-6921c6f5bc0a.md",
+        "tasks": "content/tasks/todo.md",
+        "calendar": null,
+        "project": "content/projects/personal.md",
+        "decisions": null,
+        "openPoints": "content/open-points/2026-05-17.md"
+      },
+      "status": "ready_for_site",
+      "readyForSite": true,
+      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "error": null,
+      "source_checksum": "37139b635cc414941f18807492a9889c170da6f29da4b28ab039fdd02c69c80c"
+    },
+    "content/transcriptions/Voice_006.md": {
+      "id": "4d392948d577",
+      "sourceAudio": "Voice 006.m4a",
+      "rawTranscriptionPath": "content/transcriptions/Voice_006.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-voice-note-voice_006-4d392948d577.md",
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/personal.md",
+        "decisions": null,
+        "openPoints": "content/open-points/2026-05-17.md"
+      },
+      "status": "ready_for_site",
+      "readyForSite": true,
+      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "error": null,
+      "source_checksum": "0ded45b874c0b1c3982731974a8b381e6b44b2a78ac81a7142788e88c6ce2124"
+    },
+    "content/transcriptions/Voice_007.md": {
+      "id": "793016bc4f37",
+      "sourceAudio": "Voice 007.m4a",
+      "rawTranscriptionPath": "content/transcriptions/Voice_007.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-voice-note-voice_007-793016bc4f37.md",
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/uncategorized.md",
+        "decisions": null,
+        "openPoints": null
+      },
+      "status": "ready_for_site",
+      "readyForSite": true,
+      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "error": null,
+      "source_checksum": "bcead9ef6cd9102c52631ff73181907601a285a55fe1ce1e51e72fac53099a07"
+    },
+    "content/transcriptions/Voice_250621_185357.md": {
+      "id": "69216cdbadfb",
+      "sourceAudio": "Voice 250621 185357.m4a",
+      "rawTranscriptionPath": "content/transcriptions/Voice_250621_185357.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-voice-note-voice_250621_185357-69216cdbadfb.md",
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/uncategorized.md",
+        "decisions": null,
+        "openPoints": null
+      },
+      "status": "needs_review",
+      "readyForSite": false,
+      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "error": null,
+      "source_checksum": "94b937825ab5ca5cdc46fd29792e1ea36fd463cf5cf955562face838cf020731"
+    },
+    "content/transcriptions/Voice_250621_185410.md": {
+      "id": "a4d50b0e6da1",
+      "sourceAudio": "Voice 250621 185410.m4a",
+      "rawTranscriptionPath": "content/transcriptions/Voice_250621_185410.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-voice-note-voice_250621_185410-a4d50b0e6da1.md",
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/uncategorized.md",
+        "decisions": null,
+        "openPoints": null
+      },
+      "status": "ready_for_site",
+      "readyForSite": true,
+      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "error": null,
+      "source_checksum": "f5bfd820c0974f0b4559cc7a6103aa8fc013e93f73dcfcbfda3a125cf15dc60b"
+    },
+    "content/transcriptions/Voice_260516_191818.md": {
+      "id": "596e527d5382",
+      "sourceAudio": "Voice 260516 191818.m4a",
+      "rawTranscriptionPath": "content/transcriptions/Voice_260516_191818.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-voice-note-voice_260516_191818-596e527d5382.md",
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/uncategorized.md",
+        "decisions": null,
+        "openPoints": null
+      },
+      "status": "ready_for_site",
+      "readyForSite": true,
+      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "error": null,
+      "source_checksum": "903da80abeb4ec4438d172688c51344cb1825a4c075e4df21f8b500b2eea340b"
+    },
+    "content/transcriptions/Voice_260516_235502.md": {
+      "id": "aa98439a4b47",
+      "sourceAudio": "Voice 260516 235502.m4a",
+      "rawTranscriptionPath": "content/transcriptions/Voice_260516_235502.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-voice-note-voice_260516_235502-aa98439a4b47.md",
+        "tasks": "content/tasks/todo.md",
+        "calendar": "content/calendar/events.md",
+        "project": "content/projects/personal.md",
+        "decisions": null,
+        "openPoints": null
+      },
+      "status": "ready_for_site",
+      "readyForSite": true,
+      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "error": null,
+      "source_checksum": "1e78df663d6100d0626bae21135e0e8762b8413a88744e2713d52332c8361439"
+    },
+    "content/transcriptions/Christian.md": {
+      "id": "42d821331d94",
+      "sourceAudio": "Christian.m4a",
+      "rawTranscriptionPath": "content/transcriptions/Christian.md",
+      "aiOutputs": {
+        "meeting": "content/meetings/2026-05-17-conversation-christian-42d821331d94.md",
+        "note": null,
+        "tasks": "content/tasks/todo.md",
+        "calendar": null,
+        "project": "content/projects/personal.md",
+        "decisions": "content/decisions/2026-05-17.md",
+        "openPoints": "content/open-points/2026-05-17.md"
+      },
+      "status": "ready_for_site",
+      "readyForSite": true,
+      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "error": null,
+      "source_checksum": "ff852a4a84b386dd4bc4168fa6ebb344301d85f1fa8a3487cb218aac6bc3c227"
     }
   },
   "version": 2

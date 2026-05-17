@@ -102,3 +102,14 @@
 ## 2026-05-17
 
 - [ ] 🙋🏻‍♂️ 2/14/22, 18:56 - Frostan: Ottimo 👍 2/14/22, 19:23 - J: Mamma mi dai il numero di telefono che devo far mettere il caricabatterie alla reception 2/14/22, 19:23 - J: Perche Christian quando è venuto non ha trovato nessuno alla reception 2/14/22, 19:24 - Mamma: <Media omitt... <!-- src: c52f33323d06 -->
+
+## 2026-05-17
+- [ ] Fare intro del canale e prove registrazione <!-- src: 6921c6f5bc0a -->
+- [ ] Bloccare/finalizzare registrazione quando pronti <!-- src: 6921c6f5bc0a -->
+
+## 2026-05-17
+- [ ] Andare al water park con Khan — 19 May 2026 <!-- src: aa98439a4b47 -->
+
+## 2026-05-17
+- [ ] Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre <!-- src: 42d821331d94 -->
+- [ ] Chiedere mutuo/rinegoziazione — opzione citata <!-- src: 42d821331d94 -->

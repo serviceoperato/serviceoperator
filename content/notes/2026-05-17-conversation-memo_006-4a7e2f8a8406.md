@@ -1,38 +1,40 @@
 ---
-title: come imparare a morire 60 anni, sì un corso accelerato pe…
+title: Vita, Marte, tempo e libro in scrittura
 category: conversation
-project: uncategorized
+project: personal
 date: 2026-05-17
-processing_date: 2026-05-17T09:46:21Z
-source_audio: Memo 006.m4a
+processing_date: 2026-05-17T11:11:46Z
+source_audio: Memo 006
 source_transcription: content/transcriptions/Memo_006.md
 source_id: 4a7e2f8a8406
-source_checksum: fb3c56e9932b76c7e4283fe01df98d357308db8b173a7526a3ccfd6bcd1abaa4
+source_checksum: ec19a81b268e3ba943c0a6375057863d2c7578ea26f3ab8a0fadaf2f3ea16b9e
 processed: true
 tags: [conversation]
 self_talk: false
 conversation: true
 visual:
-  type: ring
-  ring_data:
-    - { label: "Open", value: 4, color: "#EF4444" }
-    - { label: "Next", value: 2, color: "#8B5CF6" }
+  type: icon
+  icon:
+    name: FileText
+    color: "#64748B"
+    bg_color: "#64748B26"
+    label: AI-ready
 ---
 
 ## Source
-- **Source audio:** Memo 006.m4a
+- **Source audio:** Memo 006
 - **Source transcription:** `Memo_006.md`
-- **Processing datetime:** 2026-05-17T09:46:21Z
-- **Category:** conversation (72%)
-- **Project:** uncategorized
+- **Processing datetime:** 2026-05-17T11:11:46Z
+- **Category:** conversation (Composer)
+- **Project:** personal
 
-## Summary
-come imparare a morire 60 anni, sì un corso accelerato per come morire come imparare a morire musta il pieno della vita in te stai agotendo di niente ok, mi sto godendo la vita ma come hai detto a me che mi vivo in vacanza?
+## Clean Summary
+Conversazione ironica e filosofica su età, figli, eredità, fine del mondo e colonizzazione di Marte (Proxima Centauri b citato a parte). Si parla di fisica quantistica, percezione del tempo, sogni, déjà vu, riferimenti a Inception e Einstein. Si accenna a un regalo/libro e all'opera dell'autore intitolata 'nulla è come sembra', con ricerca su narcisismo patologico e scena di violenza coniugale descritta in scrittura.
 
 ## Top 3 Important Points
-- come imparare a morire 60 anni, sì un corso accelerato per come morire come imparare a morire musta il pieno della vita in te stai agotendo di niente ok, mi sto godendo la vita ma come hai detto a me che mi vivo in vacanza?
-- però non mi coto la vita adesso in vacanza ma non mi coto la vita ma come ti dico a me che mi dico a te?
-- quelle sono fottile di tonto cose serie per costruire allora c'è l'energia per costruire tutta una casa, una famiglia, un figlio poi dov'o farlo figlio si stanno che se non vado io che fanno figlio no io fanno figlio non vuoi?
+- Temi esistenziali: tempo, realtà, sogni, possibile 'pianeta B'
+- Riferimenti a fisica quantistica e percezione soggettiva del tempo
+- Work in progress letterario con personaggio narcisista e ricerca documentale
 
 ## Decisions
 - (none)
@@ -44,14 +46,16 @@ come imparare a morire 60 anni, sì un corso accelerato per come morire come imp
 - (none)
 
 ## Open Points
-- come imparare a morire 60 anni, sì un corso accelerato per come morire come imparare a morire musta il pieno della vita in te stai agotendo di niente ok, mi sto godendo la vita ma come hai detto a me che mi vivo in vacanza? | owner: to confirm
-- però non mi coto la vita adesso in vacanza ma non mi coto la vita ma come ti dico a me che mi dico a te? | owner: to confirm
-- quelle sono fottile di tonto cose serie per costruire allora c'è l'energia per costruire tutta una casa, una famiglia, un figlio poi dov'o farlo figlio si stanno che se non vado io che fanno figlio no io fanno figlio non vuoi? | owner: to confirm
-- Non vuoi lasciare eredità su questa tappa? | owner: to confirm
+- Contenuto e struttura finale del libro 'nulla è come sembra'
+- Quanto integrare riferimenti scientifici vs narrativa fantastica
 
 ## Next Steps
-- Non vuoi lasciare eredità su questa tappa?
-- Su questa tappa rimarrà eredità di neri indiani e cinesi.
+- Proseguire scrittura e revisione senza spoilerare troppo l'intreccio
+- Chiarire target lettore per il regalo/libro discussa
+
+## Possible Actions
+- Continuare documentazione per la scena sul narcisismo patologico
+- Valutare letture consigliate (fisica quantistica / Einstein) se si vuole approfondire
 
 ## Full Transcription Reference
 See `content/transcriptions/Memo_006.md`.

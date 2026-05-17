@@ -1,41 +1,43 @@
 ---
-title: Allora, oggi sto lavorando un nuovo progetto, un nuovo pr…
+title: Idea servizio riassunti e registrazione per AI
 category: conversation
-project: uncategorized
-date: 2026-05-16
-processing_date: 2026-05-17T09:46:21Z
-source_audio: Memo 001.m4a
+project: serviceopera
+date: 2026-05-17
+processing_date: 2026-05-17T11:11:46Z
+source_audio: Memo 001
 source_transcription: content/transcriptions/Memo_001.md
 source_id: 5c1e4449ab12
-source_checksum: 798732a7820af4f01ac30e4b1175c23a307498a7ddd2b2b1440b4f733865b023
+source_checksum: 28bf2ce39c70bd3f77dbdccb4b7d14ccbe1ffb0e2eb01305faa00438f7b8f4d6
 processed: true
 tags: [conversation]
 self_talk: false
 conversation: true
 visual:
-  type: ring
-  ring_data:
-    - { label: "Open", value: 2, color: "#EF4444" }
-    - { label: "Next", value: 2, color: "#8B5CF6" }
+  type: icon
+  icon:
+    name: FileText
+    color: "#64748B"
+    bg_color: "#64748B26"
+    label: AI-ready
 ---
 
 ## Source
-- **Source audio:** Memo 001.m4a
+- **Source audio:** Memo 001
 - **Source transcription:** `Memo_001.md`
-- **Processing datetime:** 2026-05-17T09:46:21Z
-- **Category:** conversation (72%)
-- **Project:** uncategorized
+- **Processing datetime:** 2026-05-17T11:11:46Z
+- **Category:** conversation (Composer)
+- **Project:** serviceopera
 
-## Summary
-Allora, oggi sto lavorando un nuovo progetto, un nuovo progetto milionario.
+## Clean Summary
+Conversazione familiare iniziale su tablet e WhatsApp, poi registrazione esplicita per sperimentare l'intelligenza artificiale sui punti focali. Si discute un possibile servizio in abbonamento con riassunti audio quotidiani di libri, già esistente in inglese e italiano, e si valuta di non replicarlo per concorrenza. Si sposta l'attenzione verso riassunti di contenuti lunghi (libri specialistici, congressi UE di ore) con voce automatizzata, distinguendosi dai telegiornali per meno soggettività e per la necessità umana di leggere anche tra le righe.
 
 ## Top 3 Important Points
-- Allora, oggi sto lavorando un nuovo progetto, un nuovo progetto milionario.
-- Guarda comunque, quali anni l'ho venerdì, ci sono un po' di radia.
-- Ah, ma stavete la Fonsu Whatsapp?
+- Registrazione della conversazione per testare elaborazione AI dei punti focali
+- Servizio tipo riassunto libri in abbonamento già coperto da competitor
+- Pivot verso riassunti di congressi/contenuti lunghi con rischio bias e ruolo umano
 
 ## Decisions
-- (none)
+- Non procedere con il servizio analogo ai riassunti-libro in abbonamento perché esiste già la concorrenza
 
 ## Tasks
 - (none)
@@ -44,12 +46,17 @@ Allora, oggi sto lavorando un nuovo progetto, un nuovo progetto milionario.
 - (none)
 
 ## Open Points
-- Ah, ma stavete la Fonsu Whatsapp? | owner: to confirm
-- Che è quella che ha certo mamma, in realtà? | owner: to confirm
+- Quale differenziazione concreta rispetto a servizi esistenti e all'AI che già risponde sui libri
+- Quanto l'umano è necessario per cogliere omissioni e bias nei congressi
 
 ## Next Steps
-- E lui con i capelli, tipo che i capelli ricci, sembra non so che avisce.
-- Che è quella che ha certo mamma, in realtà?
+- Affinare l'idea verso riassunti di eventi lunghi (congressi, contenuti specialistici)
+- Valutare automazione voce più controllo qualità umano
+
+## Possible Actions
+- Definire un MVP di riassunto congressi/contenuti lunghi con revisione umana
+- Mappare competitor esistenti (servizi libro del giorno, telegiornali)
+- Testare pipeline AI su questa registrazione per estrarre punti focali
 
 ## Full Transcription Reference
 See `content/transcriptions/Memo_001.md`.

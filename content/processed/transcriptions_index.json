@@ -1,35 +1,128 @@
 {
   "ok": true,
-  "generatedAt": "2026-05-17T10:57:02Z",
+  "generatedAt": "2026-05-17T11:11:51Z",
   "registryVersion": 2,
   "totals": {
-    "meetings": 1,
-    "notes": 15,
-    "tasks": 17,
+    "meetings": 3,
+    "notes": 21,
+    "tasks": 22,
     "calendar": 0,
     "projects": 0,
     "decisions": 0,
     "open-points": 0,
     "needsReview": 0,
-    "total": 33
+    "total": 46
   },
   "counts": {
-    "meetings": 1,
-    "notes": 15,
-    "tasks": 17,
+    "meetings": 3,
+    "notes": 21,
+    "tasks": 22,
     "calendar": 0,
     "projects": 0,
     "decisions": 0,
     "open-points": 0,
     "needsReview": 0,
-    "total": 33
+    "total": 46
   },
   "rawSources": {
     "total": 24,
-    "latestRawFile": "WhatsApp Chat with Koragon Gi.md",
-    "latestProcessedFile": "Voice_001.md",
+    "latestRawFile": "Christian.md",
+    "latestProcessedFile": "Memo_001.md",
     "waitingForProcessing": 5,
     "pendingSources": [
+      {
+        "id": "69216cdbadfb",
+        "sourceAudio": "Voice 250621 185357.m4a",
+        "sourceAudioPath": "content/transcriptions/Voice_250621_185357.md",
+        "rawTranscriptionPath": "content/transcriptions/Voice_250621_185357.md",
+        "aiOutputs": {
+          "meeting": null,
+          "note": "content/notes/2026-05-17-voice-note-voice_250621_185357-69216cdbadfb.md",
+          "tasks": null,
+          "calendar": null,
+          "project": "content/projects/uncategorized.md",
+          "decisions": null,
+          "openPoints": null
+        },
+        "detectedLanguage": null,
+        "languageProbability": null,
+        "detected_language": null,
+        "language_probability": null,
+        "rawCreatedAt": null,
+        "aiProcessedAt": "2026-05-17T11:11:46Z",
+        "status": "needs_review",
+        "readyForSite": false,
+        "error": null,
+        "size": null,
+        "modified_time": null,
+        "modified_datetime": null,
+        "file_name": "Voice_250621_185357.md",
+        "full_path": "content/transcriptions/Voice_250621_185357.md",
+        "output_markdown": null,
+        "processed_datetime": null
+      },
+      {
+        "id": "f0dc2085112e",
+        "sourceAudio": "Voice 002.m4a",
+        "sourceAudioPath": "content/transcriptions/Voice_002.md",
+        "rawTranscriptionPath": "content/transcriptions/Voice_002.md",
+        "aiOutputs": {
+          "meeting": null,
+          "note": "content/notes/2026-05-17-voice-note-voice_002-f0dc2085112e.md",
+          "tasks": null,
+          "calendar": null,
+          "project": "content/projects/uncategorized.md",
+          "decisions": null,
+          "openPoints": null
+        },
+        "detectedLanguage": null,
+        "languageProbability": null,
+        "detected_language": null,
+        "language_probability": null,
+        "rawCreatedAt": null,
+        "aiProcessedAt": "2026-05-17T11:11:46Z",
+        "status": "needs_review",
+        "readyForSite": false,
+        "error": null,
+        "size": null,
+        "modified_time": null,
+        "modified_datetime": null,
+        "file_name": "Voice_002.md",
+        "full_path": "content/transcriptions/Voice_002.md",
+        "output_markdown": null,
+        "processed_datetime": null
+      },
+      {
+        "id": "c8091515a34f",
+        "sourceAudio": "Voice 001.m4a",
+        "sourceAudioPath": "content/transcriptions/Voice_001.md",
+        "rawTranscriptionPath": "content/transcriptions/Voice_001.md",
+        "aiOutputs": {
+          "meeting": null,
+          "note": "content/notes/2026-05-17-voice-note-voice_001-c8091515a34f.md",
+          "tasks": null,
+          "calendar": null,
+          "project": "content/projects/uncategorized.md",
+          "decisions": null,
+          "openPoints": null
+        },
+        "detectedLanguage": null,
+        "languageProbability": null,
+        "detected_language": null,
+        "language_probability": null,
+        "rawCreatedAt": null,
+        "aiProcessedAt": "2026-05-17T11:11:46Z",
+        "status": "needs_review",
+        "readyForSite": false,
+        "error": null,
+        "size": null,
+        "modified_time": null,
+        "modified_datetime": null,
+        "file_name": "Voice_001.md",
+        "full_path": "content/transcriptions/Voice_001.md",
+        "output_markdown": null,
+        "processed_datetime": null
+      },
       {
         "id": "37d2a3a4fa59",
         "sourceAudio": "Chat history with Karn.md",
@@ -207,6 +300,151 @@
   "needsReviewCount": 0,
   "items": [
     {
+      "id": "1478d3df5d65",
+      "category": "meetings",
+      "categoryLabel": "Meetings",
+      "title": "Dono ~50.000 €, casa cointestata e timori su separazione",
+      "filepath": "content/meetings/2026-05-17-conversation-christian-42d821331d94.md",
+      "path": "content/meetings/2026-05-17-conversation-christian-42d821331d94.md",
+      "source_audio": "Christian",
+      "source_transcription": "content/transcriptions/Christian.md",
+      "sourceAudio": "Christian",
+      "sourceTranscription": "content/transcriptions/Christian.md",
+      "project": "personal",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T11:11:46Z",
+      "processedDate": "2026-05-17T11:11:46Z",
+      "preview": "Discussione familiare (genitori–figlio Christian) su erogazione di circa 50.000 € per investimento sulla casa in costruzione/cointestata. Nei primi minuti: madre esprime timore che, in caso di separa…",
+      "summary": "Discussione familiare (genitori–figlio Christian) su erogazione di circa 50.000 € per investimento sulla casa in costruzione/cointestata. Nei primi minuti: madre esprime timore che, in caso di separazione futura, il figlio resti svantaggiato sulla casa; padre spiega che gli immobili sono pensati per la figlia, rifiuta di cambiare direzione, cita ~57.000 € verso banca e mutuo; serve un accordo con…",
+      "stats": {
+        "decisions_count": 2,
+        "tasks_count": 2,
+        "open_points_count": 4,
+        "calendar_events_count": 0,
+        "next_steps_count": 2
+      },
+      "has_chart_data": true,
+      "raw_sections": {
+        "Source": "- **Source audio:** Christian\n- **Source transcription:** `Christian.md`\n- **Processing datetime:** 2026-05-17T11:11:46Z\n- **Category:** conversation (Composer)\n- **Project:** personal",
+        "Summary": "Discussione familiare (genitori–figlio Christian) su erogazione di circa 50.000 € per investimento sulla casa in costruzione/cointestata. Nei primi minuti: madre esprime timore che, in caso di separazione futura, il figlio resti svantaggiato sulla casa; padre spiega che gli immobili sono pensati per la figlia, rifiuta di cambiare direzione, cita ~57.000 € verso banca e mutuo; serve un accordo condiviso. File lungo: anche tensioni con Silvana, comunicazione assertiva, eredità/comunione, senza accordo formale finale chiaro nel estratto.",
+        "Important Points": "- Tema centrale (~0–5 min): 50.000 € «cortesia» / investimento casa; soldi «tuoi» ma serve accordo tra tutti\n- Timore madre: separazione futura → figlio senza casa; casa cointestata 50/50\n- Padre: case acquistate anche per i figli; ~57.000 € da estinguere verso banca; mutuo con quota capitale/interessi",
+        "Decisions": "- Padre dichiara volontà di non cambiare direzione: case/risorse orientate a Christian/figli, nonostante i timori espressi\n- Vendita casa Anzio menzionata nel contesto familiare — stato decisionale nel file: da confermare",
+        "Tasks": "- [ ] Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre\n- [ ] Chiedere mutuo/rinegoziazione — opzione citata",
+        "Calendar Events": "- (none)",
+        "Open Points": "- Accordo formale su 50.000 €, cointestazione e scenario separazione — da definire\n- Presenza/partecipazione Silvana al dialogo — non presente\n- Distribuzione ereditaria/comunione e lettere/testamenti — dibattito aperto\n- Clausole legali obbligo assistenza genitori anziani — citate, non approfondite come decisione",
+        "Next Steps": "- Arrivare a accordo condiviso prima dell'erogazione\n- Chiarire con banca importi e estinzione mutuo",
+        "Possible Actions": "- Definire accordo scritto su come intestare/gestire i 50.000 € e la casa\n- Estinguere/ristrutturare mutuo (~57.000 €) — da confermare in banca\n- Coinvolgere Silvana in modo concordato se necessario"
+      },
+      "extracted_items": {
+        "decisions": [
+          "Padre dichiara volontà di non cambiare direzione: case/risorse orientate a Christian/figli, nonostante i timori espressi",
+          "Vendita casa Anzio menzionata nel contesto familiare — stato decisionale nel file: da confermare"
+        ],
+        "tasks": [
+          "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre",
+          "Chiedere mutuo/rinegoziazione — opzione citata"
+        ],
+        "open_points": [
+          "Accordo formale su 50.000 €, cointestazione e scenario separazione — da definire",
+          "Presenza/partecipazione Silvana al dialogo — non presente",
+          "Distribuzione ereditaria/comunione e lettere/testamenti — dibattito aperto",
+          "Clausole legali obbligo assistenza genitori anziani — citate, non approfondite come decisione"
+        ],
+        "next_steps": [
+          "Arrivare a accordo condiviso prima dell'erogazione",
+          "Chiarire con banca importi e estinzione mutuo"
+        ],
+        "important_points": [
+          "Tema centrale (~0–5 min): 50.000 € «cortesia» / investimento casa; soldi «tuoi» ma serve accordo tra tutti",
+          "Timore madre: separazione futura → figlio senza casa; casa cointestata 50/50",
+          "Padre: case acquistate anche per i figli; ~57.000 € da estinguere verso banca; mutuo con quota capitale/interessi"
+        ]
+      },
+      "related_files": [
+        "53bdca7bb95c"
+      ],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "file",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
+      "id": "87beb2a027c1",
+      "category": "meetings",
+      "categoryLabel": "Meetings",
+      "title": "Famiglia: soldi senza condizioni, libertà reciproca e pace",
+      "filepath": "content/meetings/2026-05-17-conversation-seconda-86e8348fd2d4.md",
+      "path": "content/meetings/2026-05-17-conversation-seconda-86e8348fd2d4.md",
+      "source_audio": "Seconda",
+      "source_transcription": "content/transcriptions/Seconda.md",
+      "sourceAudio": "Seconda",
+      "sourceTranscription": "content/transcriptions/Seconda.md",
+      "project": "personal",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T11:11:46Z",
+      "processedDate": "2026-05-17T11:11:46Z",
+      "preview": "Conversazione familiare lunga tra genitori (Fabio/Silvana) e figli (Stefania e altri), con apertura su erogazione dei soldi promessi senza condizioni né ulteriori aspettative, poi chiarimenti su pass…",
+      "summary": "Conversazione familiare lunga tra genitori (Fabio/Silvana) e figli (Stefania e altri), con apertura su erogazione dei soldi promessi senza condizioni né ulteriori aspettative, poi chiarimenti su passati litigi (Natale, videochiamate, educazione di Christian), pattern comunicativo e desiderio di ambiente non ostile.",
+      "stats": {
+        "decisions_count": 5,
+        "tasks_count": 0,
+        "open_points_count": 4,
+        "calendar_events_count": 0,
+        "next_steps_count": 3
+      },
+      "has_chart_data": true,
+      "raw_sections": {
+        "Source": "- **Source audio:** Seconda\n- **Source transcription:** `Seconda.md`\n- **Processing datetime:** 2026-05-17T11:11:46Z\n- **Category:** conversation (Composer)\n- **Project:** personal",
+        "Summary": "Conversazione familiare lunga tra genitori (Fabio/Silvana) e figli (Stefania e altri), con apertura su erogazione dei soldi promessi senza condizioni né ulteriori aspettative, poi chiarimenti su passati litigi (Natale, videochiamate, educazione di Christian), pattern comunicativo e desiderio di ambiente non ostile.",
+        "Important Points": "- I soldi promessi saranno dati quando disponibili, senza postille; indicati come ultima distribuzione, con riserve per la vecchiaia dei genitori\n- Da entrambe le parti nessun vincolo né aspettativa futura reciproca\n- Discussione su passate tensioni (Natale, battesimo, auguri) e su cosa i genitori chiamavano «ingerenze» (civiltà/educazione)",
+        "Decisions": "- Soldi promessi da dare senza condizioni quando arriveranno; nessun ulteriore round di distribuzione annunciato\n- Libertà reciproca: nessuno vincolato, nessuna aspettativa futura da nessuna parte\n- Accordo di pace: presenza possibile a Natale/feste comandate nel rispetto degli altri, senza obbligo e senza che un Natale sì e uno no diventi motivo di litigio\n- Non usare Christian né minacciare di tagliare rapporti con il nipote; mai pensato di coinvolgere il giudice per questo\n- Da oggi evitare pressione su Silvana; non coinvolgerla nelle discussioni quando sta male",
+        "Tasks": "- (none)",
+        "Calendar Events": "- (none)",
+        "Open Points": "- Dettagli futuri su quali Natali/feste e con quale cadenza — da concordare senza obbligo\n- Educazione di Christian verso i nonni (desiderio vs obbligo) — visioni diverse\n- Christian dovrebbe esprimere il proprio punto di vista — da fare\n- Questioni vaccinara/Piacenza e percezioni contrastanti — parzialmente chiarite, sensibilità residua",
+        "Next Steps": "- Rispettare libertà e presenza non obbligatoria alle ricorrenze\n- Parlare con calma e chiedere tempo prima di richieste urgenti\n- Non coinvolgere Silvana nelle dispute familiari",
+        "Possible Actions": "- Comunicare stress e priorità prima di richieste urgenti (telefonate, compiti)\n- Evitare esplosioni di rabbia; segnalare disagio prima dell'esplosione\n- Non far litigare Christian né esporla a pressioni su presenze/obblighi\n- Ridurre pressione su Silvana nelle conversazioni familiari"
+      },
+      "extracted_items": {
+        "decisions": [
+          "Soldi promessi da dare senza condizioni quando arriveranno; nessun ulteriore round di distribuzione annunciato",
+          "Libertà reciproca: nessuno vincolato, nessuna aspettativa futura da nessuna parte",
+          "Accordo di pace: presenza possibile a Natale/feste comandate nel rispetto degli altri, senza obbligo e senza che un Natale sì e uno no diventi motivo di litigio",
+          "Non usare Christian né minacciare di tagliare rapporti con il nipote; mai pensato di coinvolgere il giudice per questo",
+          "Da oggi evitare pressione su Silvana; non coinvolgerla nelle discussioni quando sta male"
+        ],
+        "tasks": [],
+        "open_points": [
+          "Dettagli futuri su quali Natali/feste e con quale cadenza — da concordare senza obbligo",
+          "Educazione di Christian verso i nonni (desiderio vs obbligo) — visioni diverse",
+          "Christian dovrebbe esprimere il proprio punto di vista — da fare",
+          "Questioni vaccinara/Piacenza e percezioni contrastanti — parzialmente chiarite, sensibilità residua"
+        ],
+        "next_steps": [
+          "Rispettare libertà e presenza non obbligatoria alle ricorrenze",
+          "Parlare con calma e chiedere tempo prima di richieste urgenti",
+          "Non coinvolgere Silvana nelle dispute familiari"
+        ],
+        "important_points": [
+          "I soldi promessi saranno dati quando disponibili, senza postille; indicati come ultima distribuzione, con riserve per la vecchiaia dei genitori",
+          "Da entrambe le parti nessun vincolo né aspettativa futura reciproca",
+          "Discussione su passate tensioni (Natale, battesimo, auguri) e su cosa i genitori chiamavano «ingerenze» (civiltà/educazione)"
+        ]
+      },
+      "related_files": [
+        "cd949a2e1e98"
+      ],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "file",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
       "id": "13146386216e",
       "category": "meetings",
       "categoryLabel": "Meetings",
@@ -258,7 +496,9 @@
           "Poi sai che la sera fanno sta trasmissione, dove dico, non si ha i lati positivi e i lati negativi."
         ]
       },
-      "related_files": [],
+      "related_files": [
+        "d0e98a4a3189"
+      ],
       "source_only": false,
       "needs_review": false,
       "item_type": "file",
@@ -270,51 +510,52 @@
       "id": "a1c89f895aba",
       "category": "notes",
       "categoryLabel": "Notes",
-      "title": "Memo 001.m4a · Conversation",
+      "title": "Idea servizio riassunti e registrazione per AI",
       "filepath": "content/notes/2026-05-17-conversation-memo_001-5c1e4449ab12.md",
       "path": "content/notes/2026-05-17-conversation-memo_001-5c1e4449ab12.md",
-      "source_audio": "Memo 001.m4a",
+      "source_audio": "Memo 001",
       "source_transcription": "content/transcriptions/Memo_001.md",
-      "sourceAudio": "Memo 001.m4a",
+      "sourceAudio": "Memo 001",
       "sourceTranscription": "content/transcriptions/Memo_001.md",
-      "project": "uncategorized",
-      "date": "2026-05-16",
-      "eventDate": "2026-05-16",
-      "processing_date": "2026-05-17T09:46:21Z",
-      "processedDate": "2026-05-17T09:46:21Z",
-      "preview": "Allora, oggi sto lavorando un nuovo progetto, un nuovo progetto milionario.",
-      "summary": "Allora, oggi sto lavorando un nuovo progetto, un nuovo progetto milionario.",
+      "project": "serviceopera",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T11:11:46Z",
+      "processedDate": "2026-05-17T11:11:46Z",
+      "preview": "AI-ready note from Memo 001. Open for structured sections.",
+      "summary": "AI-ready note from Memo 001. Open for structured sections.",
       "stats": {
         "decisions_count": 0,
-        "tasks_count": 0,
+        "tasks_count": 3,
         "open_points_count": 0,
         "calendar_events_count": 0,
         "next_steps_count": 0
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Memo 001.m4a\n- **Source transcription:** `Memo_001.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** conversation (72%)\n- **Project:** uncategorized",
-        "Summary": "Allora, oggi sto lavorando un nuovo progetto, un nuovo progetto milionario.",
-        "Important Points": "- Allora, oggi sto lavorando un nuovo progetto, un nuovo progetto milionario.\n- Guarda comunque, quali anni l'ho venerdì, ci sono un po' di radia.\n- Ah, ma stavete la Fonsu Whatsapp?",
-        "Decisions": "- (none)",
+        "Source": "- **Source audio:** Memo 001\n- **Source transcription:** `Memo_001.md`\n- **Processing datetime:** 2026-05-17T11:11:46Z\n- **Category:** conversation (Composer)\n- **Project:** serviceopera",
+        "Summary": "Conversazione familiare iniziale su tablet e WhatsApp, poi registrazione esplicita per sperimentare l'intelligenza artificiale sui punti focali. Si discute un possibile servizio in abbonamento con riassunti audio quotidiani di libri, già esistente in inglese e italiano, e si valuta di non replicarlo per concorrenza. Si sposta l'attenzione verso riassunti di contenuti lunghi (libri specialistici, congressi UE di ore) con voce automatizzata, distinguendosi dai telegiornali per meno soggettività e per la necessità umana di leggere anche tra le righe.",
+        "Important Points": "- Registrazione della conversazione per testare elaborazione AI dei punti focali\n- Servizio tipo riassunto libri in abbonamento già coperto da competitor\n- Pivot verso riassunti di congressi/contenuti lunghi con rischio bias e ruolo umano",
+        "Decisions": "- Non procedere con il servizio analogo ai riassunti-libro in abbonamento perché esiste già la concorrenza",
         "Tasks": "- (none)",
         "Calendar Events": "- (none)",
-        "Open Points": "- Ah, ma stavete la Fonsu Whatsapp? | owner: to confirm\n- Che è quella che ha certo mamma, in realtà? | owner: to confirm",
-        "Next Steps": "- E lui con i capelli, tipo che i capelli ricci, sembra non so che avisce.\n- Che è quella che ha certo mamma, in realtà?"
+        "Open Points": "- Quale differenziazione concreta rispetto a servizi esistenti e all'AI che già risponde sui libri\n- Quanto l'umano è necessario per cogliere omissioni e bias nei congressi",
+        "Next Steps": "- Affinare l'idea verso riassunti di eventi lunghi (congressi, contenuti specialistici)\n- Valutare automazione voce più controllo qualità umano",
+        "Possible Actions": "- Definire un MVP di riassunto congressi/contenuti lunghi con revisione umana\n- Mappare competitor esistenti (servizi libro del giorno, telegiornali)\n- Testare pipeline AI su questa registrazione per estrarre punti focali"
       },
       "extracted_items": {
         "important_points": [
-          "Allora, oggi sto lavorando un nuovo progetto, un nuovo progetto milionario.",
-          "Guarda comunque, quali anni l'ho venerdì, ci sono un po' di radia.",
-          "Ah, ma stavete la Fonsu Whatsapp?"
+          "Registrazione della conversazione per testare elaborazione AI dei punti focali",
+          "Servizio tipo riassunto libri in abbonamento già coperto da competitor",
+          "Pivot verso riassunti di congressi/contenuti lunghi con rischio bias e ruolo umano"
         ],
-        "possible_actions": []
+        "possible_actions": [
+          "Definire un MVP di riassunto congressi/contenuti lunghi con revisione umana",
+          "Mappare competitor esistenti (servizi libro del giorno, telegiornali)",
+          "Testare pipeline AI su questa registrazione per estrarre punti focali"
+        ]
       },
-      "related_files": [
-        "bd08d17b19cb",
-        "89001eb77610",
-        "2f49b1cbde12"
-      ],
+      "related_files": [],
       "source_only": false,
       "needs_review": false,
       "item_type": "file",
@@ -326,50 +567,110 @@
       "id": "8cdc56affa0f",
       "category": "notes",
       "categoryLabel": "Notes",
-      "title": "Memo 002.m4a · Conversation",
+      "title": "Dibattiti politici e informazione bilanciata",
       "filepath": "content/notes/2026-05-17-conversation-memo_002-ea440a9f313e.md",
       "path": "content/notes/2026-05-17-conversation-memo_002-ea440a9f313e.md",
-      "source_audio": "Memo 002.m4a",
+      "source_audio": "Memo 002",
       "source_transcription": "content/transcriptions/Memo_002.md",
-      "sourceAudio": "Memo 002.m4a",
+      "sourceAudio": "Memo 002",
       "sourceTranscription": "content/transcriptions/Memo_002.md",
-      "project": "uncategorized",
-      "date": "2026-05-16",
-      "eventDate": "2026-05-16",
-      "processing_date": "2026-05-17T09:46:21Z",
-      "processedDate": "2026-05-17T09:46:21Z",
-      "preview": "AI-ready note from Memo 002.m4a. Open for structured sections.",
-      "summary": "AI-ready note from Memo 002.m4a. Open for structured sections.",
+      "project": "serviceopera",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T11:11:46Z",
+      "processedDate": "2026-05-17T11:11:46Z",
+      "preview": "AI-ready note from Memo 002. Open for structured sections.",
+      "summary": "AI-ready note from Memo 002. Open for structured sections.",
       "stats": {
         "decisions_count": 0,
-        "tasks_count": 0,
+        "tasks_count": 3,
         "open_points_count": 0,
         "calendar_events_count": 0,
         "next_steps_count": 0
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Memo 002.m4a\n- **Source transcription:** `Memo_002.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** conversation (72%)\n- **Project:** uncategorized",
-        "Summary": "Ma quindi tu mi dici che non c'è la possibilità, durante un congresso europeo, durante un video di un Parlamento europeo, di sentire sia le notizie positive che i negativi a seconda di quello?",
-        "Important Points": "- Ma quindi tu mi dici che non c'è la possibilità, durante un congresso europeo, durante un video di un Parlamento europeo, di sentire sia le notizie positive che i negativi a seconda di quello?\n- A meno che non c'è un dibattito, a meno che insieme al congresso c'è un dibattito, allora il dibattito è chiaro che c'è chi dall'altra parte vuole approfondire e dice ci sono delle cose che non mi sono ghiare, vorrei capire e allora li deve spiegare, allora in quel caso si.\n- Ok, vabbè adesso non so esperto di come funziona il dibattito, il congresso, il Parlamento europeo.",
-        "Decisions": "- Quindi in quel caso è quando c'è stata presa una decisione il Presidente deve solo esternarla.",
+        "Source": "- **Source audio:** Memo 002\n- **Source transcription:** `Memo_002.md`\n- **Processing datetime:** 2026-05-17T11:11:46Z\n- **Category:** conversation (Composer)\n- **Project:** serviceopera",
+        "Summary": "Prosegue il dialogo su congressi e dibattiti europei: senza contraddittorio resta un punto di vista, con dibattito emergono domande incrociate. Si ipotizza un servizio che sintetizzi dibattiti lunghi con punti destra/sinistra, sintesi e pro/contro, oltre al telegiornale. L'interlocutore segue soprattutto politica, legge testate diverse anche di controparte per cogliere omissioni. Si definisce l'esigenza di un'informazione che dia strumenti di giudizio (par condicio) su benefici e rischi, non solo la valutazione del comunicatore.",
+        "Important Points": "- Interesse principale: politica e dibattiti pre-decisionali\n- Lettura di giornali da punti di vista diversi per trovare omissioni\n- Proposta servizio news con lati positivi/negativi in versione lunga e breve",
+        "Decisions": "- (none)",
         "Tasks": "- (none)",
         "Calendar Events": "- (none)",
-        "Open Points": "- Ma quindi tu mi dici che non c'è la possibilità, durante un congresso europeo, durante un video di un Parlamento europeo, di sentire sia le notizie positive che i negativi a seconda di quello? | owner: to confirm",
-        "Next Steps": "- Quindi in quel caso è quando c'è stata presa una decisione il Presidente deve solo esternarla.\n- Ah allora no, io parlavo un sacco del dibattito, quello che dici te, che mi interessava di più."
+        "Open Points": "- Quanto pubblico è disposto a un approfondimento oltre il telegiornale\n- Come garantire equilibrio senza sostituire il giudizio del lettore",
+        "Next Steps": "- Validare il bisogno di 'par condicio' su notizie politiche e vaccini\n- Definire template editoriale per sintesi con pro/contro verificabili",
+        "Possible Actions": "- Prototipare formato 'tre punti destra / tre sinistra / sintesi / pro-contro' per un dibattito\n- Intervistare utenti interessati a politica su formati di sintesi bilanciata\n- Confrontare offerta con telegiornali e replay lunghi"
       },
       "extracted_items": {
         "important_points": [
-          "Ma quindi tu mi dici che non c'è la possibilità, durante un congresso europeo, durante un video di un Parlamento europeo, di sentire sia le notizie positive che i negativi a seconda di quello?",
-          "A meno che non c'è un dibattito, a meno che insieme al congresso c'è un dibattito, allora il dibattito è chiaro che c'è chi dall'altra parte vuole approfondire e dice ci sono delle cose che non mi sono ghiare, vorrei capire e allora li deve spiegare, allora in quel caso si.",
-          "Ok, vabbè adesso non so esperto di come funziona il dibattito, il congresso, il Parlamento europeo."
+          "Interesse principale: politica e dibattiti pre-decisionali",
+          "Lettura di giornali da punti di vista diversi per trovare omissioni",
+          "Proposta servizio news con lati positivi/negativi in versione lunga e breve"
         ],
-        "possible_actions": []
+        "possible_actions": [
+          "Prototipare formato 'tre punti destra / tre sinistra / sintesi / pro-contro' per un dibattito",
+          "Intervistare utenti interessati a politica su formati di sintesi bilanciata",
+          "Confrontare offerta con telegiornali e replay lunghi"
+        ]
+      },
+      "related_files": [],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "file",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
+      "id": "d0e98a4a3189",
+      "category": "notes",
+      "categoryLabel": "Notes",
+      "title": "Contraddittorio TV e servizi di sunto",
+      "filepath": "content/notes/2026-05-17-conversation-memo_003-c890c918890b.md",
+      "path": "content/notes/2026-05-17-conversation-memo_003-c890c918890b.md",
+      "source_audio": "Memo 003",
+      "source_transcription": "content/transcriptions/Memo_003.md",
+      "sourceAudio": "Memo 003",
+      "sourceTranscription": "content/transcriptions/Memo_003.md",
+      "project": "serviceopera",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T11:11:46Z",
+      "processedDate": "2026-05-17T11:11:46Z",
+      "preview": "AI-ready note from Memo 003. Open for structured sections.",
+      "summary": "AI-ready note from Memo 003. Open for structured sections.",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 3,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {
+        "Source": "- **Source audio:** Memo 003\n- **Source transcription:** `Memo_003.md`\n- **Processing datetime:** 2026-05-17T11:11:46Z\n- **Category:** conversation (Composer)\n- **Project:** serviceopera",
+        "Summary": "Si parla di trasmissioni con contraddittorio che danno poco spazio all'opposizione, con preferenza per conduttori/percorsi considerati più schietti. Si discute frequenza settimanale vs quotidiana e recupero tramite replay (Rai Play, Mediaset Play), ma anche il vincolo di tempo per chi lavora molte ore. Si ipotizza un servizio a pagamento che riassuma posizioni di destra, sinistra, scienziati e politica su temi come i vaccini. Vengono citati esempi di sintesi online (Dagospia, Huffington Post con contributi in italiano).",
+        "Important Points": "- Contraddittorio televisivo utile ma con spazio limitato all'opposizione\n- Replay esistenti ma richiedono comunque molto tempo\n- Mercato parziale già coperto da testate/servizi di sunto online",
+        "Decisions": "- (none)",
+        "Tasks": "- (none)",
+        "Calendar Events": "- (none)",
+        "Open Points": "- Fattibilità economica di un servizio a pagamento rispetto a fonti gratuite\n- Frequenza ideale (giornaliera vs settimanale) per il target",
+        "Next Steps": "- Confrontare formati brevi 'short news' con approfondimento opzionale\n- Verificare gap rispetto a replay TV e giornali cartacei",
+        "Possible Actions": "- Analizzare Dagospia e Huffington Post come benchmark di sintesi\n- Progettare sunto breve multiperspettiva per chi non ha 1–3 ore\n- Testare pricing/abbonamento per sintesi giornaliera"
+      },
+      "extracted_items": {
+        "important_points": [
+          "Contraddittorio televisivo utile ma con spazio limitato all'opposizione",
+          "Replay esistenti ma richiedono comunque molto tempo",
+          "Mercato parziale già coperto da testate/servizi di sunto online"
+        ],
+        "possible_actions": [
+          "Analizzare Dagospia e Huffington Post come benchmark di sintesi",
+          "Progettare sunto breve multiperspettiva per chi non ha 1–3 ore",
+          "Testare pricing/abbonamento per sintesi giornaliera"
+        ]
       },
       "related_files": [
-        "8f48535fdca9",
-        "dd496468ac1b",
-        "a9ad44e8e35a"
+        "13146386216e"
       ],
       "source_only": false,
       "needs_review": false,
@@ -382,45 +683,49 @@
       "id": "1158923cd9e1",
       "category": "notes",
       "categoryLabel": "Notes",
-      "title": "Memo 004.m4a · Conversation",
+      "title": "Paywall giornalismo, pranzo e raggi UV",
       "filepath": "content/notes/2026-05-17-conversation-memo_004-8320a9a4414c.md",
       "path": "content/notes/2026-05-17-conversation-memo_004-8320a9a4414c.md",
-      "source_audio": "Memo 004.m4a",
+      "source_audio": "Memo 004",
       "source_transcription": "content/transcriptions/Memo_004.md",
-      "sourceAudio": "Memo 004.m4a",
+      "sourceAudio": "Memo 004",
       "sourceTranscription": "content/transcriptions/Memo_004.md",
-      "project": "uncategorized",
-      "date": "2026-05-16",
-      "eventDate": "2026-05-16",
-      "processing_date": "2026-05-17T09:46:21Z",
-      "processedDate": "2026-05-17T09:46:21Z",
-      "preview": "AI-ready note from Memo 004.m4a. Open for structured sections.",
-      "summary": "AI-ready note from Memo 004.m4a. Open for structured sections.",
+      "project": "personal",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T11:11:46Z",
+      "processedDate": "2026-05-17T11:11:46Z",
+      "preview": "AI-ready note from Memo 004. Open for structured sections.",
+      "summary": "AI-ready note from Memo 004. Open for structured sections.",
       "stats": {
         "decisions_count": 0,
-        "tasks_count": 0,
+        "tasks_count": 2,
         "open_points_count": 0,
         "calendar_events_count": 0,
         "next_steps_count": 0
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Memo 004.m4a\n- **Source transcription:** `Memo_004.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** conversation (72%)\n- **Project:** uncategorized",
-        "Summary": "oppure la stessa lentica cosa, perché l'olio te dà delle notizie in due ricche, tu scuri le notizie in due ricche, lì è poi quella che ti interessa, però lì paghi l'abbonamento se puoi entrare nel corpo della notizia, ti dà proprio un brevissimo accenno e poi ti dice segue, se...",
-        "Important Points": "- oppure la stessa lentica cosa, perché l'olio te dà delle notizie in due ricche, tu scuri le notizie in due ricche, lì è poi quella che ti interessa, però lì paghi l'abbonamento se puoi entrare nel corpo della notizia, ti dà proprio un brevissimo accenno e poi ti dice segue, se...\n- No perché io compro il giornale direttamente quindi quello che sta lì sopra su un online poi lo leggo sul giornale.\n- Ok e se è il lavoro che fanno i giornalisti?",
+        "Source": "- **Source audio:** Memo 004\n- **Source transcription:** `Memo_004.md`\n- **Processing datetime:** 2026-05-17T11:11:46Z\n- **Category:** conversation (Composer)\n- **Project:** personal",
+        "Summary": "Breve confronto sul modello a due righe più abbonamento per leggere il corpo della notizia; si ribadisce che i giornali hanno tagli editoriali di destra/centro/sinistra. Poi conversazione domestica su lasagna/pasta al forno e quantità di sugo per più persone. Infine discussione su esposizione solare dietro vetri: alcuni raggi UV vengono filtrati, altri no; vecchie creme solari bloccavano il calore ma non tutti i raggi associati al rischio; si accenna a vetri e creme più recenti.",
+        "Important Points": "- Modello notizie brevi + paywall per il dettaglio\n- Pianificazione pasto (lasagna, sugo, porzioni)\n- Rischio UV attraverso finestre e differenza tra tipi di raggi/creme",
         "Decisions": "- (none)",
         "Tasks": "- (none)",
-        "Calendar Events": "- Senti ma domani che il mondo inizia c'è questa? | confidence: low",
-        "Open Points": "- Ok e se è il lavoro che fanno i giornalisti? | owner: to confirm\n- Senti ma domani che il mondo inizia c'è questa? | owner: to confirm\n- Ti l'ho scritto? | owner: to confirm",
-        "Next Steps": "- Senti ma domani che il mondo inizia c'è questa?\n- Ti l'ho scritto?"
+        "Calendar Events": "- (none)",
+        "Open Points": "- Affidabilità delle informazioni su vetri, creme e rischio tumori cutanei\n- Stato preparazione del pasto ('è già pronto?')",
+        "Next Steps": "- Riprendere eventuale filo sul servizio informativo se necessario\n- Consultare dermatologo/fonti mediche se si vuole approfondire UV indoor",
+        "Possible Actions": "- Verificare su fonti attendibili le affermazioni su UV e vetri/creme\n- Chiarire quantità sugo/pasta per il numero di commensali previsto"
       },
       "extracted_items": {
         "important_points": [
-          "oppure la stessa lentica cosa, perché l'olio te dà delle notizie in due ricche, tu scuri le notizie in due ricche, lì è poi quella che ti interessa, però lì paghi l'abbonamento se puoi entrare nel corpo della notizia, ti dà proprio un brevissimo accenno e poi ti dice segue, se...",
-          "No perché io compro il giornale direttamente quindi quello che sta lì sopra su un online poi lo leggo sul giornale.",
-          "Ok e se è il lavoro che fanno i giornalisti?"
+          "Modello notizie brevi + paywall per il dettaglio",
+          "Pianificazione pasto (lasagna, sugo, porzioni)",
+          "Rischio UV attraverso finestre e differenza tra tipi di raggi/creme"
         ],
-        "possible_actions": []
+        "possible_actions": [
+          "Verificare su fonti attendibili le affermazioni su UV e vetri/creme",
+          "Chiarire quantità sugo/pasta per il numero di commensali previsto"
+        ]
       },
       "related_files": [],
       "source_only": false,
@@ -434,51 +739,52 @@
       "id": "cd874136e601",
       "category": "notes",
       "categoryLabel": "Notes",
-      "title": "Cosa vuoi a scuola dei corpi alla medica?",
+      "title": "Scuola, YouTube minori e salute",
       "filepath": "content/notes/2026-05-17-conversation-memo_005-eac97257e652.md",
       "path": "content/notes/2026-05-17-conversation-memo_005-eac97257e652.md",
-      "source_audio": "Memo 005.m4a",
+      "source_audio": "Memo 005",
       "source_transcription": "content/transcriptions/Memo_005.md",
-      "sourceAudio": "Memo 005.m4a",
+      "sourceAudio": "Memo 005",
       "sourceTranscription": "content/transcriptions/Memo_005.md",
-      "project": "uncategorized",
-      "date": "2026-05-16",
-      "eventDate": "2026-05-16",
-      "processing_date": "2026-05-17T09:46:21Z",
-      "processedDate": "2026-05-17T09:46:21Z",
-      "preview": "Cosa vuoi a scuola dei corpi alla medica?",
-      "summary": "Cosa vuoi a scuola dei corpi alla medica?",
+      "project": "personal",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T11:11:46Z",
+      "processedDate": "2026-05-17T11:11:46Z",
+      "preview": "AI-ready note from Memo 005. Open for structured sections.",
+      "summary": "AI-ready note from Memo 005. Open for structured sections.",
       "stats": {
         "decisions_count": 0,
-        "tasks_count": 0,
+        "tasks_count": 3,
         "open_points_count": 0,
         "calendar_events_count": 0,
         "next_steps_count": 0
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Memo 005.m4a\n- **Source transcription:** `Memo_005.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** conversation (72%)\n- **Project:** uncategorized",
-        "Summary": "Cosa vuoi a scuola dei corpi alla medica?",
-        "Important Points": "- Cosa vuoi a scuola dei corpi alla medica?\n- Mi dà un libro da leggere durante l'estate, poi dovrate portare un sundo.\n- Quella è proprio la truffa più grande della scuola, però invece quando abbiamo letto l'illigia, l'odissea, poi ci stanno...",
+        "Source": "- **Source audio:** Memo 005\n- **Source transcription:** `Memo_005.md`\n- **Processing datetime:** 2026-05-17T11:11:46Z\n- **Category:** conversation (Composer)\n- **Project:** personal",
+        "Summary": "Dialogo su compiti estivi e riassunti scolastici (critica ai 'promessi sposi' e compiti estivi), confronto con letture passate. Acceso dibattito sulla pubblicazione online di video con minori (esempio Silvano/sciroppo, canali famiglia su YouTube) con forte disaccordo etico. Poi conversazione da cucina su broccoli, ossidazione/limone, sale nell'acqua di cottura. Chiusura su pressione bassa, restrizioni sale/caffè, cardiologo che definisce condizione non risolutiva, mani fredde e limiti allo sport.",
+        "Important Points": "- Critica al modello scolastico di letture/riassunti estivi\n- Disaccordo su video di minori pubblicati online\n- Pressione bassa gestita con dieta e parere cardiologico non risolutivo",
         "Decisions": "- (none)",
         "Tasks": "- (none)",
         "Calendar Events": "- (none)",
-        "Open Points": "- Cosa vuoi a scuola dei corpi alla medica? | owner: to confirm\n- Cioè quella è una realtà di vita? | owner: to confirm",
-        "Next Steps": "- Cioè quella è una realtà di vita?\n- Quando uno non arriva, che c'è a fatti, c'è..."
+        "Open Points": "- Cosa consiglia esattamente il cardiologo oltre alle restrizioni già note\n- Equilibrio tra monitoraggio pressione e qualità di vita",
+        "Next Steps": "- Ripetere visita o contatto con cardiologo per mani fredde e attività fisica\n- Allineamento familiare su policy per foto/video dei minori",
+        "Possible Actions": "- Evitare pubblicazione non consensuale di contenuti con minori\n- Seguire indicazioni del cardiologo su sale, caffè e stile di vita\n- Chiedere chiarimenti al cardiologo su sport e microcircolazione"
       },
       "extracted_items": {
         "important_points": [
-          "Cosa vuoi a scuola dei corpi alla medica?",
-          "Mi dà un libro da leggere durante l'estate, poi dovrate portare un sundo.",
-          "Quella è proprio la truffa più grande della scuola, però invece quando abbiamo letto l'illigia, l'odissea, poi ci stanno..."
+          "Critica al modello scolastico di letture/riassunti estivi",
+          "Disaccordo su video di minori pubblicati online",
+          "Pressione bassa gestita con dieta e parere cardiologico non risolutivo"
         ],
-        "possible_actions": []
+        "possible_actions": [
+          "Evitare pubblicazione non consensuale di contenuti con minori",
+          "Seguire indicazioni del cardiologo su sale, caffè e stile di vita",
+          "Chiedere chiarimenti al cardiologo su sport e microcircolazione"
+        ]
       },
-      "related_files": [
-        "292fe57f5ecd",
-        "1e8ec63a1469",
-        "a94fe0d397b3"
-      ],
+      "related_files": [],
       "source_only": false,
       "needs_review": false,
       "item_type": "file",
@@ -490,49 +796,51 @@
       "id": "53d366f5383a",
       "category": "notes",
       "categoryLabel": "Notes",
-      "title": "Memo 006.m4a · Conversation",
+      "title": "Vita, Marte, tempo e libro in scrittura",
       "filepath": "content/notes/2026-05-17-conversation-memo_006-4a7e2f8a8406.md",
       "path": "content/notes/2026-05-17-conversation-memo_006-4a7e2f8a8406.md",
-      "source_audio": "Memo 006.m4a",
+      "source_audio": "Memo 006",
       "source_transcription": "content/transcriptions/Memo_006.md",
-      "sourceAudio": "Memo 006.m4a",
+      "sourceAudio": "Memo 006",
       "sourceTranscription": "content/transcriptions/Memo_006.md",
-      "project": "uncategorized",
+      "project": "personal",
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T09:46:21Z",
-      "processedDate": "2026-05-17T09:46:21Z",
-      "preview": "AI-ready note from Memo 006.m4a. Open for structured sections.",
-      "summary": "AI-ready note from Memo 006.m4a. Open for structured sections.",
+      "processing_date": "2026-05-17T11:11:46Z",
+      "processedDate": "2026-05-17T11:11:46Z",
+      "preview": "AI-ready note from Memo 006. Open for structured sections.",
+      "summary": "AI-ready note from Memo 006. Open for structured sections.",
       "stats": {
         "decisions_count": 0,
-        "tasks_count": 0,
+        "tasks_count": 2,
         "open_points_count": 0,
         "calendar_events_count": 0,
         "next_steps_count": 0
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Memo 006.m4a\n- **Source transcription:** `Memo_006.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** conversation (72%)\n- **Project:** uncategorized",
-        "Summary": "come imparare a morire 60 anni, sì un corso accelerato per come morire come imparare a morire musta il pieno della vita in te stai agotendo di niente ok, mi sto godendo la vita ma come hai detto a me che mi vivo in vacanza?",
-        "Important Points": "- come imparare a morire 60 anni, sì un corso accelerato per come morire come imparare a morire musta il pieno della vita in te stai agotendo di niente ok, mi sto godendo la vita ma come hai detto a me che mi vivo in vacanza?\n- però non mi coto la vita adesso in vacanza ma non mi coto la vita ma come ti dico a me che mi dico a te?\n- quelle sono fottile di tonto cose serie per costruire allora c'è l'energia per costruire tutta una casa, una famiglia, un figlio poi dov'o farlo figlio si stanno che se non vado io che fanno figlio no io fanno figlio non vuoi?",
+        "Source": "- **Source audio:** Memo 006\n- **Source transcription:** `Memo_006.md`\n- **Processing datetime:** 2026-05-17T11:11:46Z\n- **Category:** conversation (Composer)\n- **Project:** personal",
+        "Summary": "Conversazione ironica e filosofica su età, figli, eredità, fine del mondo e colonizzazione di Marte (Proxima Centauri b citato a parte). Si parla di fisica quantistica, percezione del tempo, sogni, déjà vu, riferimenti a Inception e Einstein. Si accenna a un regalo/libro e all'opera dell'autore intitolata 'nulla è come sembra', con ricerca su narcisismo patologico e scena di violenza coniugale descritta in scrittura.",
+        "Important Points": "- Temi esistenziali: tempo, realtà, sogni, possibile 'pianeta B'\n- Riferimenti a fisica quantistica e percezione soggettiva del tempo\n- Work in progress letterario con personaggio narcisista e ricerca documentale",
         "Decisions": "- (none)",
         "Tasks": "- (none)",
         "Calendar Events": "- (none)",
-        "Open Points": "- come imparare a morire 60 anni, sì un corso accelerato per come morire come imparare a morire musta il pieno della vita in te stai agotendo di niente ok, mi sto godendo la vita ma come hai detto a me che mi vivo in vacanza? | owner: to confirm\n- però non mi coto la vita adesso in vacanza ma non mi coto la vita ma come ti dico a me che mi dico a te? | owner: to confirm\n- quelle sono fottile di tonto cose serie per costruire allora c'è l'energia per costruire tutta una casa, una famiglia, un figlio poi dov'o farlo figlio si stanno che se non vado io che fanno figlio no io fanno figlio non vuoi? | owner: to confirm\n- Non vuoi lasciare eredità su questa tappa? | owner: to confirm",
-        "Next Steps": "- Non vuoi lasciare eredità su questa tappa?\n- Su questa tappa rimarrà eredità di neri indiani e cinesi."
+        "Open Points": "- Contenuto e struttura finale del libro 'nulla è come sembra'\n- Quanto integrare riferimenti scientifici vs narrativa fantastica",
+        "Next Steps": "- Proseguire scrittura e revisione senza spoilerare troppo l'intreccio\n- Chiarire target lettore per il regalo/libro discussa",
+        "Possible Actions": "- Continuare documentazione per la scena sul narcisismo patologico\n- Valutare letture consigliate (fisica quantistica / Einstein) se si vuole approfondire"
       },
       "extracted_items": {
         "important_points": [
-          "come imparare a morire 60 anni, sì un corso accelerato per come morire come imparare a morire musta il pieno della vita in te stai agotendo di niente ok, mi sto godendo la vita ma come hai detto a me che mi vivo in vacanza?",
-          "però non mi coto la vita adesso in vacanza ma non mi coto la vita ma come ti dico a me che mi dico a te?",
-          "quelle sono fottile di tonto cose serie per costruire allora c'è l'energia per costruire tutta una casa, una famiglia, un figlio poi dov'o farlo figlio si stanno che se non vado io che fanno figlio no io fanno figlio non vuoi?"
+          "Temi esistenziali: tempo, realtà, sogni, possibile 'pianeta B'",
+          "Riferimenti a fisica quantistica e percezione soggettiva del tempo",
+          "Work in progress letterario con personaggio narcisista e ricerca documentale"
         ],
-        "possible_actions": []
+        "possible_actions": [
+          "Continuare documentazione per la scena sul narcisismo patologico",
+          "Valutare letture consigliate (fisica quantistica / Einstein) se si vuole approfondire"
+        ]
       },
-      "related_files": [
-        "0131b42b4070"
-      ],
+      "related_files": [],
       "source_only": false,
       "needs_review": false,
       "item_type": "file",
@@ -585,11 +893,14 @@
         "possible_actions": []
       },
       "related_files": [
+        "87beb2a027c1",
         "150a208bc778",
         "ee5f09440ace",
         "d9274514f65d",
         "a2f8bcd20b11",
-        "2fb27d209bdf"
+        "2fb27d209bdf",
+        "4da8b3d6dc55",
+        "bce10f56adfa"
       ],
       "source_only": false,
       "needs_review": false,
@@ -643,7 +954,67 @@
         "possible_actions": []
       },
       "related_files": [
+        "82fa94044f5a",
         "d9274514f65d"
+      ],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "file",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
+      "id": "01ec856cc92c",
+      "category": "notes",
+      "categoryLabel": "Notes",
+      "title": "Voice 005 · Conversation",
+      "filepath": "content/notes/2026-05-17-conversation-voice_005-6921c6f5bc0a.md",
+      "path": "content/notes/2026-05-17-conversation-voice_005-6921c6f5bc0a.md",
+      "source_audio": "Voice 005",
+      "source_transcription": "content/transcriptions/Voice_005.md",
+      "sourceAudio": "Voice 005",
+      "sourceTranscription": "content/transcriptions/Voice_005.md",
+      "project": "personal",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T11:11:46Z",
+      "processedDate": "2026-05-17T11:11:46Z",
+      "preview": "AI-ready note from Voice 005. Open for structured sections.",
+      "summary": "AI-ready note from Voice 005. Open for structured sections.",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 3,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {
+        "Source": "- **Source audio:** Voice 005\n- **Source transcription:** `Voice_005.md`\n- **Processing datetime:** 2026-05-17T11:11:46Z\n- **Category:** conversation (Composer)\n- **Project:** personal",
+        "Summary": "Sessione di registrazione/planning per contenuti del canale «Tanti Soldi» (crypto, personal finance, ChatGPT): intro, hook iniziali, consigli su telecamera e gesti, uso di ChatGPT per script e spiegazioni (Algorand, layer 1/2, intro video).",
+        "Important Points": "- Canale «Tanti Soldi»: temi crypto, bitcoin, finance, borsa\n- Intro: clap + saluto; primi secondi/minuto con hook chiaro (TikTok 3s, YouTube ~1 min)\n- ChatGPT utile per passato e spiegazioni, non per previsioni di mercato affidabili",
+        "Decisions": "- (none)",
+        "Tasks": "- [ ] Fare intro del canale e prove registrazione\n- [ ] Bloccare/finalizzare registrazione quando pronti",
+        "Calendar Events": "- (none)",
+        "Open Points": "- Formato intro definitivo (sigla breve vs solo hook)\n- Chi presenta (Marco/Leonardo/Fabio) — da confermare nei take",
+        "Next Steps": "- Prove davanti telecamera con microfono\n- Due video al prossimo incontro: intro + episodio spiegato",
+        "Possible Actions": "- Registrare intro canale e clip di prova a casa\n- Usare ChatGPT per punti positivi/negativi e script, non per price prediction\n- Preparare video intro e episodio crypto quando si rivedono"
+      },
+      "extracted_items": {
+        "important_points": [
+          "Canale «Tanti Soldi»: temi crypto, bitcoin, finance, borsa",
+          "Intro: clap + saluto; primi secondi/minuto con hook chiaro (TikTok 3s, YouTube ~1 min)",
+          "ChatGPT utile per passato e spiegazioni, non per previsioni di mercato affidabili"
+        ],
+        "possible_actions": [
+          "Registrare intro canale e clip di prova a casa",
+          "Usare ChatGPT per punti positivi/negativi e script, non per price prediction",
+          "Preparare video intro e episodio crypto quando si rivedono"
+        ]
+      },
+      "related_files": [
+        "bd04c6a561ca"
       ],
       "source_only": false,
       "needs_review": false,
@@ -696,7 +1067,9 @@
         ],
         "possible_actions": []
       },
-      "related_files": [],
+      "related_files": [
+        "1478d3df5d65"
+      ],
       "source_only": false,
       "needs_review": false,
       "item_type": "file",
@@ -749,6 +1122,7 @@
         "possible_actions": []
       },
       "related_files": [
+        "01ec856cc92c",
         "86e1b1108f7e"
       ],
       "source_only": false,
@@ -759,23 +1133,23 @@
       "readyForSite": true
     },
     {
-      "id": "c6ba19f8abf0",
+      "id": "54a9a939b5b6",
       "category": "notes",
       "categoryLabel": "Notes",
-      "title": "Voice 003.m4a · Voice note",
-      "filepath": "content/notes/2026-05-17-voice-note-voice_003-8ae8c30860dd.md",
-      "path": "content/notes/2026-05-17-voice-note-voice_003-8ae8c30860dd.md",
-      "source_audio": "Voice 003.m4a",
-      "source_transcription": "content/transcriptions/Voice_003.md",
-      "sourceAudio": "Voice 003.m4a",
-      "sourceTranscription": "content/transcriptions/Voice_003.md",
+      "title": "Registrazione non intellegibile",
+      "filepath": "content/notes/2026-05-17-voice-note-voice_001-c8091515a34f.md",
+      "path": "content/notes/2026-05-17-voice-note-voice_001-c8091515a34f.md",
+      "source_audio": "Voice 001",
+      "source_transcription": "content/transcriptions/Voice_001.md",
+      "sourceAudio": "Voice 001",
+      "sourceTranscription": "content/transcriptions/Voice_001.md",
       "project": "uncategorized",
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T09:46:21Z",
-      "processedDate": "2026-05-17T09:46:21Z",
-      "preview": "AI-ready note from Voice 003.m4a. Open for structured sections.",
-      "summary": "AI-ready note from Voice 003.m4a. Open for structured sections.",
+      "processing_date": "2026-05-17T11:11:46Z",
+      "processedDate": "2026-05-17T11:11:46Z",
+      "preview": "AI-ready note from Voice 001. Open for structured sections.",
+      "summary": "AI-ready note from Voice 001. Open for structured sections.",
       "stats": {
         "decisions_count": 0,
         "tasks_count": 0,
@@ -785,19 +1159,18 @@
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Voice 003.m4a\n- **Source transcription:** `Voice_003.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** voice-note (65%)\n- **Project:** uncategorized",
-        "Summary": "metterli tutti insieme e non fa cazzate di fa così ogni volta che inizi porti da telecamera e fai così così ti vedrai la raccia che fa così e le puoi mettere tutte insieme perché tragancio automaticamente quindi adesso ah sono un coglione perché ho registrato",
-        "Important Points": "- metterli tutti insieme e non fa cazzate di fa così ogni volta che inizi porti da telecamera e fai così così ti vedrai la raccia che fa così e le puoi mettere tutte insieme perché tragancio automaticamente quindi adesso ah sono un coglione perché ho registrato",
+        "Source": "- **Source audio:** Voice 001\n- **Source transcription:** `Voice_001.md`\n- **Processing datetime:** 2026-05-17T11:11:46Z\n- **Category:** voice-note (Composer)\n- **Project:** uncategorized",
+        "Summary": "[Bassa qualità trascrizione — revisione manuale] Trascrizione brevissima in lingua non italiana (probabile singalese), senza contenuto analizzabile in italiano.",
+        "Important Points": "- (none)",
         "Decisions": "- (none)",
         "Tasks": "- (none)",
         "Calendar Events": "- (none)",
         "Open Points": "- (none)",
-        "Next Steps": "- metterli tutti insieme e non fa cazzate di fa così ogni volta che inizi porti da telecamera e fai così così ti vedrai la raccia che fa così e le puoi mettere tutte insieme perché tragancio automaticamente quindi adesso ah sono un coglione perché ho registrato"
+        "Next Steps": "- (none)",
+        "Possible Actions": "- (none)"
       },
       "extracted_items": {
-        "important_points": [
-          "metterli tutti insieme e non fa cazzate di fa così ogni volta che inizi porti da telecamera e fai così così ti vedrai la raccia che fa così e le puoi mettere tutte insieme perché tragancio automaticamente quindi adesso ah sono un coglione perché ho registrato"
-        ],
+        "important_points": [],
         "possible_actions": []
       },
       "related_files": [],
@@ -809,23 +1182,23 @@
       "readyForSite": true
     },
     {
-      "id": "12f4e2b8252d",
+      "id": "610fba25e32d",
       "category": "notes",
       "categoryLabel": "Notes",
-      "title": "Condropatia, condropatia, condropatia, vedete?",
-      "filepath": "content/notes/2026-05-17-voice-note-voice_006-4d392948d577.md",
-      "path": "content/notes/2026-05-17-voice-note-voice_006-4d392948d577.md",
-      "source_audio": "Voice 006.m4a",
-      "source_transcription": "content/transcriptions/Voice_006.md",
-      "sourceAudio": "Voice 006.m4a",
-      "sourceTranscription": "content/transcriptions/Voice_006.md",
+      "title": "Trascrizione vuota",
+      "filepath": "content/notes/2026-05-17-voice-note-voice_002-f0dc2085112e.md",
+      "path": "content/notes/2026-05-17-voice-note-voice_002-f0dc2085112e.md",
+      "source_audio": "Voice 002",
+      "source_transcription": "content/transcriptions/Voice_002.md",
+      "sourceAudio": "Voice 002",
+      "sourceTranscription": "content/transcriptions/Voice_002.md",
       "project": "uncategorized",
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T09:46:21Z",
-      "processedDate": "2026-05-17T09:46:21Z",
-      "preview": "Condropatia, condropatia, condropatia, vedete?",
-      "summary": "Condropatia, condropatia, condropatia, vedete?",
+      "processing_date": "2026-05-17T11:11:46Z",
+      "processedDate": "2026-05-17T11:11:46Z",
+      "preview": "[Bassa qualità trascrizione — revisione manuale] File audio trascritto senza testo nel corpo della trascrizione.",
+      "summary": "[Bassa qualità trascrizione — revisione manuale] File audio trascritto senza testo nel corpo della trascrizione.",
       "stats": {
         "decisions_count": 0,
         "tasks_count": 0,
@@ -835,22 +1208,183 @@
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Voice 006.m4a\n- **Source transcription:** `Voice_006.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** voice-note (65%)\n- **Project:** uncategorized",
-        "Summary": "Condropatia, condropatia, condropatia, vedete?",
-        "Important Points": "- Condropatia, condropatia, condropatia, vedete?\n- Questa praticamente è questa, in un momento con la matida, no?\n- Ho finito la vivenza.",
+        "Source": "- **Source audio:** Voice 002\n- **Source transcription:** `Voice_002.md`\n- **Processing datetime:** 2026-05-17T11:11:46Z\n- **Category:** voice-note (Composer)\n- **Project:** uncategorized",
+        "Summary": "[Bassa qualità trascrizione — revisione manuale] File audio trascritto senza testo nel corpo della trascrizione.",
+        "Important Points": "- (none)",
         "Decisions": "- (none)",
         "Tasks": "- (none)",
         "Calendar Events": "- (none)",
-        "Open Points": "- Condropatia, condropatia, condropatia, vedete? | owner: to confirm\n- Questa praticamente è questa, in un momento con la matida, no? | owner: to confirm",
-        "Next Steps": "- Ok, soluzione infiltrazione con acido e gianuronico.\n- No, io che è un bubriete e un bubricigiano."
+        "Open Points": "- (none)",
+        "Next Steps": "- (none)",
+        "Possible Actions": "- (none)"
+      },
+      "extracted_items": {
+        "important_points": [],
+        "possible_actions": []
+      },
+      "related_files": [],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "file",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
+      "id": "c6ba19f8abf0",
+      "category": "notes",
+      "categoryLabel": "Notes",
+      "title": "Clip video: mettere registrazioni insieme",
+      "filepath": "content/notes/2026-05-17-voice-note-voice_003-8ae8c30860dd.md",
+      "path": "content/notes/2026-05-17-voice-note-voice_003-8ae8c30860dd.md",
+      "source_audio": "Voice 003",
+      "source_transcription": "content/transcriptions/Voice_003.md",
+      "sourceAudio": "Voice 003",
+      "sourceTranscription": "content/transcriptions/Voice_003.md",
+      "project": "uncategorized",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T11:11:46Z",
+      "processedDate": "2026-05-17T11:11:46Z",
+      "preview": "AI-ready note from Voice 003. Open for structured sections.",
+      "summary": "AI-ready note from Voice 003. Open for structured sections.",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 1,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {
+        "Source": "- **Source audio:** Voice 003\n- **Source transcription:** `Voice_003.md`\n- **Processing datetime:** 2026-05-17T11:11:46Z\n- **Category:** voice-note (Composer)\n- **Project:** uncategorized",
+        "Summary": "Nota su come registrare con telecamera e raggruppare le clip (menzione di montaggio automatico); speaker si definisce «un coglione» per come ha registrato.",
+        "Important Points": "- Suggerimento di portare la telecamera ogni volta e mettere tutte le riprese insieme\n- Riferimento a montaggio/trascodifica automatica",
+        "Decisions": "- (none)",
+        "Tasks": "- (none)",
+        "Calendar Events": "- (none)",
+        "Open Points": "- (none)",
+        "Next Steps": "- (none)",
+        "Possible Actions": "- Ripetere registrazione con telecamera secondo il metodo descritto"
       },
       "extracted_items": {
         "important_points": [
-          "Condropatia, condropatia, condropatia, vedete?",
-          "Questa praticamente è questa, in un momento con la matida, no?",
-          "Ho finito la vivenza."
+          "Suggerimento di portare la telecamera ogni volta e mettere tutte le riprese insieme",
+          "Riferimento a montaggio/trascodifica automatica"
         ],
-        "possible_actions": []
+        "possible_actions": [
+          "Ripetere registrazione con telecamera secondo il metodo descritto"
+        ]
+      },
+      "related_files": [],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "file",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
+      "id": "82fa94044f5a",
+      "category": "notes",
+      "categoryLabel": "Notes",
+      "title": "Prova registrazione audio/video",
+      "filepath": "content/notes/2026-05-17-voice-note-voice_004-d58c88f66165.md",
+      "path": "content/notes/2026-05-17-voice-note-voice_004-d58c88f66165.md",
+      "source_audio": "Voice 004",
+      "source_transcription": "content/transcriptions/Voice_004.md",
+      "sourceAudio": "Voice 004",
+      "sourceTranscription": "content/transcriptions/Voice_004.md",
+      "project": "uncategorized",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T11:11:46Z",
+      "processedDate": "2026-05-17T11:11:46Z",
+      "preview": "AI-ready note from Voice 004. Open for structured sections.",
+      "summary": "AI-ready note from Voice 004. Open for structured sections.",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 1,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {
+        "Source": "- **Source audio:** Voice 004\n- **Source transcription:** `Voice_004.md`\n- **Processing datetime:** 2026-05-17T11:11:46Z\n- **Category:** voice-note (Composer)\n- **Project:** uncategorized",
+        "Summary": "Prova tecnica di registrazione: microfono, tracce, ripartenza per test suoni; confronto tra registrazione video e solo audio.",
+        "Important Points": "- Setup microfono e tracce per prova\n- Preferenza per prova registrazione suoni senza video",
+        "Decisions": "- (none)",
+        "Tasks": "- (none)",
+        "Calendar Events": "- (none)",
+        "Open Points": "- (none)",
+        "Next Steps": "- (none)",
+        "Possible Actions": "- Ripetere prova con registrazione suoni"
+      },
+      "extracted_items": {
+        "important_points": [
+          "Setup microfono e tracce per prova",
+          "Preferenza per prova registrazione suoni senza video"
+        ],
+        "possible_actions": [
+          "Ripetere prova con registrazione suoni"
+        ]
+      },
+      "related_files": [
+        "29df35493553"
+      ],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "file",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
+      "id": "12f4e2b8252d",
+      "category": "notes",
+      "categoryLabel": "Notes",
+      "title": "Condropatia: infiltrazione acido ialuronico",
+      "filepath": "content/notes/2026-05-17-voice-note-voice_006-4d392948d577.md",
+      "path": "content/notes/2026-05-17-voice-note-voice_006-4d392948d577.md",
+      "source_audio": "Voice 006",
+      "source_transcription": "content/transcriptions/Voice_006.md",
+      "sourceAudio": "Voice 006",
+      "sourceTranscription": "content/transcriptions/Voice_006.md",
+      "project": "personal",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T11:11:46Z",
+      "processedDate": "2026-05-17T11:11:46Z",
+      "preview": "AI-ready note from Voice 006. Open for structured sections.",
+      "summary": "AI-ready note from Voice 006. Open for structured sections.",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 1,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {
+        "Source": "- **Source audio:** Voice 006\n- **Source transcription:** `Voice_006.md`\n- **Processing datetime:** 2026-05-17T11:11:46Z\n- **Category:** voice-note (Composer)\n- **Project:** personal",
+        "Summary": "Frammento medico su condropatia (ginocchio; riferimento a condropatia medio-astragalica) e soluzione con infiltrazione di acido ialuronico.",
+        "Important Points": "- Diagnosi/contesto: condropatia\n- Trattamento proposto: infiltrazione con acido ialuronico",
+        "Decisions": "- (none)",
+        "Tasks": "- (none)",
+        "Calendar Events": "- (none)",
+        "Open Points": "- Dettagli clinici e conferma trattamento — owner to confirm",
+        "Next Steps": "- (none)",
+        "Possible Actions": "- Procedere con infiltrazione acido ialuronico — da confermare con medico"
+      },
+      "extracted_items": {
+        "important_points": [
+          "Diagnosi/contesto: condropatia",
+          "Trattamento proposto: infiltrazione con acido ialuronico"
+        ],
+        "possible_actions": [
+          "Procedere con infiltrazione acido ialuronico — da confermare con medico"
+        ]
       },
       "related_files": [],
       "source_only": false,
@@ -864,20 +1398,20 @@
       "id": "e863b4b31a3f",
       "category": "notes",
       "categoryLabel": "Notes",
-      "title": "Cosa si ricorda?",
+      "title": "Domanda su cosa si ricorda",
       "filepath": "content/notes/2026-05-17-voice-note-voice_007-793016bc4f37.md",
       "path": "content/notes/2026-05-17-voice-note-voice_007-793016bc4f37.md",
-      "source_audio": "Voice 007.m4a",
+      "source_audio": "Voice 007",
       "source_transcription": "content/transcriptions/Voice_007.md",
-      "sourceAudio": "Voice 007.m4a",
+      "sourceAudio": "Voice 007",
       "sourceTranscription": "content/transcriptions/Voice_007.md",
       "project": "uncategorized",
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T09:46:21Z",
-      "processedDate": "2026-05-17T09:46:21Z",
-      "preview": "Cosa si ricorda?",
-      "summary": "Cosa si ricorda?",
+      "processing_date": "2026-05-17T11:11:46Z",
+      "processedDate": "2026-05-17T11:11:46Z",
+      "preview": "Scambio brevissimo: «Cosa si ricorda?» / reazione ironica; qualcuno sta facendo un «ricordi».",
+      "summary": "Scambio brevissimo: «Cosa si ricorda?» / reazione ironica; qualcuno sta facendo un «ricordi».",
       "stats": {
         "decisions_count": 0,
         "tasks_count": 0,
@@ -887,21 +1421,70 @@
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Voice 007.m4a\n- **Source transcription:** `Voice_007.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** voice-note (65%)\n- **Project:** uncategorized",
-        "Summary": "Cosa si ricorda?",
-        "Important Points": "- Cosa si ricorda?\n- No, no, come è così?\n- Dice ricordi?",
+        "Source": "- **Source audio:** Voice 007\n- **Source transcription:** `Voice_007.md`\n- **Processing datetime:** 2026-05-17T11:11:46Z\n- **Category:** voice-note (Composer)\n- **Project:** uncategorized",
+        "Summary": "Scambio brevissimo: «Cosa si ricorda?» / reazione ironica; qualcuno sta facendo un «ricordi».",
+        "Important Points": "- Domanda su memoria/ricordi\n- Attività «ricordi» in corso",
         "Decisions": "- (none)",
         "Tasks": "- (none)",
         "Calendar Events": "- (none)",
-        "Open Points": "- Cosa si ricorda? | owner: to confirm\n- No, no, come è così? | owner: to confirm\n- Voi vede che cazzo si ricorda? | owner: to confirm\n- Ah, sta facendo il ricordi? | owner: to confirm",
-        "Next Steps": "- Voi vede che cazzo si ricorda?\n- Ah, sta facendo il ricordi?"
+        "Open Points": "- (none)",
+        "Next Steps": "- (none)",
+        "Possible Actions": "- (none)"
       },
       "extracted_items": {
         "important_points": [
-          "Cosa si ricorda?",
-          "No, no, come è così?",
-          "Dice ricordi?"
+          "Domanda su memoria/ricordi",
+          "Attività «ricordi» in corso"
         ],
+        "possible_actions": []
+      },
+      "related_files": [],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "file",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
+      "id": "80c98b9de050",
+      "category": "notes",
+      "categoryLabel": "Notes",
+      "title": "Audio non decodificabile",
+      "filepath": "content/notes/2026-05-17-voice-note-voice_250621_185357-69216cdbadfb.md",
+      "path": "content/notes/2026-05-17-voice-note-voice_250621_185357-69216cdbadfb.md",
+      "source_audio": "Voice 250621 185357",
+      "source_transcription": "content/transcriptions/Voice_250621_185357.md",
+      "sourceAudio": "Voice 250621 185357",
+      "sourceTranscription": "content/transcriptions/Voice_250621_185357.md",
+      "project": "uncategorized",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T11:11:46Z",
+      "processedDate": "2026-05-17T11:11:46Z",
+      "preview": "AI-ready note from Voice 250621 185357. Open for structured sections.",
+      "summary": "AI-ready note from Voice 250621 185357. Open for structured sections.",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 0,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {
+        "Source": "- **Source audio:** Voice 250621 185357\n- **Source transcription:** `Voice_250621_185357.md`\n- **Processing datetime:** 2026-05-17T11:11:46Z\n- **Category:** voice-note (Composer)\n- **Project:** uncategorized",
+        "Summary": "[Bassa qualità trascrizione — revisione manuale] Trascrizione con caratteri non leggibili; lingua non identificata (nn). Nessun contenuto semantico affidabile.",
+        "Important Points": "- (none)",
+        "Decisions": "- (none)",
+        "Tasks": "- (none)",
+        "Calendar Events": "- (none)",
+        "Open Points": "- (none)",
+        "Next Steps": "- (none)",
+        "Possible Actions": "- (none)"
+      },
+      "extracted_items": {
+        "important_points": [],
         "possible_actions": []
       },
       "related_files": [],
@@ -916,20 +1499,20 @@
       "id": "923bec706cca",
       "category": "notes",
       "categoryLabel": "Notes",
-      "title": "¡Ande, sí encuentre el limpio!",
+      "title": "Frase in spagnolo (limpio)",
       "filepath": "content/notes/2026-05-17-voice-note-voice_250621_185410-a4d50b0e6da1.md",
       "path": "content/notes/2026-05-17-voice-note-voice_250621_185410-a4d50b0e6da1.md",
-      "source_audio": "Voice 250621_185410.m4a",
+      "source_audio": "Voice 250621 185410",
       "source_transcription": "content/transcriptions/Voice_250621_185410.md",
-      "sourceAudio": "Voice 250621_185410.m4a",
+      "sourceAudio": "Voice 250621 185410",
       "sourceTranscription": "content/transcriptions/Voice_250621_185410.md",
       "project": "uncategorized",
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T09:46:21Z",
-      "processedDate": "2026-05-17T09:46:21Z",
-      "preview": "¡Ande, sí encuentre el limpio!",
-      "summary": "¡Ande, sí encuentre el limpio!",
+      "processing_date": "2026-05-17T11:11:46Z",
+      "processedDate": "2026-05-17T11:11:46Z",
+      "preview": "Una frase in spagnolo: «¡Ande, sí encuentre el limpio!» — contenuto isolato senza contesto.",
+      "summary": "Una frase in spagnolo: «¡Ande, sí encuentre el limpio!» — contenuto isolato senza contesto.",
       "stats": {
         "decisions_count": 0,
         "tasks_count": 0,
@@ -939,18 +1522,19 @@
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Voice 250621_185410.m4a\n- **Source transcription:** `Voice_250621_185410.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** voice-note (65%)\n- **Project:** uncategorized",
-        "Summary": "¡Ande, sí encuentre el limpio!",
-        "Important Points": "- ¡Ande, sí encuentre el limpio!",
+        "Source": "- **Source audio:** Voice 250621 185410\n- **Source transcription:** `Voice_250621_185410.md`\n- **Processing datetime:** 2026-05-17T11:11:46Z\n- **Category:** voice-note (Composer)\n- **Project:** uncategorized",
+        "Summary": "Una frase in spagnolo: «¡Ande, sí encuentre el limpio!» — contenuto isolato senza contesto.",
+        "Important Points": "- Frase: cercare/trovare «el limpio»",
         "Decisions": "- (none)",
         "Tasks": "- (none)",
         "Calendar Events": "- (none)",
         "Open Points": "- (none)",
-        "Next Steps": "- ¡Ande, sí encuentre el limpio!"
+        "Next Steps": "- (none)",
+        "Possible Actions": "- (none)"
       },
       "extracted_items": {
         "important_points": [
-          "¡Ande, sí encuentre el limpio!"
+          "Frase: cercare/trovare «el limpio»"
         ],
         "possible_actions": []
       },
@@ -966,20 +1550,20 @@
       "id": "1d5702fe1dd1",
       "category": "notes",
       "categoryLabel": "Notes",
-      "title": "Voice 260516_191818.m4a · Voice note",
+      "title": "Prova registrazione audio → testo",
       "filepath": "content/notes/2026-05-17-voice-note-voice_260516_191818-596e527d5382.md",
       "path": "content/notes/2026-05-17-voice-note-voice_260516_191818-596e527d5382.md",
-      "source_audio": "Voice 260516_191818.m4a",
+      "source_audio": "Voice 260516 191818",
       "source_transcription": "content/transcriptions/Voice_260516_191818.md",
-      "sourceAudio": "Voice 260516_191818.m4a",
+      "sourceAudio": "Voice 260516 191818",
       "sourceTranscription": "content/transcriptions/Voice_260516_191818.md",
       "project": "uncategorized",
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T09:46:21Z",
-      "processedDate": "2026-05-17T09:46:21Z",
-      "preview": "Facciamo una prova di questa registrazione audio per vedere se riusciamo a metterlo in testo.",
-      "summary": "Facciamo una prova di questa registrazione audio per vedere se riusciamo a metterlo in testo.",
+      "processing_date": "2026-05-17T11:11:46Z",
+      "processedDate": "2026-05-17T11:11:46Z",
+      "preview": "Prova per verificare se la registrazione audio viene convertita correttamente in testo.",
+      "summary": "Prova per verificare se la registrazione audio viene convertita correttamente in testo.",
       "stats": {
         "decisions_count": 0,
         "tasks_count": 0,
@@ -989,18 +1573,19 @@
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Voice 260516_191818.m4a\n- **Source transcription:** `Voice_260516_191818.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** voice-note (65%)\n- **Project:** uncategorized",
-        "Summary": "Facciamo una prova di questa registrazione audio per vedere se riusciamo a metterlo in testo.",
-        "Important Points": "- Facciamo una prova di questa registrazione audio per vedere se riusciamo a metterlo in testo.",
+        "Source": "- **Source audio:** Voice 260516 191818\n- **Source transcription:** `Voice_260516_191818.md`\n- **Processing datetime:** 2026-05-17T11:11:46Z\n- **Category:** voice-note (Composer)\n- **Project:** uncategorized",
+        "Summary": "Prova per verificare se la registrazione audio viene convertita correttamente in testo.",
+        "Important Points": "- Test pipeline trascrizione",
         "Decisions": "- (none)",
         "Tasks": "- (none)",
         "Calendar Events": "- (none)",
         "Open Points": "- (none)",
-        "Next Steps": "- Facciamo una prova di questa registrazione audio per vedere se riusciamo a metterlo in testo."
+        "Next Steps": "- (none)",
+        "Possible Actions": "- (none)"
       },
       "extracted_items": {
         "important_points": [
-          "Facciamo una prova di questa registrazione audio per vedere se riusciamo a metterlo in testo."
+          "Test pipeline trascrizione"
         ],
         "possible_actions": []
       },
@@ -1016,43 +1601,47 @@
       "id": "1a40023b5e03",
       "category": "notes",
       "categoryLabel": "Notes",
-      "title": "Voice 260516_235502.m4a · Voice note",
+      "title": "Promemoria parco acquatico con Khan",
       "filepath": "content/notes/2026-05-17-voice-note-voice_260516_235502-aa98439a4b47.md",
       "path": "content/notes/2026-05-17-voice-note-voice_260516_235502-aa98439a4b47.md",
-      "source_audio": "Voice 260516_235502.m4a",
+      "source_audio": "Voice 260516 235502",
       "source_transcription": "content/transcriptions/Voice_260516_235502.md",
-      "sourceAudio": "Voice 260516_235502.m4a",
+      "sourceAudio": "Voice 260516 235502",
       "sourceTranscription": "content/transcriptions/Voice_260516_235502.md",
-      "project": "uncategorized",
+      "project": "personal",
       "date": "2026-05-17",
       "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T09:46:21Z",
-      "processedDate": "2026-05-17T09:46:21Z",
-      "preview": "I have to remember that I have to go to water park next week with Khan number 19 May 2026",
-      "summary": "I have to remember that I have to go to water park next week with Khan number 19 May 2026",
+      "processing_date": "2026-05-17T11:11:46Z",
+      "processedDate": "2026-05-17T11:11:46Z",
+      "preview": "Promemoria vocale in inglese: andare al water park la settimana prossima con Khan, riferimento al 19 maggio 2026.",
+      "summary": "Promemoria vocale in inglese: andare al water park la settimana prossima con Khan, riferimento al 19 maggio 2026.",
       "stats": {
         "decisions_count": 0,
-        "tasks_count": 0,
+        "tasks_count": 1,
         "open_points_count": 0,
         "calendar_events_count": 0,
         "next_steps_count": 0
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Voice 260516_235502.m4a\n- **Source transcription:** `Voice_260516_235502.md`\n- **Processing datetime:** 2026-05-17T09:46:21Z\n- **Category:** voice-note (65%)\n- **Project:** uncategorized",
-        "Summary": "I have to remember that I have to go to water park next week with Khan number 19 May 2026",
-        "Important Points": "- I have to remember that I have to go to water park next week with Khan number 19 May 2026",
+        "Source": "- **Source audio:** Voice 260516 235502\n- **Source transcription:** `Voice_260516_235502.md`\n- **Processing datetime:** 2026-05-17T11:11:46Z\n- **Category:** voice-note (Composer)\n- **Project:** personal",
+        "Summary": "Promemoria vocale in inglese: andare al water park la settimana prossima con Khan, riferimento al 19 maggio 2026.",
+        "Important Points": "- Appuntamento: water park con Khan\n- Data citata: 19 May 2026",
         "Decisions": "- (none)",
-        "Tasks": "- (none)",
-        "Calendar Events": "- I have to remember that I have to go to water park next week with Khan number 19 May 2026 | confidence: low",
+        "Tasks": "- [ ] Andare al water park con Khan — 19 May 2026",
+        "Calendar Events": "- Water park con Khan — 19 May 2026",
         "Open Points": "- (none)",
-        "Next Steps": "- I have to remember that I have to go to water park next week with Khan number 19 May 2026"
+        "Next Steps": "- (none)",
+        "Possible Actions": "- Andare al water park con Khan"
       },
       "extracted_items": {
         "important_points": [
-          "I have to remember that I have to go to water park next week with Khan number 19 May 2026"
+          "Appuntamento: water park con Khan",
+          "Data citata: 19 May 2026"
         ],
-        "possible_actions": []
+        "possible_actions": [
+          "Andare al water park con Khan"
+        ]
       },
       "related_files": [],
       "source_only": false,
@@ -1095,7 +1684,6 @@
         ]
       },
       "related_files": [
-        "a1c89f895aba",
         "89001eb77610",
         "2f49b1cbde12"
       ],
@@ -1139,7 +1727,6 @@
         ]
       },
       "related_files": [
-        "a1c89f895aba",
         "bd08d17b19cb",
         "2f49b1cbde12"
       ],
@@ -1183,7 +1770,6 @@
         ]
       },
       "related_files": [
-        "a1c89f895aba",
         "bd08d17b19cb",
         "89001eb77610"
       ],
@@ -1227,7 +1813,6 @@
         ]
       },
       "related_files": [
-        "8cdc56affa0f",
         "dd496468ac1b",
         "a9ad44e8e35a"
       ],
@@ -1271,7 +1856,6 @@
         ]
       },
       "related_files": [
-        "8cdc56affa0f",
         "8f48535fdca9",
         "a9ad44e8e35a"
       ],
@@ -1315,7 +1899,6 @@
         ]
       },
       "related_files": [
-        "8cdc56affa0f",
         "8f48535fdca9",
         "dd496468ac1b"
       ],
@@ -1359,7 +1942,6 @@
         ]
       },
       "related_files": [
-        "cd874136e601",
         "1e8ec63a1469",
         "a94fe0d397b3"
       ],
@@ -1403,7 +1985,6 @@
         ]
       },
       "related_files": [
-        "cd874136e601",
         "292fe57f5ecd",
         "a94fe0d397b3"
       ],
@@ -1447,7 +2028,6 @@
         ]
       },
       "related_files": [
-        "cd874136e601",
         "292fe57f5ecd",
         "1e8ec63a1469"
       ],
@@ -1490,9 +2070,7 @@
           "come imparare a morire 60 anni, sì un corso accelerato per come morire come imparare a morire musta il pieno della vita in te stai agotendo di niente ok, mi sto godendo la vita ma come hai detto a me che mi vivo in vacanza?"
         ]
       },
-      "related_files": [
-        "53d366f5383a"
-      ],
+      "related_files": [],
       "source_only": false,
       "needs_review": false,
       "item_type": "task",
@@ -1621,7 +2199,10 @@
         "ee5f09440ace",
         "d9274514f65d",
         "a2f8bcd20b11",
-        "2fb27d209bdf"
+        "2fb27d209bdf",
+        "4da8b3d6dc55",
+        "bce10f56adfa",
+        "d1a2be3a6eff"
       ],
       "source_only": false,
       "needs_review": false,
@@ -1667,7 +2248,10 @@
         "150a208bc778",
         "d9274514f65d",
         "a2f8bcd20b11",
-        "2fb27d209bdf"
+        "2fb27d209bdf",
+        "4da8b3d6dc55",
+        "bce10f56adfa",
+        "d1a2be3a6eff"
       ],
       "source_only": false,
       "needs_review": false,
@@ -1713,7 +2297,10 @@
         "150a208bc778",
         "ee5f09440ace",
         "a2f8bcd20b11",
-        "2fb27d209bdf"
+        "2fb27d209bdf",
+        "4da8b3d6dc55",
+        "bce10f56adfa",
+        "d1a2be3a6eff"
       ],
       "source_only": false,
       "needs_review": false,
@@ -1759,7 +2346,10 @@
         "150a208bc778",
         "ee5f09440ace",
         "d9274514f65d",
-        "2fb27d209bdf"
+        "2fb27d209bdf",
+        "4da8b3d6dc55",
+        "bce10f56adfa",
+        "d1a2be3a6eff"
       ],
       "source_only": false,
       "needs_review": false,
@@ -1805,7 +2395,255 @@
         "150a208bc778",
         "ee5f09440ace",
         "d9274514f65d",
-        "a2f8bcd20b11"
+        "a2f8bcd20b11",
+        "4da8b3d6dc55",
+        "bce10f56adfa",
+        "d1a2be3a6eff"
+      ],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "task",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
+      "id": "4da8b3d6dc55",
+      "category": "tasks",
+      "categoryLabel": "Tasks",
+      "title": "Fare intro del canale e prove registrazione",
+      "filepath": "content/tasks/todo.md#task-135626095126",
+      "path": "content/tasks/todo.md#task-135626095126",
+      "source_audio": "Seconda.m4a",
+      "source_transcription": "Seconda.md",
+      "sourceAudio": "Seconda.m4a",
+      "sourceTranscription": "Seconda.md",
+      "project": null,
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": null,
+      "processedDate": null,
+      "preview": "Fare intro del canale e prove registrazione",
+      "summary": "Fare intro del canale e prove registrazione",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 1,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {},
+      "extracted_items": {
+        "tasks": [
+          "Fare intro del canale e prove registrazione"
+        ]
+      },
+      "related_files": [
+        "cd949a2e1e98",
+        "150a208bc778",
+        "ee5f09440ace",
+        "d9274514f65d",
+        "a2f8bcd20b11",
+        "2fb27d209bdf",
+        "bce10f56adfa",
+        "d1a2be3a6eff"
+      ],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "task",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
+      "id": "bce10f56adfa",
+      "category": "tasks",
+      "categoryLabel": "Tasks",
+      "title": "Bloccare/finalizzare registrazione quando pronti",
+      "filepath": "content/tasks/todo.md#task-01f9caef4d58",
+      "path": "content/tasks/todo.md#task-01f9caef4d58",
+      "source_audio": "Seconda.m4a",
+      "source_transcription": "Seconda.md",
+      "sourceAudio": "Seconda.m4a",
+      "sourceTranscription": "Seconda.md",
+      "project": null,
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": null,
+      "processedDate": null,
+      "preview": "Bloccare/finalizzare registrazione quando pronti",
+      "summary": "Bloccare/finalizzare registrazione quando pronti",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 1,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {},
+      "extracted_items": {
+        "tasks": [
+          "Bloccare/finalizzare registrazione quando pronti"
+        ]
+      },
+      "related_files": [
+        "cd949a2e1e98",
+        "150a208bc778",
+        "ee5f09440ace",
+        "d9274514f65d",
+        "a2f8bcd20b11",
+        "2fb27d209bdf",
+        "4da8b3d6dc55",
+        "d1a2be3a6eff"
+      ],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "task",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
+      "id": "d1a2be3a6eff",
+      "category": "tasks",
+      "categoryLabel": "Tasks",
+      "title": "Andare al water park con Khan — 19 May 2026",
+      "filepath": "content/tasks/todo.md#task-15ed42531b06",
+      "path": "content/tasks/todo.md#task-15ed42531b06",
+      "source_audio": "Seconda.m4a",
+      "source_transcription": "Seconda.md",
+      "sourceAudio": "Seconda.m4a",
+      "sourceTranscription": "Seconda.md",
+      "project": null,
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": null,
+      "processedDate": null,
+      "preview": "Andare al water park con Khan — 19 May 2026",
+      "summary": "Andare al water park con Khan — 19 May 2026",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 1,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {},
+      "extracted_items": {
+        "tasks": [
+          "Andare al water park con Khan — 19 May 2026"
+        ]
+      },
+      "related_files": [
+        "cd949a2e1e98",
+        "150a208bc778",
+        "ee5f09440ace",
+        "d9274514f65d",
+        "a2f8bcd20b11",
+        "2fb27d209bdf",
+        "4da8b3d6dc55",
+        "bce10f56adfa"
+      ],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "task",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
+      "id": "ed2bf6b318dc",
+      "category": "tasks",
+      "categoryLabel": "Tasks",
+      "title": "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre",
+      "filepath": "content/tasks/todo.md#task-13f425596c81",
+      "path": "content/tasks/todo.md#task-13f425596c81",
+      "source_audio": "Seconda.m4a",
+      "source_transcription": "Seconda.md",
+      "sourceAudio": "Seconda.m4a",
+      "sourceTranscription": "Seconda.md",
+      "project": null,
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": null,
+      "processedDate": null,
+      "preview": "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre",
+      "summary": "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 1,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {},
+      "extracted_items": {
+        "tasks": [
+          "Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre"
+        ]
+      },
+      "related_files": [
+        "cd949a2e1e98",
+        "150a208bc778",
+        "ee5f09440ace",
+        "d9274514f65d",
+        "a2f8bcd20b11",
+        "2fb27d209bdf",
+        "4da8b3d6dc55",
+        "bce10f56adfa"
+      ],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "task",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
+      "id": "4a3dbd5e0d0f",
+      "category": "tasks",
+      "categoryLabel": "Tasks",
+      "title": "Chiedere mutuo/rinegoziazione — opzione citata",
+      "filepath": "content/tasks/todo.md#task-df21e5289f7e",
+      "path": "content/tasks/todo.md#task-df21e5289f7e",
+      "source_audio": "Seconda.m4a",
+      "source_transcription": "Seconda.md",
+      "sourceAudio": "Seconda.m4a",
+      "sourceTranscription": "Seconda.md",
+      "project": null,
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": null,
+      "processedDate": null,
+      "preview": "Chiedere mutuo/rinegoziazione — opzione citata",
+      "summary": "Chiedere mutuo/rinegoziazione — opzione citata",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 1,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {},
+      "extracted_items": {
+        "tasks": [
+          "Chiedere mutuo/rinegoziazione — opzione citata"
+        ]
+      },
+      "related_files": [
+        "cd949a2e1e98",
+        "150a208bc778",
+        "ee5f09440ace",
+        "d9274514f65d",
+        "a2f8bcd20b11",
+        "2fb27d209bdf",
+        "4da8b3d6dc55",
+        "bce10f56adfa"
       ],
       "source_only": false,
       "needs_review": false,
