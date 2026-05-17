@@ -1,9 +1,8 @@
 #!/usr/bin/env node
-/** Write content/processed/transcriptions_index.json from content/ folders. */
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { writeTranscriptionsIndexFile } from '../lib/transcriptions-index.mjs';
+/** Wrapper: run scripts/index_transcriptions.py */
+import { runTranscriptionsIndexScript } from '../lib/transcriptions/run-index.mjs';
 
-const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
-const out = writeTranscriptionsIndexFile(root);
-console.log('[index_transcriptions]', out);
+const run = await runTranscriptionsIndexScript();
+if (run.stdout) console.log(run.stdout);
+if (run.stderr) console.error(run.stderr);
+process.exit(run.ok ? 0 : 1);

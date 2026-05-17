@@ -54,6 +54,116 @@
       "processed_datetime": "2026-05-16 17:53:50 UTC",
       "detected_language": "it",
       "language_probability": 0.9909849166870117
+    },
+    "G:\\My Drive\\Voice Recorder\\Memo 005.m4a": {
+      "file_name": "Memo 005.m4a",
+      "full_path": "G:\\My Drive\\Voice Recorder\\Memo 005.m4a",
+      "size": 9874375,
+      "modified_time": 1671366775.0,
+      "modified_datetime": "2022-12-18 12:32:55 UTC",
+      "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Memo_005.md",
+      "processed_datetime": "2026-05-16 18:02:14 UTC",
+      "detected_language": "it",
+      "language_probability": 0.989618718624115
+    },
+    "G:\\My Drive\\Voice Recorder\\Memo 006.m4a": {
+      "file_name": "Memo 006.m4a",
+      "full_path": "G:\\My Drive\\Voice Recorder\\Memo 006.m4a",
+      "size": 9877991,
+      "modified_time": 1671367380.0,
+      "modified_datetime": "2022-12-18 12:43:00 UTC",
+      "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Memo_006.md",
+      "processed_datetime": "2026-05-17 05:09:22 UTC",
+      "detected_language": "it",
+      "language_probability": 0.9780745506286621
+    },
+    "G:\\My Drive\\Voice Recorder\\Voice 002.m4a": {
+      "file_name": "Voice 002.m4a",
+      "full_path": "G:\\My Drive\\Voice Recorder\\Voice 002.m4a",
+      "size": 54034,
+      "modified_time": 1673201315.0,
+      "modified_datetime": "2023-01-08 18:08:35 UTC",
+      "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_002.md",
+      "processed_datetime": "2026-05-17 05:09:26 UTC",
+      "detected_language": "ru",
+      "language_probability": 0.35724231600761414
+    },
+    "G:\\My Drive\\Voice Recorder\\Voice 003.m4a": {
+      "file_name": "Voice 003.m4a",
+      "full_path": "G:\\My Drive\\Voice Recorder\\Voice 003.m4a",
+      "size": 336197,
+      "modified_time": 1673201586.0,
+      "modified_datetime": "2023-01-08 18:13:06 UTC",
+      "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_003.md",
+      "processed_datetime": "2026-05-17 05:09:32 UTC",
+      "detected_language": "it",
+      "language_probability": 0.9884478449821472
+    },
+    "G:\\My Drive\\Voice Recorder\\Voice 004.m4a": {
+      "file_name": "Voice 004.m4a",
+      "full_path": "G:\\My Drive\\Voice Recorder\\Voice 004.m4a",
+      "size": 918147,
+      "modified_time": 1673201645.0,
+      "modified_datetime": "2023-01-08 18:14:05 UTC",
+      "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_004.md",
+      "processed_datetime": "2026-05-17 05:09:52 UTC",
+      "detected_language": "it",
+      "language_probability": 0.9791030287742615
+    },
+    "G:\\My Drive\\Voice Recorder\\Voice 005.m4a": {
+      "file_name": "Voice 005.m4a",
+      "full_path": "G:\\My Drive\\Voice Recorder\\Voice 005.m4a",
+      "size": 26145986,
+      "modified_time": 1673203590.0,
+      "modified_datetime": "2023-01-08 18:46:30 UTC",
+      "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_005.md",
+      "processed_datetime": "2026-05-17 05:21:55 UTC",
+      "detected_language": "it",
+      "language_probability": 0.9681119918823242
+    },
+    "G:\\My Drive\\Voice Recorder\\Voice 006.m4a": {
+      "file_name": "Voice 006.m4a",
+      "full_path": "G:\\My Drive\\Voice Recorder\\Voice 006.m4a",
+      "size": 565900,
+      "modified_time": 1674038625.0,
+      "modified_datetime": "2023-01-18 10:43:45 UTC",
+      "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_006.md",
+      "processed_datetime": "2026-05-17 05:22:07 UTC",
+      "detected_language": "it",
+      "language_probability": 0.9962931275367737
+    },
+    "G:\\My Drive\\Voice Recorder\\Voice 007.m4a": {
+      "file_name": "Voice 007.m4a",
+      "full_path": "G:\\My Drive\\Voice Recorder\\Voice 007.m4a",
+      "size": 321485,
+      "modified_time": 1699349148.149,
+      "modified_datetime": "2023-11-07 09:25:48 UTC",
+      "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_007.md",
+      "processed_datetime": "2026-05-17 05:22:13 UTC",
+      "detected_language": "it",
+      "language_probability": 0.887336254119873
+    },
+    "G:\\My Drive\\Voice Recorder\\Voice 250621_185357.m4a": {
+      "file_name": "Voice 250621_185357.m4a",
+      "full_path": "G:\\My Drive\\Voice Recorder\\Voice 250621_185357.m4a",
+      "size": 72293,
+      "modified_time": 1750524844.045,
+      "modified_datetime": "2025-06-21 16:54:04 UTC",
+      "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_250621_185357.md",
+      "processed_datetime": "2026-05-17 05:23:10 UTC",
+      "detected_language": "nn",
+      "language_probability": 0.5088310837745667
+    },
+    "G:\\My Drive\\Voice Recorder\\Voice 250621_185410.m4a": {
+      "file_name": "Voice 250621_185410.m4a",
+      "full_path": "G:\\My Drive\\Voice Recorder\\Voice 250621_185410.m4a",
+      "size": 63599,
+      "modified_time": 1750524854.753,
+      "modified_datetime": "2025-06-21 16:54:14 UTC",
+      "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_250621_185410.md",
+      "processed_datetime": "2026-05-17 05:23:14 UTC",
+      "detected_language": "es",
+      "language_probability": 0.4350312352180481
     }
   }
 }

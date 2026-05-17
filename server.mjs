@@ -22,6 +22,15 @@ import { createUserTelemetryStore, ensureUserTelemetrySchema } from './user-tele
 import { createLeadEventsStore, ensureLeadEventsSchema } from './lead-events.mjs';
 import { searchTextAllPages } from './lib/google-places-search.mjs';
 import { buildTranscriptionsIndex } from './lib/transcriptions-index.mjs';
+import { syncTranscriptionBulk, syncTranscriptionItem } from './lib/transcriptions/google-sync.mjs';
+import { runTranscriptionsIndexScript } from './lib/transcriptions/run-index.mjs';
+import {
+  getIndexItem,
+  loadTranscriptionsIndex,
+  markItemReviewed,
+  sanitizeIndexItemForClient,
+  searchIndexItems,
+} from './lib/transcriptions/store.mjs';
 
 const processFatalLogHandlersKey = Symbol.for('serviceopera.server.processFatalLogHandlers');
 if (!globalThis[processFatalLogHandlersKey]) {
@@ -2439,6 +2448,146 @@ app.get('/api/admin/transcriptions-index', requireAdmin, (_req, res) => {
   } catch (e) {
     console.warn('[transcriptions-index]', e && e.message ? e.message : e);
     return res.status(500).json({ error: 'Could not build transcriptions index.' });
+  }
+});
+
+function transcriptionsApiNoStore(res) {
+  res.setHeader('Cache-Control', 'no-store');
+}
+
+app.get('/api/admin/transcriptions/index', requireAdmin, (_req, res) => {
+  transcriptionsApiNoStore(res);
+  try {
+    const data = loadTranscriptionsIndex();
+    data.items = (data.items || []).map(sanitizeIndexItemForClient);
+    return res.json(data);
+  } catch (e) {
+    console.warn('[transcriptions/index]', e && e.message ? e.message : e);
+    return res.status(500).json({ error: 'Could not load transcriptions index.' });
+  }
+});
+
+app.get('/api/admin/transcriptions/item', requireAdmin, (req, res) => {
+  transcriptionsApiNoStore(res);
+  const id = String(req.query.id || '').trim();
+  if (!id) return res.status(400).json({ error: 'Query parameter id is required.' });
+  try {
+    const item = getIndexItem(id);
+    if (!item) return res.status(404).json({ error: 'Item not found.' });
+    return res.json({
+      ok: true,
+      item: sanitizeIndexItemForClient(item),
+      related: (item.related || []).map(sanitizeIndexItemForClient),
+    });
+  } catch (e) {
+    console.warn('[transcriptions/item]', e && e.message ? e.message : e);
+    return res.status(500).json({ error: 'Could not load transcription item.' });
+  }
+});
+
+app.get('/api/admin/transcriptions/search', requireAdmin, (req, res) => {
+  transcriptionsApiNoStore(res);
+  try {
+    const result = searchIndexItems({
+      q: req.query.q,
+      category: req.query.category,
+      project: req.query.project,
+      from: req.query.from,
+      to: req.query.to,
+    });
+    result.items = (result.items || []).map(sanitizeIndexItemForClient);
+    return res.json(result);
+  } catch (e) {
+    console.warn('[transcriptions/search]', e && e.message ? e.message : e);
+    return res.status(500).json({ error: 'Search failed.' });
+  }
+});
+
+app.post('/api/admin/transcriptions/reindex', requireAdmin, async (_req, res) => {
+  transcriptionsApiNoStore(res);
+  try {
+    const run = await runTranscriptionsIndexScript();
+    const index = loadTranscriptionsIndex();
+    if (!run.ok) {
+      return res.status(500).json({
+        ok: false,
+        error: 'Reindex script failed.',
+        run,
+        totals: index.totals,
+        itemCount: index.items.length,
+      });
+    }
+    return res.json({
+      ok: true,
+      message: 'Transcriptions index rebuilt.',
+      run,
+      generatedAt: index.generatedAt,
+      totals: index.totals,
+      itemCount: index.items.length,
+      errors: index.errors,
+    });
+  } catch (e) {
+    console.warn('[transcriptions/reindex]', e && e.message ? e.message : e);
+    return res.status(500).json({ error: 'Reindex failed.' });
+  }
+});
+
+app.post('/api/admin/transcriptions/mark-reviewed', requireAdmin, (req, res) => {
+  transcriptionsApiNoStore(res);
+  const id = req.body && typeof req.body.id === 'string' ? req.body.id.trim() : '';
+  if (!id) return res.status(400).json({ error: 'Body field id is required.' });
+  try {
+    const result = markItemReviewed(id);
+    if (!result.ok) return res.status(result.status || 404).json({ error: result.error });
+    return res.json(result);
+  } catch (e) {
+    console.warn('[transcriptions/mark-reviewed]', e && e.message ? e.message : e);
+    return res.status(500).json({ error: 'Could not mark item reviewed.' });
+  }
+});
+
+app.post('/api/admin/transcriptions/reprocess', requireAdmin, (_req, res) => {
+  transcriptionsApiNoStore(res);
+  return res.status(501).json({ error: 'Coming soon' });
+});
+
+app.post('/api/admin/transcriptions/sync-item', requireAdmin, async (req, res) => {
+  transcriptionsApiNoStore(res);
+  const body = req.body && typeof req.body === 'object' ? req.body : {};
+  const id = typeof body.id === 'string' ? body.id.trim() : '';
+  const itemType = typeof body.item_type === 'string' ? body.item_type.trim() : '';
+  const itemIndex = Number(body.item_index);
+  if (!id || !itemType || !Number.isInteger(itemIndex) || itemIndex < 0) {
+    return res.status(400).json({
+      error: 'Body fields id, item_type (task|event), and item_index (non-negative integer) are required.',
+    });
+  }
+  if (itemType !== 'task' && itemType !== 'event') {
+    return res.status(400).json({ error: 'item_type must be "task" or "event".' });
+  }
+  const item = getIndexItem(id);
+  if (!item) return res.status(404).json({ error: 'Item not found.' });
+  try {
+    const result = await syncTranscriptionItem(item, itemType, itemIndex);
+    return res.status(result.status).json(result.body);
+  } catch (e) {
+    console.warn('[transcriptions/sync-item]', e && e.message ? e.message : e);
+    return res.status(500).json({ error: 'Sync failed.' });
+  }
+});
+
+app.post('/api/admin/transcriptions/sync-bulk', requireAdmin, async (req, res) => {
+  transcriptionsApiNoStore(res);
+  const id = req.body && typeof req.body.id === 'string' ? req.body.id.trim() : '';
+  if (!id) return res.status(400).json({ error: 'Body field id is required.' });
+  const item = getIndexItem(id);
+  if (!item) return res.status(404).json({ error: 'Item not found.' });
+  try {
+    const result = await syncTranscriptionBulk(item);
+    return res.status(result.status).json(result.body);
+  } catch (e) {
+    console.warn('[transcriptions/sync-bulk]', e && e.message ? e.message : e);
+    return res.status(500).json({ error: 'Bulk sync failed.' });
   }
 });
 

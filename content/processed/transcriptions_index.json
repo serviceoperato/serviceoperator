@@ -1,16 +1,75 @@
 {
   "ok": true,
-  "generatedAt": "2026-05-17T05:23:27.239Z",
-  "rawTranscriptionCount": 15,
-  "counts": {
+  "generatedAt": "2026-05-17T05:32:43Z",
+  "totals": {
     "meetings": 0,
     "notes": 0,
-    "tasks": 0,
-    "calendar": 0,
+    "tasks": 1,
+    "calendar": 1,
     "projects": 0,
     "decisions": 0,
-    "openPoints": 0,
-    "total": 0
+    "open-points": 0,
+    "total": 2
   },
-  "items": []
+  "rawTranscriptionCount": 15,
+  "filesProcessed": 2,
+  "errors": [],
+  "items": [
+    {
+      "id": "acacb522f6ab",
+      "category": "tasks",
+      "title": "Voice tasks",
+      "filepath": "content/tasks/todo.md",
+      "source_audio": null,
+      "source_transcription": null,
+      "project": null,
+      "date": null,
+      "processing_date": null,
+      "preview": "# Voice tasks",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 0,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {},
+      "extracted_items": {
+        "tasks": [],
+        "calendar_events": [],
+        "decisions": [],
+        "open_points": []
+      },
+      "related_files": []
+    },
+    {
+      "id": "0e8fe2780b48",
+      "category": "calendar",
+      "title": "Calendar events",
+      "filepath": "content/calendar/events.md",
+      "source_audio": null,
+      "source_transcription": null,
+      "project": null,
+      "date": null,
+      "processing_date": null,
+      "preview": "# Calendar events",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 0,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {},
+      "extracted_items": {
+        "tasks": [],
+        "calendar_events": [],
+        "decisions": [],
+        "open_points": []
+      },
+      "related_files": []
+    }
+  ]
 }

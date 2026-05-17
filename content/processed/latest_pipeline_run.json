@@ -1,23 +1,21 @@
 {
   "status": "success",
-  "success": false,
+  "success": true,
   "startedAt": "2026-05-16 17:22:18 UTC",
-  "finishedAt": "2026-05-16 17:22:18 UTC",
-  "exitCode": 1,
-  "stdout": "",
-  "stderr": "faster-whisper is not installed. Run: pip install faster-whisper",
+  "finishedAt": "2026-05-16T18:02:17.313Z",
+  "exitCode": 0,
+  "stdout": "Local sync: 6 transcription(s) on disk; registry 6 entry/entries.",
+  "stderr": "",
   "stats": {
     "filesScanned": 19,
-    "newProcessed": 0,
-    "transcriptions": 0,
+    "newProcessed": 6,
+    "transcriptions": 6,
     "notes": 0,
     "meetings": 0,
     "tasks": 0,
     "calendar": 0,
-    "errors": 1,
-    "error_messages": [
-      "faster-whisper is not installed. Run: pip install faster-whisper"
-    ]
+    "errors": 0,
+    "error_messages": []
   },
   "files": {
     "transcriptions": [
@@ -25,6 +23,7 @@
       "content/transcriptions/Memo_002.md",
       "content/transcriptions/Memo_003.md",
       "content/transcriptions/Memo_004.md",
+      "content/transcriptions/Memo_005.md",
       "content/transcriptions/Voice_001.md"
     ]
   }
