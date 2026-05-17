@@ -173,7 +173,10 @@
 
   function apiErrorMessage(pack, fallback) {
     if (pack && pack.status === 429) {
-      return (pack.j && pack.j.error) || 'Too many requests. Try again in a minute.';
+      return (
+        (pack.j && pack.j.error) ||
+        'Too many admin API requests. Wait about a minute, reload, or sign out and sign in again.'
+      );
     }
     return (pack && pack.j && pack.j.error) || fallback;
   }
