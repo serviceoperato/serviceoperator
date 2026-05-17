@@ -1445,3 +1445,57 @@
 .tx-overview-card__icon svg {
   stroke: none;
 }
+
+.tx-content-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: 100%;
+  max-width: 5.5rem;
+}
+
+.tx-content-stats--card {
+  max-width: 4.75rem;
+  gap: 0.25rem;
+}
+
+.tx-content-stats--hero {
+  max-width: 7rem;
+}
+
+.tx-content-stat {
+  display: flex;
+  flex-direction: column;
+  padding: 0.2rem 0.35rem;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--tx-stat-accent, #4f46e5) 10%, var(--tx-dash-card, #fff));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tx-stat-accent, #4f46e5) 22%, transparent);
+  line-height: 1.2;
+}
+
+.tx-content-stat__val {
+  font-size: 0.68rem;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.tx-content-stat__lbl {
+  font-size: 0.55rem;
+  color: var(--tx-dash-muted, #64748b);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tx-dash-card__visual--stats {
+  align-items: stretch;
+  justify-content: center;
+}
+
+.tx-topic-visual__svg {
+  filter: hue-rotate(var(--tx-topic-hue, 0deg));
+}
+
+.tx-topic-visual--mirror .tx-topic-visual__svg {
+  transform: scaleX(-1);
+}

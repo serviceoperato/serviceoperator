@@ -151,21 +151,23 @@
     },
     {
       key: 'topic-media',
-      label: 'Media & service',
-      keywords: [
-        'service',
-        'media',
-        'journalism',
-        'giornalismo',
-        'podcast',
-        'video',
-        'content',
-        'publish',
-        'pubblicazione',
-        'broadcast',
-        'newsletter',
-        'editorial',
-      ],
+      label: 'Video & content',
+      keywords: ['video', 'youtube', 'podcast', 'camera', 'stream', 'content', 'publish', 'timeline', 'edit'],
+    },
+    {
+      key: 'topic-travel',
+      label: 'Travel',
+      keywords: ['travel', 'viaggio', 'flight', 'hotel', 'vacation', 'beach', 'map', 'trip', 'airport'],
+    },
+    {
+      key: 'topic-legal',
+      label: 'Legal',
+      keywords: ['legal', 'contract', 'contratto', 'lawyer', 'avvocato', 'signature', 'firma', 'court', 'notary'],
+    },
+    {
+      key: 'topic-work',
+      label: 'Work & projects',
+      keywords: ['project', 'progetto', 'sprint', 'roadmap', 'milestone', 'client', 'laptop', 'office', 'deliverable'],
     },
   ];
 
@@ -267,10 +269,72 @@
       '<path d="M16 58h48" stroke="#1e293b" stroke-width="3"/><circle cx="40" cy="14" r="8" fill="#f59e0b"/>',
     'topic-media':
       '<rect x="14" y="24" width="36" height="28" rx="4" fill="#1e293b"/>' +
-      '<circle cx="26" cy="38" r="6" fill="#38bdf8"/><path d="M36 32l14 8-14 8z" fill="#f472b6"/>' +
-      '<rect x="48" y="18" width="18" height="24" rx="2" fill="#fef08a" stroke="#ca8a04"/>' +
-      '<path d="M52 26h10M52 32h8" stroke="#a16207" stroke-width="1.5"/>',
+      '<path d="M36 32l14 8-14 8z" fill="#f472b6"/>' +
+      '<circle cx="26" cy="38" r="6" fill="#38bdf8"/>' +
+      '<path d="M52 18v28M48 22h8M48 42h8" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>',
+    'topic-travel':
+      '<path d="M12 52c10-20 46-20 56 0z" fill="#38bdf8" opacity="0.9"/>' +
+      '<path d="M44 20l16 12-16 8z" fill="#f472b6"/>' +
+      '<circle cx="26" cy="40" r="6" fill="#fbbf24"/>',
+    'topic-legal':
+      '<rect x="20" y="20" width="32" height="40" rx="3" fill="#fef9c3" stroke="#ca8a04" stroke-width="2"/>' +
+      '<path d="M54 24h8v28h-8z" fill="#e2e8f0" stroke="#64748b"/>' +
+      '<path d="M48 58h20M48 58c0-8 10-8 10 0" stroke="#475569" stroke-width="2.5" fill="none"/>',
+    'topic-work':
+      '<rect x="14" y="22" width="36" height="26" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>' +
+      '<rect x="44" y="44" width="24" height="18" rx="3" fill="#ecfdf5" stroke="#10b981"/>' +
+      '<path d="M48 50l4 4 8-10" stroke="#059669" stroke-width="2.5" fill="none" stroke-linecap="round"/>',
+    'topic-unclear':
+      '<path d="M10 44c8-16 20-24 30-24s22 8 30 24" fill="none" stroke="#94a3b8" stroke-width="2.5"/>' +
+      '<path d="M22 44c4-6 10-10 18-10s14 4 18 10" fill="none" stroke="#ef4444" stroke-width="2"/>' +
+      '<path d="M58 18l6 6-6 6-6-6z" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>' +
+      '<text x="58" y="40" text-anchor="middle" font-size="16" font-weight="700" fill="#dc2626">!</text>',
   };
+
+  var CAT_VARIANTS = {
+    'cat-meetings': [
+      SVG_INNER['cat-meetings'],
+      '<circle cx="24" cy="32" r="10" fill="#f472b6"/><circle cx="56" cy="32" r="10" fill="#34d399"/>' +
+        '<path d="M12 58c6-12 20-16 28-16s22 4 28 16" fill="#60a5fa"/>',
+    ],
+    'cat-notes': [
+      SVG_INNER['cat-notes'],
+      '<rect x="20" y="14" width="44" height="50" rx="8" fill="#fce7f3" stroke="#ec4899" stroke-width="2"/>' +
+        '<path d="M28 30h24M28 40h18" stroke="#f472b6" stroke-width="2.5" stroke-linecap="round"/>',
+    ],
+    'cat-tasks': [
+      SVG_INNER['cat-tasks'],
+      '<rect x="18" y="16" width="44" height="48" rx="8" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>' +
+        '<path d="M28 32l5 5 12-12" stroke="#c2410c" stroke-width="3" fill="none" stroke-linecap="round"/>',
+    ],
+    'cat-calendar': [SVG_INNER['cat-calendar']],
+    'cat-projects': [SVG_INNER['cat-projects']],
+    'cat-decisions': [SVG_INNER['cat-decisions']],
+    'cat-open': [SVG_INNER['cat-open']],
+  };
+
+  VISUAL_LABELS['topic-unclear'] = 'Unclear audio — needs review';
+  VISUAL_LABELS['topic-travel'] = 'Travel';
+  VISUAL_LABELS['topic-legal'] = 'Legal';
+  VISUAL_LABELS['topic-work'] = 'Work & projects';
+
+  function hashSeed(str) {
+    var h = 0;
+    var s = String(str || '');
+    for (var i = 0; i < s.length; i++) {
+      h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+    }
+    return Math.abs(h);
+  }
+
+  function itemSeed(item) {
+    if (!item) return 0;
+    return hashSeed(
+      [item.id, item.path, item.filepath, item.title, item.project, item.sourceAudio || item.source_audio]
+        .filter(Boolean)
+        .join('|')
+    );
+  }
 
   function categoryVisualKey(cat) {
     var c = String(cat || 'notes').toLowerCase();
@@ -318,22 +382,44 @@
     return hits;
   }
 
+  function isUnclearItem(item) {
+    if (!item) return false;
+    var corpus = itemVisualCorpus(item);
+    if (corpus.indexOf('| confidence: low') !== -1) return true;
+    if (/\b(inaudible|unintelligible|garbled|unclear audio)\b/.test(corpus)) return true;
+    if (corpus.length < 100 && !item.summary && !item.title) return true;
+    return false;
+  }
+
   function inferTopicVisualKey(item) {
     var cat = String((item && item.category) || 'notes').toLowerCase();
     var fallback = categoryVisualKey(cat);
     if (!item) return fallback;
+    if (isUnclearItem(item)) return 'topic-unclear';
     var corpus = itemVisualCorpus(item);
     if (!corpus) return fallback;
     var bestKey = null;
     var bestHits = 0;
     TOPIC_RULES.forEach(function (rule) {
       var h = countKeywordHits(corpus, rule.keywords);
-      if (h >= 2 && h > bestHits) {
+      if (h >= 1 && h > bestHits) {
         bestHits = h;
         bestKey = rule.key;
       }
     });
-    return bestKey || fallback;
+    if (bestKey) return bestKey;
+    if (cat === 'calendar') return 'cat-calendar';
+    if (cat === 'tasks') return 'cat-tasks';
+    if (cat === 'decisions') return 'cat-decisions';
+    if (cat === 'projects') return 'cat-projects';
+    return fallback;
+  }
+
+  function resolveInnerSvg(key, seed) {
+    if (SVG_INNER[key]) return SVG_INNER[key];
+    var variants = CAT_VARIANTS[key];
+    if (variants && variants.length) return variants[seed % variants.length];
+    return SVG_INNER['cat-notes'];
   }
 
   function visualLabel(key) {
@@ -342,23 +428,30 @@
 
   function renderTopicVisual(key, opts) {
     opts = opts || {};
-    var visualKey = SVG_INNER[key] ? key : categoryVisualKey(opts.category || 'notes');
-    var inner = SVG_INNER[visualKey] || SVG_INNER['cat-notes'];
+    var seed = opts.seed != null ? opts.seed : 0;
+    var visualKey = key && (SVG_INNER[key] || CAT_VARIANTS[key]) ? key : categoryVisualKey(opts.category || 'notes');
+    var inner = resolveInnerSvg(visualKey, seed);
     inner = inner.replace(/\bid="([^"]+)"/g, function (_, id) {
-      return 'id="' + visualKey + '-' + id + '"';
+      return 'id="' + visualKey + '-' + seed + '-' + id + '"';
     });
     inner = inner.replace(/url\(#([^)]+)\)/g, function (_, id) {
-      return 'url(#' + visualKey + '-' + id + ')';
+      return 'url(#' + visualKey + '-' + seed + '-' + id + ')';
     });
     var size = opts.size === 'hero' ? 'hero' : 'list';
     var extra = opts.extraClass ? ' ' + opts.extraClass : '';
-    var wrapCls = 'tx-topic-visual tx-topic-visual--' + size + extra;
+    var mirror = seed % 3 === 0 ? ' tx-topic-visual--mirror' : '';
+    var wrapCls = 'tx-topic-visual tx-topic-visual--' + size + extra + mirror;
+    var hue = (seed % 14) * 14;
     return (
       '<div class="' +
       wrapCls +
       '" data-tx-visual-key="' +
       visualKey +
-      '" role="img" aria-label="' +
+      '" data-tx-visual-seed="' +
+      seed +
+      '" style="--tx-topic-hue:' +
+      hue +
+      'deg" role="img" aria-label="' +
       visualLabel(visualKey).replace(/"/g, '&quot;') +
       '">' +
       '<svg class="tx-topic-visual__svg" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">' +
@@ -367,11 +460,24 @@
     );
   }
 
+  function renderTopicVisualForItem(item, opts) {
+    opts = opts || {};
+    return renderTopicVisual(inferTopicVisualKey(item), {
+      seed: itemSeed(item),
+      size: opts.size,
+      extraClass: opts.extraClass,
+      category: item && item.category,
+    });
+  }
+
   window.TxTopicVisuals = {
     inferTopicVisualKey: inferTopicVisualKey,
     categoryVisualKey: categoryVisualKey,
     renderTopicVisual: renderTopicVisual,
+    renderTopicVisualForItem: renderTopicVisualForItem,
     visualLabel: visualLabel,
+    itemSeed: itemSeed,
+    isUnclearItem: isUnclearItem,
     TOPIC_RULES: TOPIC_RULES,
     CATEGORY_KEYS: CATEGORY_KEYS,
   };
