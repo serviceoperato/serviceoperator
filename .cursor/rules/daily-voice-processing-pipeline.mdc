@@ -1,11 +1,18 @@
 ---
-description: Run daily ServiceOpera voice processing pipeline when user asks to launch/run the pipeline
-alwaysApply: false
+description: Daily voice pipeline — always run Phase 1 + Phase 2 without asking
+alwaysApply: true
 ---
 
 # Daily voice processing pipeline
 
-When the user asks to **launch**, **run**, or **process** the voice pipeline (Italian: *lancia la pipeline*, *esegui la pipeline*, *voice pipeline*, *pipeline vocale*), follow this workflow end-to-end.
+When the user asks to **launch**, **run**, or **process** the voice pipeline (Italian: *lancia la pipeline*, *esegui la pipeline*, *voice pipeline*, *pipeline vocale*), or when voice/transcription work is implied, follow this workflow end-to-end **without asking for confirmation**.
+
+**Always run both phases in sequence every time** (even if Phase 1 reports zero new audio files):
+
+1. **Phase 1** — transcription (local script)
+2. **Phase 2** — AI processing per runbook (Steps 0–7)
+
+Do not stop after Phase 1. Do not ask whether to continue to Phase 2.
 
 ## Canonical prompt
 
@@ -16,12 +23,19 @@ Read and execute **`content/voice-reports/daily-voice-processing-pipeline.md`** 
 
 Respect all constraints in **`.cursor/rules/voice-automation.md`** (allowed paths, no invented facts, security).
 
-## Phase 1 runner (local)
+## Runners (local, Windows)
 
-Preferred local commands (Windows):
+**Single command (Phase 1 + 2 + reindex):**
 
 - `.\scripts\run-voice-pipeline.ps1`
-- or `python scripts/process_voice_recorder_pipeline.py`
+
+Or step by step:
+
+- Phase 1: `python scripts/transcribe_voice_recorder.py`
+- Phase 2: `python scripts/process_daily_voice_phase2.py` (implements runbook Steps 0–7; registry: `content/processed/phase2_registry.json`)
+- Reindex: `python scripts/index_transcriptions.py`
+
+Legacy orchestrator (old heuristic classify only): `python scripts/process_voice_recorder_pipeline.py` — do not use for daily runs.
 
 Wait for Phase 1 to finish before starting Phase 2.
 

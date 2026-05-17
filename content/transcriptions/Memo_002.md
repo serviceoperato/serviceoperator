@@ -1,3 +1,4 @@
+<!-- PROCESSED: true | date: 2026-05-17T09:23:10Z | output: content/notes/2026-05-17-conversation-memo_002-ea440a9f313e.md | checksum: 9c142e378118e4616b8c587d204ca9f98642c8e266e4a9d9e84d17296a1ca1b4 -->
 # Transcription: Memo 002.m4a
 
 - **Source file:** Memo 002.m4a

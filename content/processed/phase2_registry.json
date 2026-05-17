@@ -1,0 +1,460 @@
+{
+  "entries": {
+    "37d2a3a4fa59": {
+      "id": "37d2a3a4fa59",
+      "source_path": "content/transcriptions/Chat history with Karn.md",
+      "source_checksum": "0b5fcd9d8d9cfb4039b5fceee4c223c4f3f506084659921bcdc265955b5da45d",
+      "output_path": "content/notes/2026-05-17-conversation-chat-history-with-karn-37d2a3a4fa59.md",
+      "processed": true,
+      "processing_date": "2026-05-17T09:23:10Z",
+      "category": "conversation",
+      "project": "personal",
+      "has_chart_data": true,
+      "visual_type": "ring",
+      "stats": {
+        "decisions": 0,
+        "tasks": 0,
+        "events": 0,
+        "open_points": 2,
+        "next_steps": 2
+      }
+    },
+    "42d821331d94": {
+      "id": "42d821331d94",
+      "source_path": "content/transcriptions/Christian.md",
+      "source_checksum": "fea8294ff066076750352e63538dee2873c861952251febbec8a6bb5fa120182",
+      "output_path": "content/notes/2026-05-17-self-recap-christian-42d821331d94.md",
+      "processed": true,
+      "processing_date": "2026-05-17T09:23:10Z",
+      "category": "self-recap",
+      "project": "personal",
+      "has_chart_data": true,
+      "visual_type": "ring",
+      "stats": {
+        "decisions": 0,
+        "tasks": 0,
+        "events": 0,
+        "open_points": 3,
+        "next_steps": 2
+      }
+    },
+    "5c1e4449ab12": {
+      "id": "5c1e4449ab12",
+      "source_path": "content/transcriptions/Memo_001.md",
+      "source_checksum": "2fb5cc0e839f3e92c0f5982ea09d2f329a10a3acdc77e5b42ef3c4c667bf6289",
+      "output_path": "content/notes/2026-05-17-conversation-memo_001-5c1e4449ab12.md",
+      "processed": true,
+      "processing_date": "2026-05-17T09:23:10Z",
+      "category": "conversation",
+      "project": "uncategorized",
+      "has_chart_data": true,
+      "visual_type": "ring",
+      "stats": {
+        "decisions": 0,
+        "tasks": 0,
+        "events": 0,
+        "open_points": 2,
+        "next_steps": 2
+      }
+    },
+    "ea440a9f313e": {
+      "id": "ea440a9f313e",
+      "source_path": "content/transcriptions/Memo_002.md",
+      "source_checksum": "9c142e378118e4616b8c587d204ca9f98642c8e266e4a9d9e84d17296a1ca1b4",
+      "output_path": "content/notes/2026-05-17-conversation-memo_002-ea440a9f313e.md",
+      "processed": true,
+      "processing_date": "2026-05-17T09:23:10Z",
+      "category": "conversation",
+      "project": "uncategorized",
+      "has_chart_data": true,
+      "visual_type": "ring",
+      "stats": {
+        "decisions": 1,
+        "tasks": 0,
+        "events": 0,
+        "open_points": 1,
+        "next_steps": 2
+      }
+    },
+    "c890c918890b": {
+      "id": "c890c918890b",
+      "source_path": "content/transcriptions/Memo_003.md",
+      "source_checksum": "2c1018a8a190efb40c7860cb8fbfd5a68abb0134ebf30232a41ede2fe19accdb",
+      "output_path": "content/meetings/2026-05-17-meeting-memo_003-c890c918890b.md",
+      "processed": true,
+      "processing_date": "2026-05-17T09:23:10Z",
+      "category": "meeting",
+      "project": "uncategorized",
+      "has_chart_data": true,
+      "visual_type": "ring",
+      "stats": {
+        "decisions": 0,
+        "tasks": 0,
+        "events": 0,
+        "open_points": 1,
+        "next_steps": 2
+      }
+    },
+    "8320a9a4414c": {
+      "id": "8320a9a4414c",
+      "source_path": "content/transcriptions/Memo_004.md",
+      "source_checksum": "28a03088dcd6e46373fbff18ffc44e43c05d8552055eb4a4825962f7a030b964",
+      "output_path": "content/notes/2026-05-17-conversation-memo_004-8320a9a4414c.md",
+      "processed": true,
+      "processing_date": "2026-05-17T09:23:10Z",
+      "category": "conversation",
+      "project": "uncategorized",
+      "has_chart_data": true,
+      "visual_type": "ring",
+      "stats": {
+        "decisions": 0,
+        "tasks": 0,
+        "events": 1,
+        "open_points": 3,
+        "next_steps": 2
+      }
+    },
+    "eac97257e652": {
+      "id": "eac97257e652",
+      "source_path": "content/transcriptions/Memo_005.md",
+      "source_checksum": "19c8c816d5a2a8ffded36aac80219c27d7e803741f5e0a31ec082cbdcb54599e",
+      "output_path": "content/notes/2026-05-17-conversation-memo_005-eac97257e652.md",
+      "processed": true,
+      "processing_date": "2026-05-17T09:23:10Z",
+      "category": "conversation",
+      "project": "uncategorized",
+      "has_chart_data": true,
+      "visual_type": "ring",
+      "stats": {
+        "decisions": 0,
+        "tasks": 0,
+        "events": 0,
+        "open_points": 2,
+        "next_steps": 2
+      }
+    },
+    "4a7e2f8a8406": {
+      "id": "4a7e2f8a8406",
+      "source_path": "content/transcriptions/Memo_006.md",
+      "source_checksum": "65620e949a861ccfa7f9665387885b26ba289c20ad526e81fb480d5c3d5a80a6",
+      "output_path": "content/notes/2026-05-17-conversation-memo_006-4a7e2f8a8406.md",
+      "processed": true,
+      "processing_date": "2026-05-17T09:23:10Z",
+      "category": "conversation",
+      "project": "uncategorized",
+      "has_chart_data": true,
+      "visual_type": "ring",
+      "stats": {
+        "decisions": 0,
+        "tasks": 0,
+        "events": 0,
+        "open_points": 4,
+        "next_steps": 2
+      }
+    },
+    "86e8348fd2d4": {
+      "id": "86e8348fd2d4",
+      "source_path": "content/transcriptions/Seconda.md",
+      "source_checksum": "01eb8d76cfad2c41c010430e7a23cec333647c0ec2b4eb8bc74577d8eee783a0",
+      "output_path": "content/notes/2026-05-17-conversation-seconda-86e8348fd2d4.md",
+      "processed": true,
+      "processing_date": "2026-05-17T09:23:10Z",
+      "category": "conversation",
+      "project": "personal",
+      "has_chart_data": true,
+      "visual_type": "ring",
+      "stats": {
+        "decisions": 1,
+        "tasks": 0,
+        "events": 0,
+        "open_points": 0,
+        "next_steps": 2
+      }
+    },
+    "c8091515a34f": {
+      "id": "c8091515a34f",
+      "source_path": "content/transcriptions/Voice_001.md",
+      "source_checksum": "cc1fd47b7c05d20741abafc28311473877aba0af47bcd37a6849e3c3f64012a5",
+      "output_path": "content/notes/2026-05-17-voice-note-voice_001-c8091515a34f.md",
+      "processed": true,
+      "processing_date": "2026-05-17T09:23:10Z",
+      "category": "voice-note",
+      "project": "uncategorized",
+      "has_chart_data": false,
+      "visual_type": "icon",
+      "stats": {
+        "decisions": 0,
+        "tasks": 0,
+        "events": 0,
+        "open_points": 0,
+        "next_steps": 1
+      }
+    },
+    "f0dc2085112e": {
+      "id": "f0dc2085112e",
+      "source_path": "content/transcriptions/Voice_002.md",
+      "source_checksum": "bec45eee70c26edac66c2af84caebd07bd6f39f4ff8608a0888a802811e2b248",
+      "output_path": "content/notes/2026-05-17-voice-note-voice_002-f0dc2085112e.md",
+      "processed": true,
+      "processing_date": "2026-05-17T09:23:10Z",
+      "category": "voice-note",
+      "project": "uncategorized",
+      "has_chart_data": false,
+      "visual_type": "icon",
+      "stats": {
+        "decisions": 0,
+        "tasks": 0,
+        "events": 0,
+        "open_points": 0,
+        "next_steps": 0
+      }
+    },
+    "8ae8c30860dd": {
+      "id": "8ae8c30860dd",
+      "source_path": "content/transcriptions/Voice_003.md",
+      "source_checksum": "b309dad8279c0da4f54dbac5337e8ce502c400d9482a0ecf803f97168fa8437f",
+      "output_path": "content/notes/2026-05-17-voice-note-voice_003-8ae8c30860dd.md",
+      "processed": true,
+      "processing_date": "2026-05-17T09:23:10Z",
+      "category": "voice-note",
+      "project": "uncategorized",
+      "has_chart_data": false,
+      "visual_type": "icon",
+      "stats": {
+        "decisions": 0,
+        "tasks": 0,
+        "events": 0,
+        "open_points": 0,
+        "next_steps": 1
+      }
+    },
+    "d58c88f66165": {
+      "id": "d58c88f66165",
+      "source_path": "content/transcriptions/Voice_004.md",
+      "source_checksum": "d5554db5b9216afa8e6ce42abbb3ba9178ed7a002d2f7de7343f6f38b387be39",
+      "output_path": "content/notes/2026-05-17-conversation-voice_004-d58c88f66165.md",
+      "processed": true,
+      "processing_date": "2026-05-17T09:23:10Z",
+      "category": "conversation",
+      "project": "uncategorized",
+      "has_chart_data": true,
+      "visual_type": "ring",
+      "stats": {
+        "decisions": 0,
+        "tasks": 1,
+        "events": 0,
+        "open_points": 1,
+        "next_steps": 1
+      }
+    },
+    "6921c6f5bc0a": {
+      "id": "6921c6f5bc0a",
+      "source_path": "content/transcriptions/Voice_005.md",
+      "source_checksum": "fbbd35eda50093d63e9e9a8ac04ccac7807c338dada3209e0c26a415af548251",
+      "output_path": "content/notes/2026-05-17-self-recap-voice_005-6921c6f5bc0a.md",
+      "processed": true,
+      "processing_date": "2026-05-17T09:23:10Z",
+      "category": "self-recap",
+      "project": "uncategorized",
+      "has_chart_data": true,
+      "visual_type": "ring",
+      "stats": {
+        "decisions": 0,
+        "tasks": 0,
+        "events": 0,
+        "open_points": 1,
+        "next_steps": 2
+      }
+    },
+    "4d392948d577": {
+      "id": "4d392948d577",
+      "source_path": "content/transcriptions/Voice_006.md",
+      "source_checksum": "aa1c86b396e084c30dee347d40b8fa6b33ef26464b5af775c91e843c98c767cb",
+      "output_path": "content/notes/2026-05-17-voice-note-voice_006-4d392948d577.md",
+      "processed": true,
+      "processing_date": "2026-05-17T09:23:10Z",
+      "category": "voice-note",
+      "project": "uncategorized",
+      "has_chart_data": true,
+      "visual_type": "ring",
+      "stats": {
+        "decisions": 0,
+        "tasks": 0,
+        "events": 0,
+        "open_points": 2,
+        "next_steps": 2
+      }
+    },
+    "793016bc4f37": {
+      "id": "793016bc4f37",
+      "source_path": "content/transcriptions/Voice_007.md",
+      "source_checksum": "a9e841287644eda630382354bbc6da86b7fee225fb473a54115f40106b4bc777",
+      "output_path": "content/notes/2026-05-17-voice-note-voice_007-793016bc4f37.md",
+      "processed": true,
+      "processing_date": "2026-05-17T09:23:10Z",
+      "category": "voice-note",
+      "project": "uncategorized",
+      "has_chart_data": true,
+      "visual_type": "ring",
+      "stats": {
+        "decisions": 0,
+        "tasks": 0,
+        "events": 0,
+        "open_points": 4,
+        "next_steps": 2
+      }
+    },
+    "69216cdbadfb": {
+      "id": "69216cdbadfb",
+      "source_path": "content/transcriptions/Voice_250621_185357.md",
+      "source_checksum": "6e24c1710e41402a9d65dbffc5c5fafdda3f090c8527ab067fdc84594f334e85",
+      "output_path": "content/notes/2026-05-17-voice-note-voice_250621_185357-69216cdbadfb.md",
+      "processed": true,
+      "processing_date": "2026-05-17T09:23:10Z",
+      "category": "voice-note",
+      "project": "uncategorized",
+      "has_chart_data": false,
+      "visual_type": "icon",
+      "stats": {
+        "decisions": 0,
+        "tasks": 0,
+        "events": 0,
+        "open_points": 0,
+        "next_steps": 1
+      }
+    },
+    "a4d50b0e6da1": {
+      "id": "a4d50b0e6da1",
+      "source_path": "content/transcriptions/Voice_250621_185410.md",
+      "source_checksum": "68a0a955ac504def0b87b06e3e2bd2e54f020c6956b079c677e17aca5a67d09b",
+      "output_path": "content/notes/2026-05-17-voice-note-voice_250621_185410-a4d50b0e6da1.md",
+      "processed": true,
+      "processing_date": "2026-05-17T09:23:10Z",
+      "category": "voice-note",
+      "project": "uncategorized",
+      "has_chart_data": false,
+      "visual_type": "icon",
+      "stats": {
+        "decisions": 0,
+        "tasks": 0,
+        "events": 0,
+        "open_points": 0,
+        "next_steps": 1
+      }
+    },
+    "596e527d5382": {
+      "id": "596e527d5382",
+      "source_path": "content/transcriptions/Voice_260516_191818.md",
+      "source_checksum": "ae94faa09f3e359e957c3682ad783b7d0e3711e922ef64a8d5de0bd4136fa46d",
+      "output_path": "content/notes/2026-05-17-voice-note-voice_260516_191818-596e527d5382.md",
+      "processed": true,
+      "processing_date": "2026-05-17T09:23:10Z",
+      "category": "voice-note",
+      "project": "uncategorized",
+      "has_chart_data": false,
+      "visual_type": "icon",
+      "stats": {
+        "decisions": 0,
+        "tasks": 0,
+        "events": 0,
+        "open_points": 0,
+        "next_steps": 1
+      }
+    },
+    "aa98439a4b47": {
+      "id": "aa98439a4b47",
+      "source_path": "content/transcriptions/Voice_260516_235502.md",
+      "source_checksum": "b0667dd1ad46cfbc0f26006336f3b5ea10cd0f99b0aff9a4044623f6bf7bab5c",
+      "output_path": "content/notes/2026-05-17-voice-note-voice_260516_235502-aa98439a4b47.md",
+      "processed": true,
+      "processing_date": "2026-05-17T09:23:10Z",
+      "category": "voice-note",
+      "project": "uncategorized",
+      "has_chart_data": true,
+      "visual_type": "ring",
+      "stats": {
+        "decisions": 0,
+        "tasks": 0,
+        "events": 1,
+        "open_points": 0,
+        "next_steps": 1
+      }
+    },
+    "6aabaa09ab24": {
+      "id": "6aabaa09ab24",
+      "source_path": "content/transcriptions/WhatsApp Chat wi.md",
+      "source_checksum": "7e38dc5ec3dc20150caa3876aa71996d88d6ee406fc7415ae2e61770c04515d3",
+      "output_path": "content/notes/2026-05-17-conversation-whatsapp-chat-wi-6aabaa09ab24.md",
+      "processed": true,
+      "processing_date": "2026-05-17T09:23:10Z",
+      "category": "conversation",
+      "project": "uncategorized",
+      "has_chart_data": true,
+      "visual_type": "ring",
+      "stats": {
+        "decisions": 0,
+        "tasks": 1,
+        "events": 1,
+        "open_points": 5,
+        "next_steps": 1
+      }
+    },
+    "c52f33323d06": {
+      "id": "c52f33323d06",
+      "source_path": "content/transcriptions/WhatsApp Chat with IANN.md",
+      "source_checksum": "319d26194716ae3935024e48606072d0ddec30dc827a95a78608b3958833785f",
+      "output_path": "content/notes/2026-05-17-conversation-whatsapp-chat-with-iann-c52f33323d06.md",
+      "processed": true,
+      "processing_date": "2026-05-17T09:23:10Z",
+      "category": "conversation",
+      "project": "personal",
+      "has_chart_data": true,
+      "visual_type": "ring",
+      "stats": {
+        "decisions": 0,
+        "tasks": 1,
+        "events": 1,
+        "open_points": 0,
+        "next_steps": 1
+      }
+    },
+    "9c47ef78ab53": {
+      "id": "9c47ef78ab53",
+      "source_path": "content/transcriptions/WhatsApp Chat with italiani a Patta.md",
+      "source_checksum": "959ea5ec953704d4a47125150d51d6e415507436df3e157f7dc5d04a2a4e56cb",
+      "output_path": "content/notes/2026-05-17-conversation-whatsapp-chat-with-italiani-a-patta-9c47ef78ab53.md",
+      "processed": true,
+      "processing_date": "2026-05-17T09:23:10Z",
+      "category": "conversation",
+      "project": "thaifans",
+      "has_chart_data": false,
+      "visual_type": "icon",
+      "stats": {
+        "decisions": 0,
+        "tasks": 0,
+        "events": 0,
+        "open_points": 0,
+        "next_steps": 2
+      }
+    },
+    "f97895de6fd3": {
+      "id": "f97895de6fd3",
+      "source_path": "content/transcriptions/WhatsApp Chat with Koragon Gi.md",
+      "source_checksum": "9a68c2213688e5f756887b72edf9ab20c08a88bb56e30ccbf72da4f577d68688",
+      "output_path": "content/notes/2026-05-17-conversation-whatsapp-chat-with-koragon-gi-f97895de6fd3.md",
+      "processed": true,
+      "processing_date": "2026-05-17T09:23:10Z",
+      "category": "conversation",
+      "project": "thaifans",
+      "has_chart_data": true,
+      "visual_type": "ring",
+      "stats": {
+        "decisions": 0,
+        "tasks": 0,
+        "events": 0,
+        "open_points": 2,
+        "next_steps": 2
+      }
+    }
+  }
+}

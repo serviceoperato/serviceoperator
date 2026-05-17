@@ -1,3 +1,4 @@
+<!-- PROCESSED: true | date: 2026-05-17T09:23:10Z | output: content/notes/2026-05-17-conversation-seconda-86e8348fd2d4.md | checksum: 01eb8d76cfad2c41c010430e7a23cec333647c0ec2b4eb8bc74577d8eee783a0 -->
 # Transcription: Seconda.m4a
 
 - **Source file:** Seconda.m4a

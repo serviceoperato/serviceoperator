@@ -25,5 +25,14 @@ if ($LASTEXITCODE -ne 0) {
   exit 1
 }
 
-python "$RepoRoot\scripts\process_voice_recorder_pipeline.py"
+# Phase 1 — transcription only
+python "$RepoRoot\scripts\transcribe_voice_recorder.py"
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+# Phase 2 — daily AI-ready processing (runbook Steps 0–7)
+python "$RepoRoot\scripts\process_daily_voice_phase2.py"
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+# Rebuild admin index
+python "$RepoRoot\scripts\index_transcriptions.py"
 exit $LASTEXITCODE

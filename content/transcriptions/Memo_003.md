@@ -1,3 +1,4 @@
+<!-- PROCESSED: true | date: 2026-05-17T09:23:10Z | output: content/meetings/2026-05-17-meeting-memo_003-c890c918890b.md | checksum: 2c1018a8a190efb40c7860cb8fbfd5a68abb0134ebf30232a41ede2fe19accdb -->
 # Transcription: Memo 003.m4a
 
 - **Source file:** Memo 003.m4a

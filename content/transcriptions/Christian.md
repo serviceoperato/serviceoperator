@@ -1,3 +1,4 @@
+<!-- PROCESSED: true | date: 2026-05-17T09:23:10Z | output: content/notes/2026-05-17-self-recap-christian-42d821331d94.md | checksum: fea8294ff066076750352e63538dee2873c861952251febbec8a6bb5fa120182 -->
 # Transcription: Christian.m4a
 
 - **Source file:** Christian.m4a

@@ -1,3 +1,4 @@
+<!-- PROCESSED: true | date: 2026-05-17T09:23:10Z | output: content/notes/2026-05-17-voice-note-voice_003-8ae8c30860dd.md | checksum: b309dad8279c0da4f54dbac5337e8ce502c400d9482a0ecf803f97168fa8437f -->
 # Transcription: Voice 003.m4a
 
 - **Source file:** Voice 003.m4a

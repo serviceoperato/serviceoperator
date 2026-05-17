@@ -90,3 +90,15 @@
 - [ ] Sentiamoci liberi tutti quanti di fare ciò che vogliamo, questo è quello che avevo pensato che fosse meglio perché nella realtà quello che si stava cercando di fare era per cercare di mettere in guardia da possibili situazioni forse non favorevoli però poi certe cose a volte p... (from Seconda.m4a)
 - [ ] Nei soldi c'è un discorso come te ho fatto molto più ampio, il discorso era dei soldi, il discorso era dei soldi, ma in contemporanea per come mi sono pronunciato è stato nel senso che ognuno si senta libero di fare ciò che vuole. (from Seconda.m4a)
 
+
+## 2026-05-17
+
+- [ ] Sì, sì, sono perché devo fare una cosa. <!-- src: d58c88f66165 -->
+
+## 2026-05-17
+
+- [ ] 5/10/26, 14:08 - +971 58 512 7782: Mi devo fare la barba 5/10/26, 14:08 - +971 58 512 7782: <Media omitted> 5/10/26, 14:08 - +971 58 512 7782: Ci vediamo alle 4 chai doi? <!-- src: 6aabaa09ab24 -->
+
+## 2026-05-17
+
+- [ ] 🙋🏻‍♂️ 2/14/22, 18:56 - Frostan: Ottimo 👍 2/14/22, 19:23 - J: Mamma mi dai il numero di telefono che devo far mettere il caricabatterie alla reception 2/14/22, 19:23 - J: Perche Christian quando è venuto non ha trovato nessuno alla reception 2/14/22, 19:24 - Mamma: <Media omitt... <!-- src: c52f33323d06 -->

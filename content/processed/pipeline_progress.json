@@ -1,4 +1,14 @@
 {
-  "status": "idle",
-  "updated_at": "2026-05-17T00:00:00Z"
+  "status": "success",
+  "updated_at": "2026-05-17T09:21:17Z",
+  "phase": "done",
+  "message": "Pipeline finished.",
+  "started_at": "2026-05-17T09:21:17Z",
+  "files_total": 19,
+  "files_skipped": 19,
+  "files_to_process": 0,
+  "files_completed": 0,
+  "bytes_total": 0,
+  "bytes_total_human": "0 B",
+  "current_file": null
 }

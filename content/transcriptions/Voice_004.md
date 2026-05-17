@@ -1,3 +1,4 @@
+<!-- PROCESSED: true | date: 2026-05-17T09:23:10Z | output: content/notes/2026-05-17-conversation-voice_004-d58c88f66165.md | checksum: d5554db5b9216afa8e6ce42abbb3ba9178ed7a002d2f7de7343f6f38b387be39 -->
 # Transcription: Voice 004.m4a
 
 - **Source file:** Voice 004.m4a
