@@ -14,6 +14,7 @@ _SCRIPTS = Path(__file__).resolve().parent
 if str(_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS))
 
+from key_point_validation import filter_key_points  # noqa: E402
 from voice_registry import find_entry_by_raw_path, normalize_raw_rel  # noqa: E402
 
 REPO = Path(__file__).resolve().parent.parent
@@ -71,10 +72,8 @@ def index_category(primary: str, cat: str) -> str:
 
 
 def key_points(item: dict) -> list[str]:
-    pts = [str(p).strip() for p in (item.get("important_points") or []) if str(p).strip()]
-    while len(pts) < 3:
-        pts.append("(none)")
-    return pts[:3]
+    raw = [str(p).strip() for p in (item.get("important_points") or []) if str(p).strip()]
+    return filter_key_points(raw, max_items=3)
 
 
 def bullet_section(title: str, lines: list[str], *, checkbox_tasks: bool = False) -> str:
@@ -133,7 +132,7 @@ tags: [{cat}]
 {summary}
 
 ## Top 3 Key Points
-{chr(10).join(f"- {p}" for p in kp)}
+{chr(10).join(f"- {p}" for p in kp) if kp else ""}
 
 {bullet_section("People Involved", people)}
 {bullet_section("Tasks", item.get("tasks") or [], checkbox_tasks=True)}

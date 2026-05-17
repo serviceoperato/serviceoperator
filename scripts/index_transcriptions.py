@@ -24,6 +24,7 @@ _SCRIPTS_DIR = Path(__file__).resolve().parent
 if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
 
+from key_point_validation import is_valid_key_point  # noqa: E402
 from tx_speaker_format import apply_speaker_format_to_item  # noqa: E402
 from voice_registry import (  # noqa: E402
     ALLOWED_OUTPUT_PREFIXES,
@@ -290,7 +291,9 @@ def is_garbage_text(text: str) -> bool:
 
 def is_meaningful_line(text: str) -> bool:
     t = strip_html_comment(text)
-    return bool(t) and not is_garbage_text(t)
+    if not is_valid_key_point(t):
+        return False
+    return not is_garbage_text(t)
 
 
 def is_chat_import_source(source_transcription: str | None) -> bool:
