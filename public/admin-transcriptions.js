@@ -5,7 +5,7 @@
   'use strict';
 
   /** Bumped when dashboard markup/behavior changes (cache-bust aid). */
-  window.TX_DASHBOARD_UI_REV = 13;
+  window.TX_DASHBOARD_UI_REV = 14;
 
   /** Detail page: collapsed preview length for full transcription reference (chars). */
   var DETAIL_REF_PREVIEW_CHARS = 650;
@@ -628,7 +628,11 @@
   function isSourceEntry(item) {
     return !!(
       item &&
-      (item.isSourceEntry || item.source_entry || item.item_type === 'source_entry')
+      (item.isSourceEntry ||
+        item.source_entry ||
+        item.item_type === 'source_entry' ||
+        (item.extractedCategories && item.extractedCategories.length) ||
+        (item.sourceEntries && item.sourceEntries.length > 1))
     );
   }
 
@@ -784,7 +788,7 @@
 
   function sourceHasCategory(item, cat) {
     if (!item || !cat) return false;
-    var categories = item.categories || [];
+    var categories = item.extractedCategories || item.categories || [];
     if (categories.length) return categories.indexOf(cat) !== -1;
     return String(item.category || '').toLowerCase() === cat;
   }
@@ -3040,6 +3044,17 @@
       readyForSite:
         it.readyForSite !== false &&
         (!it.pipelineStatus || !!VISIBLE_PIPELINE_STATUSES[it.pipelineStatus]),
+      extractedCategories: it.extractedCategories || it.categories || (it.category ? [it.category] : []),
+      categories: it.extractedCategories || it.categories || (it.category ? [it.category] : []),
+      sourceEntries: it.sourceEntries || [],
+      sourceGroupKey: it.sourceGroupKey || it.sourceKey || null,
+      isSourceEntry: !!(
+        it.isSourceEntry ||
+        it.source_entry ||
+        it.item_type === 'source_entry' ||
+        (it.extractedCategories && it.extractedCategories.length)
+      ),
+      displayTitle: it.displayTitle || it.title,
     });
     return applyCardCopyFields(merged);
   }
@@ -3140,16 +3155,14 @@
     var serverCounts = j.counts || j.totals || {};
     var serverSourceCounts = j.sourceTotals || {};
     var flatItems = (j.items || []).map(normalizeItem).filter(isAiReadyItem);
-    var hasSourceEntries = flatItems.some(isSourceEntry);
-    var items = hasSourceEntries
-      ? flatItems.filter(function (it) {
-          return !it.source_only && !it.sourceOnly;
-        })
-      : groupFlatItemsToSources(
-          flatItems.filter(function (it) {
-            return !it.source_only && !it.sourceOnly;
-          })
-        );
+    var readyFlat = flatItems.filter(function (it) {
+      return !it.source_only && !it.sourceOnly;
+    });
+    var items = readyFlat.some(function (it) {
+      return it.extractedCategories || it.isSourceEntry || it.sourceGroupKey;
+    })
+      ? readyFlat
+      : groupFlatItemsToSources(readyFlat);
     var countPack = countsFromItems(items, serverCounts, serverSourceCounts);
     var counts = countPack.extraction;
     var sourceCounts = countPack.source;

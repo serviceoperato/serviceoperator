@@ -908,8 +908,32 @@ def is_low_quality_item(item: dict[str, Any]) -> bool:
     return "confidence: low" in blob
 
 
+def infer_group_categories(
+    group: list[dict[str, Any]], merged_raw_sections: dict[str, str], stats: dict[str, int]
+) -> list[str]:
+    cats = sorted({str(it.get("category") or "") for it in group if it.get("category")})
+    if stats.get("tasks_count", 0) > 0 or bullets_from(merged_raw_sections.get("Tasks", "")):
+        if "tasks" not in cats:
+            cats.append("tasks")
+    if stats.get("calendar_events_count", 0) > 0 or bullets_from(
+        merged_raw_sections.get("Calendar Events", "")
+    ):
+        if "calendar" not in cats:
+            cats.append("calendar")
+    if stats.get("decisions_count", 0) > 0 or bullets_from(merged_raw_sections.get("Decisions", "")):
+        if "decisions" not in cats:
+            cats.append("decisions")
+    if stats.get("open_points_count", 0) > 0 or bullets_from(
+        merged_raw_sections.get("Open Points", "")
+    ):
+        if "open-points" not in cats:
+            cats.append("open-points")
+    return cats
+
+
 def pick_display_title(group: list[dict[str, Any]]) -> str:
-    if any(is_low_quality_item(it) for it in group):
+    primary = pick_primary_item(group)
+    if is_low_quality_item(primary):
         return "Unclear audio / Needs review"
     for cat in PRIMARY_CATEGORY_ORDER:
         for it in group:
@@ -934,7 +958,6 @@ def group_items_by_source(flat_items: list[dict[str, Any]]) -> list[dict[str, An
     source_entries: list[dict[str, Any]] = []
     for source_key, group in groups.items():
         primary = pick_primary_item(group)
-        categories = sorted({str(it.get("category") or "") for it in group if it.get("category")})
         extractions: dict[str, list[dict[str, Any]]] = {}
         for child in group:
             cat = str(child.get("category") or "")
@@ -950,15 +973,20 @@ def group_items_by_source(flat_items: list[dict[str, Any]]) -> list[dict[str, An
             )
             merged_raw_sections.update(child.get("raw_sections") or {})
 
-        stats = merge_stats(group)
-        chart_values = [
-            stats["decisions_count"],
-            stats["tasks_count"],
-            stats["open_points_count"],
-            stats["calendar_events_count"],
-            stats["next_steps_count"],
-        ]
+        task_lines = bullets_from(merged_raw_sections.get("Tasks", ""))
+        if task_lines and not merged_extracted.get("tasks"):
+            merged_extracted["tasks"] = task_lines
+        stats = {
+            "decisions_count": len(merged_extracted.get("decisions") or []),
+            "tasks_count": len(merged_extracted.get("tasks") or []),
+            "open_points_count": len(merged_extracted.get("open_points") or []),
+            "calendar_events_count": len(merged_extracted.get("calendar_events") or []),
+            "next_steps_count": len(merged_extracted.get("next_steps") or []),
+        }
+        chart_values = list(stats.values())
         child_ids = [str(it.get("id")) for it in group if it.get("id")]
+        source_entries_children = [extraction_snapshot(child) for child in group]
+        extracted_categories = infer_group_categories(group, merged_raw_sections, stats)
         display_title = pick_display_title(group)
         summaries = [
             str(it.get("summary") or it.get("preview") or "").strip()
@@ -981,9 +1009,24 @@ def group_items_by_source(flat_items: list[dict[str, Any]]) -> list[dict[str, An
             "source_entry": True,
             "category": primary.get("category"),
             "primaryCategory": primary.get("category"),
-            "categories": categories,
+            "categories": extracted_categories,
+            "extractedCategories": extracted_categories,
             "extractions": extractions,
+            "sourceEntries": source_entries_children,
+            "groupedIds": child_ids,
             "extracted_items": merged_extracted,
+            "decisions": merged_extracted.get("decisions") or [],
+            "tasks": merged_extracted.get("tasks") or [],
+            "openPoints": merged_extracted.get("open_points") or [],
+            "open_points": merged_extracted.get("open_points") or [],
+            "nextSteps": merged_extracted.get("next_steps") or [],
+            "next_steps": merged_extracted.get("next_steps") or [],
+            "importantPoints": merged_extracted.get("important_points") or [],
+            "important_points": merged_extracted.get("important_points") or [],
+            "calendarEvents": merged_extracted.get("calendar_events") or [],
+            "calendar_events": merged_extracted.get("calendar_events") or [],
+            "possibleActions": merged_extracted.get("possible_actions") or [],
+            "possible_actions": merged_extracted.get("possible_actions") or [],
             "raw_sections": merged_raw_sections,
             "childIds": child_ids,
             "related_files": [],
@@ -1014,13 +1057,25 @@ def compute_index_totals(source_entries: list[dict[str, Any]]) -> tuple[dict[str
     extraction_totals = {cat: 0 for cat in CATEGORIES}
     source_totals = {cat: 0 for cat in CATEGORIES}
     for entry in source_entries:
-        cats = entry.get("categories") or []
+        cats = entry.get("extractedCategories") or entry.get("categories") or []
         for cat in cats:
             if cat in source_totals:
                 source_totals[cat] += 1
-        for cat, children in (entry.get("extractions") or {}).items():
-            if cat in extraction_totals:
-                extraction_totals[cat] += len(children or [])
+        children = entry.get("sourceEntries") or []
+        if children:
+            for child in children:
+                cat = str(child.get("category") or "")
+                if cat in extraction_totals:
+                    extraction_totals[cat] += 1
+        else:
+            stats = entry.get("stats") or {}
+            extraction_totals["tasks"] += int(stats.get("tasks_count") or 0)
+            extraction_totals["calendar"] += int(stats.get("calendar_events_count") or 0)
+            extraction_totals["decisions"] += int(stats.get("decisions_count") or 0)
+            extraction_totals["open-points"] += int(stats.get("open_points_count") or 0)
+            cat = str(entry.get("category") or "")
+            if cat in extraction_totals and cat not in ("tasks", "calendar", "decisions", "open-points"):
+                extraction_totals[cat] += 1
     extraction_totals["total"] = sum(extraction_totals[c] for c in CATEGORIES)
     source_totals["total"] = len(source_entries)
     return extraction_totals, source_totals

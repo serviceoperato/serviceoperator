@@ -1049,11 +1049,9 @@
     var points = itemKeyPoints(item);
     var summary = itemSummaryParagraph(item);
     var nextAction = itemNextActionLine(item);
-    var heroStats = categoryBreakdownStats(cat, [item]);
-    var heroVisual = categoryVisualFromStats(heroStats, cat, 1, null, {
+    var heroVisual = itemInsightVisual(item, {
       legend: true,
       size: 'hero',
-      item: item,
     });
     var processed = formatProcessedDate(item);
     var audioName = audioBasename(item);
@@ -1451,8 +1449,110 @@
     });
   }
 
+  function arrayLen(val) {
+    return Array.isArray(val) ? val.length : 0;
+  }
+
+  function categoryCounterVisual(catKey, iconExtraClass, opts) {
+    opts = opts || {};
+    var TV = txTopicVisuals();
+    if (TV) {
+      var key = opts.item ? TV.inferTopicVisualKey(opts.item) : TV.categoryVisualKey(catKey);
+      var size = opts.size === 'hero' ? 'hero' : 'list';
+      return TV.renderTopicVisual(key, { size: size, extraClass: iconExtraClass });
+    }
+    return renderLargeCategoryIcon(catKey, iconExtraClass);
+  }
+
+  function itemInsightSegments(item) {
+    var cat = String(item.category || 'notes').toLowerCase();
+    var st = item.stats || {};
+
+    function seg(label, value, color) {
+      var v = value | 0;
+      if (v <= 0) return null;
+      return { label: label, value: v, color: color };
+    }
+
+    function compact(parts) {
+      parts = parts.filter(Boolean);
+      return parts.length >= 2 ? parts : null;
+    }
+
+    if (cat === 'meetings' || cat === 'notes') {
+      return compact([
+        seg('Tasks', st.tasks_count != null ? st.tasks_count : arrayLen(item.tasks), '#f59e0b'),
+        seg(
+          'Decisions',
+          st.decisions_count != null ? st.decisions_count : arrayLen(item.decisions),
+          '#10b981'
+        ),
+        seg(
+          'Open points',
+          st.open_points_count != null ? st.open_points_count : arrayLen(item.openPoints),
+          '#64748b'
+        ),
+        seg(
+          'Calendar',
+          st.calendar_events_count != null ? st.calendar_events_count : arrayLen(item.calendarEvents),
+          '#8b5cf6'
+        ),
+        seg(
+          'Next steps',
+          st.next_steps_count != null ? st.next_steps_count : arrayLen(item.nextSteps),
+          '#4f46e5'
+        ),
+      ]);
+    }
+
+    if (cat === 'tasks') {
+      var subs = item.subtasks || item.checklist || [];
+      if (subs.length >= 2) {
+        var done = countWhere(subs, function (s) {
+          if (s && typeof s === 'object') {
+            if (s.done === true || s.completed === true) return true;
+            var t = String(s.status || '').toLowerCase();
+            return t === 'done' || t === 'complete' || t === 'completed';
+          }
+          return /^\s*[-*]?\s*\[[xX]\]/.test(String(s || ''));
+        });
+        return compact([
+          seg('Done', done, '#10b981'),
+          seg('Pending', subs.length - done, '#f59e0b'),
+        ]);
+      }
+      return null;
+    }
+
+    if (cat === 'projects') {
+      return compact([
+        seg('Blockers', arrayLen(item.blockers), '#ef4444'),
+        seg('Next steps', arrayLen(item.nextSteps), '#4f46e5'),
+        seg('Actions', arrayLen(item.possibleActions), '#10b981'),
+      ]);
+    }
+
+    return null;
+  }
+
+  function itemInsightVisual(item, opts) {
+    opts = opts || {};
+    var cat = String(item.category || 'notes').toLowerCase();
+    var segs = itemInsightSegments(item);
+    if (segs && segs.length >= 2) {
+      var total = segs.reduce(function (s, c) {
+        return s + (c.value || 0);
+      }, 0);
+      return renderCompactRing(segs, total, opts);
+    }
+    return categoryCounterVisual(cat, opts.extraClass, { item: item, size: opts.size });
+  }
+
   function categoryVisualFromStats(stats, catKey, total, iconExtraClass, opts) {
     opts = opts || {};
+    if (!opts.allowRing) {
+      return categoryCounterVisual(catKey, iconExtraClass, opts);
+    }
     var segs = buildSegmentsFromStats(stats, catKey);
     var active = segs.filter(function (s) {
       return (s.value || 0) > 0;
@@ -1464,13 +1564,7 @@
     if (active.length >= 2 && center > 0) {
       return renderCompactRing(active, center, opts);
     }
-    var TV = txTopicVisuals();
-    if (TV) {
-      var key = opts.item ? TV.inferTopicVisualKey(opts.item) : TV.categoryVisualKey(catKey);
-      var size = opts.size === 'hero' ? 'hero' : 'list';
-      return TV.renderTopicVisual(key, { size: size, extraClass: iconExtraClass });
-    }
-    return renderLargeCategoryIcon(catKey, iconExtraClass);
+    return categoryCounterVisual(catKey, iconExtraClass, opts);
   }
 
   function categoryDonutSegments(cat, items) {
@@ -1609,10 +1703,9 @@
       var n = items.length;
       var theme = catTheme(c.key);
       var active = state.category === c.key ? ' is-active' : '';
-      var oStats = categoryBreakdownStats(c.key, items);
       var visual =
         '<div class="tx-overview-card__visual">' +
-        categoryVisualFromStats(oStats, c.key, n, 'tx-overview-card__icon', { legend: true }) +
+        categoryCounterVisual(c.key, 'tx-overview-card__icon') +
         '</div>';
       var stats = categorySecondaryStats(c.key, items)
         .map(function (s) {
@@ -1660,8 +1753,7 @@
     var items = categoryItems(cat);
     var theme = catTheme(cat);
     var label = categoryShortLabel(cat);
-    var hStats = categoryBreakdownStats(cat, items);
-    var visual = categoryVisualFromStats(hStats, cat, items.length, null, { legend: false });
+    var visual = categoryCounterVisual(cat);
     var meta = categorySecondaryStats(cat, items).join(' · ');
     el.innerHTML =
       '<div class="tx-category-header__visual" style="--tx-cat-accent:' +
@@ -1708,23 +1800,18 @@
   }
 
   function itemCardVisual(item) {
-    var cat = String(item.category || 'notes').toLowerCase();
-    var stats = categoryBreakdownStats(cat, [item]);
-    var segs = buildSegmentsFromStats(stats, cat);
-    var active = segs.filter(function (s) {
-      return (s.value || 0) > 0;
-    });
-    if (active.length >= 2) {
+    var segs = itemInsightSegments(item);
+    if (segs && segs.length >= 2) {
+      var total = segs.reduce(function (s, c) {
+        return s + (c.value || 0);
+      }, 0);
       return (
         '<div class="tx-dash-card__visual tx-dash-card__visual--ring">' +
-        renderCompactRing(active, 1, { legend: false, size: 'card' }) +
+        renderCompactRing(segs, total, { legend: false, size: 'card' }) +
         '</div>'
       );
     }
-    var TV = txTopicVisuals();
-    var topicHtml = TV
-      ? TV.renderTopicVisual(TV.inferTopicVisualKey(item), { size: 'list' })
-      : renderLargeCategoryIcon(cat);
+    var topicHtml = itemInsightVisual(item, { size: 'list' });
     return '<div class="tx-dash-card__visual tx-dash-card__visual--topic">' + topicHtml + '</div>';
   }
 
@@ -2526,12 +2613,6 @@
   function renderDistribution() {
     var el = byId('txDistribution');
     if (!el) return;
-    if (state.chart && state.chart.length) {
-      el.innerHTML = renderRingChart(state.chart);
-      el.hidden = false;
-      el.removeAttribute('hidden');
-      return;
-    }
     el.innerHTML = '';
     el.hidden = true;
     el.setAttribute('hidden', '');
