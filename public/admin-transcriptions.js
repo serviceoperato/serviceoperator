@@ -1062,11 +1062,7 @@
       html +=
         detailSectionCard(
           'Project update',
-          item.summary || item.preview
-            ? '<p class="tx-detail-page__prose">' +
-              highlightPeopleInText(item.summary || item.preview, people) +
-              '</p>'
-            : ''
+          itemDetailSummary(item) ? detailProseHtml(itemDetailSummary(item), people) : ''
         ) +
         detailListSection('Decisions', item.decisions, people) +
         detailListSection('Tasks', item.tasks, people) +
@@ -1288,21 +1284,7 @@
       '<div class="tx-detail-page__ops">' +
       detailOperationalSections(item) +
       '</div>' +
-      detailSectionCard(
-        'Full transcription reference',
-        '<details class="tx-detail-page__ref"><summary>Source paths &amp; extended text</summary><div class="tx-detail-page__ref-body">' +
-          (item.sourceTranscription
-            ? '<p><strong>Transcription:</strong> <code>' + esc(item.sourceTranscription) + '</code></p>'
-            : '') +
-          (item.path ? '<p><strong>Output:</strong> <code>' + esc(item.path) + '</code></p>' : '') +
-          (transcriptBlock ||
-            (summary
-              ? '<p class="tx-detail-page__prose tx-detail-page__prose--muted">' +
-                highlightPeopleInText(summary, people) +
-                '</p>'
-              : '')) +
-          '</div></details>'
-      ) +
+      detailSectionCard('Full transcription reference', renderFullTranscriptionReferenceBlock(item)) +
       '<div class="tx-detail-page__actions">' +
       '<button type="button" class="tf-admin-toolbar__btn" id="txDetailMarkBtn">Mark reviewed</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" id="txDetailSyncBtn">Sync Google</button>' +
@@ -1885,18 +1867,21 @@
     var cat = String(item.category || 'notes').toLowerCase();
     var stats = categoryBreakdownStats(cat, [item]);
     var segs = buildSegmentsFromStats(stats, cat);
-    if (segs.length >= 2) {
+    var active = segs.filter(function (s) {
+      return (s.value || 0) > 0;
+    });
+    if (active.length >= 2) {
       return (
         '<div class="tx-dash-card__visual tx-dash-card__visual--ring">' +
-        renderCompactRing(segs, 1, { legend: false, size: 'card' }) +
+        renderCompactRing(active, 1, { legend: false, size: 'card' }) +
         '</div>'
       );
     }
-    return (
-      '<div class="tx-dash-card__visual tx-dash-card__visual--icon">' +
-      renderLargeCategoryIcon(cat) +
-      '</div>'
-    );
+    var TV = txTopicVisuals();
+    var topicHtml = TV
+      ? TV.renderTopicVisual(TV.inferTopicVisualKey(item), { size: 'list' })
+      : renderLargeCategoryIcon(cat);
+    return '<div class="tx-dash-card__visual tx-dash-card__visual--topic">' + topicHtml + '</div>';
   }
 
   function renderFeedSectionHeader(cat, count) {
@@ -2184,6 +2169,11 @@
       sourceTranscription: srcTrans,
       source_transcription: srcTrans,
       processedDate: it.processedDate || it.processing_date || it.processed_date || null,
+      raw_sections: it.raw_sections || it.rawSections || {},
+      rawSections: it.raw_sections || it.rawSections || {},
+      fullContent: it.fullContent || it.full_content || '',
+      sourceTranscriptionContent:
+        it.sourceTranscriptionContent || it.source_transcription_content || '',
       readyForSite:
         it.readyForSite !== false &&
         (!it.pipelineStatus || !!VISIBLE_PIPELINE_STATUSES[it.pipelineStatus]),
