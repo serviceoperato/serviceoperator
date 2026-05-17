@@ -1411,7 +1411,7 @@ function pruneAdminUserProfilingGets(ip) {
  */
 const ADMIN_API_RATE_LIMIT_WINDOW_MS = 60_000;
 /** Valid admin JWT (Bearer or HttpOnly cookie) — normal console / transcriptions API usage. */
-const ADMIN_API_RATE_LIMIT_PER_MIN = 60;
+const ADMIN_API_RATE_LIMIT_PER_MIN = 30;
 /** Unauthenticated /api/admin/* (capabilities probe, etc.). */
 const ADMIN_API_RATE_LIMIT_UNAUTH_PER_MIN = 10;
 /** @type {Map<string, number[]>} */
