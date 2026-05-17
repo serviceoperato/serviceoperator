@@ -12,8 +12,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles.css" />
-<link rel="stylesheet" href="/transcriptions-admin.css?v=1.5.59" />
+<link rel="stylesheet" href="/transcriptions-admin.css?v=1.5.61" />
 <link rel="stylesheet" href="/admin-transcriptions.css?v=1.5.60" />
+<link rel="stylesheet" href="/transcriptions-dashboard.css?v=1.5.61" />
 <script src="/page-skeleton.js"></script>
 <script src="/so-api.js"></script>
 </head>
@@ -196,7 +197,7 @@
       </div>
     </section>
 
-    <section id="transcriptionsSection" class="tx-admin tf-admin-table-card is-hidden" aria-label="Transcriptions">
+    <section id="transcriptionsSection" class="tx-admin tx-admin--dashboard tf-admin-table-card is-hidden" aria-label="Transcriptions">
       <header class="tx-admin__header">
         <div class="tx-admin__title-row">
           <div>
@@ -220,11 +221,13 @@
         </div>
         <p id="txLoadHint" class="tx-admin__status mono tf-admin-muted" role="status"></p>
       </header>
-      <h3 class="tx-section-heading">AI-ready outputs</h3>
-      <p class="tx-section-hint tf-admin-muted">Main list = categorized outputs under <code>content/meetings</code>, <code>notes</code>, <code>tasks</code>, etc. Raw files stay in the section below.</p>
+      <div id="txOverview" class="tx-overview" aria-label="Category overview"></div>
+
+      <header id="txCategoryHeader" class="tx-category-header" aria-live="polite"></header>
+
       <div class="tx-toolbar-desktop">
         <div id="txCatScroll" class="tx-cats" role="tablist" aria-label="Categories"></div>
-        <div id="txStats" class="tx-stats" aria-label="AI-ready counts"></div>
+        <div id="txStats" class="tx-stats tx-stats--compact" aria-hidden="true"></div>
       </div>
 
       <h3 class="tx-section-heading tx-section-heading--secondary">Raw / Pending / Failed Sources</h3>
@@ -322,7 +325,7 @@
 <script src="/site-nav-drawer.js"></script>
 <script src="/user-account-menu.js?v=1.5.53"></script>
 <script src="/theme.js"></script>
-<script src="/admin-transcriptions.js?v=1.5.60"></script>
+<script src="/admin-transcriptions.js?v=1.5.61"></script>
 <script src="/admin.js?v=1.5.57"></script>
 <script src="/debug.js"></script>
 </body>
