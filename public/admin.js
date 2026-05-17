@@ -37,7 +37,6 @@
   function clearStoredAdminJwt() {
     writeStoredAdminJwt('');
   }
-  window.readStoredAdminJwt = readStoredAdminJwt;
 
   /** Safe same-origin `?next=` from login handoff or server redirect (path must start with /, no //). */
   function readAdminLoginNextParam() {
@@ -2353,6 +2352,7 @@
             }
           }
         }
+        scheduleTranscriptionsSafetyInit();
       });
     }
   }
@@ -2362,7 +2362,10 @@
     var attemptKey = 'so_tx_dash_reload_attempts';
 
     function isDashboardReady() {
-      return window.TX_DASHBOARD_UI_REV >= 6 && typeof window.initAdminTranscriptions === 'function';
+      return (
+        typeof window.initAdminTranscriptions === 'function' &&
+        (window.TX_DASHBOARD_UI_REV == null || window.TX_DASHBOARD_UI_REV >= 6)
+      );
     }
     if (isDashboardReady()) {
       try {
@@ -2400,6 +2403,11 @@
         try {
           sessionStorage.removeItem(attemptKey);
         } catch (e) {}
+        done();
+        return;
+      }
+      if (typeof window.initAdminTranscriptions === 'function') {
+        console.warn('[transcriptions] dashboard loaded without TX_DASHBOARD_UI_REV; continuing');
         done();
         return;
       }
@@ -2472,6 +2480,26 @@
         'script[src*="admin-transcriptions.js"], script[src*="admin-tx-dashboard.js"]'
       );
     waitForDashboardScript(existing);
+  }
+
+  var txSafetyInitTimer = null;
+
+  /** Re-run dashboard init if overview cards never appeared (init race / stale script). */
+  function scheduleTranscriptionsSafetyInit() {
+    if (txSafetyInitTimer) {
+      clearTimeout(txSafetyInitTimer);
+      txSafetyInitTimer = null;
+    }
+    txSafetyInitTimer = setTimeout(function () {
+      txSafetyInitTimer = null;
+      if (getAdminRouteFromLocation() !== 'transcriptions') return;
+      if (typeof window.initAdminTranscriptions !== 'function') return;
+      var overviewCards = document.querySelectorAll('#txOverview .tx-overview-card').length;
+      if (overviewCards > 0) return;
+      console.warn('[tx] safety re-init: overview still empty after 2s');
+      window.__txDashboardInitComplete = false;
+      window.initAdminTranscriptions();
+    }, 2000);
   }
 
   var voicePipelinePollTimer = null;
@@ -3311,6 +3339,9 @@
   function getAdminBearer() {
     return readStoredAdminJwt();
   }
+
+  window.readStoredAdminJwt = readStoredAdminJwt;
+  window.getAdminBearer = getAdminBearer;
 
   function formatAdminTs(iso) {
     if (!iso) return '';
