@@ -1,284 +1,35 @@
 {
   "ok": true,
-  "generatedAt": "2026-05-17T11:14:44Z",
+  "generatedAt": "2026-05-17T11:20:04Z",
   "registryVersion": 2,
   "totals": {
     "meetings": 2,
-    "notes": 14,
+    "notes": 17,
     "tasks": 22,
     "calendar": 4,
     "projects": 0,
     "decisions": 2,
-    "open-points": 4,
+    "open-points": 0,
     "needsReview": 0,
-    "total": 48
+    "total": 47
   },
   "counts": {
     "meetings": 2,
-    "notes": 14,
+    "notes": 17,
     "tasks": 22,
     "calendar": 4,
     "projects": 0,
     "decisions": 2,
-    "open-points": 4,
+    "open-points": 0,
     "needsReview": 0,
-    "total": 48
+    "total": 47
   },
   "rawSources": {
     "total": 24,
-    "latestRawFile": "Christian.md",
-    "latestProcessedFile": "Memo_001.md",
-    "waitingForProcessing": 8,
-    "pendingSources": [
-      {
-        "id": "69216cdbadfb",
-        "sourceAudio": "Voice 250621 185357.m4a",
-        "sourceAudioPath": "content/transcriptions/Voice_250621_185357.md",
-        "rawTranscriptionPath": "content/transcriptions/Voice_250621_185357.md",
-        "aiOutputs": {
-          "meeting": null,
-          "note": "content/notes/2026-05-17-voice-note-voice_250621_185357-69216cdbadfb.md",
-          "tasks": null,
-          "calendar": null,
-          "project": "content/projects/uncategorized.md",
-          "decisions": null,
-          "openPoints": null
-        },
-        "detectedLanguage": null,
-        "languageProbability": null,
-        "detected_language": null,
-        "language_probability": null,
-        "rawCreatedAt": null,
-        "aiProcessedAt": "2026-05-17T11:11:46Z",
-        "status": "needs_review",
-        "readyForSite": false,
-        "error": null,
-        "size": null,
-        "modified_time": null,
-        "modified_datetime": null,
-        "file_name": "Voice_250621_185357.md",
-        "full_path": "content/transcriptions/Voice_250621_185357.md",
-        "output_markdown": null,
-        "processed_datetime": null
-      },
-      {
-        "id": "f0dc2085112e",
-        "sourceAudio": "Voice 002.m4a",
-        "sourceAudioPath": "content/transcriptions/Voice_002.md",
-        "rawTranscriptionPath": "content/transcriptions/Voice_002.md",
-        "aiOutputs": {
-          "meeting": null,
-          "note": "content/notes/2026-05-17-voice-note-voice_002-f0dc2085112e.md",
-          "tasks": null,
-          "calendar": null,
-          "project": "content/projects/uncategorized.md",
-          "decisions": null,
-          "openPoints": null
-        },
-        "detectedLanguage": null,
-        "languageProbability": null,
-        "detected_language": null,
-        "language_probability": null,
-        "rawCreatedAt": null,
-        "aiProcessedAt": "2026-05-17T11:11:46Z",
-        "status": "needs_review",
-        "readyForSite": false,
-        "error": null,
-        "size": null,
-        "modified_time": null,
-        "modified_datetime": null,
-        "file_name": "Voice_002.md",
-        "full_path": "content/transcriptions/Voice_002.md",
-        "output_markdown": null,
-        "processed_datetime": null
-      },
-      {
-        "id": "c8091515a34f",
-        "sourceAudio": "Voice 001.m4a",
-        "sourceAudioPath": "content/transcriptions/Voice_001.md",
-        "rawTranscriptionPath": "content/transcriptions/Voice_001.md",
-        "aiOutputs": {
-          "meeting": null,
-          "note": "content/notes/2026-05-17-voice-note-voice_001-c8091515a34f.md",
-          "tasks": null,
-          "calendar": null,
-          "project": "content/projects/uncategorized.md",
-          "decisions": null,
-          "openPoints": null
-        },
-        "detectedLanguage": null,
-        "languageProbability": null,
-        "detected_language": null,
-        "language_probability": null,
-        "rawCreatedAt": null,
-        "aiProcessedAt": "2026-05-17T11:11:46Z",
-        "status": "needs_review",
-        "readyForSite": false,
-        "error": null,
-        "size": null,
-        "modified_time": null,
-        "modified_datetime": null,
-        "file_name": "Voice_001.md",
-        "full_path": "content/transcriptions/Voice_001.md",
-        "output_markdown": null,
-        "processed_datetime": null
-      },
-      {
-        "id": "37d2a3a4fa59",
-        "sourceAudio": "Chat history with Karn.md",
-        "sourceAudioPath": "chat-import:content/transcriptions/Chat history with Karn.md",
-        "rawTranscriptionPath": "content/transcriptions/Chat history with Karn.md",
-        "aiOutputs": {
-          "meeting": null,
-          "note": "content/notes/2026-05-17-conversation-chat-history-with-karn-37d2a3a4fa59.md",
-          "tasks": null,
-          "calendar": null,
-          "project": "content/projects/personal.md",
-          "decisions": null,
-          "openPoints": null
-        },
-        "detectedLanguage": null,
-        "languageProbability": null,
-        "detected_language": null,
-        "language_probability": null,
-        "rawCreatedAt": "2026-05-17T10:57:01Z",
-        "aiProcessedAt": "2026-05-17T10:57:01Z",
-        "status": "needs_review",
-        "readyForSite": false,
-        "error": "chat import — excluded from main transcriptions feed",
-        "size": null,
-        "modified_time": null,
-        "modified_datetime": null,
-        "file_name": "Chat history with Karn.md",
-        "full_path": "chat-import:content/transcriptions/Chat history with Karn.md",
-        "output_markdown": null,
-        "processed_datetime": null
-      },
-      {
-        "id": "6aabaa09ab24",
-        "sourceAudio": "WhatsApp Chat wi.md",
-        "sourceAudioPath": "chat-import:content/transcriptions/WhatsApp Chat wi.md",
-        "rawTranscriptionPath": "content/transcriptions/WhatsApp Chat wi.md",
-        "aiOutputs": {
-          "meeting": null,
-          "note": "content/notes/2026-05-17-conversation-whatsapp-chat-wi-6aabaa09ab24.md",
-          "tasks": null,
-          "calendar": null,
-          "project": "content/projects/personal.md",
-          "decisions": null,
-          "openPoints": null
-        },
-        "detectedLanguage": null,
-        "languageProbability": null,
-        "detected_language": null,
-        "language_probability": null,
-        "rawCreatedAt": "2026-05-17T10:57:01Z",
-        "aiProcessedAt": "2026-05-17T10:57:01Z",
-        "status": "needs_review",
-        "readyForSite": false,
-        "error": "chat import — excluded from main transcriptions feed",
-        "size": null,
-        "modified_time": null,
-        "modified_datetime": null,
-        "file_name": "WhatsApp Chat wi.md",
-        "full_path": "chat-import:content/transcriptions/WhatsApp Chat wi.md",
-        "output_markdown": null,
-        "processed_datetime": null
-      },
-      {
-        "id": "c52f33323d06",
-        "sourceAudio": "WhatsApp Chat with IANN.md",
-        "sourceAudioPath": "chat-import:content/transcriptions/WhatsApp Chat with IANN.md",
-        "rawTranscriptionPath": "content/transcriptions/WhatsApp Chat with IANN.md",
-        "aiOutputs": {
-          "meeting": null,
-          "note": "content/notes/2026-05-17-conversation-whatsapp-chat-with-iann-c52f33323d06.md",
-          "tasks": null,
-          "calendar": null,
-          "project": "content/projects/personal.md",
-          "decisions": null,
-          "openPoints": null
-        },
-        "detectedLanguage": null,
-        "languageProbability": null,
-        "detected_language": null,
-        "language_probability": null,
-        "rawCreatedAt": "2026-05-17T10:57:01Z",
-        "aiProcessedAt": "2026-05-17T10:57:01Z",
-        "status": "needs_review",
-        "readyForSite": false,
-        "error": "chat import — excluded from main transcriptions feed",
-        "size": null,
-        "modified_time": null,
-        "modified_datetime": null,
-        "file_name": "WhatsApp Chat with IANN.md",
-        "full_path": "chat-import:content/transcriptions/WhatsApp Chat with IANN.md",
-        "output_markdown": null,
-        "processed_datetime": null
-      },
-      {
-        "id": "9c47ef78ab53",
-        "sourceAudio": "WhatsApp Chat with italiani a Patta.md",
-        "sourceAudioPath": "chat-import:content/transcriptions/WhatsApp Chat with italiani a Patta.md",
-        "rawTranscriptionPath": "content/transcriptions/WhatsApp Chat with italiani a Patta.md",
-        "aiOutputs": {
-          "meeting": null,
-          "note": "content/notes/2026-05-17-conversation-whatsapp-chat-with-italiani-a-patta-9c47ef78ab53.md",
-          "tasks": null,
-          "calendar": null,
-          "project": "content/projects/thaifans.md",
-          "decisions": null,
-          "openPoints": null
-        },
-        "detectedLanguage": null,
-        "languageProbability": null,
-        "detected_language": null,
-        "language_probability": null,
-        "rawCreatedAt": "2026-05-17T10:57:01Z",
-        "aiProcessedAt": "2026-05-17T10:57:01Z",
-        "status": "needs_review",
-        "readyForSite": false,
-        "error": "chat import — excluded from main transcriptions feed",
-        "size": null,
-        "modified_time": null,
-        "modified_datetime": null,
-        "file_name": "WhatsApp Chat with italiani a Patta.md",
-        "full_path": "chat-import:content/transcriptions/WhatsApp Chat with italiani a Patta.md",
-        "output_markdown": null,
-        "processed_datetime": null
-      },
-      {
-        "id": "f97895de6fd3",
-        "sourceAudio": "WhatsApp Chat with Koragon Gi.md",
-        "sourceAudioPath": "chat-import:content/transcriptions/WhatsApp Chat with Koragon Gi.md",
-        "rawTranscriptionPath": "content/transcriptions/WhatsApp Chat with Koragon Gi.md",
-        "aiOutputs": {
-          "meeting": null,
-          "note": "content/notes/2026-05-17-conversation-whatsapp-chat-with-koragon-gi-f97895de6fd3.md",
-          "tasks": null,
-          "calendar": null,
-          "project": "content/projects/personal.md",
-          "decisions": null,
-          "openPoints": null
-        },
-        "detectedLanguage": null,
-        "languageProbability": null,
-        "detected_language": null,
-        "language_probability": null,
-        "rawCreatedAt": "2026-05-17T10:57:01Z",
-        "aiProcessedAt": "2026-05-17T10:57:01Z",
-        "status": "needs_review",
-        "readyForSite": false,
-        "error": "chat import — excluded from main transcriptions feed",
-        "size": null,
-        "modified_time": null,
-        "modified_datetime": null,
-        "file_name": "WhatsApp Chat with Koragon Gi.md",
-        "full_path": "chat-import:content/transcriptions/WhatsApp Chat with Koragon Gi.md",
-        "output_markdown": null,
-        "processed_datetime": null
-      }
-    ]
+    "latestRawFile": "WhatsApp Chat wi.md",
+    "latestProcessedFile": "Voice_001.md",
+    "waitingForProcessing": 0,
+    "pendingSources": []
   },
   "rawTranscriptionCount": 24,
   "pipeline": {
@@ -363,11 +114,7 @@
       },
       "related_files": [
         "0bb2ff077566",
-        "e5e907611199",
-        "eda9377e1c8b",
-        "e4a57405f25d",
-        "e490ca72475e",
-        "ab25bb874c77"
+        "e5e907611199"
       ],
       "source_only": false,
       "needs_review": false,
@@ -870,6 +617,114 @@
       "readyForSite": true
     },
     {
+      "id": "54a9a939b5b6",
+      "category": "notes",
+      "categoryLabel": "Notes",
+      "title": "Registrazione non intellegibile (Voice 001)",
+      "filepath": "content/notes/2026-05-17-voice-note-voice_001-c8091515a34f.md",
+      "path": "content/notes/2026-05-17-voice-note-voice_001-c8091515a34f.md",
+      "source_audio": "Voice 001",
+      "source_transcription": "content/transcriptions/Voice_001.md",
+      "sourceAudio": "Voice 001",
+      "sourceTranscription": "content/transcriptions/Voice_001.md",
+      "project": "uncategorized",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T11:20:03Z",
+      "processedDate": "2026-05-17T11:20:03Z",
+      "preview": "AI-ready note from Voice 001. Open for structured sections.",
+      "summary": "AI-ready note from Voice 001. Open for structured sections.",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 1,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {
+        "Source": "- **Source audio:** Voice 001\n- **Source transcription:** `Voice_001.md`\n- **Processing datetime:** 2026-05-17T11:20:03Z\n- **Category:** voice-note (Composer)\n- **Project:** uncategorized",
+        "Summary": "[Bassa qualità — revisione manuale consigliata] Clip audio del 2022-12-09: Whisper rileva lingua «nn» (non identificata, prob. singalese). Unica frase trascritta non è in italiano e non consente estrazione di task o decisioni.",
+        "Important Points": "- Durata breve; probabilità lingua 0.88 su codice non italiano\n- Nessun contenuto semantico utilizzabile in italiano",
+        "Decisions": "- (none)",
+        "Tasks": "- (none)",
+        "Calendar Events": "- (none)",
+        "Open Points": "- Contenuto reale del messaggio — da confermare ascoltando l'audio",
+        "Next Steps": "- Archiviare come non analizzabile finché non c'è ritrascrizione manuale",
+        "Possible Actions": "- Riascoltare l'audio originale (Voice 001.m4a) e ritrascrivere o scartare"
+      },
+      "extracted_items": {
+        "important_points": [
+          "Durata breve; probabilità lingua 0.88 su codice non italiano",
+          "Nessun contenuto semantico utilizzabile in italiano"
+        ],
+        "possible_actions": [
+          "Riascoltare l'audio originale (Voice 001.m4a) e ritrascrivere o scartare"
+        ]
+      },
+      "related_files": [],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "file",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
+      "id": "610fba25e32d",
+      "category": "notes",
+      "categoryLabel": "Notes",
+      "title": "Trascrizione vuota (Voice 002)",
+      "filepath": "content/notes/2026-05-17-voice-note-voice_002-f0dc2085112e.md",
+      "path": "content/notes/2026-05-17-voice-note-voice_002-f0dc2085112e.md",
+      "source_audio": "Voice 002",
+      "source_transcription": "content/transcriptions/Voice_002.md",
+      "sourceAudio": "Voice 002",
+      "sourceTranscription": "content/transcriptions/Voice_002.md",
+      "project": "uncategorized",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T11:20:03Z",
+      "processedDate": "2026-05-17T11:20:03Z",
+      "preview": "AI-ready note from Voice 002. Open for structured sections.",
+      "summary": "AI-ready note from Voice 002. Open for structured sections.",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 1,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {
+        "Source": "- **Source audio:** Voice 002\n- **Source transcription:** `Voice_002.md`\n- **Processing datetime:** 2026-05-17T11:20:03Z\n- **Category:** voice-note (Composer)\n- **Project:** uncategorized",
+        "Summary": "[Bassa qualità — revisione manuale consigliata] File Voice 002.m4a (2023-01-08): metadati Whisper indicano lingua «ru» con bassa confidenza (0.36) ma il corpo della trascrizione è vuoto — nessun testo estratto.",
+        "Important Points": "- Audio presente su drive ma trascrizione senza segmenti\n- Impossibile classificare argomento senza nuovo passaggio STT",
+        "Decisions": "- (none)",
+        "Tasks": "- (none)",
+        "Calendar Events": "- (none)",
+        "Open Points": "- L'audio contiene parlato intelligibile? — owner to confirm",
+        "Next Steps": "- Riprocessare Voice 002.m4a in Phase 1 se serve contenuto",
+        "Possible Actions": "- Ripetere trascrizione con modello/parametri diversi o verifica microfono"
+      },
+      "extracted_items": {
+        "important_points": [
+          "Audio presente su drive ma trascrizione senza segmenti",
+          "Impossibile classificare argomento senza nuovo passaggio STT"
+        ],
+        "possible_actions": [
+          "Ripetere trascrizione con modello/parametri diversi o verifica microfono"
+        ]
+      },
+      "related_files": [],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "file",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
       "id": "c6ba19f8abf0",
       "category": "notes",
       "categoryLabel": "Notes",
@@ -1076,6 +931,60 @@
           "Attività «ricordi» in corso"
         ],
         "possible_actions": []
+      },
+      "related_files": [],
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "file",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true
+    },
+    {
+      "id": "80c98b9de050",
+      "category": "notes",
+      "categoryLabel": "Notes",
+      "title": "Audio non decodificabile (giu 2025)",
+      "filepath": "content/notes/2026-05-17-voice-note-voice_250621_185357-69216cdbadfb.md",
+      "path": "content/notes/2026-05-17-voice-note-voice_250621_185357-69216cdbadfb.md",
+      "source_audio": "Voice 250621 185357",
+      "source_transcription": "content/transcriptions/Voice_250621_185357.md",
+      "sourceAudio": "Voice 250621 185357",
+      "sourceTranscription": "content/transcriptions/Voice_250621_185357.md",
+      "project": "uncategorized",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T11:20:03Z",
+      "processedDate": "2026-05-17T11:20:03Z",
+      "preview": "AI-ready note from Voice 250621 185357. Open for structured sections.",
+      "summary": "AI-ready note from Voice 250621 185357. Open for structured sections.",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 1,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {
+        "Source": "- **Source audio:** Voice 250621 185357\n- **Source transcription:** `Voice_250621_185357.md`\n- **Processing datetime:** 2026-05-17T11:20:03Z\n- **Category:** voice-note (Composer)\n- **Project:** uncategorized",
+        "Summary": "[Bassa qualità — revisione manuale consigliata] Registrazione del 2025-06-21: lingua «nn», testo con caratteri speciali/illeggibili (~10 s). Nessun significato estratto in italiano o inglese.",
+        "Important Points": "- Checksum e header pipeline ok; contenuto semantico assente\n- Probabile rumore, lingua non supportata o audio corrotto",
+        "Decisions": "- (none)",
+        "Tasks": "- (none)",
+        "Calendar Events": "- (none)",
+        "Open Points": "- Utilità di conservare il file nel feed — owner to confirm",
+        "Next Steps": "- (none)",
+        "Possible Actions": "- Verificare Voice 250621_185357.m4a all'origine"
+      },
+      "extracted_items": {
+        "important_points": [
+          "Checksum e header pipeline ok; contenuto semantico assente",
+          "Probabile rumore, lingua non supportata o audio corrotto"
+        ],
+        "possible_actions": [
+          "Verificare Voice 250621_185357.m4a all'origine"
+        ]
       },
       "related_files": [],
       "source_only": false,
@@ -2472,11 +2381,7 @@
       },
       "related_files": [
         "1478d3df5d65",
-        "e5e907611199",
-        "eda9377e1c8b",
-        "e4a57405f25d",
-        "e490ca72475e",
-        "ab25bb874c77"
+        "e5e907611199"
       ],
       "source_only": false,
       "needs_review": false,
@@ -2519,203 +2424,11 @@
       },
       "related_files": [
         "1478d3df5d65",
-        "0bb2ff077566",
-        "eda9377e1c8b",
-        "e4a57405f25d",
-        "e490ca72475e",
-        "ab25bb874c77"
+        "0bb2ff077566"
       ],
       "source_only": false,
       "needs_review": false,
       "item_type": "decision",
-      "reviewed": false,
-      "pipelineStatus": "ready_for_site",
-      "readyForSite": true
-    },
-    {
-      "id": "eda9377e1c8b",
-      "category": "open-points",
-      "categoryLabel": "Open Points",
-      "title": "Accordo formale su 50.000 €, cointestazione e scenario separazione — da definire",
-      "filepath": "content/open-points/2026-05-17.md#line-681a20bb4ce5",
-      "path": "content/open-points/2026-05-17.md#line-681a20bb4ce5",
-      "source_audio": "Christian.m4a",
-      "source_transcription": "content/transcriptions/Christian.md",
-      "sourceAudio": "Christian.m4a",
-      "sourceTranscription": "content/transcriptions/Christian.md",
-      "project": null,
-      "date": "2026-05-17",
-      "eventDate": "2026-05-17",
-      "processing_date": null,
-      "processedDate": null,
-      "preview": "Accordo formale su 50.000 €, cointestazione e scenario separazione — da definire",
-      "summary": "Accordo formale su 50.000 €, cointestazione e scenario separazione — da definire",
-      "stats": {
-        "decisions_count": 0,
-        "tasks_count": 0,
-        "open_points_count": 0,
-        "calendar_events_count": 0,
-        "next_steps_count": 0
-      },
-      "has_chart_data": false,
-      "raw_sections": {},
-      "extracted_items": {
-        "open_points": [
-          "Accordo formale su 50.000 €, cointestazione e scenario separazione — da definire"
-        ]
-      },
-      "related_files": [
-        "1478d3df5d65",
-        "0bb2ff077566",
-        "e5e907611199",
-        "e4a57405f25d",
-        "e490ca72475e",
-        "ab25bb874c77"
-      ],
-      "source_only": false,
-      "needs_review": false,
-      "item_type": "open-point",
-      "reviewed": false,
-      "pipelineStatus": "ready_for_site",
-      "readyForSite": true
-    },
-    {
-      "id": "e4a57405f25d",
-      "category": "open-points",
-      "categoryLabel": "Open Points",
-      "title": "Presenza/partecipazione Silvana al dialogo — non presente",
-      "filepath": "content/open-points/2026-05-17.md#line-d078c9db111d",
-      "path": "content/open-points/2026-05-17.md#line-d078c9db111d",
-      "source_audio": "Christian.m4a",
-      "source_transcription": "content/transcriptions/Christian.md",
-      "sourceAudio": "Christian.m4a",
-      "sourceTranscription": "content/transcriptions/Christian.md",
-      "project": null,
-      "date": "2026-05-17",
-      "eventDate": "2026-05-17",
-      "processing_date": null,
-      "processedDate": null,
-      "preview": "Presenza/partecipazione Silvana al dialogo — non presente",
-      "summary": "Presenza/partecipazione Silvana al dialogo — non presente",
-      "stats": {
-        "decisions_count": 0,
-        "tasks_count": 0,
-        "open_points_count": 0,
-        "calendar_events_count": 0,
-        "next_steps_count": 0
-      },
-      "has_chart_data": false,
-      "raw_sections": {},
-      "extracted_items": {
-        "open_points": [
-          "Presenza/partecipazione Silvana al dialogo — non presente"
-        ]
-      },
-      "related_files": [
-        "1478d3df5d65",
-        "0bb2ff077566",
-        "e5e907611199",
-        "eda9377e1c8b",
-        "e490ca72475e",
-        "ab25bb874c77"
-      ],
-      "source_only": false,
-      "needs_review": false,
-      "item_type": "open-point",
-      "reviewed": false,
-      "pipelineStatus": "ready_for_site",
-      "readyForSite": true
-    },
-    {
-      "id": "e490ca72475e",
-      "category": "open-points",
-      "categoryLabel": "Open Points",
-      "title": "Distribuzione ereditaria/comunione e lettere/testamenti — dibattito aperto",
-      "filepath": "content/open-points/2026-05-17.md#line-42e1f51d5f66",
-      "path": "content/open-points/2026-05-17.md#line-42e1f51d5f66",
-      "source_audio": "Christian.m4a",
-      "source_transcription": "content/transcriptions/Christian.md",
-      "sourceAudio": "Christian.m4a",
-      "sourceTranscription": "content/transcriptions/Christian.md",
-      "project": null,
-      "date": "2026-05-17",
-      "eventDate": "2026-05-17",
-      "processing_date": null,
-      "processedDate": null,
-      "preview": "Distribuzione ereditaria/comunione e lettere/testamenti — dibattito aperto",
-      "summary": "Distribuzione ereditaria/comunione e lettere/testamenti — dibattito aperto",
-      "stats": {
-        "decisions_count": 0,
-        "tasks_count": 0,
-        "open_points_count": 0,
-        "calendar_events_count": 0,
-        "next_steps_count": 0
-      },
-      "has_chart_data": false,
-      "raw_sections": {},
-      "extracted_items": {
-        "open_points": [
-          "Distribuzione ereditaria/comunione e lettere/testamenti — dibattito aperto"
-        ]
-      },
-      "related_files": [
-        "1478d3df5d65",
-        "0bb2ff077566",
-        "e5e907611199",
-        "eda9377e1c8b",
-        "e4a57405f25d",
-        "ab25bb874c77"
-      ],
-      "source_only": false,
-      "needs_review": false,
-      "item_type": "open-point",
-      "reviewed": false,
-      "pipelineStatus": "ready_for_site",
-      "readyForSite": true
-    },
-    {
-      "id": "ab25bb874c77",
-      "category": "open-points",
-      "categoryLabel": "Open Points",
-      "title": "Clausole legali obbligo assistenza genitori anziani — citate, non approfondite …",
-      "filepath": "content/open-points/2026-05-17.md#line-b89346b5d8de",
-      "path": "content/open-points/2026-05-17.md#line-b89346b5d8de",
-      "source_audio": "Christian.m4a",
-      "source_transcription": "content/transcriptions/Christian.md",
-      "sourceAudio": "Christian.m4a",
-      "sourceTranscription": "content/transcriptions/Christian.md",
-      "project": null,
-      "date": "2026-05-17",
-      "eventDate": "2026-05-17",
-      "processing_date": null,
-      "processedDate": null,
-      "preview": "Clausole legali obbligo assistenza genitori anziani — citate, non approfondite come decisione",
-      "summary": "Clausole legali obbligo assistenza genitori anziani — citate, non approfondite come decisione",
-      "stats": {
-        "decisions_count": 0,
-        "tasks_count": 0,
-        "open_points_count": 0,
-        "calendar_events_count": 0,
-        "next_steps_count": 0
-      },
-      "has_chart_data": false,
-      "raw_sections": {},
-      "extracted_items": {
-        "open_points": [
-          "Clausole legali obbligo assistenza genitori anziani — citate, non approfondite come decisione"
-        ]
-      },
-      "related_files": [
-        "1478d3df5d65",
-        "0bb2ff077566",
-        "e5e907611199",
-        "eda9377e1c8b",
-        "e4a57405f25d",
-        "e490ca72475e"
-      ],
-      "source_only": false,
-      "needs_review": false,
-      "item_type": "open-point",
       "reviewed": false,
       "pipelineStatus": "ready_for_site",
       "readyForSite": true

@@ -2,19 +2,25 @@
 """Apply Composer-structured voice reprocess outputs (chat Phase 2)."""
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import re
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+_SCRIPTS = Path(__file__).resolve().parent
+if str(_SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS))
+
+from voice_registry import find_entry_by_raw_path, normalize_raw_rel  # noqa: E402
+
 REPO = Path(__file__).resolve().parent.parent
 PROCESSED_JSON = REPO / "content" / "processed" / "processed_files.json"
+DEFAULT_DATA = REPO / "content" / "processed" / "_composer_reprocess_data.json"
 TODAY = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 NOW = datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
-
-# Combined analysis from Composer chat (Memo 001-006 + remaining voice files)
-ITEMS: list[dict] = []  # populated below via exec of json file
 
 
 def short_id(rel: str) -> str:
@@ -31,10 +37,28 @@ def slugify(stem: str) -> str:
 
 def find_audio_key(registry: dict, raw_name: str) -> str | None:
     raw_rel = f"content/transcriptions/{raw_name}"
+    match = find_entry_by_raw_path(registry, raw_rel)
+    if match:
+        return match[0]
     for key, val in registry.get("processed", {}).items():
+        if not isinstance(val, dict):
+            continue
         rp = val.get("rawTranscriptionPath") or ""
         if rp.endswith(raw_name) or raw_rel in str(rp):
             return key
+    return None
+
+
+def existing_primary_output(registry: dict, raw_name: str, primary: str) -> str | None:
+    match = find_entry_by_raw_path(registry, f"content/transcriptions/{raw_name}")
+    if not match:
+        return None
+    ai = match[1].get("aiOutputs") or {}
+    if not isinstance(ai, dict):
+        return None
+    rel = ai.get("meeting") if primary == "meeting" else ai.get("note")
+    if rel and (REPO / rel).is_file():
+        return str(rel)
     return None
 
 
@@ -124,9 +148,31 @@ def append_idempotent(path: Path, block: str, sid: str) -> None:
         path.write_text(block + "\n", encoding="utf-8")
 
 
+def load_items(data_paths: list[Path]) -> list[dict]:
+    merged: dict[str, dict] = {}
+    for path in data_paths:
+        if not path.is_file():
+            print(f"SKIP missing data file {path}")
+            continue
+        batch = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(batch, list):
+            raise SystemExit(f"Expected JSON array in {path}")
+        for item in batch:
+            merged[item["raw_name"]] = item
+    return list(merged.values())
+
+
 def main() -> None:
-    data_path = REPO / "content" / "processed" / "_composer_reprocess_data.json"
-    items = json.loads(data_path.read_text(encoding="utf-8"))
+    parser = argparse.ArgumentParser(description="Apply Composer Phase 2 structured outputs")
+    parser.add_argument(
+        "--data",
+        action="append",
+        type=Path,
+        help="JSON array of Composer items (default: _composer_reprocess_data.json)",
+    )
+    args = parser.parse_args()
+    data_paths = args.data if args.data else [DEFAULT_DATA]
+    items = load_items(data_paths)
     reg = json.loads(PROCESSED_JSON.read_text(encoding="utf-8"))
     processed = reg.setdefault("processed", {})
 
@@ -137,14 +183,19 @@ def main() -> None:
             print(f"SKIP missing {raw_name}")
             continue
         checksum = sha256_file(raw_path)
-        sid = short_id(f"content/transcriptions/{raw_name}")
+        match = find_entry_by_raw_path(processed, f"content/transcriptions/{raw_name}")
+        sid = (match[1].get("id") if match else None) or short_id(f"content/transcriptions/{raw_name}")
         stem = Path(raw_name).stem
         primary = item.get("primary_type", "note")
         folder = REPO / "content" / ("meetings" if primary == "meeting" else "notes")
         folder.mkdir(parents=True, exist_ok=True)
-        out_name = f"{TODAY}-{item['category']}-{slugify(stem)}-{sid}.md"
-        out_path = folder / out_name
-        out_rel = out_path.relative_to(REPO).as_posix()
+        out_rel = existing_primary_output(processed, raw_name, primary)
+        if out_rel:
+            out_path = REPO / out_rel
+        else:
+            out_name = f"{TODAY}-{item['category']}-{slugify(stem)}-{sid}.md"
+            out_path = folder / out_name
+            out_rel = out_path.relative_to(REPO).as_posix()
 
         out_path.write_text(build_md(item, raw_name=raw_name, note_rel=out_rel, checksum=checksum, sid=sid), encoding="utf-8")
 
@@ -179,8 +230,15 @@ def main() -> None:
             block = "## Open points\n\n" + "\n".join(f"- {o} <!-- src: {sid} -->" for o in item["open_points"])
             append_idempotent(REPO / "content/open-points" / f"{TODAY}.md", block, sid)
 
-        low_quality = raw_name in ("Voice_001.md", "Voice_002.md", "Voice_250621_185357.md") or not item.get("clean_summary")
-        status = "needs_review" if low_quality else "ready_for_site"
+        force_ready = bool(item.get("force_ready") or item.get("ready_for_site"))
+        low_quality = (
+            not force_ready
+            and (
+                raw_name in ("Voice_001.md", "Voice_002.md", "Voice_250621_185357.md")
+                or not item.get("clean_summary")
+            )
+        )
+        status = "ready_for_site" if force_ready or not low_quality else "needs_review"
         ready = status == "ready_for_site"
 
         key = find_audio_key(processed, raw_name)
@@ -201,7 +259,27 @@ def main() -> None:
             }
         )
         processed[key] = entry
-        print(f"OK {raw_name} -> {out_rel} [{status}]")
+        raw_rel = f"content/transcriptions/{raw_name}"
+        for reg_key, val in list(processed.items()):
+            if reg_key == key or not isinstance(val, dict):
+                continue
+            rp = normalize_raw_rel(str(val.get("rawTranscriptionPath") or ""))
+            if rp != raw_rel:
+                continue
+            val = dict(val)
+            val.update(
+                {
+                    "id": sid,
+                    "aiOutputs": ai,
+                    "status": status,
+                    "readyForSite": ready,
+                    "aiProcessedAt": NOW,
+                    "error": None,
+                    "source_checksum": checksum,
+                }
+            )
+            processed[reg_key] = val
+        print(f"OK {raw_name} -> {out_rel} [{status}] ready={ready}")
 
     PROCESSED_JSON.write_text(json.dumps(reg, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
@@ -212,6 +290,8 @@ def src_audio_name(raw_name: str) -> str:
         return stem.replace("Memo ", "Memo ") + ".m4a"
     if stem.startswith("Voice "):
         return stem + ".m4a"
+    if "chat" in raw_name.lower() or "whatsapp" in raw_name.lower():
+        return stem
     return stem + ".m4a"
 
 

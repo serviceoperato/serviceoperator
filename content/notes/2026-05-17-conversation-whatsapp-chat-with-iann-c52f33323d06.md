@@ -1,42 +1,40 @@
 ---
-title: WhatsApp — Chat with IANN
+title: Famiglia Iannace — gruppo WhatsApp
 category: conversation
 project: personal
 date: 2026-05-17
-processing_date: 2026-05-17T10:57:01Z
-source_audio: null
+processing_date: 2026-05-17T11:20:03Z
+source_audio: WhatsApp Chat with IANN
 source_transcription: content/transcriptions/WhatsApp Chat with IANN.md
 source_id: c52f33323d06
-source_checksum: f1029633ae5e14638ffe9f7af0d0a2c548cffbb486c7ac7f0b11b3d54bfaf52c
+source_checksum: 1dc2a6e7e917cfe51ed5a6de1e3012fd28d7e607ac45c367a650cc254a3d95be
 processed: true
-tags: [conversation, chat-import, needs-review]
+tags: [conversation]
 self_talk: false
 conversation: true
 visual:
   type: icon
   icon:
-    name: MessageCircle
-    color: "#06B6D4"
-    bg_color: "#06B6D426"
-    label: Chat import
+    name: FileText
+    color: "#64748B"
+    bg_color: "#64748B26"
+    label: AI-ready
 ---
 
 ## Source
-- **Source type:** WhatsApp chat export (not voice audio)
+- **Source audio:** WhatsApp Chat with IANN
 - **Source transcription:** `WhatsApp Chat with IANN.md`
-- **Processing datetime:** 2026-05-17T10:57:01Z
-- **Category:** conversation (chat import)
+- **Processing datetime:** 2026-05-17T11:20:03Z
+- **Category:** conversation (Composer)
 - **Project:** personal
 
 ## Clean Summary
-WhatsApp chat export with IANN. Conversation log only; not processed as operational voice output.
+Gruppo familiare «IANNACE» (Mamma, Papà, Frostan/Stefania, Jack, Christian). Dal 2015: saluti quotidiani, logistica Piacenza/Residence Europa (caricabatterie, spedizioni Mail Boxes), foto Kristen/nipoti, lavori casa (piazzale ~8000 €, autobloccanti), notizie (commissariamento Anzio/Nettuno, battesimi). Conversazioni affettive e pratiche; nessun task business centralizzato.
 
-## Important Points
-- Chat import — not auto-extracted as meeting/task pipeline
-- Review manually only if operational items are required
-
-## Possible Actions
-- (none auto-extracted)
+## Top 3 Important Points
+- Canale principale famiglia Iannace per aggiornamenti e foto
+- Riferimenti ricorrenti a Kristen, Silvana, Christian, eventi religiosi
+- Decisioni domestiche (lavori, spedizioni) discusse in chat
 
 ## Decisions
 - (none)
@@ -48,7 +46,13 @@ WhatsApp chat export with IANN. Conversation log only; not processed as operatio
 - (none)
 
 ## Open Points
-- Whether to extract tasks/events from this chat — owner to confirm
+- Eventi futuri menzionati nel log — da riconciliare con calendario personale
+
+## Next Steps
+- (none)
+
+## Possible Actions
+- Estrarre date eventi (battesimi, visite) manualmente se servono in calendario
 
 ## Full Transcription Reference
 See `content/transcriptions/WhatsApp Chat with IANN.md`.

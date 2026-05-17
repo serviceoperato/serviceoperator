@@ -1,42 +1,40 @@
 ---
-title: WhatsApp — Chat with Koragon Gi
+title: WhatsApp Koragon Gicos — Pattaya e vita sociale
 category: conversation
 project: personal
 date: 2026-05-17
-processing_date: 2026-05-17T10:57:01Z
-source_audio: null
+processing_date: 2026-05-17T11:20:03Z
+source_audio: WhatsApp Chat with Koragon Gi
 source_transcription: content/transcriptions/WhatsApp Chat with Koragon Gi.md
 source_id: f97895de6fd3
-source_checksum: 5cca226f1e20d85817fa0762e06089591c9ce94b577d06b2b0f33ab7c0b61081
+source_checksum: 2de295478101b5b44be1c059957c51cffa7ce250142569fc65dbbbdb34ae7c80
 processed: true
-tags: [conversation, chat-import, needs-review]
+tags: [conversation]
 self_talk: false
 conversation: true
 visual:
   type: icon
   icon:
-    name: MessageCircle
-    color: "#06B6D4"
-    bg_color: "#06B6D426"
-    label: Chat import
+    name: FileText
+    color: "#64748B"
+    bg_color: "#64748B26"
+    label: AI-ready
 ---
 
 ## Source
-- **Source type:** WhatsApp chat export (not voice audio)
+- **Source audio:** WhatsApp Chat with Koragon Gi
 - **Source transcription:** `WhatsApp Chat with Koragon Gi.md`
-- **Processing datetime:** 2026-05-17T10:57:01Z
-- **Category:** conversation (chat import)
+- **Processing datetime:** 2026-05-17T11:20:03Z
+- **Category:** conversation (Composer)
 - **Project:** personal
 
 ## Clean Summary
-WhatsApp chat with Koragon Gi. Export for archive; not a voice memo.
+Chat 1:1 con Koragon Gicos (Gicos) dal 2021, prevalentemente da Pattaya. Argomenti: tamponi COVID in inglese, affitto scooter Morotino 2–3 mesi, mappa locali e nightlife, contenuti OnlyFans/video (prezzi ~1500 THB, qualità, marketing), sauna (Sauna Bar / Sands), app budget senza export Excel, nickname «Birillo». Conversazioni leggere su incontri, cibo, TikTok; nessun progetto Service Opera strutturato.
 
-## Important Points
-- Chat import — not auto-extracted as meeting/task pipeline
-- Review manually only if operational items are required
-
-## Possible Actions
-- (none auto-extracted)
+## Top 3 Important Points
+- Contatto stabile in Thailandia per logistica quotidiana e uscite
+- Discussione economica su contenuti adulti e piattaforme (OnlyFans, Fansly)
+- Riferimenti a ambulatorio/consolato per documenti COVID — verificare uso corretto
 
 ## Decisions
 - (none)
@@ -48,7 +46,13 @@ WhatsApp chat with Koragon Gi. Export for archive; not a voice memo.
 - (none)
 
 ## Open Points
-- Whether to extract tasks/events from this chat — owner to confirm
+- Accordi scooter con Michele — storici, stato attuale da confermare
+
+## Next Steps
+- (none)
+
+## Possible Actions
+- Recuperare link o contatti utili solo se ancora operativi
 
 ## Full Transcription Reference
 See `content/transcriptions/WhatsApp Chat with Koragon Gi.md`.

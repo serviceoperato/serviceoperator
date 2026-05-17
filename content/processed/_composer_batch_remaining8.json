@@ -1,0 +1,201 @@
+[
+  {
+    "raw_name": "Voice_001.md",
+    "category": "voice-note",
+    "project": "uncategorized",
+    "title": "Registrazione non intellegibile (Voice 001)",
+    "clean_summary": "[Bassa qualità — revisione manuale consigliata] Clip audio del 2022-12-09: Whisper rileva lingua «nn» (non identificata, prob. singalese). Unica frase trascritta non è in italiano e non consente estrazione di task o decisioni.",
+    "important_points": [
+      "Durata breve; probabilità lingua 0.88 su codice non italiano",
+      "Nessun contenuto semantico utilizzabile in italiano"
+    ],
+    "possible_actions": [
+      "Riascoltare l'audio originale (Voice 001.m4a) e ritrascrivere o scartare"
+    ],
+    "decisions": [],
+    "tasks": [],
+    "calendar": [],
+    "open_points": [
+      "Contenuto reale del messaggio — da confermare ascoltando l'audio"
+    ],
+    "next_steps": [
+      "Archiviare come non analizzabile finché non c'è ritrascrizione manuale"
+    ],
+    "primary_type": "note",
+    "force_ready": true
+  },
+  {
+    "raw_name": "Voice_002.md",
+    "category": "voice-note",
+    "project": "uncategorized",
+    "title": "Trascrizione vuota (Voice 002)",
+    "clean_summary": "[Bassa qualità — revisione manuale consigliata] File Voice 002.m4a (2023-01-08): metadati Whisper indicano lingua «ru» con bassa confidenza (0.36) ma il corpo della trascrizione è vuoto — nessun testo estratto.",
+    "important_points": [
+      "Audio presente su drive ma trascrizione senza segmenti",
+      "Impossibile classificare argomento senza nuovo passaggio STT"
+    ],
+    "possible_actions": [
+      "Ripetere trascrizione con modello/parametri diversi o verifica microfono"
+    ],
+    "decisions": [],
+    "tasks": [],
+    "calendar": [],
+    "open_points": [
+      "L'audio contiene parlato intelligibile? — owner to confirm"
+    ],
+    "next_steps": [
+      "Riprocessare Voice 002.m4a in Phase 1 se serve contenuto"
+    ],
+    "primary_type": "note",
+    "force_ready": true
+  },
+  {
+    "raw_name": "Voice_250621_185357.md",
+    "category": "voice-note",
+    "project": "uncategorized",
+    "title": "Audio non decodificabile (giu 2025)",
+    "clean_summary": "[Bassa qualità — revisione manuale consigliata] Registrazione del 2025-06-21: lingua «nn», testo con caratteri speciali/illeggibili (~10 s). Nessun significato estratto in italiano o inglese.",
+    "important_points": [
+      "Checksum e header pipeline ok; contenuto semantico assente",
+      "Probabile rumore, lingua non supportata o audio corrotto"
+    ],
+    "possible_actions": [
+      "Verificare Voice 250621_185357.m4a all'origine"
+    ],
+    "decisions": [],
+    "tasks": [],
+    "calendar": [],
+    "open_points": [
+      "Utilità di conservare il file nel feed — owner to confirm"
+    ],
+    "next_steps": [],
+    "primary_type": "note",
+    "force_ready": true
+  },
+  {
+    "raw_name": "Chat history with Karn.md",
+    "category": "conversation",
+    "project": "personal",
+    "title": "Chat Karn — relazione, salute e vita a Pattaya",
+    "clean_summary": "Export chat con Karn (salvato 2026-05-14), arco 2023–2026. Thread personale lungo: inizio conoscenza a Pattaya, litigi su stile di vita e bugie, pause e riconciliazioni. Temi ricorrenti: terapia/attachment avoidant, alcol e lavoro in bar, condizioni per fidanzarsi (stabilità, Bitcoin, «jai yen»), Natale/feste separate, supporto emotivo in inglese/thai. Dal 2025–2026 tono da coppia (Teerak): logistica quotidiana (Myth bar, pickup), trasferimenti USDC/ETH (~12 000 THB con hash Etherscan), salute (chiarimenti herpes vs candida, avvertimenti IST confidenziali), anniversario 3 anni (maggio 2026), compleanni amici. Non contiene deliverable lavorativi Service Opera.",
+    "important_points": [
+      "Relazione on-off Jack–Karn con fasi di rottura (2023) e riconciliazione 2024+",
+      "2026: convivenza emotiva, lavoro Karn in bar, trasferimenti crypto documentati in chat",
+      "Conversazioni salute: revisione diagnosi herpes, messaggi cautela malattie sessualmente trasmissibili",
+      "Obiettivi Karn: cash flow, responsabilità, possibile viaggio/Italia — date da confermare"
+    ],
+    "possible_actions": [
+      "Estrarre manualmente promemoria futuri (es. visite, pagamenti) se servono in todo",
+      "Non pubblicare dettagli sanitari di terzi senza consenso"
+    ],
+    "decisions": [],
+    "tasks": [],
+    "calendar": [],
+    "open_points": [
+      "Piani viaggio Italia / feste — menzionati ma non fissati nel thread recente",
+      "Eventuali follow-up medici o legali — solo in chat, non verificati qui"
+    ],
+    "next_steps": [
+      "Consultare export solo per contesto personale; nessuna azione pipeline automatica"
+    ],
+    "primary_type": "note",
+    "force_ready": true
+  },
+  {
+    "raw_name": "WhatsApp Chat with Koragon Gi.md",
+    "category": "conversation",
+    "project": "personal",
+    "title": "WhatsApp Koragon Gicos — Pattaya e vita sociale",
+    "clean_summary": "Chat 1:1 con Koragon Gicos (Gicos) dal 2021, prevalentemente da Pattaya. Argomenti: tamponi COVID in inglese, affitto scooter Morotino 2–3 mesi, mappa locali e nightlife, contenuti OnlyFans/video (prezzi ~1500 THB, qualità, marketing), sauna (Sauna Bar / Sands), app budget senza export Excel, nickname «Birillo». Conversazioni leggere su incontri, cibo, TikTok; nessun progetto Service Opera strutturato.",
+    "important_points": [
+      "Contatto stabile in Thailandia per logistica quotidiana e uscite",
+      "Discussione economica su contenuti adulti e piattaforme (OnlyFans, Fansly)",
+      "Riferimenti a ambulatorio/consolato per documenti COVID — verificare uso corretto"
+    ],
+    "possible_actions": [
+      "Recuperare link o contatti utili solo se ancora operativi"
+    ],
+    "decisions": [],
+    "tasks": [],
+    "calendar": [],
+    "open_points": [
+      "Accordi scooter con Michele — storici, stato attuale da confermare"
+    ],
+    "next_steps": [],
+    "primary_type": "note",
+    "force_ready": true
+  },
+  {
+    "raw_name": "WhatsApp Chat with italiani a Patta.md",
+    "category": "conversation",
+    "project": "thaifans",
+    "title": "Gruppo WhatsApp «italiani a Pattaya»",
+    "clean_summary": "Gruppo creato 2023, attivo 2024–2025 con Koragon Gicos, Giovanni Castoldi, Stefano Pattaya e Jack. Coordinamento uscite: Sand Sauna, Pizza Italy, ToyBox, Soi 5/6, Pin-Up. Temi crypto (Trump, short BTC, USDT/Nexo), visto DTV Thailandia (requisiti 500k THB, nomadi digitali), divieti ecig in TH. Toni informale; qualche rimozione membro e battute. Utile come diario sociale expat, non come verbale riunione.",
+    "important_points": [
+      "Rete italiani a Pattaya per serate e sauna",
+      "Condivisione info DTV e mercati crypto tra membri",
+      "Stefano segue trading; Koragon propone uscite e locali"
+    ],
+    "possible_actions": [
+      "Verificare requisiti DTV su fonti ufficiali se si valuta il visto"
+    ],
+    "decisions": [],
+    "tasks": [],
+    "calendar": [],
+    "open_points": [
+      "Applicabilità DTV a chi opera sui mercati — dibattuto senza conclusione",
+      "Piani uscite future — non strutturati in questo export"
+    ],
+    "next_steps": [],
+    "primary_type": "note",
+    "force_ready": true
+  },
+  {
+    "raw_name": "WhatsApp Chat with IANN.md",
+    "category": "conversation",
+    "project": "personal",
+    "title": "Famiglia Iannace — gruppo WhatsApp",
+    "clean_summary": "Gruppo familiare «IANNACE» (Mamma, Papà, Frostan/Stefania, Jack, Christian). Dal 2015: saluti quotidiani, logistica Piacenza/Residence Europa (caricabatterie, spedizioni Mail Boxes), foto Kristen/nipoti, lavori casa (piazzale ~8000 €, autobloccanti), notizie (commissariamento Anzio/Nettuno, battesimi). Conversazioni affettive e pratiche; nessun task business centralizzato.",
+    "important_points": [
+      "Canale principale famiglia Iannace per aggiornamenti e foto",
+      "Riferimenti ricorrenti a Kristen, Silvana, Christian, eventi religiosi",
+      "Decisioni domestiche (lavori, spedizioni) discusse in chat"
+    ],
+    "possible_actions": [
+      "Estrarre date eventi (battesimi, visite) manualmente se servono in calendario"
+    ],
+    "decisions": [],
+    "tasks": [],
+    "calendar": [],
+    "open_points": [
+      "Eventi futuri menzionati nel log — da riconciliare con calendario personale"
+    ],
+    "next_steps": [],
+    "primary_type": "note",
+    "force_ready": true
+  },
+  {
+    "raw_name": "WhatsApp Chat wi.md",
+    "category": "conversation",
+    "project": "personal",
+    "title": "Gruppo «30-13» — vacanza Pattaya mag 2026",
+    "clean_summary": "Gruppo WhatsApp «30-13» (maggio 2026): Koragon Gicos, Giovanni Castoldi, Vincenzo Cammarrata, Roger (+971), Jack. Coordinamento colazione/caffè (Chao Doi, Cremerie), pizza da Giovanni, serate Soi 6/Myst/Flirt, battute e foto. Roger segue mercati (short BTC); Giovanni video con studentessa MIT. Moglie di Jack lavora al bar (turni). Chiusura log intorno al 16/05 con uscite notturne e ThaiFriendly.",
+    "important_points": [
+      "Vacanza/amici Pattaya maggio 2026 — logistica giornaliera in chat",
+      "Luoghi: Chao Doi, Cremerie, Zama rooftop Jomtien, Soi 6, Myst",
+      "Riferimenti crypto/trading informali tra Roger e gruppo"
+    ],
+    "possible_actions": [
+      "Nessuna azione automatica; eventuali appuntamenti già passati (maggio 2026)"
+    ],
+    "decisions": [],
+    "tasks": [],
+    "calendar": [],
+    "open_points": [
+      "Prossimi incontri dopo 16/05 — non nel segmento finale dell'export"
+    ],
+    "next_steps": [],
+    "primary_type": "note",
+    "force_ready": true
+  }
+]

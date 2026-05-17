@@ -1,7 +1,7 @@
 {
   "processed": {
     "G:\\My Drive\\Voice Recorder\\Voice 001.m4a": {
-      "id": "b9cb73603018c7ac",
+      "id": "c8091515a34f",
       "sourceAudio": "Voice 001.m4a",
       "sourceAudioPath": "G:\\My Drive\\Voice Recorder\\Voice 001.m4a",
       "rawTranscriptionPath": "content/transcriptions/Voice_001.md",
@@ -12,14 +12,14 @@
         "calendar": null,
         "project": "content/projects/uncategorized.md",
         "decisions": null,
-        "openPoints": null
+        "openPoints": "content/open-points/2026-05-17.md"
       },
       "detectedLanguage": "nn",
       "languageProbability": 0.8789923191070557,
       "detected_language": "nn",
       "language_probability": 0.8789923191070557,
       "rawCreatedAt": "2026-05-16 17:33:54 UTC",
-      "aiProcessedAt": "2026-05-17T09:46:21Z",
+      "aiProcessedAt": "2026-05-17T11:20:03Z",
       "status": "ready_for_site",
       "readyForSite": true,
       "error": null,
@@ -30,7 +30,7 @@
       "full_path": "G:\\My Drive\\Voice Recorder\\Voice 001.m4a",
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_001.md",
       "processed_datetime": "2026-05-16 17:33:54 UTC",
-      "source_checksum": "f13393517f88a7a3e72ddd474753cc3a502145168a5e10c1092ca11669c77340",
+      "source_checksum": "ccb3d4ec273e98cc3aa42b3a7cfaaa4dbfc518a57b84b092cf7ea87815a0cd3d",
       "category": "voice-note",
       "project": "uncategorized"
     },
@@ -239,7 +239,7 @@
       "project": "uncategorized"
     },
     "G:\\My Drive\\Voice Recorder\\Voice 002.m4a": {
-      "id": "e97f8d659a605fdc",
+      "id": "f0dc2085112e",
       "sourceAudio": "Voice 002.m4a",
       "sourceAudioPath": "G:\\My Drive\\Voice Recorder\\Voice 002.m4a",
       "rawTranscriptionPath": "content/transcriptions/Voice_002.md",
@@ -250,14 +250,14 @@
         "calendar": null,
         "project": "content/projects/uncategorized.md",
         "decisions": null,
-        "openPoints": null
+        "openPoints": "content/open-points/2026-05-17.md"
       },
       "detectedLanguage": "ru",
       "languageProbability": 0.35724231600761414,
       "detected_language": "ru",
       "language_probability": 0.35724231600761414,
       "rawCreatedAt": "2026-05-17 05:09:26 UTC",
-      "aiProcessedAt": "2026-05-17T09:46:21Z",
+      "aiProcessedAt": "2026-05-17T11:20:03Z",
       "status": "ready_for_site",
       "readyForSite": true,
       "error": null,
@@ -268,7 +268,7 @@
       "full_path": "G:\\My Drive\\Voice Recorder\\Voice 002.m4a",
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_002.md",
       "processed_datetime": "2026-05-17 05:09:26 UTC",
-      "source_checksum": "268931cda308efa2c80e0eb2022c21d344357a07cf318f336722fbf69e746fc1",
+      "source_checksum": "21e4b06ce532c2f0b57f4c0fa284eb87329f63a7e58e3d677a183baf6dc64b13",
       "category": "voice-note",
       "project": "uncategorized"
     },
@@ -443,7 +443,7 @@
       "project": "uncategorized"
     },
     "G:\\My Drive\\Voice Recorder\\Voice 250621_185357.m4a": {
-      "id": "23549afd15a92f2f",
+      "id": "69216cdbadfb",
       "sourceAudio": "Voice 250621_185357.m4a",
       "sourceAudioPath": "G:\\My Drive\\Voice Recorder\\Voice 250621_185357.m4a",
       "rawTranscriptionPath": "content/transcriptions/Voice_250621_185357.md",
@@ -454,14 +454,14 @@
         "calendar": null,
         "project": "content/projects/uncategorized.md",
         "decisions": null,
-        "openPoints": null
+        "openPoints": "content/open-points/2026-05-17.md"
       },
       "detectedLanguage": "nn",
       "languageProbability": 0.5088310837745667,
       "detected_language": "nn",
       "language_probability": 0.5088310837745667,
       "rawCreatedAt": "2026-05-17 05:23:10 UTC",
-      "aiProcessedAt": "2026-05-17T09:46:21Z",
+      "aiProcessedAt": "2026-05-17T11:20:03Z",
       "status": "ready_for_site",
       "readyForSite": true,
       "error": null,
@@ -472,7 +472,7 @@
       "full_path": "G:\\My Drive\\Voice Recorder\\Voice 250621_185357.m4a",
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_250621_185357.md",
       "processed_datetime": "2026-05-17 05:23:10 UTC",
-      "source_checksum": "67b0b7808cfbc6d4ff0e3fc96d8ca38ff8c59664282e0a4a5a9dce0d0a631166",
+      "source_checksum": "9a9a437aa31cfc25ca4f8cd5f250e11a32aad894ad886f301013afc0691d4037",
       "category": "voice-note",
       "project": "uncategorized"
     },
@@ -658,13 +658,14 @@
         "calendar": null,
         "project": "content/projects/personal.md",
         "decisions": null,
-        "openPoints": null
+        "openPoints": "content/open-points/2026-05-17.md"
       },
-      "status": "needs_review",
-      "readyForSite": false,
+      "status": "ready_for_site",
+      "readyForSite": true,
       "rawCreatedAt": "2026-05-17T10:57:01Z",
-      "aiProcessedAt": "2026-05-17T10:57:01Z",
-      "error": "chat import — excluded from main transcriptions feed"
+      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "error": null,
+      "source_checksum": "2b22742b185f0f47a9c50ca2abab76570924487f726aec2d6c3a4bf0b27d48bb"
     },
     "chat-import:content/transcriptions/WhatsApp Chat wi.md": {
       "id": "6aabaa09ab24",
@@ -678,13 +679,14 @@
         "calendar": null,
         "project": "content/projects/personal.md",
         "decisions": null,
-        "openPoints": null
+        "openPoints": "content/open-points/2026-05-17.md"
       },
-      "status": "needs_review",
-      "readyForSite": false,
+      "status": "ready_for_site",
+      "readyForSite": true,
       "rawCreatedAt": "2026-05-17T10:57:01Z",
-      "aiProcessedAt": "2026-05-17T10:57:01Z",
-      "error": "chat import — excluded from main transcriptions feed"
+      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "error": null,
+      "source_checksum": "246b648ac480210b7d974018b32055382d50c303ac07741e9b430e3837481c4b"
     },
     "chat-import:content/transcriptions/WhatsApp Chat with IANN.md": {
       "id": "c52f33323d06",
@@ -698,13 +700,14 @@
         "calendar": null,
         "project": "content/projects/personal.md",
         "decisions": null,
-        "openPoints": null
+        "openPoints": "content/open-points/2026-05-17.md"
       },
-      "status": "needs_review",
-      "readyForSite": false,
+      "status": "ready_for_site",
+      "readyForSite": true,
       "rawCreatedAt": "2026-05-17T10:57:01Z",
-      "aiProcessedAt": "2026-05-17T10:57:01Z",
-      "error": "chat import — excluded from main transcriptions feed"
+      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "error": null,
+      "source_checksum": "1dc2a6e7e917cfe51ed5a6de1e3012fd28d7e607ac45c367a650cc254a3d95be"
     },
     "chat-import:content/transcriptions/WhatsApp Chat with italiani a Patta.md": {
       "id": "9c47ef78ab53",
@@ -718,13 +721,14 @@
         "calendar": null,
         "project": "content/projects/thaifans.md",
         "decisions": null,
-        "openPoints": null
+        "openPoints": "content/open-points/2026-05-17.md"
       },
-      "status": "needs_review",
-      "readyForSite": false,
+      "status": "ready_for_site",
+      "readyForSite": true,
       "rawCreatedAt": "2026-05-17T10:57:01Z",
-      "aiProcessedAt": "2026-05-17T10:57:01Z",
-      "error": "chat import — excluded from main transcriptions feed"
+      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "error": null,
+      "source_checksum": "773d3af04bce162a0f7583fb84b2253abae53b946a004849c2067aeeffdeed0f"
     },
     "chat-import:content/transcriptions/WhatsApp Chat with Koragon Gi.md": {
       "id": "f97895de6fd3",
@@ -738,13 +742,14 @@
         "calendar": null,
         "project": "content/projects/personal.md",
         "decisions": null,
-        "openPoints": null
+        "openPoints": "content/open-points/2026-05-17.md"
       },
-      "status": "needs_review",
-      "readyForSite": false,
+      "status": "ready_for_site",
+      "readyForSite": true,
       "rawCreatedAt": "2026-05-17T10:57:01Z",
-      "aiProcessedAt": "2026-05-17T10:57:01Z",
-      "error": "chat import — excluded from main transcriptions feed"
+      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "error": null,
+      "source_checksum": "2de295478101b5b44be1c059957c51cffa7ce250142569fc65dbbbdb34ae7c80"
     },
     "content/transcriptions/Memo_001.md": {
       "id": "5c1e4449ab12",
@@ -890,13 +895,13 @@
         "calendar": null,
         "project": "content/projects/uncategorized.md",
         "decisions": null,
-        "openPoints": null
+        "openPoints": "content/open-points/2026-05-17.md"
       },
-      "status": "needs_review",
-      "readyForSite": false,
-      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "status": "ready_for_site",
+      "readyForSite": true,
+      "aiProcessedAt": "2026-05-17T11:20:03Z",
       "error": null,
-      "source_checksum": "22f206b4f2254fa1004594a1f55a52f3ef97e0182e708abd52b2c6b101710b5b"
+      "source_checksum": "ccb3d4ec273e98cc3aa42b3a7cfaaa4dbfc518a57b84b092cf7ea87815a0cd3d"
     },
     "content/transcriptions/Voice_002.md": {
       "id": "f0dc2085112e",
@@ -909,13 +914,13 @@
         "calendar": null,
         "project": "content/projects/uncategorized.md",
         "decisions": null,
-        "openPoints": null
+        "openPoints": "content/open-points/2026-05-17.md"
       },
-      "status": "needs_review",
-      "readyForSite": false,
-      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "status": "ready_for_site",
+      "readyForSite": true,
+      "aiProcessedAt": "2026-05-17T11:20:03Z",
       "error": null,
-      "source_checksum": "74610ee0acfeb19c8f99adbe4d79e84820a2cabe99cad280fc7155b01701c329"
+      "source_checksum": "21e4b06ce532c2f0b57f4c0fa284eb87329f63a7e58e3d677a183baf6dc64b13"
     },
     "content/transcriptions/Voice_003.md": {
       "id": "8ae8c30860dd",
@@ -1023,13 +1028,13 @@
         "calendar": null,
         "project": "content/projects/uncategorized.md",
         "decisions": null,
-        "openPoints": null
+        "openPoints": "content/open-points/2026-05-17.md"
       },
-      "status": "needs_review",
-      "readyForSite": false,
-      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "status": "ready_for_site",
+      "readyForSite": true,
+      "aiProcessedAt": "2026-05-17T11:20:03Z",
       "error": null,
-      "source_checksum": "94b937825ab5ca5cdc46fd29792e1ea36fd463cf5cf955562face838cf020731"
+      "source_checksum": "9a9a437aa31cfc25ca4f8cd5f250e11a32aad894ad886f301013afc0691d4037"
     },
     "content/transcriptions/Voice_250621_185410.md": {
       "id": "a4d50b0e6da1",
@@ -1106,6 +1111,101 @@
       "aiProcessedAt": "2026-05-17T11:11:46Z",
       "error": null,
       "source_checksum": "ff852a4a84b386dd4bc4168fa6ebb344301d85f1fa8a3487cb218aac6bc3c227"
+    },
+    "content/transcriptions/Chat history with Karn.md": {
+      "id": "37d2a3a4fa59",
+      "sourceAudio": "Chat history with Karn",
+      "rawTranscriptionPath": "content/transcriptions/Chat history with Karn.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-conversation-chat-history-with-karn-37d2a3a4fa59.md",
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/personal.md",
+        "decisions": null,
+        "openPoints": "content/open-points/2026-05-17.md"
+      },
+      "status": "ready_for_site",
+      "readyForSite": true,
+      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "error": null,
+      "source_checksum": "2b22742b185f0f47a9c50ca2abab76570924487f726aec2d6c3a4bf0b27d48bb"
+    },
+    "content/transcriptions/WhatsApp Chat with Koragon Gi.md": {
+      "id": "f97895de6fd3",
+      "sourceAudio": "WhatsApp Chat with Koragon Gi",
+      "rawTranscriptionPath": "content/transcriptions/WhatsApp Chat with Koragon Gi.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-conversation-whatsapp-chat-with-koragon-gi-f97895de6fd3.md",
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/personal.md",
+        "decisions": null,
+        "openPoints": "content/open-points/2026-05-17.md"
+      },
+      "status": "ready_for_site",
+      "readyForSite": true,
+      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "error": null,
+      "source_checksum": "2de295478101b5b44be1c059957c51cffa7ce250142569fc65dbbbdb34ae7c80"
+    },
+    "content/transcriptions/WhatsApp Chat with italiani a Patta.md": {
+      "id": "9c47ef78ab53",
+      "sourceAudio": "WhatsApp Chat with italiani a Patta",
+      "rawTranscriptionPath": "content/transcriptions/WhatsApp Chat with italiani a Patta.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-conversation-whatsapp-chat-with-italiani-a-patta-9c47ef78ab53.md",
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/thaifans.md",
+        "decisions": null,
+        "openPoints": "content/open-points/2026-05-17.md"
+      },
+      "status": "ready_for_site",
+      "readyForSite": true,
+      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "error": null,
+      "source_checksum": "773d3af04bce162a0f7583fb84b2253abae53b946a004849c2067aeeffdeed0f"
+    },
+    "content/transcriptions/WhatsApp Chat with IANN.md": {
+      "id": "c52f33323d06",
+      "sourceAudio": "WhatsApp Chat with IANN",
+      "rawTranscriptionPath": "content/transcriptions/WhatsApp Chat with IANN.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-conversation-whatsapp-chat-with-iann-c52f33323d06.md",
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/personal.md",
+        "decisions": null,
+        "openPoints": "content/open-points/2026-05-17.md"
+      },
+      "status": "ready_for_site",
+      "readyForSite": true,
+      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "error": null,
+      "source_checksum": "1dc2a6e7e917cfe51ed5a6de1e3012fd28d7e607ac45c367a650cc254a3d95be"
+    },
+    "content/transcriptions/WhatsApp Chat wi.md": {
+      "id": "6aabaa09ab24",
+      "sourceAudio": "WhatsApp Chat wi",
+      "rawTranscriptionPath": "content/transcriptions/WhatsApp Chat wi.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/notes/2026-05-17-conversation-whatsapp-chat-wi-6aabaa09ab24.md",
+        "tasks": null,
+        "calendar": null,
+        "project": "content/projects/personal.md",
+        "decisions": null,
+        "openPoints": "content/open-points/2026-05-17.md"
+      },
+      "status": "ready_for_site",
+      "readyForSite": true,
+      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "error": null,
+      "source_checksum": "246b648ac480210b7d974018b32055382d50c303ac07741e9b430e3837481c4b"
     }
   },
   "version": 2
