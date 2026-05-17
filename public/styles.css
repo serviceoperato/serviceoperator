@@ -2561,6 +2561,18 @@ html.so-site-nav-open {
   flex: 1 1 auto;
   min-width: 0;
 }
+.tf-admin-nav__pills:has(.tf-admin-nav__row) {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+.tf-admin-nav__pills > .tf-admin-nav__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.45rem;
+  margin-bottom: 0;
+}
 .tf-admin-version {
   flex-shrink: 0;
   margin-left: auto;

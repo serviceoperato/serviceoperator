@@ -133,6 +133,7 @@
     { label: 'Report catalog', path: '/admin/report-catalog' },
     { label: 'User reports', path: '/admin/user-reports' },
     { label: 'Voice Recorder', path: '/admin/voice-recorder' },
+    { label: 'Transcriptions', path: '/admin/transcriptions' },
   ];
 
   function openPlacesLeadsFromMenu(e) {

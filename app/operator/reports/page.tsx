@@ -36,6 +36,12 @@ export default function OperatorReportsPage() {
           <Link className="tf-admin-nav__pill" href="/admin/user-reports">
             User reports
           </Link>
+          <Link className="tf-admin-nav__pill" href="/admin/voice-recorder">
+            Voice Recorder
+          </Link>
+          <Link className="tf-admin-nav__pill" href="/admin/transcriptions">
+            Transcriptions
+          </Link>
         </div>
       </nav>
 

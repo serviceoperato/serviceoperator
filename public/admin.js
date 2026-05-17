@@ -2159,18 +2159,28 @@
     if (!tfNav) return;
     var id = activeRouteId != null ? activeRouteId : getAdminRouteFromLocation();
     tfNav.innerHTML = '';
-    tfNav.appendChild(makeNavLink('Users & payouts', '/admin/users', 'users', id));
-    tfNav.appendChild(makeNavLink('Activity log', '/admin/activity', 'activity', id));
-    tfNav.appendChild(makeNavLink('User profiling', '/admin/user-profiling', 'user-profiling', id));
-    tfNav.appendChild(makeNavLink('Deploy log', '/admin/deploy-log', 'deploy-log', id));
-    tfNav.appendChild(makeNavLink('Site appearance', '/admin/site-appearance', 'site-appearance', id));
-    tfNav.appendChild(makeNavLink('Icons', '/admin/icons', 'icons', id));
-    tfNav.appendChild(makeNavLink('Reports', '/operator/reports', 'reports', id));
-    tfNav.appendChild(makePlacesLeadsNavControl());
-    tfNav.appendChild(makeNavLink('Report catalog', '/admin/report-catalog', 'report-catalog', id));
-    tfNav.appendChild(makeNavLink('User reports', '/admin/user-reports', 'user-reports', id));
-    tfNav.appendChild(makeNavLink('Voice Recorder', '/admin/voice-recorder', 'voice-recorder', id));
-    tfNav.appendChild(makeNavLink('Transcriptions', '/admin/transcriptions', 'transcriptions', id));
+    tfNav.className = 'tf-admin-nav__pills';
+
+    var rowMain = document.createElement('div');
+    rowMain.className = 'tf-admin-nav__row';
+    rowMain.appendChild(makeNavLink('Users & payouts', '/admin/users', 'users', id));
+    rowMain.appendChild(makeNavLink('Activity log', '/admin/activity', 'activity', id));
+    rowMain.appendChild(makeNavLink('User profiling', '/admin/user-profiling', 'user-profiling', id));
+    rowMain.appendChild(makeNavLink('Deploy log', '/admin/deploy-log', 'deploy-log', id));
+    rowMain.appendChild(makeNavLink('Site appearance', '/admin/site-appearance', 'site-appearance', id));
+    rowMain.appendChild(makeNavLink('Icons', '/admin/icons', 'icons', id));
+    rowMain.appendChild(makeNavLink('Reports', '/operator/reports', 'reports', id));
+    rowMain.appendChild(makePlacesLeadsNavControl());
+    rowMain.appendChild(makeNavLink('Report catalog', '/admin/report-catalog', 'report-catalog', id));
+    rowMain.appendChild(makeNavLink('User reports', '/admin/user-reports', 'user-reports', id));
+
+    var rowVoice = document.createElement('div');
+    rowVoice.className = 'tf-admin-nav__row';
+    rowVoice.appendChild(makeNavLink('Voice Recorder', '/admin/voice-recorder', 'voice-recorder', id));
+    rowVoice.appendChild(makeNavLink('Transcriptions', '/admin/transcriptions', 'transcriptions', id));
+
+    tfNav.appendChild(rowMain);
+    tfNav.appendChild(rowVoice);
   }
 
   function syncAdminRouteFromLocation() {
