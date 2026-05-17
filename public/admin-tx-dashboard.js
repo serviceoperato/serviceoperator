@@ -5,7 +5,13 @@
   'use strict';
 
   /** Bumped when dashboard markup/behavior changes (cache-bust aid). */
-  window.TX_DASHBOARD_UI_REV = 6;
+  window.TX_DASHBOARD_UI_REV = 7;
+
+  function txLog() {
+    if (typeof console !== 'undefined' && console.log) {
+      console.log.apply(console, ['[tx]'].concat([].slice.call(arguments)));
+    }
+  }
 
   var CATEGORIES = [
     { key: 'meetings', label: 'Meeting summaries', short: 'Meetings' },
@@ -99,6 +105,7 @@
   var ADMIN_JWT_KEY = 'so_admin_jwt';
 
   function adminJwt() {
+    if (typeof window.getAdminBearer === 'function') return window.getAdminBearer() || '';
     if (typeof readStoredAdminJwt === 'function') return readStoredAdminJwt() || '';
     try {
       return localStorage.getItem(ADMIN_JWT_KEY) || sessionStorage.getItem(ADMIN_JWT_KEY) || '';
@@ -747,7 +754,10 @@
 
   function renderOverview() {
     var el = byId('txOverview');
-    if (!el) return;
+    if (!el) {
+      txLog('renderOverview: #txOverview missing');
+      return;
+    }
     el.innerHTML = CATEGORIES.map(function (c) {
       var items = categoryItems(c.key);
       var n = items.length;
@@ -787,6 +797,13 @@
         selectCategory(btn.getAttribute('data-tx-overview-cat'));
       });
     });
+    txLog(
+      'render overview:',
+      el.querySelectorAll('.tx-overview-card').length,
+      'cards ·',
+      state.items.length,
+      'items loaded'
+    );
   }
 
   function renderCategoryHeader() {
@@ -2276,7 +2293,10 @@
   function renderFeed() {
     var feed = byId('txFeed');
     var hint = byId('txFeedHint');
-    if (!feed) return;
+    if (!feed) {
+      txLog('renderFeed: #txFeed missing');
+      return;
+    }
 
     renderDigest();
     renderDashboardBanner();
@@ -2323,6 +2343,15 @@
     feed.innerHTML = renderFeedBody(list);
     bindFeedActions(feed);
     renderTimeline();
+    txLog(
+      'render feed:',
+      feed.querySelectorAll('.tx-dash-card').length,
+      'cards ·',
+      list.length,
+      'filtered ·',
+      state.items.length,
+      'total'
+    );
   }
 
   function renderTimeline() {
@@ -2778,12 +2807,17 @@
     var feed = byId('txFeed');
     if (feed) feed.setAttribute('aria-busy', 'true');
 
-    return tryApi(['/api/admin/transcriptions/index', '/api/admin/transcriptions-index'], {
+    var indexPaths = ['/api/admin/transcriptions/index', '/api/admin/transcriptions-index'];
+    txLog('API GET start', indexPaths[0], '· jwt len', adminJwt().length);
+
+    return tryApi(indexPaths, {
       method: 'GET',
     })
       .then(function (pack) {
         state.loading = false;
         if (feed) feed.setAttribute('aria-busy', 'false');
+        var rawCount = pack && pack.j && Array.isArray(pack.j.items) ? pack.j.items.length : 0;
+        txLog('API response', pack.status, 'ok=' + pack.ok, 'raw items=' + rawCount);
         if (!pack.ok) {
           state.apiUnavailable = pack.status === 404;
           state.items = [];
@@ -2835,6 +2869,8 @@
 
         renderStats();
         renderRawSourcesBox();
+        renderOverview();
+        renderCategoryHeader();
         renderCategoryCards();
         renderProjectSelect();
         syncFilterPills();
@@ -2966,7 +3002,7 @@
   }
 
   window.initAdminTranscriptions = function () {
-    if (window.__txDashboardInitComplete) return;
+    txLog('init start · rev', window.TX_DASHBOARD_UI_REV, '· route', txShellPath());
     var section = byId('transcriptionsSection');
     if (section) {
       section.classList.add('tx-admin--dashboard');
@@ -2977,7 +3013,6 @@
     renderOverview();
     renderCategoryHeader();
     renderDistribution();
-    window.__txDashboardInitComplete = true;
     loadIndex();
   };
 
@@ -2996,10 +3031,11 @@
 
   function scheduleTxDashboardSelfInit() {
     function trySelfInit() {
-      if (window.__txDashboardInitComplete) return;
       if (!isTranscriptionsAdminRoute()) return;
       if (!txWorkspaceVisible()) return;
       if (typeof window.initAdminTranscriptions !== 'function') return;
+      var cards = document.querySelectorAll('#txOverview .tx-overview-card').length;
+      if (cards > 0 && !state.loading && state.items.length) return;
       window.initAdminTranscriptions();
     }
 
@@ -3017,6 +3053,14 @@
       obs.observe(workspace, { attributes: true, attributeFilter: ['class'] });
     }
     window.addEventListener('popstate', trySelfInit);
+
+    setTimeout(function () {
+      if (!isTranscriptionsAdminRoute()) return;
+      var cards = document.querySelectorAll('#txOverview .tx-overview-card').length;
+      if (cards > 0) return;
+      txLog('safety self-init after 2s');
+      trySelfInit();
+    }, 2000);
   }
 
   scheduleTxDashboardSelfInit();
