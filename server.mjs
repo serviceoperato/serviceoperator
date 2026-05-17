@@ -4052,8 +4052,6 @@ const ADMIN_HTML_PATHS = [
   '/admin/transcriptions',
   '/admin/transcriptions/',
   /^\/admin\/transcriptions\/item\/[A-Za-z0-9_-]+$/,
-  '/admin/transcriptions/item/:id',
-  '/admin/transcriptions/item/:id/',
   '/admin/users',
   '/admin/users/',
   '/admin/activity',

@@ -488,8 +488,19 @@
 }
 
 .tx-mini-ring {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   width: 3.5rem;
   height: 3.5rem;
+  color: var(--tx-dash-ink, #0f172a);
+}
+
+.tx-mini-ring .tx-ring__svg {
+  width: 3.5rem;
+  height: 3.5rem;
+  flex-shrink: 0;
 }
 
 .tx-mini-ring svg {
@@ -504,6 +515,91 @@
 
 .tx-ring--compact svg text {
   font-size: 11px;
+  font-weight: 700;
+}
+
+.tx-ring--legend {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+}
+
+.tx-ring--legend .tx-ring__svg {
+  width: 3.25rem;
+  height: 3.25rem;
+  filter: drop-shadow(0 2px 6px color-mix(in srgb, var(--tx-overview-accent, #4f46e5) 18%, transparent));
+}
+
+.tx-ring--legend .tx-ring__legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  width: 100%;
+}
+
+.tx-ring__legend-item {
+  display: grid;
+  grid-template-columns: 0.45rem 1fr auto;
+  align-items: center;
+  gap: 0.2rem 0.3rem;
+  font-size: 0.58rem;
+  line-height: 1.2;
+  color: var(--tx-dash-muted);
+}
+
+.tx-ring__legend-swatch {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, #000 12%, transparent);
+}
+
+.tx-ring__legend-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tx-ring__legend-val {
+  font-weight: 700;
+  color: var(--tx-dash-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.tx-ring--hero {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.65rem;
+  width: auto;
+  height: auto;
+}
+
+.tx-ring--hero .tx-ring__svg {
+  width: 4.25rem;
+  height: 4.25rem;
+}
+
+.tx-ring--hero .tx-ring__legend {
+  gap: 0.2rem;
+}
+
+.tx-ring--hero .tx-ring__legend-item {
+  font-size: 0.68rem;
+}
+
+.tx-detail-page__hero-visual .tx-ring--hero {
+  padding: 0.35rem 0.5rem;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--tx-cat-accent, #4f46e5) 10%, var(--tx-dash-card));
+}
+
+.tx-detail-page__hero-visual .tx-dash-card__icon {
+  width: 4.25rem;
+  height: 4.25rem;
 }
 
 .tx-empty--visual {
