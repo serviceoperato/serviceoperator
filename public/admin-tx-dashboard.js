@@ -1499,7 +1499,7 @@
     var chart = segments.filter(function (s) {
       return s.value > 0;
     });
-    if (!chart.length) return '';
+    if (chart.length < 2) return '';
     var chartTotal = chart.reduce(function (s, c) {
       return s + c.value;
     }, 0);
@@ -1509,48 +1509,34 @@
     var cy = 24;
     var circ = 2 * Math.PI * r;
     var offset = 0;
-    var arcs;
-    if (chart.length === 1) {
-      arcs =
-        '<circle cx="' +
-        cx +
-        '" cy="' +
-        cy +
-        '" r="' +
-        r +
-        '" fill="none" stroke="' +
-        esc(chart[0].color) +
-        '" stroke-width="5" opacity="0.92"/>';
-    } else {
-      arcs = chart
-        .map(function (c) {
-          var frac = c.value / chartTotal;
-          var len = circ * frac;
-          var dash = len + ' ' + (circ - len);
-          var rot = (offset / circ) * 360 - 90;
-          offset += len;
-          return (
-            '<circle cx="' +
-            cx +
-            '" cy="' +
-            cy +
-            '" r="' +
-            r +
-            '" fill="none" stroke="' +
-            esc(c.color) +
-            '" stroke-width="5" stroke-dasharray="' +
-            dash +
-            '" transform="rotate(' +
-            rot +
-            ' ' +
-            cx +
-            ' ' +
-            cy +
-            ')" />'
-          );
-        })
-        .join('');
-    }
+    var arcs = chart
+      .map(function (c) {
+        var frac = c.value / chartTotal;
+        var len = circ * frac;
+        var dash = len + ' ' + (circ - len);
+        var rot = (offset / circ) * 360 - 90;
+        offset += len;
+        return (
+          '<circle cx="' +
+          cx +
+          '" cy="' +
+          cy +
+          '" r="' +
+          r +
+          '" fill="none" stroke="' +
+          esc(c.color) +
+          '" stroke-width="5" stroke-dasharray="' +
+          dash +
+          '" transform="rotate(' +
+          rot +
+          ' ' +
+          cx +
+          ' ' +
+          cy +
+          ')" />'
+        );
+      })
+      .join('');
     var center = centerLabel != null ? centerLabel : chartTotal;
     var sizeCls = opts.size === 'hero' ? ' tx-ring--hero' : opts.size === 'card' ? ' tx-ring--card' : '';
     var ringCls = opts.legend ? ' tx-ring--legend' : ' tx-ring--compact';
