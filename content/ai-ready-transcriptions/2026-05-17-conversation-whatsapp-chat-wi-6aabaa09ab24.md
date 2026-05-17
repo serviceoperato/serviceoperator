@@ -27,7 +27,8 @@ Gruppo «30-13» — vacanza Pattaya mag 2026
 - **Project:** personal
 
 ## Summary
-Gruppo WhatsApp «30-13» (maggio 2026): Koragon Gicos, Giovanni Castoldi, Vincenzo Cammarrata, Roger (+971), Jack. Coordinamento colazione/caffè (Chao Doi, Cremerie), pizza da Giovanni, serate Soi 6/Myst/Flirt, battute e foto. Roger segue mercati (short BTC); Giovanni video con studentessa MIT. Moglie di Jack lavora al bar (turni). Chiusura log intorno al 16/05 con uscite notturne e ThaiFriendly.
+Gruppo WhatsApp «30-13» (maggio 2026) tra Koragon Gicos, Giovanni Castoldi, Vincenzo Cammarrata, Roger (+971) e Jack. Coordinamento quotidiano a Pattaya: colazione e caffè (Chao Doi, Cremerie), pizza da Giovanni, serate Soi 6, Myst, Flirt e Zama rooftop Jomtien, battute e foto. Roger commenta mercati (short BTC); Giovanni condivide video con studentessa MIT. Compare il fatto che la moglie di Jack lavori al bar con turni variabili, influenzando orari di uscita. La chat chiude intorno al 16 maggio con uscite notturne e riferimenti a ThaiFriendly. Non è un verbale di progetto: funge da diario sociale expat e logistica amici in vacanza. Implicazione per chi legge l’admin: utile per contesto vita Pattaya e rete italiani, senza task business centralizzati. Nessuna azione Service Opera derivata; eventuali riferimenti crypto sono informali tra pari.
+
 
 ## Top 3 Key Points
 - Vacanza/amici Pattaya maggio 2026 — logistica giornaliera in chat

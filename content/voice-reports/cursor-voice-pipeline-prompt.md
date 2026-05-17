@@ -73,7 +73,7 @@ visual:
 
 Sezioni markdown nell'ordine (omettere se vuote):
 ## Source
-## Summary               (max 5 righe)
+## Summary               (detail 150–220 words; up to 250 for long chats/meetings; card preview 40–70 words derived at index)
 ## Top 3 Important Points
 ## Decisions             (solo decisioni esplicite)
 ## Tasks                 (- [ ] task | due: <data|null> | priority: <h|m|l>)

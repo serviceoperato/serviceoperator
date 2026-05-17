@@ -27,7 +27,8 @@ WhatsApp Koragon Gicos — Pattaya e vita sociale
 - **Project:** personal
 
 ## Summary
-Chat 1:1 con Koragon Gicos (Gicos) dal 2021, prevalentemente da Pattaya. Argomenti: tamponi COVID in inglese, affitto scooter Morotino 2–3 mesi, mappa locali e nightlife, contenuti OnlyFans/video (prezzi ~1500 THB, qualità, marketing), sauna (Sauna Bar / Sands), app budget senza export Excel, nickname «Birillo». Conversazioni leggere su incontri, cibo, TikTok; nessun progetto Service Opera strutturato.
+Chat 1:1 WhatsApp con Koragon Gicos (Gicos) dal 2021, prevalentemente da Pattaya. Argomenti ricorrenti: tamponi COVID in inglese, affitto scooter Morotino per due-tre mesi, mappe di locali e nightlife, contenuti OnlyFans e video (prezzi intorno a 1.500 THB, qualità, marketing), sauna (Sauna Bar, Sands), app budget senza export Excel, nickname «Birillo». Conversazioni leggere su incontri, cibo e TikTok; nessun progetto Service Opera strutturato. Koragon funge da contatto stabile per logistica quotidiana e uscite; compaiono discussioni economiche su piattaforme adulte e riferimenti ad ambulatorio o consolato per documenti COVID da verificare sul posto. Implicazione: archivio personale utile per contesto Thailandia e rete locale, non per task aziendali. Prossimo passo: consultare solo se serve ricostruire accordi storici su scooter o documenti; stato attuale e prezzi vanno confermati fuori chat.
+
 
 ## Top 3 Key Points
 - Contatto stabile in Thailandia per logistica quotidiana e uscite

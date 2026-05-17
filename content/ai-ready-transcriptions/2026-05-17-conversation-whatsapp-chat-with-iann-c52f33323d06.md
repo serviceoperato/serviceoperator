@@ -27,7 +27,8 @@ Famiglia Iannace — gruppo WhatsApp
 - **Project:** personal
 
 ## Summary
-Gruppo familiare «IANNACE» (Mamma, Papà, Frostan/Stefania, Jack, Christian). Dal 2015: saluti quotidiani, logistica Piacenza/Residence Europa (caricabatterie, spedizioni Mail Boxes), foto Kristen/nipoti, lavori casa (piazzale ~8000 €, autobloccanti), notizie (commissariamento Anzio/Nettuno, battesimi). Conversazioni affettive e pratiche; nessun task business centralizzato.
+Gruppo familiare WhatsApp «IANNACE» (Mamma, Papà, Frostan/Stefania, Jack, Christian) attivo dal 2015. Saluti quotidiani, logistica tra Piacenza e Residence Europa (caricabatterie, spedizioni Mail Boxes), foto di Kristen e nipoti, lavori casa (piazzale indicato intorno a 8.000 €, autobloccanti), notizie locali (commissariamento Anzio/Nettuno, battesimi). Tono prevalentemente affettivo e pratico; decisioni domestiche e spedizioni si discutono in chat senza tracker centralizzato. Compare spesso Silvana e Christian nei thread; eventi religiosi e auguri strutturano il calendario sociale della famiglia. Il gruppo funge da canale principale per aggiornamenti e foto, non da verbale di riunioni formali. Per Service Opera il file non contiene deliverable lavorativi. Valore: ricostruire timeline familiare, contatti e spese citate quando servono contesto personale. Prossimo passo: consultare solo per riferimento; importi o lavori vanno confermati con documenti esterni alla chat.
+
 
 ## Top 3 Key Points
 - Canale principale famiglia Iannace per aggiornamenti e foto

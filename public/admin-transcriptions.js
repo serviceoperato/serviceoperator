@@ -5,10 +5,13 @@
   'use strict';
 
   /** Bumped when dashboard markup/behavior changes (cache-bust aid). */
-  window.TX_DASHBOARD_UI_REV = 16;
+  window.TX_DASHBOARD_UI_REV = 17;
 
   /** Detail page: collapsed preview length for full transcription reference (chars). */
   var DETAIL_REF_PREVIEW_CHARS = 650;
+  /** List/card preview: max words (index preview / cardSummary). */
+  var CARD_PREVIEW_MAX_WORDS = 70;
+  var CARD_PREVIEW_MIN_WORDS = 40;
 
   function txLog() {
     if (typeof console !== 'undefined' && console.log) {
@@ -458,7 +461,7 @@
     var fmt = function (s) {
       return s ? formatSpeakerLine(s, people) : s;
     };
-    ['summary', 'preview', 'description', 'notes', 'decisionText', 'issue'].forEach(function (key) {
+    ['summary', 'preview', 'cardSummary', 'description', 'notes', 'decisionText', 'issue'].forEach(function (key) {
       if (typeof item[key] === 'string') item[key] = fmt(item[key]);
     });
     [
@@ -1403,25 +1406,32 @@
     return filterDistinctFromTitle(title, pts);
   }
 
-  function itemSummaryForDisplay(item, title, points) {
-    var summary = itemDetailSummary(item) || itemSummaryParagraph(item);
-    if (!summary || isGenericPlaceholderText(summary)) return '';
-    if (textOverlaps(title, summary)) return '';
-    if (points && points.length) {
-      var overlap = points.some(function (p) {
-        return textOverlaps(p, summary);
-      });
-      if (overlap) {
-        var parts = splitTextToPoints(summary, 3).filter(function (s) {
-          if (textOverlaps(title, s)) return false;
-          return !points.some(function (p) {
-            return textOverlaps(p, s);
-          });
-        });
-        return parts.join(' ').trim();
-      }
+  function wordCount(text) {
+    var m = String(text || '').match(/\b\w+\b/g);
+    return m ? m.length : 0;
+  }
+
+  function cardPreviewFromFull(fullText) {
+    var t = String(fullText || '').trim();
+    if (!t) return '';
+    var wc = wordCount(t);
+    if (wc <= CARD_PREVIEW_MAX_WORDS) return t;
+    return shortenToWords(t, CARD_PREVIEW_MAX_WORDS) + '\u2026';
+  }
+
+  function cardPreviewText(item) {
+    if (!item) return '';
+    var card = String(item.cardSummary || item.preview || '').trim();
+    if (card && !textLooksTruncated(card) && wordCount(card) <= CARD_PREVIEW_MAX_WORDS) {
+      return card;
     }
-    return summary;
+    var full = itemDetailSummary(item) || itemSummaryParagraph(item);
+    if (!full) return card;
+    return cardPreviewFromFull(full);
+  }
+
+  function itemSummaryForDisplay(item, title, points) {
+    return cardPreviewText(item);
   }
 
   function applyCardCopyFields(item) {
@@ -1430,14 +1440,13 @@
     var title = itemDisplayTitle(item);
     var points = itemKeyPoints(item);
     item.title = title;
-    var summary = itemSummaryForDisplay(item, title, points);
-    if (summary) {
-      item.summary = summary;
-      if (!item.preview || textOverlaps(title, item.preview)) {
-        item.preview = truncatePoint(summary, 200);
-      }
+    var card = itemSummaryForDisplay(item, title, points);
+    if (card) {
+      item.preview = card;
+      item.cardSummary = card;
     } else if (item.preview && textOverlaps(title, item.preview)) {
       item.preview = '';
+      item.cardSummary = '';
     }
     return item;
   }
@@ -3805,7 +3814,8 @@
   }
 
   function cardExcerpt(item) {
-    if (item.preview) return String(item.preview);
+    var card = cardPreviewText(item);
+    if (card) return card;
     var bullets = topBullets(item);
     if (bullets.length) return bullets[0];
     return '';

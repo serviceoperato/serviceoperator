@@ -27,7 +27,8 @@ Scuola, YouTube minori e salute
 - **Project:** personal
 
 ## Summary
-Dialogo su compiti estivi e riassunti scolastici (critica ai 'promessi sposi' e compiti estivi), confronto con letture passate. Acceso dibattito sulla pubblicazione online di video con minori (esempio Silvano/sciroppo, canali famiglia su YouTube) con forte disaccordo etico. Poi conversazione da cucina su broccoli, ossidazione/limone, sale nell'acqua di cottura. Chiusura su pressione bassa, restrizioni sale/caffè, cardiologo che definisce condizione non risolutiva, mani fredde e limiti allo sport.
+Dialogo familiare che alterna critica al modello scolastico di letture estive e riassunti (es. Promessi sposi) con confronto su esperienze passate e utilità dei compiti vacanza. Acceso dibattito etico sulla pubblicazione online di video con minori (esempio Silvano/sciroppo, canali famiglia su YouTube), con forte disaccordo tra i partecipanti su consenso, privacy e ruolo dei genitori. Poi conversazione da cucina su broccoli, ossidazione e uso di limone e sale nell’acqua di cottura. Chiusura su pressione bassa, restrizioni su sale e caffè, parere cardiologico che definisce la condizione non risolutiva, mani fredde e limiti allo sport, con richiesta implicita di maggior chiarezza medica. Il contenuto mescola policy familiare su immagini dei minori e gestione salute. Implicazioni: allineamento familiare su foto/video dei bambini; eventuale follow-up cardiologico per attività fisica e sintomi periferici. Non emergono decisioni formali su prodotti digitali o scuola.
+
 
 ## Top 3 Key Points
 - Critica al modello scolastico di letture/riassunti estivi

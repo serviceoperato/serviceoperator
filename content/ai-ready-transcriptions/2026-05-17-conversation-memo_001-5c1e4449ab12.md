@@ -27,7 +27,8 @@ Idea servizio riassunti e registrazione per AI
 - **Project:** serviceopera
 
 ## Summary
-Conversazione familiare iniziale su tablet e WhatsApp, poi registrazione esplicita per sperimentare l'intelligenza artificiale sui punti focali. Si discute un possibile servizio in abbonamento con riassunti audio quotidiani di libri, già esistente in inglese e italiano, e si valuta di non replicarlo per concorrenza. Si sposta l'attenzione verso riassunti di contenuti lunghi (libri specialistici, congressi UE di ore) con voce automatizzata, distinguendosi dai telegiornali per meno soggettività e per la necessità umana di leggere anche tra le righe.
+Conversazione registrata per sperimentare l’elaborazione AI dei punti focali: parte domestica su tablet e WhatsApp, poi brainstorming su un possibile servizio in abbonamento con riassunti audio quotidiani di libri. L’interlocutore nota che il modello esiste già in inglese e italiano e propone di non replicarlo per concorrenza satura. L’attenzione si sposta verso contenuti molto lunghi — libri specialistici, congressi e dibattiti europei di ore — con sintesi vocali automatizzate, distinguendosi dai telegiornali brevi ma riconoscendo che ogni taglio introduce bias e che serve ancora un lettore umano per omissioni e sfumature. Il filo lega l’esperienza personale (poco tempo, ascolto passivo) a un posizionamento informativo diverso, con decisione esplicita di non procedere sul clone dei riassunti-libro. Per Service Opera resta esplorazione di nicchia, non impegno di prodotto. Implicazione: definire differenziazione rispetto ai riassunti-libro esistenti e quanto controllo editoriale serve su politica e congressi prima di un prototipo.
+
 
 ## Top 3 Key Points
 - Registrazione della conversazione per testare elaborazione AI dei punti focali

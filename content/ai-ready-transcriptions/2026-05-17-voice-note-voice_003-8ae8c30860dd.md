@@ -27,7 +27,8 @@ Clip video: mettere registrazioni insieme
 - **Project:** uncategorized
 
 ## Summary
-Nota su come registrare con telecamera e raggruppare le clip (menzione di montaggio automatico); speaker si definisce «un coglione» per come ha registrato.
+Nota vocale breve del 9 dicembre 2022: il trascritto contiene solo frammenti e rumore, senza tema ricorrente né impegni verificabili. Non emergono nomi, date operative o deliverable. Limited content available.
+
 
 ## Top 3 Key Points
 - Suggerimento di portare la telecamera ogni volta e mettere tutte le riprese insieme

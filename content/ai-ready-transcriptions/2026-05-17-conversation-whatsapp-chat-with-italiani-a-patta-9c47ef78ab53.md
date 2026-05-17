@@ -27,7 +27,8 @@ Gruppo WhatsApp «italiani a Pattaya»
 - **Project:** thaifans
 
 ## Summary
-Gruppo creato 2023, attivo 2024–2025 con Koragon Gicos, Giovanni Castoldi, Stefano Pattaya e Jack. Coordinamento uscite: Sand Sauna, Pizza Italy, ToyBox, Soi 5/6, Pin-Up. Temi crypto (Trump, short BTC, USDT/Nexo), visto DTV Thailandia (requisiti 500k THB, nomadi digitali), divieti ecig in TH. Toni informale; qualche rimozione membro e battute. Utile come diario sociale expat, non come verbale riunione.
+Gruppo WhatsApp «italiani a Patta» creato nel 2023, attivo 2024–2025 con Koragon Gicos, Giovanni Castoldi, Stefano Pattaya e Jack. Coordinamento uscite: Sand Sauna, Pizza Italy, ToyBox, Soi 5/6, Pin-Up; discussioni su crypto (Trump, short BTC, USDT/Nexo), requisiti visto DTV Thailandia (500k THB, nomadi digitali) e divieti ecig in Thailandia. Tono informale con battute e qualche rimozione membro; contenuti economici e normativi vanno letti come chiacchiere tra pari, non consulenza professionale. Utile come diario della rete italiani a Pattaya, non come verbale di riunione formale né archivio decisionale Service Opera. Implicazione: nessuna azione pipeline automatica; per decisioni su visti o investimenti serve verifica su fonti ufficiali. Stefano segue trading in chat; Koragon propone locali e serate — valore principale logistica sociale expat e condivisione esperienze sul posto.
+
 
 ## Top 3 Key Points
 - Rete italiani a Pattaya per serate e sauna

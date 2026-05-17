@@ -26,6 +26,7 @@ if str(_SCRIPTS_DIR) not in sys.path:
 
 from key_point_validation import is_valid_key_point  # noqa: E402
 from tx_speaker_format import apply_speaker_format_to_item  # noqa: E402
+from tx_summary_utils import card_preview_of  # noqa: E402
 from voice_registry import (  # noqa: E402
     ALLOWED_OUTPUT_PREFIXES,
     find_entry_by_raw_path,
@@ -390,7 +391,8 @@ def base_item(
     category: str,
     title: str,
     filepath: str,
-    preview: str,
+    preview: str | None = None,
+    summary: str | None = None,
     source_audio: str | None = None,
     source_transcription: str | None = None,
     project: str | None = None,
@@ -416,6 +418,10 @@ def base_item(
         stats["calendar_events_count"],
         stats["next_steps_count"],
     ]
+    full_summary = (summary if summary is not None else preview or "").strip()
+    card = card_preview_of(full_summary) if full_summary else preview_of(preview or "", 280)
+    if not card:
+        card = preview_of(preview or full_summary or title, 280)
     return {
         "id": short_id(filepath),
         "category": category,
@@ -432,8 +438,9 @@ def base_item(
         "eventDate": date_val,
         "processing_date": processing_date,
         "processedDate": processing_date,
-        "preview": preview_of(preview),
-        "summary": preview_of(preview, 400),
+        "preview": card,
+        "cardSummary": card,
+        "summary": full_summary,
         "stats": stats,
         "has_chart_data": sum(1 for c in counts_for_chart if c > 0) >= 2,
         "raw_sections": raw_sections or {},
@@ -517,11 +524,13 @@ def index_meeting_file(abs_path: Path, registry: dict[str, Any] | None = None) -
         "calendar_events_count": 0,
         "next_steps_count": len(next_steps),
     }
+    full_summary = summary or (important[0] if important else "")
     return base_item(
         category="meetings",
         title=title,
         filepath=rel,
-        preview=summary or (important[0] if important else title),
+        summary=full_summary,
+        preview=card_preview_of(full_summary) or preview_of(full_summary or title, 70),
         source_audio=source_audio,
         source_transcription=source_transcription,
         project=project,
@@ -587,11 +596,13 @@ def index_grouped_file(abs_path: Path, registry: dict[str, Any] | None = None) -
         "calendar_events_count": len(calendar),
         "next_steps_count": len(next_steps),
     }
+    full_summary = summary or (important[0] if important else "")
     return base_item(
         category=index_cat,
         title=title.strip() or preview_of(summary, 60),
         filepath=rel,
-        preview=summary or (important[0] if important else title),
+        summary=full_summary,
+        preview=card_preview_of(full_summary) or preview_of(full_summary or title, 70),
         source_audio=source_audio,
         source_transcription=source_transcription,
         project=project,
@@ -650,14 +661,14 @@ def index_note_file(abs_path: Path, registry: dict[str, Any] | None = None) -> d
         title = f"{source_audio} · {category_label_from_path(rel)}"
     else:
         title = raw_title or preview_of(summary or (important[0] if important else rel), 60)
-    clean_preview = summary or (important[0] if important else "")
-    if clean_preview and len(clean_preview) > 120 and source_audio:
-        clean_preview = f"AI-ready note from {source_audio}. Open for structured sections."
+    full_summary = summary or (important[0] if important else "")
+    card = card_preview_of(full_summary) if full_summary else preview_of(title, 70)
     return base_item(
         category="notes",
         title=title,
         filepath=rel,
-        preview=clean_preview or title,
+        summary=full_summary,
+        preview=card or title,
         source_audio=source_audio,
         source_transcription=source_transcription,
         project=project,
@@ -1227,8 +1238,13 @@ def group_items_by_source(flat_items: list[dict[str, Any]]) -> list[dict[str, An
             "sourceGroupKey": source_key,
             "title": display_title,
             "displayTitle": display_title,
-            "summary": preview_of(summary, 400) if summary else primary.get("summary"),
-            "preview": preview_of(summary or display_title, 200),
+            "summary": summary if summary else primary.get("summary"),
+            "preview": card_preview_of(summary)
+            if summary
+            else primary.get("preview") or card_preview_of(display_title),
+            "cardSummary": card_preview_of(summary)
+            if summary
+            else primary.get("cardSummary") or primary.get("preview"),
             "reviewed": all(bool(it.get("reviewed")) for it in group),
         }
         source_entries.append(entry)

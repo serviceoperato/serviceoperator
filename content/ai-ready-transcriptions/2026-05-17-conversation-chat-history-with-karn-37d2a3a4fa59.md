@@ -27,7 +27,8 @@ Chat Karn — relazione, salute e vita a Pattaya
 - **Project:** personal
 
 ## Summary
-Export chat con Karn (salvato 2026-05-14), arco 2023–2026. Thread personale lungo: inizio conoscenza a Pattaya, litigi su stile di vita e bugie, pause e riconciliazioni. Temi ricorrenti: terapia/attachment avoidant, alcol e lavoro in bar, condizioni per fidanzarsi (stabilità, Bitcoin, «jai yen»), Natale/feste separate, supporto emotivo in inglese/thai. Dal 2025–2026 tono da coppia (Teerak): logistica quotidiana (Myth bar, pickup), trasferimenti USDC/ETH (~12 000 THB con hash Etherscan), salute (chiarimenti herpes vs candida, avvertimenti IST confidenziali), anniversario 3 anni (maggio 2026), compleanni amici. Non contiene deliverable lavorativi Service Opera.
+Export WhatsApp con Karn salvato il 14 maggio 2026, arco 2023–2026. Il thread è una relazione personale on-off tra Jack e Karn a Pattaya: litigi su stile di vita, bugie e alcol, pause e riconciliazioni, con passaggi su terapia e attachment avoidant. Dal 2024–2026 il tono diventa più stabile (Teerak): logistica quotidiana al Myth bar, pickup, trasferimenti USDC/ETH con hash Etherscan, chiarimenti su salute (herpes vs candida, avvertimenti IST), anniversario di tre anni (maggio 2026) e compleanni amici. Non compaiono deliverable Service Opera; il valore è contesto personale e tracciabilità di supporto emotivo e pagamenti in chat. Per chi consulta l’admin serve ricordare che decisioni mediche o legali vanno verificate fuori dal thread. Prossimo passo operativo: nessuna azione pipeline automatica; usare l’export solo come riferimento storico se serve ricostruire date o importi citati in conversazione.
+
 
 ## Top 3 Key Points
 - Relazione on-off Jack–Karn con fasi di rottura (2023) e riconciliazione 2024+

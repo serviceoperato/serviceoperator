@@ -15,6 +15,7 @@ if str(_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS))
 
 from key_point_validation import filter_key_points  # noqa: E402
+from tx_summary_utils import card_preview_of  # noqa: E402
 from voice_registry import find_entry_by_raw_path, normalize_raw_rel  # noqa: E402
 
 REPO = Path(__file__).resolve().parent.parent
@@ -98,6 +99,7 @@ def build_grouped_md(item: dict, *, raw_name: str, grouped_rel: str, checksum: s
 
     kp = key_points(item)
     summary = item["clean_summary"].strip()
+    card_preview_of(summary)  # index derives preview/cardSummary from full summary at reindex
 
     parts = [
         f"""---

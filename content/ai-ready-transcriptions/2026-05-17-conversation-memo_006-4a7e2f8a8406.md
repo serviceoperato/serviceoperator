@@ -27,7 +27,8 @@ Vita, Marte, tempo e libro in scrittura
 - **Project:** personal
 
 ## Summary
-Conversazione ironica e filosofica su età, figli, eredità, fine del mondo e colonizzazione di Marte (Proxima Centauri b citato a parte). Si parla di fisica quantistica, percezione del tempo, sogni, déjà vu, riferimenti a Inception e Einstein. Si accenna a un regalo/libro e all'opera dell'autore intitolata 'nulla è come sembra', con ricerca su narcisismo patologico e scena di violenza coniugale descritta in scrittura.
+Conversazione ironica e filosofica su età, figli, eredità, fine del mondo e ipotesi di colonizzazione di Marte, con citazione di Proxima Centauri b. Si parla di fisica quantistica, percezione del tempo, sogni, déjà vu, riferimenti a Inception e Einstein, mescolando battute e domande esistenziali senza conclusioni operative. Accenno a un regalo o libro dell’autore intitolato «nulla è come sembra», con ricerca su narcisismo patologico e scena di violenza coniugale descritta in scrittura, senza rivelare l’intreccio completo. Il tono è creativo e speculativo, non operativo per Service Opera. Valore principale: work in progress letterario e confronto tra rigore scientifico e narrativa fantastica, utile come diario di idee per chi scrive. Prossimi passi suggeriti nel dialogo: proseguire scrittura senza spoilerare l’intreccio e chiarire il target lettore per il regalo discussa. Nessun impegno commerciale, calendario o task estratti per altri progetti; eventuali riferimenti scientifici restano opinione tra interlocutori.
+
 
 ## Top 3 Key Points
 - Temi esistenziali: tempo, realtà, sogni, possibile 'pianeta B'

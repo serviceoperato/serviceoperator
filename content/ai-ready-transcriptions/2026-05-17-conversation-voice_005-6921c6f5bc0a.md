@@ -27,7 +27,8 @@ Riprese canale YouTube «Tanti Soldi» e prove ChatGPT
 - **Project:** personal
 
 ## Summary
-Sessione di registrazione/planning per contenuti del canale «Tanti Soldi» (crypto, personal finance, ChatGPT): intro, hook iniziali, consigli su telecamera e gesti, uso di ChatGPT per script e spiegazioni (Algorand, layer 1/2, intro video).
+Sessione di registrazione e planning per il canale YouTube «Tanti Soldi», dedicato a crypto, personal finance e uso di ChatGPT. Si lavora su intro, hook iniziali, consigli su telecamera e gesti, e script generati con ChatGPT per spiegazioni (Algorand, layer 1/2, struttura video). Emergono preferenze su formato intro (clap, saluto, primi secondi critici per TikTok e YouTube) e limite dell’AI sulle previsioni di mercato affidabili. Si discute chi presenta (Marco, Leonardo o Fabio — da confermare nei take) e come bilanciare sigla breve vs solo hook. Task aperti: finalizzare intro, prove con microfono, bloccare registrazione quando pronti. Implicazione pratica: registrare due video al prossimo incontro (intro + episodio spiegato). Il file documenta processo creativo, non risultati pubblicati. Utile per chi coordina il canale come checklist di ripresa e messaggistica educativa, non come consulenza finanziaria o promessa di rendimento.
+
 
 ## Top 3 Key Points
 - Canale «Tanti Soldi»: temi crypto, bitcoin, finance, borsa

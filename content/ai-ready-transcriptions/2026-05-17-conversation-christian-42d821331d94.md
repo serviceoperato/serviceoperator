@@ -27,7 +27,8 @@ Dono ~50.000 €, casa cointestata e timori su separazione
 - **Project:** personal
 
 ## Summary
-Discussione familiare (genitori–figlio Christian) su erogazione di circa 50.000 € per investimento sulla casa in costruzione/cointestata. Nei primi minuti: madre esprime timore che, in caso di separazione futura, il figlio resti svantaggiato sulla casa; padre spiega che gli immobili sono pensati per la figlia, rifiuta di cambiare direzione, cita ~57.000 € verso banca e mutuo; serve un accordo condiviso. File lungo: anche tensioni con Silvana, comunicazione assertiva, eredità/comunione, senza accordo formale finale chiaro nel estratto.
+Registrazione familiare lunga tra genitori e il figlio Christian sul tema di circa 50.000 € promessi per investimento sulla casa in costruzione o cointestata. La madre teme che, in uno scenario di separazione futura, Christian resti senza tutela sulla quota; il padre ribadisce che gli immobili sono stati pensati anche per i figli, cita circa 57.000 € da estinguere verso banca e mutuo e rifiuta di cambiare direzione senza un accordo conmotione condiviso. Nel file compaiono anche tensioni con Silvana, comunicazione assertiva, eredità e comunione, senza accordo formale finale chiaro nell’estratto indicizzato. Il contenuto ha implicazioni patrimoniali e relazionali: serve chiarire cointestazione, erogazione effettiva e eventuale rinegoziazione mutuo prima di movimentare liquidità. Non è un verbale legale. Prossimi passi pratici: allineamento esplicito tra le parti su importi e clausole, verifica con banca e, se necessario, consulenza legale esterna al di fuori di questa trascrizione.
+
 
 ## Top 3 Key Points
 - Tema centrale (~0–5 min): 50.000 € «cortesia» / investimento casa; soldi «tuoi» ma serve accordo tra tutti

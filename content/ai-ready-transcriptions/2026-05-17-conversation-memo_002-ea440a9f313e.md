@@ -27,7 +27,8 @@ Dibattiti politici e informazione bilanciata
 - **Project:** serviceopera
 
 ## Summary
-Prosegue il dialogo su congressi e dibattiti europei: senza contraddittorio resta un punto di vista, con dibattito emergono domande incrociate. Si ipotizza un servizio che sintetizzi dibattiti lunghi con punti destra/sinistra, sintesi e pro/contro, oltre al telegiornale. L'interlocutore segue soprattutto politica, legge testate diverse anche di controparte per cogliere omissioni. Si definisce l'esigenza di un'informazione che dia strumenti di giudizio (par condicio) su benefici e rischi, non solo la valutazione del comunicatore.
+Prosegue il dialogo su dibattiti e congressi europei: senza contraddittorio resta un solo punto di vista, con confronto emergono domande incrociate. Si ipotizza un servizio che sintetizzi dibattiti lunghi con tesi destra/sinistra, sintesi e pro/contro, oltre al telegiornale. L’interlocutore segue soprattutto politica, legge testate anche di controparte per cogliere omissioni e vuole strumenti di giudizio (par condicio) su benefici e rischi, non solo la valutazione del comunicatore. Il tema vaccini e scelte sanitarie compare come esempio di bisogno di versione lunga e breve, con attenzione a non sostituire il giudizio del lettore ma a rendere visibili trade-off. Il valore per il progetto informativo è validare se esiste pubblico disposto a un approfondimento oltre il formato televisivo standard e quanto sono disposti a pagare rispetto a fonti gratuite. Prossimo passo: testare template editoriale con pro/contro verificabili e misurare gap rispetto a replay Rai/Mediaset e sintesi online già disponibili.
+
 
 ## Top 3 Key Points
 - Interesse principale: politica e dibattiti pre-decisionali

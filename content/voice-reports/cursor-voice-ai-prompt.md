@@ -39,6 +39,26 @@ Source, Summary, Decisions, Tasks, Open Points, Next Steps, Full Transcription R
 
 Source, Clean Summary, Important Points, Possible Actions, Full Transcription Reference
 
+### Summary length (grouped AI-ready + admin)
+
+**Detail `## Summary` (full prose):**
+
+- Target **150–220 words** (up to **250** for long meetings or WhatsApp/chat exports).
+- Explain: what the source is about, key people, main topics, why it matters, practical implications / next action.
+- Do **not** repeat the Top 3 key points verbatim.
+- Use **`Name: sentence`** when someone said/did/asked/decided (see speaker format below).
+- Very short or noisy sources: honest shorter summary only; end with **`Limited content available.`** — no invented facts.
+
+**Card preview (index only, not a markdown section):**
+
+- Derive a **40–70 word** excerpt from the full summary for list cards (`preview` / `cardSummary` in the index).
+
+### Speaker format (summary + bullets)
+
+- Prose and bullets: `Name: sentence` when a person clearly said/did/asked/decided.
+- Use names from the transcript only; if unclear, omit the label (no invented names).
+- Apply to: Summary, Top 3 key points, Decisions, Tasks, Calendar, Open points, Next steps, Important points.
+
 6. **Registry** — update `content/processed/processed_files.json` for the audio key:
 
 ```json
