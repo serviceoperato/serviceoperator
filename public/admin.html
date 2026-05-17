@@ -188,6 +188,55 @@
       </div>
     </section>
 
+    <section id="transcriptionsSection" class="tf-admin-table-card is-hidden" aria-label="Transcriptions">
+      <h2 class="tf-admin-section-title">Transcriptions</h2>
+      <p class="tf-admin-muted" style="margin:0 0 1rem;max-width:52rem">
+        Review AI-ready outputs extracted from voice recordings: meetings, notes, tasks, calendar events, project updates, decisions, and open points.
+      </p>
+      <p id="txEmpty" class="tf-admin-muted is-hidden" style="margin:0 0 1rem;padding:0.75rem;border:1px solid var(--line,#2a2f3a);border-radius:8px"></p>
+      <p id="txLoadHint" class="mono tf-admin-muted" style="margin:0 0 0.75rem"></p>
+      <div id="txCounts" class="tx-counts" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(9rem,1fr));gap:0.5rem;margin-bottom:1rem"></div>
+      <div class="tx-toolbar" style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;align-items:center">
+        <input type="search" id="txSearch" placeholder="Search text, file, audio, project…" style="min-width:14rem;flex:1" />
+        <select id="txSort" aria-label="Sort">
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+          <option value="category">Category</option>
+          <option value="project">Project</option>
+          <option value="filename">Filename</option>
+        </select>
+        <button type="button" id="txRefreshBtn" class="tf-admin-toolbar__btn">Refresh</button>
+      </div>
+      <div id="txTabs" class="tf-admin-reports__tabs" role="tablist" style="margin-bottom:0.75rem">
+        <button type="button" class="tf-admin-reports__tab is-active" data-tx-cat="all">All</button>
+        <button type="button" class="tf-admin-reports__tab" data-tx-cat="meetings">Meetings</button>
+        <button type="button" class="tf-admin-reports__tab" data-tx-cat="notes">Notes</button>
+        <button type="button" class="tf-admin-reports__tab" data-tx-cat="tasks">Tasks</button>
+        <button type="button" class="tf-admin-reports__tab" data-tx-cat="calendar">Calendar</button>
+        <button type="button" class="tf-admin-reports__tab" data-tx-cat="projects">Projects</button>
+        <button type="button" class="tf-admin-reports__tab" data-tx-cat="decisions">Decisions</button>
+        <button type="button" class="tf-admin-reports__tab" data-tx-cat="open-points">Open Points</button>
+      </div>
+      <p id="txListHint" class="tf-admin-muted mono" style="margin:0 0 0.35rem"></p>
+      <div class="tx-layout" style="display:grid;grid-template-columns:minmax(16rem,1fr) minmax(20rem,1.4fr);gap:1rem;align-items:start">
+        <div id="txList" class="tx-list" style="display:flex;flex-direction:column;gap:0.35rem;max-height:28rem;overflow:auto"></div>
+        <div id="txDetail" class="tx-detail-wrap tf-admin-payout-card" style="margin:0;padding:0.85rem;min-height:12rem"></div>
+      </div>
+      <style>
+        .tx-count-card{display:flex;flex-direction:column;gap:0.15rem;padding:0.55rem 0.65rem;border:1px solid var(--line,#2a2f3a);border-radius:8px;background:var(--ink-2,#1a1d24)}
+        .tx-count-card__n{font-size:1.25rem;font-weight:700}
+        .tx-count-card__l{font-size:0.72rem;opacity:0.85}
+        .tx-list-item{display:block;width:100%;text-align:left;padding:0.55rem 0.65rem;border:1px solid var(--line,#2a2f3a);border-radius:8px;background:var(--ink-2,#1a1d24);cursor:pointer}
+        .tx-list-item.is-active{border-color:var(--accent,#6366f1)}
+        .tx-list-item__cat{font-size:0.68rem;opacity:0.8;display:block}
+        .tx-list-item__title{display:block;font-size:0.9rem}
+        .tx-list-item__meta{display:block;font-size:0.72rem;opacity:0.75;margin-top:0.15rem}
+        .tx-list-item__preview{display:block;font-size:0.78rem;opacity:0.9;margin-top:0.25rem}
+        .tx-detail__body{max-height:14rem;overflow:auto;white-space:pre-wrap;font-size:0.75rem;margin-top:0.75rem}
+        .tx-actions{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.75rem}
+      </style>
+    </section>
+
     <section id="reportCatalogSection" class="tf-admin-reports" aria-label="Report catalog">
       <h2 class="tf-admin-section-title">Report catalog</h2>
       <div class="tf-admin-reports__tabs" role="tablist">
@@ -210,6 +259,7 @@
 <script src="/site-nav-drawer.js"></script>
 <script src="/user-account-menu.js"></script>
 <script src="/theme.js"></script>
+<script src="/admin-transcriptions.js"></script>
 <script src="/admin.js"></script>
 <script src="/debug.js"></script>
 </body>

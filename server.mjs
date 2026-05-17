@@ -21,6 +21,7 @@ import {
 import { createUserTelemetryStore, ensureUserTelemetrySchema } from './user-telemetry.mjs';
 import { createLeadEventsStore, ensureLeadEventsSchema } from './lead-events.mjs';
 import { searchTextAllPages } from './lib/google-places-search.mjs';
+import { buildTranscriptionsIndex } from './lib/transcriptions-index.mjs';
 
 const processFatalLogHandlersKey = Symbol.for('serviceopera.server.processFatalLogHandlers');
 if (!globalThis[processFatalLogHandlersKey]) {
@@ -2416,6 +2417,31 @@ app.get('/api/admin/voice-recorder/status', requireAdmin, (_req, res) => {
   return res.json(sanitizeVoicePipelineClientPayload(buildVoicePipelineStatusPayload()));
 });
 
+function sanitizeTranscriptionIndexItem(item) {
+  if (!item || typeof item !== 'object') return item;
+  const out = { ...item };
+  for (const key of Object.keys(out)) {
+    if (typeof out[key] === 'string') {
+      out[key] = out[key]
+        .replace(/[A-Za-z]:\\[^\s\n\r`"']+/g, '[path-redacted]')
+        .replace(/G:\\My Drive\\Voice Recorder/gi, 'Voice Recorder (local)');
+    }
+  }
+  return out;
+}
+
+app.get('/api/admin/transcriptions-index', requireAdmin, (_req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  try {
+    const data = buildTranscriptionsIndex(__dirname);
+    data.items = (data.items || []).map(sanitizeTranscriptionIndexItem);
+    return res.json(data);
+  } catch (e) {
+    console.warn('[transcriptions-index]', e && e.message ? e.message : e);
+    return res.status(500).json({ error: 'Could not build transcriptions index.' });
+  }
+});
+
 app.post('/api/admin/voice-recorder/run', requireAdmin, (_req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   const result = startVoiceRecorderPipelineRun();
@@ -3706,6 +3732,8 @@ app.get(
     '/admin/report-catalog/',
     '/admin/voice-recorder',
     '/admin/voice-recorder/',
+    '/admin/transcriptions',
+    '/admin/transcriptions/',
   ],
   sendAdminHtml
 );

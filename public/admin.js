@@ -2092,6 +2092,7 @@
     if (path === '/admin/user-reports') return 'user-reports';
     if (path === '/admin/user-profiling') return 'user-profiling';
     if (path === '/admin/voice-recorder') return 'voice-recorder';
+    if (path === '/admin/transcriptions') return 'transcriptions';
     if (path === '/admin/users' || path === '/admin') return 'users';
     if (/\/admin\.html$/i.test(path)) return 'users';
     return 'users';
@@ -2169,6 +2170,7 @@
     tfNav.appendChild(makeNavLink('Report catalog', '/admin/report-catalog', 'report-catalog', id));
     tfNav.appendChild(makeNavLink('User reports', '/admin/user-reports', 'user-reports', id));
     tfNav.appendChild(makeNavLink('Voice Recorder', '/admin/voice-recorder', 'voice-recorder', id));
+    tfNav.appendChild(makeNavLink('Transcriptions', '/admin/transcriptions', 'transcriptions', id));
   }
 
   function syncAdminRouteFromLocation() {
@@ -2179,6 +2181,7 @@
     var inboxEl = document.getElementById('adminInbox');
     var reportsEl = document.getElementById('reportCatalogSection');
     var voiceRecorderEl = document.getElementById('voiceRecorderSection');
+    var transcriptionsEl = document.getElementById('transcriptionsSection');
 
     if (routeId === 'deploy-log') {
       if (main) main.classList.add('is-hidden');
@@ -2216,11 +2219,15 @@
     if (inboxEl) inboxEl.classList.toggle('is-hidden', routeId !== 'activity');
     if (reportsEl) reportsEl.classList.toggle('is-hidden', routeId !== 'report-catalog');
     if (voiceRecorderEl) voiceRecorderEl.classList.toggle('is-hidden', routeId !== 'voice-recorder');
+    if (transcriptionsEl) transcriptionsEl.classList.toggle('is-hidden', routeId !== 'transcriptions');
 
     buildTfNav(routeId);
     window.scrollTo(0, 0);
     if (routeId === 'user-profiling') loadUserProfiling();
     if (routeId === 'voice-recorder') initVoiceRecorderPipelineUi();
+    if (routeId === 'transcriptions' && typeof window.initAdminTranscriptions === 'function') {
+      window.initAdminTranscriptions();
+    }
   }
 
   var voicePipelinePollTimer = null;

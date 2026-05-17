@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "generatedAt": "2026-05-17T05:23:27.239Z",
+  "rawTranscriptionCount": 15,
+  "counts": {
+    "meetings": 0,
+    "notes": 0,
+    "tasks": 0,
+    "calendar": 0,
+    "projects": 0,
+    "decisions": 0,
+    "openPoints": 0,
+    "total": 0
+  },
+  "items": []
+}
