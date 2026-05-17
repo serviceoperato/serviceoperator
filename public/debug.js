@@ -1318,6 +1318,71 @@
       (cc.passwordResetEmail != null ? String(cc.passwordResetEmail) : 'n/a'),
   });
 
+    /* —— Admin transcriptions dashboard ([TX]) —— */
+    var onTxDashboard = path === '/admin/transcriptions' || path === '/admin/transcriptions/';
+    if (onTxDashboard) {
+      var txRev =
+        typeof window.TX_DASHBOARD_UI_REV !== 'undefined' ? String(window.TX_DASHBOARD_UI_REV) : '(unset)';
+      lines.push({ cat: 'TX', text: '01 · TX_DASHBOARD_UI_REV: ' + txRev });
+      lines.push({
+        cat: 'TX',
+        text:
+          '02 · initAdminTranscriptions: ' +
+          (typeof window.initAdminTranscriptions === 'function' ? 'function' : 'missing'),
+      });
+      lines.push({
+        cat: 'TX',
+        text: '03 · #txOverview .tx-overview-card count: ' + document.querySelectorAll('#txOverview .tx-overview-card').length,
+      });
+      lines.push({
+        cat: 'TX',
+        text: '04 · #txFeed .tx-dash-card count: ' + document.querySelectorAll('#txFeed .tx-dash-card').length,
+      });
+      var txHintEl = document.getElementById('txLoadHint');
+      var txHintTxt = txHintEl ? String(txHintEl.textContent || '').replace(/\s+/g, ' ').trim() : '';
+      if (txHintTxt.length > 120) txHintTxt = txHintTxt.slice(0, 120) + '…';
+      var txAdminTok = '';
+      try {
+        txAdminTok =
+          typeof readStoredAdminJwt === 'function'
+            ? readStoredAdminJwt()
+            : sessionStorage.getItem('so_admin_jwt') || localStorage.getItem('so_admin_jwt') || '';
+      } catch (eTxJwt) {
+        txAdminTok = '';
+      }
+      var txIndexProbe = await timedJsonAuth('/api/admin/transcriptions/index', txAdminTok);
+      var txIdx = txIndexProbe.json || {};
+      var txItemCount = Array.isArray(txIdx.items) ? txIdx.items.length : 'n/a';
+      lines.push({
+        cat: 'TX',
+        text:
+          '05 · #txLoadHint: ' +
+          (txHintTxt || '(empty)') +
+          ' · GET /api/admin/transcriptions/index: HTTP ' +
+          txIndexProbe.status +
+          ' · ' +
+          txIndexProbe.ms +
+          ' ms' +
+          (txAdminTok ? '' : ' · note=no admin JWT') +
+          (txIndexProbe.status === 401
+            ? ' · note=admin auth required'
+            : txIndexProbe.ok
+              ? ' · items=' + txItemCount
+              : txIndexProbe.err
+                ? ' · ' + txIndexProbe.err
+                : ''),
+      });
+    } else {
+      lines.push({ cat: 'TX', text: '01 · TX_DASHBOARD_UI_REV: n/a (not on /admin/transcriptions)' });
+      lines.push({ cat: 'TX', text: '02 · initAdminTranscriptions: n/a (not on /admin/transcriptions)' });
+      lines.push({ cat: 'TX', text: '03 · #txOverview .tx-overview-card count: n/a (not on /admin/transcriptions)' });
+      lines.push({ cat: 'TX', text: '04 · #txFeed .tx-dash-card count: n/a (not on /admin/transcriptions)' });
+      lines.push({
+        cat: 'TX',
+        text: '05 · #txLoadHint / GET /api/admin/transcriptions/index: n/a (not on /admin/transcriptions)',
+      });
+    }
+
     /* —— Portal password reset (login.html only) —— */
     var onPortalLogin = /\/login\.html$/i.test(path) || path === '/login' || path.endsWith('/login.html');
     if (onPortalLogin) {
@@ -1399,7 +1464,7 @@
       '<span class="mono debug-panel__title" id="soDebugTitle">— DEBUG · … checks</span>' +
       '<button type="button" class="debug-panel__close mono" data-debug-close aria-label="Close panel"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg></button>' +
       '</div>' +
-      '<p class="debug-panel__sub mono">STORE = browser storage only · FE = browser · BE = same-origin HTTP · DB = server PostgreSQL / user store · OPS = deploy/Railway · AUTH = portal JWT/session · <strong>AUTH-L</strong> = login/report handoff (10 rows after sign-in). Rows 01–08b: localStorage/sessionStorage (not Railway tables). Rows 69–78: <code>/api/debug/user-store</code> plus reference Node probe when this host is static-only. On <code>login.html</code>, <strong>[PW]</strong> rows too. Select the text below and copy (Ctrl+C), or use the button.</p>' +
+      '<p class="debug-panel__sub mono">STORE = browser storage only · FE = browser · BE = same-origin HTTP · DB = server PostgreSQL / user store · OPS = deploy/Railway · AUTH = portal JWT/session · <strong>AUTH-L</strong> = login/report handoff (10 rows after sign-in). Rows 01–08b: localStorage/sessionStorage (not Railway tables). Rows 69–78: <code>/api/debug/user-store</code> plus reference Node probe when this host is static-only. On <code>/admin/transcriptions</code>, <strong>[TX]</strong> rows (5). On <code>login.html</code>, <strong>[PW]</strong> rows too. Select the text below and copy (Ctrl+C), or use the button.</p>' +
       '<div class="debug-panel__status mono" id="soDebugStatus">Running…</div>' +
       '<pre class="debug-panel__out mono" id="soDebugOut" tabindex="0"></pre>' +
       '<div class="debug-panel__actions">' +
