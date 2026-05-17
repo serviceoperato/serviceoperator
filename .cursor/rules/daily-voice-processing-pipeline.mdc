@@ -35,7 +35,7 @@ Respect all constraints in **`.cursor/rules/voice-automation.md`** (allowed path
 Or step by step:
 
 - Phase 1: `python scripts/transcribe_voice_recorder.py`
-- Phase 2: `python scripts/process_daily_voice_phase2.py` (AI-ready outputs; registry: `content/processed/processed_files.json` with per-file `status` / `readyForSite`)
+- Phase 2: `python scripts/process_daily_voice_phase2.py` → **Cursor Composer** via `scripts/cursor_voice_phase2.mjs` (`@cursor/sdk`, `CURSOR_API_KEY` from [Cursor Dashboard](https://cursor.com/dashboard) — **not** `OPENAI_API_KEY`). Runs on the **local repo**. Install once: `cd telegram-cursor-bot && npm install`. Heuristic fallback only if `VOICE_PHASE2_HEURISTIC=1`.
 - Reindex: `python scripts/index_transcriptions.py` (main list = AI-ready only; pending/failed in `rawSources.pendingSources`)
 - Validate: `python scripts/validate_voice_publish.py` (must pass before git)
 - **Git publish (required):** `.\scripts\git_publish_voice_outputs.ps1` — commit message: `Update AI-ready voice transcription outputs`; only voice-related paths; then `git push`

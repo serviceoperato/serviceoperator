@@ -101,13 +101,36 @@ def is_already_processed(
 
 
 def run_phase2_for_raw(raw_path: Path, registry: dict) -> None:
-    from process_daily_voice_phase2 import process_single_raw
+    import os
+    import subprocess
 
     log.info("Phase 2 (immediate) for %s", raw_path.name)
-    write_progress(message=f"AI processing: {raw_path.name}")
-    stats = process_single_raw(raw_path, registry, save=False)
-    if stats.get("errors"):
-        log.warning("Phase 2 reported errors for %s", raw_path.name)
+    write_progress(message=f"AI processing (Cursor Composer): {raw_path.name}")
+
+    if os.environ.get("VOICE_PHASE2_HEURISTIC") == "1":
+        from process_daily_voice_phase2 import process_single_raw
+
+        stats = process_single_raw(raw_path, registry, save=False)
+        if stats.get("errors"):
+            log.warning("Phase 2 heuristic errors for %s", raw_path.name)
+        return
+
+    if not os.environ.get("CURSOR_API_KEY"):
+        log.warning(
+            "CURSOR_API_KEY missing — skipping immediate Phase 2 for %s. "
+            "Run: node scripts/cursor_voice_phase2.mjs after setting .env",
+            raw_path.name,
+        )
+        return
+
+    rel = raw_path.relative_to(REPO_ROOT).as_posix()
+    result = subprocess.run(
+        ["node", str(Path(__file__).resolve().parent / "cursor_voice_phase2.mjs"), rel],
+        cwd=REPO_ROOT,
+        env=os.environ,
+    )
+    if result.returncode != 0:
+        log.warning("Cursor Composer Phase 2 failed for %s (exit %s)", raw_path.name, result.returncode)
 
 
 def format_timestamp(seconds: float) -> str:

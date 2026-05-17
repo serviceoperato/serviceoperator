@@ -549,7 +549,30 @@ def process_single_raw(md_path: Path, registry: dict | None = None, *, save: boo
     return stats
 
 
-def main() -> int:
+def run_cursor_composer_phase2(extra_args: list[str] | None = None) -> int:
+    """Phase 2 via Cursor Composer (@cursor/sdk) — not OpenAI."""
+    import os
+    import subprocess
+
+    if not os.environ.get("CURSOR_API_KEY"):
+        log.error(
+            "CURSOR_API_KEY is required for Phase 2 (Cursor Composer on local repo).\n"
+            "  Add it to .env from https://cursor.com/dashboard\n"
+            "  Install SDK: cd telegram-cursor-bot && npm install\n"
+            "  Emergency keyword-only fallback: set VOICE_PHASE2_HEURISTIC=1"
+        )
+        return 1
+
+    cmd = ["node", str(_SCRIPTS / "cursor_voice_phase2.mjs")]
+    if extra_args:
+        cmd.extend(extra_args)
+    log.info("Phase 2 (Cursor Composer): %s", " ".join(cmd[2:]) or "all pending raw files")
+    result = subprocess.run(cmd, cwd=REPO, env=os.environ)
+    return int(result.returncode)
+
+
+def main_heuristic() -> int:
+    """Legacy keyword/heuristic Phase 2 — not Cursor AI. Use only with VOICE_PHASE2_HEURISTIC=1."""
     mod = load_pipeline_module()
     registry = load_registry()
     migrate_legacy_ready_flags(registry)
@@ -557,7 +580,7 @@ def main() -> int:
 
     files = sorted(TRANSCRIPTIONS.glob("*.md"))
     stats["total"] = len(files)
-    log.info("Phase 2 (AI processing): %d raw transcript(s)", len(files))
+    log.warning("Phase 2 HEURISTIC mode (not Cursor Composer): %d raw transcript(s)", len(files))
 
     for md in files:
         process_file(mod, md, registry, stats)
@@ -574,6 +597,14 @@ def main() -> int:
         log.info("Low-confidence files: %s", ", ".join(stats["warnings"]))
 
     return 1 if stats["errors"] and stats["processed"] == 0 else 0
+
+
+def main() -> int:
+    import os
+
+    if os.environ.get("VOICE_PHASE2_HEURISTIC") == "1":
+        return main_heuristic()
+    return run_cursor_composer_phase2()
 
 
 if __name__ == "__main__":

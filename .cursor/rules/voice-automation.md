@@ -44,7 +44,7 @@ When processing voice notes:
 
 ## Daily pipeline (Cursor)
 
-When the user asks to launch or run the voice pipeline (or voice processing is clearly in scope), follow **`.cursor/rules/daily-voice-processing-pipeline.mdc`** and execute the full runbook in **`content/voice-reports/daily-voice-processing-pipeline.md`** (Phase 1 transcription + Phase 2 AI processing, Steps 0–7). **Always run all phases without asking**, including reindex, validate, and **git commit + push** (`Update AI-ready voice transcription outputs`). Do not stop before `git push` succeeds. Google Calendar/Tasks sync stays via `/admin/transcriptions` (not part of git publish).
+When the user asks to launch or run the voice pipeline (or voice processing is clearly in scope), follow **`.cursor/rules/daily-voice-processing-pipeline.mdc`** and execute the full runbook in **`content/voice-reports/daily-voice-processing-pipeline.md`** (Phase 1 transcription + Phase 2 **Cursor Composer** via `CURSOR_API_KEY` / `scripts/cursor_voice_phase2.mjs`, **not** `OPENAI_API_KEY`). **Always run all phases without asking**, including reindex, validate, and **git commit + push**. If `CURSOR_API_KEY` is missing, process pending raw files **in this Cursor chat** using `content/voice-reports/cursor-voice-ai-prompt.md` instead of heuristic scripts. Heuristic Phase 2 only when `VOICE_PHASE2_HEURISTIC=1`.
 
 ## Transcription pipeline (local Windows only)
 
