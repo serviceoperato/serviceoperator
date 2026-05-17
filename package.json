@@ -1,6 +1,6 @@
 {
   "name": "serviceopera-site",
-  "version": "1.5.81",
+  "version": "1.5.82",
   "private": true,
   "type": "module",
   "description": "Static site served by Node (Express); operator console uses password + JWT when ADMIN_PASSWORD_HASH is set. Google Places Text Search is admin-only (POST /api/places/search + operator UI) — see PLACES_LEADS.md.",
