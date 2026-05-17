@@ -401,12 +401,46 @@
     return document.getElementById(id);
   }
 
+  function hideToast() {
+    var el = byId('txToast');
+    if (!el) return;
+    clearTimeout(toast._t);
+    toast._t = null;
+    el.textContent = '';
+    el.classList.remove('is-visible', 'is-error', 'is-sticky');
+    el.removeAttribute('title');
+    el.onclick = null;
+    el.setAttribute('role', 'status');
+    el.setAttribute('aria-live', 'polite');
+  }
+
+  function toastPersist(msg) {
+    var el = byId('txToast');
+    if (!el) return;
+    clearTimeout(toast._t);
+    toast._t = null;
+    el.textContent = msg;
+    el.classList.add('is-visible', 'is-error', 'is-sticky');
+    el.setAttribute('role', 'alert');
+    el.setAttribute('aria-live', 'assertive');
+    el.setAttribute('title', 'Click to dismiss');
+    el.onclick = function () {
+      hideToast();
+    };
+  }
+
   function toast(msg) {
     var el = byId('txToast');
     if (!el) return;
+    clearTimeout(toast._t);
+    toast._t = null;
+    el.onclick = null;
+    el.removeAttribute('title');
+    el.classList.remove('is-error', 'is-sticky');
+    el.setAttribute('role', 'status');
+    el.setAttribute('aria-live', 'polite');
     el.textContent = msg;
     el.classList.add('is-visible');
-    clearTimeout(toast._t);
     toast._t = setTimeout(function () {
       el.classList.remove('is-visible');
     }, 2800);
@@ -1771,7 +1805,7 @@
       { label: 'Category', value: CATEGORY_LABELS[cat] || item.categoryLabel || cat },
       { label: 'Project', value: item.project },
       { label: 'Source audio', value: audioName || item.sourceAudio },
-      { label: 'Processed', value: processed || item.processedDate },
+      { label: 'Processed', value: formatProcessedDate(item) || item.processedDate },
     ]);
 
     root.innerHTML =
@@ -4105,7 +4139,11 @@
       }).length;
       updateBulkUI();
       renderFeed();
-      toast(failed ? 'Bulk sync finished with ' + failed + ' failure(s).' : 'Bulk sync finished.');
+      if (failed) {
+        toastPersist('Bulk sync finished with ' + failed + ' failure(s).');
+      } else {
+        toast('Bulk sync finished.');
+      }
     });
   }
 
@@ -4345,6 +4383,12 @@
           card.classList.contains('tx-card--junk-collapsed')
         ) {
           card.classList.remove('tx-item--junk-collapsed', 'tx-card--junk-collapsed');
+          return;
+        }
+        if (ev.target.closest('.tx-dash-card__actions')) return;
+        if (id) {
+          ev.preventDefault();
+          navigateToDetail(id);
         }
       });
       card.addEventListener('keydown', function (ev) {
@@ -4549,6 +4593,7 @@
 
   function syncItem(id, opts) {
     opts = opts || {};
+    if (!opts.quiet) hideToast();
     return syncItemRequest(id).then(function (result) {
       if (result.ok) {
         state.items.forEach(function (it) {
@@ -4560,9 +4605,9 @@
         if (!opts.skipFeedRender) renderFeed();
         if (!opts.quiet) toast('Google sync queued.');
       } else if (result.status === 404) {
-        if (!opts.quiet) toast('Google sync API not available yet.');
+        if (!opts.quiet) toastPersist('Google sync API not available yet.');
       } else if (!opts.quiet) {
-        toast((result.j && result.j.error) || 'Sync failed.');
+        toastPersist((result.j && result.j.error) || 'Sync failed.');
       }
       return result;
     });
@@ -4576,9 +4621,9 @@
       if (pack.ok) {
         toast('Bulk sync started.');
       } else if (pack.status === 404) {
-        toast('Bulk sync API not available yet.');
+        toastPersist('Bulk sync API not available yet.');
       } else {
-        toast((pack.j && pack.j.error) || 'Bulk sync failed.');
+        toastPersist((pack.j && pack.j.error) || 'Bulk sync failed.');
       }
     });
   }

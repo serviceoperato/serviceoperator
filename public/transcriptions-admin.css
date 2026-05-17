@@ -719,6 +719,20 @@
   transform: translateX(-50%) translateY(0);
 }
 
+.tx-toast.is-error {
+  border-color: #b91c1c;
+  color: #fecaca;
+}
+
+.tx-toast.is-sticky {
+  cursor: pointer;
+}
+
+[data-theme='light'] .tx-toast.is-error {
+  color: #b91c1c;
+  background: #fef2f2;
+}
+
 [data-theme='light'] .tx-admin__header,
 [data-theme='light'] .tx-search-wrap {
   background: color-mix(in srgb, var(--paper, #f8f6f1) 94%, transparent);
