@@ -21,14 +21,17 @@ STATUS_READY = "ready_for_site"
 STATUS_FAILED = "failed"
 STATUS_NEEDS_REVIEW = "needs_review"
 
-# Main /admin/transcriptions feed — ai_processed or ready_for_site with readyForSite + outputs
-VISIBLE_STATUSES = frozenset({STATUS_AI_PROCESSED, STATUS_READY})
+# Main /admin/transcriptions list: ONLY ready_for_site
+VISIBLE_STATUSES = frozenset({STATUS_READY})
+
+# Secondary pending box: everything not published on main list
 PENDING_STATUSES = frozenset(
     {
         STATUS_DETECTED,
         STATUS_RAW_CREATED,
         STATUS_AI_PENDING,
         STATUS_AI_RUNNING,
+        STATUS_AI_PROCESSED,
         STATUS_FAILED,
         STATUS_NEEDS_REVIEW,
     }
@@ -44,13 +47,62 @@ ALLOWED_OUTPUT_PREFIXES = (
     "content/open-points/",
 )
 
+AI_OUTPUT_KEYS = ("meeting", "note", "tasks", "calendar", "project", "decisions", "openPoints")
+
 
 def utc_now_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
-def stable_id(audio_full_path: str) -> str:
-    return hashlib.sha256(audio_full_path.encode("utf-8")).hexdigest()[:16]
+def stable_id(
+    audio_full_path: str,
+    size: int | None = None,
+    mtime: float | None = None,
+) -> str:
+    payload = str(audio_full_path)
+    if size is not None:
+        payload += f"|{size}"
+    if mtime is not None:
+        payload += f"|{mtime}"
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
+
+
+def empty_ai_outputs() -> dict[str, str | None]:
+    return {k: None for k in AI_OUTPUT_KEYS}
+
+
+def normalize_ai_outputs(raw: Any) -> dict[str, str | None]:
+    out = empty_ai_outputs()
+    if not isinstance(raw, dict):
+        return out
+    alias = {"open-points": "openPoints", "open_points": "openPoints", "primary": None}
+    for key, val in raw.items():
+        if not val:
+            continue
+        target = alias.get(key, key)
+        if target is None:
+            if isinstance(val, str) and val.startswith("content/"):
+                if "meetings/" in val:
+                    out["meeting"] = val
+                elif "notes/" in val:
+                    out["note"] = val
+            continue
+        if target in out:
+            out[target] = str(val)
+    return out
+
+
+def has_primary_ai_output(ai_outputs: dict[str, str | None] | None) -> bool:
+    if not ai_outputs:
+        return False
+    return bool(ai_outputs.get("meeting") or ai_outputs.get("note"))
+
+
+def primary_output_exists(ai_outputs: dict[str, str | None] | None) -> bool:
+    if not has_primary_ai_output(ai_outputs):
+        return False
+    rel = (ai_outputs or {}).get("meeting") or (ai_outputs or {}).get("note")
+    return bool(rel and (REPO_ROOT / rel).is_file())
 
 
 def load_registry() -> dict[str, Any]:
@@ -75,8 +127,9 @@ def save_registry(data: dict[str, Any]) -> None:
 
 
 def normalize_entry(key: str, raw: dict[str, Any]) -> dict[str, Any]:
-    """Migrate legacy fields into the v2 shape."""
     full_path = raw.get("full_path") or raw.get("sourceAudioPath") or key
+    size = raw.get("size")
+    mtime = raw.get("modified_time")
     raw_md = raw.get("rawTranscriptionPath") or raw.get("output_markdown") or ""
     if raw_md and not str(raw_md).startswith("content/"):
         try:
@@ -86,39 +139,51 @@ def normalize_entry(key: str, raw: dict[str, Any]) -> dict[str, Any]:
 
     status = raw.get("status")
     if not status:
-        if raw.get("readyForSite") or raw.get("pipeline_classified"):
-            status = STATUS_READY if raw.get("readyForSite", True) else STATUS_AI_PROCESSED
+        if raw.get("readyForSite"):
+            status = STATUS_READY
+        elif raw.get("pipeline_classified") or raw.get("aiProcessedAt"):
+            status = STATUS_AI_PROCESSED
         elif raw_md:
             status = STATUS_AI_PENDING
         else:
-            status = STATUS_RAW_CREATED
+            status = STATUS_DETECTED
 
-    ready = bool(raw.get("readyForSite"))
-    if status in VISIBLE_STATUSES:
-        ready = ready or status == STATUS_READY
+    ai_outputs = normalize_ai_outputs(raw.get("aiOutputs"))
+    legacy_out = raw.get("output_path") or raw.get("phase2_output_path")
+    if legacy_out and isinstance(legacy_out, str):
+        if "meetings/" in legacy_out and not ai_outputs["meeting"]:
+            ai_outputs["meeting"] = legacy_out
+        elif "notes/" in legacy_out and not ai_outputs["note"]:
+            ai_outputs["note"] = legacy_out
 
-    ai_outputs = raw.get("aiOutputs")
-    if not isinstance(ai_outputs, dict):
-        ai_outputs = {}
-        out = raw.get("output_path") or raw.get("phase2_output_path")
-        if out:
-            ai_outputs["primary"] = out
+    ready = bool(raw.get("readyForSite")) and status == STATUS_READY
+    if ready and not primary_output_exists(ai_outputs):
+        ready = False
+        status = STATUS_AI_PROCESSED if primary_output_exists(ai_outputs) else STATUS_AI_PENDING
+
+    lang = raw.get("detectedLanguage") or raw.get("detected_language")
+    lang_prob = raw.get("languageProbability")
+    if lang_prob is None:
+        lang_prob = raw.get("language_probability")
 
     return {
-        "id": raw.get("id") or stable_id(full_path),
+        "id": raw.get("id")
+        or stable_id(full_path, size if isinstance(size, int) else None, mtime if mtime is not None else None),
         "sourceAudio": raw.get("sourceAudio") or raw.get("file_name") or Path(full_path).name,
         "sourceAudioPath": full_path,
         "rawTranscriptionPath": raw_md,
         "aiOutputs": ai_outputs,
-        "detected_language": raw.get("detected_language"),
-        "language_probability": raw.get("language_probability"),
+        "detectedLanguage": lang,
+        "languageProbability": lang_prob,
+        "detected_language": lang,
+        "language_probability": lang_prob,
         "rawCreatedAt": raw.get("rawCreatedAt") or raw.get("processed_datetime"),
         "aiProcessedAt": raw.get("aiProcessedAt") or raw.get("pipeline_classified_datetime"),
         "status": status,
-        "readyForSite": ready and status in VISIBLE_STATUSES,
+        "readyForSite": ready,
         "error": raw.get("error"),
-        "size": raw.get("size"),
-        "modified_time": raw.get("modified_time"),
+        "size": size,
+        "modified_time": mtime,
         "modified_datetime": raw.get("modified_datetime"),
         "file_name": raw.get("file_name") or Path(full_path).name,
         "full_path": full_path,
@@ -137,9 +202,27 @@ def get_entry_by_audio_path(registry: dict[str, Any], audio_full_path: str) -> d
 def upsert_entry(registry: dict[str, Any], audio_full_path: str, **fields: Any) -> dict[str, Any]:
     processed = registry.setdefault("processed", {})
     current = normalize_entry(audio_full_path, processed.get(audio_full_path, {}))
+    if "aiOutputs" in fields and fields["aiOutputs"] is not None:
+        merged = empty_ai_outputs()
+        merged.update(normalize_ai_outputs(current.get("aiOutputs")))
+        merged.update(normalize_ai_outputs(fields["aiOutputs"]))
+        fields = {**fields, "aiOutputs": merged}
     current.update(fields)
-    current["id"] = current.get("id") or stable_id(audio_full_path)
+    size = current.get("size")
+    mtime = current.get("modified_time")
+    current["id"] = stable_id(
+        audio_full_path,
+        size if isinstance(size, int) else None,
+        mtime if mtime is not None else None,
+    )
     current["sourceAudioPath"] = audio_full_path
+    if current.get("readyForSite"):
+        if primary_output_exists(current.get("aiOutputs")):
+            current["status"] = STATUS_READY
+        else:
+            current["readyForSite"] = False
+    elif current.get("status") == STATUS_READY:
+        current["readyForSite"] = False
     processed[audio_full_path] = current
     return current
 
@@ -159,46 +242,30 @@ def find_entry_by_raw_path(registry: dict[str, Any], raw_rel: str) -> tuple[str,
         return None
     for key, val in registry.get("processed", {}).items():
         entry = normalize_entry(key, val)
-        entry_raw = normalize_raw_rel(str(entry.get("rawTranscriptionPath") or ""))
-        if entry_raw == target:
+        if normalize_raw_rel(str(entry.get("rawTranscriptionPath") or "")) == target:
             return key, entry
     return None
 
 
-def has_ai_output(entry: dict[str, Any]) -> bool:
-    outputs = entry.get("aiOutputs")
-    if not isinstance(outputs, dict):
-        return False
-    for val in outputs.values():
-        if val:
-            return True
-    return bool(entry.get("aiProcessedAt"))
-
-
 def is_visible_on_main_page(entry: dict[str, Any]) -> bool:
-    """Main Transcriptions list: ai_processed or ready_for_site, readyForSite, with AI outputs."""
-    return (
-        entry.get("status") in VISIBLE_STATUSES
-        and bool(entry.get("readyForSite"))
-        and has_ai_output(entry)
-    )
+    """Main Transcriptions list: ONLY ready_for_site with primary AI output on disk."""
+    return is_ready_for_site(entry)
 
 
 def is_ready_for_site(entry: dict[str, Any]) -> bool:
-    """Alias used by index + publish validation."""
-    return is_visible_on_main_page(entry)
+    return (
+        bool(entry.get("readyForSite"))
+        and entry.get("status") == STATUS_READY
+        and primary_output_exists(entry.get("aiOutputs"))
+    )
 
 
 def list_pending_sources(registry: dict[str, Any]) -> list[dict[str, Any]]:
     out: list[dict[str, Any]] = []
     for key, val in registry.get("processed", {}).items():
         entry = normalize_entry(key, val)
-        if is_visible_on_main_page(entry):
+        if is_ready_for_site(entry):
             continue
-        if (
-            entry.get("status") in PENDING_STATUSES
-            or not entry.get("aiProcessedAt")
-            or not entry.get("readyForSite")
-        ):
+        if entry.get("status") in PENDING_STATUSES or not entry.get("aiProcessedAt"):
             out.append(entry)
     return sorted(out, key=lambda e: e.get("rawCreatedAt") or "", reverse=True)

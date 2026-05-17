@@ -799,8 +799,7 @@ def build_index() -> dict[str, Any]:
         elif it.get("source_audio"):
             continue
         else:
-            it["readyForSite"] = True
-            it["pipelineStatus"] = "ready_for_site"
+            continue
         visible.append(it)
     operational = visible
     compute_related_files(operational)

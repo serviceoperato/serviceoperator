@@ -25,7 +25,7 @@ if ($LASTEXITCODE -ne 0) {
   exit 1
 }
 
-# Phase 1 — transcription only
+# Phase 1 — transcription + immediate per-file Phase 2
 python "$RepoRoot\scripts\transcribe_voice_recorder.py"
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 

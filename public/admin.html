@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles.css" />
-<link rel="stylesheet" href="/transcriptions-admin.css" />
+<link rel="stylesheet" href="/transcriptions-admin.css?v=1.5.57" />
 <script src="/page-skeleton.js"></script>
 <script src="/so-api.js"></script>
 </head>
@@ -219,10 +219,9 @@
         </div>
         <p id="txLoadHint" class="tx-admin__status mono tf-admin-muted" role="status"></p>
       </header>
+      <h3 class="tx-section-heading">AI-ready outputs</h3>
       <div id="txCatScroll" class="tx-cats" role="tablist" aria-label="Categories"></div>
       <div id="txStats" class="tx-stats" aria-label="AI-ready counts"></div>
-      <aside id="txRawSources" class="tx-raw-sources" aria-label="Raw, pending, and failed sources"></aside>
-
       <div id="txFilters" class="tx-filters" aria-label="Filters">
         <button type="button" class="tx-pill" data-tx-filter="today">Today</button>
         <button type="button" class="tx-pill" data-tx-filter="week">Week</button>

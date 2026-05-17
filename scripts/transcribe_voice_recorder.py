@@ -2,6 +2,8 @@
 """
 Voice recorder transcription batch job (faster-whisper, auto language).
 
+Per file: transcribe → raw_created → immediate Phase 2 AI processing.
+
 Usage:
   pip install faster-whisper
   winget install Gyan.FFmpeg
@@ -29,9 +31,13 @@ from voice_pipeline_progress import (
 )
 from voice_registry import (
     STATUS_AI_PENDING,
+    STATUS_DETECTED,
     STATUS_RAW_CREATED,
+    STATUS_READY,
     load_registry,
+    normalize_entry,
     save_registry,
+    stable_id,
     upsert_entry,
 )
 
@@ -82,11 +88,25 @@ def is_already_processed(
     entry = registry["processed"].get(full_path)
     if not entry:
         return False
-    return (
-        entry.get("size") == size
-        and entry.get("modified_time") == mtime
-        and Path(entry.get("output_markdown", "")).is_file()
-    )
+    if entry.get("size") != size or entry.get("modified_time") != mtime:
+        return False
+    normalized = normalize_entry(full_path, entry)
+    if normalized.get("status") == STATUS_READY and normalized.get("readyForSite"):
+        return True
+    raw_rel = normalized.get("rawTranscriptionPath")
+    if raw_rel and (REPO_ROOT / raw_rel).is_file() and normalized.get("aiProcessedAt"):
+        return True
+    return bool(raw_rel) and (REPO_ROOT / raw_rel).is_file()
+
+
+def run_phase2_for_raw(raw_path: Path, registry: dict) -> None:
+    from process_daily_voice_phase2 import process_single_raw
+
+    log.info("Phase 2 (immediate) for %s", raw_path.name)
+    write_progress(message=f"AI processing: {raw_path.name}")
+    stats = process_single_raw(raw_path, registry, save=False)
+    if stats.get("errors"):
+        log.warning("Phase 2 reported errors for %s", raw_path.name)
 
 
 def format_timestamp(seconds: float) -> str:
@@ -173,10 +193,35 @@ def process_file(model, registry: dict, source: Path) -> bool:
 
     log.info("Processing file: %s", source.name)
     write_progress(message=f"Transcribing: {source.name}")
+
+    upsert_entry(
+        registry,
+        full_path,
+        file_name=source.name,
+        full_path=full_path,
+        size=size,
+        modified_time=mtime,
+        modified_datetime=format_mtime(mtime),
+        sourceAudio=source.name,
+        sourceAudioPath=full_path,
+        id=stable_id(full_path, size, mtime),
+        status=STATUS_DETECTED,
+        readyForSite=False,
+        error=None,
+        aiOutputs={},
+    )
+
     try:
         segment_rows, language, language_probability = transcribe_file(model, source)
     except Exception as exc:
         log.error("Transcription failed for %s: %s", source, exc)
+        upsert_entry(
+            registry,
+            full_path,
+            status="failed",
+            readyForSite=False,
+            error=str(exc)[:500],
+        )
         return False
 
     prob_msg = (
@@ -205,30 +250,35 @@ def process_file(model, registry: dict, source: Path) -> bool:
         )
     except OSError as exc:
         log.error("Could not write %s: %s", output_path, exc)
+        upsert_entry(
+            registry,
+            full_path,
+            status="failed",
+            readyForSite=False,
+            error=str(exc)[:500],
+        )
         return False
 
     raw_rel = output_path.relative_to(REPO_ROOT).as_posix()
     upsert_entry(
         registry,
         full_path,
-        file_name=source.name,
-        full_path=full_path,
-        size=size,
-        modified_time=mtime,
-        modified_datetime=modified_at,
         output_markdown=str(output_path.resolve()),
         rawTranscriptionPath=raw_rel,
         processed_datetime=processed_at,
         rawCreatedAt=processed_at,
+        detectedLanguage=language,
+        languageProbability=language_probability,
         detected_language=language,
         language_probability=language_probability,
         status=STATUS_RAW_CREATED,
         readyForSite=False,
         error=None,
-        aiOutputs={},
     )
     upsert_entry(registry, full_path, status=STATUS_AI_PENDING)
-    log.info("Raw transcription created (AI pending): %s", output_path)
+    log.info("Raw transcription created: %s", output_path)
+
+    run_phase2_for_raw(output_path, registry)
     return True
 
 
@@ -260,6 +310,18 @@ def run_transcription() -> tuple[int, int, list[str]]:
             continue
         queue.append((source, full_path, size, mtime))
         bytes_total += size
+        upsert_entry(
+            registry,
+            full_path,
+            file_name=source.name,
+            size=size,
+            modified_time=mtime,
+            modified_datetime=format_mtime(mtime),
+            sourceAudio=source.name,
+            id=stable_id(full_path, size, mtime),
+            status=STATUS_DETECTED,
+            readyForSite=False,
+        )
     pending = len(queue)
     log.info("New files to transcribe: %d", pending)
     mark_running_scan(audio_found, skipped, pending, bytes_total)

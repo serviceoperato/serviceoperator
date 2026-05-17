@@ -328,8 +328,11 @@
   }
 
   function pipelineStatusLabel(status, ready) {
-    if (ready || status === 'ready_for_site' || status === 'ai_processed') {
+    if (ready || status === 'ready_for_site') {
       return { t: 'AI-ready', ok: true };
+    }
+    if (status === 'ai_processed') {
+      return { t: 'AI processed (not published)', warn: true };
     }
     if (
       status === 'detected' ||
@@ -510,12 +513,12 @@
 
   function formatPipelineStatus(status) {
     var map = {
-      detected: 'Waiting for AI processing',
-      raw_created: 'Waiting for AI processing',
+      detected: 'Detected',
+      raw_created: 'Raw created',
       ai_processing_pending: 'Waiting for AI processing',
-      ai_processing_running: 'Waiting for AI processing',
-      ai_processed: 'AI-ready',
-      ready_for_site: 'AI-ready',
+      ai_processing_running: 'AI processing running',
+      ai_processed: 'AI processed (not on main list)',
+      ready_for_site: 'AI-ready (published)',
       failed: 'Failed processing',
       needs_review: 'Needs review',
     };

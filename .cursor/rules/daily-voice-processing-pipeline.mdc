@@ -36,7 +36,7 @@ Or step by step:
 - Reindex: `python scripts/index_transcriptions.py` (main list = AI-ready only; pending/failed in `rawSources.pendingSources`)
 - Validate: `python scripts/validate_voice_publish.py` (run before commit/push)
 
-**Never publish raw-only transcriptions** to `/admin/transcriptions` or git as visible site items. Pipeline: audio → raw MD → AI processing → AI-ready markdown → index → commit (only when `readyForSite` / `ready_for_site` or `ai_processed`).
+**Never publish raw-only transcriptions** to `/admin/transcriptions` or git as visible site items. Per-file sequence: detect audio → raw MD (`raw_created`) → immediate Phase 2 AI → outputs under `content/{meetings,notes,tasks,...}` → registry → index. **Main list visibility: ONLY `ready_for_site`** (not `ai_processed`). Pending box: `detected`, `raw_created`, `ai_processing_*`, `ai_processed`, `failed`, `needs_review`. Commit/push only when `readyForSite` and primary AI outputs exist.
 
 Legacy orchestrator (old heuristic classify only): `python scripts/process_voice_recorder_pipeline.py` — do not use for daily runs.
 
