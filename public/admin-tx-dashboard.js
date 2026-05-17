@@ -5,7 +5,7 @@
   'use strict';
 
   /** Bumped when dashboard markup/behavior changes (cache-bust aid). */
-  window.TX_DASHBOARD_UI_REV = 7;
+  window.TX_DASHBOARD_UI_REV = 9;
 
   function txLog() {
     if (typeof console !== 'undefined' && console.log) {
@@ -81,6 +81,7 @@
     itemSyncState: {},
     bulkSyncing: false,
     bulkSyncProgress: { done: 0, total: 0 },
+    sortOrder: 'recent',
   };
 
   var searchTimer = null;
@@ -124,6 +125,259 @@
           .replace(/</g, '&lt;')
           .replace(/>/g, '&gt;')
           .replace(/"/g, '&quot;');
+  }
+
+  var TX_PERSON_SCALAR_KEYS = [
+    'owner',
+    'assignedTo',
+    'assignee',
+    'madeBy',
+    'decidedBy',
+    'affectedBy',
+    'speaker',
+    'organizer',
+    'facilitator',
+  ];
+  var TX_PERSON_ARRAY_KEYS = [
+    'speakers',
+    'participants',
+    'people',
+    'attendees',
+    'names',
+    'assignedTo',
+  ];
+  var TX_OWNER_PLACEHOLDER_RE = /^(owner\s+)?to\s+confirm$/i;
+
+  function regexEscape(s) {
+    return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function isPersonPlaceholder(name) {
+    if (name == null) return true;
+    var t = String(name).trim();
+    if (!t || t === '—' || t === '-') return true;
+    if (TX_OWNER_PLACEHOLDER_RE.test(t)) return true;
+    if (/^unknown$/i.test(t) || /^unclear$/i.test(t)) return true;
+    return false;
+  }
+
+  function pushPersonName(out, seen, name) {
+    if (isPersonPlaceholder(name)) return;
+    var t = String(name).trim();
+    if (t.length < 2) return;
+    var key = t.toLowerCase();
+    if (seen[key]) return;
+    seen[key] = true;
+    out.push(t);
+  }
+
+  function collectPeopleValues(val, out, seen) {
+    if (val == null) return;
+    if (Array.isArray(val)) {
+      val.forEach(function (v) {
+        collectPeopleValues(v, out, seen);
+      });
+      return;
+    }
+    if (typeof val === 'object') {
+      if (val.name) pushPersonName(out, seen, val.name);
+      if (val.speaker) pushPersonName(out, seen, val.speaker);
+      if (val.label) pushPersonName(out, seen, val.label);
+      return;
+    }
+    var parts = String(val).split(/[,;/|]+/);
+    parts.forEach(function (p) {
+      pushPersonName(out, seen, p);
+    });
+  }
+
+  function extractPeopleFromItem(item) {
+    if (!item) return [];
+    var out = [];
+    var seen = {};
+    TX_PERSON_SCALAR_KEYS.forEach(function (key) {
+      if (item[key] != null) collectPeopleValues(item[key], out, seen);
+    });
+    TX_PERSON_ARRAY_KEYS.forEach(function (key) {
+      if (item[key] != null) collectPeopleValues(item[key], out, seen);
+    });
+    var ex = item.extracted_items || item.extractedItems;
+    if (ex && typeof ex === 'object') {
+      TX_PERSON_SCALAR_KEYS.forEach(function (key) {
+        if (ex[key] != null) collectPeopleValues(ex[key], out, seen);
+      });
+      TX_PERSON_ARRAY_KEYS.forEach(function (key) {
+        if (ex[key] != null) collectPeopleValues(ex[key], out, seen);
+      });
+    }
+    var transcript = item.transcript || item.transcription;
+    if (transcript && typeof transcript === 'object') {
+      if (transcript.speakers) collectPeopleValues(transcript.speakers, out, seen);
+      if (Array.isArray(transcript.segments)) {
+        transcript.segments.forEach(function (seg) {
+          if (seg && seg.speaker) pushPersonName(out, seen, seg.speaker);
+        });
+      }
+    }
+    if (item.transcriptSpeakers) collectPeopleValues(item.transcriptSpeakers, out, seen);
+    if (Array.isArray(item.segments)) {
+      item.segments.forEach(function (seg) {
+        if (seg && seg.speaker) pushPersonName(out, seen, seg.speaker);
+      });
+    }
+    return out;
+  }
+
+  function highlightPeopleInText(text, people) {
+    if (!text) return '';
+    var safe = esc(text);
+    if (!people || !people.length) return safe;
+    var sorted = people.slice().sort(function (a, b) {
+      return b.length - a.length;
+    });
+    sorted.forEach(function (name) {
+      if (!name || name.length < 2) return;
+      var escapedName = regexEscape(esc(name));
+      var re = new RegExp(escapedName, 'gi');
+      safe = safe.replace(re, function (match) {
+        return (
+          '<strong class="tx-person">' +
+          match +
+          '</strong>'
+        );
+      });
+    });
+    return safe;
+  }
+
+  function renderPersonBadge(name, extraClass) {
+    return (
+      '<span class="tx-person-badge' +
+      (extraClass ? ' ' + extraClass : '') +
+      '">' +
+      esc(name) +
+      '</span>'
+    );
+  }
+
+  function renderPeopleInvolvedBlock(people, options) {
+    options = options || {};
+    if (!people || !people.length) return '';
+    var chips = people
+      .map(function (name) {
+        return renderPersonBadge(name);
+      })
+      .join('');
+    return (
+      '<section class="tx-people-involved' +
+      (options.compact ? ' tx-people-involved--compact' : '') +
+      '" aria-label="People involved">' +
+      '<h4>People involved</h4>' +
+      '<div class="tx-people-involved__chips">' +
+      chips +
+      '</div></section>'
+    );
+  }
+
+  function renderPeopleChipsRow(people, max) {
+    if (!people || !people.length) return '';
+    var slice = people.slice(0, max || 3);
+    return (
+      '<div class="tx-dash-card__people" aria-label="People">' +
+      slice.map(function (name) {
+        return renderPersonBadge(name);
+      }).join('') +
+      '</div>'
+    );
+  }
+
+  function openPointOwnerDisplay(item) {
+    var raw = item.owner || item.assignedTo;
+    if (!raw || isPersonPlaceholder(raw)) {
+      return { label: 'Owner to confirm', confirm: true, person: null };
+    }
+    return { label: String(raw).trim(), confirm: false, person: String(raw).trim() };
+  }
+
+  function renderCategoryPeopleMeta(item) {
+    if (!item) return '';
+    var cat = String(item.category || '').toLowerCase();
+    var rows = [];
+    if (cat === 'tasks') {
+      var assignee = item.assignedTo || item.assignee || item.owner;
+      if (assignee && !isPersonPlaceholder(assignee)) {
+        rows.push(
+          '<p class="tx-detail-person-meta"><span class="tx-detail-person-meta__label">Owner</span> ' +
+            renderPersonBadge(assignee) +
+            '</p>'
+        );
+      }
+    } else if (cat === 'decisions') {
+      var maker = item.madeBy || item.decidedBy;
+      var affected = item.affectedBy;
+      if (maker && !isPersonPlaceholder(maker)) {
+        rows.push(
+          '<p class="tx-detail-person-meta"><span class="tx-detail-person-meta__label">Decided by</span> ' +
+            renderPersonBadge(maker) +
+            '</p>'
+        );
+      }
+      if (affected && !isPersonPlaceholder(affected)) {
+        rows.push(
+          '<p class="tx-detail-person-meta"><span class="tx-detail-person-meta__label">Affects</span> ' +
+            renderPersonBadge(affected) +
+            '</p>'
+        );
+      }
+    } else if (cat === 'open-points') {
+      var op = openPointOwnerDisplay(item);
+      rows.push(
+        '<p class="tx-detail-person-meta"><span class="tx-detail-person-meta__label">Owner</span> ' +
+          (op.confirm
+            ? renderPersonBadge(op.label, 'tx-person-badge--confirm')
+            : renderPersonBadge(op.label)) +
+          '</p>'
+      );
+    }
+    return rows.length ? '<div class="tx-detail-person-fields">' + rows.join('') + '</div>' : '';
+  }
+
+  function bulletsHtml(arr, people) {
+    if (!arr || !arr.length) return '';
+    return (
+      '<ul>' +
+      arr
+        .map(function (x) {
+          var html = people && people.length ? highlightPeopleInText(x, people) : esc(x);
+          return '<li>' + html + '</li>';
+        })
+        .join('') +
+      '</ul>'
+    );
+  }
+
+  function renderTranscriptSpeakersBlock(item, people) {
+    var segments = (item.transcript && item.transcript.segments) || item.segments;
+    if (!segments || !segments.length) return '';
+    var lines = segments
+      .map(function (seg) {
+        var speaker = seg.speaker || seg.name || '';
+        var text = seg.text || seg.content || '';
+        if (!text) return '';
+        var speakerHtml = speaker
+          ? '<strong class="tx-person">' + esc(speaker) + '</strong>: '
+          : '';
+        return (
+          '<p class="tx-transcript-line">' +
+          speakerHtml +
+          highlightPeopleInText(text, people) +
+          '</p>'
+        );
+      })
+      .filter(Boolean)
+      .join('');
+    if (!lines) return '';
+    return '<div class="tx-transcript-speakers">' + lines + '</div>';
   }
 
   function byId(id) {
@@ -294,6 +548,41 @@
     return CATEGORY_THEME[cat] || { accent: '#4f46e5', subtitle: '' };
   }
 
+  /** Numeric breakdowns per category (≥2 states → donut). Colors align with catTheme accents. */
+  var CATEGORY_SEGMENT_DEFS = {
+    meetings: [
+      { key: 'reviewed', label: 'Reviewed', color: '#10b981' },
+      { key: 'needsReview', label: 'Needs review', color: '#f59e0b' },
+    ],
+    notes: [
+      { key: 'processed', label: 'Processed', color: '#10b981' },
+      { key: 'pending', label: 'Pending', color: '#94a3b8' },
+    ],
+    tasks: [
+      { key: 'open', label: 'Open', color: '#f59e0b' },
+      { key: 'done', label: 'Done', color: '#10b981' },
+      { key: 'unclear', label: 'Unclear', color: '#94a3b8' },
+    ],
+    calendar: [
+      { key: 'dated', label: 'Dated', color: '#8b5cf6' },
+      { key: 'toConfirm', label: 'To confirm', color: '#ef4444' },
+      { key: 'unclear', label: 'Unclear', color: '#94a3b8' },
+    ],
+    projects: [
+      { key: 'categorized', label: 'Categorized', color: '#f59e0b' },
+      { key: 'uncategorized', label: 'Uncategorized', color: '#cbd5e1' },
+    ],
+    decisions: [
+      { key: 'confirmed', label: 'Confirmed', color: '#10b981' },
+      { key: 'needsReview', label: 'Needs review', color: '#ef4444' },
+    ],
+    'open-points': [
+      { key: 'unresolved', label: 'Unresolved', color: '#64748b' },
+      { key: 'assigned', label: 'Assigned', color: '#4f46e5' },
+      { key: 'unclear', label: 'Unclear', color: '#eab308' },
+    ],
+  };
+
   function aiReadyItems() {
     return state.items.filter(function (it) {
       if (!isAiReadyItem(it)) return false;
@@ -379,11 +668,518 @@
   }
 
   function itemDetailKeyPoints(item) {
-    var pool = itemKeyPoints(item).slice();
-    if (pool.length >= 3) return pool;
-    if (!pool.length && item.summary) pool.push(truncatePoint(item.summary, KEY_POINT_MAX));
-    if (pool.length < 3 && item.preview) pool.push(truncatePoint(item.preview, KEY_POINT_MAX));
-    return uniquePoints(pool).slice(0, 3);
+    return itemKeyPoints(item);
+  }
+
+  function txItemDetailPath(id) {
+    return '/admin/transcriptions/item/' + encodeURIComponent(String(id || ''));
+  }
+
+  function parseTxDetailIdFromPath(pathname) {
+    var path = String(pathname != null ? pathname : window.location.pathname || '')
+      .replace(/\/+$/, '') || '/';
+    var m = path.match(/\/admin\/transcriptions\/item\/([^/]+)$/);
+    return m ? decodeURIComponent(m[1]) : '';
+  }
+
+  function isTranscriptionDetailRoute() {
+    return !!parseTxDetailIdFromPath();
+  }
+
+  function isTranscriptionsListRoute() {
+    return txShellPath() === '/admin/transcriptions';
+  }
+
+  function navigateToDetail(id, replace) {
+    if (!id) return;
+    var href = txItemDetailPath(id);
+    if (typeof adminShellNavigate === 'function' && adminShellNavigate(href, null, !!replace)) {
+      if (typeof window.initAdminTranscriptionDetail === 'function') {
+        window.initAdminTranscriptionDetail();
+      }
+      return;
+    }
+    if (replace) window.location.replace(href);
+    else window.location.assign(href);
+  }
+
+  function itemSummaryParagraph(item) {
+    var fields = [item.summary, item.preview, item.description, item.notes];
+    for (var i = 0; i < fields.length; i++) {
+      var t = String(fields[i] || '').trim();
+      if (t && !isGenericPlaceholderText(t)) return t;
+    }
+    return '';
+  }
+
+  function itemNextActionLine(item) {
+    var steps = item.nextSteps || [];
+    if (steps.length) return String(steps[0] || '').trim();
+    var actions = item.possibleActions || [];
+    if (actions.length) return String(actions[0] || '').trim();
+    return '';
+  }
+
+  function detailSectionCard(title, bodyHtml) {
+    if (!bodyHtml) return '';
+    return (
+      '<article class="tx-detail-page__card"><h3 class="tx-detail-page__card-title">' +
+      esc(title) +
+      '</h3><div class="tx-detail-page__card-body">' +
+      bodyHtml +
+      '</div></article>'
+    );
+  }
+
+  function detailListSection(title, arr, people) {
+    if (!arr || !arr.length) return '';
+    return detailSectionCard(title, bulletsHtml(arr, people));
+  }
+
+  function detailFieldTable(rows) {
+    var html = rows
+      .filter(function (row) {
+        if (!row) return false;
+        if (row.html) return true;
+        return row.value != null && String(row.value).trim();
+      })
+      .map(function (row) {
+        var cell = row.html
+          ? row.html
+          : row.code
+            ? '<code>' + esc(row.value) + '</code>'
+            : esc(row.value);
+        return (
+          '<tr><th scope="row">' +
+          esc(row.label) +
+          '</th><td>' +
+          cell +
+          '</td></tr>'
+        );
+      })
+      .join('');
+    if (!html) return '';
+    return '<table class="tx-detail-page__fields"><tbody>' + html + '</tbody></table>';
+  }
+
+  function detailRelatedLinks(items) {
+    if (!items || !items.length) return '';
+    return (
+      '<div class="tx-detail-page__related">' +
+      items
+        .map(function (r) {
+          return (
+            '<a class="tx-detail-page__related-link" href="' +
+            esc(txItemDetailPath(r.id)) +
+            '"><strong>' +
+            esc(r.categoryLabel || r.category) +
+            '</strong><span>' +
+            esc(r.title || '') +
+            '</span></a>'
+          );
+        })
+        .join('') +
+      '</div>'
+    );
+  }
+
+  function detailSourceRefBlock(item) {
+    var rows = [
+      { label: 'Source audio', value: audioBasename(item) || item.sourceAudio },
+      { label: 'Source transcription', value: item.sourceTranscription, code: true },
+      { label: 'Output file', value: item.path || item.filepath, code: true },
+    ];
+    var table = detailFieldTable(rows);
+    if (!table) return '';
+    return detailSectionCard('Source reference', table);
+  }
+
+  function detailOperationalSections(item) {
+    var cat = String(item.category || 'notes').toLowerCase();
+    var people = extractPeopleFromItem(item);
+    var html = renderCategoryPeopleMeta(item);
+    var rel = relatedItems(item);
+    var relTasks = rel.filter(function (r) {
+      return r.category === 'tasks';
+    });
+    var relCal = rel.filter(function (r) {
+      return r.category === 'calendar';
+    });
+    var relMeetNotes = rel.filter(function (r) {
+      return r.category === 'meetings' || r.category === 'notes';
+    });
+
+    if (cat === 'meetings') {
+      html +=
+        detailListSection('Decisions', item.decisions, people) +
+        detailListSection('Tasks', item.tasks, people) +
+        detailListSection('Open points', item.openPoints, people) +
+        detailListSection('Next steps', item.nextSteps, people) +
+        detailSourceRefBlock(item);
+    } else if (cat === 'notes') {
+      html +=
+        detailListSection('Important points', item.importantPoints, people) +
+        detailListSection('Possible actions', item.possibleActions, people) +
+        (relTasks.length ? detailSectionCard('Related tasks', detailRelatedLinks(relTasks)) : '') +
+        (relCal.length ? detailSectionCard('Related calendar', detailRelatedLinks(relCal)) : '') +
+        detailSourceRefBlock(item);
+    } else if (cat === 'tasks') {
+      var taskLine = (item.tasks && item.tasks[0]) || item.taskText || item.title;
+      var taskOwner = item.assignedTo || item.assignee || item.owner;
+      var taskRows = [
+            { label: 'Task', value: taskLine },
+            { label: 'Status', value: item.status || taskStatusBucket(item) },
+            { label: 'Due date', value: item.dueDate },
+            { label: 'Project', value: item.project },
+            { label: 'Source audio', value: audioBasename(item) || item.sourceAudio },
+            {
+              label: 'Related note / meeting',
+              value: relMeetNotes.length
+                ? relMeetNotes
+                    .map(function (r) {
+                      return r.title;
+                    })
+                    .join('; ')
+                : '',
+            },
+          ];
+      if (taskOwner && !isPersonPlaceholder(taskOwner)) {
+        taskRows.splice(1, 0, {
+          label: 'Owner',
+          html: renderPersonBadge(taskOwner),
+        });
+      }
+      html +=
+        detailSectionCard('Task', detailFieldTable(taskRows)) + detailSourceRefBlock(item);
+    } else if (cat === 'calendar') {
+      var calLines = item.calendarEvents || [];
+      var eventTitle = calLines[0] || item.title;
+      html +=
+        detailSectionCard(
+          'Calendar event',
+          detailFieldTable([
+            { label: 'Event title', value: eventTitle },
+            { label: 'Date', value: item.eventDate || item.date },
+            { label: 'Time', value: item.eventTime },
+            { label: 'Status', value: item.status || item.confidence },
+            { label: 'Source audio', value: audioBasename(item) || item.sourceAudio },
+            {
+              label: 'Related task / note',
+              value: rel.length
+                ? rel
+                    .map(function (r) {
+                      return r.title;
+                    })
+                    .join('; ')
+                : '',
+            },
+          ])
+        ) + detailSourceRefBlock(item);
+    } else if (cat === 'projects') {
+      html +=
+        detailSectionCard(
+          'Project update',
+          item.summary || item.preview
+            ? '<p class="tx-detail-page__prose">' +
+              highlightPeopleInText(item.summary || item.preview, people) +
+              '</p>'
+            : ''
+        ) +
+        detailListSection('Decisions', item.decisions, people) +
+        detailListSection('Tasks', item.tasks, people) +
+        detailListSection('Blockers', item.blockers, people) +
+        detailListSection('Next steps', item.nextSteps, people) +
+        detailSourceRefBlock(item);
+    } else if (cat === 'decisions') {
+      var decisionRows = [
+        { label: 'Decision', value: item.decisionText || (item.decisions && item.decisions[0]) },
+        { label: 'Context', value: item.context },
+        { label: 'Reason', value: item.reason },
+        { label: 'Related project', value: item.project },
+      ];
+      var decidedBy = item.madeBy || item.decidedBy;
+      var affects = item.affectedBy;
+      if (decidedBy && !isPersonPlaceholder(decidedBy)) {
+        decisionRows.push({ label: 'Decided by', html: renderPersonBadge(decidedBy) });
+      }
+      if (affects && !isPersonPlaceholder(affects)) {
+        decisionRows.push({ label: 'Affects', html: renderPersonBadge(affects) });
+      }
+      html +=
+        detailSectionCard('Decision', detailFieldTable(decisionRows)) + detailSourceRefBlock(item);
+    } else if (cat === 'open-points') {
+      var opOwner = openPointOwnerDisplay(item);
+      html +=
+        detailSectionCard(
+          'Open point',
+          detailFieldTable([
+            { label: 'Question / issue', value: item.issue || item.title },
+            {
+              label: 'Owner',
+              html: opOwner.confirm
+                ? renderPersonBadge(opOwner.label, 'tx-person-badge--confirm')
+                : renderPersonBadge(opOwner.label),
+            },
+            { label: 'Deadline', value: item.deadline || item.dueDate || item.eventDate },
+            { label: 'Related project', value: item.project },
+            { label: 'Next step', value: (item.nextSteps && item.nextSteps[0]) || '' },
+          ])
+        ) + detailSourceRefBlock(item);
+    }
+    return html;
+  }
+
+  function detailNavList() {
+    if (state.filtered && state.filtered.length) return state.filtered.slice();
+    return applyClientFilters(aiReadyItems());
+  }
+
+  function detailNeighbors(item) {
+    var list = detailNavList();
+    var idx = -1;
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].id === item.id) {
+        idx = i;
+        break;
+      }
+    }
+    return {
+      prev: idx > 0 ? list[idx - 1] : null,
+      next: idx >= 0 && idx < list.length - 1 ? list[idx + 1] : null,
+    };
+  }
+
+  function renderDetailStatusBadges(item) {
+    var chips = dashStatChips(item);
+    chips.unshift({ t: item.reviewed ? 'Reviewed' : 'Unreviewed', ok: !!item.reviewed, warn: !item.reviewed });
+    return chips.map(renderDashChip).join('');
+  }
+
+  function renderDetailPageNotFound(message) {
+    var root = byId('txDetailPageRoot');
+    if (!root) return;
+    root.innerHTML =
+      '<div class="tx-detail-page__empty"><h2>Not available</h2><p>' +
+      esc(message || 'Item not found or not AI-ready.') +
+      '</p><a href="/admin/transcriptions" class="tf-admin-toolbar__btn">Back to Transcriptions</a></div>';
+    updateDetailPager(null);
+  }
+
+  function updateDetailPager(item) {
+    var prevBtn = byId('txDetailPrevBtn');
+    var nextBtn = byId('txDetailNextBtn');
+    if (!prevBtn || !nextBtn) return;
+    if (!item) {
+      prevBtn.disabled = true;
+      nextBtn.disabled = true;
+      return;
+    }
+    var neighbors = detailNeighbors(item);
+    prevBtn.disabled = !neighbors.prev;
+    nextBtn.disabled = !neighbors.next;
+    prevBtn.dataset.txNavId = neighbors.prev ? neighbors.prev.id : '';
+    nextBtn.dataset.txNavId = neighbors.next ? neighbors.next.id : '';
+  }
+
+  var detailChromeBound = false;
+
+  function bindDetailPageChrome() {
+    if (detailChromeBound) return;
+    detailChromeBound = true;
+    var back = document.querySelector('[data-tx-detail-back]');
+    if (back) {
+      back.addEventListener('click', function (ev) {
+        if (typeof adminShellNavigate === 'function' && adminShellNavigate('/admin/transcriptions', ev)) {
+          if (typeof window.initAdminTranscriptions === 'function') window.initAdminTranscriptions();
+        }
+      });
+    }
+    var prevBtn = byId('txDetailPrevBtn');
+    var nextBtn = byId('txDetailNextBtn');
+    if (prevBtn) {
+      prevBtn.addEventListener('click', function () {
+        var id = prevBtn.dataset.txNavId;
+        if (id) navigateToDetail(id);
+      });
+    }
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function () {
+        var id = nextBtn.dataset.txNavId;
+        if (id) navigateToDetail(id);
+      });
+    }
+    var copySummary = byId('txDetailCopySummaryBtn');
+    if (copySummary) {
+      copySummary.addEventListener('click', function () {
+        if (!state.detailItem) return;
+        var text = itemSummaryParagraph(state.detailItem) || state.detailItem.title || '';
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(
+            function () {
+              toast('Summary copied.');
+            },
+            function () {
+              toast('Copy failed.');
+            }
+          );
+        } else {
+          toast('Clipboard not available.');
+        }
+      });
+    }
+  }
+
+  function renderDetailPage(item) {
+    var root = byId('txDetailPageRoot');
+    var hint = byId('txDetailPageHint');
+    if (!root || !item) return;
+    if (hint) hint.textContent = '';
+    state.detailItem = item;
+
+    var cat = String(item.category || 'notes').toLowerCase();
+    var theme = catTheme(cat);
+    var people = extractPeopleFromItem(item);
+    var points = itemKeyPoints(item);
+    var summary = itemSummaryParagraph(item);
+    var nextAction = itemNextActionLine(item);
+    var heroStats = categoryBreakdownStats(cat, [item]);
+    var heroVisual = categoryVisualFromStats(heroStats, cat, 1, null, { legend: true, size: 'hero' });
+    var processed = formatProcessedDate(item);
+    var audioName = audioBasename(item);
+
+    var pointsBlock = points.length
+      ? '<section class="tx-detail-page__keypoints" aria-labelledby="txDetailKeyPointsTitle">' +
+        '<h3 id="txDetailKeyPointsTitle">Top 3 key points</h3><ul>' +
+        points
+          .map(function (p) {
+            return '<li>' + highlightPeopleInText(p, people) + '</li>';
+          })
+          .join('') +
+        '</ul></section>'
+      : '';
+
+    var peopleBlock = renderPeopleInvolvedBlock(people);
+    var transcriptBlock = renderTranscriptSpeakersBlock(item, people);
+
+    var summaryBody =
+      '<p class="tx-detail-page__prose">' +
+      highlightPeopleInText(summary || 'No summary available in the index for this item.', people) +
+      '</p>';
+    if (nextAction) {
+      summaryBody +=
+        '<p class="tx-detail-page__next-action"><strong>Next action:</strong> ' +
+        highlightPeopleInText(nextAction, people) +
+        '</p>';
+    }
+
+    var metaRows = detailFieldTable([
+      { label: 'Category', value: CATEGORY_LABELS[cat] || item.categoryLabel || cat },
+      { label: 'Project', value: item.project },
+      { label: 'Source audio', value: audioName || item.sourceAudio },
+      { label: 'Processed', value: processed || item.processedDate },
+    ]);
+
+    root.innerHTML =
+      '<header class="tx-detail-page__hero" style="--tx-cat-accent:' +
+      esc(theme.accent) +
+      '">' +
+      '<div class="tx-detail-page__hero-visual" aria-hidden="true">' +
+      heroVisual +
+      '</div>' +
+      '<div class="tx-detail-page__hero-copy">' +
+      '<p class="tx-detail-page__eyebrow">' +
+      esc(CATEGORY_LABELS[cat] || cat) +
+      '</p>' +
+      '<h1 class="tx-detail-page__title">' +
+      highlightPeopleInText(item.title || item.path || 'Untitled', people) +
+      '</h1>' +
+      '<div class="tx-detail-page__badges">' +
+      renderDetailStatusBadges(item) +
+      '</div>' +
+      metaRows +
+      '</div></header>' +
+      peopleBlock +
+      pointsBlock +
+      detailSectionCard('Summary', summaryBody) +
+      '<div class="tx-detail-page__ops">' +
+      detailOperationalSections(item) +
+      '</div>' +
+      detailSectionCard(
+        'Full transcription reference',
+        '<details class="tx-detail-page__ref"><summary>Source paths &amp; extended text</summary><div class="tx-detail-page__ref-body">' +
+          (item.sourceTranscription
+            ? '<p><strong>Transcription:</strong> <code>' + esc(item.sourceTranscription) + '</code></p>'
+            : '') +
+          (item.path ? '<p><strong>Output:</strong> <code>' + esc(item.path) + '</code></p>' : '') +
+          (transcriptBlock ||
+            (summary
+              ? '<p class="tx-detail-page__prose tx-detail-page__prose--muted">' +
+                highlightPeopleInText(summary, people) +
+                '</p>'
+              : '')) +
+          '</div></details>'
+      ) +
+      '<div class="tx-detail-page__actions">' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="txDetailMarkBtn">Mark reviewed</button>' +
+      '<button type="button" class="tf-admin-toolbar__btn" id="txDetailSyncBtn">Sync Google</button>' +
+      '</div>';
+
+    updateDetailPager(item);
+
+    var markBtn = byId('txDetailMarkBtn');
+    if (markBtn) markBtn.addEventListener('click', function () { markReviewed(item.id); });
+    var syncBtn = byId('txDetailSyncBtn');
+    if (syncBtn) syncBtn.addEventListener('click', function () { syncItem(item.id); });
+
+    root.querySelectorAll('.tx-detail-page__related-link').forEach(function (link) {
+      link.addEventListener('click', function (ev) {
+        if (typeof adminShellNavigate === 'function' && adminShellNavigate(link.getAttribute('href'), ev)) {
+          if (typeof window.initAdminTranscriptionDetail === 'function') {
+            window.initAdminTranscriptionDetail();
+          }
+        }
+      });
+    });
+  }
+
+  function fetchDetailItem(id) {
+    return tryApi(
+      [
+        '/api/admin/transcriptions/item/' + encodeURIComponent(id),
+        '/api/admin/transcriptions/item?id=' + encodeURIComponent(id),
+      ],
+      { method: 'GET' }
+    );
+  }
+
+  function loadAndRenderDetailPage() {
+    var id = parseTxDetailIdFromPath();
+    var root = byId('txDetailPageRoot');
+    if (!id) {
+      renderDetailPageNotFound('Item not found or not AI-ready.');
+      return;
+    }
+    if (root) root.innerHTML = '<p class="tf-admin-muted">Loading item…</p>';
+    var local = state.items.find(function (it) {
+      return it.id === id;
+    });
+    if (local && isAiReadyItem(local)) renderDetailPage(local);
+    fetchDetailItem(id).then(function (pack) {
+      if (pack.ok && pack.j && pack.j.item) {
+        var item = normalizeItem(pack.j.item);
+        if (!isAiReadyItem(item)) {
+          renderDetailPageNotFound('Raw source only — not AI-ready.');
+          return;
+        }
+        var idx = state.items.findIndex(function (it) {
+          return it.id === id;
+        });
+        if (idx >= 0) state.items[idx] = Object.assign(state.items[idx], item);
+        renderDetailPage(item);
+      } else if (!local || !isAiReadyItem(local)) {
+        renderDetailPageNotFound('Raw source only — not AI-ready.');
+      }
+    });
   }
 
   function renderCompactRing(segments, centerLabel) {
@@ -400,9 +1196,9 @@
     var cy = 24;
     var circ = 2 * Math.PI * r;
     var offset = 0;
-    var segs;
+    var arcs;
     if (chart.length === 1) {
-      segs =
+      arcs =
         '<circle cx="' +
         cx +
         '" cy="' +
@@ -413,7 +1209,7 @@
         esc(chart[0].color) +
         '" stroke-width="5" opacity="0.92"/>';
     } else {
-      segs = chart
+      arcs = chart
         .map(function (c) {
           var frac = c.value / total;
           var len = circ * frac;
@@ -445,7 +1241,7 @@
     return (
       '<div class="tx-mini-ring tx-ring--compact" aria-hidden="true"><svg viewBox="0 0 48 48">' +
       '<circle cx="24" cy="24" r="18" fill="none" stroke="var(--tx-dash-line,#e2e8f0)" stroke-width="5"/>' +
-      segs +
+      arcs +
       '<text x="24" y="26" text-anchor="middle" font-size="9" fill="currentColor" font-weight="700">' +
       esc(centerLabel != null ? centerLabel : total) +
       '</text></svg></div>'
@@ -971,7 +1767,7 @@
         return groups[key] && groups[key].length;
       })
       .map(function (key) {
-        var items = groups[key];
+        var items = sortItemsNewestFirst(groups[key], isSortAscending());
         return (
           '<section class="tx-feed-section">' +
           renderFeedSectionHeader(key, items.length) +
@@ -992,13 +1788,155 @@
   }
 
 
-  function parseItemDate(item) {
-    var d = item.processedDate || item.eventDate || item.title || '';
-    var t = Date.parse(d);
-    if (!Number.isNaN(t)) return t;
-    var m = String(d).match(/(\d{4})-(\d{2})-(\d{2})/);
-    if (m) return Date.parse(m[1] + '-' + m[2] + '-' + m[3]);
+  function parseSortableTimestamp(value) {
+    if (value == null || value === '') return NaN;
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      return value < 1e12 ? value * 1000 : value;
+    }
+    var t = Date.parse(String(value));
+    return Number.isNaN(t) ? NaN : t;
+  }
+
+  function dateFromFilenameToken(name) {
+    var s = String(name || '');
+    var m = s.match(/(?:Voice|Memo)_(\d{2})(\d{2})(\d{2})(?:_\d{6})?/i);
+    if (m) {
+      var yy = parseInt(m[1], 10);
+      var year = yy >= 70 ? 1900 + yy : 2000 + yy;
+      var fromVoice = Date.parse(year + '-' + m[2] + '-' + m[3]);
+      if (!Number.isNaN(fromVoice)) return fromVoice;
+    }
+    m = s.match(/(\d{4})-(\d{2})-(\d{2})/);
+    if (m) {
+      var fromIso = Date.parse(m[1] + '-' + m[2] + '-' + m[3]);
+      if (!Number.isNaN(fromIso)) return fromIso;
+    }
+    return NaN;
+  }
+
+  function getItemSortTimestamp(item) {
+    if (!item) return 0;
+    var candidates = [
+      item.processedAt,
+      item.processed_at,
+      item.aiProcessedAt,
+      item.ai_processed_at,
+      item.createdAt,
+      item.created_at,
+      item.modifiedAt,
+      item.modified_at,
+      item.mtimeMs,
+      item.fileMtimeMs,
+      item.sourceAudioModifiedAt,
+      item.source_audio_modified_at,
+      item.audioModifiedAt,
+      item.modified_datetime,
+      item.processing_date,
+      item.processedDate,
+      item.date,
+      item.eventDate,
+      item.dueDate,
+    ];
+    var i;
+    for (i = 0; i < candidates.length; i++) {
+      var ts = parseSortableTimestamp(candidates[i]);
+      if (!Number.isNaN(ts)) return ts;
+    }
+    if (item.modified_time != null) {
+      var mt = parseSortableTimestamp(item.modified_time);
+      if (!Number.isNaN(mt)) return mt;
+    }
+    var fnTs = dateFromFilenameToken(
+      item.sourceAudio ||
+        item.source_audio ||
+        item.sourceTranscription ||
+        item.source_transcription ||
+        item.path ||
+        item.filepath ||
+        item.title
+    );
+    if (!Number.isNaN(fnTs)) return fnTs;
+    var pathTs = dateFromFilenameToken(item.path || item.filepath || '');
+    if (!Number.isNaN(pathTs)) return pathTs;
     return 0;
+  }
+
+  function getPendingSortTimestamp(entry) {
+    if (!entry) return 0;
+    var candidates = [
+      entry.processedAt,
+      entry.processed_at,
+      entry.aiProcessedAt,
+      entry.ai_processed_at,
+      entry.rawCreatedAt,
+      entry.createdAt,
+      entry.created_at,
+      entry.modifiedAt,
+      entry.modified_at,
+      entry.modified_datetime,
+      entry.processed_datetime,
+    ];
+    var i;
+    for (i = 0; i < candidates.length; i++) {
+      var ts = parseSortableTimestamp(candidates[i]);
+      if (!Number.isNaN(ts)) return ts;
+    }
+    if (entry.modified_time != null) {
+      var mt = parseSortableTimestamp(entry.modified_time);
+      if (!Number.isNaN(mt)) return mt;
+    }
+    var fnTs = dateFromFilenameToken(
+      entry.rawTranscriptionPath || entry.sourceAudio || entry.file_name || entry.id || ''
+    );
+    return Number.isNaN(fnTs) ? 0 : fnTs;
+  }
+
+  function sortItemsNewestFirst(items, ascending) {
+    var list = (items || []).slice();
+    list.sort(function (a, b) {
+      var diff = getItemSortTimestamp(b) - getItemSortTimestamp(a);
+      if (diff !== 0) return ascending ? -diff : diff;
+      var ida = String(a.id || a.path || '');
+      var idb = String(b.id || b.path || '');
+      return ascending ? ida.localeCompare(idb) : idb.localeCompare(ida);
+    });
+    return list;
+  }
+
+  function sortPendingSourcesNewestFirst(pending, ascending) {
+    var list = (pending || []).slice();
+    list.sort(function (a, b) {
+      var diff = getPendingSortTimestamp(b) - getPendingSortTimestamp(a);
+      if (diff !== 0) return ascending ? -diff : diff;
+      var ida = String(a.rawTranscriptionPath || a.id || '');
+      var idb = String(b.rawTranscriptionPath || b.id || '');
+      return ascending ? ida.localeCompare(idb) : idb.localeCompare(ida);
+    });
+    return list;
+  }
+
+  function isSortAscending() {
+    return state.sortOrder === 'oldest';
+  }
+
+  function applyIndexSort() {
+    state.items = sortItemsNewestFirst(state.items, isSortAscending());
+    if (state.rawSources && state.rawSources.pendingSources && state.rawSources.pendingSources.length) {
+      state.rawSources.pendingSources = sortPendingSourcesNewestFirst(
+        state.rawSources.pendingSources,
+        isSortAscending()
+      );
+    }
+  }
+
+  function syncSortSelectUi() {
+    var sel = byId('txSortSelect');
+    if (!sel) return;
+    sel.value = state.sortOrder === 'oldest' ? 'oldest' : 'recent';
+  }
+
+  function parseItemDate(item) {
+    return getItemSortTimestamp(item);
   }
 
   function relativeDate(item) {
@@ -1068,6 +2006,10 @@
       openPoints: ex.open_points || it.openPoints || [],
       nextSteps: ex.next_steps || it.nextSteps || [],
       importantPoints: ex.important_points || it.importantPoints || [],
+      possibleActions: ex.possible_actions || it.possibleActions || [],
+      calendarEvents: ex.calendar_events || it.calendarEvents || it.calendar || [],
+      blockers: ex.blockers || it.blockers || [],
+      reason: it.reason || ex.reason || '',
       path: it.filepath || it.path,
       sourceAudio: srcAudio,
       source_audio: srcAudio,
@@ -1396,13 +2338,13 @@
       ? top
           .map(function (it) {
             return (
-              '<li><button type="button" class="tx-digest__pick" data-tx-digest-id="' +
-              esc(it.id) +
+              '<li><a class="tx-digest__pick" href="' +
+              esc(txItemDetailPath(it.id)) +
               '">' +
               esc(it.title || it.path || 'Untitled') +
               '<span class="tx-digest__score mono">+' +
               esc(priorityScore(it)) +
-              '</span></button></li>'
+              '</span></a></li>'
             );
           })
           .join('')
@@ -1425,12 +2367,6 @@
       topHtml +
       '</ul>';
 
-    body.querySelectorAll('[data-tx-digest-id]').forEach(function (btn) {
-      btn.addEventListener('click', function (ev) {
-        ev.preventDefault();
-        openDetail(btn.getAttribute('data-tx-digest-id'));
-      });
-    });
   }
 
   function ensureHideJunkFilter() {
@@ -1524,10 +2460,7 @@
         return !isJunkItem(it);
       });
     }
-    out.sort(function (a, b) {
-      return parseItemDate(b) - parseItemDate(a);
-    });
-    return out;
+    return sortItemsNewestFirst(out, isSortAscending());
   }
 
   function renderRingChart(chart) {
@@ -1666,7 +2599,7 @@
     var rs = state.rawSources || {};
     var total = rs.total != null ? rs.total : state.rawTranscriptionCount || 0;
     var waiting = rs.waitingForProcessing || 0;
-    var pending = rs.pendingSources || [];
+    var pending = sortPendingSourcesNewestFirst(rs.pendingSources || [], isSortAscending());
     var rows = pending
       .slice(0, 24)
       .map(function (p) {
@@ -2164,6 +3097,7 @@
   function renderFeedCard(item) {
     var points = itemKeyPoints(item);
     var chips = itemFeedChips(item);
+    var people = extractPeopleFromItem(item);
     var unread = !item.reviewed ? ' is-unread' : '';
     var junk = isJunkCard(item);
     var title = item.title || item.path || '';
@@ -2197,11 +3131,13 @@
       ? '<div class="tx-dash-card__points-wrap"><h4 class="tx-dash-card__points-label">Key points</h4><ul class="tx-dash-card__points">' +
         points
           .map(function (p) {
-            return '<li>' + esc(p) + '</li>';
+            return '<li>' + highlightPeopleInText(p, people) + '</li>';
           })
           .join('') +
         '</ul></div>'
-      : '<p class="tx-dash-card__points-empty tf-admin-muted">Open for structured highlights</p>';
+      : '<p class="tx-dash-card__points-empty tf-admin-muted">View page for structured highlights</p>';
+    var peopleRow =
+      people.length && people.length <= 3 ? renderPeopleChipsRow(people, 3) : '';
     return (
       '<article class="tx-dash-card tx-card' +
       unread +
@@ -2221,19 +3157,20 @@
       '<div class="tx-dash-card__body">' +
       '<div class="tx-dash-card__head-row">' +
       '<h3 class="tx-dash-card__title">' +
-      esc(title) +
+      highlightPeopleInText(title, people) +
       '</h3></div>' +
       '<p class="tx-dash-card__meta">' +
       metaRows +
       '</p>' +
       pointsHtml +
+      peopleRow +
       '<div class="tx-dash-card__chips">' +
       chips.map(renderDashChip).join('') +
       '</div>' +
       '<div class="tx-dash-card__actions">' +
-      '<button type="button" class="tf-admin-toolbar__btn" data-tx-action="open" data-tx-id="' +
-      esc(item.id) +
-      '">Open</button>' +
+      '<a class="tf-admin-toolbar__btn" href="' +
+      esc(txItemDetailPath(item.id)) +
+      '">View page</a>' +
       '<button type="button" class="tf-admin-toolbar__btn" data-tx-action="read" data-tx-id="' +
       esc(item.id) +
       '"' +
@@ -2253,8 +3190,7 @@
         ev.stopPropagation();
         var id = btn.getAttribute('data-tx-id');
         var action = btn.getAttribute('data-tx-action');
-        if (action === 'open') openDetail(id);
-        else if (action === 'read') markReviewed(id);
+        if (action === 'read') markReviewed(id);
         else if (action === 'sync') syncItem(id);
         else if (action === 'copy') copyItem(id);
         closeCardMenus();
@@ -2320,9 +3256,7 @@
           card.classList.contains('tx-card--junk-collapsed')
         ) {
           card.classList.remove('tx-item--junk-collapsed', 'tx-card--junk-collapsed');
-          return;
         }
-        openDetail(id);
       });
       card.addEventListener('keydown', function (ev) {
         if (ev.key !== 'Enter' && ev.key !== ' ') return;
@@ -2348,7 +3282,7 @@
 
     var list;
     if (state.searchQuery.trim() && state.searchResults) {
-      list = state.searchResults;
+      list = sortItemsNewestFirst(state.searchResults, isSortAscending());
       if (state.hideJunk) {
         list = list.filter(function (it) {
           return !isJunkItem(it);
@@ -2399,13 +3333,12 @@
   function renderTimeline() {
     var body = byId('txTimelineBody');
     if (!body) return;
-    var todayItems = state.items
-      .filter(function (it) {
+    var todayItems = sortItemsNewestFirst(
+      state.items.filter(function (it) {
         return isToday(parseItemDate(it));
-      })
-      .sort(function (a, b) {
-        return parseItemDate(b) - parseItemDate(a);
-      });
+      }),
+      false
+    );
     if (!todayItems.length) {
       body.innerHTML = '<p class="tf-admin-muted" style="margin:0;font-size:0.74rem">Nessuna voce per oggi.</p>';
       return;
@@ -2455,158 +3388,12 @@
     );
   }
 
-  function bulletsHtml(arr) {
-    if (!arr || !arr.length) return '';
-    return '<ul>' + arr.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
-  }
-
-  function renderDetailContent(item) {
-    var el = byId('txDetailScroll');
-    var catEl = byId('txDetailCat');
-    var titleEl = byId('txDetailTitle');
-    if (!el || !item) return;
-    var cat = item.category || 'notes';
-    var theme = catTheme(cat);
-    if (catEl) {
-      catEl.textContent =
-        CATEGORY_LABELS[item.category] || item.categoryLabel || item.category || '';
-    }
-    if (titleEl) titleEl.textContent = item.title || item.path || '';
-
-    var points = itemDetailKeyPoints(item);
-    var chips = dashStatChips(item);
-    var segs = categoryDonutSegments(cat, [item]);
-    var heroVisual = segs
-      ? renderCompactRing(segs, 1)
-      : renderLargeCategoryIcon(cat);
-
-    var pointsBlock = points.length
-      ? '<div class="tx-detail-points"><h4>Key points</h4><ul>' +
-        points
-          .map(function (p) {
-            return '<li>' + esc(p) + '</li>';
-          })
-          .join('') +
-        '</ul></div>'
-      : '';
-
-    var rel = relatedItems(item);
-    var relHtml = rel.length
-      ? '<div class="tx-detail__related">' +
-        rel
-          .map(function (r) {
-            return (
-              '<button type="button" class="tx-detail__related-card" data-tx-rel-id="' +
-              esc(r.id) +
-              '"><strong>' +
-              esc(r.categoryLabel || r.category) +
-              '</strong><br>' +
-              esc(r.title || '') +
-              '</button>'
-            );
-          })
-          .join('') +
-        '</div>'
-      : '<p class="tf-admin-muted">No related items from the same source.</p>';
-
-    el.innerHTML =
-      '<div class="tx-detail-hero" style="--tx-cat-accent:' +
-      esc(theme.accent) +
-      '">' +
-      '<div>' +
-      heroVisual +
-      '</div>' +
-      '<div>' +
-      '<p class="tf-admin-muted" style="margin:0;font-size:0.72rem">' +
-      esc(CATEGORY_LABELS[cat] || cat) +
-      '</p>' +
-      '<div class="tx-dash-card__chips" style="margin-top:0.35rem">' +
-      chips.map(renderDashChip).join('') +
-      '</div></div></div>' +
-      pointsBlock +
-      sectionHtml(
-        'Source & meta',
-        '<ul class="tf-admin-muted" style="margin:0;padding-left:1rem;font-size:0.74rem;line-height:1.5">' +
-          '<li><strong>Project:</strong> ' +
-          esc(item.project || '—') +
-          '</li><li><strong>Processed:</strong> ' +
-          esc(item.processedDate || '—') +
-          '</li><li><strong>Audio:</strong> ' +
-          esc(item.sourceAudio || '—') +
-          '</li><li><strong>Transcription:</strong> <code>' +
-          esc(item.sourceTranscription || item.source_transcription || '—') +
-          '</code></li><li><strong>Output:</strong> <code>' +
-          esc(item.path || item.filepath || '—') +
-          '</code></li></ul>'
-      ) +
-      sectionHtml('Decisions', bulletsHtml(item.decisions)) +
-      sectionHtml('Tasks', bulletsHtml(item.tasks)) +
-      sectionHtml('Calendar', bulletsHtml(item.calendarEvents || item.calendar || [])) +
-      sectionHtml('Open points', bulletsHtml(item.openPoints)) +
-      sectionHtml('Next steps', bulletsHtml(item.nextSteps)) +
-      sectionHtml('Related items', relHtml) +
-      sectionHtml(
-        'Full transcription reference',
-        item.summary
-          ? '<p style="font-size:0.78rem;line-height:1.45">' + esc(item.summary) + '</p>'
-          : item.preview
-            ? '<p style="font-size:0.78rem;line-height:1.45">' + esc(item.preview) + '</p>'
-            : '<p class="tf-admin-muted">No extended reference text.</p>'
-      ) +
-      '<div class="tx-detail__actions">' +
-      '<button type="button" class="tf-admin-toolbar__btn" id="txDetailCopyBtn">Copy</button>' +
-      '<button type="button" class="tf-admin-toolbar__btn" id="txDetailMarkBtn">Mark reviewed</button>' +
-      '<button type="button" class="tf-admin-toolbar__btn" id="txDetailSyncBtn">Sync Google</button>' +
-      '<button type="button" class="tf-admin-toolbar__btn" disabled title="Coming soon">Reprocess</button>' +
-      '</div>';
-
-
-    el.querySelectorAll('[data-tx-rel-id]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        openDetail(btn.getAttribute('data-tx-rel-id'));
-      });
-    });
-
-    var syncBtn = byId('txDetailSyncBtn');
-    if (syncBtn) syncBtn.addEventListener('click', function () { syncItem(item.id); });
-    var markBtn = byId('txDetailMarkBtn');
-    if (markBtn) markBtn.addEventListener('click', function () { markReviewed(item.id); });
-    var copyBtn = byId('txDetailCopyBtn');
-    if (copyBtn) {
-      copyBtn.addEventListener('click', function () {
-        var text = [item.title]
-          .concat(points)
-          .concat([item.summary || ''])
-          .filter(Boolean)
-          .join('\n');
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(text).then(
-            function () { toast('Copied.'); },
-            function () { toast('Copy failed.'); }
-          );
-        } else {
-          toast('Clipboard not available.');
-        }
-      });
-    }
-  }
-
   function openOverlay() {
-    var ov = byId('txOverlay');
-    if (!ov) return;
-    ov.classList.add('is-open');
-    ov.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
+    /* Detail uses dedicated page; overlay modal disabled. */
   }
 
   function closeOverlay() {
-    var ov = byId('txOverlay');
-    if (!ov) return;
-    ov.classList.remove('is-open');
-    ov.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
-    state.selectedId = null;
-    state.detailItem = null;
   }
 
   function copyItem(id) {
@@ -2630,35 +3417,6 @@
     }
   }
 
-  function openDetail(id) {
-    if (!id) return;
-    state.selectedId = id;
-    var local = state.items.find(function (it) {
-      return it.id === id;
-    });
-    if (local) {
-      state.detailItem = local;
-      renderDetailContent(local);
-      openOverlay();
-    }
-    tryApi(['/api/admin/transcriptions/item?id=' + encodeURIComponent(id)], { method: 'GET' }).then(
-      function (pack) {
-        if (pack.ok && pack.j && (pack.j.item || pack.j.id)) {
-          var item = normalizeItem(pack.j.item || pack.j);
-          state.detailItem = item;
-          var idx = state.items.findIndex(function (it) {
-            return it.id === id;
-          });
-          if (idx >= 0) state.items[idx] = Object.assign(state.items[idx], item);
-          renderDetailContent(item);
-          openOverlay();
-        } else if (!local && pack.status !== 404) {
-          toast((pack.j && pack.j.error) || 'Could not load item.');
-        }
-      }
-    );
-  }
-
   function markReviewedRequest(id) {
     return tryApi(['/api/admin/transcriptions/mark-reviewed'], {
       method: 'POST',
@@ -2677,7 +3435,9 @@
         });
         if (state.detailItem && state.detailItem.id === id) state.detailItem.reviewed = true;
         if (!opts.skipFeedRender) renderFeed();
-        if (state.detailItem) renderDetailContent(state.detailItem);
+        if (state.detailItem) {
+          if (isTranscriptionDetailRoute()) renderDetailPage(state.detailItem);
+        }
         if (!opts.quiet) toast('Marked as reviewed.');
       } else if (result.status === 404) {
         if (!opts.quiet) toast('Mark reviewed API not available yet.');
@@ -2897,6 +3657,7 @@
         state.counts = norm.counts;
         state.rawTranscriptionCount = norm.rawTranscriptionCount;
         state.rawSources = norm.rawSources || {};
+        applyIndexSort();
         state.pipeline = norm.pipeline || {};
         state.needsReviewCount = norm.needsReviewCount || 0;
         state.generatedAt = norm.generatedAt;
@@ -3002,6 +3763,16 @@
       });
     }
 
+    syncSortSelectUi();
+    var sortSel = byId('txSortSelect');
+    if (sortSel) {
+      sortSel.addEventListener('change', function () {
+        state.sortOrder = sortSel.value === 'oldest' ? 'oldest' : 'recent';
+        applyIndexSort();
+        renderFeed();
+      });
+    }
+
     var search = byId('txSearch');
     if (search) {
       search.addEventListener('input', function () {
@@ -3013,15 +3784,10 @@
       });
     }
 
-    document.querySelectorAll('[data-tx-close]').forEach(function (el) {
-      el.addEventListener('click', closeOverlay);
-    });
-
     document.addEventListener('keydown', function (ev) {
       if (ev.key === 'Escape') {
         if (state.selectMode) exitSelectMode();
         else if (openSheetId) closeTxSheet();
-        else closeOverlay();
         closeCardMenus();
       }
     });
@@ -3056,6 +3822,34 @@
     });
   }
 
+  window.initAdminTranscriptionDetail = function () {
+    var id = parseTxDetailIdFromPath();
+    if (window.__txDashDetailInitId === id) {
+      var root = byId('txDetailPageRoot');
+      if (root && root.querySelector('.tx-detail-page__hero')) return;
+    }
+    window.__txDashDetailInitId = id;
+    txLog('detail init · rev', window.TX_DASHBOARD_UI_REV, '· id', id);
+    bindDetailPageChrome();
+    var section = byId('transcriptionsDetailSection');
+    if (section) {
+      section.classList.add('tx-admin--dashboard');
+      section.setAttribute('data-tx-dashboard-rev', String(window.TX_DASHBOARD_UI_REV || 0));
+    }
+    if (state.items.length) {
+      loadAndRenderDetailPage();
+      return;
+    }
+    var load = loadIndex();
+    if (load && typeof load.then === 'function') {
+      load.then(function () {
+        if (isTranscriptionDetailRoute()) loadAndRenderDetailPage();
+      });
+    } else {
+      loadAndRenderDetailPage();
+    }
+  };
+
   window.initAdminTranscriptions = function () {
     window.__txDashInitRan = true;
     txLog('init start · rev', window.TX_DASHBOARD_UI_REV, '· route', txShellPath());
@@ -3077,7 +3871,7 @@
   }
 
   function isTranscriptionsAdminRoute() {
-    return txShellPath() === '/admin/transcriptions';
+    return isTranscriptionsListRoute();
   }
 
   function txWorkspaceVisible() {
@@ -3087,9 +3881,15 @@
 
   function scheduleTxDashboardSelfInit() {
     function trySelfInit() {
-      if (window.__txDashInitRan) return;
-      if (!isTranscriptionsAdminRoute()) return;
       if (!txWorkspaceVisible()) return;
+      if (isTranscriptionDetailRoute()) {
+        if (typeof window.initAdminTranscriptionDetail === 'function') {
+          window.initAdminTranscriptionDetail();
+        }
+        return;
+      }
+      if (window.__txDashInitRan) return;
+      if (!isTranscriptionsListRoute()) return;
       if (typeof window.initAdminTranscriptions !== 'function') return;
       window.initAdminTranscriptions();
     }
@@ -3107,10 +3907,14 @@
       });
       obs.observe(workspace, { attributes: true, attributeFilter: ['class'] });
     }
-    window.addEventListener('popstate', trySelfInit);
+    window.addEventListener('popstate', function () {
+      window.__txDashDetailInitId = null;
+      window.__txDashInitRan = false;
+      trySelfInit();
+    });
 
     setTimeout(function () {
-      if (!isTranscriptionsAdminRoute()) return;
+      if (!isTranscriptionsListRoute()) return;
       var cards = document.querySelectorAll('#txOverview .tx-overview-card').length;
       if (cards > 0) return;
       txLog('safety self-init after 2s');
