@@ -4168,7 +4168,11 @@ app.use((req, res, next) => {
 });
 
 /** Transcription admin script — not served without admin JWT (main admin.js is needed on the login shell). */
-const ADMIN_STATIC_REQUIRES_AUTH = new Set(['admin.html', 'admin-transcriptions.js']);
+const ADMIN_STATIC_REQUIRES_AUTH = new Set([
+  'admin.html',
+  'admin-transcriptions.js',
+  'admin-tx-dashboard.js',
+]);
 
 app.use((req, res, next) => {
   if (req.method !== 'GET' && req.method !== 'HEAD') return next();

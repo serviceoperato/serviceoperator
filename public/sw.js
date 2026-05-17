@@ -1,7 +1,7 @@
 /* global self, caches, fetch, clients */
 
-var PAGE_CACHE = 'so-pages-v8';
-var ASSET_CACHE = 'so-assets-v7';
+var PAGE_CACHE = 'so-pages-v9';
+var ASSET_CACHE = 'so-assets-v8';
 
 function isAdminTranscriptionsAsset(pathname) {
   return (

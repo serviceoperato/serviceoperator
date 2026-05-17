@@ -5,7 +5,7 @@
   'use strict';
 
   /** Bumped when dashboard markup/behavior changes (cache-bust aid). */
-  window.TX_DASHBOARD_UI_REV = 5;
+  window.TX_DASHBOARD_UI_REV = 6;
 
   var CATEGORIES = [
     { key: 'meetings', label: 'Meeting summaries', short: 'Meetings' },

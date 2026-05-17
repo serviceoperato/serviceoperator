@@ -2227,9 +2227,55 @@
     window.scrollTo(0, 0);
     if (routeId === 'user-profiling') loadUserProfiling();
     if (routeId === 'voice-recorder') initVoiceRecorderPipelineUi();
-    if (routeId === 'transcriptions' && typeof window.initAdminTranscriptions === 'function') {
-      window.initAdminTranscriptions();
+    if (routeId === 'transcriptions') {
+      ensureTranscriptionsDashboard(function () {
+        if (typeof window.initAdminTranscriptions === 'function') {
+          window.initAdminTranscriptions();
+        } else {
+          console.error('[transcriptions] initAdminTranscriptions missing after dashboard load');
+        }
+      });
     }
+  }
+
+  function ensureTranscriptionsDashboard(done) {
+    if (window.TX_DASHBOARD_UI_REV >= 6 && typeof window.initAdminTranscriptions === 'function') {
+      done();
+      return;
+    }
+    var version = '1.5.67';
+    var existing = document.querySelector('script[data-tx-dashboard-bundle]');
+    if (existing) {
+      existing.addEventListener('load', function () {
+        done();
+      });
+      existing.addEventListener('error', function () {
+        console.error('[transcriptions] dashboard script failed:', existing.src);
+      });
+      return;
+    }
+    var s = document.createElement('script');
+    s.src = '/admin-transcriptions.js?v=' + encodeURIComponent(version) + '&_=' + Date.now();
+    s.async = false;
+    s.setAttribute('data-tx-dashboard-bundle', '1');
+    s.onload = function () {
+      done();
+    };
+    s.onerror = function () {
+      console.error('[transcriptions] could not load admin-transcriptions.js');
+      var fallback = document.createElement('script');
+      fallback.src = '/admin-tx-dashboard.js?v=' + encodeURIComponent(version) + '&_=' + Date.now();
+      fallback.async = false;
+      fallback.setAttribute('data-tx-dashboard-bundle', '1');
+      fallback.onload = function () {
+        done();
+      };
+      fallback.onerror = function () {
+        console.error('[transcriptions] could not load admin-tx-dashboard.js');
+      };
+      document.head.appendChild(fallback);
+    };
+    document.head.appendChild(s);
   }
 
   var voicePipelinePollTimer = null;
