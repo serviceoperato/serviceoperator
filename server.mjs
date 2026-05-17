@@ -1421,7 +1421,12 @@ function pruneAdminRouteRequests(ip) {
 function isAdminProtectedRequestPath(pathname) {
   const p = pathname || '';
   if (p === '/admin.html' || p === '/admin.js' || p === '/admin-transcriptions.js') return true;
-  if (p === '/admin-config.js' || p === '/transcriptions-admin.css' || p === '/admin-transcriptions.css')
+  if (
+    p === '/admin-config.js' ||
+    p === '/transcriptions-admin.css' ||
+    p === '/admin-transcriptions.css' ||
+    p === '/transcriptions-dashboard.css'
+  )
     return true;
   if (p.startsWith('/admin/') || p === '/admin') return true;
   if (p.startsWith('/api/admin/')) return true;
@@ -4159,6 +4164,7 @@ app.use(
         filePath.endsWith('admin-transcriptions.js') ||
         norm.endsWith('transcriptions-admin.css') ||
         norm.endsWith('admin-transcriptions.css') ||
+        norm.endsWith('transcriptions-dashboard.css') ||
         norm.endsWith('app-version.json') ||
         norm.endsWith('operator/places-leads.html') ||
         filePath.endsWith('places-leads.html') ||

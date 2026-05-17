@@ -110,6 +110,16 @@
   min-height: 4.5rem;
 }
 
+.tx-overview-card__icon {
+  width: 4rem;
+  height: 4rem;
+}
+
+.tx-overview-card__icon svg {
+  width: 2rem;
+  height: 2rem;
+}
+
 .tx-overview-card__stats {
   display: flex;
   flex-wrap: wrap;
