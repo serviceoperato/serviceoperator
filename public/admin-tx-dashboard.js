@@ -5,7 +5,7 @@
   'use strict';
 
   /** Bumped when dashboard markup/behavior changes (cache-bust aid). */
-  window.TX_DASHBOARD_UI_REV = 10;
+  window.TX_DASHBOARD_UI_REV = 11;
 
   /** Detail page: collapsed preview length for full transcription reference (chars). */
   var DETAIL_REF_PREVIEW_CHARS = 650;
@@ -551,6 +551,10 @@
     return CATEGORY_THEME[cat] || { accent: '#4f46e5', subtitle: '' };
   }
 
+  function txTopicVisuals() {
+    return window.TxTopicVisuals || null;
+  }
+
   /** Numeric breakdowns per category (≥2 states → donut). Colors align with catTheme accents. */
   var CATEGORY_SEGMENT_DEFS = {
     meetings: [
@@ -1046,7 +1050,11 @@
     var summary = itemSummaryParagraph(item);
     var nextAction = itemNextActionLine(item);
     var heroStats = categoryBreakdownStats(cat, [item]);
-    var heroVisual = categoryVisualFromStats(heroStats, cat, 1, null, { legend: true, size: 'hero' });
+    var heroVisual = categoryVisualFromStats(heroStats, cat, 1, null, {
+      legend: true,
+      size: 'hero',
+      item: item,
+    });
     var processed = formatProcessedDate(item);
     var audioName = audioBasename(item);
 
@@ -1281,6 +1289,10 @@
     );
   }
   function renderLargeCategoryIcon(cat, extraClass) {
+    var TV = txTopicVisuals();
+    if (TV) {
+      return TV.renderTopicVisual(TV.categoryVisualKey(cat), { size: 'list', extraClass: extraClass });
+    }
     var theme = catTheme(cat);
     var cls = 'tx-dash-card__icon' + (extraClass ? ' ' + extraClass : '');
     return (
@@ -1442,12 +1454,21 @@
   function categoryVisualFromStats(stats, catKey, total, iconExtraClass, opts) {
     opts = opts || {};
     var segs = buildSegmentsFromStats(stats, catKey);
-    var sum = segs.reduce(function (s, c) {
+    var active = segs.filter(function (s) {
+      return (s.value || 0) > 0;
+    });
+    var sum = active.reduce(function (s, c) {
       return s + (c.value || 0);
     }, 0);
     var center = total != null ? total : sum;
-    if (segs.length >= 2 && center > 0) {
-      return renderCompactRing(segs, center, opts);
+    if (active.length >= 2 && center > 0) {
+      return renderCompactRing(active, center, opts);
+    }
+    var TV = txTopicVisuals();
+    if (TV) {
+      var key = opts.item ? TV.inferTopicVisualKey(opts.item) : TV.categoryVisualKey(catKey);
+      var size = opts.size === 'hero' ? 'hero' : 'list';
+      return TV.renderTopicVisual(key, { size: size, extraClass: iconExtraClass });
     }
     return renderLargeCategoryIcon(catKey, iconExtraClass);
   }
@@ -1690,18 +1711,21 @@
     var cat = String(item.category || 'notes').toLowerCase();
     var stats = categoryBreakdownStats(cat, [item]);
     var segs = buildSegmentsFromStats(stats, cat);
-    if (segs.length >= 2) {
+    var active = segs.filter(function (s) {
+      return (s.value || 0) > 0;
+    });
+    if (active.length >= 2) {
       return (
         '<div class="tx-dash-card__visual tx-dash-card__visual--ring">' +
-        renderCompactRing(segs, 1, { legend: false, size: 'card' }) +
+        renderCompactRing(active, 1, { legend: false, size: 'card' }) +
         '</div>'
       );
     }
-    return (
-      '<div class="tx-dash-card__visual tx-dash-card__visual--icon">' +
-      renderLargeCategoryIcon(cat) +
-      '</div>'
-    );
+    var TV = txTopicVisuals();
+    var topicHtml = TV
+      ? TV.renderTopicVisual(TV.inferTopicVisualKey(item), { size: 'list' })
+      : renderLargeCategoryIcon(cat);
+    return '<div class="tx-dash-card__visual tx-dash-card__visual--topic">' + topicHtml + '</div>';
   }
 
   function renderFeedSectionHeader(cat, count) {

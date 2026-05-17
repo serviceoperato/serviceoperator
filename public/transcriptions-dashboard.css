@@ -1234,3 +1234,69 @@
   font-size: 0.78rem;
   line-height: 1.45;
 }
+
+/* Multi-color topic / category SVG visuals (tx-topic-visuals.js) */
+.tx-topic-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--tx-cat-accent, #4f46e5) 8%, var(--tx-dash-card, #fff));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--tx-cat-accent, #4f46e5) 12%, transparent),
+    0 4px 14px color-mix(in srgb, var(--tx-cat-accent, #4f46e5) 10%, transparent);
+}
+
+.tx-topic-visual__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.tx-topic-visual--list {
+  width: 4.5rem;
+  height: 4.5rem;
+  padding: 0.35rem;
+}
+
+.tx-topic-visual--hero {
+  width: 7.5rem;
+  height: 7.5rem;
+  padding: 0.5rem;
+  border-radius: 14px;
+}
+
+.tx-overview-card__visual .tx-topic-visual--list {
+  width: 4rem;
+  height: 4rem;
+}
+
+.tx-category-header__visual .tx-topic-visual--list {
+  width: 3.25rem;
+  height: 3.25rem;
+  padding: 0.25rem;
+  background: transparent;
+  box-shadow: none;
+}
+
+.tx-dash-card__visual--topic .tx-topic-visual--list {
+  width: 4.75rem;
+  height: 4.75rem;
+}
+
+.tx-detail-page__hero-visual .tx-topic-visual--hero {
+  width: 8.5rem;
+  height: 8.5rem;
+}
+
+.tx-dash-card__visual--topic .tx-dash-card__icon,
+.tx-overview-card__visual .tx-dash-card__icon {
+  background: transparent;
+  box-shadow: none;
+}
+
+.tx-dash-card__visual--topic .tx-dash-card__icon svg,
+.tx-overview-card__icon svg {
+  stroke: none;
+}
