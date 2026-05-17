@@ -12,7 +12,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles.css" />
-<link rel="stylesheet" href="/transcriptions-admin.css?v=1.5.57" />
+<link rel="stylesheet" href="/transcriptions-admin.css?v=1.5.59" />
+<link rel="stylesheet" href="/admin-transcriptions.css?v=1.5.60" />
 <script src="/page-skeleton.js"></script>
 <script src="/so-api.js"></script>
 </head>
@@ -221,27 +222,59 @@
       </header>
       <h3 class="tx-section-heading">AI-ready outputs</h3>
       <p class="tx-section-hint tf-admin-muted">Main list = categorized outputs under <code>content/meetings</code>, <code>notes</code>, <code>tasks</code>, etc. Raw files stay in the section below.</p>
-      <div id="txCatScroll" class="tx-cats" role="tablist" aria-label="Categories"></div>
-      <div id="txStats" class="tx-stats" aria-label="AI-ready counts"></div>
+      <div class="tx-toolbar-desktop">
+        <div id="txCatScroll" class="tx-cats" role="tablist" aria-label="Categories"></div>
+        <div id="txStats" class="tx-stats" aria-label="AI-ready counts"></div>
+      </div>
 
       <h3 class="tx-section-heading tx-section-heading--secondary">Raw / Pending / Failed Sources</h3>
       <aside id="txRawSources" class="tx-raw-sources" aria-label="Raw, pending, and failed sources"></aside>
 
-      <div id="txFilters" class="tx-filters" aria-label="Filters">
-        <button type="button" class="tx-pill" data-tx-filter="today">Today</button>
-        <button type="button" class="tx-pill" data-tx-filter="week">Week</button>
-        <label class="tx-pill" id="txProjectPill">
-          <span class="mono">Project</span>
-          <select id="txProjectSelect" aria-label="Filter by project">
-            <option value="">All</option>
-          </select>
-        </label>
-        <button type="button" class="tx-pill" data-tx-filter="unreviewed">Unreviewed only</button>
-        <button type="button" class="tx-pill" data-tx-filter="sync-pending">Google sync pending</button>
+      <div id="txMobileBar" class="tx-mobile-bar" aria-label="Feed controls">
+        <button type="button" id="txMobileCatBtn" class="tx-mobile-bar__cat" aria-haspopup="dialog" aria-controls="txCatSheet"></button>
+        <button type="button" id="txMobileSearchBtn" class="tx-mobile-bar__icon" aria-label="Search" aria-controls="txSearchSheet">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
+        </button>
+        <button type="button" id="txMobileFilterBtn" class="tx-mobile-bar__icon" aria-label="Filters" aria-controls="txFilterSheet">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+        </button>
       </div>
 
-      <div class="tx-search-wrap">
-        <input type="search" id="txSearch" placeholder="Search titles, projects, audio, text?" autocomplete="off" aria-label="Search transcriptions" />
+      <div id="txCatSheet" class="tx-sheet" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="txCatSheetTitle">
+        <div class="tx-sheet__backdrop" data-tx-sheet="cat"></div>
+        <div class="tx-sheet__panel">
+          <h4 id="txCatSheetTitle" class="tx-sheet__title">Category</h4>
+          <div id="txCatSheetList" class="tx-sheet-cats" role="tablist" aria-label="Categories"></div>
+        </div>
+      </div>
+
+      <div id="txFilterSheet" class="tx-sheet" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="txFilterSheetTitle">
+        <div class="tx-sheet__backdrop" data-tx-sheet="filter"></div>
+        <div class="tx-sheet__panel">
+          <h4 id="txFilterSheetTitle" class="tx-sheet__title">Filters</h4>
+          <div id="txFilters" class="tx-filters" aria-label="Filters">
+            <button type="button" class="tx-pill" data-tx-filter="today">Today</button>
+            <button type="button" class="tx-pill" data-tx-filter="week">Week</button>
+            <label class="tx-pill" id="txProjectPill">
+              <span class="mono">Project</span>
+              <select id="txProjectSelect" aria-label="Filter by project">
+                <option value="">All</option>
+              </select>
+            </label>
+            <button type="button" class="tx-pill" data-tx-filter="unreviewed">Unreviewed only</button>
+            <button type="button" class="tx-pill" data-tx-filter="sync-pending">Google sync pending</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="txSearchSheet" class="tx-sheet tx-sheet--search" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="txSearchSheetTitle">
+        <div class="tx-sheet__backdrop" data-tx-sheet="search"></div>
+        <div class="tx-sheet__panel tx-sheet__panel--compact">
+          <h4 id="txSearchSheetTitle" class="tx-sheet__title">Search</h4>
+          <div class="tx-search-wrap">
+            <input type="search" id="txSearch" placeholder="Search titles, projects, audio, text?" autocomplete="off" aria-label="Search transcriptions" />
+          </div>
+        </div>
       </div>
 
       <p id="txFeedHint" class="mono tf-admin-muted" style="margin:0 0 0.4rem;font-size:0.68rem"></p>
@@ -289,7 +322,7 @@
 <script src="/site-nav-drawer.js"></script>
 <script src="/user-account-menu.js?v=1.5.53"></script>
 <script src="/theme.js"></script>
-<script src="/admin-transcriptions.js?v=1.5.58"></script>
+<script src="/admin-transcriptions.js?v=1.5.60"></script>
 <script src="/admin.js?v=1.5.57"></script>
 <script src="/debug.js"></script>
 </body>

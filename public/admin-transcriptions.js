@@ -24,6 +24,15 @@
     'open-points': 'Open point',
   };
 
+  var HIDE_JUNK_STORAGE_KEY = 'tf.tx.hideJunk';
+  var BULK_ONBOARDED_KEY = 'tf.tx.bulkOnboarded';
+  var BULK_SYNC_CONCURRENCY = 5;
+  var LONG_PRESS_MS = 500;
+  var SERIOUS_PROJECTS = { personal: true, serviceopera: true, work: true, projects: true };
+  var WHATSAPP_EXPORT_RE = /\d{1,2}\/\d{1,2}\/\d{2}, \d{2}:\d{2} - /;
+  var ACTION_VERB_RE =
+    /^(call|email|buy|schedule|follow|send|book|pay|check|fix|review|meet|contact|prepare|complete|finish|update|create|add|remove|start|plan|discuss|decide|confirm|cancel|order|submit|write|read|attend|visit|deliver|organize|chiama|invia|compra|prenota|paga|controlla|completare|finire|preparare|verificare|fare)\b/i;
+
   var CHART_COLORS = [
     '#c9a227',
     '#6bcb8a',
@@ -44,6 +53,7 @@
     pipeline: {},
     needsReviewCount: 0,
     filters: { today: false, week: false, unreviewed: false, syncPending: false },
+    hideJunk: true,
     project: '',
     searchQuery: '',
     searchLoading: false,
@@ -57,10 +67,17 @@
     generatedAt: null,
     loading: false,
     apiUnavailable: false,
+    selectMode: false,
+    selectedIds: {},
+    itemSyncState: {},
+    bulkSyncing: false,
+    bulkSyncProgress: { done: 0, total: 0 },
   };
 
   var searchTimer = null;
   var bound = false;
+  var longPressTimer = null;
+  var longPressDidTrigger = false;
 
   function api(path) {
     if (typeof soApiUrl === 'function') return soApiUrl(path);
@@ -329,6 +346,249 @@
     if (el) el.textContent = text || '';
   }
 
+
+  function categoryShortLabel(key) {
+    for (var i = 0; i < CATEGORIES.length; i++) {
+      if (CATEGORIES[i].key === key) return CATEGORIES[i].short;
+    }
+    return key || '—';
+  }
+
+  function normalizeCompareKey(s) {
+    return String(s || '')
+      .toLowerCase()
+      .trim()
+      .slice(0, 60);
+  }
+
+  function excerptSameAsTitle(title, excerpt) {
+    return normalizeCompareKey(title) === normalizeCompareKey(excerpt);
+  }
+
+  function cardExcerpt(item) {
+    if (item.preview) return String(item.preview);
+    var bullets = topBullets(item);
+    if (bullets.length) return bullets[0];
+    return '';
+  }
+
+  function loadHideJunkPref() {
+    try {
+      var v = localStorage.getItem(HIDE_JUNK_STORAGE_KEY);
+      if (v === null || v === undefined) return true;
+      return v === '1' || v === 'true';
+    } catch (e) {
+      return true;
+    }
+  }
+
+  function saveHideJunkPref(on) {
+    try {
+      localStorage.setItem(HIDE_JUNK_STORAGE_KEY, on ? '1' : '0');
+    } catch (e) {
+      /* ignore */
+    }
+  }
+
+  function itemText(item) {
+    var parts = [
+      item.title,
+      item.preview,
+      item.summary,
+      item.taskText,
+      item.decisionText,
+      item.issue,
+    ];
+    (item.bullets || []).forEach(function (b) {
+      parts.push(b);
+    });
+    (item.tasks || []).forEach(function (t) {
+      if (typeof t === 'string') parts.push(t);
+      else if (t && (t.text || t.title)) parts.push(t.text || t.title);
+    });
+    var ex = item.extracted_items || item.extractedItems || {};
+    (ex.tasks || []).forEach(function (t) {
+      parts.push(typeof t === 'string' ? t : t && (t.text || t.title));
+    });
+    return parts
+      .filter(function (p) {
+        return p != null && String(p).trim();
+      })
+      .join(' ')
+      .trim();
+  }
+
+  function hasExtractedActions(item) {
+    if (item.category === 'tasks') return true;
+    if (item.taskText && String(item.taskText).trim()) return true;
+    if ((item.tasks || []).length) return true;
+    var ex = item.extracted_items || item.extractedItems || {};
+    if ((ex.tasks || []).length) return true;
+    return false;
+  }
+
+  function isJunkCategory(item) {
+    var cat = item.category;
+    if (cat == null || cat === '') return true;
+    var c = String(cat).trim();
+    if (!c) return true;
+    var lower = c.toLowerCase();
+    return lower === 'uncategorized' || c === '—' || lower === '—';
+  }
+
+  function isJunkItem(item) {
+    if (!item) return false;
+    if (isJunkCategory(item)) return true;
+    var text = itemText(item);
+    if (text.toLowerCase().indexOf('| confidence: low') !== -1) return true;
+    if (WHATSAPP_EXPORT_RE.test(text)) return true;
+    if (text.length < 80 && !hasExtractedActions(item)) return true;
+    return false;
+  }
+
+  function isJunkCard(item) {
+    return isJunkItem(item);
+  }
+
+  function hasRealCategory(item) {
+    return !isJunkCategory(item);
+  }
+
+  function isTaskLikeItem(item) {
+    if (item.category === 'tasks') return true;
+    var text = itemText(item).trim();
+    return ACTION_VERB_RE.test(text);
+  }
+
+  function isSeriousItem(item) {
+    if (isJunkItem(item)) return false;
+    var project = String(item.project || '')
+      .toLowerCase()
+      .trim();
+    if (SERIOUS_PROJECTS[project]) return true;
+    if (item.category === 'projects') return true;
+    return false;
+  }
+
+  function priorityScore(item) {
+    var text = itemText(item);
+    var cat = String(item.category || '').toLowerCase();
+    var score = 0;
+    if (hasRealCategory(item)) score += 2;
+    if (text.length > 200) score += 1;
+    if (cat === 'decisions' || cat === 'meetings') score += 2;
+    return score;
+  }
+
+  function todayOperationalItems() {
+    return state.items.filter(function (it) {
+      return isAiReadyItem(it) && isToday(parseItemDate(it));
+    });
+  }
+
+  function ensureTxDigest() {
+    var existing = byId('txDigest');
+    if (existing) return existing;
+    var feed = byId('txFeed');
+    if (!feed || !feed.parentNode) return null;
+    var details = document.createElement('details');
+    details.id = 'txDigest';
+    details.className = 'tx-digest';
+    details.innerHTML =
+      '<summary class="tx-digest__summary">Today\u2019s digest</summary>' +
+      '<div class="tx-digest__body" role="region" aria-live="polite"></div>';
+    feed.parentNode.insertBefore(details, feed);
+    return details;
+  }
+
+  function digestDefaultOpen() {
+    try {
+      return window.matchMedia('(max-width: 767px)').matches;
+    } catch (e) {
+      return true;
+    }
+  }
+
+  function renderDigest() {
+    var details = ensureTxDigest();
+    if (!details) return;
+    var body = details.querySelector('.tx-digest__body');
+    if (!body) return;
+
+    if (details.dataset.txDigestOpenSet !== '1') {
+      details.open = digestDefaultOpen();
+      details.dataset.txDigestOpenSet = '1';
+    }
+
+    var today = todayOperationalItems();
+    var serious = 0;
+    var taskCount = 0;
+    var junkCount = 0;
+    today.forEach(function (it) {
+      if (isJunkItem(it)) junkCount += 1;
+      else if (isSeriousItem(it)) serious += 1;
+      if (isTaskLikeItem(it)) taskCount += 1;
+    });
+
+    var top = today
+      .slice()
+      .sort(function (a, b) {
+        return priorityScore(b) - priorityScore(a) || parseItemDate(b) - parseItemDate(a);
+      })
+      .slice(0, 3);
+
+    var topHtml = top.length
+      ? top
+          .map(function (it) {
+            return (
+              '<li><button type="button" class="tx-digest__pick" data-tx-digest-id="' +
+              esc(it.id) +
+              '">' +
+              esc(it.title || it.path || 'Untitled') +
+              '<span class="tx-digest__score mono">+' +
+              esc(priorityScore(it)) +
+              '</span></button></li>'
+            );
+          })
+          .join('')
+      : '<li class="tf-admin-muted">No prioritized items for today.</li>';
+
+    body.innerHTML =
+      '<ul class="tx-digest__stats mono">' +
+      '<li><strong>' +
+      esc(serious) +
+      '</strong> serious</li>' +
+      '<li><strong>' +
+      esc(taskCount) +
+      '</strong> tasks</li>' +
+      '<li><strong>' +
+      esc(junkCount) +
+      '</strong> junk / raw</li>' +
+      '</ul>' +
+      '<p class="tx-digest__label tf-admin-muted">Top priority</p>' +
+      '<ul class="tx-digest__top">' +
+      topHtml +
+      '</ul>';
+
+    body.querySelectorAll('[data-tx-digest-id]').forEach(function (btn) {
+      btn.addEventListener('click', function (ev) {
+        ev.preventDefault();
+        openDetail(btn.getAttribute('data-tx-digest-id'));
+      });
+    });
+  }
+
+  function ensureHideJunkFilter() {
+    var wrap = byId('txFilters');
+    if (!wrap || wrap.querySelector('[data-tx-filter="hide-junk"]')) return;
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'tx-pill';
+    btn.setAttribute('data-tx-filter', 'hide-junk');
+    btn.textContent = 'Hide junk';
+    wrap.appendChild(btn);
+  }
+
   function topBullets(item) {
     var list = item.bullets || [];
     if (!list.length) {
@@ -402,6 +662,11 @@
     if (state.filters.syncPending) {
       out = out.filter(function (it) {
         return it.googleSyncPending;
+      });
+    }
+    if (state.hideJunk) {
+      out = out.filter(function (it) {
+        return !isJunkItem(it);
       });
     }
     out.sort(function (a, b) {
@@ -592,50 +857,104 @@
         : '<p class="tf-admin-muted" style="margin:0.5rem 0 0;font-size:0.74rem">No pending or failed sources.</p>');
   }
 
-  function renderCategoryCards() {
-    var el = byId('txCatScroll');
-    if (!el) return;
-    var counts = state.counts || {};
-    el.innerHTML = CATEGORIES.map(function (c) {
-      var n = counts[c.key] != null ? counts[c.key] : 0;
-      var active = state.category === c.key ? ' is-active' : '';
-      return (
-        '<button type="button" class="tx-cat-card' +
-        active +
-        '" data-tx-cat="' +
-        esc(c.key) +
-        '" role="tab" aria-selected="' +
-        (active ? 'true' : 'false') +
-        '">' +
-        iconSvg(c.key) +
-        '<span class="tx-cat-card__n">' +
-        esc(n) +
-        '</span><span class="tx-cat-card__l">' +
-        esc(c.short) +
-        '</span></button>'
-      );
-    }).join('');
-    el.querySelectorAll('[data-tx-cat]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        state.category = btn.getAttribute('data-tx-cat') || 'meetings';
-        renderCategoryCards();
-        renderFeed();
-      });
-    });
+  function renderCategoryButton(c, counts, activeKey) {
+    var n = counts[c.key] != null ? counts[c.key] : 0;
+    var active = activeKey === c.key ? ' is-active' : '';
+    return (
+      '<button type="button" class="tx-cat-card' +
+      active +
+      '" data-tx-cat="' +
+      esc(c.key) +
+      '" role="tab" aria-selected="' +
+      (active ? 'true' : 'false') +
+      '">' +
+      iconSvg(c.key) +
+      '<span class="tx-cat-card__n">' +
+      esc(n) +
+      '</span><span class="tx-cat-card__l">' +
+      esc(c.short) +
+      '</span></button>'
+    );
   }
 
-  function renderProjectSelect() {
-    var sel = byId('txProjectSelect');
-    if (!sel) return;
-    var cur = state.project;
-    var opts = '<option value="">All</option>';
-    (state.indexMeta.projects || []).forEach(function (p) {
-      opts += '<option value="' + esc(p) + '"' + (p === cur ? ' selected' : '') + '>' + esc(p) + '</option>';
+  function selectCategory(key) {
+    state.category = key || 'meetings';
+    renderCategoryCards();
+    renderFeed();
+    closeTxSheet();
+  }
+
+  function renderCategoryCards() {
+    var el = byId('txCatScroll');
+    var sheetList = byId('txCatSheetList');
+    var counts = state.counts || {};
+    var html = CATEGORIES.map(function (c) {
+      return renderCategoryButton(c, counts, state.category);
+    }).join('');
+    if (el) {
+      el.innerHTML = html;
+      el.querySelectorAll('[data-tx-cat]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          selectCategory(btn.getAttribute('data-tx-cat'));
+        });
+      });
+    }
+    if (sheetList) {
+      sheetList.innerHTML = html;
+      sheetList.querySelectorAll('[data-tx-cat]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          selectCategory(btn.getAttribute('data-tx-cat'));
+        });
+      });
+    }
+    var mobileCat = byId('txMobileCatBtn');
+    if (mobileCat) {
+      var n = counts[state.category] != null ? counts[state.category] : 0;
+      mobileCat.textContent = categoryShortLabel(state.category) + ' · ' + n;
+      mobileCat.setAttribute('aria-label', 'Category: ' + categoryShortLabel(state.category));
+    }
+  }
+
+  var openSheetId = null;
+
+  function openTxSheet(id) {
+    var sheet = byId(id);
+    if (!sheet) return;
+    closeTxSheet();
+    openSheetId = id;
+    sheet.classList.add('is-open');
+    sheet.setAttribute('aria-hidden', 'false');
+    if (id === 'txSearchSheet') {
+      var search = byId('txSearch');
+      if (search) setTimeout(function () { search.focus(); }, 120);
+    }
+  }
+
+  function closeTxSheet() {
+    if (!openSheetId) return;
+    var sheet = byId(openSheetId);
+    if (sheet) {
+      sheet.classList.remove('is-open');
+      sheet.setAttribute('aria-hidden', 'true');
+    }
+    openSheetId = null;
+  }
+
+  function closeCardMenus(except) {
+    document.querySelectorAll('.tx-card__menu-pop.is-open').forEach(function (pop) {
+      if (except && pop === except) return;
+      pop.classList.remove('is-open');
+      pop.hidden = true;
+      var wrap = pop.closest('.tx-card__menu-wrap');
+      if (wrap) {
+        var t = wrap.querySelector('.tx-card__menu-btn');
+        if (t) t.setAttribute('aria-expanded', 'false');
+      }
     });
-    sel.innerHTML = opts;
   }
 
   function syncFilterPills() {
+
     var wrap = byId('txFilters');
     if (!wrap) return;
     wrap.querySelectorAll('[data-tx-filter]').forEach(function (btn) {
@@ -645,6 +964,7 @@
       if (key === 'week') on = state.filters.week;
       if (key === 'unreviewed') on = state.filters.unreviewed;
       if (key === 'sync-pending') on = state.filters.syncPending;
+      if (key === 'hide-junk') on = state.hideJunk;
       btn.classList.toggle('is-active', on);
     });
   }
@@ -687,6 +1007,296 @@
     return parts[parts.length - 1] || p;
   }
 
+  function selectedCount() {
+    return Object.keys(state.selectedIds).filter(function (id) {
+      return state.selectedIds[id];
+    }).length;
+  }
+
+  function transcriptionsSectionEl() {
+    return byId('transcriptionsSection');
+  }
+
+  function maybeBulkOnboardToast() {
+    try {
+      if (localStorage.getItem(BULK_ONBOARDED_KEY) === '1') return;
+      localStorage.setItem(BULK_ONBOARDED_KEY, '1');
+    } catch (e) {
+      /* ignore */
+    }
+    toast('Long-press to select · then bulk sync or mark read.');
+  }
+
+  function ensureBulkChrome() {
+    var mobileBar = byId('txMobileBar');
+    if (mobileBar && !byId('txBulkCounter')) {
+      var counter = document.createElement('span');
+      counter.id = 'txBulkCounter';
+      counter.className = 'tx-bulk-counter mono';
+      counter.setAttribute('aria-live', 'polite');
+      counter.setAttribute('aria-atomic', 'true');
+      mobileBar.insertBefore(counter, mobileBar.children[1] || null);
+    }
+    if (mobileBar && !byId('txBulkSelectBtn')) {
+      var selBtn = document.createElement('button');
+      selBtn.type = 'button';
+      selBtn.id = 'txBulkSelectBtn';
+      selBtn.className = 'tx-mobile-bar__icon tx-bulk-select-btn';
+      selBtn.setAttribute('aria-label', 'Select items');
+      selBtn.textContent = 'Sel';
+      mobileBar.insertBefore(selBtn, byId('txMobileFilterBtn'));
+    }
+    var toolbar = document.querySelector('#transcriptionsSection .tx-toolbar-desktop');
+    if (toolbar && !byId('txBulkCounterDesktop')) {
+      var deskCounter = document.createElement('span');
+      deskCounter.id = 'txBulkCounterDesktop';
+      deskCounter.className = 'tx-bulk-counter tx-bulk-counter--desktop mono';
+      deskCounter.setAttribute('aria-live', 'polite');
+      deskCounter.setAttribute('aria-atomic', 'true');
+      toolbar.appendChild(deskCounter);
+    }
+    if (toolbar && !byId('txBulkSelectBtnDesktop')) {
+      var desk = document.createElement('button');
+      desk.type = 'button';
+      desk.id = 'txBulkSelectBtnDesktop';
+      desk.className = 'tf-admin-toolbar__btn tx-bulk-select-btn';
+      desk.textContent = 'Select';
+      toolbar.appendChild(desk);
+    }
+    var section = transcriptionsSectionEl();
+    if (section && !byId('txBulkBar')) {
+      var bar = document.createElement('di' + 'v');
+      bar.id = 'txBulkBar';
+      bar.className = 'tx-bulk-bar';
+      bar.setAttribute('aria-label', 'Bulk actions');
+      bar.innerHTML =
+        '<button type="button" id="txBulkSyncBtn" class="tf-admin-toolbar__btn">Sync to Google</button>' +
+        '<button type="button" id="txBulkMarkBtn" class="tf-admin-toolbar__btn">Mark read</button>' +
+        '<button type="button" id="txBulkCancelBtn" class="tf-admin-toolbar__btn">Cancel</button>';
+      var feed = byId('txFeed');
+      if (feed && feed.parentNode) feed.parentNode.insertBefore(bar, feed);
+    }
+  }
+
+  function updateBulkUI() {
+    ensureBulkChrome();
+    var n = selectedCount();
+    var bar = byId('txBulkBar');
+    var syncBtn = byId('txBulkSyncBtn');
+    var markBtn = byId('txBulkMarkBtn');
+    var autoOn = !!state.syncSettings.auto_sync_google;
+    if (bar) bar.classList.toggle('is-visible', state.selectMode);
+    if (syncBtn) {
+      syncBtn.textContent = 'Sync ' + n + ' item' + (n === 1 ? '' : 's') + ' to Google';
+      syncBtn.disabled = autoOn || state.bulkSyncing || n < 1;
+      syncBtn.title = autoOn ? 'Auto-sync is on — items sync individually' : '';
+    }
+    if (markBtn) {
+      markBtn.textContent = 'Mark ' + n + ' read';
+      markBtn.disabled = state.bulkSyncing || n < 1;
+    }
+    var cancelBtn = byId('txBulkCancelBtn');
+    if (cancelBtn) cancelBtn.disabled = state.bulkSyncing;
+    [byId('txBulkSelectBtn'), byId('txBulkSelectBtnDesktop')].forEach(function (btn) {
+      if (btn) btn.classList.toggle('is-active', state.selectMode);
+    });
+    updateBulkCounter();
+  }
+
+  function updateBulkCounter() {
+    var text = '';
+    if (state.bulkSyncing) {
+      text =
+        'Syncing ' + state.bulkSyncProgress.done + '/' + state.bulkSyncProgress.total + '…';
+    } else if (state.selectMode) {
+      var n = selectedCount();
+      text = n ? n + ' selected' : 'Tap cards to select';
+    }
+    [byId('txBulkCounter'), byId('txBulkCounterDesktop')].forEach(function (el) {
+      if (el) el.textContent = text;
+    });
+  }
+
+  function enterSelectMode(firstId) {
+    closeOverlay();
+    closeTxSheet();
+    closeCardMenus();
+    state.selectMode = true;
+    if (firstId) state.selectedIds[firstId] = true;
+    var section = transcriptionsSectionEl();
+    if (section) section.classList.add('tx-admin--select-mode');
+    updateBulkUI();
+    renderFeed();
+  }
+
+  function exitSelectMode() {
+    state.selectMode = false;
+    state.selectedIds = {};
+    state.bulkSyncing = false;
+    state.bulkSyncProgress = { done: 0, total: 0 };
+    state.itemSyncState = {};
+    var section = transcriptionsSectionEl();
+    if (section) section.classList.remove('tx-admin--select-mode');
+    updateBulkUI();
+    renderFeed();
+  }
+
+  function toggleSelectId(id) {
+    if (!id) return;
+    if (state.selectedIds[id]) delete state.selectedIds[id];
+    else state.selectedIds[id] = true;
+    updateBulkUI();
+    renderFeed();
+  }
+
+  function runConcurrent(ids, worker, limit) {
+    var index = 0;
+    var active = 0;
+    var results = [];
+    return new Promise(function (resolve) {
+      function pump() {
+        if (index >= ids.length && active === 0) {
+          resolve(results);
+          return;
+        }
+        while (active < limit && index < ids.length) {
+          var i = index++;
+          active++;
+          worker(ids[i], i)
+            .then(function (r) {
+              results[i] = r;
+            })
+            .catch(function (err) {
+              results[i] = { ok: false, error: err };
+            })
+            .finally(function () {
+              active--;
+              pump();
+            });
+        }
+      }
+      pump();
+    });
+  }
+
+  function retrySyncOne(id) {
+    if (!id || state.bulkSyncing) return;
+    state.itemSyncState[id] = 'syncing';
+    updateBulkCounter();
+    renderFeed();
+    syncItem(id, { quiet: true, skipFeedRender: true }).then(function () {
+      renderFeed();
+      updateBulkUI();
+    });
+  }
+
+  function runBulkSync() {
+    if (state.syncSettings.auto_sync_google || state.bulkSyncing) return;
+    var ids = Object.keys(state.selectedIds).filter(function (id) {
+      return state.selectedIds[id];
+    });
+    if (!ids.length) return;
+    state.bulkSyncing = true;
+    state.bulkSyncProgress = { done: 0, total: ids.length };
+    ids.forEach(function (id) {
+      state.itemSyncState[id] = 'pending';
+    });
+    updateBulkUI();
+    renderFeed();
+    runConcurrent(
+      ids,
+      function (id) {
+        state.itemSyncState[id] = 'syncing';
+        updateBulkCounter();
+        renderFeed();
+        return syncItem(id, { quiet: true, skipFeedRender: true }).then(function (result) {
+          state.bulkSyncProgress.done += 1;
+          state.itemSyncState[id] = result.ok ? 'ok' : 'fail';
+          updateBulkCounter();
+          renderFeed();
+          return result;
+        });
+      },
+      BULK_SYNC_CONCURRENCY
+    ).then(function (results) {
+      state.bulkSyncing = false;
+      var failed = results.filter(function (r) {
+        return r && !r.ok;
+      }).length;
+      updateBulkUI();
+      renderFeed();
+      toast(failed ? 'Bulk sync finished with ' + failed + ' failure(s).' : 'Bulk sync finished.');
+    });
+  }
+
+  function runBulkMarkRead() {
+    if (state.bulkSyncing) return;
+    var ids = Object.keys(state.selectedIds).filter(function (id) {
+      return state.selectedIds[id];
+    });
+    if (!ids.length) return;
+    state.bulkSyncing = true;
+    state.bulkSyncProgress = { done: 0, total: ids.length };
+    updateBulkUI();
+    runConcurrent(
+      ids,
+      function (id) {
+        return markReviewedRequest(id).then(function (result) {
+          state.bulkSyncProgress.done += 1;
+          updateBulkCounter();
+          return result;
+        });
+      },
+      BULK_SYNC_CONCURRENCY
+    ).then(function (results) {
+      state.bulkSyncing = false;
+      results.forEach(function (r) {
+        if (r && r.ok) {
+          state.items.forEach(function (it) {
+            if (it.id === r.id) it.reviewed = true;
+          });
+        }
+      });
+      updateBulkUI();
+      renderFeed();
+      toast('Marked selected items as read.');
+    });
+  }
+
+  function bindBulkChrome() {
+    ensureBulkChrome();
+    var syncBtn = byId('txBulkSyncBtn');
+    var markBtn = byId('txBulkMarkBtn');
+    var cancelBtn = byId('txBulkCancelBtn');
+    if (syncBtn && !syncBtn.dataset.txBound) {
+      syncBtn.dataset.txBound = '1';
+      syncBtn.addEventListener('click', runBulkSync);
+    }
+    if (markBtn && !markBtn.dataset.txBound) {
+      markBtn.dataset.txBound = '1';
+      markBtn.addEventListener('click', runBulkMarkRead);
+    }
+    if (cancelBtn && !cancelBtn.dataset.txBound) {
+      cancelBtn.dataset.txBound = '1';
+      cancelBtn.addEventListener('click', exitSelectMode);
+    }
+    [byId('txBulkSelectBtn'), byId('txBulkSelectBtnDesktop')].forEach(function (btn) {
+      if (!btn || btn.dataset.txBound) return;
+      btn.dataset.txBound = '1';
+      btn.addEventListener('click', function () {
+        if (state.selectMode) exitSelectMode();
+        else enterSelectMode();
+      });
+    });
+  }
+
+  function clearLongPressTimer() {
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      longPressTimer = null;
+    }
+  }
+
   function renderFeedCard(item) {
     var bullets = topBullets(item);
     var chips = statChips(item);
@@ -694,20 +1304,64 @@
       chips.unshift({ t: 'AI-ready', ok: true });
     }
     var unread = !item.reviewed ? ' is-unread' : '';
+    var junk = isJunkCard(item);
+    var title = item.title || item.path || '';
+    var excerpt = cardExcerpt(item);
+    var hideExcerpt = !excerpt || excerptSameAsTitle(title, excerpt);
+    var catKey = String(item.category || 'notes').toLowerCase();
     var outFile = outputBasename(item);
+    var ts = relativeDate(item);
+    var menuActions =
+      '<button type="button" role="menuitem" class="tx-card__menu-item" data-tx-action="sync" data-tx-id="' +
+      esc(item.id) +
+      '">Sync Google</button>' +
+      '<button type="button" role="menuitem" class="tx-card__menu-item" data-tx-action="read" data-tx-id="' +
+      esc(item.id) +
+      '">Mark read</button>';
+    var syncSt = state.itemSyncState[item.id] || '';
+    var syncCls = syncSt ? ' tx-card--sync-' + syncSt : '';
+    var isSelected = !!state.selectedIds[item.id];
+    var roleAttrs = state.selectMode
+      ? ' role="checkbox" aria-checked="' + (isSelected ? 'true' : 'false') + '"'
+      : '';
     return (
       '<article class="tx-card' +
       unread +
+      (junk ? ' tx-item--junk tx-item--junk-collapsed tx-card--junk tx-card--junk-collapsed' : '') +
+      (state.selectMode ? ' tx-card--select-mode' : '') +
+      (isSelected ? ' is-selected' : '') +
+      syncCls +
       '" data-tx-id="' +
       esc(item.id) +
-      '"><div class="tx-card__head">' +
+      '"' +
+      roleAttrs +
+      ' tabindex="0">' +
+      '<div class="tx-card__top">' +
+      (state.selectMode ? '<span class="tx-card__bulk-check" aria-hidden="true"></span>' : '') +
+      '<span class="tx-card__cat-chip tx-card__cat-chip--' +
+      esc(catKey.replace(/[^a-z0-9-]/g, '')) +
+      '">' +
+      esc(categoryShortLabel(item.category)) +
+      '</span>' +
+      '<time class="tx-card__time mono">' +
+      esc(ts) +
+      '</time>' +
+      '<span class="tx-card__sync-spin" aria-hidden="true"></span>' +
+      '<span class="tx-card__sync-fail" aria-hidden="true"></span>' +
+      '<div class="tx-card__menu-wrap">' +
+      '<button type="button" class="tx-card__menu-btn" aria-label="Actions" aria-haspopup="menu" aria-expanded="false">&#8942;</button>' +
+      '<div class="tx-card__menu-pop" role="menu" hidden>' +
+      menuActions +
+      '</div></div></div>' +
+      '<div class="tx-card__legacy">' +
+      '<div class="tx-card__head">' +
       iconSvg(item.category).replace('tx-cat-card__icon', 'tx-card__icon') +
       '<div class="tx-card__main"><h3 class="tx-card__title">' +
-      esc(item.title || item.path) +
+      esc(title) +
       '</h3><p class="tx-card__meta mono">' +
       esc(item.project || '—') +
       ' · ' +
-      esc(relativeDate(item)) +
+      esc(ts) +
       (outFile ? ' · ' + esc(outFile) : '') +
       '</p>' +
       (bullets.length
@@ -719,9 +1373,7 @@
             .join('') +
           '</ul>'
         : '') +
-      '<p class="tx-card__preview">' +
-      esc(item.preview || '') +
-      '</p><div class="tx-card__chips">' +
+      '<div class="tx-card__chips">' +
       chips
         .map(function (c) {
           var cls = 'tx-chip';
@@ -730,7 +1382,9 @@
           return '<span class="' + cls + '">' + esc(c.t) + '</span>';
         })
         .join('') +
-      '</div></div></div><div class="tx-card__actions">' +
+      '</div></div></div>' +
+      (hideExcerpt ? '' : '<p class="tx-card__preview">' + esc(excerpt) + '</p>') +
+      '<div class="tx-card__actions">' +
       '<button type="button" class="tf-admin-toolbar__btn" data-tx-action="sync" data-tx-id="' +
       esc(item.id) +
       '">Sync Google</button>' +
@@ -739,7 +1393,7 @@
       '">Mark read</button>' +
       '<button type="button" class="tf-admin-toolbar__btn" data-tx-action="open" data-tx-id="' +
       esc(item.id) +
-      '">Open</button></div></article>'
+      '">Open</button></div></div></article>'
     );
   }
 
@@ -753,12 +1407,77 @@
         if (action === 'open') openDetail(id);
         else if (action === 'read') markReviewed(id);
         else if (action === 'sync') syncItem(id);
+        closeCardMenus();
+      });
+    });
+    root.querySelectorAll('.tx-card__menu-btn').forEach(function (btn) {
+      btn.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        var pop = btn.parentElement && btn.parentElement.querySelector('.tx-card__menu-pop');
+        if (!pop) return;
+        var wasOpen = pop.classList.contains('is-open');
+        closeCardMenus();
+        if (!wasOpen) {
+          pop.hidden = false;
+          pop.classList.add('is-open');
+          btn.setAttribute('aria-expanded', 'true');
+        }
       });
     });
     root.querySelectorAll('.tx-card').forEach(function (card) {
+      var id = card.getAttribute('data-tx-id');
+
+      function onPointerDown() {
+        if (state.selectMode || state.bulkSyncing) return;
+        longPressDidTrigger = false;
+        clearLongPressTimer();
+        longPressTimer = setTimeout(function () {
+          longPressDidTrigger = true;
+          enterSelectMode(id);
+          maybeBulkOnboardToast();
+        }, LONG_PRESS_MS);
+      }
+
+      function onPointerUp() {
+        clearLongPressTimer();
+      }
+
+      card.addEventListener('mousedown', onPointerDown);
+      card.addEventListener('mouseup', onPointerUp);
+      card.addEventListener('mouseleave', onPointerUp);
+      card.addEventListener('touchstart', onPointerDown, { passive: true });
+      card.addEventListener('touchend', onPointerUp);
+      card.addEventListener('touchcancel', onPointerUp);
+
       card.addEventListener('click', function (ev) {
-        if (ev.target.closest('[data-tx-action]')) return;
-        openDetail(card.getAttribute('data-tx-id'));
+        if (longPressDidTrigger) {
+          longPressDidTrigger = false;
+          ev.preventDefault();
+          return;
+        }
+        if (ev.target.closest('[data-tx-action]') || ev.target.closest('.tx-card__menu-wrap')) return;
+        if (state.selectMode) {
+          ev.preventDefault();
+          if (state.itemSyncState[id] === 'fail') {
+            retrySyncOne(id);
+            return;
+          }
+          toggleSelectId(id);
+          return;
+        }
+        if (
+          card.classList.contains('tx-item--junk-collapsed') ||
+          card.classList.contains('tx-card--junk-collapsed')
+        ) {
+          card.classList.remove('tx-item--junk-collapsed', 'tx-card--junk-collapsed');
+          return;
+        }
+        openDetail(id);
+      });
+      card.addEventListener('keydown', function (ev) {
+        if (ev.key !== 'Enter' && ev.key !== ' ') return;
+        ev.preventDefault();
+        card.click();
       });
     });
   }
@@ -768,9 +1487,16 @@
     var hint = byId('txFeedHint');
     if (!feed) return;
 
+    renderDigest();
+
     var list;
     if (state.searchQuery.trim() && state.searchResults) {
       list = state.searchResults;
+      if (state.hideJunk) {
+        list = list.filter(function (it) {
+          return !isJunkItem(it);
+        });
+      }
     } else if (state.searchQuery.trim() && state.searchLoading) {
       feed.innerHTML = '<p class="tf-admin-muted">Searching…</p>';
       if (hint) hint.textContent = '';
@@ -1010,46 +1736,62 @@
     );
   }
 
-  function markReviewed(id) {
-    tryApi(['/api/admin/transcriptions/mark-reviewed'], {
+  function markReviewedRequest(id) {
+    return tryApi(['/api/admin/transcriptions/mark-reviewed'], {
       method: 'POST',
       body: { id: id },
     }).then(function (pack) {
-      if (pack.ok) {
+      return { id: id, ok: pack.ok, status: pack.status, j: pack.j };
+    });
+  }
+
+  function markReviewed(id, opts) {
+    opts = opts || {};
+    return markReviewedRequest(id).then(function (result) {
+      if (result.ok) {
         state.items.forEach(function (it) {
           if (it.id === id) it.reviewed = true;
         });
         if (state.detailItem && state.detailItem.id === id) state.detailItem.reviewed = true;
-        renderFeed();
+        if (!opts.skipFeedRender) renderFeed();
         if (state.detailItem) renderDetailContent(state.detailItem);
-        toast('Marked as reviewed.');
-      } else if (pack.status === 404) {
-        toast('Mark reviewed API not available yet.');
-      } else {
-        toast((pack.j && pack.j.error) || 'Could not mark reviewed.');
+        if (!opts.quiet) toast('Marked as reviewed.');
+      } else if (result.status === 404) {
+        if (!opts.quiet) toast('Mark reviewed API not available yet.');
+      } else if (!opts.quiet) {
+        toast((result.j && result.j.error) || 'Could not mark reviewed.');
       }
+      return result;
     });
   }
 
-  function syncItem(id) {
-    tryApi(['/api/admin/transcriptions/sync-item'], {
+  function syncItemRequest(id) {
+    return tryApi(['/api/admin/transcriptions/sync-item'], {
       method: 'POST',
       body: { id: id },
     }).then(function (pack) {
-      if (pack.ok) {
+      return { id: id, ok: pack.ok, status: pack.status, j: pack.j };
+    });
+  }
+
+  function syncItem(id, opts) {
+    opts = opts || {};
+    return syncItemRequest(id).then(function (result) {
+      if (result.ok) {
         state.items.forEach(function (it) {
           if (it.id === id) {
             it.googleSyncPending = false;
             it.googleSynced = true;
           }
         });
-        renderFeed();
-        toast('Google sync queued.');
-      } else if (pack.status === 404) {
-        toast('Google sync API not available yet.');
-      } else {
-        toast((pack.j && pack.j.error) || 'Sync failed.');
+        if (!opts.skipFeedRender) renderFeed();
+        if (!opts.quiet) toast('Google sync queued.');
+      } else if (result.status === 404) {
+        if (!opts.quiet) toast('Google sync API not available yet.');
+      } else if (!opts.quiet) {
+        toast((result.j && result.j.error) || 'Sync failed.');
       }
+      return result;
     });
   }
 
@@ -1096,9 +1838,11 @@
       if (pack.ok) {
         state.syncSettings.auto_sync_google = enabled;
         toast(enabled ? 'Auto-sync enabled.' : 'Auto-sync disabled.');
+        updateBulkUI();
       } else if (pack.status === 404) {
         state.syncSettings.auto_sync_google = enabled;
         toast('Sync settings API not available — preference kept locally.');
+        updateBulkUI();
       } else {
         toast((pack.j && pack.j.error) || 'Could not save sync settings.');
         var tgl = byId('txAutoSyncToggle');
@@ -1228,8 +1972,12 @@
     if (tgl) {
       tgl.addEventListener('change', function () {
         saveSyncSettings(tgl.checked);
+        updateBulkUI();
       });
     }
+
+    state.hideJunk = loadHideJunkPref();
+    ensureHideJunkFilter();
 
     var filters = byId('txFilters');
     if (filters) {
@@ -1240,10 +1988,15 @@
           if (key === 'week') state.filters.week = !state.filters.week;
           if (key === 'unreviewed') state.filters.unreviewed = !state.filters.unreviewed;
           if (key === 'sync-pending') state.filters.syncPending = !state.filters.syncPending;
+          if (key === 'hide-junk') {
+            state.hideJunk = !state.hideJunk;
+            saveHideJunkPref(state.hideJunk);
+          }
           syncFilterPills();
           renderFeed();
         });
       });
+      syncFilterPills();
     }
 
     var proj = byId('txProjectSelect');
@@ -1270,7 +2023,41 @@
     });
 
     document.addEventListener('keydown', function (ev) {
-      if (ev.key === 'Escape') closeOverlay();
+      if (ev.key === 'Escape') {
+        if (state.selectMode) exitSelectMode();
+        else if (openSheetId) closeTxSheet();
+        else closeOverlay();
+        closeCardMenus();
+      }
+    });
+
+    bindBulkChrome();
+
+    var mobileCat = byId('txMobileCatBtn');
+    if (mobileCat) {
+      mobileCat.addEventListener('click', function () {
+        openTxSheet('txCatSheet');
+      });
+    }
+    var mobileFilter = byId('txMobileFilterBtn');
+    if (mobileFilter) {
+      mobileFilter.addEventListener('click', function () {
+        openTxSheet('txFilterSheet');
+      });
+    }
+    var mobileSearch = byId('txMobileSearchBtn');
+    if (mobileSearch) {
+      mobileSearch.addEventListener('click', function () {
+        openTxSheet('txSearchSheet');
+      });
+    }
+    document.querySelectorAll('[data-tx-sheet]').forEach(function (el) {
+      el.addEventListener('click', function () {
+        closeTxSheet();
+      });
+    });
+    document.addEventListener('click', function (ev) {
+      if (!ev.target.closest('.tx-card__menu-wrap')) closeCardMenus();
     });
   }
 

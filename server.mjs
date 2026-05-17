@@ -31,6 +31,7 @@ import {
   sanitizeIndexItemForClient,
   searchIndexItems,
 } from './lib/transcriptions/store.mjs';
+import { appendAdminAuditLog } from './scripts/admin_audit_logger.js';
 
 const processFatalLogHandlersKey = Symbol.for('serviceopera.server.processFatalLogHandlers');
 if (!globalThis[processFatalLogHandlersKey]) {
@@ -1368,8 +1369,8 @@ function pruneOnboardingPosts(ip) {
   return arr;
 }
 
-const ADMIN_LOGIN_WINDOW_MS = SEND_WINDOW_MS;
-const ADMIN_LOGIN_MAX_ATTEMPTS = 15;
+const ADMIN_LOGIN_WINDOW_MS = 5 * 60 * 1000;
+const ADMIN_LOGIN_MAX_ATTEMPTS = 20;
 /** @type {Map<string, number[]>} */
 const adminLoginFailTimestampsByIp = new Map();
 
@@ -1384,6 +1385,10 @@ function recordAdminLoginFailure(ip) {
   const arr = pruneAdminLoginFails(ip);
   arr.push(Date.now());
   adminLoginFailTimestampsByIp.set(ip, arr);
+}
+
+function isAdminLoginIpBlocked(ip) {
+  return pruneAdminLoginFails(ip).length >= ADMIN_LOGIN_MAX_ATTEMPTS;
 }
 
 const ADMIN_USER_PROFILING_WINDOW_MS = 60_000;
@@ -1402,7 +1407,7 @@ function pruneAdminUserProfilingGets(ip) {
 
 /** Rate-limit /admin/* HTML and /api/admin/* (and legacy voice-recorder API paths) by IP. */
 const ADMIN_ROUTE_RATE_WINDOW_MS = 60_000;
-const ADMIN_ROUTE_RATE_MAX = 100;
+const ADMIN_ROUTE_RATE_MAX = 10;
 /** @type {Map<string, number[]>} */
 const adminRouteTimestampsByIp = new Map();
 
@@ -1416,7 +1421,8 @@ function pruneAdminRouteRequests(ip) {
 function isAdminProtectedRequestPath(pathname) {
   const p = pathname || '';
   if (p === '/admin.html' || p === '/admin.js' || p === '/admin-transcriptions.js') return true;
-  if (p === '/admin-config.js' || p === '/transcriptions-admin.css') return true;
+  if (p === '/admin-config.js' || p === '/transcriptions-admin.css' || p === '/admin-transcriptions.css')
+    return true;
   if (p.startsWith('/admin/') || p === '/admin') return true;
   if (p.startsWith('/api/admin/')) return true;
   return /^\/api\/voice-recorder(\/|$)/.test(p);
@@ -1759,20 +1765,54 @@ app.use((req, res, next) => {
   next();
 });
 
-/** Structured access log for operator console HTML and admin APIs. */
+/** Extra security headers on admin HTML and APIs. */
+app.use((req, res, next) => {
+  if (!isAdminProtectedRequestPath(req.path)) return next();
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'"
+  );
+  if (process.env.NODE_ENV === 'production') {
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  }
+  res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+  next();
+});
+
+/** Block admin routes when IP exceeded failed login attempts (5 min window). */
+app.use((req, res, next) => {
+  if (!isAdminProtectedRequestPath(req.path) || isAdminRateLimitExemptPath(req.path)) return next();
+  const ip = clientIp(req);
+  if (!isAdminLoginIpBlocked(ip)) return next();
+  if (req.path.startsWith('/api/')) {
+    return res.status(429).json({ error: 'Too many failed sign-in attempts. Try again later.' });
+  }
+  res.setHeader('Cache-Control', 'no-store');
+  return res.status(429).type('text/plain').send('Too many failed sign-in attempts. Try again later.');
+});
+
+/** Structured access log + audit file for operator console HTML and admin APIs. */
 app.use((req, res, next) => {
   if (!isAdminProtectedRequestPath(req.path)) return next();
   const admin = getVerifiedAdmin(req);
-  console.log(
-    JSON.stringify({
+  const ip = clientIp(req);
+  const method = req.method;
+  const pathLogged = req.originalUrl || req.path;
+  const adminEmail = admin ? admin.email : null;
+  res.on('finish', () => {
+    const entry = {
       ts: new Date().toISOString(),
-      type: 'admin_access',
-      ip: clientIp(req),
-      method: req.method,
-      path: req.originalUrl || req.path,
-      adminEmail: admin ? admin.email : null,
-    })
-  );
+      ip,
+      method,
+      path: pathLogged,
+      adminEmail,
+      status: res.statusCode,
+    };
+    console.log(JSON.stringify({ type: 'admin_access', ...entry }));
+    appendAdminAuditLog(entry);
+  });
   next();
 });
 
@@ -2084,8 +2124,7 @@ app.post('/api/auth/clinic-register', handlePortalRegister);
 
 app.post('/api/admin/login', (req, res) => {
   const ip = clientIp(req);
-  const fails = pruneAdminLoginFails(ip);
-  if (fails.length >= ADMIN_LOGIN_MAX_ATTEMPTS) {
+  if (isAdminLoginIpBlocked(ip)) {
     return res.status(429).json({ error: 'Too many sign-in attempts. Try again later.' });
   }
   if (!ADMIN_PASSWORD_HASH) {
@@ -4119,6 +4158,7 @@ app.use(
         filePath.endsWith('admin.js') ||
         filePath.endsWith('admin-transcriptions.js') ||
         norm.endsWith('transcriptions-admin.css') ||
+        norm.endsWith('admin-transcriptions.css') ||
         norm.endsWith('app-version.json') ||
         norm.endsWith('operator/places-leads.html') ||
         filePath.endsWith('places-leads.html') ||
