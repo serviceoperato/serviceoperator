@@ -173,10 +173,7 @@
 
   function apiErrorMessage(pack, fallback) {
     if (pack && pack.status === 429) {
-      return (
-        'Too many admin API requests from this network. Wait about a minute, then reload. ' +
-        'If it still fails, sign out and sign in again.'
-      );
+      return (pack.j && pack.j.error) || 'Too many requests. Try again in a minute.';
     }
     return (pack && pack.j && pack.j.error) || fallback;
   }
@@ -2557,23 +2554,52 @@
   }
 
   function runReindex() {
+    if (reindexBusy) return;
     var btn = byId('txReindexBtn');
-    if (btn) btn.disabled = true;
-    setLoadHint('Reindexing…');
-    tryApi(['/api/admin/transcriptions/reindex'], { method: 'POST' }).then(function (pack) {
-      if (btn) btn.disabled = false;
-      if (pack.ok) {
-        toast('Reindex complete.');
-        loadIndex();
-      } else if (pack.status === 404) {
-        setLoadHint('Reindex API not available — reload index only.');
-        loadIndex();
-        toast('Reindex endpoint not ready; refreshed index.');
-      } else {
-        setLoadHint(apiErrorMessage(pack, 'Reindex failed.'));
-        toast(apiErrorMessage(pack, 'Reindex failed.'));
-      }
-    });
+    if (btn && btn.disabled) return;
+
+    reindexBusy = true;
+    var previousHint = getLoadHintText();
+    var btnLabel = btn ? btn.textContent : '';
+
+    setReindexBtnDisabled(true);
+    if (btn) btn.textContent = 'Indexing…';
+    setLoadHint('Indexing…');
+
+    function finishReindexUi() {
+      window.setTimeout(function () {
+        reindexBusy = false;
+        setReindexBtnDisabled(false);
+        if (btn) btn.textContent = btnLabel;
+      }, REINDEX_DEBOUNCE_MS);
+    }
+
+    tryApi(['/api/admin/transcriptions/reindex'], { method: 'POST' })
+      .then(function (pack) {
+        if (pack.ok) {
+          toast('Reindex complete.');
+          loadIndex();
+          return;
+        }
+        if (pack.status === 404) {
+          setLoadHint('Reindex API not available — reload index only.');
+          loadIndex();
+          toast('Reindex endpoint not ready; refreshed index.');
+          return;
+        }
+        var err = apiErrorMessage(pack, 'Reindex failed.');
+        if (pack.status === 429) {
+          setLoadHint(err);
+        } else {
+          setLoadHint(previousHint);
+        }
+        toast(err);
+      })
+      .catch(function () {
+        setLoadHint(previousHint);
+        toast('Network error during reindex.');
+      })
+      .then(finishReindexUi);
   }
 
   function saveSyncSettings(enabled) {
