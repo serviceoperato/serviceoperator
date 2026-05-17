@@ -81,6 +81,8 @@
   var bound = false;
   var longPressTimer = null;
   var longPressDidTrigger = false;
+  var REINDEX_DEBOUNCE_MS = 2000;
+  var reindexBusy = false;
 
   function api(path) {
     if (typeof soApiUrl === 'function') return soApiUrl(path);
@@ -167,6 +169,16 @@
       });
     }
     return next();
+  }
+
+  function apiErrorMessage(pack, fallback) {
+    if (pack && pack.status === 429) {
+      return (
+        'Too many admin API requests from this network. Wait about a minute, then reload. ' +
+        'If it still fails, sign out and sign in again.'
+      );
+    }
+    return (pack && pack.j && pack.j.error) || fallback;
   }
 
   function iconSvg(key) {
@@ -1017,6 +1029,19 @@
   function setLoadHint(text) {
     var el = byId('txLoadHint');
     if (el) el.textContent = text || '';
+  }
+
+  function getLoadHintText() {
+    var el = byId('txLoadHint');
+    return el ? el.textContent : '';
+  }
+
+  function setReindexBtnDisabled(disabled) {
+    var btn = byId('txReindexBtn');
+    if (!btn) return;
+    btn.disabled = disabled;
+    if (disabled) btn.setAttribute('aria-busy', 'true');
+    else btn.removeAttribute('aria-busy');
   }
 
 
@@ -2545,8 +2570,8 @@
         loadIndex();
         toast('Reindex endpoint not ready; refreshed index.');
       } else {
-        setLoadHint((pack.j && pack.j.error) || 'Reindex failed.');
-        toast((pack.j && pack.j.error) || 'Reindex failed.');
+        setLoadHint(apiErrorMessage(pack, 'Reindex failed.'));
+        toast(apiErrorMessage(pack, 'Reindex failed.'));
       }
     });
   }
@@ -2605,7 +2630,7 @@
           });
         } else {
           state.searchResults = [];
-          toast((pack.j && pack.j.error) || 'Search failed.');
+          toast(apiErrorMessage(pack, 'Search failed.'));
         }
         renderFeed();
       }
@@ -2626,7 +2651,7 @@
         if (feed) feed.setAttribute('aria-busy', 'false');
         if (!pack.ok) {
           state.apiUnavailable = pack.status === 404;
-          setLoadHint((pack.j && pack.j.error) || 'Could not load transcriptions.');
+          setLoadHint(apiErrorMessage(pack, 'Could not load transcriptions.'));
           renderOverview();
           renderCategoryHeader();
           byId('txFeed').innerHTML = emptyState('none');

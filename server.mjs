@@ -1407,7 +1407,10 @@ function pruneAdminUserProfilingGets(ip) {
 
 /** Rate-limit /admin/* HTML and /api/admin/* (and legacy voice-recorder API paths) by IP. */
 const ADMIN_ROUTE_RATE_WINDOW_MS = 60_000;
+/** Unauthenticated /api/admin/* (capabilities probe, etc.). */
 const ADMIN_ROUTE_RATE_MAX = 10;
+/** Valid admin JWT (Bearer or HttpOnly cookie) — normal console usage. */
+const ADMIN_ROUTE_RATE_MAX_AUTHENTICATED = 60;
 /** @type {Map<string, number[]>} */
 const adminRouteTimestampsByIp = new Map();
 
@@ -1416,6 +1419,23 @@ function pruneAdminRouteRequests(ip) {
   const arr = (adminRouteTimestampsByIp.get(ip) || []).filter((t) => now - t < ADMIN_ROUTE_RATE_WINDOW_MS);
   adminRouteTimestampsByIp.set(ip, arr);
   return arr;
+}
+
+/** Admin JS/CSS bundles — not counted toward API rate limits (HTML still JWT-gated in sendAdminHtml). */
+function isAdminStaticAssetPath(pathname) {
+  const p = pathname || '';
+  if (p === '/admin.html' || p === '/admin.js' || p === '/admin-transcriptions.js' || p === '/admin-config.js')
+    return true;
+  return (
+    p === '/transcriptions-admin.css' ||
+    p === '/admin-transcriptions.css' ||
+    p === '/transcriptions-dashboard.css'
+  );
+}
+
+function resolveAdminRouteRateLimitMax(req) {
+  if (getVerifiedAdmin(req)) return ADMIN_ROUTE_RATE_MAX_AUTHENTICATED;
+  return ADMIN_ROUTE_RATE_MAX;
 }
 
 function isAdminProtectedRequestPath(pathname) {
@@ -1823,13 +1843,17 @@ app.use((req, res, next) => {
 
 app.use((req, res, next) => {
   if (!isAdminProtectedRequestPath(req.path) || isAdminRateLimitExemptPath(req.path)) return next();
+  if (req.method === 'GET' && isAdminStaticAssetPath(req.path)) return next();
   const ip = clientIp(req);
+  const max = resolveAdminRouteRateLimitMax(req);
   const arr = pruneAdminRouteRequests(ip);
-  if (arr.length >= ADMIN_ROUTE_RATE_MAX) {
+  if (arr.length >= max) {
     if (req.path.startsWith('/api/')) {
+      res.setHeader('Retry-After', String(Math.ceil(ADMIN_ROUTE_RATE_WINDOW_MS / 1000)));
       return res.status(429).json({ error: 'Too many requests. Try again later.' });
     }
     res.setHeader('Cache-Control', 'no-store');
+    res.setHeader('Retry-After', String(Math.ceil(ADMIN_ROUTE_RATE_WINDOW_MS / 1000)));
     return res.status(429).type('text/plain').send('Too many requests. Try again later.');
   }
   arr.push(Date.now());
