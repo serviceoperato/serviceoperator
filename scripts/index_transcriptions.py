@@ -47,6 +47,46 @@ AI_READY_DIR = CONTENT / "ai-ready-transcriptions"
 
 CATEGORIES = ("meetings", "notes", "tasks", "calendar", "projects", "decisions", "open-points")
 
+PRIMARY_CATEGORY_ALIASES: dict[str, str] = {
+    "meeting": "meetings",
+    "meetings": "meetings",
+    "note": "notes",
+    "notes": "notes",
+    "voice-note": "notes",
+    "voice note": "notes",
+    "conversation": "notes",
+    "task": "tasks",
+    "tasks": "tasks",
+    "calendar": "calendar",
+    "event": "calendar",
+    "events": "calendar",
+    "project": "projects",
+    "projects": "projects",
+    "decision": "decisions",
+    "decisions": "decisions",
+    "open-point": "open-points",
+    "open-points": "open-points",
+    "open point": "open-points",
+    "open points": "open-points",
+}
+
+
+def normalize_primary_category(value: Any, fallback: str | None = None) -> str:
+    """Map frontmatter / labels to a single index category key."""
+    raw = str(value or "").strip().lower()
+    if raw.startswith("[") and raw.endswith("]"):
+        raw = raw.strip("[]").split(",")[0].strip().strip("'\"")
+    if raw in PRIMARY_CATEGORY_ALIASES:
+        return PRIMARY_CATEGORY_ALIASES[raw]
+    for token in re.split(r"[\s,/|]+", raw):
+        if token in PRIMARY_CATEGORY_ALIASES:
+            return PRIMARY_CATEGORY_ALIASES[token]
+    fb = str(fallback or "notes").strip().lower()
+    if fb in CATEGORIES:
+        return fb
+    return PRIMARY_CATEGORY_ALIASES.get(fb, "notes")
+
+
 SCAN_FOLDERS: dict[str, str] = {
     "meetings": "meetings",
     "notes": "notes",
@@ -511,17 +551,18 @@ def index_grouped_file(abs_path: Path, registry: dict[str, Any] | None = None) -
     if registry is not None and not output_is_canonical(rel, source_transcription, registry):
         return None
     main_cat = str(frontmatter.get("main_category", "") or frontmatter.get("tags", "") or "").strip()
-    if not main_cat:
-        main_cat = str(frontmatter.get("category", "") or "voice-note")
     primary_type = str(frontmatter.get("primary_type", "") or "note")
-    index_cat = "meetings" if primary_type == "meeting" else "notes"
+    type_fallback = "meetings" if primary_type == "meeting" else "notes"
+    if not main_cat:
+        main_cat = str(frontmatter.get("category", "") or primary_type or "note")
+    index_cat = normalize_primary_category(main_cat, type_fallback)
     summary = sections.get("Summary", "") or sections.get("Clean Summary", "")
     important = [
-        b for b in bullets_from(sections.get("Important Points", "")) if is_meaningful_line(b)
+        b for b in bullets_from(sections.get("Important Points", "")) if is_valid_key_point(b)
     ]
     if not important:
         important = [
-            b for b in bullets_from(sections.get("Top 3 Key Points", "")) if is_meaningful_line(b)
+            b for b in bullets_from(sections.get("Top 3 Key Points", "")) if is_valid_key_point(b)
         ]
     decisions = [b for b in bullets_from(sections.get("Decisions", "")) if is_meaningful_line(b)]
     tasks = [b for b in bullets_from(sections.get("Tasks", "")) if is_meaningful_line(b)]
@@ -949,7 +990,31 @@ def merge_extracted_items(a: dict[str, Any], b: dict[str, Any]) -> dict[str, Any
     return out
 
 
+def resolve_source_primary_category(group: list[dict[str, Any]]) -> str:
+    """Exactly one primary tab category per voice source."""
+    for it in group:
+        extracted = it.get("extracted_items") or {}
+        for key in ("main_category", "mainCategory"):
+            raw = extracted.get("main_category") or it.get(key)
+            if raw:
+                return normalize_primary_category(raw, it.get("category"))
+        pt = it.get("primary_type") or it.get("primaryType")
+        if pt:
+            return normalize_primary_category(pt, it.get("category"))
+    by_cat = {str(it.get("category") or ""): it for it in group}
+    for cat in PRIMARY_CATEGORY_ORDER:
+        if cat in by_cat:
+            return normalize_primary_category(by_cat[cat].get("category"), cat)
+    if group:
+        return normalize_primary_category(group[0].get("category"), "notes")
+    return "notes"
+
+
 def pick_primary_item(group: list[dict[str, Any]]) -> dict[str, Any]:
+    primary_cat = resolve_source_primary_category(group)
+    for it in group:
+        if normalize_primary_category(it.get("category"), primary_cat) == primary_cat:
+            return it
     by_cat = {str(it.get("category") or ""): it for it in group}
     for cat in PRIMARY_CATEGORY_ORDER:
         if cat in by_cat:
@@ -1004,27 +1069,49 @@ def is_low_quality_item(item: dict[str, Any]) -> bool:
     return "confidence: low" in blob
 
 
-def infer_group_categories(
+def infer_secondary_extractions(
     group: list[dict[str, Any]], merged_raw_sections: dict[str, str], stats: dict[str, int]
-) -> list[str]:
-    cats = sorted({str(it.get("category") or "") for it in group if it.get("category")})
+) -> tuple[list[str], dict[str, bool]]:
+    """Secondary extraction flags for badges — never includes the source primary category."""
+    flags = {
+        "hasTasks": False,
+        "hasCalendar": False,
+        "hasDecisions": False,
+        "hasOpenPoints": False,
+        "hasProjects": False,
+    }
     if stats.get("tasks_count", 0) > 0 or bullets_from(merged_raw_sections.get("Tasks", "")):
-        if "tasks" not in cats:
-            cats.append("tasks")
+        flags["hasTasks"] = True
     if stats.get("calendar_events_count", 0) > 0 or bullets_from(
         merged_raw_sections.get("Calendar Events", "")
     ):
-        if "calendar" not in cats:
-            cats.append("calendar")
+        flags["hasCalendar"] = True
     if stats.get("decisions_count", 0) > 0 or bullets_from(merged_raw_sections.get("Decisions", "")):
-        if "decisions" not in cats:
-            cats.append("decisions")
+        flags["hasDecisions"] = True
     if stats.get("open_points_count", 0) > 0 or bullets_from(
         merged_raw_sections.get("Open Points", "")
     ):
-        if "open-points" not in cats:
-            cats.append("open-points")
-    return cats
+        flags["hasOpenPoints"] = True
+    for it in group:
+        extracted = it.get("extracted_items") or {}
+        updates = extracted.get("project_updates") or []
+        if isinstance(updates, list) and updates:
+            flags["hasProjects"] = True
+            break
+    if bullets_from(merged_raw_sections.get("Project Updates", "")):
+        flags["hasProjects"] = True
+    secondary: list[str] = []
+    if flags["hasTasks"]:
+        secondary.append("tasks")
+    if flags["hasCalendar"]:
+        secondary.append("calendar")
+    if flags["hasDecisions"]:
+        secondary.append("decisions")
+    if flags["hasOpenPoints"]:
+        secondary.append("open-points")
+    if flags["hasProjects"]:
+        secondary.append("projects")
+    return secondary, flags
 
 
 def pick_display_title(group: list[dict[str, Any]]) -> str:
@@ -1082,7 +1169,10 @@ def group_items_by_source(flat_items: list[dict[str, Any]]) -> list[dict[str, An
         chart_values = list(stats.values())
         child_ids = [str(it.get("id")) for it in group if it.get("id")]
         source_entries_children = [extraction_snapshot(child) for child in group]
-        extracted_categories = infer_group_categories(group, merged_raw_sections, stats)
+        primary_cat = resolve_source_primary_category(group)
+        secondary_categories, secondary_flags = infer_secondary_extractions(
+            group, merged_raw_sections, stats
+        )
         display_title = pick_display_title(group)
         summaries = [
             str(it.get("summary") or it.get("preview") or "").strip()
@@ -1103,10 +1193,12 @@ def group_items_by_source(flat_items: list[dict[str, Any]]) -> list[dict[str, An
             "item_type": "source_entry",
             "isSourceEntry": True,
             "source_entry": True,
-            "category": primary.get("category"),
-            "primaryCategory": primary.get("category"),
-            "categories": extracted_categories,
-            "extractedCategories": extracted_categories,
+            "category": primary_cat,
+            "primaryCategory": primary_cat,
+            "mainCategory": primary_cat,
+            "categories": secondary_categories,
+            "extractedCategories": secondary_categories,
+            **secondary_flags,
             "extractions": extractions,
             "sourceEntries": source_entries_children,
             "groupedIds": child_ids,
@@ -1149,30 +1241,32 @@ def group_items_by_source(flat_items: list[dict[str, Any]]) -> list[dict[str, An
 
 
 def compute_index_totals(source_entries: list[dict[str, Any]]) -> tuple[dict[str, int], dict[str, int]]:
-    """Return (extraction_totals, source_totals)."""
+    """Return (extraction_element_totals, source_primary_totals)."""
     extraction_totals = {cat: 0 for cat in CATEGORIES}
     source_totals = {cat: 0 for cat in CATEGORIES}
     for entry in source_entries:
-        cats = entry.get("extractedCategories") or entry.get("categories") or []
-        for cat in cats:
-            if cat in source_totals:
-                source_totals[cat] += 1
-        children = entry.get("sourceEntries") or []
-        if children:
-            for child in children:
-                cat = str(child.get("category") or "")
-                if cat in extraction_totals:
-                    extraction_totals[cat] += 1
-        else:
-            stats = entry.get("stats") or {}
-            extraction_totals["tasks"] += int(stats.get("tasks_count") or 0)
-            extraction_totals["calendar"] += int(stats.get("calendar_events_count") or 0)
-            extraction_totals["decisions"] += int(stats.get("decisions_count") or 0)
-            extraction_totals["open-points"] += int(stats.get("open_points_count") or 0)
-            cat = str(entry.get("category") or "")
-            if cat in extraction_totals and cat not in ("tasks", "calendar", "decisions", "open-points"):
-                extraction_totals[cat] += 1
-    extraction_totals["total"] = sum(extraction_totals[c] for c in CATEGORIES)
+        primary = normalize_primary_category(
+            entry.get("primaryCategory") or entry.get("mainCategory") or entry.get("category"),
+            "notes",
+        )
+        if primary in source_totals:
+            source_totals[primary] += 1
+        stats = entry.get("stats") or {}
+        extraction_totals["tasks"] += int(stats.get("tasks_count") or 0)
+        extraction_totals["calendar"] += int(stats.get("calendar_events_count") or 0)
+        extraction_totals["decisions"] += int(stats.get("decisions_count") or 0)
+        extraction_totals["open-points"] += int(stats.get("open_points_count") or 0)
+        extracted = entry.get("extracted_items") or {}
+        updates = extracted.get("project_updates") or []
+        if isinstance(updates, list):
+            extraction_totals["projects"] += len(updates)
+    extraction_totals["total"] = (
+        extraction_totals["tasks"]
+        + extraction_totals["calendar"]
+        + extraction_totals["decisions"]
+        + extraction_totals["open-points"]
+        + extraction_totals["projects"]
+    )
     source_totals["total"] = len(source_entries)
     return extraction_totals, source_totals
 

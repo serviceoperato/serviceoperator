@@ -5,7 +5,7 @@
   'use strict';
 
   /** Bumped when dashboard markup/behavior changes (cache-bust aid). */
-  window.TX_DASHBOARD_UI_REV = 13;
+  window.TX_DASHBOARD_UI_REV = 16;
 
   /** Detail page: collapsed preview length for full transcription reference (chars). */
   var DETAIL_REF_PREVIEW_CHARS = 650;
@@ -794,6 +794,34 @@
     'bullets',
   ];
 
+  function txKeyPointsLib() {
+    return window.TxKeyPoints || null;
+  }
+
+  function isValidKeyPoint(text) {
+    var lib = txKeyPointsLib();
+    if (lib) return lib.isValidKeyPoint(text);
+    var s = String(text || '').trim().toLowerCase();
+    return !!(
+      s &&
+      s !== '(none)' &&
+      s !== 'none' &&
+      s !== 'n/a' &&
+      s !== 'null' &&
+      s !== 'undefined'
+    );
+  }
+
+  function keyPointsEmptyFallback() {
+    var lib = txKeyPointsLib();
+    return lib ? lib.EMPTY_FALLBACK : 'No strong key points detected. Review the summary below.';
+  }
+
+  function keyPointsSectionTitle(count) {
+    var lib = txKeyPointsLib();
+    return lib ? lib.keyPointsHeading(count) : count === 3 ? 'Top 3 key points' : 'Top key points';
+  }
+
   var CATEGORY_THEME = {
     meetings: { accent: '#2563eb', subtitle: 'Discussions, decisions, and follow-ups' },
     notes: { accent: '#4f46e5', subtitle: 'Ideas, reminders, and personal takeaways' },
@@ -810,6 +838,10 @@
 
   function txTopicVisuals() {
     return window.TxTopicVisuals || null;
+  }
+
+  function txContentNumbers() {
+    return window.TxContentNumbers || null;
   }
 
   /** Numeric breakdowns per category (≥2 states → donut). Colors align with catTheme accents. */
@@ -879,7 +911,7 @@
     var out = [];
     list.forEach(function (p) {
       var t = limit > 0 ? truncatePoint(p, limit) : String(p || '').trim();
-      if (!t) return;
+      if (!t || !isValidKeyPoint(t)) return;
       var k = t.toLowerCase();
       if (seen[k]) return;
       seen[k] = true;
@@ -915,7 +947,7 @@
         return s.replace(/^[-*•]\s*/, '').trim();
       })
       .filter(function (s) {
-        return s.length > 8 && !isGenericPlaceholderText(s);
+        return s.length > 8 && !isGenericPlaceholderText(s) && isValidKeyPoint(s);
       });
     return uniquePoints(parts, maxChars).slice(0, max || 3);
   }
@@ -925,7 +957,7 @@
     var pool = pointValuesForKeys(item, CATEGORY_POINT_KEYS[cat] || []);
     if (!pool.length) pool = pointValuesForKeys(item, KEY_POINT_FALLBACK_KEYS);
     pool = pool.filter(function (p) {
-      return !isGenericPlaceholderText(p);
+      return isValidKeyPoint(p) && !isGenericPlaceholderText(p);
     });
     if (!pool.length && item.taskText) pool.push(item.taskText);
     if (!pool.length && item.decisionText) pool.push(item.decisionText);
@@ -933,7 +965,7 @@
     if (!pool.length && item.summary) pool = pool.concat(splitTextToPoints(item.summary, 3, maxChars));
     if (!pool.length && item.preview) pool = pool.concat(splitTextToPoints(item.preview, 3, maxChars));
     pool = pool.filter(function (p) {
-      return !isGenericPlaceholderText(p);
+      return isValidKeyPoint(p) && !isGenericPlaceholderText(p);
     });
     return uniquePoints(pool, maxChars).slice(0, 3);
   }
@@ -1326,14 +1358,16 @@
 
     var pointsBlock = points.length
       ? '<section class="tx-detail-page__keypoints tx-text--full" aria-labelledby="txDetailKeyPointsTitle">' +
-        '<h3 id="txDetailKeyPointsTitle">Top 3 key points</h3><ul class="tx-text--full">' +
+        '<h3 id="txDetailKeyPointsTitle">' +
+        esc(keyPointsSectionTitle(points.length)) +
+        '</h3><ul class="tx-text--full">' +
         points
           .map(function (p) {
             return '<li>' + renderSpeakerText(p, people) + '</li>';
           })
           .join('') +
         '</ul></section>'
-      : '';
+      : '<p class="tx-detail-page__keypoints-empty tf-admin-muted">' + esc(keyPointsEmptyFallback()) + '</p>';
 
     var peopleBlock = renderPeopleInvolvedBlock(people);
     var transcriptBlock = renderTranscriptSpeakersBlock(item, people);
@@ -1534,7 +1568,7 @@
               '"></span><span class="tx-ring__legend-label">' +
               esc(s.label) +
               '</span><span class="tx-ring__legend-val">' +
-              esc(s.value != null ? s.value : 0) +
+              esc(s.raw != null ? s.raw : s.value != null ? s.value : 0) +
               '</span></li>'
             );
           })
@@ -1929,112 +1963,82 @@
     opts = opts || {};
     var TV = txTopicVisuals();
     if (TV) {
-      var key = opts.item ? TV.inferTopicVisualKey(opts.item) : TV.categoryVisualKey(catKey);
+      if (opts.item && TV.renderTopicVisualForItem) {
+        return TV.renderTopicVisualForItem(opts.item, {
+          size: opts.size === 'hero' ? 'hero' : 'list',
+          extraClass: iconExtraClass,
+        });
+      }
+      var key = TV.categoryVisualKey(catKey);
       var size = opts.size === 'hero' ? 'hero' : 'list';
-      return TV.renderTopicVisual(key, { size: size, extraClass: iconExtraClass });
+      return TV.renderTopicVisual(key, { size: size, extraClass: iconExtraClass, seed: TV.itemSeed ? TV.itemSeed({ id: catKey }) : 0 });
     }
     return renderLargeCategoryIcon(catKey, iconExtraClass);
   }
 
-  function itemInsightSegments(item) {
-    var cat = String(item.category || 'notes').toLowerCase();
-
-    if (cat === 'meetings' || cat === 'notes') {
-      return mergeInsightSegments([
-        countStatusSegments(meaningfulEntries(item.tasks), entryTaskStatus, TASK_STATUS_DEFS),
-        countStatusSegments(meaningfulEntries(item.decisions), function (e) {
-          return entryDecisionStatus(e, item);
-        }, DECISION_STATUS_DEFS),
-        countStatusSegments(meaningfulEntries(item.openPoints || item.open_points), entryOpenPointStatus, OPEN_POINT_STATUS_DEFS),
-        countStatusSegments(meaningfulEntries(item.nextSteps || item.next_steps), entryNextStepStatus, NEXT_STEP_STATUS_DEFS),
-      ]);
+  function itemTopicVisual(item, opts) {
+    opts = opts || {};
+    var TV = txTopicVisuals();
+    if (TV && TV.renderTopicVisualForItem) {
+      return TV.renderTopicVisualForItem(item, {
+        size: opts.size === 'hero' ? 'hero' : 'list',
+        extraClass: opts.extraClass,
+      });
     }
+    var cat = String((item && item.category) || 'notes').toLowerCase();
+    return categoryCounterVisual(cat, opts.extraClass, { item: item, size: opts.size });
+  }
 
-    if (cat === 'tasks') {
-      var subs = item.subtasks || item.checklist || [];
-      if (subs.length >= 2) {
-        var done = countWhere(subs, function (s) {
-          return entryTaskStatus(s) === 'done';
-        });
-        var unclear = countWhere(subs, function (s) {
-          return entryTaskStatus(s) === 'unclear';
-        });
-        var open = subs.length - done - unclear;
-        return compactInsightSegments([
-          { label: 'Completed', value: done, color: '#10b981' },
-          { label: 'Open', value: open, color: '#f59e0b' },
-          { label: 'Unclear / to confirm', value: unclear, color: '#94a3b8' },
-        ]);
-      }
-      var taskLines = meaningfulEntries(item.tasks);
-      if (taskLines.length >= 2) {
-        return compactInsightSegments(
-          countStatusSegments(taskLines, entryTaskStatus, TASK_STATUS_DEFS)
-        );
-      }
-      return null;
+  /** Content numbers from transcription text → donut | stat cards | topic SVG. */
+  function itemContentInsight(item) {
+    var CN = txContentNumbers();
+    if (!CN) return { mode: 'topic', numbers: [] };
+    var numbers = CN.extractContentNumbers(item);
+    if (!numbers.length) return { mode: 'topic', numbers: [] };
+    var donutSegs = CN.toDonutSegments(numbers);
+    if (donutSegs && donutSegs.length >= 2) {
+      return { mode: 'donut', segments: donutSegs, numbers: numbers };
     }
+    return { mode: 'stats', numbers: numbers };
+  }
 
-    if (cat === 'decisions') {
-      var decLines = meaningfulEntries(item.decisions);
-      if (!decLines.length && item.decisionText && isMeaningfulEntry(item.decisionText)) {
-        decLines = [item.decisionText];
-      }
-      return compactInsightSegments(
-        countStatusSegments(decLines, function (e) {
-          return entryDecisionStatus(e, item);
-        }, DECISION_STATUS_DEFS)
+  function renderContentStatCards(numbers, opts) {
+    opts = opts || {};
+    if (!numbers || !numbers.length) return '';
+    var CN = txContentNumbers();
+    var max = opts.size === 'hero' ? 6 : 4;
+    var cards = numbers.slice(0, max).map(function (seg, idx) {
+      var color = CN && CN.kindColor ? CN.kindColor(seg.kind, idx) : CHART_COLORS[idx % CHART_COLORS.length];
+      var val = seg.raw != null ? String(seg.raw) : String(seg.value != null ? seg.value : '');
+      var lbl = seg.label || seg.kind || 'Value';
+      return (
+        '<div class="tx-content-stat" style="--tx-stat-accent:' +
+        esc(color) +
+        '">' +
+        '<span class="tx-content-stat__val">' +
+        esc(val) +
+        '</span>' +
+        '<span class="tx-content-stat__lbl">' +
+        esc(lbl) +
+        '</span></div>'
       );
-    }
-
-    if (cat === 'open-points') {
-      var opLines = meaningfulEntries(item.openPoints || item.open_points);
-      if (!opLines.length && item.issue && isMeaningfulEntry(item.issue)) opLines = [item.issue];
-      return compactInsightSegments(
-        countStatusSegments(opLines, entryOpenPointStatus, OPEN_POINT_STATUS_DEFS)
-      );
-    }
-
-    if (cat === 'calendar') {
-      var evs = meaningfulEntries(item.calendarEvents || item.calendar_events);
-      if (evs.length >= 2) {
-        return compactInsightSegments(
-          countStatusSegments(
-            evs,
-            function (e) {
-              return calendarDateState(typeof e === 'object' ? e : { summary: entryText(e) });
-            },
-            CALENDAR_STATUS_DEFS
-          )
-        );
-      }
-      return null;
-    }
-
-    if (cat === 'projects') {
-      var steps = meaningfulEntries(item.nextSteps || item.next_steps);
-      if (steps.length >= 2) {
-        return compactInsightSegments(
-          countStatusSegments(steps, entryNextStepStatus, NEXT_STEP_STATUS_DEFS)
-        );
-      }
-      return null;
-    }
-
-    return null;
+    });
+    var sizeCls = opts.size === 'hero' ? ' tx-content-stats--hero' : opts.size === 'card' ? ' tx-content-stats--card' : '';
+    return '<div class="tx-content-stats' + sizeCls + '" role="list">' + cards.join('') + '</div>';
   }
 
   function itemInsightVisual(item, opts) {
     opts = opts || {};
-    var cat = String(item.category || 'notes').toLowerCase();
-    var segs = itemInsightSegments(item);
-    if (segs && segs.length >= 2) {
-      var total = segs.reduce(function (s, c) {
-        return s + (c.value || 0);
-      }, 0);
-      return renderCompactRing(segs, total, opts);
+    var insight = itemContentInsight(item);
+    if (insight.mode === 'donut') {
+      var CN = txContentNumbers();
+      var center = CN && CN.donutCenterLabel ? CN.donutCenterLabel(insight.segments) : insight.segments.length;
+      return renderCompactRing(insight.segments, center, opts);
     }
-    return categoryCounterVisual(cat, opts.extraClass, { item: item, size: opts.size });
+    if (insight.mode === 'stats') {
+      return renderContentStatCards(insight.numbers, opts);
+    }
+    return itemTopicVisual(item, opts);
   }
 
   function categoryVisualFromStats(stats, catKey, total, iconExtraClass, opts) {
@@ -2296,19 +2300,28 @@
   }
 
   function itemCardVisual(item) {
-    var segs = itemInsightSegments(item);
-    if (segs && segs.length >= 2) {
-      var total = segs.reduce(function (s, c) {
-        return s + (c.value || 0);
-      }, 0);
+    var insight = itemContentInsight(item);
+    if (insight.mode === 'donut') {
+      var CN = txContentNumbers();
+      var center = CN && CN.donutCenterLabel ? CN.donutCenterLabel(insight.segments) : insight.segments.length;
       return (
         '<div class="tx-dash-card__visual tx-dash-card__visual--ring">' +
-        renderCompactRing(segs, total, { legend: false, size: 'card' }) +
+        renderCompactRing(insight.segments, center, { legend: false, size: 'card' }) +
         '</div>'
       );
     }
-    var topicHtml = itemInsightVisual(item, { size: 'list' });
-    return '<div class="tx-dash-card__visual tx-dash-card__visual--topic">' + topicHtml + '</div>';
+    if (insight.mode === 'stats') {
+      return (
+        '<div class="tx-dash-card__visual tx-dash-card__visual--stats">' +
+        renderContentStatCards(insight.numbers, { size: 'card' }) +
+        '</div>'
+      );
+    }
+    return (
+      '<div class="tx-dash-card__visual tx-dash-card__visual--topic">' +
+      itemTopicVisual(item, { size: 'list' }) +
+      '</div>'
+    );
   }
 
   function renderFeedSectionHeader(cat, count) {
@@ -2575,8 +2588,15 @@
     if (srcTrans && srcTrans.indexOf('content/') !== 0) {
       srcTrans = 'content/transcriptions/' + String(srcTrans).replace(/^.*[\\/]/, '');
     }
+    var primaryCat = normalizePrimaryCategory(
+      it.primaryCategory || it.mainCategory || it.category,
+      it.category || 'notes'
+    );
     var merged = Object.assign({}, it, {
-      categoryLabel: CATEGORY_LABELS[it.category] || it.categoryLabel || it.category,
+      primaryCategory: primaryCat,
+      mainCategory: primaryCat,
+      category: primaryCat,
+      categoryLabel: CATEGORY_LABELS[primaryCat] || it.categoryLabel || primaryCat,
       reviewed: !!(it.reviewed || it.isReviewed),
       googleSyncPending: !!(it.googleSyncPending || it.syncPending),
       googleSynced: !!(it.googleSynced || it.synced),
@@ -3750,7 +3770,7 @@
           })
           .join('') +
         '</ul></div>'
-      : '<p class="tx-dash-card__points-empty tf-admin-muted">View page for structured highlights</p>';
+      : '<p class="tx-dash-card__points-empty tf-admin-muted">' + esc(keyPointsEmptyFallback()) + '</p>';
     var peopleRow =
       people.length && people.length <= 3 ? renderPeopleChipsRow(people, 3) : '';
     return (
@@ -3979,18 +3999,38 @@
         var time = t
           ? new Date(t).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
           : '—';
+        var id = String(it.id || '').trim();
+        var href = id ? txItemDetailPath(id) : '#';
         return (
-          '<div class="tx-timeline__item">' +
+          '<a class="tx-timeline__item" href="' +
+          esc(href) +
+          '"' +
+          (id ? ' data-tx-id="' + esc(id) + '"' : ' aria-disabled="true" tabindex="-1"') +
+          '>' +
           '<span class="tx-timeline__time mono">' +
           esc(time) +
-          '</span><span><strong>' +
+          '</span><span class="tx-timeline__label"><strong>' +
           esc(it.categoryLabel || it.category) +
           '</strong> — ' +
           esc(it.title || '') +
-          '</span></div>'
+          '</span></a>'
         );
       })
       .join('');
+  }
+
+  function bindTimelineLinks() {
+    var body = byId('txTimelineBody');
+    if (!body || body.dataset.txTimelineBound === '1') return;
+    body.dataset.txTimelineBound = '1';
+    body.addEventListener('click', function (ev) {
+      var link = ev.target.closest('a.tx-timeline__item[data-tx-id]');
+      if (!link) return;
+      var id = link.getAttribute('data-tx-id');
+      if (!id) return;
+      ev.preventDefault();
+      navigateToDetail(id);
+    });
   }
 
   function relatedItems(item) {
@@ -4532,6 +4572,8 @@
     document.addEventListener('click', function (ev) {
       if (!ev.target.closest('.tx-card__menu-wrap')) closeCardMenus();
     });
+
+    bindTimelineLinks();
   }
 
   window.initAdminTranscriptionDetail = function () {

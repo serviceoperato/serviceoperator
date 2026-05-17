@@ -811,6 +811,34 @@
     'bullets',
   ];
 
+  function txKeyPointsLib() {
+    return window.TxKeyPoints || null;
+  }
+
+  function isValidKeyPoint(text) {
+    var lib = txKeyPointsLib();
+    if (lib) return lib.isValidKeyPoint(text);
+    var s = String(text || '').trim().toLowerCase();
+    return !!(
+      s &&
+      s !== '(none)' &&
+      s !== 'none' &&
+      s !== 'n/a' &&
+      s !== 'null' &&
+      s !== 'undefined'
+    );
+  }
+
+  function keyPointsEmptyFallback() {
+    var lib = txKeyPointsLib();
+    return lib ? lib.EMPTY_FALLBACK : 'No strong key points detected. Review the summary below.';
+  }
+
+  function keyPointsSectionTitle(count) {
+    var lib = txKeyPointsLib();
+    return lib ? lib.keyPointsHeading(count) : count === 3 ? 'Top 3 key points' : 'Top key points';
+  }
+
   var CATEGORY_THEME = {
     meetings: { accent: '#2563eb', subtitle: 'Discussions, decisions, and follow-ups' },
     notes: { accent: '#4f46e5', subtitle: 'Ideas, reminders, and personal takeaways' },
@@ -1226,7 +1254,7 @@
     var out = [];
     list.forEach(function (p) {
       var t = limit > 0 ? truncatePoint(p, limit) : String(p || '').trim();
-      if (!t) return;
+      if (!t || !isValidKeyPoint(t)) return;
       var k = t.toLowerCase();
       if (seen[k]) return;
       seen[k] = true;
@@ -1262,7 +1290,7 @@
         return s.replace(/^[-*•]\s*/, '').trim();
       })
       .filter(function (s) {
-        return s.length > 8 && !isGenericPlaceholderText(s);
+        return s.length > 8 && !isGenericPlaceholderText(s) && isValidKeyPoint(s);
       });
     return uniquePoints(parts, maxChars).slice(0, max || 3);
   }
@@ -1338,7 +1366,7 @@
 
   function filterDistinctFromTitle(title, list) {
     return (list || []).filter(function (p) {
-      return p && !textOverlaps(title, p) && !isGenericPlaceholderText(p);
+      return p && isValidKeyPoint(p) && !textOverlaps(title, p) && !isGenericPlaceholderText(p);
     });
   }
 
@@ -1427,7 +1455,7 @@
     pool = pool.concat(pointValuesForKeys(item, CATEGORY_POINT_KEYS[cat] || []));
     if (!pool.length) pool = pointValuesForKeys(item, KEY_POINT_FALLBACK_KEYS);
     pool = pool.filter(function (p) {
-      return !isGenericPlaceholderText(p);
+      return isValidKeyPoint(p) && !isGenericPlaceholderText(p);
     });
     if (!pool.length && item.decisionText) pool.push(item.decisionText);
     if (!pool.length && item.issue) pool.push(item.issue);
@@ -1435,7 +1463,7 @@
     if (!pool.length && item.preview) pool = pool.concat(splitTextToPoints(item.preview, 3, maxChars));
     pool = filterDistinctFromTitle(title, pool);
     pool = pool.filter(function (p) {
-      return !isGenericPlaceholderText(p);
+      return isValidKeyPoint(p) && !isGenericPlaceholderText(p);
     });
     if (!pool.length) return [];
     return uniquePoints(pool, maxChars).slice(0, 3);
@@ -2066,14 +2094,16 @@
 
     var pointsBlock = points.length
       ? '<section class="tx-detail-page__keypoints tx-text--full" aria-labelledby="txDetailKeyPointsTitle">' +
-        '<h3 id="txDetailKeyPointsTitle">Top 3 key points</h3><ul class="tx-text--full">' +
+        '<h3 id="txDetailKeyPointsTitle">' +
+        esc(keyPointsSectionTitle(points.length)) +
+        '</h3><ul class="tx-text--full">' +
         points
           .map(function (p) {
             return '<li>' + renderSpeakerText(p, people) + '</li>';
           })
           .join('') +
         '</ul></section>'
-      : '';
+      : '<p class="tx-detail-page__keypoints-empty tf-admin-muted">' + esc(keyPointsEmptyFallback()) + '</p>';
 
     var peopleBlock = renderPeopleInvolvedBlock(people);
 
@@ -2394,8 +2424,7 @@
   }
 
   function isMeaningfulEntry(entry) {
-    var t = entryText(entry).toLowerCase();
-    return !!(t && t !== '(none)' && t !== 'none' && t !== '—' && t !== '-');
+    return isValidKeyPoint(entryText(entry));
   }
 
   function meaningfulEntries(arr) {
@@ -3018,19 +3047,27 @@
 
   function itemCardVisual(item) {
     var insight = itemContentInsight(item);
-    if (false) var segs = null;
-    if (segs && segs.length >= 2) {
-      var total = segs.reduce(function (s, c) {
-        return s + (c.value || 0);
-      }, 0);
+    if (insight.mode === 'donut') {
+      var CN = txContentNumbers();
+      var center = CN && CN.donutCenterLabel ? CN.donutCenterLabel(insight.segments) : insight.segments.length;
       return (
         '<div class="tx-dash-card__visual tx-dash-card__visual--ring">' +
-        renderCompactRing(segs, total, { legend: false, size: 'card' }) +
+        renderCompactRing(insight.segments, center, { legend: false, size: 'card' }) +
         '</div>'
       );
     }
-    var topicHtml = itemInsightVisual(item, { size: 'list' });
-    return '<div class="tx-dash-card__visual tx-dash-card__visual--topic">' + topicHtml + '</div>';
+    if (insight.mode === 'stats') {
+      return (
+        '<div class="tx-dash-card__visual tx-dash-card__visual--stats">' +
+        renderContentStatCards(insight.numbers, { size: 'card' }) +
+        '</div>'
+      );
+    }
+    return (
+      '<div class="tx-dash-card__visual tx-dash-card__visual--topic">' +
+      itemTopicVisual(item, { size: 'list' }) +
+      '</div>'
+    );
   }
 
   function renderFeedSectionHeader(cat, count) {
@@ -4761,7 +4798,7 @@
           })
           .join('') +
         '</ul></div>'
-      : '<p class="tx-dash-card__points-empty tf-admin-muted">View page for structured highlights</p>';
+      : '<p class="tx-dash-card__points-empty tf-admin-muted">' + esc(keyPointsEmptyFallback()) + '</p>';
     var peopleRow =
       people.length && people.length <= 3 ? renderPeopleChipsRow(people, 3) : '';
     return (
@@ -4987,22 +5024,42 @@
     }
     body.innerHTML = todayItems
       .map(function (it) {
+        var id = String(it.id || '').trim();
         var t = parseItemDate(it);
         var time = t
           ? new Date(t).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
           : '—';
+        var href = id ? txItemDetailPath(id) : '#';
         return (
-          '<div class="tx-timeline__item">' +
+          '<a class="tx-timeline__item" href="' +
+          esc(href) +
+          '"' +
+          (id ? ' data-tx-id="' + esc(id) + '"' : ' aria-disabled="true" tabindex="-1"') +
+          '>' +
           '<span class="tx-timeline__time mono">' +
           esc(time) +
-          '</span><span><strong>' +
+          '</span><span class="tx-timeline__label"><strong>' +
           esc(it.categoryLabel || it.category) +
           '</strong> — ' +
           esc(itemDisplayTitle(it) || '') +
-          '</span></div>'
+          '</span></a>'
         );
       })
       .join('');
+  }
+
+  function bindTimelineLinks() {
+    var body = byId('txTimelineBody');
+    if (!body || body.dataset.txTimelineBound === '1') return;
+    body.dataset.txTimelineBound = '1';
+    body.addEventListener('click', function (ev) {
+      var link = ev.target.closest('a.tx-timeline__item[data-tx-id]');
+      if (!link) return;
+      var id = link.getAttribute('data-tx-id');
+      if (!id) return;
+      ev.preventDefault();
+      navigateToDetail(id);
+    });
   }
 
   function relatedItems(item) {
@@ -5555,6 +5612,8 @@
     document.addEventListener('click', function (ev) {
       if (!ev.target.closest('.tx-card__menu-wrap')) closeCardMenus();
     });
+
+    bindTimelineLinks();
   }
 
   window.initAdminTranscriptionDetail = function () {

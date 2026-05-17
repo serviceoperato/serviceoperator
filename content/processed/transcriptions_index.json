@@ -1,37 +1,37 @@
 {
   "ok": true,
-  "generatedAt": "2026-05-17T15:18:51Z",
+  "generatedAt": "2026-05-17T15:34:17Z",
   "registryVersion": 2,
   "totals": {
-    "meetings": 3,
-    "notes": 22,
-    "tasks": 0,
-    "calendar": 0,
-    "projects": 0,
-    "decisions": 0,
-    "open-points": 0,
-    "total": 25,
+    "meetings": 0,
+    "notes": 0,
+    "tasks": 27,
+    "calendar": 2,
+    "projects": 1,
+    "decisions": 8,
+    "open-points": 35,
+    "total": 73,
     "needsReview": 0
   },
   "counts": {
-    "meetings": 3,
-    "notes": 22,
+    "meetings": 0,
+    "notes": 0,
+    "tasks": 27,
+    "calendar": 2,
+    "projects": 1,
+    "decisions": 8,
+    "open-points": 35,
+    "total": 73,
+    "needsReview": 0
+  },
+  "sourceTotals": {
+    "meetings": 1,
+    "notes": 24,
     "tasks": 0,
     "calendar": 0,
     "projects": 0,
     "decisions": 0,
     "open-points": 0,
-    "total": 25,
-    "needsReview": 0
-  },
-  "sourceTotals": {
-    "meetings": 3,
-    "notes": 22,
-    "tasks": 25,
-    "calendar": 25,
-    "projects": 0,
-    "decisions": 25,
-    "open-points": 25,
     "total": 25,
     "needsReview": 0
   },
@@ -129,20 +129,26 @@
       "isSourceEntry": true,
       "source_entry": true,
       "primaryCategory": "notes",
+      "mainCategory": "notes",
       "categories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
       "extractedCategories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
       "extractions": {
         "notes": [
           {
@@ -317,20 +323,26 @@
       "isSourceEntry": true,
       "source_entry": true,
       "primaryCategory": "notes",
+      "mainCategory": "notes",
       "categories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
       "extractedCategories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
       "extractions": {
         "notes": [
           {
@@ -501,20 +513,26 @@
       "isSourceEntry": true,
       "source_entry": true,
       "primaryCategory": "notes",
+      "mainCategory": "notes",
       "categories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
       "extractedCategories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
       "extractions": {
         "notes": [
           {
@@ -685,20 +703,26 @@
       "isSourceEntry": true,
       "source_entry": true,
       "primaryCategory": "notes",
+      "mainCategory": "notes",
       "categories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
       "extractedCategories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
       "extractions": {
         "notes": [
           {
@@ -878,20 +902,26 @@
       "isSourceEntry": true,
       "source_entry": true,
       "primaryCategory": "meetings",
+      "mainCategory": "meetings",
       "categories": [
-        "meetings",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
       "extractedCategories": [
-        "meetings",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
       "extractions": {
         "meetings": [
           {
@@ -1093,20 +1123,26 @@
       "isSourceEntry": true,
       "source_entry": true,
       "primaryCategory": "notes",
+      "mainCategory": "notes",
       "categories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
       "extractedCategories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
       "extractions": {
         "notes": [
           {
@@ -1273,20 +1309,26 @@
       "isSourceEntry": true,
       "source_entry": true,
       "primaryCategory": "notes",
+      "mainCategory": "notes",
       "categories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
       "extractedCategories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
       "extractions": {
         "notes": [
           {
@@ -1437,20 +1479,26 @@
       "isSourceEntry": true,
       "source_entry": true,
       "primaryCategory": "notes",
+      "mainCategory": "notes",
       "categories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
       "extractedCategories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
       "extractions": {
         "notes": [
           {
@@ -1604,20 +1652,26 @@
       "isSourceEntry": true,
       "source_entry": true,
       "primaryCategory": "notes",
+      "mainCategory": "notes",
       "categories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
       "extractedCategories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
       "extractions": {
         "notes": [
           {
@@ -1781,20 +1835,26 @@
       "isSourceEntry": true,
       "source_entry": true,
       "primaryCategory": "notes",
+      "mainCategory": "notes",
       "categories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
       "extractedCategories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
       "extractions": {
         "notes": [
           {
@@ -1952,20 +2012,26 @@
       "isSourceEntry": true,
       "source_entry": true,
       "primaryCategory": "notes",
+      "mainCategory": "notes",
       "categories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
       "extractedCategories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
       "extractions": {
         "notes": [
           {
@@ -2137,20 +2203,26 @@
       "isSourceEntry": true,
       "source_entry": true,
       "primaryCategory": "notes",
+      "mainCategory": "notes",
       "categories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
       "extractedCategories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
       "extractions": {
         "notes": [
           {
@@ -2341,20 +2413,26 @@
       "isSourceEntry": true,
       "source_entry": true,
       "primaryCategory": "notes",
+      "mainCategory": "notes",
       "categories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
       "extractedCategories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
       "extractions": {
         "notes": [
           {
@@ -2510,20 +2588,26 @@
       "isSourceEntry": true,
       "source_entry": true,
       "primaryCategory": "notes",
+      "mainCategory": "notes",
       "categories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
       "extractedCategories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
       "extractions": {
         "notes": [
           {
@@ -2683,20 +2767,26 @@
       "isSourceEntry": true,
       "source_entry": true,
       "primaryCategory": "notes",
+      "mainCategory": "notes",
       "categories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
       "extractedCategories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
       "extractions": {
         "notes": [
           {
@@ -2872,20 +2962,26 @@
       "isSourceEntry": true,
       "source_entry": true,
       "primaryCategory": "notes",
+      "mainCategory": "notes",
       "categories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
       "extractedCategories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
       "extractions": {
         "notes": [
           {
@@ -2995,8 +3091,8 @@
       "displayTitle": "Registrazione non intellegibile (Voice 001)"
     },
     {
-      "category": "meetings",
-      "categoryLabel": "Meetings",
+      "category": "notes",
+      "categoryLabel": "Notes",
       "filepath": "content/ai-ready-transcriptions/2026-05-17-conversation-seconda-86e8348fd2d4.md",
       "path": "content/ai-ready-transcriptions/2026-05-17-conversation-seconda-86e8348fd2d4.md",
       "source_audio": "Seconda.m4a",
@@ -3072,26 +3168,32 @@
       "id": "2d994e9299fc",
       "isSourceEntry": true,
       "source_entry": true,
-      "primaryCategory": "meetings",
+      "primaryCategory": "notes",
+      "mainCategory": "notes",
       "categories": [
-        "meetings",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
       "extractedCategories": [
-        "meetings",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
       "extractions": {
-        "meetings": [
+        "notes": [
           {
             "id": "2766612e694e",
-            "category": "meetings",
+            "category": "notes",
             "title": "Famiglia: soldi senza condizioni, libertà reciproca e pace",
             "path": "content/ai-ready-transcriptions/2026-05-17-conversation-seconda-86e8348fd2d4.md",
             "preview": "Conversazione familiare lunga tra genitori (Fabio/Silvana) e figli (Stefania e altri), con apertura su erogazione dei soldi promessi senza condizioni né ulteriori aspettative, poi chiarimenti su pass…",
@@ -3137,7 +3239,7 @@
       "sourceEntries": [
         {
           "id": "2766612e694e",
-          "category": "meetings",
+          "category": "notes",
           "title": "Famiglia: soldi senza condizioni, libertà reciproca e pace",
           "path": "content/ai-ready-transcriptions/2026-05-17-conversation-seconda-86e8348fd2d4.md",
           "preview": "Conversazione familiare lunga tra genitori (Fabio/Silvana) e figli (Stefania e altri), con apertura su erogazione dei soldi promessi senza condizioni né ulteriori aspettative, poi chiarimenti su pass…",
@@ -3307,20 +3409,26 @@
       "isSourceEntry": true,
       "source_entry": true,
       "primaryCategory": "notes",
+      "mainCategory": "notes",
       "categories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
       "extractedCategories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
       "extractions": {
         "notes": [
           {
@@ -3511,20 +3619,26 @@
       "isSourceEntry": true,
       "source_entry": true,
       "primaryCategory": "notes",
+      "mainCategory": "notes",
       "categories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
       "extractedCategories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
       "extractions": {
         "notes": [
           {
@@ -3715,20 +3829,26 @@
       "isSourceEntry": true,
       "source_entry": true,
       "primaryCategory": "notes",
+      "mainCategory": "notes",
       "categories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
       "extractedCategories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
       "extractions": {
         "notes": [
           {
@@ -3919,20 +4039,26 @@
       "isSourceEntry": true,
       "source_entry": true,
       "primaryCategory": "notes",
+      "mainCategory": "notes",
       "categories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
       "extractedCategories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
       "extractions": {
         "notes": [
           {
@@ -4123,20 +4249,26 @@
       "isSourceEntry": true,
       "source_entry": true,
       "primaryCategory": "notes",
+      "mainCategory": "notes",
       "categories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
       "extractedCategories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
       "extractions": {
         "notes": [
           {
@@ -4329,20 +4461,26 @@
       "isSourceEntry": true,
       "source_entry": true,
       "primaryCategory": "notes",
+      "mainCategory": "notes",
       "categories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
       "extractedCategories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
       "extractions": {
         "notes": [
           {
@@ -4470,8 +4608,8 @@
       "displayTitle": "Idea servizio riassunti e registrazione per AI"
     },
     {
-      "category": "meetings",
-      "categoryLabel": "Meetings",
+      "category": "notes",
+      "categoryLabel": "Notes",
       "filepath": "content/ai-ready-transcriptions/2026-05-17-conversation-christian-42d821331d94.md",
       "path": "content/ai-ready-transcriptions/2026-05-17-conversation-christian-42d821331d94.md",
       "source_audio": "Christian.m4a",
@@ -4544,26 +4682,32 @@
       "id": "4e5e1e14138e",
       "isSourceEntry": true,
       "source_entry": true,
-      "primaryCategory": "meetings",
+      "primaryCategory": "notes",
+      "mainCategory": "notes",
       "categories": [
-        "meetings",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
       "extractedCategories": [
-        "meetings",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
       "extractions": {
-        "meetings": [
+        "notes": [
           {
             "id": "f5f2ba2f59c8",
-            "category": "meetings",
+            "category": "notes",
             "title": "Dono ~50.000 €, casa cointestata e timori su separazione",
             "path": "content/ai-ready-transcriptions/2026-05-17-conversation-christian-42d821331d94.md",
             "preview": "Discussione familiare (genitori–figlio Christian) su erogazione di circa 50.000 € per investimento sulla casa in costruzione/cointestata. Nei primi minuti: madre esprime timore che, in caso di separa…",
@@ -4608,7 +4752,7 @@
       "sourceEntries": [
         {
           "id": "f5f2ba2f59c8",
-          "category": "meetings",
+          "category": "notes",
           "title": "Dono ~50.000 €, casa cointestata e timori su separazione",
           "path": "content/ai-ready-transcriptions/2026-05-17-conversation-christian-42d821331d94.md",
           "preview": "Discussione familiare (genitori–figlio Christian) su erogazione di circa 50.000 € per investimento sulla casa in costruzione/cointestata. Nei primi minuti: madre esprime timore che, in caso di separa…",
@@ -4772,20 +4916,26 @@
       "isSourceEntry": true,
       "source_entry": true,
       "primaryCategory": "notes",
+      "mainCategory": "notes",
       "categories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
       "extractedCategories": [
-        "notes",
         "tasks",
         "calendar",
         "decisions",
-        "open-points"
+        "open-points",
+        "projects"
       ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
       "extractions": {
         "notes": [
           {
