@@ -4,12 +4,12 @@ main_category: conversation
 category: notes
 project: personal
 date: 2026-05-17
-processing_date: 2026-05-17T15:04:27Z
-processed_date: 2026-05-17T15:04:27Z
+processing_date: 2026-05-17T15:06:39Z
+processed_date: 2026-05-17T15:06:39Z
 source_audio: Memo 005.m4a
 source_transcription: content/transcriptions/Memo_005.md
 source_id: eac97257e652
-source_checksum: 6fb316a33945966961b27ca6ff153e7c17345175e7c80de8eac475f25ee59b65
+source_checksum: 4e6e6952a877f281627003b792211c7ac8caf3ecb11b3ef05d7b82d7e69c7c6f
 grouped_output: content/ai-ready-transcriptions/2026-05-17-conversation-memo_005-eac97257e652.md
 primary_type: note
 processed: true
@@ -22,7 +22,7 @@ Scuola, YouTube minori e salute
 ## Source
 - **Source audio:** Memo 005.m4a
 - **Source transcription:** `Memo_005.md`
-- **Processed date:** 2026-05-17T15:04:27Z
+- **Processed date:** 2026-05-17T15:06:39Z
 - **Main category:** conversation
 - **Project:** personal
 

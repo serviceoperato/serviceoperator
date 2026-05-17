@@ -1,4 +1,4 @@
-<!-- PROCESSED: true | date: 2026-05-17T15:04:27Z | output: content/ai-ready-transcriptions/2026-05-17-conversation-whatsapp-chat-with-koragon-gi-f97895de6fd3.md | checksum: 64eb5a5dadb51036837a4c0a78d62dea3af0cbb80dace95aef022d76cc2c6b8a -->
+<!-- PROCESSED: true | date: 2026-05-17T15:06:39Z | output: content/ai-ready-transcriptions/2026-05-17-conversation-whatsapp-chat-with-koragon-gi-f97895de6fd3.md | checksum: b9934766666bdbc1397582d68b75ffaecbd60748bfb9a4b7dfdab2f62fc3f25c -->
 3/22/21, 21:07 - Messages and calls are end-to-end encrypted. Only people in this chat can read, listen to, or share them. *Learn more*
 3/22/21, 21:07 - J: gicos ma il tampone l'hai fatto in inglese o in italiano?
 3/22/21, 21:11 - Koragon Gicos: inglese

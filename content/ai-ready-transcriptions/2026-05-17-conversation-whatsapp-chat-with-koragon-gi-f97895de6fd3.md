@@ -4,12 +4,12 @@ main_category: conversation
 category: notes
 project: personal
 date: 2026-05-17
-processing_date: 2026-05-17T15:04:27Z
-processed_date: 2026-05-17T15:04:27Z
+processing_date: 2026-05-17T15:06:39Z
+processed_date: 2026-05-17T15:06:39Z
 source_audio: WhatsApp Chat with Koragon Gi
 source_transcription: content/transcriptions/WhatsApp Chat with Koragon Gi.md
 source_id: f97895de6fd3
-source_checksum: 64eb5a5dadb51036837a4c0a78d62dea3af0cbb80dace95aef022d76cc2c6b8a
+source_checksum: b9934766666bdbc1397582d68b75ffaecbd60748bfb9a4b7dfdab2f62fc3f25c
 grouped_output: content/ai-ready-transcriptions/2026-05-17-conversation-whatsapp-chat-with-koragon-gi-f97895de6fd3.md
 primary_type: note
 processed: true
@@ -22,7 +22,7 @@ WhatsApp Koragon Gicos — Pattaya e vita sociale
 ## Source
 - **Source audio:** WhatsApp Chat with Koragon Gi
 - **Source transcription:** `WhatsApp Chat with Koragon Gi.md`
-- **Processed date:** 2026-05-17T15:04:27Z
+- **Processed date:** 2026-05-17T15:06:39Z
 - **Main category:** conversation
 - **Project:** personal
 

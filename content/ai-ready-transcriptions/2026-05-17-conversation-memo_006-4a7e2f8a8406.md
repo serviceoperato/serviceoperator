@@ -4,12 +4,12 @@ main_category: conversation
 category: notes
 project: personal
 date: 2026-05-17
-processing_date: 2026-05-17T15:04:27Z
-processed_date: 2026-05-17T15:04:27Z
+processing_date: 2026-05-17T15:06:39Z
+processed_date: 2026-05-17T15:06:39Z
 source_audio: Memo 006.m4a
 source_transcription: content/transcriptions/Memo_006.md
 source_id: 4a7e2f8a8406
-source_checksum: 5700bb45361496607a40a0c34853ddbbdb7638a58be916c28c73d383c6b39f5e
+source_checksum: 6e9cfebe7d64d5d9bbc3674ba4d79a87c327e1a8bac0d5ee1a88b1504c1a54e9
 grouped_output: content/ai-ready-transcriptions/2026-05-17-conversation-memo_006-4a7e2f8a8406.md
 primary_type: note
 processed: true
@@ -22,7 +22,7 @@ Vita, Marte, tempo e libro in scrittura
 ## Source
 - **Source audio:** Memo 006.m4a
 - **Source transcription:** `Memo_006.md`
-- **Processed date:** 2026-05-17T15:04:27Z
+- **Processed date:** 2026-05-17T15:06:39Z
 - **Main category:** conversation
 - **Project:** personal
 

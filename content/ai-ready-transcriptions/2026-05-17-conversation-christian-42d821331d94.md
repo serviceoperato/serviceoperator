@@ -4,12 +4,12 @@ main_category: conversation
 category: meetings
 project: personal
 date: 2026-05-17
-processing_date: 2026-05-17T15:04:27Z
-processed_date: 2026-05-17T15:04:27Z
+processing_date: 2026-05-17T15:06:39Z
+processed_date: 2026-05-17T15:06:39Z
 source_audio: Christian.m4a
 source_transcription: content/transcriptions/Christian.md
 source_id: 42d821331d94
-source_checksum: e3c39f5af841bf51ba82491b48ac99ba434c89b962c1fe49f5153b4a069e2175
+source_checksum: 328f62c33b86b0718afc9d8bc52bd13ebbfe0ff95b1e0bd7c662fdce90306744
 grouped_output: content/ai-ready-transcriptions/2026-05-17-conversation-christian-42d821331d94.md
 primary_type: meeting
 processed: true
@@ -22,7 +22,7 @@ Dono ~50.000 €, casa cointestata e timori su separazione
 ## Source
 - **Source audio:** Christian.m4a
 - **Source transcription:** `Christian.md`
-- **Processed date:** 2026-05-17T15:04:27Z
+- **Processed date:** 2026-05-17T15:06:39Z
 - **Main category:** conversation
 - **Project:** personal
 

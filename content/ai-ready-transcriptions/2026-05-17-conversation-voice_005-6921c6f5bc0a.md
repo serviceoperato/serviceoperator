@@ -4,12 +4,12 @@ main_category: conversation
 category: notes
 project: personal
 date: 2026-05-17
-processing_date: 2026-05-17T15:04:27Z
-processed_date: 2026-05-17T15:04:27Z
+processing_date: 2026-05-17T15:06:39Z
+processed_date: 2026-05-17T15:06:39Z
 source_audio: Voice 005.m4a
 source_transcription: content/transcriptions/Voice_005.md
 source_id: 6921c6f5bc0a
-source_checksum: 99d50802155f7fe0c5e7578b6ee1052442e9c86ad7e4cdc947b2a30231fa8de5
+source_checksum: 21d503169f34510a2a565c82a56d597444108a2bc88e1c0d539c5a41968c2ac6
 grouped_output: content/ai-ready-transcriptions/2026-05-17-conversation-voice_005-6921c6f5bc0a.md
 primary_type: note
 processed: true
@@ -22,7 +22,7 @@ Riprese canale YouTube «Tanti Soldi» e prove ChatGPT
 ## Source
 - **Source audio:** Voice 005.m4a
 - **Source transcription:** `Voice_005.md`
-- **Processed date:** 2026-05-17T15:04:27Z
+- **Processed date:** 2026-05-17T15:06:39Z
 - **Main category:** conversation
 - **Project:** personal
 

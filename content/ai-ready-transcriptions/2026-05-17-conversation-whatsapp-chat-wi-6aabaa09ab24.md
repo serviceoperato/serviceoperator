@@ -4,12 +4,12 @@ main_category: conversation
 category: notes
 project: personal
 date: 2026-05-17
-processing_date: 2026-05-17T15:04:27Z
-processed_date: 2026-05-17T15:04:27Z
+processing_date: 2026-05-17T15:06:39Z
+processed_date: 2026-05-17T15:06:39Z
 source_audio: WhatsApp Chat wi
 source_transcription: content/transcriptions/WhatsApp Chat wi.md
 source_id: 6aabaa09ab24
-source_checksum: f7125340abece6f4dced026d4c9096e41b0112ed10e432bfa56faf0e86b64cea
+source_checksum: 562d2a476afb431898bb1fbdb9733b3e1cfce24af6f8bde9c48d266c21da8e62
 grouped_output: content/ai-ready-transcriptions/2026-05-17-conversation-whatsapp-chat-wi-6aabaa09ab24.md
 primary_type: note
 processed: true
@@ -22,7 +22,7 @@ Gruppo «30-13» — vacanza Pattaya mag 2026
 ## Source
 - **Source audio:** WhatsApp Chat wi
 - **Source transcription:** `WhatsApp Chat wi.md`
-- **Processed date:** 2026-05-17T15:04:27Z
+- **Processed date:** 2026-05-17T15:06:39Z
 - **Main category:** conversation
 - **Project:** personal
 

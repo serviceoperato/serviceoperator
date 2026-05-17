@@ -39,12 +39,12 @@ def slugify(stem: str) -> str:
     return re.sub(r"[^\w\-]+", "-", stem.lower()).strip("-")[:40]
 
 
-def find_audio_key(registry: dict, raw_name: str) -> str | None:
+def find_audio_key(reg: dict, raw_name: str) -> str | None:
     raw_rel = f"content/transcriptions/{raw_name}"
-    match = find_entry_by_raw_path(registry, raw_rel)
+    match = find_entry_by_raw_path(reg, raw_rel)
     if match:
         return match[0]
-    for key, val in registry.get("processed", {}).items():
+    for key, val in reg.get("processed", {}).items():
         if not isinstance(val, dict):
             continue
         rp = val.get("rawTranscriptionPath") or ""
@@ -185,7 +185,7 @@ def main() -> None:
             continue
 
         checksum = sha256_file(raw_path)
-        match = find_entry_by_raw_path(processed, f"content/transcriptions/{raw_name}")
+        match = find_entry_by_raw_path(reg, f"content/transcriptions/{raw_name}")
         sid = (match[1].get("id") if match else None) or short_id(f"content/transcriptions/{raw_name}")
         stem = Path(raw_name).stem
         primary = item.get("primary_type", "note")
@@ -229,10 +229,12 @@ def main() -> None:
             "openPoints": f"content/open-points/{TODAY}.md" if item.get("open_points") else None,
         }
 
-        key = find_audio_key(processed, raw_name)
+        key = find_audio_key(reg, raw_name)
         if not key:
             key = f"content/transcriptions/{raw_name}"
         entry = processed.get(key, {}) if isinstance(processed.get(key), dict) else {}
+        if match and match[0] != key and isinstance(processed.get(match[0]), dict):
+            entry = {**processed[match[0]], **entry}
         entry.update(
             {
                 "id": sid,
@@ -247,6 +249,7 @@ def main() -> None:
                 "source_checksum": checksum,
                 "category": item.get("category"),
                 "project": item.get("project"),
+                "primary_type": primary,
             }
         )
         processed[key] = entry
@@ -271,9 +274,11 @@ def main() -> None:
                     "source_checksum": checksum,
                     "category": item.get("category"),
                     "project": item.get("project"),
+                    "primary_type": primary,
                 }
             )
             processed[reg_key] = val
+        entry["primary_type"] = primary
 
         if ready:
             ok += 1

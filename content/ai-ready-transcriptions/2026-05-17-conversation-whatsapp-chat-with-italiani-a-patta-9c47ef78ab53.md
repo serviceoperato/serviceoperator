@@ -4,12 +4,12 @@ main_category: conversation
 category: notes
 project: thaifans
 date: 2026-05-17
-processing_date: 2026-05-17T15:04:27Z
-processed_date: 2026-05-17T15:04:27Z
+processing_date: 2026-05-17T15:06:39Z
+processed_date: 2026-05-17T15:06:39Z
 source_audio: WhatsApp Chat with italiani a Patta
 source_transcription: content/transcriptions/WhatsApp Chat with italiani a Patta.md
 source_id: 9c47ef78ab53
-source_checksum: 6147578bf1cd13b007cbe9e1ba798da579c4b70d88ee6581c37065667edbaa6d
+source_checksum: b5631d1e7c70d1015aef37ac9b1f657522731d0ff704f7469e13ace0faadab80
 grouped_output: content/ai-ready-transcriptions/2026-05-17-conversation-whatsapp-chat-with-italiani-a-patta-9c47ef78ab53.md
 primary_type: note
 processed: true
@@ -22,7 +22,7 @@ Gruppo WhatsApp «italiani a Pattaya»
 ## Source
 - **Source audio:** WhatsApp Chat with italiani a Patta
 - **Source transcription:** `WhatsApp Chat with italiani a Patta.md`
-- **Processed date:** 2026-05-17T15:04:27Z
+- **Processed date:** 2026-05-17T15:06:39Z
 - **Main category:** conversation
 - **Project:** thaifans
 

@@ -1,4 +1,4 @@
-<!-- PROCESSED: true | date: 2026-05-17T15:04:27Z | output: content/ai-ready-transcriptions/2026-05-17-conversation-memo_005-eac97257e652.md | checksum: 6fb316a33945966961b27ca6ff153e7c17345175e7c80de8eac475f25ee59b65 -->
+<!-- PROCESSED: true | date: 2026-05-17T15:06:39Z | output: content/ai-ready-transcriptions/2026-05-17-conversation-memo_005-eac97257e652.md | checksum: 4e6e6952a877f281627003b792211c7ac8caf3ecb11b3ef05d7b82d7e69c7c6f -->
 # Transcription: Memo 005.m4a
 
 - **Source file:** Memo 005.m4a

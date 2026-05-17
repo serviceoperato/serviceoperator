@@ -7,7 +7,7 @@
       "rawTranscriptionPath": "content/transcriptions/Voice_001.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-voice-note-voice_001-c8091515a34f.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_001-c8091515a34f.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/uncategorized.md",
@@ -19,7 +19,7 @@
       "detected_language": "nn",
       "language_probability": 0.8789923191070557,
       "rawCreatedAt": "2026-05-16 17:33:54 UTC",
-      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "status": "ready_for_site",
       "readyForSite": true,
       "error": null,
@@ -30,22 +30,24 @@
       "full_path": "G:\\My Drive\\Voice Recorder\\Voice 001.m4a",
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_001.md",
       "processed_datetime": "2026-05-16 17:33:54 UTC",
-      "source_checksum": "ccb3d4ec273e98cc3aa42b3a7cfaaa4dbfc518a57b84b092cf7ea87815a0cd3d",
+      "source_checksum": "61bbe1bfe7327adab4c2503ba59308f1d822a2321a4c2aa8cf606f381da619b8",
       "category": "voice-note",
-      "project": "uncategorized"
+      "project": "uncategorized",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_001-c8091515a34f.md",
+      "primary_type": "note"
     },
     "G:\\My Drive\\Voice Recorder\\Memo 001.m4a": {
-      "id": "5d3d2990f9c280f8",
+      "id": "5c1e4449ab12",
       "sourceAudio": "Memo 001.m4a",
       "sourceAudioPath": "G:\\My Drive\\Voice Recorder\\Memo 001.m4a",
       "rawTranscriptionPath": "content/transcriptions/Memo_001.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-conversation-memo_001-5c1e4449ab12.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-conversation-memo_001-5c1e4449ab12.md",
         "tasks": null,
         "calendar": null,
-        "project": "content/projects/uncategorized.md",
-        "decisions": null,
+        "project": "content/projects/serviceopera.md",
+        "decisions": "content/decisions/2026-05-17.md",
         "openPoints": "content/open-points/2026-05-17.md"
       },
       "detectedLanguage": "it",
@@ -53,7 +55,7 @@
       "detected_language": "it",
       "language_probability": 0.9377347230911255,
       "rawCreatedAt": "2026-05-16 17:40:01 UTC",
-      "aiProcessedAt": "2026-05-17T09:46:21Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "status": "ready_for_site",
       "readyForSite": true,
       "error": null,
@@ -64,22 +66,24 @@
       "full_path": "G:\\My Drive\\Voice Recorder\\Memo 001.m4a",
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Memo_001.md",
       "processed_datetime": "2026-05-16 17:40:01 UTC",
-      "source_checksum": "798732a7820af4f01ac30e4b1175c23a307498a7ddd2b2b1440b4f733865b023",
+      "source_checksum": "bb002ca27e72c23d7109c4caa58ca0c00c6c2985b6014b60f04741194d413a6e",
       "category": "conversation",
-      "project": "uncategorized"
+      "project": "serviceopera",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-memo_001-5c1e4449ab12.md",
+      "primary_type": "note"
     },
     "G:\\My Drive\\Voice Recorder\\Memo 002.m4a": {
-      "id": "d9b3ece30b004977",
+      "id": "ea440a9f313e",
       "sourceAudio": "Memo 002.m4a",
       "sourceAudioPath": "G:\\My Drive\\Voice Recorder\\Memo 002.m4a",
       "rawTranscriptionPath": "content/transcriptions/Memo_002.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-conversation-memo_002-ea440a9f313e.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-conversation-memo_002-ea440a9f313e.md",
         "tasks": null,
         "calendar": null,
-        "project": "content/projects/uncategorized.md",
-        "decisions": "content/decisions/2026-05-17.md",
+        "project": "content/projects/serviceopera.md",
+        "decisions": null,
         "openPoints": "content/open-points/2026-05-17.md"
       },
       "detectedLanguage": "it",
@@ -87,7 +91,7 @@
       "detected_language": "it",
       "language_probability": 0.9923604130744934,
       "rawCreatedAt": "2026-05-16 17:44:50 UTC",
-      "aiProcessedAt": "2026-05-17T09:46:21Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "status": "ready_for_site",
       "readyForSite": true,
       "error": null,
@@ -98,21 +102,23 @@
       "full_path": "G:\\My Drive\\Voice Recorder\\Memo 002.m4a",
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Memo_002.md",
       "processed_datetime": "2026-05-16 17:44:50 UTC",
-      "source_checksum": "4bd236f3b0db5b06743e2f763e12b350df828338d3a2d3d0b12693840ed6388a",
+      "source_checksum": "5ed13b06f8aabb49ee2dab254659c9ec16ceabed69b9d6b322210e4ebbdf5113",
       "category": "conversation",
-      "project": "uncategorized"
+      "project": "serviceopera",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-memo_002-ea440a9f313e.md",
+      "primary_type": "note"
     },
     "G:\\My Drive\\Voice Recorder\\Memo 003.m4a": {
-      "id": "efc04b83ed304fcb",
+      "id": "c890c918890b",
       "sourceAudio": "Memo 003.m4a",
       "sourceAudioPath": "G:\\My Drive\\Voice Recorder\\Memo 003.m4a",
       "rawTranscriptionPath": "content/transcriptions/Memo_003.md",
       "aiOutputs": {
-        "meeting": "content/meetings/2026-05-17-meeting-memo_003-c890c918890b.md",
-        "note": null,
+        "meeting": null,
+        "note": "content/ai-ready-transcriptions/2026-05-17-conversation-memo_003-c890c918890b.md",
         "tasks": null,
         "calendar": null,
-        "project": "content/projects/uncategorized.md",
+        "project": "content/projects/serviceopera.md",
         "decisions": null,
         "openPoints": "content/open-points/2026-05-17.md"
       },
@@ -121,7 +127,7 @@
       "detected_language": "it",
       "language_probability": 0.9913640022277832,
       "rawCreatedAt": "2026-05-16 17:49:11 UTC",
-      "aiProcessedAt": "2026-05-17T09:46:21Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "status": "ready_for_site",
       "readyForSite": true,
       "error": null,
@@ -132,21 +138,23 @@
       "full_path": "G:\\My Drive\\Voice Recorder\\Memo 003.m4a",
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Memo_003.md",
       "processed_datetime": "2026-05-16 17:49:11 UTC",
-      "source_checksum": "7f23e9c89458f19cb06d3f464700d07ca3335fbef3addaf1b5d69591e07d5b3e",
-      "category": "meeting",
-      "project": "uncategorized"
+      "source_checksum": "e9db8bd0cdac7ee3c23ac2da6aba235bc41beae3cfead106cba2b35b4c79fdf1",
+      "category": "conversation",
+      "project": "serviceopera",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-memo_003-c890c918890b.md",
+      "primary_type": "note"
     },
     "G:\\My Drive\\Voice Recorder\\Memo 004.m4a": {
-      "id": "0f2644a36d8e18fb",
+      "id": "8320a9a4414c",
       "sourceAudio": "Memo 004.m4a",
       "sourceAudioPath": "G:\\My Drive\\Voice Recorder\\Memo 004.m4a",
       "rawTranscriptionPath": "content/transcriptions/Memo_004.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-conversation-memo_004-8320a9a4414c.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-conversation-memo_004-8320a9a4414c.md",
         "tasks": null,
-        "calendar": "content/calendar/events.md",
-        "project": "content/projects/uncategorized.md",
+        "calendar": null,
+        "project": "content/projects/personal.md",
         "decisions": null,
         "openPoints": "content/open-points/2026-05-17.md"
       },
@@ -155,7 +163,7 @@
       "detected_language": "it",
       "language_probability": 0.9909849166870117,
       "rawCreatedAt": "2026-05-16 17:53:50 UTC",
-      "aiProcessedAt": "2026-05-17T09:46:21Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "status": "ready_for_site",
       "readyForSite": true,
       "error": null,
@@ -166,21 +174,23 @@
       "full_path": "G:\\My Drive\\Voice Recorder\\Memo 004.m4a",
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Memo_004.md",
       "processed_datetime": "2026-05-16 17:53:50 UTC",
-      "source_checksum": "7b7c541b6a54256166e28bf6b4823e9abd367b5caabc430e34032d13136e1473",
+      "source_checksum": "dd73b9c9c82830a5612f1a9dddf98f2ae1e7cf7851878477a264a01494bccc3d",
       "category": "conversation",
-      "project": "uncategorized"
+      "project": "personal",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-memo_004-8320a9a4414c.md",
+      "primary_type": "note"
     },
     "G:\\My Drive\\Voice Recorder\\Memo 005.m4a": {
-      "id": "06eaef6c3db75ae7",
+      "id": "eac97257e652",
       "sourceAudio": "Memo 005.m4a",
       "sourceAudioPath": "G:\\My Drive\\Voice Recorder\\Memo 005.m4a",
       "rawTranscriptionPath": "content/transcriptions/Memo_005.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-conversation-memo_005-eac97257e652.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-conversation-memo_005-eac97257e652.md",
         "tasks": null,
         "calendar": null,
-        "project": "content/projects/uncategorized.md",
+        "project": "content/projects/personal.md",
         "decisions": null,
         "openPoints": "content/open-points/2026-05-17.md"
       },
@@ -189,7 +199,7 @@
       "detected_language": "it",
       "language_probability": 0.989618718624115,
       "rawCreatedAt": "2026-05-16 18:02:14 UTC",
-      "aiProcessedAt": "2026-05-17T09:46:21Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "status": "ready_for_site",
       "readyForSite": true,
       "error": null,
@@ -200,21 +210,23 @@
       "full_path": "G:\\My Drive\\Voice Recorder\\Memo 005.m4a",
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Memo_005.md",
       "processed_datetime": "2026-05-16 18:02:14 UTC",
-      "source_checksum": "2d7f50ae8b1d5cd15f9ac84485d09744f5334650ab7b53d9f8aa6d7e25447ce6",
+      "source_checksum": "4e6e6952a877f281627003b792211c7ac8caf3ecb11b3ef05d7b82d7e69c7c6f",
       "category": "conversation",
-      "project": "uncategorized"
+      "project": "personal",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-memo_005-eac97257e652.md",
+      "primary_type": "note"
     },
     "G:\\My Drive\\Voice Recorder\\Memo 006.m4a": {
-      "id": "edbfb0e137ca8421",
+      "id": "4a7e2f8a8406",
       "sourceAudio": "Memo 006.m4a",
       "sourceAudioPath": "G:\\My Drive\\Voice Recorder\\Memo 006.m4a",
       "rawTranscriptionPath": "content/transcriptions/Memo_006.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-conversation-memo_006-4a7e2f8a8406.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-conversation-memo_006-4a7e2f8a8406.md",
         "tasks": null,
         "calendar": null,
-        "project": "content/projects/uncategorized.md",
+        "project": "content/projects/personal.md",
         "decisions": null,
         "openPoints": "content/open-points/2026-05-17.md"
       },
@@ -223,7 +235,7 @@
       "detected_language": "it",
       "language_probability": 0.9780745506286621,
       "rawCreatedAt": "2026-05-17 05:09:22 UTC",
-      "aiProcessedAt": "2026-05-17T09:46:21Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "status": "ready_for_site",
       "readyForSite": true,
       "error": null,
@@ -234,9 +246,11 @@
       "full_path": "G:\\My Drive\\Voice Recorder\\Memo 006.m4a",
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Memo_006.md",
       "processed_datetime": "2026-05-17 05:09:22 UTC",
-      "source_checksum": "fb3c56e9932b76c7e4283fe01df98d357308db8b173a7526a3ccfd6bcd1abaa4",
+      "source_checksum": "6e9cfebe7d64d5d9bbc3674ba4d79a87c327e1a8bac0d5ee1a88b1504c1a54e9",
       "category": "conversation",
-      "project": "uncategorized"
+      "project": "personal",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-memo_006-4a7e2f8a8406.md",
+      "primary_type": "note"
     },
     "G:\\My Drive\\Voice Recorder\\Voice 002.m4a": {
       "id": "f0dc2085112e",
@@ -245,7 +259,7 @@
       "rawTranscriptionPath": "content/transcriptions/Voice_002.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-voice-note-voice_002-f0dc2085112e.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_002-f0dc2085112e.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/uncategorized.md",
@@ -257,7 +271,7 @@
       "detected_language": "ru",
       "language_probability": 0.35724231600761414,
       "rawCreatedAt": "2026-05-17 05:09:26 UTC",
-      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "status": "ready_for_site",
       "readyForSite": true,
       "error": null,
@@ -268,18 +282,20 @@
       "full_path": "G:\\My Drive\\Voice Recorder\\Voice 002.m4a",
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_002.md",
       "processed_datetime": "2026-05-17 05:09:26 UTC",
-      "source_checksum": "21e4b06ce532c2f0b57f4c0fa284eb87329f63a7e58e3d677a183baf6dc64b13",
+      "source_checksum": "b9e0d217b0add959e7a3e2d19a52b3813bbee254ec4720b17c68028e59cfb579",
       "category": "voice-note",
-      "project": "uncategorized"
+      "project": "uncategorized",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_002-f0dc2085112e.md",
+      "primary_type": "note"
     },
     "G:\\My Drive\\Voice Recorder\\Voice 003.m4a": {
-      "id": "5ca566537fce2421",
+      "id": "8ae8c30860dd",
       "sourceAudio": "Voice 003.m4a",
       "sourceAudioPath": "G:\\My Drive\\Voice Recorder\\Voice 003.m4a",
       "rawTranscriptionPath": "content/transcriptions/Voice_003.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-voice-note-voice_003-8ae8c30860dd.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_003-8ae8c30860dd.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/uncategorized.md",
@@ -291,7 +307,7 @@
       "detected_language": "it",
       "language_probability": 0.9884478449821472,
       "rawCreatedAt": "2026-05-17 05:09:32 UTC",
-      "aiProcessedAt": "2026-05-17T09:46:21Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "status": "ready_for_site",
       "readyForSite": true,
       "error": null,
@@ -302,30 +318,32 @@
       "full_path": "G:\\My Drive\\Voice Recorder\\Voice 003.m4a",
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_003.md",
       "processed_datetime": "2026-05-17 05:09:32 UTC",
-      "source_checksum": "2e9f4bdc6fc97c4b053b030655d0e55ad22ef596e6b065fef658421b495f84b5",
+      "source_checksum": "aac0f4d6b72fc174a094a1569f2963f5f832719ecdaff1d5c45d664cc1707342",
       "category": "voice-note",
-      "project": "uncategorized"
+      "project": "uncategorized",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_003-8ae8c30860dd.md",
+      "primary_type": "note"
     },
     "G:\\My Drive\\Voice Recorder\\Voice 004.m4a": {
-      "id": "f25a820414ec0fea",
+      "id": "d58c88f66165",
       "sourceAudio": "Voice 004.m4a",
       "sourceAudioPath": "G:\\My Drive\\Voice Recorder\\Voice 004.m4a",
       "rawTranscriptionPath": "content/transcriptions/Voice_004.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-conversation-voice_004-d58c88f66165.md",
-        "tasks": "content/tasks/todo.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_004-d58c88f66165.md",
+        "tasks": null,
         "calendar": null,
         "project": "content/projects/uncategorized.md",
         "decisions": null,
-        "openPoints": "content/open-points/2026-05-17.md"
+        "openPoints": null
       },
       "detectedLanguage": "it",
       "languageProbability": 0.9791030287742615,
       "detected_language": "it",
       "language_probability": 0.9791030287742615,
       "rawCreatedAt": "2026-05-17 05:09:52 UTC",
-      "aiProcessedAt": "2026-05-17T09:46:21Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "status": "ready_for_site",
       "readyForSite": true,
       "error": null,
@@ -336,21 +354,23 @@
       "full_path": "G:\\My Drive\\Voice Recorder\\Voice 004.m4a",
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_004.md",
       "processed_datetime": "2026-05-17 05:09:52 UTC",
-      "source_checksum": "7751643c80588c5b7354043ca140f17094a610d9602082fea38fe4d734d2c447",
-      "category": "conversation",
-      "project": "uncategorized"
+      "source_checksum": "9673da80c8d3113143ad33dbb4b97da0bee677a7d236ca77b6be73f385ff869e",
+      "category": "voice-note",
+      "project": "uncategorized",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_004-d58c88f66165.md",
+      "primary_type": "note"
     },
     "G:\\My Drive\\Voice Recorder\\Voice 005.m4a": {
-      "id": "5aa8a4614595d40e",
+      "id": "6921c6f5bc0a",
       "sourceAudio": "Voice 005.m4a",
       "sourceAudioPath": "G:\\My Drive\\Voice Recorder\\Voice 005.m4a",
       "rawTranscriptionPath": "content/transcriptions/Voice_005.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-self-recap-voice_005-6921c6f5bc0a.md",
-        "tasks": null,
+        "note": "content/ai-ready-transcriptions/2026-05-17-conversation-voice_005-6921c6f5bc0a.md",
+        "tasks": "content/tasks/todo.md",
         "calendar": null,
-        "project": "content/projects/uncategorized.md",
+        "project": "content/projects/personal.md",
         "decisions": null,
         "openPoints": "content/open-points/2026-05-17.md"
       },
@@ -359,7 +379,7 @@
       "detected_language": "it",
       "language_probability": 0.9681119918823242,
       "rawCreatedAt": "2026-05-17 05:21:55 UTC",
-      "aiProcessedAt": "2026-05-17T09:46:21Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "status": "ready_for_site",
       "readyForSite": true,
       "error": null,
@@ -370,21 +390,23 @@
       "full_path": "G:\\My Drive\\Voice Recorder\\Voice 005.m4a",
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_005.md",
       "processed_datetime": "2026-05-17 05:21:55 UTC",
-      "source_checksum": "e2ea69fff90e2bd94312ed27661f9bbb8bb3b98e8fa2450acdba4c2fe12de195",
-      "category": "self-recap",
-      "project": "uncategorized"
+      "source_checksum": "21d503169f34510a2a565c82a56d597444108a2bc88e1c0d539c5a41968c2ac6",
+      "category": "conversation",
+      "project": "personal",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-voice_005-6921c6f5bc0a.md",
+      "primary_type": "note"
     },
     "G:\\My Drive\\Voice Recorder\\Voice 006.m4a": {
-      "id": "c65d6ff91afae6d8",
+      "id": "4d392948d577",
       "sourceAudio": "Voice 006.m4a",
       "sourceAudioPath": "G:\\My Drive\\Voice Recorder\\Voice 006.m4a",
       "rawTranscriptionPath": "content/transcriptions/Voice_006.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-voice-note-voice_006-4d392948d577.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_006-4d392948d577.md",
         "tasks": null,
         "calendar": null,
-        "project": "content/projects/uncategorized.md",
+        "project": "content/projects/personal.md",
         "decisions": null,
         "openPoints": "content/open-points/2026-05-17.md"
       },
@@ -393,7 +415,7 @@
       "detected_language": "it",
       "language_probability": 0.9962931275367737,
       "rawCreatedAt": "2026-05-17 05:22:07 UTC",
-      "aiProcessedAt": "2026-05-17T09:46:21Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "status": "ready_for_site",
       "readyForSite": true,
       "error": null,
@@ -404,30 +426,32 @@
       "full_path": "G:\\My Drive\\Voice Recorder\\Voice 006.m4a",
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_006.md",
       "processed_datetime": "2026-05-17 05:22:07 UTC",
-      "source_checksum": "ab09fa010225d2e8b6d9373dcf0bae0b6ba037bf9aa8770c4b8ca8800740aa3d",
+      "source_checksum": "4ad9b780cf12d07c254ce68e81e0a4bdc019390e4eb760768370f4f9c3132a08",
       "category": "voice-note",
-      "project": "uncategorized"
+      "project": "personal",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_006-4d392948d577.md",
+      "primary_type": "note"
     },
     "G:\\My Drive\\Voice Recorder\\Voice 007.m4a": {
-      "id": "3d572f10143c7d9b",
+      "id": "793016bc4f37",
       "sourceAudio": "Voice 007.m4a",
       "sourceAudioPath": "G:\\My Drive\\Voice Recorder\\Voice 007.m4a",
       "rawTranscriptionPath": "content/transcriptions/Voice_007.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-voice-note-voice_007-793016bc4f37.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_007-793016bc4f37.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/uncategorized.md",
         "decisions": null,
-        "openPoints": "content/open-points/2026-05-17.md"
+        "openPoints": null
       },
       "detectedLanguage": "it",
       "languageProbability": 0.887336254119873,
       "detected_language": "it",
       "language_probability": 0.887336254119873,
       "rawCreatedAt": "2026-05-17 05:22:13 UTC",
-      "aiProcessedAt": "2026-05-17T09:46:21Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "status": "ready_for_site",
       "readyForSite": true,
       "error": null,
@@ -438,9 +462,11 @@
       "full_path": "G:\\My Drive\\Voice Recorder\\Voice 007.m4a",
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_007.md",
       "processed_datetime": "2026-05-17 05:22:13 UTC",
-      "source_checksum": "51d0d4261df54138d1dfb8ba114f9f9fa3aa8e7c9ebb8148e5afb1ec3b6a9eee",
+      "source_checksum": "3b3d80a950afb4c19ace51e85d9282461263aa49fd47e5da765bf0b144eadb10",
       "category": "voice-note",
-      "project": "uncategorized"
+      "project": "uncategorized",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_007-793016bc4f37.md",
+      "primary_type": "note"
     },
     "G:\\My Drive\\Voice Recorder\\Voice 250621_185357.m4a": {
       "id": "69216cdbadfb",
@@ -449,7 +475,7 @@
       "rawTranscriptionPath": "content/transcriptions/Voice_250621_185357.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-voice-note-voice_250621_185357-69216cdbadfb.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_250621_185357-69216cdbadfb.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/uncategorized.md",
@@ -461,7 +487,7 @@
       "detected_language": "nn",
       "language_probability": 0.5088310837745667,
       "rawCreatedAt": "2026-05-17 05:23:10 UTC",
-      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "status": "ready_for_site",
       "readyForSite": true,
       "error": null,
@@ -472,18 +498,20 @@
       "full_path": "G:\\My Drive\\Voice Recorder\\Voice 250621_185357.m4a",
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_250621_185357.md",
       "processed_datetime": "2026-05-17 05:23:10 UTC",
-      "source_checksum": "9a9a437aa31cfc25ca4f8cd5f250e11a32aad894ad886f301013afc0691d4037",
+      "source_checksum": "8e52ee08c303630933fb96a366f56ce2230786eb63600383a29d3ec76eb0245d",
       "category": "voice-note",
-      "project": "uncategorized"
+      "project": "uncategorized",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_250621_185357-69216cdbadfb.md",
+      "primary_type": "note"
     },
     "G:\\My Drive\\Voice Recorder\\Voice 250621_185410.m4a": {
-      "id": "e022766078b28a58",
+      "id": "a4d50b0e6da1",
       "sourceAudio": "Voice 250621_185410.m4a",
       "sourceAudioPath": "G:\\My Drive\\Voice Recorder\\Voice 250621_185410.m4a",
       "rawTranscriptionPath": "content/transcriptions/Voice_250621_185410.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-voice-note-voice_250621_185410-a4d50b0e6da1.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_250621_185410-a4d50b0e6da1.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/uncategorized.md",
@@ -495,7 +523,7 @@
       "detected_language": "es",
       "language_probability": 0.4350312352180481,
       "rawCreatedAt": "2026-05-17 05:23:14 UTC",
-      "aiProcessedAt": "2026-05-17T09:46:21Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "status": "ready_for_site",
       "readyForSite": true,
       "error": null,
@@ -506,22 +534,24 @@
       "full_path": "G:\\My Drive\\Voice Recorder\\Voice 250621_185410.m4a",
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_250621_185410.md",
       "processed_datetime": "2026-05-17 05:23:14 UTC",
-      "source_checksum": "7fbe0d512567badd883ebfaa9c7db007163ad9b90d59dc39916ed30aae29261e",
+      "source_checksum": "f63ba018e37da26c09506779d5bbc639de28165f9ed1aa23cef7fa46a54adac0",
       "category": "voice-note",
-      "project": "uncategorized"
+      "project": "uncategorized",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_250621_185410-a4d50b0e6da1.md",
+      "primary_type": "note"
     },
     "G:\\My Drive\\Voice Recorder\\Christian.m4a": {
-      "id": "288fd57ef1988e2c",
+      "id": "42d821331d94",
       "sourceAudio": "Christian.m4a",
       "sourceAudioPath": "G:\\My Drive\\Voice Recorder\\Christian.m4a",
       "rawTranscriptionPath": "content/transcriptions/Christian.md",
       "aiOutputs": {
-        "meeting": null,
-        "note": "content/notes/2026-05-17-self-recap-christian-42d821331d94.md",
-        "tasks": null,
+        "meeting": "content/ai-ready-transcriptions/2026-05-17-conversation-christian-42d821331d94.md",
+        "note": null,
+        "tasks": "content/tasks/todo.md",
         "calendar": null,
         "project": "content/projects/personal.md",
-        "decisions": null,
+        "decisions": "content/decisions/2026-05-17.md",
         "openPoints": "content/open-points/2026-05-17.md"
       },
       "detectedLanguage": "it",
@@ -529,7 +559,7 @@
       "detected_language": "it",
       "language_probability": 0.9727195501327515,
       "rawCreatedAt": "2026-05-17 05:53:53 UTC",
-      "aiProcessedAt": "2026-05-17T09:46:21Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "status": "ready_for_site",
       "readyForSite": true,
       "error": null,
@@ -540,30 +570,32 @@
       "full_path": "G:\\My Drive\\Voice Recorder\\Christian.m4a",
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Christian.md",
       "processed_datetime": "2026-05-17 05:53:53 UTC",
-      "source_checksum": "e7867a0da02cd0e91b115a9aeca2f6e20a2badfe395f86652f68a20ada7fb14a",
-      "category": "self-recap",
-      "project": "personal"
+      "source_checksum": "328f62c33b86b0718afc9d8bc52bd13ebbfe0ff95b1e0bd7c662fdce90306744",
+      "category": "conversation",
+      "project": "personal",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-christian-42d821331d94.md",
+      "primary_type": "meeting"
     },
     "G:\\My Drive\\Voice Recorder\\Seconda.m4a": {
-      "id": "4b428e20cdb6886b",
+      "id": "86e8348fd2d4",
       "sourceAudio": "Seconda.m4a",
       "sourceAudioPath": "G:\\My Drive\\Voice Recorder\\Seconda.m4a",
       "rawTranscriptionPath": "content/transcriptions/Seconda.md",
       "aiOutputs": {
-        "meeting": null,
-        "note": "content/notes/2026-05-17-conversation-seconda-86e8348fd2d4.md",
+        "meeting": "content/ai-ready-transcriptions/2026-05-17-conversation-seconda-86e8348fd2d4.md",
+        "note": null,
         "tasks": null,
         "calendar": null,
         "project": "content/projects/personal.md",
         "decisions": "content/decisions/2026-05-17.md",
-        "openPoints": null
+        "openPoints": "content/open-points/2026-05-17.md"
       },
       "detectedLanguage": "it",
       "languageProbability": 0.9865317940711975,
       "detected_language": "it",
       "language_probability": 0.9865317940711975,
       "rawCreatedAt": "2026-05-17 06:22:04 UTC",
-      "aiProcessedAt": "2026-05-17T09:46:21Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "status": "ready_for_site",
       "readyForSite": true,
       "error": null,
@@ -574,18 +606,20 @@
       "full_path": "G:\\My Drive\\Voice Recorder\\Seconda.m4a",
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Seconda.md",
       "processed_datetime": "2026-05-17 06:22:04 UTC",
-      "source_checksum": "49c1ffcd8c77893afa1cce2b4f00e6994c79d06ca212a2405c6765a2f64cc487",
+      "source_checksum": "8abb164995e6b9b8b132c3cedb5b2c613f755e8f9305f341961c745a74f35a4b",
       "category": "conversation",
-      "project": "personal"
+      "project": "personal",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-seconda-86e8348fd2d4.md",
+      "primary_type": "meeting"
     },
     "G:\\My Drive\\Voice Recorder\\Voice 260516_191818.m4a": {
-      "id": "a57492fde7e50133",
+      "id": "596e527d5382",
       "sourceAudio": "Voice 260516_191818.m4a",
       "sourceAudioPath": "G:\\My Drive\\Voice Recorder\\Voice 260516_191818.m4a",
       "rawTranscriptionPath": "content/transcriptions/Voice_260516_191818.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-voice-note-voice_260516_191818-596e527d5382.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_260516_191818-596e527d5382.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/uncategorized.md",
@@ -597,7 +631,7 @@
       "detected_language": "it",
       "language_probability": 0.9917218089103699,
       "rawCreatedAt": "2026-05-17 06:22:09 UTC",
-      "aiProcessedAt": "2026-05-17T09:46:21Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "status": "ready_for_site",
       "readyForSite": true,
       "error": null,
@@ -608,21 +642,23 @@
       "full_path": "G:\\My Drive\\Voice Recorder\\Voice 260516_191818.m4a",
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_260516_191818.md",
       "processed_datetime": "2026-05-17 06:22:09 UTC",
-      "source_checksum": "e344282bd1c7a36646c7a555bdc905dcfe52557e8a6c0f4c611cf1a00bcc9409",
+      "source_checksum": "fe842d932b77d57b22782c60bbc53734893a0a4c6e4292899381279d447577d6",
       "category": "voice-note",
-      "project": "uncategorized"
+      "project": "uncategorized",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_260516_191818-596e527d5382.md",
+      "primary_type": "note"
     },
     "G:\\My Drive\\Voice Recorder\\Voice 260516_235502.m4a": {
-      "id": "ea623e53a8f67f7c",
+      "id": "aa98439a4b47",
       "sourceAudio": "Voice 260516_235502.m4a",
       "sourceAudioPath": "G:\\My Drive\\Voice Recorder\\Voice 260516_235502.m4a",
       "rawTranscriptionPath": "content/transcriptions/Voice_260516_235502.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-voice-note-voice_260516_235502-aa98439a4b47.md",
-        "tasks": null,
+        "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_260516_235502-aa98439a4b47.md",
+        "tasks": "content/tasks/todo.md",
         "calendar": "content/calendar/events.md",
-        "project": "content/projects/uncategorized.md",
+        "project": "content/projects/personal.md",
         "decisions": null,
         "openPoints": null
       },
@@ -631,7 +667,7 @@
       "detected_language": "en",
       "language_probability": 0.7901437878608704,
       "rawCreatedAt": "2026-05-17 06:22:15 UTC",
-      "aiProcessedAt": "2026-05-17T09:46:21Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "status": "ready_for_site",
       "readyForSite": true,
       "error": null,
@@ -642,9 +678,11 @@
       "full_path": "G:\\My Drive\\Voice Recorder\\Voice 260516_235502.m4a",
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_260516_235502.md",
       "processed_datetime": "2026-05-17 06:22:15 UTC",
-      "source_checksum": "5001ad06425b6be6204c50c93310525f89bf31bc97913dfc377eae70edd37358",
+      "source_checksum": "ed9dee30e057a09606aa90f8beaf9bded94da003e4390644b1b080895977976d",
       "category": "voice-note",
-      "project": "uncategorized"
+      "project": "personal",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_260516_235502-aa98439a4b47.md",
+      "primary_type": "note"
     },
     "chat-import:content/transcriptions/Chat history with Karn.md": {
       "id": "37d2a3a4fa59",
@@ -653,7 +691,7 @@
       "rawTranscriptionPath": "content/transcriptions/Chat history with Karn.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-conversation-chat-history-with-karn-37d2a3a4fa59.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-conversation-chat-history-with-karn-37d2a3a4fa59.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/personal.md",
@@ -663,9 +701,13 @@
       "status": "ready_for_site",
       "readyForSite": true,
       "rawCreatedAt": "2026-05-17T10:57:01Z",
-      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "2b22742b185f0f47a9c50ca2abab76570924487f726aec2d6c3a4bf0b27d48bb"
+      "source_checksum": "a6c042407321c927337d6a60b4c3e5ab31f4b1169fddbc9ea6e1fc498a7442ce",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-chat-history-with-karn-37d2a3a4fa59.md",
+      "category": "conversation",
+      "project": "personal",
+      "primary_type": "note"
     },
     "chat-import:content/transcriptions/WhatsApp Chat wi.md": {
       "id": "6aabaa09ab24",
@@ -674,7 +716,7 @@
       "rawTranscriptionPath": "content/transcriptions/WhatsApp Chat wi.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-conversation-whatsapp-chat-wi-6aabaa09ab24.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-conversation-whatsapp-chat-wi-6aabaa09ab24.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/personal.md",
@@ -684,9 +726,13 @@
       "status": "ready_for_site",
       "readyForSite": true,
       "rawCreatedAt": "2026-05-17T10:57:01Z",
-      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "246b648ac480210b7d974018b32055382d50c303ac07741e9b430e3837481c4b"
+      "source_checksum": "562d2a476afb431898bb1fbdb9733b3e1cfce24af6f8bde9c48d266c21da8e62",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-whatsapp-chat-wi-6aabaa09ab24.md",
+      "category": "conversation",
+      "project": "personal",
+      "primary_type": "note"
     },
     "chat-import:content/transcriptions/WhatsApp Chat with IANN.md": {
       "id": "c52f33323d06",
@@ -695,7 +741,7 @@
       "rawTranscriptionPath": "content/transcriptions/WhatsApp Chat with IANN.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-conversation-whatsapp-chat-with-iann-c52f33323d06.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-conversation-whatsapp-chat-with-iann-c52f33323d06.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/personal.md",
@@ -705,9 +751,13 @@
       "status": "ready_for_site",
       "readyForSite": true,
       "rawCreatedAt": "2026-05-17T10:57:01Z",
-      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "1dc2a6e7e917cfe51ed5a6de1e3012fd28d7e607ac45c367a650cc254a3d95be"
+      "source_checksum": "ec8738b9f65d94be1054212495c4e36abbe2f568f425a255fa28bdcaa690d617",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-whatsapp-chat-with-iann-c52f33323d06.md",
+      "category": "conversation",
+      "project": "personal",
+      "primary_type": "note"
     },
     "chat-import:content/transcriptions/WhatsApp Chat with italiani a Patta.md": {
       "id": "9c47ef78ab53",
@@ -716,7 +766,7 @@
       "rawTranscriptionPath": "content/transcriptions/WhatsApp Chat with italiani a Patta.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-conversation-whatsapp-chat-with-italiani-a-patta-9c47ef78ab53.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-conversation-whatsapp-chat-with-italiani-a-patta-9c47ef78ab53.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/thaifans.md",
@@ -726,9 +776,13 @@
       "status": "ready_for_site",
       "readyForSite": true,
       "rawCreatedAt": "2026-05-17T10:57:01Z",
-      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "773d3af04bce162a0f7583fb84b2253abae53b946a004849c2067aeeffdeed0f"
+      "source_checksum": "b5631d1e7c70d1015aef37ac9b1f657522731d0ff704f7469e13ace0faadab80",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-whatsapp-chat-with-italiani-a-patta-9c47ef78ab53.md",
+      "category": "conversation",
+      "project": "thaifans",
+      "primary_type": "note"
     },
     "chat-import:content/transcriptions/WhatsApp Chat with Koragon Gi.md": {
       "id": "f97895de6fd3",
@@ -737,7 +791,7 @@
       "rawTranscriptionPath": "content/transcriptions/WhatsApp Chat with Koragon Gi.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-conversation-whatsapp-chat-with-koragon-gi-f97895de6fd3.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-conversation-whatsapp-chat-with-koragon-gi-f97895de6fd3.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/personal.md",
@@ -747,9 +801,13 @@
       "status": "ready_for_site",
       "readyForSite": true,
       "rawCreatedAt": "2026-05-17T10:57:01Z",
-      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "2de295478101b5b44be1c059957c51cffa7ce250142569fc65dbbbdb34ae7c80"
+      "source_checksum": "b9934766666bdbc1397582d68b75ffaecbd60748bfb9a4b7dfdab2f62fc3f25c",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-whatsapp-chat-with-koragon-gi-f97895de6fd3.md",
+      "category": "conversation",
+      "project": "personal",
+      "primary_type": "note"
     },
     "content/transcriptions/Memo_001.md": {
       "id": "5c1e4449ab12",
@@ -757,7 +815,7 @@
       "rawTranscriptionPath": "content/transcriptions/Memo_001.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-conversation-memo_001-5c1e4449ab12.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-conversation-memo_001-5c1e4449ab12.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/serviceopera.md",
@@ -766,9 +824,13 @@
       },
       "status": "ready_for_site",
       "readyForSite": true,
-      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "28bf2ce39c70bd3f77dbdccb4b7d14ccbe1ffb0e2eb01305faa00438f7b8f4d6"
+      "source_checksum": "bb002ca27e72c23d7109c4caa58ca0c00c6c2985b6014b60f04741194d413a6e",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-memo_001-5c1e4449ab12.md",
+      "category": "conversation",
+      "project": "serviceopera",
+      "primary_type": "note"
     },
     "content/transcriptions/Memo_002.md": {
       "id": "ea440a9f313e",
@@ -776,7 +838,7 @@
       "rawTranscriptionPath": "content/transcriptions/Memo_002.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-conversation-memo_002-ea440a9f313e.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-conversation-memo_002-ea440a9f313e.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/serviceopera.md",
@@ -785,9 +847,13 @@
       },
       "status": "ready_for_site",
       "readyForSite": true,
-      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "82f3f5e390fcb2a01e3ea042a1470a9ae6ffb84d4690eadaedc925de7cd8a92c"
+      "source_checksum": "5ed13b06f8aabb49ee2dab254659c9ec16ceabed69b9d6b322210e4ebbdf5113",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-memo_002-ea440a9f313e.md",
+      "category": "conversation",
+      "project": "serviceopera",
+      "primary_type": "note"
     },
     "content/transcriptions/Memo_003.md": {
       "id": "c890c918890b",
@@ -795,7 +861,7 @@
       "rawTranscriptionPath": "content/transcriptions/Memo_003.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-conversation-memo_003-c890c918890b.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-conversation-memo_003-c890c918890b.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/serviceopera.md",
@@ -804,9 +870,13 @@
       },
       "status": "ready_for_site",
       "readyForSite": true,
-      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "af2b5fd7f01090d95950f7175eb8b6192d54270b49ffa2681a1d6c7388b57610"
+      "source_checksum": "e9db8bd0cdac7ee3c23ac2da6aba235bc41beae3cfead106cba2b35b4c79fdf1",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-memo_003-c890c918890b.md",
+      "category": "conversation",
+      "project": "serviceopera",
+      "primary_type": "note"
     },
     "content/transcriptions/Memo_004.md": {
       "id": "8320a9a4414c",
@@ -814,7 +884,7 @@
       "rawTranscriptionPath": "content/transcriptions/Memo_004.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-conversation-memo_004-8320a9a4414c.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-conversation-memo_004-8320a9a4414c.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/personal.md",
@@ -823,9 +893,13 @@
       },
       "status": "ready_for_site",
       "readyForSite": true,
-      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "6768bdbe9dd0bedd14fc17e421741e600949263f748e8d664208a0298fc9f01c"
+      "source_checksum": "dd73b9c9c82830a5612f1a9dddf98f2ae1e7cf7851878477a264a01494bccc3d",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-memo_004-8320a9a4414c.md",
+      "category": "conversation",
+      "project": "personal",
+      "primary_type": "note"
     },
     "content/transcriptions/Memo_005.md": {
       "id": "eac97257e652",
@@ -833,7 +907,7 @@
       "rawTranscriptionPath": "content/transcriptions/Memo_005.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-conversation-memo_005-eac97257e652.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-conversation-memo_005-eac97257e652.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/personal.md",
@@ -842,9 +916,13 @@
       },
       "status": "ready_for_site",
       "readyForSite": true,
-      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "ff8d3ed652a946228f5d0c920e5646fa26421cf7dc6e237d90da49ff42ebbdfd"
+      "source_checksum": "4e6e6952a877f281627003b792211c7ac8caf3ecb11b3ef05d7b82d7e69c7c6f",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-memo_005-eac97257e652.md",
+      "category": "conversation",
+      "project": "personal",
+      "primary_type": "note"
     },
     "content/transcriptions/Memo_006.md": {
       "id": "4a7e2f8a8406",
@@ -852,7 +930,7 @@
       "rawTranscriptionPath": "content/transcriptions/Memo_006.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-conversation-memo_006-4a7e2f8a8406.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-conversation-memo_006-4a7e2f8a8406.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/personal.md",
@@ -861,16 +939,20 @@
       },
       "status": "ready_for_site",
       "readyForSite": true,
-      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "ec19a81b268e3ba943c0a6375057863d2c7578ea26f3ab8a0fadaf2f3ea16b9e"
+      "source_checksum": "6e9cfebe7d64d5d9bbc3674ba4d79a87c327e1a8bac0d5ee1a88b1504c1a54e9",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-memo_006-4a7e2f8a8406.md",
+      "category": "conversation",
+      "project": "personal",
+      "primary_type": "note"
     },
     "content/transcriptions/Seconda.md": {
       "id": "86e8348fd2d4",
       "sourceAudio": "Seconda.m4a",
       "rawTranscriptionPath": "content/transcriptions/Seconda.md",
       "aiOutputs": {
-        "meeting": "content/meetings/2026-05-17-conversation-seconda-86e8348fd2d4.md",
+        "meeting": "content/ai-ready-transcriptions/2026-05-17-conversation-seconda-86e8348fd2d4.md",
         "note": null,
         "tasks": null,
         "calendar": null,
@@ -880,9 +962,13 @@
       },
       "status": "ready_for_site",
       "readyForSite": true,
-      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "9b8780f94518c25cabfd279631689c94b2907aad69add0ffedf7f204fed78e5e"
+      "source_checksum": "8abb164995e6b9b8b132c3cedb5b2c613f755e8f9305f341961c745a74f35a4b",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-seconda-86e8348fd2d4.md",
+      "category": "conversation",
+      "project": "personal",
+      "primary_type": "meeting"
     },
     "content/transcriptions/Voice_001.md": {
       "id": "c8091515a34f",
@@ -890,7 +976,7 @@
       "rawTranscriptionPath": "content/transcriptions/Voice_001.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-voice-note-voice_001-c8091515a34f.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_001-c8091515a34f.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/uncategorized.md",
@@ -899,9 +985,13 @@
       },
       "status": "ready_for_site",
       "readyForSite": true,
-      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "ccb3d4ec273e98cc3aa42b3a7cfaaa4dbfc518a57b84b092cf7ea87815a0cd3d"
+      "source_checksum": "61bbe1bfe7327adab4c2503ba59308f1d822a2321a4c2aa8cf606f381da619b8",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_001-c8091515a34f.md",
+      "category": "voice-note",
+      "project": "uncategorized",
+      "primary_type": "note"
     },
     "content/transcriptions/Voice_002.md": {
       "id": "f0dc2085112e",
@@ -909,7 +999,7 @@
       "rawTranscriptionPath": "content/transcriptions/Voice_002.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-voice-note-voice_002-f0dc2085112e.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_002-f0dc2085112e.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/uncategorized.md",
@@ -918,9 +1008,13 @@
       },
       "status": "ready_for_site",
       "readyForSite": true,
-      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "21e4b06ce532c2f0b57f4c0fa284eb87329f63a7e58e3d677a183baf6dc64b13"
+      "source_checksum": "b9e0d217b0add959e7a3e2d19a52b3813bbee254ec4720b17c68028e59cfb579",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_002-f0dc2085112e.md",
+      "category": "voice-note",
+      "project": "uncategorized",
+      "primary_type": "note"
     },
     "content/transcriptions/Voice_003.md": {
       "id": "8ae8c30860dd",
@@ -928,7 +1022,7 @@
       "rawTranscriptionPath": "content/transcriptions/Voice_003.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-voice-note-voice_003-8ae8c30860dd.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_003-8ae8c30860dd.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/uncategorized.md",
@@ -937,9 +1031,13 @@
       },
       "status": "ready_for_site",
       "readyForSite": true,
-      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "3482878b0f12b7efa5c15415e9b38396a79da45f7298b9de02744ec0b575d2c8"
+      "source_checksum": "aac0f4d6b72fc174a094a1569f2963f5f832719ecdaff1d5c45d664cc1707342",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_003-8ae8c30860dd.md",
+      "category": "voice-note",
+      "project": "uncategorized",
+      "primary_type": "note"
     },
     "content/transcriptions/Voice_004.md": {
       "id": "d58c88f66165",
@@ -947,7 +1045,7 @@
       "rawTranscriptionPath": "content/transcriptions/Voice_004.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-voice-note-voice_004-d58c88f66165.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_004-d58c88f66165.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/uncategorized.md",
@@ -956,9 +1054,13 @@
       },
       "status": "ready_for_site",
       "readyForSite": true,
-      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "5c02c319992c12cb89e6fdbc7a28ca6d7ebc2226042981329adcffb8a3f41aa2"
+      "source_checksum": "9673da80c8d3113143ad33dbb4b97da0bee677a7d236ca77b6be73f385ff869e",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_004-d58c88f66165.md",
+      "category": "voice-note",
+      "project": "uncategorized",
+      "primary_type": "note"
     },
     "content/transcriptions/Voice_005.md": {
       "id": "6921c6f5bc0a",
@@ -966,7 +1068,7 @@
       "rawTranscriptionPath": "content/transcriptions/Voice_005.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-conversation-voice_005-6921c6f5bc0a.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-conversation-voice_005-6921c6f5bc0a.md",
         "tasks": "content/tasks/todo.md",
         "calendar": null,
         "project": "content/projects/personal.md",
@@ -975,9 +1077,13 @@
       },
       "status": "ready_for_site",
       "readyForSite": true,
-      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "37139b635cc414941f18807492a9889c170da6f29da4b28ab039fdd02c69c80c"
+      "source_checksum": "21d503169f34510a2a565c82a56d597444108a2bc88e1c0d539c5a41968c2ac6",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-voice_005-6921c6f5bc0a.md",
+      "category": "conversation",
+      "project": "personal",
+      "primary_type": "note"
     },
     "content/transcriptions/Voice_006.md": {
       "id": "4d392948d577",
@@ -985,7 +1091,7 @@
       "rawTranscriptionPath": "content/transcriptions/Voice_006.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-voice-note-voice_006-4d392948d577.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_006-4d392948d577.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/personal.md",
@@ -994,9 +1100,13 @@
       },
       "status": "ready_for_site",
       "readyForSite": true,
-      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "0ded45b874c0b1c3982731974a8b381e6b44b2a78ac81a7142788e88c6ce2124"
+      "source_checksum": "4ad9b780cf12d07c254ce68e81e0a4bdc019390e4eb760768370f4f9c3132a08",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_006-4d392948d577.md",
+      "category": "voice-note",
+      "project": "personal",
+      "primary_type": "note"
     },
     "content/transcriptions/Voice_007.md": {
       "id": "793016bc4f37",
@@ -1004,7 +1114,7 @@
       "rawTranscriptionPath": "content/transcriptions/Voice_007.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-voice-note-voice_007-793016bc4f37.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_007-793016bc4f37.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/uncategorized.md",
@@ -1013,9 +1123,13 @@
       },
       "status": "ready_for_site",
       "readyForSite": true,
-      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "bcead9ef6cd9102c52631ff73181907601a285a55fe1ce1e51e72fac53099a07"
+      "source_checksum": "3b3d80a950afb4c19ace51e85d9282461263aa49fd47e5da765bf0b144eadb10",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_007-793016bc4f37.md",
+      "category": "voice-note",
+      "project": "uncategorized",
+      "primary_type": "note"
     },
     "content/transcriptions/Voice_250621_185357.md": {
       "id": "69216cdbadfb",
@@ -1023,7 +1137,7 @@
       "rawTranscriptionPath": "content/transcriptions/Voice_250621_185357.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-voice-note-voice_250621_185357-69216cdbadfb.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_250621_185357-69216cdbadfb.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/uncategorized.md",
@@ -1032,9 +1146,13 @@
       },
       "status": "ready_for_site",
       "readyForSite": true,
-      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "9a9a437aa31cfc25ca4f8cd5f250e11a32aad894ad886f301013afc0691d4037"
+      "source_checksum": "8e52ee08c303630933fb96a366f56ce2230786eb63600383a29d3ec76eb0245d",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_250621_185357-69216cdbadfb.md",
+      "category": "voice-note",
+      "project": "uncategorized",
+      "primary_type": "note"
     },
     "content/transcriptions/Voice_250621_185410.md": {
       "id": "a4d50b0e6da1",
@@ -1042,7 +1160,7 @@
       "rawTranscriptionPath": "content/transcriptions/Voice_250621_185410.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-voice-note-voice_250621_185410-a4d50b0e6da1.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_250621_185410-a4d50b0e6da1.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/uncategorized.md",
@@ -1051,9 +1169,13 @@
       },
       "status": "ready_for_site",
       "readyForSite": true,
-      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "f5bfd820c0974f0b4559cc7a6103aa8fc013e93f73dcfcbfda3a125cf15dc60b"
+      "source_checksum": "f63ba018e37da26c09506779d5bbc639de28165f9ed1aa23cef7fa46a54adac0",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_250621_185410-a4d50b0e6da1.md",
+      "category": "voice-note",
+      "project": "uncategorized",
+      "primary_type": "note"
     },
     "content/transcriptions/Voice_260516_191818.md": {
       "id": "596e527d5382",
@@ -1061,7 +1183,7 @@
       "rawTranscriptionPath": "content/transcriptions/Voice_260516_191818.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-voice-note-voice_260516_191818-596e527d5382.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_260516_191818-596e527d5382.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/uncategorized.md",
@@ -1070,9 +1192,13 @@
       },
       "status": "ready_for_site",
       "readyForSite": true,
-      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "903da80abeb4ec4438d172688c51344cb1825a4c075e4df21f8b500b2eea340b"
+      "source_checksum": "fe842d932b77d57b22782c60bbc53734893a0a4c6e4292899381279d447577d6",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_260516_191818-596e527d5382.md",
+      "category": "voice-note",
+      "project": "uncategorized",
+      "primary_type": "note"
     },
     "content/transcriptions/Voice_260516_235502.md": {
       "id": "aa98439a4b47",
@@ -1080,7 +1206,7 @@
       "rawTranscriptionPath": "content/transcriptions/Voice_260516_235502.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-voice-note-voice_260516_235502-aa98439a4b47.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_260516_235502-aa98439a4b47.md",
         "tasks": "content/tasks/todo.md",
         "calendar": "content/calendar/events.md",
         "project": "content/projects/personal.md",
@@ -1089,16 +1215,20 @@
       },
       "status": "ready_for_site",
       "readyForSite": true,
-      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "1e78df663d6100d0626bae21135e0e8762b8413a88744e2713d52332c8361439"
+      "source_checksum": "ed9dee30e057a09606aa90f8beaf9bded94da003e4390644b1b080895977976d",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_260516_235502-aa98439a4b47.md",
+      "category": "voice-note",
+      "project": "personal",
+      "primary_type": "note"
     },
     "content/transcriptions/Christian.md": {
       "id": "42d821331d94",
       "sourceAudio": "Christian.m4a",
       "rawTranscriptionPath": "content/transcriptions/Christian.md",
       "aiOutputs": {
-        "meeting": "content/meetings/2026-05-17-conversation-christian-42d821331d94.md",
+        "meeting": "content/ai-ready-transcriptions/2026-05-17-conversation-christian-42d821331d94.md",
         "note": null,
         "tasks": "content/tasks/todo.md",
         "calendar": null,
@@ -1108,9 +1238,13 @@
       },
       "status": "ready_for_site",
       "readyForSite": true,
-      "aiProcessedAt": "2026-05-17T11:11:46Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "ff852a4a84b386dd4bc4168fa6ebb344301d85f1fa8a3487cb218aac6bc3c227"
+      "source_checksum": "328f62c33b86b0718afc9d8bc52bd13ebbfe0ff95b1e0bd7c662fdce90306744",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-christian-42d821331d94.md",
+      "category": "conversation",
+      "project": "personal",
+      "primary_type": "meeting"
     },
     "content/transcriptions/Chat history with Karn.md": {
       "id": "37d2a3a4fa59",
@@ -1118,7 +1252,7 @@
       "rawTranscriptionPath": "content/transcriptions/Chat history with Karn.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-conversation-chat-history-with-karn-37d2a3a4fa59.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-conversation-chat-history-with-karn-37d2a3a4fa59.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/personal.md",
@@ -1127,9 +1261,13 @@
       },
       "status": "ready_for_site",
       "readyForSite": true,
-      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "2b22742b185f0f47a9c50ca2abab76570924487f726aec2d6c3a4bf0b27d48bb"
+      "source_checksum": "a6c042407321c927337d6a60b4c3e5ab31f4b1169fddbc9ea6e1fc498a7442ce",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-chat-history-with-karn-37d2a3a4fa59.md",
+      "category": "conversation",
+      "project": "personal",
+      "primary_type": "note"
     },
     "content/transcriptions/WhatsApp Chat with Koragon Gi.md": {
       "id": "f97895de6fd3",
@@ -1137,7 +1275,7 @@
       "rawTranscriptionPath": "content/transcriptions/WhatsApp Chat with Koragon Gi.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-conversation-whatsapp-chat-with-koragon-gi-f97895de6fd3.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-conversation-whatsapp-chat-with-koragon-gi-f97895de6fd3.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/personal.md",
@@ -1146,9 +1284,13 @@
       },
       "status": "ready_for_site",
       "readyForSite": true,
-      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "2de295478101b5b44be1c059957c51cffa7ce250142569fc65dbbbdb34ae7c80"
+      "source_checksum": "b9934766666bdbc1397582d68b75ffaecbd60748bfb9a4b7dfdab2f62fc3f25c",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-whatsapp-chat-with-koragon-gi-f97895de6fd3.md",
+      "category": "conversation",
+      "project": "personal",
+      "primary_type": "note"
     },
     "content/transcriptions/WhatsApp Chat with italiani a Patta.md": {
       "id": "9c47ef78ab53",
@@ -1156,7 +1298,7 @@
       "rawTranscriptionPath": "content/transcriptions/WhatsApp Chat with italiani a Patta.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-conversation-whatsapp-chat-with-italiani-a-patta-9c47ef78ab53.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-conversation-whatsapp-chat-with-italiani-a-patta-9c47ef78ab53.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/thaifans.md",
@@ -1165,9 +1307,13 @@
       },
       "status": "ready_for_site",
       "readyForSite": true,
-      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "773d3af04bce162a0f7583fb84b2253abae53b946a004849c2067aeeffdeed0f"
+      "source_checksum": "b5631d1e7c70d1015aef37ac9b1f657522731d0ff704f7469e13ace0faadab80",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-whatsapp-chat-with-italiani-a-patta-9c47ef78ab53.md",
+      "category": "conversation",
+      "project": "thaifans",
+      "primary_type": "note"
     },
     "content/transcriptions/WhatsApp Chat with IANN.md": {
       "id": "c52f33323d06",
@@ -1175,7 +1321,7 @@
       "rawTranscriptionPath": "content/transcriptions/WhatsApp Chat with IANN.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-conversation-whatsapp-chat-with-iann-c52f33323d06.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-conversation-whatsapp-chat-with-iann-c52f33323d06.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/personal.md",
@@ -1184,9 +1330,13 @@
       },
       "status": "ready_for_site",
       "readyForSite": true,
-      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "1dc2a6e7e917cfe51ed5a6de1e3012fd28d7e607ac45c367a650cc254a3d95be"
+      "source_checksum": "ec8738b9f65d94be1054212495c4e36abbe2f568f425a255fa28bdcaa690d617",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-whatsapp-chat-with-iann-c52f33323d06.md",
+      "category": "conversation",
+      "project": "personal",
+      "primary_type": "note"
     },
     "content/transcriptions/WhatsApp Chat wi.md": {
       "id": "6aabaa09ab24",
@@ -1194,7 +1344,7 @@
       "rawTranscriptionPath": "content/transcriptions/WhatsApp Chat wi.md",
       "aiOutputs": {
         "meeting": null,
-        "note": "content/notes/2026-05-17-conversation-whatsapp-chat-wi-6aabaa09ab24.md",
+        "note": "content/ai-ready-transcriptions/2026-05-17-conversation-whatsapp-chat-wi-6aabaa09ab24.md",
         "tasks": null,
         "calendar": null,
         "project": "content/projects/personal.md",
@@ -1203,9 +1353,13 @@
       },
       "status": "ready_for_site",
       "readyForSite": true,
-      "aiProcessedAt": "2026-05-17T11:20:03Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "246b648ac480210b7d974018b32055382d50c303ac07741e9b430e3837481c4b"
+      "source_checksum": "562d2a476afb431898bb1fbdb9733b3e1cfce24af6f8bde9c48d266c21da8e62",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-conversation-whatsapp-chat-wi-6aabaa09ab24.md",
+      "category": "conversation",
+      "project": "personal",
+      "primary_type": "note"
     },
     "G:\\My Drive\\Voice Recorder\\Voice 260517_181446.m4a": {
       "id": "85846b20bb26",
@@ -1227,7 +1381,7 @@
       "detected_language": "it",
       "language_probability": 0.9810185432434082,
       "rawCreatedAt": "2026-05-17 15:04:34 UTC",
-      "aiProcessedAt": "2026-05-17T15:05:12Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "status": "ready_for_site",
       "readyForSite": true,
       "error": null,
@@ -1238,9 +1392,10 @@
       "full_path": "G:\\My Drive\\Voice Recorder\\Voice 260517_181446.m4a",
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_260517_181446.md",
       "processed_datetime": "2026-05-17 15:04:34 UTC",
-      "source_checksum": "de4d18bf1933601dc9c64e18952278e2d30f367f92808b604f1f279c0189a3ce",
+      "source_checksum": "bd488b1aaf534b0b44e8ec027ea2d82235e4668c04f6f9a643281b3d5c904005",
       "category": "meeting",
-      "project": "thaifans"
+      "project": "thaifans",
+      "primary_type": "meeting"
     },
     "content/transcriptions/Voice_260517_181446.md": {
       "id": "85846b20bb26",
@@ -1258,11 +1413,12 @@
       "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-meeting-voice_260517_181446-85846b20bb26.md",
       "status": "ready_for_site",
       "readyForSite": true,
-      "aiProcessedAt": "2026-05-17T15:05:12Z",
+      "aiProcessedAt": "2026-05-17T15:06:39Z",
       "error": null,
-      "source_checksum": "de4d18bf1933601dc9c64e18952278e2d30f367f92808b604f1f279c0189a3ce",
+      "source_checksum": "bd488b1aaf534b0b44e8ec027ea2d82235e4668c04f6f9a643281b3d5c904005",
       "category": "meeting",
-      "project": "thaifans"
+      "project": "thaifans",
+      "primary_type": "meeting"
     }
   },
   "version": 2

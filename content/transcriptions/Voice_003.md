@@ -1,4 +1,4 @@
-<!-- PROCESSED: true | date: 2026-05-17T15:04:27Z | output: content/ai-ready-transcriptions/2026-05-17-voice-note-voice_003-8ae8c30860dd.md | checksum: d8abde782e4a7920fe2a559411e2c179a33a072841ff59fc05f14b6b6c37762e -->
+<!-- PROCESSED: true | date: 2026-05-17T15:06:39Z | output: content/ai-ready-transcriptions/2026-05-17-voice-note-voice_003-8ae8c30860dd.md | checksum: aac0f4d6b72fc174a094a1569f2963f5f832719ecdaff1d5c45d664cc1707342 -->
 # Transcription: Voice 003.m4a
 
 - **Source file:** Voice 003.m4a

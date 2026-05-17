@@ -4,12 +4,12 @@ main_category: conversation
 category: notes
 project: personal
 date: 2026-05-17
-processing_date: 2026-05-17T15:04:27Z
-processed_date: 2026-05-17T15:04:27Z
+processing_date: 2026-05-17T15:06:39Z
+processed_date: 2026-05-17T15:06:39Z
 source_audio: Chat history with Karn
 source_transcription: content/transcriptions/Chat history with Karn.md
 source_id: 37d2a3a4fa59
-source_checksum: 68081aac2d2f0a3a920213a889b5c09f3300e5250d0d97d2a7a4786b5fe32ebf
+source_checksum: a6c042407321c927337d6a60b4c3e5ab31f4b1169fddbc9ea6e1fc498a7442ce
 grouped_output: content/ai-ready-transcriptions/2026-05-17-conversation-chat-history-with-karn-37d2a3a4fa59.md
 primary_type: note
 processed: true
@@ -22,7 +22,7 @@ Chat Karn — relazione, salute e vita a Pattaya
 ## Source
 - **Source audio:** Chat history with Karn
 - **Source transcription:** `Chat history with Karn.md`
-- **Processed date:** 2026-05-17T15:04:27Z
+- **Processed date:** 2026-05-17T15:06:39Z
 - **Main category:** conversation
 - **Project:** personal
 

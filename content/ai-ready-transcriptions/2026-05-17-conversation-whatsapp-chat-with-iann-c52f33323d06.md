@@ -4,12 +4,12 @@ main_category: conversation
 category: notes
 project: personal
 date: 2026-05-17
-processing_date: 2026-05-17T15:04:27Z
-processed_date: 2026-05-17T15:04:27Z
+processing_date: 2026-05-17T15:06:39Z
+processed_date: 2026-05-17T15:06:39Z
 source_audio: WhatsApp Chat with IANN
 source_transcription: content/transcriptions/WhatsApp Chat with IANN.md
 source_id: c52f33323d06
-source_checksum: 5cf2cb3c3312a614c55820e437379c8ccb642d28f3c567c330e5b82c391f288f
+source_checksum: ec8738b9f65d94be1054212495c4e36abbe2f568f425a255fa28bdcaa690d617
 grouped_output: content/ai-ready-transcriptions/2026-05-17-conversation-whatsapp-chat-with-iann-c52f33323d06.md
 primary_type: note
 processed: true
@@ -22,7 +22,7 @@ Famiglia Iannace — gruppo WhatsApp
 ## Source
 - **Source audio:** WhatsApp Chat with IANN
 - **Source transcription:** `WhatsApp Chat with IANN.md`
-- **Processed date:** 2026-05-17T15:04:27Z
+- **Processed date:** 2026-05-17T15:06:39Z
 - **Main category:** conversation
 - **Project:** personal
 

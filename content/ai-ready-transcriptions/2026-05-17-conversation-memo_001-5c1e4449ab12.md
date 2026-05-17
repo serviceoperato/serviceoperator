@@ -4,12 +4,12 @@ main_category: conversation
 category: notes
 project: serviceopera
 date: 2026-05-17
-processing_date: 2026-05-17T15:04:27Z
-processed_date: 2026-05-17T15:04:27Z
+processing_date: 2026-05-17T15:06:39Z
+processed_date: 2026-05-17T15:06:39Z
 source_audio: Memo 001.m4a
 source_transcription: content/transcriptions/Memo_001.md
 source_id: 5c1e4449ab12
-source_checksum: 550d5bd2e34cc798f04a5eda1dd5ba3f85856f82f949e92208db6e47ba82f357
+source_checksum: bb002ca27e72c23d7109c4caa58ca0c00c6c2985b6014b60f04741194d413a6e
 grouped_output: content/ai-ready-transcriptions/2026-05-17-conversation-memo_001-5c1e4449ab12.md
 primary_type: note
 processed: true
@@ -22,7 +22,7 @@ Idea servizio riassunti e registrazione per AI
 ## Source
 - **Source audio:** Memo 001.m4a
 - **Source transcription:** `Memo_001.md`
-- **Processed date:** 2026-05-17T15:04:27Z
+- **Processed date:** 2026-05-17T15:06:39Z
 - **Main category:** conversation
 - **Project:** serviceopera
 

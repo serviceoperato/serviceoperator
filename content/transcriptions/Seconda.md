@@ -1,4 +1,4 @@
-<!-- PROCESSED: true | date: 2026-05-17T15:04:27Z | output: content/ai-ready-transcriptions/2026-05-17-conversation-seconda-86e8348fd2d4.md | checksum: 7c4c9f94b957d1bd13e53ccdc1a5591ff2a81164de08342b1e5f90047d11bfe4 -->
+<!-- PROCESSED: true | date: 2026-05-17T15:06:39Z | output: content/ai-ready-transcriptions/2026-05-17-conversation-seconda-86e8348fd2d4.md | checksum: 8abb164995e6b9b8b132c3cedb5b2c613f755e8f9305f341961c745a74f35a4b -->
 # Transcription: Seconda.m4a
 
 - **Source file:** Seconda.m4a

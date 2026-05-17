@@ -4,12 +4,12 @@ main_category: conversation
 category: notes
 project: serviceopera
 date: 2026-05-17
-processing_date: 2026-05-17T15:04:27Z
-processed_date: 2026-05-17T15:04:27Z
+processing_date: 2026-05-17T15:06:39Z
+processed_date: 2026-05-17T15:06:39Z
 source_audio: Memo 002.m4a
 source_transcription: content/transcriptions/Memo_002.md
 source_id: ea440a9f313e
-source_checksum: 2cf14a09dd4e16fff4c1da0954598f728fc638410b0c6fbf56487f96def58e62
+source_checksum: 5ed13b06f8aabb49ee2dab254659c9ec16ceabed69b9d6b322210e4ebbdf5113
 grouped_output: content/ai-ready-transcriptions/2026-05-17-conversation-memo_002-ea440a9f313e.md
 primary_type: note
 processed: true
@@ -22,7 +22,7 @@ Dibattiti politici e informazione bilanciata
 ## Source
 - **Source audio:** Memo 002.m4a
 - **Source transcription:** `Memo_002.md`
-- **Processed date:** 2026-05-17T15:04:27Z
+- **Processed date:** 2026-05-17T15:06:39Z
 - **Main category:** conversation
 - **Project:** serviceopera
 
