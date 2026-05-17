@@ -5,7 +5,7 @@
   'use strict';
 
   /** Bumped when dashboard markup/behavior changes (cache-bust aid). */
-  window.TX_DASHBOARD_UI_REV = 3;
+  window.TX_DASHBOARD_UI_REV = 4;
 
   var CATEGORIES = [
     { key: 'meetings', label: 'Meeting summaries', short: 'Meetings' },
@@ -282,16 +282,24 @@
     return pool;
   }
 
+  function isGenericPlaceholderText(t) {
+    var s = String(t || '').toLowerCase();
+    if (!s) return true;
+    if (s.indexOf('open for structured sections') !== -1) return true;
+    if (s.indexOf('ai-ready note from') === 0 && s.length < 120) return true;
+    return false;
+  }
+
   function splitTextToPoints(text, max) {
     var t = String(text || '').trim();
-    if (!t) return [];
+    if (!t || isGenericPlaceholderText(t)) return [];
     var parts = t
       .split(/(?<=[.!?])\s+|[\n;•]+/)
       .map(function (s) {
         return s.replace(/^[-*•]\s*/, '').trim();
       })
       .filter(function (s) {
-        return s.length > 8;
+        return s.length > 8 && !isGenericPlaceholderText(s);
       });
     return uniquePoints(parts).slice(0, max || 3);
   }
@@ -300,11 +308,17 @@
     var cat = String(item.category || 'notes').toLowerCase();
     var pool = pointValuesForKeys(item, CATEGORY_POINT_KEYS[cat] || []);
     if (!pool.length) pool = pointValuesForKeys(item, KEY_POINT_FALLBACK_KEYS);
+    pool = pool.filter(function (p) {
+      return !isGenericPlaceholderText(p);
+    });
     if (!pool.length && item.taskText) pool.push(item.taskText);
     if (!pool.length && item.decisionText) pool.push(item.decisionText);
     if (!pool.length && item.issue) pool.push(item.issue);
     if (!pool.length && item.summary) pool = pool.concat(splitTextToPoints(item.summary, 3));
     if (!pool.length && item.preview) pool = pool.concat(splitTextToPoints(item.preview, 3));
+    pool = pool.filter(function (p) {
+      return !isGenericPlaceholderText(p);
+    });
     return uniquePoints(pool).slice(0, 3);
   }
 
@@ -2065,7 +2079,7 @@
           })
           .join('') +
         '</ul></div>'
-      : '';
+      : '<p class="tx-dash-card__points-empty tf-admin-muted">Open for structured highlights</p>';
     return (
       '<article class="tx-dash-card tx-card' +
       unread +
@@ -2868,6 +2882,11 @@
   }
 
   window.initAdminTranscriptions = function () {
+    var section = byId('transcriptionsSection');
+    if (section) {
+      section.classList.add('tx-admin--dashboard');
+      section.setAttribute('data-tx-dashboard-rev', String(window.TX_DASHBOARD_UI_REV || 0));
+    }
     bindControls();
     renderOverview();
     renderCategoryHeader();

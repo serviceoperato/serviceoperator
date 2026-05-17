@@ -1,7 +1,17 @@
 /* global self, caches, fetch, clients */
 
 var PAGE_CACHE = 'so-pages-v7';
-var ASSET_CACHE = 'so-assets-v5';
+var ASSET_CACHE = 'so-assets-v6';
+
+function isAdminTranscriptionsAsset(pathname) {
+  return (
+    pathname === '/admin-transcriptions.js' ||
+    pathname === '/transcriptions-dashboard.css' ||
+    pathname === '/admin-transcriptions.css' ||
+    pathname === '/transcriptions-admin.css' ||
+    pathname === '/admin.html'
+  );
+}
 
 function isSameOrigin(url) {
   return url.origin === self.location.origin;
@@ -103,6 +113,16 @@ self.addEventListener('fetch', function (event) {
   }
 
   if (isCacheableAsset(event.request)) {
+    if (isAdminTranscriptionsAsset(url.pathname)) {
+      event.respondWith(
+        fetch(event.request).catch(function () {
+          return caches.open(ASSET_CACHE).then(function (cache) {
+            return cache.match(event.request);
+          });
+        })
+      );
+      return;
+    }
     event.respondWith(staleWhileRevalidate(event.request, ASSET_CACHE, event));
   }
 });
