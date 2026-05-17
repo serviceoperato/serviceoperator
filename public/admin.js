@@ -38,29 +38,94 @@
     writeStoredAdminJwt('');
   }
 
-  /** After sign-in, open a numbered report if the user was redirected from /clinics/NNN/ or /hotels/NNN/. */
-  function readAdminLoginNextPath() {
+  /** Safe same-origin `?next=` from login handoff or server redirect (path must start with /, no //). */
+  function readAdminLoginNextParam() {
     try {
       var params = new URLSearchParams(window.location.search);
       var next = (params.get('next') || '').trim();
       if (!next || next.charAt(0) !== '/' || next.indexOf('//') === 0) return '';
-      var pathOnly = next.split('?')[0].split('#')[0];
-      if (!/^\/(clinics|hotels)\/\d{3}(\/.*)?$/.test(pathOnly)) return '';
       return next;
     } catch (e) {
       return '';
     }
   }
 
-  function redirectAdminLoginNextIfPresent() {
-    var next = readAdminLoginNextPath();
+  function normalizeAdminShellPath(pathname) {
+    var path = String(pathname || '').replace(/\/+$/, '') || '/';
+    if (path === '/admin' || /\/admin\.html$/i.test(path)) return '/admin/users';
+    return path;
+  }
+
+  /** Whitelist admin SPA paths allowed in `?next=` (must match getAdminRouteFromLocation). */
+  function isAllowedAdminShellNextPath(pathOnly) {
+    var norm = normalizeAdminShellPath(pathOnly);
+    return (
+      norm === '/admin/users' ||
+      norm === '/admin/activity' ||
+      norm === '/admin/deploy-log' ||
+      norm === '/admin/site-appearance' ||
+      norm === '/admin/icons' ||
+      norm === '/admin/report-catalog' ||
+      norm === '/admin/user-reports' ||
+      norm === '/admin/user-profiling' ||
+      norm === '/admin/voice-recorder' ||
+      norm === '/admin/transcriptions'
+    );
+  }
+
+  function isAllowedClinicHotelNextPath(pathOnly) {
+    return /^\/(clinics|hotels)\/\d{3}(\/.*)?$/.test(pathOnly);
+  }
+
+  function stripAdminLoginNextQueryParam() {
+    try {
+      var params = new URLSearchParams(window.location.search);
+      if (!params.has('next')) return;
+      params.delete('next');
+      var qs = params.toString();
+      var url = window.location.pathname + (qs ? '?' + qs : '') + window.location.hash;
+      history.replaceState(null, '', url);
+    } catch (e) {}
+  }
+
+  /** Full-page redirect for numbered clinic/hotel reports after admin sign-in. */
+  function redirectClinicHotelLoginNextIfPresent() {
+    var next = readAdminLoginNextParam();
     if (!next) return false;
+    var pathOnly = next.split('?')[0].split('#')[0];
+    if (!isAllowedClinicHotelNextPath(pathOnly)) return false;
     try {
       var u = new URL(next, window.location.origin);
       if (u.origin !== window.location.origin) return false;
       window.location.replace(u.pathname + u.search + u.hash);
       return true;
     } catch (e2) {
+      return false;
+    }
+  }
+
+  /** In-shell navigation for `?next=/admin/...` (e.g. transcriptions after auth redirect). */
+  function applyAdminShellLoginNextIfPresent() {
+    var next = readAdminLoginNextParam();
+    if (!next) return false;
+    var pathOnly = next.split('?')[0].split('#')[0];
+    if (!isAllowedAdminShellNextPath(pathOnly)) return false;
+    try {
+      var u = new URL(next, window.location.origin);
+      if (u.origin !== window.location.origin) return false;
+      var targetPath = normalizeAdminShellPath(u.pathname);
+      var target = targetPath + u.search + u.hash;
+      var here =
+        normalizeAdminShellPath(window.location.pathname) +
+        window.location.search +
+        window.location.hash;
+      if (target !== here) {
+        history.replaceState(null, '', target);
+      } else {
+        stripAdminLoginNextQueryParam();
+      }
+      return true;
+    } catch (e3) {
       return false;
     }
   }
@@ -2869,7 +2934,8 @@
   }
 
   function showWorkspace() {
-    if (redirectAdminLoginNextIfPresent()) return;
+    if (redirectClinicHotelLoginNextIfPresent()) return;
+    applyAdminShellLoginNextIfPresent();
     if (gate) gate.classList.add('is-hidden');
     if (workspace) workspace.classList.remove('is-hidden');
     loadTfVersion();
