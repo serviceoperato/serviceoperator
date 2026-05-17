@@ -2256,6 +2256,68 @@
     return '';
   }
 
+  function formatEta(seconds) {
+    if (seconds == null || seconds < 0) return '—';
+    var s = Math.round(Number(seconds));
+    var h = Math.floor(s / 3600);
+    var m = Math.floor((s % 3600) / 60);
+    if (h > 0) return h + 'h ' + m + 'm';
+    if (m > 0) return m + ' min';
+    return s + ' s';
+  }
+
+  function renderVoicePipelineLive(progress, running) {
+    var liveEl = document.getElementById('voicePipelineLive');
+    if (!liveEl) return;
+    if (!progress || (!running && progress.status !== 'running')) {
+      liveEl.style.display = 'none';
+      liveEl.innerHTML = '';
+      return;
+    }
+    liveEl.style.display = 'block';
+    var finishLabel = progress.estimatedFinishAt
+      ? formatAdminTs(progress.estimatedFinishAt)
+      : '—';
+    liveEl.innerHTML =
+      '<p style="margin:0 0 0.35rem"><strong>Live progress</strong></p>' +
+      '<ul style="margin:0;padding-left:1.1rem">' +
+      '<li>Phase: <code class="mono">' +
+      escapeHtml(progress.phase || '—') +
+      '</code></li>' +
+      '<li>Files found: <strong>' +
+      escapeHtml(progress.filesTotal != null ? progress.filesTotal : '—') +
+      '</strong> · already done: ' +
+      escapeHtml(progress.filesSkipped != null ? progress.filesSkipped : '0') +
+      ' · to process: <strong>' +
+      escapeHtml(progress.filesToProcess != null ? progress.filesToProcess : '—') +
+      '</strong></li>' +
+      '<li>Completed this run: <strong>' +
+      escapeHtml(progress.filesCompleted != null ? progress.filesCompleted : '0') +
+      '</strong></li>' +
+      '<li>Total size (pending): <strong>' +
+      escapeHtml(progress.bytesTotalHuman || '—') +
+      '</strong></li>' +
+      '<li>Now processing: <code class="mono">' +
+      escapeHtml(progress.currentFile || '(loading model…)') +
+      '</code>' +
+      (progress.currentIndex != null && progress.currentOf != null
+        ? ' (' + escapeHtml(progress.currentIndex) + '/' + escapeHtml(progress.currentOf) + ')'
+        : '') +
+      (progress.currentSizeHuman ? ' · ' + escapeHtml(progress.currentSizeHuman) : '') +
+      '</li>' +
+      '<li>ETA remaining: <strong>' +
+      escapeHtml(formatEta(progress.estimatedSecondsRemaining)) +
+      '</strong> · finish ~ <strong>' +
+      escapeHtml(finishLabel) +
+      '</strong></li>' +
+      '</ul>' +
+      (progress.message
+        ? '<p class="mono" style="margin:0.5rem 0 0;font-size:0.78rem">' +
+          escapeHtml(progress.message) +
+          '</p>'
+        : '');
+  }
+
   function renderVoicePipelineStatus(payload) {
     var badge = document.getElementById('voicePipelineStatusBadge');
     var hint = document.getElementById('voicePipelineHint');
@@ -2268,6 +2330,7 @@
     var status = payload && payload.status ? String(payload.status) : 'idle';
     badge.textContent = status;
     var running = Boolean(payload && (payload.running || status === 'running'));
+    renderVoicePipelineLive(payload && payload.progress, running);
     if (runBtn) runBtn.disabled = running;
 
     var parts = [];
@@ -2391,6 +2454,17 @@
     else stopVoicePipelinePolling();
   }
 
+  var voicePipelineLivePollTimer = null;
+
+  function startVoicePipelineLivePolling() {
+    if (voicePipelineLivePollTimer) return;
+    voicePipelineLivePollTimer = setInterval(function () {
+      var section = document.getElementById('voiceRecorderSection');
+      if (!section || section.classList.contains('is-hidden')) return;
+      refreshVoicePipelineStatus({ quiet: true });
+    }, 2500);
+  }
+
   function stopVoicePipelinePolling() {
     if (voicePipelinePollTimer) {
       clearInterval(voicePipelinePollTimer);
@@ -2479,6 +2553,7 @@
 
   function initVoiceRecorderPipelineUi() {
     refreshVoicePipelineStatus({ quiet: true });
+    startVoicePipelineLivePolling();
     if (voicePipelineUiBound) return;
     voicePipelineUiBound = true;
     var runBtn = document.getElementById('voicePipelineRunBtn');

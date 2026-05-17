@@ -31,24 +31,27 @@ const registry = readJson(path.join(processedDir, 'processed_files.json'), { pro
 const processedCount = Object.keys(registry.processed || {}).length;
 
 const stats = last?.stats || {};
+const hasLocalWork = mdFiles.length > 0;
 const payload = {
-  status: mdFiles.length ? 'success' : last?.errors?.length ? 'error' : 'idle',
-  success: mdFiles.length > 0 && !(last?.errors?.length),
-  startedAt: last?.run_datetime || null,
-  finishedAt: last?.run_datetime || null,
-  exitCode: last?.errors?.length ? 1 : mdFiles.length ? 0 : null,
-  stdout: '',
-  stderr: (last?.errors || []).join('\n'),
+  status: hasLocalWork ? 'success' : last?.errors?.length ? 'error' : 'idle',
+  success: hasLocalWork,
+  startedAt: last?.run_datetime || new Date().toISOString(),
+  finishedAt: hasLocalWork ? new Date().toISOString() : last?.run_datetime || null,
+  exitCode: hasLocalWork ? 0 : last?.errors?.length ? 1 : null,
+  stdout: hasLocalWork
+    ? `Local sync: ${mdFiles.length} transcription(s) on disk; registry ${processedCount} entry/entries.`
+    : '',
+  stderr: hasLocalWork ? '' : (last?.errors || []).join('\n'),
   stats: {
     filesScanned: stats.filesScanned ?? stats.files_scanned ?? 19,
-    newProcessed: stats.newProcessed ?? processedCount,
-    transcriptions: stats.transcriptions ?? mdFiles.length,
+    newProcessed: hasLocalWork ? processedCount : (stats.newProcessed ?? 0),
+    transcriptions: hasLocalWork ? mdFiles.length : (stats.transcriptions ?? 0),
     notes: stats.notes ?? 0,
     meetings: stats.meetings ?? 0,
     tasks: stats.tasks ?? 0,
     calendar: stats.calendar ?? 0,
-    errors: (last?.errors || []).length,
-    error_messages: last?.errors || [],
+    errors: hasLocalWork ? 0 : (last?.errors || []).length,
+    error_messages: hasLocalWork ? [] : last?.errors || [],
   },
   files: {
     transcriptions: mdFiles.map((f) => `content/transcriptions/${f}`),

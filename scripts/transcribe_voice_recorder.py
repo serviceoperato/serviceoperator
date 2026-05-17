@@ -14,11 +14,25 @@ import json
 import logging
 import os
 import sys
+import time
 import traceback
 from datetime import datetime, timezone
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+from voice_pipeline_progress import (
+    format_bytes,
+    mark_file_done,
+    mark_file_start,
+    mark_idle,
+    mark_running_scan,
+    write_progress,
+)
+
+_SCRIPTS_DIR = Path(__file__).resolve().parent
+if str(_SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS_DIR))
+
+REPO_ROOT = _SCRIPTS_DIR.parent
 _DEFAULT_INPUT = r"G:\My Drive\Voice Recorder"
 INPUT_DIR = Path(os.environ.get("VOICE_RECORDER_INPUT_DIR", _DEFAULT_INPUT))
 TRANSCRIPTIONS_DIR = REPO_ROOT / "content" / "transcriptions"
@@ -173,6 +187,7 @@ def process_file(model, registry: dict, source: Path) -> bool:
         return False
 
     log.info("Processing file: %s", source.name)
+    write_progress(message=f"Transcribing: {source.name}")
     try:
         segment_rows, language, language_probability = transcribe_file(model, source)
     except Exception as exc:
@@ -237,17 +252,25 @@ def run_transcription() -> tuple[int, int, list[str]]:
         save_processed_registry(registry)
         return 0, 0, errors
 
-    pending = 0
+    queue: list[tuple[Path, str, int, float]] = []
+    skipped = 0
+    bytes_total = 0
     for source in audio_files:
         try:
             full_path, size, mtime = file_identity(source)
         except OSError:
             continue
-        if not is_already_processed(registry, full_path, size, mtime):
-            pending += 1
+        if is_already_processed(registry, full_path, size, mtime):
+            skipped += 1
+            continue
+        queue.append((source, full_path, size, mtime))
+        bytes_total += size
+    pending = len(queue)
     log.info("New files to transcribe: %d", pending)
+    mark_running_scan(audio_found, skipped, pending, bytes_total)
 
     if pending == 0:
+        write_progress(status="success", phase="done", message="All audio files already transcribed.")
         save_processed_registry(registry)
         return audio_found, 0, errors
 
@@ -258,9 +281,11 @@ def run_transcription() -> tuple[int, int, list[str]]:
         log.error("%s\n%s", msg, traceback.format_exc())
         errors.append(msg)
         errors.append(traceback.format_exc().strip())
+        write_progress(status="error", phase="transcribe", message=msg)
         return audio_found, 0, errors
 
     log.info("Loading Whisper model %r (cpu, int8)...", WHISPER_MODEL)
+    write_progress(phase="load_model", message=f"Loading Whisper model {WHISPER_MODEL!r}…")
     try:
         model = WhisperModel(WHISPER_MODEL, device="cpu", compute_type="int8")
     except Exception as exc:
@@ -268,22 +293,47 @@ def run_transcription() -> tuple[int, int, list[str]]:
         log.error("%s\n%s", msg, traceback.format_exc())
         errors.append(msg)
         errors.append(traceback.format_exc().strip())
+        write_progress(status="error", phase="transcribe", message=msg)
         return audio_found, 0, errors
 
     processed_count = 0
-    for source in audio_files:
+    run_started = time.monotonic()
+    total = len(queue)
+    for index, (source, _full_path, size, _mtime) in enumerate(queue, start=1):
+        mark_file_start(
+            file_name=source.name,
+            size_bytes=size,
+            index=index,
+            total=total,
+            started_monotonic=run_started,
+            completed_count=processed_count,
+        )
         try:
             if process_file(model, registry, source):
                 processed_count += 1
                 save_processed_registry(registry)
+                mark_file_done(processed_count, total)
         except Exception as exc:
             err = f"Unexpected error for {source.name}: {exc}"
             log.error("%s\n%s", err, traceback.format_exc())
             errors.append(err)
             errors.append(traceback.format_exc().strip())
+            write_progress(message=err)
             continue
 
     save_processed_registry(registry)
+    if errors:
+        write_progress(
+            status="error",
+            phase="done",
+            message=f"Transcription finished with {len(errors)} error(s).",
+        )
+    else:
+        write_progress(
+            status="success",
+            phase="done",
+            message=f"Transcription complete: {processed_count} new file(s).",
+        )
     log.info("Transcription complete. New transcriptions: %d", processed_count)
     return audio_found, processed_count, errors
 

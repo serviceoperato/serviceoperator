@@ -2108,6 +2108,7 @@ app.get('/api/admin/work-queue', requireAdmin, async (_req, res) => {
 const voiceProcessedDir = path.join(__dirname, 'content', 'processed');
 const voiceLatestPipelineRunPath = path.join(voiceProcessedDir, 'latest_pipeline_run.json');
 const voicePipelineRunsPath = path.join(voiceProcessedDir, 'pipeline_runs.json');
+const voicePipelineProgressPath = path.join(voiceProcessedDir, 'pipeline_progress.json');
 const voicePipelineScriptPath = path.join(__dirname, 'scripts', 'process_voice_recorder_pipeline.py');
 
 /** Strip host-specific paths from voice-pipeline API responses (admin JSON only). */
@@ -2220,27 +2221,86 @@ function isVoicePipelineChildRunning() {
   return Boolean(voicePipelineActive.child && voicePipelineActive.child.exitCode == null);
 }
 
+function sanitizeVoicePipelineProgress(progress) {
+  if (!progress || typeof progress !== 'object') return null;
+  return {
+    status: progress.status || 'idle',
+    phase: progress.phase || null,
+    message: sanitizeVoicePipelineText(String(progress.message || '')),
+    filesTotal: progress.files_total ?? null,
+    filesSkipped: progress.files_skipped ?? null,
+    filesToProcess: progress.files_to_process ?? null,
+    filesCompleted: progress.files_completed ?? null,
+    currentFile: progress.current_file || null,
+    currentIndex: progress.current_index ?? null,
+    currentOf: progress.current_of ?? null,
+    currentSizeBytes: progress.current_size_bytes ?? null,
+    currentSizeHuman: progress.current_size_human || null,
+    bytesTotal: progress.bytes_total ?? null,
+    bytesTotalHuman: progress.bytes_total_human || null,
+    estimatedFinishAt: progress.estimated_finish_at || null,
+    estimatedSecondsRemaining: progress.estimated_seconds_remaining ?? null,
+    updatedAt: progress.updated_at || null,
+    startedAt: progress.started_at || null,
+  };
+}
+
 function buildVoicePipelineStatusPayload() {
   const latest = readVoiceJsonFile(voiceLatestPipelineRunPath, null);
-  const running = isVoicePipelineChildRunning();
+  const progressRaw = readVoiceJsonFile(voicePipelineProgressPath, null);
+  const progress = sanitizeVoicePipelineProgress(progressRaw);
+  const runningChild = isVoicePipelineChildRunning();
+  const progressRunning = progress && progress.status === 'running';
+  const running = runningChild || progressRunning;
   const history = lastVoicePipelineRunFromHistory();
-  const stats = (latest && latest.stats) || (history && history.stats) || null;
-  const files = (latest && latest.files) || (history && history.files) || null;
+  let stats = (latest && latest.stats) || (history && history.stats) || null;
+  let files = (latest && latest.files) || (history && history.files) || null;
   let status = latest && typeof latest.status === 'string' ? latest.status : 'idle';
   if (running) status = 'running';
+  if (progressRunning && progress) {
+    stats = {
+      ...(stats && typeof stats === 'object' ? stats : {}),
+      filesScanned: progress.filesTotal ?? stats?.filesScanned,
+      newProcessed: progress.filesCompleted ?? stats?.newProcessed,
+      transcriptions: progress.filesCompleted ?? stats?.transcriptions,
+      errors: 0,
+      error_messages: [],
+    };
+  }
+  if (progressRunning && progress.filesCompleted > 0) {
+    const transDir = path.join(__dirname, 'content', 'transcriptions');
+    try {
+      if (fs.existsSync(transDir)) {
+        const md = fs
+          .readdirSync(transDir)
+          .filter((f) => f.endsWith('.md'))
+          .map((f) => `content/transcriptions/${f}`);
+        if (md.length) {
+          files = { ...(files && typeof files === 'object' ? files : {}), transcriptions: md };
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+  }
   return {
     ok: true,
     status,
     running,
     success: latest && typeof latest.success === 'boolean' ? latest.success : null,
-    startedAt: (running && voicePipelineActive.startedAt) || (latest && latest.startedAt) || null,
-    finishedAt: latest && latest.finishedAt ? latest.finishedAt : null,
-    exitCode: latest && latest.exitCode != null ? latest.exitCode : null,
+    startedAt:
+      (running && voicePipelineActive.startedAt) ||
+      (progress && progress.startedAt) ||
+      (latest && latest.startedAt) ||
+      null,
+    finishedAt: running ? null : latest && latest.finishedAt ? latest.finishedAt : null,
+    exitCode: running ? null : latest && latest.exitCode != null ? latest.exitCode : null,
     stdout: running ? voicePipelineActive.stdout : (latest && latest.stdout) || '',
     stderr: running ? voicePipelineActive.stderr : (latest && latest.stderr) || '',
     stats,
     files,
     historyRun: history,
+    progress,
   };
 }
 

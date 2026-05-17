@@ -20,7 +20,11 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+_SCRIPTS_DIR = Path(__file__).resolve().parent
+if str(_SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS_DIR))
+
+REPO_ROOT = _SCRIPTS_DIR.parent
 CONTENT = REPO_ROOT / "content"
 TRANSCRIPTIONS_DIR = CONTENT / "transcriptions"
 PROCESSED_DIR = CONTENT / "processed"
@@ -819,6 +823,8 @@ def process_transcription(
 
 
 def run_pipeline() -> RunStats:
+    from voice_pipeline_progress import write_progress
+
     stats = RunStats(run_datetime=utc_now_str())
     processed_names: list[str] = []
     ensure_content_dirs()
@@ -826,11 +832,16 @@ def run_pipeline() -> RunStats:
     if not PIPELINE_RUNS_JSON.exists():
         save_json(PIPELINE_RUNS_JSON, {"runs": []})
 
+    write_progress(status="running", phase="pipeline", message="Voice pipeline starting…")
     run_transcription_step(stats)
 
     registry = load_processed_registry()
     pending = pending_transcriptions(registry)
     log.info("Transcriptions to classify: %d", len(pending))
+    write_progress(
+        phase="classify",
+        message=f"Classifying {len(pending)} transcription(s)…",
+    )
 
     for key, entry, md_path in pending:
         try:
@@ -854,6 +865,12 @@ def run_pipeline() -> RunStats:
                 text = text[:idx] + err_lines + text[idx:]
                 report_path.write_text(text, encoding="utf-8")
 
+    write_progress(
+        status="success" if not stats.errors else "error",
+        phase="done",
+        message="Pipeline finished.",
+        files_completed=stats.files_transcribed,
+    )
     return stats
 
 
