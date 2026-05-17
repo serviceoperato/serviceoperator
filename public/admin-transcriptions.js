@@ -5,7 +5,7 @@
   'use strict';
 
   /** Bumped when dashboard markup/behavior changes (cache-bust aid). */
-  window.TX_DASHBOARD_UI_REV = 2;
+  window.TX_DASHBOARD_UI_REV = 3;
 
   var CATEGORIES = [
     { key: 'meetings', label: 'Meeting summaries', short: 'Meetings' },
@@ -282,6 +282,20 @@
     return pool;
   }
 
+  function splitTextToPoints(text, max) {
+    var t = String(text || '').trim();
+    if (!t) return [];
+    var parts = t
+      .split(/(?<=[.!?])\s+|[\n;•]+/)
+      .map(function (s) {
+        return s.replace(/^[-*•]\s*/, '').trim();
+      })
+      .filter(function (s) {
+        return s.length > 8;
+      });
+    return uniquePoints(parts).slice(0, max || 3);
+  }
+
   function itemKeyPoints(item) {
     var cat = String(item.category || 'notes').toLowerCase();
     var pool = pointValuesForKeys(item, CATEGORY_POINT_KEYS[cat] || []);
@@ -289,6 +303,8 @@
     if (!pool.length && item.taskText) pool.push(item.taskText);
     if (!pool.length && item.decisionText) pool.push(item.decisionText);
     if (!pool.length && item.issue) pool.push(item.issue);
+    if (!pool.length && item.summary) pool = pool.concat(splitTextToPoints(item.summary, 3));
+    if (!pool.length && item.preview) pool = pool.concat(splitTextToPoints(item.preview, 3));
     return uniquePoints(pool).slice(0, 3);
   }
 
@@ -963,13 +979,18 @@
   function buildChartFromCounts(counts) {
     if (!counts) return { hasChartData: false, chart: [] };
     var chart = [];
-    CATEGORIES.forEach(function (c, i) {
+    CATEGORIES.forEach(function (c) {
       var n = counts[c.key] != null ? counts[c.key] : 0;
       if (n > 0) {
-        chart.push({ category: c.key, label: c.short, value: n, color: CHART_COLORS[i % CHART_COLORS.length] });
+        chart.push({
+          category: c.key,
+          label: c.short,
+          value: n,
+          color: catTheme(c.key).accent,
+        });
       }
     });
-    return { hasChartData: chart.length > 1, chart: chart };
+    return { hasChartData: chart.length > 0, chart: chart };
   }
 
   var VISIBLE_PIPELINE_STATUSES = { ai_processed: true, ready_for_site: true };
@@ -1436,17 +1457,18 @@
     );
   }
 
-  function renderHero() {
-    var el = byId('txHero');
+  function renderDistribution() {
+    var el = byId('txDistribution');
     if (!el) return;
-    if (state.hasChartData && state.chart && state.chart.length) {
+    if (state.chart && state.chart.length) {
       el.innerHTML = renderRingChart(state.chart);
-      el.setAttribute('aria-hidden', 'false');
+      el.hidden = false;
+      el.removeAttribute('hidden');
       return;
     }
-    var cat = state.category === 'all' ? 'meetings' : state.category;
-    el.innerHTML = iconSvg(cat).replace('tx-cat-card__icon', 'tx-hero__icon');
-    el.setAttribute('aria-hidden', 'false');
+    el.innerHTML = '';
+    el.hidden = true;
+    el.setAttribute('hidden', '');
   }
 
   function renderStats() {
@@ -1558,11 +1580,14 @@
   function renderCategoryButton(c, counts, activeKey) {
     var n = counts[c.key] != null ? counts[c.key] : 0;
     var active = activeKey === c.key ? ' is-active' : '';
+    var theme = catTheme(c.key);
     return (
       '<button type="button" class="tx-cat-card' +
       active +
       '" data-tx-cat="' +
       esc(c.key) +
+      '" style="--tx-cat-accent:' +
+      esc(theme.accent) +
       '" role="tab" aria-selected="' +
       (active ? 'true' : 'false') +
       '">' +
@@ -1578,6 +1603,8 @@
   function selectCategory(key) {
     state.category = key || 'meetings';
     renderCategoryCards();
+    renderOverview();
+    renderCategoryHeader();
     renderFeed();
     closeTxSheet();
   }
@@ -2177,6 +2204,7 @@
     renderDigest();
     renderOverview();
     renderCategoryHeader();
+    renderDistribution();
 
     var list;
     if (state.searchQuery.trim() && state.searchResults) {
@@ -2722,6 +2750,7 @@
         renderCategoryCards();
         renderProjectSelect();
         syncFilterPills();
+        renderDistribution();
         renderFeed();
       })
       .catch(function () {
@@ -2842,6 +2871,7 @@
     bindControls();
     renderOverview();
     renderCategoryHeader();
+    renderDistribution();
     loadIndex();
   };
 })();

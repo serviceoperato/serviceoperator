@@ -35,8 +35,32 @@
 .tx-overview {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.65rem;
+  gap: 0.75rem;
   margin-bottom: 1rem;
+  min-height: 4rem;
+}
+
+.tx-distribution {
+  margin: 0 0 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--tx-dash-line);
+  border-radius: 12px;
+  background: var(--tx-dash-card);
+  box-shadow: var(--tx-dash-shadow);
+}
+
+.tx-distribution .tx-ring {
+  max-width: 11rem;
+}
+
+.tx-distribution[hidden] {
+  display: none !important;
+}
+
+@media (min-width: 720px) {
+  .tx-admin--dashboard .tx-toolbar-desktop--legacy-cats .tx-cats {
+    display: none !important;
+  }
 }
 
 @media (min-width: 720px) {
@@ -250,15 +274,18 @@
   height: 2rem;
 }
 
-.tx-dash-card__icon {
+.tx-dash-card__icon,
+.tx-overview-card__icon {
   width: 5rem;
   height: 5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 12px;
-  background: color-mix(in srgb, var(--tx-cat-accent, #4f46e5) 12%, var(--tx-dash-card));
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tx-cat-accent, #4f46e5) 18%, transparent);
+  background: color-mix(in srgb, var(--tx-cat-accent, #4f46e5) 22%, var(--tx-dash-card));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--tx-cat-accent, #4f46e5) 28%, transparent),
+    0 4px 12px color-mix(in srgb, var(--tx-cat-accent, #4f46e5) 12%, transparent);
 }
 
 .tx-dash-card__icon svg {
@@ -625,4 +652,33 @@
 
 .tx-admin--dashboard .tx-overview {
   display: grid !important;
+}
+
+.tx-admin--dashboard .tx-cat-card {
+  --tx-cat-accent: var(--tx-overview-accent, #4f46e5);
+  border-color: color-mix(in srgb, var(--tx-cat-accent) 35%, var(--tx-dash-line, #e2e8f0));
+}
+
+.tx-admin--dashboard .tx-cat-card .tx-cat-card__icon {
+  stroke: var(--tx-cat-accent, #4f46e5);
+}
+
+.tx-admin--dashboard .tx-cat-card.is-active {
+  border-color: var(--tx-cat-accent, #4f46e5);
+  background: color-mix(in srgb, var(--tx-cat-accent) 12%, var(--tx-dash-card, #fff));
+}
+
+@media (max-width: 719px) {
+  .tx-admin--dashboard .tx-feed .tx-card.tx-dash-card {
+    display: grid !important;
+    grid-template-columns: 80px 1fr !important;
+    padding: 0.75rem 0.85rem !important;
+    margin-bottom: 0.5rem;
+  }
+
+  .tx-admin--dashboard .tx-feed .tx-card.tx-dash-card .tx-card__top,
+  .tx-admin--dashboard .tx-feed .tx-card.tx-dash-card .tx-card__preview,
+  .tx-admin--dashboard .tx-feed .tx-card.tx-dash-card .tx-card__legacy {
+    display: none !important;
+  }
 }
