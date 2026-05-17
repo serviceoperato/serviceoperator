@@ -2006,13 +2006,13 @@
       ? ' role="checkbox" aria-checked="' + (isSelected ? 'true' : 'false') + '"'
       : '';
     var pointsHtml = points.length
-      ? '<ul class="tx-dash-card__points">' +
+      ? '<div class="tx-dash-card__points-wrap"><h4 class="tx-dash-card__points-label">Key points</h4><ul class="tx-dash-card__points">' +
         points
           .map(function (p) {
             return '<li>' + esc(p) + '</li>';
           })
           .join('') +
-        '</ul>'
+        '</ul></div>'
       : '';
     return (
       '<article class="tx-dash-card tx-card' +
