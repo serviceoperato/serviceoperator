@@ -5,7 +5,7 @@
   'use strict';
 
   /** Bumped when dashboard markup/behavior changes (cache-bust aid). */
-  window.TX_DASHBOARD_UI_REV = 11;
+  window.TX_DASHBOARD_UI_REV = 13;
 
   /** Detail page: collapsed preview length for full transcription reference (chars). */
   var DETAIL_REF_PREVIEW_CHARS = 650;
@@ -37,6 +37,17 @@
   };
 
   var HIDE_JUNK_STORAGE_KEY = 'tf.tx.hideJunk';
+  var SHOW_EMPTY_CATEGORIES_KEY = 'tf.tx.showEmptyCategories';
+  var GROUP_BY_STORAGE_KEY = 'so_tx_group_by';
+  var TIME_BUCKET_ORDER = ['today', 'yesterday', 'week', 'month', 'year', 'older'];
+  var TIME_BUCKET_LABELS = {
+    today: 'Today',
+    yesterday: 'Yesterday',
+    week: 'This week',
+    month: 'This month',
+    year: 'This year',
+    older: 'Older',
+  };
   var BULK_ONBOARDED_KEY = 'tf.tx.bulkOnboarded';
   var BULK_SYNC_CONCURRENCY = 5;
   var LONG_PRESS_MS = 500;
@@ -58,6 +69,7 @@
   var state = {
     items: [],
     counts: {},
+    sourceCounts: {},
     filtered: [],
     searchResults: null,
     category: 'meetings',
@@ -66,6 +78,7 @@
     needsReviewCount: 0,
     filters: { today: false, week: false, unreviewed: false, syncPending: false },
     hideJunk: true,
+    showEmptyCategories: false,
     project: '',
     searchQuery: '',
     searchLoading: false,
@@ -85,6 +98,7 @@
     bulkSyncing: false,
     bulkSyncProgress: { done: 0, total: 0 },
     sortOrder: 'recent',
+    groupByDate: 'processed',
   };
 
   var searchTimer = null;
@@ -517,6 +531,9 @@
 
 
   var KEY_POINT_MAX = 60;
+  var TITLE_MAX_WORDS = 12;
+  var UNCLEAR_ITEM_TITLE = 'Unclear audio / Needs review';
+  var TRAILING_DATE_RE = /\s*[—–-]\s*(?:\d{1,2}\s+\w+\s+\d{4}|\d{4}-\d{2}-\d{2})\s*$/;
 
   var CATEGORY_POINT_KEYS = {
     meetings: ['decisions', 'openPoints', 'nextSteps', 'tasks'],
@@ -598,10 +615,246 @@
     });
   }
 
+  var PRIMARY_SOURCE_CATEGORY_ORDER = [
+    'meetings',
+    'notes',
+    'projects',
+    'tasks',
+    'calendar',
+    'decisions',
+    'open-points',
+  ];
+
+  function isSourceEntry(item) {
+    return !!(
+      item &&
+      (item.isSourceEntry || item.source_entry || item.item_type === 'source_entry')
+    );
+  }
+
+  function itemSourceKey(it) {
+    var raw = it.sourceTranscription || it.source_transcription;
+    if (raw) {
+      if (raw.indexOf('content/') !== 0) {
+        raw = 'content/transcriptions/' + String(raw).replace(/^.*[\\/]/, '');
+      }
+      return raw;
+    }
+    var audio = it.sourceAudio || it.source_audio;
+    if (audio) return 'audio:' + String(audio).trim().toLowerCase();
+    return 'path:' + (it.path || it.filepath || it.id || '');
+  }
+
+  function mergeExtractedItems(a, b) {
+    var out = Object.assign({}, a || {});
+    Object.keys(b || {}).forEach(function (key) {
+      var val = b[key];
+      if (!out[key]) {
+        out[key] = Array.isArray(val) ? val.slice() : val;
+      } else if (Array.isArray(out[key]) && Array.isArray(val)) {
+        var seen = {};
+        out[key] = out[key].concat(val).filter(function (entry) {
+          var k = typeof entry === 'object' ? JSON.stringify(entry) : String(entry);
+          if (seen[k]) return false;
+          seen[k] = true;
+          return true;
+        });
+      }
+    });
+    return out;
+  }
+
+  function pickPrimaryFromGroup(group) {
+    var byCat = {};
+    group.forEach(function (it) {
+      byCat[String(it.category || '')] = it;
+    });
+    var i;
+    for (i = 0; i < PRIMARY_SOURCE_CATEGORY_ORDER.length; i++) {
+      var cat = PRIMARY_SOURCE_CATEGORY_ORDER[i];
+      if (byCat[cat]) return byCat[cat];
+    }
+    return group[0];
+  }
+
+  function extractionSnapshot(child) {
+    return {
+      id: child.id,
+      category: child.category,
+      title: child.title,
+      path: child.path || child.filepath,
+      preview: child.preview,
+      summary: child.summary,
+      project: child.project,
+      date: child.date,
+      dueDate: child.dueDate,
+      eventDate: child.eventDate,
+      status: child.status,
+      extracted_items: child.extracted_items || child.extractedItems || {},
+    };
+  }
+
+  function groupFlatItemsToSources(flatItems) {
+    var groups = {};
+    flatItems.forEach(function (it) {
+      var key = itemSourceKey(it);
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(it);
+    });
+    var entries = [];
+    Object.keys(groups).forEach(function (key) {
+      var group = groups[key];
+      var primary = pickPrimaryFromGroup(group);
+      var categories = [];
+      var extractions = {};
+      var mergedExtracted = {};
+      var mergedRawSections = {};
+      var childIds = [];
+      group.forEach(function (child) {
+        var cat = String(child.category || '');
+        if (cat && categories.indexOf(cat) === -1) categories.push(cat);
+        if (cat) {
+          if (!extractions[cat]) extractions[cat] = [];
+          extractions[cat].push(extractionSnapshot(child));
+        }
+        mergedExtracted = mergeExtractedItems(mergedExtracted, child.extracted_items || child.extractedItems || {});
+        mergedRawSections = Object.assign(mergedRawSections, child.raw_sections || child.rawSections || {});
+        if (child.id) childIds.push(child.id);
+      });
+      categories.sort();
+      var entry = Object.assign({}, primary, {
+        id: 'src_' + key.replace(/[^a-z0-9]+/gi, '').slice(0, 8) + '_' + String(primary.id || '').slice(0, 8),
+        item_type: 'source_entry',
+        isSourceEntry: true,
+        source_entry: true,
+        category: primary.category,
+        primaryCategory: primary.category,
+        categories: categories,
+        extractions: extractions,
+        extracted_items: mergedExtracted,
+        extractedItems: mergedExtracted,
+        raw_sections: mergedRawSections,
+        rawSections: mergedRawSections,
+        childIds: childIds,
+        related_files: childIds.slice(0, 8),
+        sourceKey: key,
+      });
+      entries.push(entry);
+    });
+    return sortItemsNewestFirst(entries, false);
+  }
+
+  function sourceHasCategory(item, cat) {
+    if (!item || !cat) return false;
+    var categories = item.categories || [];
+    if (categories.length) return categories.indexOf(cat) !== -1;
+    return String(item.category || '').toLowerCase() === cat;
+  }
+
+  function extractionCountForCategory(item, cat) {
+    var extractions = item.extractions || {};
+    if (extractions[cat] && extractions[cat].length) return extractions[cat].length;
+    return sourceHasCategory(item, cat) ? 1 : 0;
+  }
+
   function categoryItems(cat) {
     return aiReadyItems().filter(function (it) {
-      return it.category === cat;
+      return sourceHasCategory(it, cat);
     });
+  }
+
+  function categoryCount(key) {
+    var sourceCounts = state.sourceCounts || {};
+    if (sourceCounts[key] != null) return sourceCounts[key];
+    return categoryItems(key).length;
+  }
+
+  function refreshDashboardCounts() {
+    var pack = countsFromItems(aiReadyItems());
+    state.counts = pack.extraction;
+    state.sourceCounts = pack.source;
+    var chartPack = buildChartFromCounts(pack.extraction);
+    state.chart = chartPack.chart;
+    state.hasChartData = chartPack.hasChartData;
+    ensureActiveCategory();
+  }
+
+  function shouldShowCategory(key) {
+    if (state.showEmptyCategories) return true;
+    return categoryCount(key) > 0;
+  }
+
+  function categoriesForNav() {
+    return CATEGORIES.filter(function (c) {
+      return shouldShowCategory(c.key);
+    });
+  }
+
+  function ensureActiveCategory() {
+    if (shouldShowCategory(state.category)) return;
+    var first = categoriesForNav()[0];
+    if (first) state.category = first.key;
+  }
+
+  function loadShowEmptyCategoriesPref() {
+    try {
+      return localStorage.getItem(SHOW_EMPTY_CATEGORIES_KEY) === '1';
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function saveShowEmptyCategoriesPref(on) {
+    try {
+      localStorage.setItem(SHOW_EMPTY_CATEGORIES_KEY, on ? '1' : '0');
+    } catch (e) {
+      /* ignore */
+    }
+  }
+
+  function toggleShowEmptyCategories() {
+    state.showEmptyCategories = !state.showEmptyCategories;
+    saveShowEmptyCategoriesPref(state.showEmptyCategories);
+    ensureActiveCategory();
+    renderCategoryCards();
+    renderOverview();
+    renderCategoryHeader();
+    renderStats();
+    renderDistribution();
+    renderFeed();
+  }
+
+  function renderEmptyCategoriesToggle() {
+    var el = byId('txShowEmptyCats');
+    if (!el) {
+      var anchor = byId('txOverview') || byId('txCatScroll');
+      if (!anchor || !anchor.parentNode) return;
+      el = document.createElement('p');
+      el.id = 'txShowEmptyCats';
+      el.className = 'tx-show-empty-cats';
+      anchor.parentNode.insertBefore(el, anchor.nextSibling);
+    }
+    var hidden = CATEGORIES.filter(function (c) {
+      return categoryCount(c.key) === 0;
+    }).length;
+    if (!hidden) {
+      el.innerHTML = '';
+      el.hidden = true;
+      return;
+    }
+    el.hidden = false;
+    var label = state.showEmptyCategories ? 'Hide empty categories' : 'Show empty categories';
+    el.innerHTML =
+      '<button type="button" class="tx-show-empty-cats__btn tf-admin-muted" data-tx-toggle-empty-cats>' +
+      esc(label) +
+      '</button>';
+    var btn = el.querySelector('[data-tx-toggle-empty-cats]');
+    if (btn && !btn.dataset.txBound) {
+      btn.dataset.txBound = '1';
+      btn.addEventListener('click', function () {
+        toggleShowEmptyCategories();
+      });
+    }
   }
 
   function truncatePoint(s, max) {
@@ -656,21 +909,165 @@
     return uniquePoints(parts).slice(0, max || 3);
   }
 
-  function itemKeyPoints(item) {
+  function shortenToWords(text, maxWords) {
+    var words = String(text || '')
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+    if (!words.length) return '';
+    if (words.length <= maxWords) return words.join(' ');
+    return words.slice(0, maxWords).join(' ');
+  }
+
+  function stripTrailingDate(text) {
+    return String(text || '')
+      .replace(TRAILING_DATE_RE, '')
+      .trim();
+  }
+
+  function textOverlaps(a, b) {
+    if (!a || !b) return false;
+    var ka = normalizeCompareKey(a);
+    var kb = normalizeCompareKey(b);
+    if (!ka || !kb) return false;
+    if (ka === kb) return true;
+    if (ka.length >= 12 && (ka.indexOf(kb) !== -1 || kb.indexOf(ka) !== -1)) return true;
+    return false;
+  }
+
+  function isLowQualityTranscriptionItem(item) {
+    if (!item) return false;
+    if (item.needs_review || item.needsReview) return true;
+    var body = item.summary || item.preview || '';
+    if (isGenericPlaceholderText(body) && !(item.importantPoints || []).length && !(item.bullets || []).length) {
+      return true;
+    }
+    if (isJunkItem(item) && !hasExtractedActions(item)) return true;
+    var blob = itemText(item);
+    if (blob.toLowerCase().indexOf('| confidence: low') !== -1) return true;
+    return false;
+  }
+
+  function taskActionTitle(taskText) {
+    var t = stripTrailingDate(String(taskText || ''));
+    t = t.replace(/^\s*-\s*\[\s*\]\s+/, '').replace(/\s*\(from [^)]+\)\s*$/i, '').trim();
+    return shortenToWords(t, TITLE_MAX_WORDS) || t;
+  }
+
+  function itemDisplayTitle(item) {
+    if (!item) return '';
+    if (isLowQualityTranscriptionItem(item)) return UNCLEAR_ITEM_TITLE;
     var cat = String(item.category || 'notes').toLowerCase();
-    var pool = pointValuesForKeys(item, CATEGORY_POINT_KEYS[cat] || []);
+    var raw = String(item.rawTitle || item.title || item.path || '').trim();
+    if (cat === 'tasks') {
+      var taskLine = (item.tasks && item.tasks[0]) || item.taskText || raw;
+      if (taskLine) return taskActionTitle(taskLine);
+    }
+    return shortenToWords(stripTrailingDate(raw), TITLE_MAX_WORDS) || raw;
+  }
+
+  function filterDistinctFromTitle(title, list) {
+    return (list || []).filter(function (p) {
+      return p && !textOverlaps(title, p) && !isGenericPlaceholderText(p);
+    });
+  }
+
+  function formatMetaDateLabel(dateVal) {
+    if (!dateVal) return '';
+    try {
+      var d = new Date(dateVal);
+      if (!isNaN(d.getTime())) {
+        return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+      }
+    } catch (eDate) {
+      /* ignore */
+    }
+    return String(dateVal).trim();
+  }
+
+  function taskMetaKeyPoints(item, title) {
+    var pts = [];
+    var dateLabel = formatMetaDateLabel(item.date || item.eventDate || item.dueDate);
+    if (dateLabel) pts.push('Date mentioned: ' + dateLabel);
+    if (item.project) pts.push('Related project: ' + item.project);
+    if (audioBasename(item) || item.sourceAudio) pts.push('Source audio detected');
+    var people = extractPeopleFromItem(item);
+    if (people.length) pts.push('Owner: ' + people[0]);
+    if (!item.reviewed) pts.push('Status: open');
+    return filterDistinctFromTitle(title, pts);
+  }
+
+  function lowQualityKeyPoints(item, title) {
+    var pts = ['Source audio detected', 'Transcription quality is low', 'Manual review needed'];
+    if (!audioBasename(item) && !item.sourceAudio) {
+      pts.shift();
+    }
+    return filterDistinctFromTitle(title, pts);
+  }
+
+  function itemSummaryForDisplay(item, title, points) {
+    var summary = itemDetailSummary(item) || itemSummaryParagraph(item);
+    if (!summary || isGenericPlaceholderText(summary)) return '';
+    if (textOverlaps(title, summary)) return '';
+    if (points && points.length) {
+      var overlap = points.some(function (p) {
+        return textOverlaps(p, summary);
+      });
+      if (overlap) {
+        var parts = splitTextToPoints(summary, 3).filter(function (s) {
+          if (textOverlaps(title, s)) return false;
+          return !points.some(function (p) {
+            return textOverlaps(p, s);
+          });
+        });
+        return parts.join(' ').trim();
+      }
+    }
+    return summary;
+  }
+
+  function applyCardCopyFields(item) {
+    if (!item) return item;
+    item.rawTitle = item.rawTitle || item.title || '';
+    var title = itemDisplayTitle(item);
+    var points = itemKeyPoints(item);
+    item.title = title;
+    var summary = itemSummaryForDisplay(item, title, points);
+    if (summary) {
+      item.summary = summary;
+      if (!item.preview || textOverlaps(title, item.preview)) {
+        item.preview = truncatePoint(summary, 200);
+      }
+    } else if (item.preview && textOverlaps(title, item.preview)) {
+      item.preview = '';
+    }
+    return item;
+  }
+
+  function itemKeyPoints(item) {
+    var title = itemDisplayTitle(item);
+    if (isLowQualityTranscriptionItem(item)) {
+      return uniquePoints(lowQualityKeyPoints(item, title)).slice(0, 3);
+    }
+    var cat = String(item.category || 'notes').toLowerCase();
+    var pool = [];
+    if (cat === 'tasks') {
+      pool = pool.concat(taskMetaKeyPoints(item, title));
+    }
+    pool = pool.concat(pointValuesForKeys(item, CATEGORY_POINT_KEYS[cat] || []));
     if (!pool.length) pool = pointValuesForKeys(item, KEY_POINT_FALLBACK_KEYS);
     pool = pool.filter(function (p) {
       return !isGenericPlaceholderText(p);
     });
-    if (!pool.length && item.taskText) pool.push(item.taskText);
     if (!pool.length && item.decisionText) pool.push(item.decisionText);
     if (!pool.length && item.issue) pool.push(item.issue);
     if (!pool.length && item.summary) pool = pool.concat(splitTextToPoints(item.summary, 3));
     if (!pool.length && item.preview) pool = pool.concat(splitTextToPoints(item.preview, 3));
+    pool = filterDistinctFromTitle(title, pool);
     pool = pool.filter(function (p) {
       return !isGenericPlaceholderText(p);
     });
+    if (!pool.length) return [];
     return uniquePoints(pool).slice(0, 3);
   }
 
@@ -977,7 +1374,69 @@
     return detailSectionCard('Source reference', table);
   }
 
+  function mergedExtractionLines(item, cat) {
+    var lines = [];
+    var children = (item.extractions || {})[cat] || [];
+    children.forEach(function (child) {
+      var ex = child.extracted_items || child.extractedItems || {};
+      if (cat === 'tasks') {
+        lines = lines.concat(ex.tasks || []);
+        if (child.title) lines.push(child.title);
+      } else if (cat === 'calendar') {
+        lines = lines.concat(ex.calendar_events || []);
+        if (child.title) lines.push(child.title);
+      } else if (cat === 'decisions') {
+        lines = lines.concat(ex.decisions || []);
+        if (child.title) lines.push(child.title);
+      } else if (cat === 'open-points') {
+        lines = lines.concat(ex.open_points || []);
+        if (child.title) lines.push(child.title);
+      } else if (child.preview) {
+        lines.push(child.preview);
+      } else if (child.title) {
+        lines.push(child.title);
+      }
+    });
+    return lines;
+  }
+
+  function detailSourceExtractionsSections(item) {
+    var people = extractPeopleFromItem(item);
+    var html = renderCategoryPeopleMeta(item);
+    html += detailListSection('Key points', itemKeyPoints(item), people);
+    html +=
+      detailListSection('Decisions', item.decisions || mergedExtractionLines(item, 'decisions'), people) +
+      detailListSection('Tasks', item.tasks || mergedExtractionLines(item, 'tasks'), people) +
+      detailListSection('Open points', item.openPoints || mergedExtractionLines(item, 'open-points'), people) +
+      detailListSection('Next steps', item.nextSteps, people) +
+      detailListSection('Important points', item.importantPoints, people) +
+      detailListSection('Possible actions', item.possibleActions, people) +
+      detailListSection(
+        'Calendar events',
+        item.calendarEvents || mergedExtractionLines(item, 'calendar'),
+        people
+      ) +
+      detailListSection('Blockers', item.blockers, people);
+    var cats = item.categories || [];
+    if (cats.length) {
+      html += detailSectionCard(
+        'Content from this source',
+        '<p class="tf-admin-muted">' +
+          esc(
+            cats
+              .map(function (c) {
+                return CATEGORY_LABELS[c] || c;
+              })
+              .join(' · ')
+          ) +
+          '</p>'
+      );
+    }
+    return html + detailSourceRefBlock(item);
+  }
+
   function detailOperationalSections(item) {
+    if (isSourceEntry(item)) return detailSourceExtractionsSections(item);
     var cat = String(item.category || 'notes').toLowerCase();
     var people = extractPeopleFromItem(item);
     var html = renderCategoryPeopleMeta(item);
@@ -1191,7 +1650,10 @@
     if (copySummary) {
       copySummary.addEventListener('click', function () {
         if (!state.detailItem) return;
-        var text = itemDetailSummary(state.detailItem) || state.detailItem.title || '';
+        var dItem = state.detailItem;
+        var dTitle = itemDisplayTitle(dItem);
+        var dPoints = itemKeyPoints(dItem);
+        var text = itemSummaryForDisplay(dItem, dTitle, dPoints) || dTitle || '';
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(text).then(
             function () {
@@ -1221,14 +1683,13 @@
     var points = itemKeyPoints(item);
     var summary = itemDetailSummary(item);
     var nextAction = itemNextActionLine(item);
-    var heroStats = categoryBreakdownStats(cat, [item]);
-    var heroVisual = categoryVisualFromStats(heroStats, cat, 1, null, {
+    var heroVisual = itemInsightVisual(item, {
       legend: true,
       size: 'hero',
-      item: item,
     });
-    var processed = formatProcessedDate(item);
+    var datesHtml = renderDetailDatesHtml(item);
     var audioName = audioBasename(item);
+    var title = item.title || item.path || '';
 
     var pointsBlock = points.length
       ? '<section class="tx-detail-page__keypoints" aria-labelledby="txDetailKeyPointsTitle">' +
@@ -1271,7 +1732,7 @@
       esc(CATEGORY_LABELS[cat] || cat) +
       '</p>' +
       '<h1 class="tx-detail-page__title">' +
-      highlightPeopleInText(item.title || item.path || 'Untitled', people) +
+      highlightPeopleInText(title || item.path || 'Untitled', people) +
       '</h1>' +
       '<div class="tx-detail-page__badges">' +
       renderDetailStatusBadges(item) +
@@ -1470,23 +1931,9 @@
   }
 
   function formatProcessedDate(item) {
-    var raw = item.processedDate || item.processed_at || '';
-    if (!raw) return '';
-    var t = Date.parse(raw);
-    if (Number.isNaN(t)) {
-      var m = String(raw).match(/(\d{4})-(\d{2})-(\d{2})/);
-      if (m) t = Date.parse(m[1] + '-' + m[2] + '-' + m[3]);
-    }
-    if (Number.isNaN(t)) return String(raw).slice(0, 16);
-    try {
-      return new Date(t).toLocaleDateString(undefined, {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-      });
-    } catch (e) {
-      return String(raw).slice(0, 16);
-    }
+    var ts = getProcessedTimestamp(item);
+    if (Number.isNaN(ts)) return '';
+    return formatDateLine(ts, Date.now());
   }
 
   function itemFeedChips(item) {
@@ -1607,8 +2054,112 @@
     });
   }
 
+  function arrayLen(val) {
+    return Array.isArray(val) ? val.length : 0;
+  }
+
+  /** Top-level category counters: icon only — never donut/ring. */
+  function categoryCounterVisual(catKey, iconExtraClass, opts) {
+    opts = opts || {};
+    var TV = txTopicVisuals();
+    if (TV) {
+      var key = opts.item ? TV.inferTopicVisualKey(opts.item) : TV.categoryVisualKey(catKey);
+      var size = opts.size === 'hero' ? 'hero' : 'list';
+      return TV.renderTopicVisual(key, { size: size, extraClass: iconExtraClass });
+    }
+    return renderLargeCategoryIcon(catKey, iconExtraClass);
+  }
+
+  /** Per-item numeric breakdown (≥2 nonzero parts → donut on cards/detail). */
+  function itemInsightSegments(item) {
+    var cat = String(item.category || 'notes').toLowerCase();
+    var st = item.stats || {};
+
+    function seg(label, value, color) {
+      var v = value | 0;
+      if (v <= 0) return null;
+      return { label: label, value: v, color: color };
+    }
+
+    function compact(parts) {
+      parts = parts.filter(Boolean);
+      return parts.length >= 2 ? parts : null;
+    }
+
+    if (cat === 'meetings' || cat === 'notes') {
+      return compact([
+        seg('Tasks', st.tasks_count != null ? st.tasks_count : arrayLen(item.tasks), '#f59e0b'),
+        seg(
+          'Decisions',
+          st.decisions_count != null ? st.decisions_count : arrayLen(item.decisions),
+          '#10b981'
+        ),
+        seg(
+          'Open points',
+          st.open_points_count != null ? st.open_points_count : arrayLen(item.openPoints),
+          '#64748b'
+        ),
+        seg(
+          'Calendar',
+          st.calendar_events_count != null ? st.calendar_events_count : arrayLen(item.calendarEvents),
+          '#8b5cf6'
+        ),
+        seg(
+          'Next steps',
+          st.next_steps_count != null ? st.next_steps_count : arrayLen(item.nextSteps),
+          '#4f46e5'
+        ),
+      ]);
+    }
+
+    if (cat === 'tasks') {
+      var subs = item.subtasks || item.checklist || [];
+      if (subs.length >= 2) {
+        var done = countWhere(subs, function (s) {
+          if (s && typeof s === 'object') {
+            if (s.done === true || s.completed === true) return true;
+            var t = String(s.status || '').toLowerCase();
+            return t === 'done' || t === 'complete' || t === 'completed';
+          }
+          return /^\s*[-*]?\s*\[[xX]\]/.test(String(s || ''));
+        });
+        return compact([
+          seg('Done', done, '#10b981'),
+          seg('Pending', subs.length - done, '#f59e0b'),
+        ]);
+      }
+      return null;
+    }
+
+    if (cat === 'projects') {
+      return compact([
+        seg('Blockers', arrayLen(item.blockers), '#ef4444'),
+        seg('Next steps', arrayLen(item.nextSteps), '#4f46e5'),
+        seg('Actions', arrayLen(item.possibleActions), '#10b981'),
+      ]);
+    }
+
+    return null;
+  }
+
+  function itemInsightVisual(item, opts) {
+    opts = opts || {};
+    var cat = String(item.category || 'notes').toLowerCase();
+    var segs = itemInsightSegments(item);
+    if (segs && segs.length >= 2) {
+      var total = segs.reduce(function (s, c) {
+        return s + (c.value || 0);
+      }, 0);
+      return renderCompactRing(segs, total, opts);
+    }
+    return categoryCounterVisual(cat, opts.extraClass, { item: item, size: opts.size });
+  }
+
   function categoryVisualFromStats(stats, catKey, total, iconExtraClass, opts) {
     opts = opts || {};
+    if (!opts.allowRing) {
+      return categoryCounterVisual(catKey, iconExtraClass, opts);
+    }
     var segs = buildSegmentsFromStats(stats, catKey);
     var active = segs.filter(function (s) {
       return (s.value || 0) > 0;
@@ -1620,13 +2171,7 @@
     if (active.length >= 2 && center > 0) {
       return renderCompactRing(active, center, opts);
     }
-    var TV = txTopicVisuals();
-    if (TV) {
-      var key = opts.item ? TV.inferTopicVisualKey(opts.item) : TV.categoryVisualKey(catKey);
-      var size = opts.size === 'hero' ? 'hero' : 'list';
-      return TV.renderTopicVisual(key, { size: size, extraClass: iconExtraClass });
-    }
-    return renderLargeCategoryIcon(catKey, iconExtraClass);
+    return categoryCounterVisual(catKey, iconExtraClass, opts);
   }
 
   function categoryDonutSegments(cat, items) {
@@ -1760,15 +2305,16 @@
       txLog('renderOverview: #txOverview missing');
       return;
     }
-    el.innerHTML = CATEGORIES.map(function (c) {
+    el.innerHTML = categoriesForNav()
+      .map(function (c) {
       var items = categoryItems(c.key);
-      var n = items.length;
+      var n = categoryCount(c.key);
       var theme = catTheme(c.key);
       var active = state.category === c.key ? ' is-active' : '';
-      var oStats = categoryBreakdownStats(c.key, items);
+      var emptyCls = n === 0 ? ' tx-overview-card--empty' : '';
       var visual =
         '<div class="tx-overview-card__visual">' +
-        categoryVisualFromStats(oStats, c.key, n, 'tx-overview-card__icon', { legend: true }) +
+        categoryCounterVisual(c.key, 'tx-overview-card__icon') +
         '</div>';
       var stats = categorySecondaryStats(c.key, items)
         .map(function (s) {
@@ -1778,6 +2324,7 @@
       return (
         '<button type="button" class="tx-overview-card' +
         active +
+        emptyCls +
         '" data-tx-overview-cat="' +
         esc(c.key) +
         '" style="--tx-overview-accent:' +
@@ -1794,7 +2341,9 @@
         (stats ? '<div class="tx-overview-card__stats">' + stats + '</div>' : '') +
         '</button>'
       );
-    }).join('');
+    })
+      .join('');
+    renderEmptyCategoriesToggle();
     el.querySelectorAll('[data-tx-overview-cat]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         selectCategory(btn.getAttribute('data-tx-overview-cat'));
@@ -1809,6 +2358,38 @@
     );
   }
 
+  function renderProjectSelect() {
+    var sel = byId('txProjectSelect');
+    if (!sel) return;
+    var projects = (state.indexMeta && state.indexMeta.projects) || [];
+    if (!projects.length) {
+      var set = {};
+      state.items.forEach(function (it) {
+        var p = String(it.project || '').trim();
+        if (p) set[p] = true;
+      });
+      projects = Object.keys(set).sort();
+    }
+    var current = state.project || sel.value || '';
+    var html = '<option value="">All</option>';
+    projects.forEach(function (p) {
+      html +=
+        '<option value="' +
+        esc(p) +
+        '"' +
+        (p === current ? ' selected' : '') +
+        '>' +
+        esc(p) +
+        '</option>';
+    });
+    sel.innerHTML = html;
+    sel.value = current;
+    if (current && sel.value !== current) {
+      state.project = '';
+      sel.value = '';
+    }
+  }
+
   function renderCategoryHeader() {
     var el = byId('txCategoryHeader');
     if (!el) return;
@@ -1816,8 +2397,7 @@
     var items = categoryItems(cat);
     var theme = catTheme(cat);
     var label = categoryShortLabel(cat);
-    var hStats = categoryBreakdownStats(cat, items);
-    var visual = categoryVisualFromStats(hStats, cat, items.length, null, { legend: false });
+    var visual = categoryCounterVisual(cat);
     var meta = categorySecondaryStats(cat, items).join(' · ');
     el.innerHTML =
       '<div class="tx-category-header__visual" style="--tx-cat-accent:' +
@@ -1864,24 +2444,19 @@
   }
 
   function itemCardVisual(item) {
-    var cat = String(item.category || 'notes').toLowerCase();
-    var stats = categoryBreakdownStats(cat, [item]);
-    var segs = buildSegmentsFromStats(stats, cat);
-    var active = segs.filter(function (s) {
-      return (s.value || 0) > 0;
-    });
-    if (active.length >= 2) {
+    var segs = itemInsightSegments(item);
+    if (segs && segs.length >= 2) {
+      var total = segs.reduce(function (s, c) {
+        return s + (c.value || 0);
+      }, 0);
       return (
         '<div class="tx-dash-card__visual tx-dash-card__visual--ring">' +
-        renderCompactRing(active, 1, { legend: false, size: 'card' }) +
+        renderCompactRing(segs, total, { legend: false, size: 'card' }) +
         '</div>'
       );
     }
-    var TV = txTopicVisuals();
-    var topicHtml = TV
-      ? TV.renderTopicVisual(TV.inferTopicVisualKey(item), { size: 'list' })
-      : renderLargeCategoryIcon(cat);
-    return '<div class="tx-dash-card__visual tx-dash-card__visual--topic">' + topicHtml + '</div>';
+    var topicHtml = itemInsightVisual(item, { size: 'list' });
+    return '<motion class="tx-dash-card__visual tx-dash-card__visual--topic">' + topicHtml + '</motion>';
   }
 
   function renderFeedSectionHeader(cat, count) {
@@ -1904,27 +2479,47 @@
 
   function renderFeedBody(list) {
     var inSearch = !!(state.searchQuery.trim() && state.searchResults);
-    if (!inSearch) {
-      return list.map(renderFeedCard).join('');
+    if (inSearch) {
+      var groups = {};
+      list.forEach(function (it) {
+        var c = String(it.category || 'notes').toLowerCase();
+        if (!groups[c]) groups[c] = [];
+        groups[c].push(it);
+      });
+      return CATEGORIES.map(function (c) {
+          return c.key;
+        })
+        .filter(function (key) {
+          return groups[key] && groups[key].length;
+        })
+        .map(function (key) {
+          var items = sortFeedItemsNewestFirst(groups[key], isSortAscending());
+          return (
+            '<section class="tx-feed-section">' +
+            renderFeedSectionHeader(key, items.length) +
+            '<div class="tx-feed-section__items">' +
+            items.map(renderFeedCard).join('') +
+            '</div></section>'
+          );
+        })
+        .join('');
     }
-    var groups = {};
-    list.forEach(function (it) {
-      var c = String(it.category || 'notes').toLowerCase();
-      if (!groups[c]) groups[c] = [];
-      groups[c].push(it);
-    });
-    return CATEGORIES.map(function (c) {
-        return c.key;
-      })
-      .filter(function (key) {
-        return groups[key] && groups[key].length;
-      })
-      .map(function (key) {
-        var items = sortItemsNewestFirst(groups[key], isSortAscending());
+    var timeGroups = groupItemsByTimeBucket(list);
+    return TIME_BUCKET_ORDER.filter(function (bucket) {
+      return timeGroups[bucket] && timeGroups[bucket].length;
+    })
+      .map(function (bucket) {
+        var items = sortFeedItemsNewestFirst(timeGroups[bucket], isSortAscending());
         return (
-          '<section class="tx-feed-section">' +
-          renderFeedSectionHeader(key, items.length) +
-          '<div class="tx-feed-section__items">' +
+          '<section class="tx-feed-group" data-tx-time-bucket="' +
+          esc(bucket) +
+          '">' +
+          '<h3 class="tx-feed-group__title">' +
+          esc(TIME_BUCKET_LABELS[bucket] || bucket) +
+          '<span class="tx-feed-group__count">' +
+          esc(items.length) +
+          '</span></h3>' +
+          '<div class="tx-feed-group__items">' +
           items.map(renderFeedCard).join('') +
           '</div></section>'
         );
@@ -1967,9 +2562,18 @@
     return NaN;
   }
 
-  function getItemSortTimestamp(item) {
-    if (!item) return 0;
-    var candidates = [
+  function firstSortableTimestamp(candidates) {
+    var i;
+    for (i = 0; i < candidates.length; i++) {
+      var ts = parseSortableTimestamp(candidates[i]);
+      if (!Number.isNaN(ts)) return ts;
+    }
+    return NaN;
+  }
+
+  function getProcessedTimestamp(item) {
+    if (!item) return NaN;
+    return firstSortableTimestamp([
       item.processedAt,
       item.processed_at,
       item.aiProcessedAt,
@@ -1978,23 +2582,25 @@
       item.created_at,
       item.modifiedAt,
       item.modified_at,
-      item.mtimeMs,
-      item.fileMtimeMs,
+      item.processing_date,
+      item.processedDate,
+      item.processed_date,
+      item.date,
+    ]);
+  }
+
+  function getSourceTimestamp(item) {
+    if (!item) return NaN;
+    var ts = firstSortableTimestamp([
+      item.sourceModifiedAt,
+      item.source_modified_at,
       item.sourceAudioModifiedAt,
       item.source_audio_modified_at,
       item.audioModifiedAt,
-      item.modified_datetime,
-      item.processing_date,
-      item.processedDate,
-      item.date,
-      item.eventDate,
-      item.dueDate,
-    ];
-    var i;
-    for (i = 0; i < candidates.length; i++) {
-      var ts = parseSortableTimestamp(candidates[i]);
-      if (!Number.isNaN(ts)) return ts;
-    }
+      item.mtimeMs,
+      item.fileMtimeMs,
+    ]);
+    if (!Number.isNaN(ts)) return ts;
     if (item.modified_time != null) {
       var mt = parseSortableTimestamp(item.modified_time);
       if (!Number.isNaN(mt)) return mt;
@@ -2009,9 +2615,216 @@
         item.title
     );
     if (!Number.isNaN(fnTs)) return fnTs;
-    var pathTs = dateFromFilenameToken(item.path || item.filepath || '');
-    if (!Number.isNaN(pathTs)) return pathTs;
-    return 0;
+    return dateFromFilenameToken(item.path || item.filepath || '');
+  }
+
+  function getFeedGroupTimestamp(item) {
+    if (state.groupByDate === 'source') {
+      var src = getSourceTimestamp(item);
+      if (!Number.isNaN(src)) return src;
+    }
+    var proc = getProcessedTimestamp(item);
+    if (!Number.isNaN(proc)) return proc;
+    var fallback = getSourceTimestamp(item);
+    return Number.isNaN(fallback) ? 0 : fallback;
+  }
+
+  function txDateLocale() {
+    var lang = String((navigator && navigator.language) || 'en').toLowerCase();
+    return lang.indexOf('it') === 0 ? 'it-IT' : 'en-US';
+  }
+
+  function formatExactDate(ts) {
+    if (!ts || Number.isNaN(ts)) return '';
+    try {
+      return new Date(ts).toLocaleDateString(txDateLocale(), {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+      });
+    } catch (eFmt) {
+      return '';
+    }
+  }
+
+  function startOfLocalDay(d) {
+    var x = new Date(d);
+    x.setHours(0, 0, 0, 0);
+    return x;
+  }
+
+  function relativeTimeBucket(ts, now) {
+    if (!ts || Number.isNaN(ts)) return 'older';
+    var ref = now != null && !Number.isNaN(now) ? new Date(now) : new Date();
+    var itemDay = startOfLocalDay(ts);
+    var todayStart = startOfLocalDay(ref);
+    if (itemDay.getTime() >= todayStart.getTime()) return 'today';
+    var yesterdayStart = new Date(todayStart);
+    yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+    if (itemDay.getTime() >= yesterdayStart.getTime()) return 'yesterday';
+    var weekStart = new Date(todayStart);
+    var dow = weekStart.getDay();
+    weekStart.setDate(weekStart.getDate() - ((dow + 6) % 7));
+    if (itemDay.getTime() >= weekStart.getTime()) return 'week';
+    if (
+      itemDay.getFullYear() === todayStart.getFullYear() &&
+      itemDay.getMonth() === todayStart.getMonth()
+    ) {
+      return 'month';
+    }
+    if (itemDay.getFullYear() === todayStart.getFullYear()) return 'year';
+    return 'older';
+  }
+
+  function relativeTimeBucketLabel(bucket) {
+    return TIME_BUCKET_LABELS[bucket] || bucket || '';
+  }
+
+  function formatDateLine(ts, now) {
+    var exact = formatExactDate(ts);
+    var bucket = relativeTimeBucket(ts, now);
+    var rel = relativeTimeBucketLabel(bucket);
+    if (!exact && !rel) return '';
+    if (!rel) return exact;
+    if (!exact) return rel;
+    return exact + ' · ' + rel;
+  }
+
+  function calendarDayKey(ts) {
+    if (!ts || Number.isNaN(ts)) return '';
+    var d = new Date(ts);
+    return d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate();
+  }
+
+  function datesDifferForDisplay(processedTs, sourceTs) {
+    if (!processedTs || !sourceTs || Number.isNaN(processedTs) || Number.isNaN(sourceTs)) {
+      return false;
+    }
+    if (calendarDayKey(processedTs) !== calendarDayKey(sourceTs)) return true;
+    return Math.abs(processedTs - sourceTs) > 24 * 60 * 60 * 1000;
+  }
+
+  function groupItemsByTimeBucket(list) {
+    var groups = {};
+    var now = Date.now();
+    (list || []).forEach(function (it) {
+      var ts = getFeedGroupTimestamp(it);
+      var bucket = relativeTimeBucket(ts, now);
+      if (!groups[bucket]) groups[bucket] = [];
+      groups[bucket].push(it);
+    });
+    return groups;
+  }
+
+  function sortFeedItemsNewestFirst(items, ascending) {
+    var list = (items || []).slice();
+    list.sort(function (a, b) {
+      var diff = getFeedGroupTimestamp(b) - getFeedGroupTimestamp(a);
+      if (diff !== 0) return ascending ? -diff : diff;
+      var ida = String(a.id || a.path || '');
+      var idb = String(b.id || b.path || '');
+      return ascending ? ida.localeCompare(idb) : idb.localeCompare(ida);
+    });
+    return list;
+  }
+
+  function renderCardDatesHtml(item) {
+    var now = Date.now();
+    var procTs = getProcessedTimestamp(item);
+    var srcTs = getSourceTimestamp(item);
+    var showBoth = datesDifferForDisplay(procTs, srcTs);
+    if (showBoth) {
+      var lines = [];
+      if (!Number.isNaN(procTs)) {
+        lines.push(
+          '<span class="tx-card__date-line"><span class="tx-card__date-label">Processed:</span> ' +
+            esc(formatDateLine(procTs, now)) +
+            '</span>'
+        );
+      }
+      if (!Number.isNaN(srcTs)) {
+        lines.push(
+          '<span class="tx-card__date-line"><span class="tx-card__date-label">Source:</span> ' +
+            esc(formatDateLine(srcTs, now)) +
+            '</span>'
+        );
+      }
+      if (!lines.length) return '';
+      return '<div class="tx-card__dates">' + lines.join('') + '</div>';
+    }
+    var primary = !Number.isNaN(procTs) ? procTs : srcTs;
+    if (Number.isNaN(primary)) return '';
+    return '<div class="tx-card__dates">' + esc(formatDateLine(primary, now)) + '</div>';
+  }
+
+  function renderDetailDatesHtml(item) {
+    var now = Date.now();
+    var procTs = getProcessedTimestamp(item);
+    var srcTs = getSourceTimestamp(item);
+    var showBoth = datesDifferForDisplay(procTs, srcTs);
+    if (showBoth) {
+      var lines = [];
+      if (!Number.isNaN(procTs)) {
+        lines.push(
+          '<p class="tx-detail-page__date-line"><span class="tx-card__date-label">Processed:</span> ' +
+            esc(formatDateLine(procTs, now)) +
+            '</p>'
+        );
+      }
+      if (!Number.isNaN(srcTs)) {
+        lines.push(
+          '<p class="tx-detail-page__date-line"><span class="tx-card__date-label">Source:</span> ' +
+            esc(formatDateLine(srcTs, now)) +
+            '</p>'
+        );
+      }
+      if (!lines.length) return '';
+      return '<div class="tx-detail-page__dates">' + lines.join('') + '</div>';
+    }
+    var primary = !Number.isNaN(procTs) ? procTs : srcTs;
+    if (Number.isNaN(primary)) return '';
+    return (
+      '<div class="tx-detail-page__dates"><p class="tx-detail-page__date-line">' +
+      esc(formatDateLine(primary, now)) +
+      '</p></div>'
+    );
+  }
+
+  function loadGroupByPref() {
+    try {
+      var v = sessionStorage.getItem(GROUP_BY_STORAGE_KEY);
+      return v === 'source' ? 'source' : 'processed';
+    } catch (eGb) {
+      return 'processed';
+    }
+  }
+
+  function saveGroupByPref(mode) {
+    try {
+      sessionStorage.setItem(GROUP_BY_STORAGE_KEY, mode === 'source' ? 'source' : 'processed');
+    } catch (eSave) {
+      /* ignore */
+    }
+  }
+
+  function syncGroupBySelectUi() {
+    var sel = byId('txGroupBySelect');
+    if (!sel) return;
+    sel.value = state.groupByDate === 'source' ? 'source' : 'processed';
+  }
+
+  function getItemSortTimestamp(item) {
+    if (!item) return 0;
+    var proc = getProcessedTimestamp(item);
+    if (!Number.isNaN(proc)) return proc;
+    var src = getSourceTimestamp(item);
+    if (!Number.isNaN(src)) return src;
+    var extra = firstSortableTimestamp([
+      item.modified_datetime,
+      item.eventDate,
+      item.dueDate,
+    ]);
+    return Number.isNaN(extra) ? 0 : extra;
   }
 
   function getPendingSortTimestamp(entry) {
@@ -2148,7 +2961,7 @@
     if (srcTrans && srcTrans.indexOf('content/') !== 0) {
       srcTrans = 'content/transcriptions/' + String(srcTrans).replace(/^.*[\\/]/, '');
     }
-    return Object.assign({}, it, {
+    var merged = Object.assign({}, it, {
       categoryLabel: CATEGORY_LABELS[it.category] || it.categoryLabel || it.category,
       reviewed: !!(it.reviewed || it.isReviewed),
       googleSyncPending: !!(it.googleSyncPending || it.syncPending),
@@ -2178,6 +2991,7 @@
         it.readyForSite !== false &&
         (!it.pipelineStatus || !!VISIBLE_PIPELINE_STATUSES[it.pipelineStatus]),
     });
+    return applyCardCopyFields(merged);
   }
 
   function buildChartFromCounts(counts) {
@@ -2219,8 +3033,18 @@
     return true;
   }
 
-  function countsFromItems(items, serverCounts) {
-    var counts = {
+  function countsFromItems(items, serverCounts, serverSourceCounts) {
+    var sourceCounts = {
+      meetings: 0,
+      notes: 0,
+      tasks: 0,
+      calendar: 0,
+      projects: 0,
+      decisions: 0,
+      'open-points': 0,
+      total: items.length,
+    };
+    var extractionCounts = {
       meetings: 0,
       notes: 0,
       tasks: 0,
@@ -2231,20 +3055,54 @@
       total: 0,
     };
     items.forEach(function (it) {
-      var cat = String(it.category || '').toLowerCase();
-      if (counts[cat] != null) counts[cat] += 1;
+      CATEGORIES.forEach(function (c) {
+        if (sourceHasCategory(it, c.key)) sourceCounts[c.key] += 1;
+        extractionCounts[c.key] += extractionCountForCategory(it, c.key);
+      });
     });
-    counts.total = items.length;
-    if (serverCounts && serverCounts.needsReview != null) {
-      counts.needsReview = serverCounts.needsReview;
+    extractionCounts.total =
+      extractionCounts.meetings +
+      extractionCounts.notes +
+      extractionCounts.tasks +
+      extractionCounts.calendar +
+      extractionCounts.projects +
+      extractionCounts.decisions +
+      extractionCounts['open-points'];
+    if (serverCounts) {
+      CATEGORIES.forEach(function (c) {
+        if (serverCounts[c.key] != null) extractionCounts[c.key] = serverCounts[c.key];
+      });
+      if (serverCounts.total != null) extractionCounts.total = serverCounts.total;
+      if (serverCounts.needsReview != null) extractionCounts.needsReview = serverCounts.needsReview;
     }
-    return counts;
+    if (serverSourceCounts) {
+      CATEGORIES.forEach(function (c) {
+        if (serverSourceCounts[c.key] != null) sourceCounts[c.key] = serverSourceCounts[c.key];
+      });
+      if (serverSourceCounts.total != null) sourceCounts.total = serverSourceCounts.total;
+    }
+    sourceCounts.sourceTotal = items.length;
+    extractionCounts.sourceTotal = items.length;
+    return { extraction: extractionCounts, source: sourceCounts };
   }
 
   function normalizeIndex(j) {
     var serverCounts = j.counts || j.totals || {};
-    var items = (j.items || []).map(normalizeItem).filter(isAiReadyItem);
-    var counts = countsFromItems(items, serverCounts);
+    var serverSourceCounts = j.sourceTotals || {};
+    var flatItems = (j.items || []).map(normalizeItem).filter(isAiReadyItem);
+    var hasSourceEntries = flatItems.some(isSourceEntry);
+    var items = hasSourceEntries
+      ? flatItems.filter(function (it) {
+          return !it.source_only && !it.sourceOnly;
+        })
+      : groupFlatItemsToSources(
+          flatItems.filter(function (it) {
+            return !it.source_only && !it.sourceOnly;
+          })
+        );
+    var countPack = countsFromItems(items, serverCounts, serverSourceCounts);
+    var counts = countPack.extraction;
+    var sourceCounts = countPack.source;
     var chartPack =
       j.has_chart_data != null
         ? { hasChartData: !!j.has_chart_data, chart: j.chart || [] }
@@ -2259,10 +3117,9 @@
     }
     var sync = j.sync_settings || j.syncSettings || {};
     return {
-      items: items.filter(function (it) {
-        return !it.source_only && !it.sourceOnly;
-      }),
+      items: items,
       counts: counts,
+      sourceCounts: sourceCounts,
       rawTranscriptionCount: (j.rawSources && j.rawSources.total) || j.rawTranscriptionCount || 0,
       rawSources: j.rawSources || {},
       pipeline: j.pipeline || {},
@@ -2586,7 +3443,7 @@
   function applyClientFilters(list) {
     var out = list.slice().filter(isAiReadyItem);
     out = out.filter(function (it) {
-      return it.category === state.category;
+      return sourceHasCategory(it, state.category);
     });
     if (state.project) {
       out = out.filter(function (it) {
@@ -2687,12 +3544,6 @@
   function renderDistribution() {
     var el = byId('txDistribution');
     if (!el) return;
-    if (state.chart && state.chart.length) {
-      el.innerHTML = renderRingChart(state.chart);
-      el.hidden = false;
-      el.removeAttribute('hidden');
-      return;
-    }
     el.innerHTML = '';
     el.hidden = true;
     el.setAttribute('hidden', '');
@@ -2705,13 +3556,13 @@
     var rs = state.rawSources || {};
     var pipe = state.pipeline || {};
     var cards = [
-      { label: 'Meeting summaries', n: c.meetings || 0 },
-      { label: 'Personal notes', n: c.notes || 0 },
-      { label: 'Extracted tasks', n: c.tasks || 0 },
-      { label: 'Calendar events', n: c.calendar || 0 },
-      { label: 'Project updates', n: c.projects || 0 },
-      { label: 'Decisions', n: c.decisions || 0 },
-      { label: 'Open points', n: c['open-points'] || 0 },
+      { label: 'Meeting summaries', n: categoryCount('meetings'), catKey: 'meetings' },
+      { label: 'Personal notes', n: categoryCount('notes'), catKey: 'notes' },
+      { label: 'Extracted tasks', n: categoryCount('tasks'), catKey: 'tasks' },
+      { label: 'Calendar events', n: categoryCount('calendar'), catKey: 'calendar' },
+      { label: 'Project updates', n: categoryCount('projects'), catKey: 'projects' },
+      { label: 'Decisions', n: categoryCount('decisions'), catKey: 'decisions' },
+      { label: 'Open points', n: categoryCount('open-points'), catKey: 'open-points' },
       { label: 'Sources waiting for AI', n: rs.waitingForProcessing || 0, muted: true },
       { label: 'Raw files on disk', n: rs.total != null ? rs.total : state.rawTranscriptionCount || 0, muted: true },
       { label: 'Needs review', n: state.needsReviewCount || 0, muted: true },
@@ -2722,8 +3573,14 @@
       },
     ];
     el.innerHTML = cards
+      .filter(function (card) {
+        if (!card.catKey) return true;
+        if (state.showEmptyCategories) return true;
+        return (card.n || 0) > 0;
+      })
       .map(function (card) {
         var cls = 'tx-stat' + (card.muted ? ' tx-stat--muted' : '');
+        if (card.catKey && (card.n || 0) === 0) cls += ' tx-stat--empty';
         return (
           '<div class="' +
           cls +
@@ -2807,10 +3664,12 @@
   function renderCategoryButton(c, counts, activeKey) {
     var n = counts[c.key] != null ? counts[c.key] : 0;
     var active = activeKey === c.key ? ' is-active' : '';
+    var emptyCls = n === 0 ? ' tx-cat-card--empty' : '';
     var theme = catTheme(c.key);
     return (
       '<button type="button" class="tx-cat-card' +
       active +
+      emptyCls +
       '" data-tx-cat="' +
       esc(c.key) +
       '" style="--tx-cat-accent:' +
@@ -2840,9 +3699,12 @@
     var el = byId('txCatScroll');
     var sheetList = byId('txCatSheetList');
     var counts = state.counts || {};
-    var html = CATEGORIES.map(function (c) {
-      return renderCategoryButton(c, counts, state.category);
-    }).join('');
+    var html = categoriesForNav()
+      .map(function (c) {
+        return renderCategoryButton(c, counts, state.category);
+      })
+      .join('');
+    renderEmptyCategoriesToggle();
     if (el) {
       el.innerHTML = html;
       el.querySelectorAll('[data-tx-cat]').forEach(function (btn) {
@@ -2861,7 +3723,7 @@
     }
     var mobileCat = byId('txMobileCatBtn');
     if (mobileCat) {
-      var n = counts[state.category] != null ? counts[state.category] : 0;
+      var n = categoryCount(state.category);
       mobileCat.textContent = categoryShortLabel(state.category) + ' · ' + n;
       mobileCat.setAttribute('aria-label', 'Category: ' + categoryShortLabel(state.category));
     }
@@ -3253,16 +4115,16 @@
   }
 
   function renderFeedCard(item) {
+    var title = itemDisplayTitle(item);
     var points = itemKeyPoints(item);
     var chips = itemFeedChips(item);
     var people = extractPeopleFromItem(item);
     var unread = !item.reviewed ? ' is-unread' : '';
     var junk = isJunkCard(item);
-    var title = item.title || item.path || '';
     var catKey = String(item.category || 'notes').toLowerCase();
     var theme = catTheme(catKey);
     var audioName = audioBasename(item);
-    var processed = formatProcessedDate(item);
+    var datesHtml = renderCardDatesHtml(item);
     var metaRows =
       '<span class="tx-dash-card__meta-row"><span class="tx-dash-card__cat">' +
       esc(categoryShortLabel(item.category)) +
@@ -3274,10 +4136,6 @@
     if (audioName) {
       metaRows +=
         '<span class="tx-dash-card__meta-row tx-dash-card__meta--muted">from ' + esc(audioName) + '</span>';
-    }
-    if (processed) {
-      metaRows +=
-        '<span class="tx-dash-card__meta-row tx-dash-card__meta--muted">' + esc(processed) + '</span>';
     }
     var syncSt = state.itemSyncState[item.id] || '';
     var syncCls = syncSt ? ' tx-card--sync-' + syncSt : '';
@@ -3320,6 +4178,7 @@
       '<p class="tx-dash-card__meta">' +
       metaRows +
       '</p>' +
+      datesHtml +
       pointsHtml +
       peopleRow +
       '<div class="tx-dash-card__chips">' +
@@ -3449,7 +4308,7 @@
 
     var list;
     if (state.searchQuery.trim() && state.searchResults) {
-      list = sortItemsNewestFirst(state.searchResults, isSortAscending());
+      list = sortFeedItemsNewestFirst(state.searchResults, isSortAscending());
       if (state.hideJunk) {
         list = list.filter(function (it) {
           return !isJunkItem(it);
@@ -3523,7 +4382,7 @@
           '</span><span><strong>' +
           esc(it.categoryLabel || it.category) +
           '</strong> — ' +
-          esc(it.title || '') +
+          esc(itemDisplayTitle(it) || '') +
           '</span></div>'
         );
       })
@@ -3568,10 +4427,11 @@
       return it.id === id;
     });
     if (!item) return;
+    var title = itemDisplayTitle(item);
     var points = itemKeyPoints(item);
-    var text = [item.title]
+    var text = [title]
       .concat(points)
-      .concat([item.summary || ''])
+      .concat([itemSummaryForDisplay(item, title, points) || item.summary || ''])
       .filter(Boolean)
       .join('\n');
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -3821,7 +4681,6 @@
           return;
         }
         state.items = norm.items;
-        state.counts = norm.counts;
         state.rawTranscriptionCount = norm.rawTranscriptionCount;
         state.rawSources = norm.rawSources || {};
         applyIndexSort();
@@ -3830,10 +4689,9 @@
         state.generatedAt = norm.generatedAt;
         state.indexMeta.projects = norm.projects;
         state.syncSettings = norm.syncSettings;
-        state.hasChartData = norm.hasChartData;
-        state.chart = norm.chart;
         state.searchResults = null;
         state.apiUnavailable = false;
+        refreshDashboardCounts();
 
         var tgl = byId('txAutoSyncToggle');
         if (tgl) tgl.checked = state.syncSettings.auto_sync_google;
@@ -3845,8 +4703,10 @@
           'Index ' +
             (norm.generatedAt ? new Date(norm.generatedAt).toLocaleString() : 'now') +
             ' · ' +
-            (norm.counts.total || 0) +
-            ' AI-ready output(s) · ' +
+            (state.items.length || state.sourceCounts.total || 0) +
+            ' voice source(s) · ' +
+            (state.counts.total || 0) +
+            ' extracted item(s) · ' +
             waiting +
             ' source(s) waiting for AI' +
             (rawOnDisk ? ' · ' + rawOnDisk + ' raw file(s) archived' : ''),
@@ -3900,6 +4760,8 @@
     }
 
     state.hideJunk = loadHideJunkPref();
+    state.showEmptyCategories = loadShowEmptyCategoriesPref();
+    state.groupByDate = loadGroupByPref();
     ensureHideJunkFilter();
 
     var filters = byId('txFilters');
@@ -3914,8 +4776,14 @@
           if (key === 'hide-junk') {
             state.hideJunk = !state.hideJunk;
             saveHideJunkPref(state.hideJunk);
+            refreshDashboardCounts();
           }
           syncFilterPills();
+          renderCategoryCards();
+          renderOverview();
+          renderCategoryHeader();
+          renderStats();
+          renderDistribution();
           renderFeed();
         });
       });
@@ -3936,6 +4804,16 @@
       sortSel.addEventListener('change', function () {
         state.sortOrder = sortSel.value === 'oldest' ? 'oldest' : 'recent';
         applyIndexSort();
+        renderFeed();
+      });
+    }
+
+    syncGroupBySelectUi();
+    var groupSel = byId('txGroupBySelect');
+    if (groupSel) {
+      groupSel.addEventListener('change', function () {
+        state.groupByDate = groupSel.value === 'source' ? 'source' : 'processed';
+        saveGroupByPref(state.groupByDate);
         renderFeed();
       });
     }
