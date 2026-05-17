@@ -85,6 +85,7 @@
 
   var searchTimer = null;
   var bound = false;
+  var indexLoadGen = 0;
   var longPressTimer = null;
   var longPressDidTrigger = false;
   var REINDEX_DEBOUNCE_MS = 2000;
@@ -156,16 +157,57 @@
       cache: 'no-store',
       headers: headers,
       body: opts.body,
-    }).then(function (r) {
-      return r
-        .json()
-        .catch(function () {
-          return {};
-        })
-        .then(function (j) {
-          return { ok: r.ok, status: r.status, j: j };
-        });
-    });
+    })
+      .then(function (r) {
+        return r
+          .json()
+          .catch(function () {
+            return {};
+          })
+          .then(function (j) {
+            return { ok: r.ok, status: r.status, j: j, url: api(path) };
+          });
+      })
+      .catch(function (err) {
+        return {
+          ok: false,
+          status: 0,
+          networkError: true,
+          url: api(path),
+          j: { error: err && err.message ? err.message : 'Network request failed' },
+        };
+      });
+  }
+
+  function formatIndexFetchError(pack, err) {
+    var origin =
+      typeof soApiOrigin === 'function' ? String(soApiOrigin() || '').trim() : '';
+    var target = (pack && pack.url) || (typeof soApiUrl === 'function' ? soApiUrl('/api/admin/transcriptions/index') : '/api/admin/transcriptions/index');
+    if (pack && pack.networkError) {
+      var netMsg = (pack.j && pack.j.error) || 'Network request failed';
+      return (
+        netMsg +
+        ' · GET ' +
+        target +
+        (origin ? ' · API origin ' + origin : ' · same-origin /api') +
+        ' · Check console, so-api.js / SERVICEOPERA_API_UPSTREAM, or Rebuild index.'
+      );
+    }
+    if (pack && pack.status) {
+      var body = pack.j && (pack.j.error || pack.j.message);
+      var snippet = body ? String(body).replace(/\s+/g, ' ').trim().slice(0, 140) : '';
+      return (
+        'Could not load transcriptions: HTTP ' +
+        pack.status +
+        ' · GET ' +
+        target +
+        (snippet ? ' — ' + snippet : '')
+      );
+    }
+    if (err && err.message) {
+      return 'Could not load transcriptions: ' + err.message + ' · GET ' + target;
+    }
+    return 'Could not load transcriptions. · GET ' + target;
   }
 
   function tryApi(paths, opts) {
@@ -2802,40 +2844,55 @@
   }
 
   function loadIndex() {
+    var gen = ++indexLoadGen;
     state.loading = true;
     setLoadHint('Loading transcriptions index…', 'warn');
     var feed = byId('txFeed');
     if (feed) feed.setAttribute('aria-busy', 'true');
 
     var indexPaths = ['/api/admin/transcriptions/index', '/api/admin/transcriptions-index'];
-    txLog('API GET start', indexPaths[0], '· jwt len', adminJwt().length);
+    txLog(
+      'API GET start',
+      indexPaths[0],
+      '· jwt len',
+      adminJwt().length,
+      '· url',
+      typeof soApiUrl === 'function' ? soApiUrl(indexPaths[0]) : indexPaths[0]
+    );
 
     return tryApi(indexPaths, {
       method: 'GET',
     })
       .then(function (pack) {
+        if (gen !== indexLoadGen) {
+          txLog('loadIndex: stale response ignored (gen', gen, 'current', indexLoadGen, ')');
+          return;
+        }
         state.loading = false;
         if (feed) feed.setAttribute('aria-busy', 'false');
         var rawCount = pack && pack.j && Array.isArray(pack.j.items) ? pack.j.items.length : 0;
         txLog('API response', pack.status, 'ok=' + pack.ok, 'raw items=' + rawCount);
         if (!pack.ok) {
           state.apiUnavailable = pack.status === 404;
-          state.items = [];
-          state.counts = {};
-          setLoadHint(
-            apiErrorMessage(
-              pack,
-              'Could not load transcriptions (HTTP ' + (pack.status || '?') + ').'
-            ),
-            'error'
-          );
+          if (!state.items.length) {
+            state.counts = {};
+          }
+          setLoadHint(formatIndexFetchError(pack), 'error');
           renderOverview();
           renderCategoryHeader();
           renderCategoryCards();
           renderFeed();
           return;
         }
-        var norm = normalizeIndex(pack.j);
+        var norm;
+        try {
+          norm = normalizeIndex(pack.j);
+        } catch (normErr) {
+          console.error('[transcriptions] normalizeIndex failed', normErr);
+          setLoadHint(formatIndexFetchError(null, normErr), 'error');
+          renderFeed();
+          return;
+        }
         state.items = norm.items;
         state.counts = norm.counts;
         state.rawTranscriptionCount = norm.rawTranscriptionCount;
@@ -2848,6 +2905,7 @@
         state.hasChartData = norm.hasChartData;
         state.chart = norm.chart;
         state.searchResults = null;
+        state.apiUnavailable = false;
 
         var tgl = byId('txAutoSyncToggle');
         if (tgl) tgl.checked = state.syncSettings.auto_sync_google;
@@ -2878,18 +2936,15 @@
         renderFeed();
       })
       .catch(function (err) {
+        if (gen !== indexLoadGen) return;
         state.loading = false;
         if (feed) feed.setAttribute('aria-busy', 'false');
         console.error('[transcriptions] loadIndex failed', err);
-        setLoadHint(
-          'Network error loading transcriptions. Check console and retry Rebuild index.',
-          'error'
-        );
+        setLoadHint(formatIndexFetchError(null, err), 'error');
         renderOverview();
         renderCategoryHeader();
         renderCategoryCards();
-        var feedEl = byId('txFeed');
-        if (feedEl) feedEl.innerHTML = emptyState('none');
+        renderFeed();
         renderTimeline();
       });
   }
@@ -3002,6 +3057,7 @@
   }
 
   window.initAdminTranscriptions = function () {
+    window.__txDashInitRan = true;
     txLog('init start · rev', window.TX_DASHBOARD_UI_REV, '· route', txShellPath());
     var section = byId('transcriptionsSection');
     if (section) {
@@ -3031,11 +3087,10 @@
 
   function scheduleTxDashboardSelfInit() {
     function trySelfInit() {
+      if (window.__txDashInitRan) return;
       if (!isTranscriptionsAdminRoute()) return;
       if (!txWorkspaceVisible()) return;
       if (typeof window.initAdminTranscriptions !== 'function') return;
-      var cards = document.querySelectorAll('#txOverview .tx-overview-card').length;
-      if (cards > 0 && !state.loading && state.items.length) return;
       window.initAdminTranscriptions();
     }
 

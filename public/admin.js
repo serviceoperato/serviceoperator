@@ -2497,7 +2497,7 @@
       var overviewCards = document.querySelectorAll('#txOverview .tx-overview-card').length;
       if (overviewCards > 0) return;
       console.warn('[tx] safety re-init: overview still empty after 2s');
-      window.__txDashboardInitComplete = false;
+      window.__txDashInitRan = false;
       window.initAdminTranscriptions();
     }, 2000);
   }

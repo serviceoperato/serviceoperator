@@ -1350,13 +1350,27 @@
       } catch (eTxJwt) {
         txAdminTok = '';
       }
-      var txIndexProbe = await timedJsonAuth('/api/admin/transcriptions/index', txAdminTok);
+      var txIndexPath = '/api/admin/transcriptions/index';
+      var txIndexUrl = typeof soApiUrl === 'function' ? soApiUrl(txIndexPath) : txIndexPath;
+      var txApiOrigin =
+        typeof soApiOrigin === 'function' ? String(soApiOrigin() || '(same-origin)') : '(no soApiOrigin)';
+      lines.push({
+        cat: 'TX',
+        text: '05 · index URL: ' + txIndexUrl + ' · soApiOrigin()=' + txApiOrigin,
+      });
+      var txIndexProbe = await timedJsonAuth(txIndexPath, txAdminTok);
       var txIdx = txIndexProbe.json || {};
       var txItemCount = Array.isArray(txIdx.items) ? txIdx.items.length : 'n/a';
+      var txTotals =
+        txIdx.totals && txIdx.totals.total != null
+          ? txIdx.totals.total
+          : txIdx.counts && txIdx.counts.total != null
+            ? txIdx.counts.total
+            : 'n/a';
       lines.push({
         cat: 'TX',
         text:
-          '05 · #txLoadHint: ' +
+          '06 · #txLoadHint: ' +
           (txHintTxt || '(empty)') +
           ' · GET /api/admin/transcriptions/index: HTTP ' +
           txIndexProbe.status +
@@ -1367,20 +1381,36 @@
           (txIndexProbe.status === 401
             ? ' · note=admin auth required'
             : txIndexProbe.ok
-              ? ' · items=' + txItemCount
+              ? ' · items=' + txItemCount + ' · totals.total=' + txTotals
               : txIndexProbe.err
-                ? ' · ' + txIndexProbe.err
-                : ''),
+                ? ' · err=' + txIndexProbe.err
+                : txIndexProbe.json && txIndexProbe.json.error
+                  ? ' · ' + String(txIndexProbe.json.error).slice(0, 80)
+                  : ''),
+      });
+      var txLegacyProbe = await timedJsonAuth('/api/admin/transcriptions-index', txAdminTok);
+      lines.push({
+        cat: 'TX',
+        text:
+          '07 · GET /api/admin/transcriptions-index (fallback): HTTP ' +
+          txLegacyProbe.status +
+          ' · ' +
+          txLegacyProbe.ms +
+          ' ms' +
+          (txLegacyProbe.ok && txLegacyProbe.json && Array.isArray(txLegacyProbe.json.items)
+            ? ' · items=' + txLegacyProbe.json.items.length
+            : txLegacyProbe.err
+              ? ' · err=' + txLegacyProbe.err
+              : ''),
       });
     } else {
       lines.push({ cat: 'TX', text: '01 · TX_DASHBOARD_UI_REV: n/a (not on /admin/transcriptions)' });
       lines.push({ cat: 'TX', text: '02 · initAdminTranscriptions: n/a (not on /admin/transcriptions)' });
       lines.push({ cat: 'TX', text: '03 · #txOverview .tx-overview-card count: n/a (not on /admin/transcriptions)' });
       lines.push({ cat: 'TX', text: '04 · #txFeed .tx-dash-card count: n/a (not on /admin/transcriptions)' });
-      lines.push({
-        cat: 'TX',
-        text: '05 · #txLoadHint / GET /api/admin/transcriptions/index: n/a (not on /admin/transcriptions)',
-      });
+      lines.push({ cat: 'TX', text: '05 · index URL: n/a (not on /admin/transcriptions)' });
+      lines.push({ cat: 'TX', text: '06 · #txLoadHint / GET /api/admin/transcriptions/index: n/a (not on /admin/transcriptions)' });
+      lines.push({ cat: 'TX', text: '07 · GET /api/admin/transcriptions-index: n/a (not on /admin/transcriptions)' });
     }
 
     /* —— Portal password reset (login.html only) —— */
