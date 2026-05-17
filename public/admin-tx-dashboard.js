@@ -1328,6 +1328,7 @@
       '<div class="tx-detail-page__badges">' +
       renderDetailStatusBadges(item) +
       '</div>' +
+      renderItemSectionCountChips(item) +
       metaRows +
       '</div></header>' +
       peopleBlock +
@@ -1598,6 +1599,209 @@
     return 'unresolved';
   }
 
+  var TASK_STATUS_DEFS = [
+    { key: 'done', label: 'Completed', color: '#10b981' },
+    { key: 'open', label: 'Open', color: '#f59e0b' },
+    { key: 'unclear', label: 'Unclear / to confirm', color: '#94a3b8' },
+  ];
+  var DECISION_STATUS_DEFS = [
+    { key: 'confirmed', label: 'Confirmed', color: '#10b981' },
+    { key: 'needsReview', label: 'Needs review', color: '#f59e0b' },
+    { key: 'toConfirm', label: 'To confirm', color: '#ef4444' },
+  ];
+  var OPEN_POINT_STATUS_DEFS = [
+    { key: 'resolved', label: 'Resolved', color: '#10b981' },
+    { key: 'unresolved', label: 'Unresolved', color: '#64748b' },
+    { key: 'ownerToConfirm', label: 'Owner to confirm', color: '#eab308' },
+    { key: 'dateToConfirm', label: 'Date/time to confirm', color: '#8b5cf6' },
+  ];
+  var NEXT_STEP_STATUS_DEFS = [
+    { key: 'done', label: 'Done', color: '#10b981' },
+    { key: 'pending', label: 'Pending', color: '#f59e0b' },
+    { key: 'blocked', label: 'Blocked', color: '#ef4444' },
+  ];
+  var CALENDAR_STATUS_DEFS = [
+    { key: 'dated', label: 'Dated', color: '#8b5cf6' },
+    { key: 'confirm', label: 'To confirm', color: '#ef4444' },
+    { key: 'unclear', label: 'Unclear', color: '#94a3b8' },
+  ];
+
+  function entryText(entry) {
+    if (entry == null) return '';
+    if (typeof entry === 'string') return String(entry).trim();
+    if (typeof entry === 'object') {
+      return String(entry.text || entry.title || entry.label || entry.issue || '').trim();
+    }
+    return String(entry).trim();
+  }
+
+  function isMeaningfulEntry(entry) {
+    var t = entryText(entry).toLowerCase();
+    return !!(t && t !== '(none)' && t !== 'none' && t !== '—' && t !== '-');
+  }
+
+  function meaningfulEntries(arr) {
+    if (!Array.isArray(arr)) return [];
+    return arr.filter(isMeaningfulEntry);
+  }
+
+  function entryTaskStatus(entry) {
+    if (entry && typeof entry === 'object') {
+      if (entry.done === true || entry.completed === true) return 'done';
+      var s = String(entry.status || '').toLowerCase();
+      if (s) return taskStatusBucket({ status: s });
+    }
+    var t = entryText(entry);
+    if (/^\s*[-*]?\s*\[[xX]\]/.test(t)) return 'done';
+    var low = t.toLowerCase();
+    if (/\b(done|completed|complete|closed)\b/.test(low)) return 'done';
+    if (/\b(unclear|to confirm|unknown|tbd)\b/.test(low)) return 'unclear';
+    return 'open';
+  }
+
+  function entryDecisionStatus(entry, parentItem) {
+    if (entry && typeof entry === 'object') {
+      if (entry.confirmed === true || entry.reviewed === true) return 'confirmed';
+      var s = String(entry.status || '').toLowerCase();
+      if (s === 'confirmed' || s === 'done' || s === 'approved') return 'confirmed';
+      if (s === 'to confirm' || s === 'confirm' || s === 'tbd') return 'toConfirm';
+      if (s === 'needs review' || s === 'needs_review' || s === 'review') return 'needsReview';
+      if (entry.reviewed === false) return 'needsReview';
+    }
+    var low = entryText(entry).toLowerCase();
+    if (/\b(confirmed|decided|approved|agreed)\b/.test(low)) return 'confirmed';
+    if (/\b(to confirm|needs confirmation)\b/.test(low)) return 'toConfirm';
+    if (/\b(needs review|review|tbd|pending)\b/.test(low)) return 'needsReview';
+    if (parentItem && parentItem.reviewed) return 'confirmed';
+    return 'needsReview';
+  }
+
+  function entryOpenPointStatus(entry) {
+    if (entry && typeof entry === 'object') {
+      var s = String(entry.status || '').toLowerCase();
+      if (s === 'resolved' || s === 'closed' || s === 'done') return 'resolved';
+      if (s === 'owner to confirm' || s === 'owner_to_confirm') return 'ownerToConfirm';
+      if (s === 'date to confirm' || s === 'date_to_confirm') return 'dateToConfirm';
+    }
+    var low = entryText(entry).toLowerCase();
+    if (/\b(resolved|closed|done)\b/.test(low)) return 'resolved';
+    if (
+      (/\b(date|time|when|schedule|deadline)\b/.test(low) && /\b(confirm|tbd|unclear)\b/.test(low)) ||
+      /\b(date\/time to confirm|confirm date)\b/.test(low)
+    ) {
+      return 'dateToConfirm';
+    }
+    if (
+      (/\b(owner|assignee|who)\b/.test(low) && /\b(confirm|tbd|unclear)\b/.test(low)) ||
+      /\bowner to confirm\b/.test(low)
+    ) {
+      return 'ownerToConfirm';
+    }
+    var pseudo =
+      entry && typeof entry === 'object'
+        ? entry
+        : { issue: entryText(entry), owner: null, assignedTo: null };
+    if (openPointBucket(pseudo) === 'unclear') return 'ownerToConfirm';
+    return 'unresolved';
+  }
+
+  function entryNextStepStatus(entry) {
+    if (entry && typeof entry === 'object') {
+      var s = String(entry.status || '').toLowerCase();
+      if (s === 'done' || s === 'completed' || s === 'complete') return 'done';
+      if (s === 'blocked') return 'blocked';
+      return 'pending';
+    }
+    var t = entryText(entry);
+    if (/^\s*[-*]?\s*\[[xX]\]/.test(t)) return 'done';
+    var low = t.toLowerCase();
+    if (/\b(done|completed|complete)\b/.test(low)) return 'done';
+    if (/\bblocked\b/.test(low)) return 'blocked';
+    return 'pending';
+  }
+
+  function countStatusSegments(entries, statusFn, defs) {
+    if (!entries.length) return [];
+    var counts = {};
+    defs.forEach(function (d) {
+      counts[d.key] = 0;
+    });
+    entries.forEach(function (e) {
+      var k = statusFn(e);
+      if (counts[k] != null) counts[k] += 1;
+    });
+    return defs
+      .map(function (d) {
+        var v = counts[d.key] || 0;
+        if (v <= 0) return null;
+        return { label: d.label, value: v, color: d.color };
+      })
+      .filter(Boolean);
+  }
+
+  function compactInsightSegments(parts) {
+    parts = (parts || []).filter(Boolean);
+    return parts.length >= 2 ? parts : null;
+  }
+
+  function mergeInsightSegments(arrays) {
+    var map = {};
+    (arrays || []).forEach(function (arr) {
+      (arr || []).forEach(function (seg) {
+        if (!map[seg.label]) {
+          map[seg.label] = { label: seg.label, value: 0, color: seg.color };
+        }
+        map[seg.label].value += seg.value;
+      });
+    });
+    return compactInsightSegments(
+      Object.keys(map).map(function (k) {
+        return map[k];
+      })
+    );
+  }
+
+  function sectionCountFrom(arr, statVal) {
+    var n = meaningfulEntries(arr || []).length;
+    if (n > 0) return n;
+    if (arr && arr.length && !meaningfulEntries(arr).length) return 0;
+    return statVal != null ? statVal | 0 : 0;
+  }
+
+  function itemSourceSectionCounts(item) {
+    var st = item.stats || {};
+    return {
+      tasks: sectionCountFrom(item.tasks, st.tasks_count),
+      decisions: sectionCountFrom(item.decisions, st.decisions_count),
+      openPoints: sectionCountFrom(item.openPoints || item.open_points, st.open_points_count),
+      nextSteps: sectionCountFrom(item.nextSteps || item.next_steps, st.next_steps_count),
+    };
+  }
+
+  function itemSectionCountChipText(item) {
+    var c = itemSourceSectionCounts(item);
+    var parts = [];
+    if (c.tasks > 0) parts.push(c.tasks + ' task' + (c.tasks === 1 ? '' : 's'));
+    if (c.decisions > 0) parts.push(c.decisions + ' decision' + (c.decisions === 1 ? '' : 's'));
+    if (c.openPoints > 0) parts.push(c.openPoints + ' open point' + (c.openPoints === 1 ? '' : 's'));
+    if (c.nextSteps > 0) parts.push(c.nextSteps + ' next step' + (c.nextSteps === 1 ? '' : 's'));
+    return parts.join(' · ');
+  }
+
+  function renderItemSectionCountChips(item) {
+    var text = itemSectionCountChipText(item);
+    if (!text) return '';
+    return (
+      '<p class="tx-section-counts" aria-label="Section counts">' +
+      text
+        .split(' · ')
+        .map(function (part) {
+          return '<span class="tx-section-counts__chip">' + esc(part) + '</span>';
+        })
+        .join('<span class="tx-section-counts__sep" aria-hidden="true">·</span>') +
+      '</p>'
+    );
+  }
 
   function categoryBreakdownStats(cat, items) {
     var n = items.length;
@@ -1689,42 +1893,15 @@
 
   function itemInsightSegments(item) {
     var cat = String(item.category || 'notes').toLowerCase();
-    var st = item.stats || {};
-
-    function seg(label, value, color) {
-      var v = value | 0;
-      if (v <= 0) return null;
-      return { label: label, value: v, color: color };
-    }
-
-    function compact(parts) {
-      parts = parts.filter(Boolean);
-      return parts.length >= 2 ? parts : null;
-    }
 
     if (cat === 'meetings' || cat === 'notes') {
-      return compact([
-        seg('Tasks', st.tasks_count != null ? st.tasks_count : arrayLen(item.tasks), '#f59e0b'),
-        seg(
-          'Decisions',
-          st.decisions_count != null ? st.decisions_count : arrayLen(item.decisions),
-          '#10b981'
-        ),
-        seg(
-          'Open points',
-          st.open_points_count != null ? st.open_points_count : arrayLen(item.openPoints),
-          '#64748b'
-        ),
-        seg(
-          'Calendar',
-          st.calendar_events_count != null ? st.calendar_events_count : arrayLen(item.calendarEvents),
-          '#8b5cf6'
-        ),
-        seg(
-          'Next steps',
-          st.next_steps_count != null ? st.next_steps_count : arrayLen(item.nextSteps),
-          '#4f46e5'
-        ),
+      return mergeInsightSegments([
+        countStatusSegments(meaningfulEntries(item.tasks), entryTaskStatus, TASK_STATUS_DEFS),
+        countStatusSegments(meaningfulEntries(item.decisions), function (e) {
+          return entryDecisionStatus(e, item);
+        }, DECISION_STATUS_DEFS),
+        countStatusSegments(meaningfulEntries(item.openPoints || item.open_points), entryOpenPointStatus, OPEN_POINT_STATUS_DEFS),
+        countStatusSegments(meaningfulEntries(item.nextSteps || item.next_steps), entryNextStepStatus, NEXT_STEP_STATUS_DEFS),
       ]);
     }
 
@@ -1732,27 +1909,71 @@
       var subs = item.subtasks || item.checklist || [];
       if (subs.length >= 2) {
         var done = countWhere(subs, function (s) {
-          if (s && typeof s === 'object') {
-            if (s.done === true || s.completed === true) return true;
-            var t = String(s.status || '').toLowerCase();
-            return t === 'done' || t === 'complete' || t === 'completed';
-          }
-          return /^\s*[-*]?\s*\[[xX]\]/.test(String(s || ''));
+          return entryTaskStatus(s) === 'done';
         });
-        return compact([
-          seg('Done', done, '#10b981'),
-          seg('Pending', subs.length - done, '#f59e0b'),
+        var unclear = countWhere(subs, function (s) {
+          return entryTaskStatus(s) === 'unclear';
+        });
+        var open = subs.length - done - unclear;
+        return compactInsightSegments([
+          { label: 'Completed', value: done, color: '#10b981' },
+          { label: 'Open', value: open, color: '#f59e0b' },
+          { label: 'Unclear / to confirm', value: unclear, color: '#94a3b8' },
         ]);
+      }
+      var taskLines = meaningfulEntries(item.tasks);
+      if (taskLines.length >= 2) {
+        return compactInsightSegments(
+          countStatusSegments(taskLines, entryTaskStatus, TASK_STATUS_DEFS)
+        );
+      }
+      return null;
+    }
+
+    if (cat === 'decisions') {
+      var decLines = meaningfulEntries(item.decisions);
+      if (!decLines.length && item.decisionText && isMeaningfulEntry(item.decisionText)) {
+        decLines = [item.decisionText];
+      }
+      return compactInsightSegments(
+        countStatusSegments(decLines, function (e) {
+          return entryDecisionStatus(e, item);
+        }, DECISION_STATUS_DEFS)
+      );
+    }
+
+    if (cat === 'open-points') {
+      var opLines = meaningfulEntries(item.openPoints || item.open_points);
+      if (!opLines.length && item.issue && isMeaningfulEntry(item.issue)) opLines = [item.issue];
+      return compactInsightSegments(
+        countStatusSegments(opLines, entryOpenPointStatus, OPEN_POINT_STATUS_DEFS)
+      );
+    }
+
+    if (cat === 'calendar') {
+      var evs = meaningfulEntries(item.calendarEvents || item.calendar_events);
+      if (evs.length >= 2) {
+        return compactInsightSegments(
+          countStatusSegments(
+            evs,
+            function (e) {
+              return calendarDateState(typeof e === 'object' ? e : { summary: entryText(e) });
+            },
+            CALENDAR_STATUS_DEFS
+          )
+        );
       }
       return null;
     }
 
     if (cat === 'projects') {
-      return compact([
-        seg('Blockers', arrayLen(item.blockers), '#ef4444'),
-        seg('Next steps', arrayLen(item.nextSteps), '#4f46e5'),
-        seg('Actions', arrayLen(item.possibleActions), '#10b981'),
-      ]);
+      var steps = meaningfulEntries(item.nextSteps || item.next_steps);
+      if (steps.length >= 2) {
+        return compactInsightSegments(
+          countStatusSegments(steps, entryNextStepStatus, NEXT_STEP_STATUS_DEFS)
+        );
+      }
+      return null;
     }
 
     return null;
@@ -2007,10 +2228,17 @@
       else if (pl.indexOf('thaifans') !== -1) chips.push({ t: 'Thaifans', accent: true });
       else chips.push({ t: proj, accent: true });
     }
-    var st = item.stats || {};
-    if ((st.tasks_count || 0) > 0 || (item.tasks || []).length) chips.push({ t: 'Has tasks' });
-    if ((st.calendar_events_count || 0) > 0) chips.push({ t: 'Has calendar' });
-    if ((st.decisions_count || 0) > 0 || (item.decisions || []).length) chips.push({ t: 'Has decisions' });
+    var sectionLine = itemSectionCountChipText(item);
+    if (sectionLine) {
+      chips.push({ t: sectionLine, accent: true });
+    } else {
+      var st = item.stats || {};
+      if ((st.tasks_count || 0) > 0 || meaningfulEntries(item.tasks).length) chips.push({ t: 'Has tasks' });
+      if ((st.calendar_events_count || 0) > 0) chips.push({ t: 'Has calendar' });
+      if ((st.decisions_count || 0) > 0 || meaningfulEntries(item.decisions).length) {
+        chips.push({ t: 'Has decisions' });
+      }
+    }
     if (item.category === 'calendar' && calendarDateState(item) === 'confirm') {
       chips.push({ t: 'Date/time to confirm', warn: true });
     }

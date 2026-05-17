@@ -1090,6 +1090,29 @@
   margin-bottom: 0.55rem;
 }
 
+.tx-section-counts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.35rem;
+  margin: 0 0 0.5rem;
+  font-size: 0.72rem;
+  color: var(--tx-dash-muted, #64748b);
+}
+
+.tx-section-counts__chip {
+  padding: 0.12rem 0.45rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--tx-cat-accent, #4f46e5) 12%, var(--tx-dash-card, #fff));
+  color: var(--tx-dash-ink, #0f172a);
+  font-weight: 500;
+}
+
+.tx-section-counts__sep {
+  opacity: 0.55;
+  user-select: none;
+}
+
 .tx-detail-page__fields {
   width: 100%;
   border-collapse: collapse;
