@@ -1,11 +1,12 @@
 /* global self, caches, fetch, clients */
 
-var PAGE_CACHE = 'so-pages-v7';
-var ASSET_CACHE = 'so-assets-v6';
+var PAGE_CACHE = 'so-pages-v8';
+var ASSET_CACHE = 'so-assets-v7';
 
 function isAdminTranscriptionsAsset(pathname) {
   return (
     pathname === '/admin-transcriptions.js' ||
+    pathname === '/admin-tx-dashboard.js' ||
     pathname === '/transcriptions-dashboard.css' ||
     pathname === '/admin-transcriptions.css' ||
     pathname === '/transcriptions-admin.css' ||

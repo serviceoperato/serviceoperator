@@ -1435,7 +1435,13 @@ function pruneAdminRouteRequests(key) {
 /** Admin JS/CSS bundles — not counted toward API rate limits (HTML still JWT-gated in sendAdminHtml). */
 function isAdminStaticAssetPath(pathname) {
   const p = pathname || '';
-  if (p === '/admin.html' || p === '/admin.js' || p === '/admin-transcriptions.js' || p === '/admin-config.js')
+  if (
+    p === '/admin.html' ||
+    p === '/admin.js' ||
+    p === '/admin-transcriptions.js' ||
+    p === '/admin-tx-dashboard.js' ||
+    p === '/admin-config.js'
+  )
     return true;
   return (
     p === '/transcriptions-admin.css' ||
@@ -1451,7 +1457,8 @@ function resolveAdminRouteRateLimitMax(req) {
 
 function isAdminProtectedRequestPath(pathname) {
   const p = pathname || '';
-  if (p === '/admin.html' || p === '/admin.js' || p === '/admin-transcriptions.js') return true;
+  if (p === '/admin.html' || p === '/admin.js' || p === '/admin-transcriptions.js' || p === '/admin-tx-dashboard.js')
+    return true;
   if (
     p === '/admin-config.js' ||
     p === '/transcriptions-admin.css' ||
@@ -4197,6 +4204,7 @@ app.use(
         filePath.endsWith('admin.html') ||
         filePath.endsWith('admin.js') ||
         filePath.endsWith('admin-transcriptions.js') ||
+        filePath.endsWith('admin-tx-dashboard.js') ||
         norm.endsWith('transcriptions-admin.css') ||
         norm.endsWith('admin-transcriptions.css') ||
         norm.endsWith('transcriptions-dashboard.css') ||

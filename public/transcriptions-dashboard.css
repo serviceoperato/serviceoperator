@@ -652,6 +652,29 @@
   display: grid !important;
 }
 
+.tx-dashboard-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: 0 0 0.75rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, #4f46e5 35%, var(--tx-dash-line, #e2e8f0));
+  background: color-mix(in srgb, #4f46e5 10%, var(--tx-dash-card, #fff));
+  font-size: 0.72rem;
+}
+
+.tx-dashboard-banner__label {
+  font-weight: 700;
+  color: var(--tx-dash-ink, #0f172a);
+}
+
+.tx-dashboard-banner__rev {
+  color: #4f46e5;
+  font-weight: 600;
+}
+
 .tx-admin--dashboard .tx-cat-card {
   --tx-cat-accent: var(--tx-overview-accent, #4f46e5);
   border-color: color-mix(in srgb, var(--tx-cat-accent) 35%, var(--tx-dash-line, #e2e8f0));

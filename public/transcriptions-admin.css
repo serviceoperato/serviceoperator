@@ -1020,22 +1020,22 @@
 }
 
 @media (min-width: 421px) {
-  .tx-card__top,
-  .tx-card__menu-wrap {
+  .tx-card:not(.tx-dash-card) .tx-card__top,
+  .tx-card:not(.tx-dash-card) .tx-card__menu-wrap {
     display: none;
   }
 
-  .tx-card__legacy,
-  .tx-card__actions {
+  .tx-card:not(.tx-dash-card) .tx-card__legacy,
+  .tx-card:not(.tx-dash-card) .tx-card__actions {
     display: block !important;
   }
 
-  .tx-card__title {
+  .tx-card:not(.tx-dash-card) .tx-card__title {
     white-space: normal;
     overflow: visible;
   }
 
-  .tx-card__preview {
+  .tx-card:not(.tx-dash-card) .tx-card__preview {
     -webkit-line-clamp: unset;
     display: block;
   }
