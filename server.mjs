@@ -1405,19 +1405,30 @@ function pruneAdminUserProfilingGets(ip) {
   return arr;
 }
 
-/** Rate-limit /admin/* HTML and /api/admin/* (and legacy voice-recorder API paths) by IP. */
-const ADMIN_ROUTE_RATE_WINDOW_MS = 60_000;
+/**
+ * Sliding-window cap for /admin/* HTML and /api/admin/* (excl. login; see ADMIN_LOGIN_*).
+ * Authenticated JWT: per admin email; unauthenticated: per client IP.
+ */
+const ADMIN_API_RATE_LIMIT_WINDOW_MS = 60_000;
+/** Valid admin JWT (Bearer or HttpOnly cookie) — normal console / transcriptions API usage. */
+const ADMIN_API_RATE_LIMIT_PER_MIN = 30;
 /** Unauthenticated /api/admin/* (capabilities probe, etc.). */
-const ADMIN_ROUTE_RATE_MAX = 10;
-/** Valid admin JWT (Bearer or HttpOnly cookie) — normal console usage. */
-const ADMIN_ROUTE_RATE_MAX_AUTHENTICATED = 60;
+const ADMIN_API_RATE_LIMIT_UNAUTH_PER_MIN = 10;
 /** @type {Map<string, number[]>} */
-const adminRouteTimestampsByIp = new Map();
+const adminRouteTimestampsByKey = new Map();
 
-function pruneAdminRouteRequests(ip) {
+function adminRouteRateLimitKey(req) {
+  const admin = getVerifiedAdmin(req);
+  if (admin?.email) return `admin:${admin.email}`;
+  return `ip:${clientIp(req)}`;
+}
+
+function pruneAdminRouteRequests(key) {
   const now = Date.now();
-  const arr = (adminRouteTimestampsByIp.get(ip) || []).filter((t) => now - t < ADMIN_ROUTE_RATE_WINDOW_MS);
-  adminRouteTimestampsByIp.set(ip, arr);
+  const arr = (adminRouteTimestampsByKey.get(key) || []).filter(
+    (t) => now - t < ADMIN_API_RATE_LIMIT_WINDOW_MS
+  );
+  adminRouteTimestampsByKey.set(key, arr);
   return arr;
 }
 
@@ -1434,8 +1445,8 @@ function isAdminStaticAssetPath(pathname) {
 }
 
 function resolveAdminRouteRateLimitMax(req) {
-  if (getVerifiedAdmin(req)) return ADMIN_ROUTE_RATE_MAX_AUTHENTICATED;
-  return ADMIN_ROUTE_RATE_MAX;
+  if (getVerifiedAdmin(req)) return ADMIN_API_RATE_LIMIT_PER_MIN;
+  return ADMIN_API_RATE_LIMIT_UNAUTH_PER_MIN;
 }
 
 function isAdminProtectedRequestPath(pathname) {
@@ -1844,20 +1855,20 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
   if (!isAdminProtectedRequestPath(req.path) || isAdminRateLimitExemptPath(req.path)) return next();
   if (req.method === 'GET' && isAdminStaticAssetPath(req.path)) return next();
-  const ip = clientIp(req);
+  const key = adminRouteRateLimitKey(req);
   const max = resolveAdminRouteRateLimitMax(req);
-  const arr = pruneAdminRouteRequests(ip);
+  const arr = pruneAdminRouteRequests(key);
   if (arr.length >= max) {
     if (req.path.startsWith('/api/')) {
-      res.setHeader('Retry-After', String(Math.ceil(ADMIN_ROUTE_RATE_WINDOW_MS / 1000)));
-      return res.status(429).json({ error: 'Too many requests. Try again later.' });
+      res.setHeader('Retry-After', String(Math.ceil(ADMIN_API_RATE_LIMIT_WINDOW_MS / 1000)));
+      return res.status(429).json({ error: 'Too many requests. Try again in a minute.' });
     }
     res.setHeader('Cache-Control', 'no-store');
-    res.setHeader('Retry-After', String(Math.ceil(ADMIN_ROUTE_RATE_WINDOW_MS / 1000)));
-    return res.status(429).type('text/plain').send('Too many requests. Try again later.');
+    res.setHeader('Retry-After', String(Math.ceil(ADMIN_API_RATE_LIMIT_WINDOW_MS / 1000)));
+    return res.status(429).type('text/plain').send('Too many requests. Try again in a minute.');
   }
   arr.push(Date.now());
-  adminRouteTimestampsByIp.set(ip, arr);
+  adminRouteTimestampsByKey.set(key, arr);
   next();
 });
 
