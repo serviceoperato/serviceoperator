@@ -822,6 +822,87 @@
   }
 }
 
+/* Detail page: full text (list cards keep line-clamp in transcriptions-admin.css) */
+.tx-detail-page__prose,
+.tx-detail-prose {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  line-height: 1.55;
+  font-size: 0.82rem;
+  margin: 0;
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+  max-height: none;
+  overflow: visible;
+  text-overflow: unset;
+}
+
+.tx-detail-page__card-body ul {
+  line-height: 1.5;
+}
+
+.tx-detail-page__card-body ul li {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow: visible;
+  text-overflow: unset;
+}
+
+.tx-detail-ref,
+.tx-detail-ref--full {
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+  max-height: none;
+  text-overflow: unset;
+  overflow: visible;
+}
+
+.tx-detail-ref__scroll {
+  border: 1px solid var(--tx-dash-line);
+  border-radius: 10px;
+  background: var(--tx-dash-bg);
+}
+
+.tx-detail-ref.is-collapsed .tx-detail-ref__scroll {
+  max-height: none;
+  overflow-y: visible;
+}
+
+.tx-detail-ref:not(.is-collapsed) .tx-detail-ref__scroll {
+  max-height: min(70vh, 720px);
+  overflow-y: auto;
+}
+
+.tx-detail-ref__text {
+  margin: 0;
+  padding: 0.75rem 0.85rem;
+  font-family: inherit;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  background: transparent;
+  border: 0;
+}
+
+.tx-detail-ref__meta {
+  margin: 0 0 0.5rem;
+  font-size: 0.72rem;
+}
+
+.tx-detail-ref__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.55rem;
+}
+
+.tx-detail-ref__remainder[hidden] {
+  display: none !important;
+}
+
 /* —— Detail page (/admin/transcriptions/item/:id) —— */
 .tx-detail-page__nav {
   display: flex;

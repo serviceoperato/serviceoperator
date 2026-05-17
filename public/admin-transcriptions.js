@@ -5,7 +5,7 @@
   'use strict';
 
   /** Bumped when dashboard markup/behavior changes (cache-bust aid). */
-  window.TX_DASHBOARD_UI_REV = 10;
+  window.TX_DASHBOARD_UI_REV = 11;
 
   /** Detail page: collapsed preview length for full transcription reference (chars). */
   var DETAIL_REF_PREVIEW_CHARS = 650;
@@ -551,6 +551,10 @@
     return CATEGORY_THEME[cat] || { accent: '#4f46e5', subtitle: '' };
   }
 
+  function txTopicVisuals() {
+    return window.TxTopicVisuals || null;
+  }
+
   /** Numeric breakdowns per category (≥2 states → donut). Colors align with catTheme accents. */
   var CATEGORY_SEGMENT_DEFS = {
     meetings: [
@@ -721,6 +725,182 @@
     var actions = item.possibleActions || [];
     if (actions.length) return String(actions[0] || '').trim();
     return '';
+  }
+
+  function itemRawSections(item) {
+    return item.raw_sections || item.rawSections || {};
+  }
+
+  function parseMarkdownSections(text) {
+    var sections = {};
+    if (!text) return sections;
+    String(text)
+      .split(/\n(?=##\s+)/)
+      .forEach(function (part) {
+        var m = part.match(/^##\s+([^\n]+)\n([\s\S]*)/);
+        if (m) sections[m[1].trim()] = m[2].trim();
+      });
+    return sections;
+  }
+
+  function isNoneSectionText(t) {
+    return !t || /^\(none(\s+extracted)?\)?\.?$/i.test(String(t).trim());
+  }
+
+  function sectionTextFromItem(item, names) {
+    var raw = itemRawSections(item);
+    var i;
+    for (i = 0; i < names.length; i++) {
+      var fromRaw = raw[names[i]];
+      if (fromRaw && !isNoneSectionText(fromRaw)) return String(fromRaw).trim();
+    }
+    if (item.fullContent) {
+      var parsed = parseMarkdownSections(item.fullContent);
+      for (i = 0; i < names.length; i++) {
+        var fromMd = parsed[names[i]];
+        if (fromMd && !isNoneSectionText(fromMd)) return String(fromMd).trim();
+      }
+    }
+    return '';
+  }
+
+  function textLooksTruncated(t) {
+    var s = String(t || '').trim();
+    return /\u2026$/.test(s) || /\.{3}$/.test(s);
+  }
+
+  function itemDetailSummary(item) {
+    var full = sectionTextFromItem(item, ['Summary', 'Clean Summary', 'Clean summary']);
+    if (full) return full;
+    var fallback = itemSummaryParagraph(item);
+    if (fallback && !textLooksTruncated(fallback)) return fallback;
+    if (item.fullContent) {
+      full = sectionTextFromItem(item, ['Summary', 'Clean Summary', 'Clean summary']);
+      if (full) return full;
+    }
+    return fallback || '';
+  }
+
+  function extractTranscriptionBody(md) {
+    if (!md) return '';
+    var cleaned = String(md).replace(/^<!--[\s\S]*?-->\s*/m, '').trim();
+    var sections = parseMarkdownSections(cleaned);
+    if (sections.Transcription && !isNoneSectionText(sections.Transcription)) {
+      return sections.Transcription.trim();
+    }
+    return cleaned;
+  }
+
+  function resolveFullTranscriptionReference(item) {
+    if (item.sourceTranscriptionContent) {
+      return extractTranscriptionBody(item.sourceTranscriptionContent);
+    }
+    var refHint = sectionTextFromItem(item, ['Full Transcription Reference']);
+    if (refHint && !/^See\s+`/i.test(refHint)) return refHint;
+    return refHint || '';
+  }
+
+  function detailProseHtml(text, people) {
+    if (!text) return '';
+    return (
+      '<div class="tx-detail-page__prose tx-detail-prose">' +
+      (people && people.length ? highlightPeopleInText(text, people) : esc(text)) +
+      '</div>'
+    );
+  }
+
+  function renderFullTranscriptionReferenceBlock(item) {
+    var text = resolveFullTranscriptionReference(item);
+    var meta =
+      (item.sourceTranscription
+        ? '<p class="tx-detail-ref__meta"><strong>Source file:</strong> <code>' +
+          esc(item.sourceTranscription) +
+          '</code></p>'
+        : '') +
+      (item.path || item.filepath
+        ? '<p class="tx-detail-ref__meta"><strong>Output:</strong> <code>' +
+          esc(item.path || item.filepath) +
+          '</code></p>'
+        : '');
+    if (!text) {
+      return (
+        meta +
+        '<p class="tf-admin-muted">Full reference text loads when the detail API returns the source transcription file.</p>'
+      );
+    }
+    var needsExpand = text.length > DETAIL_REF_PREVIEW_CHARS;
+    var previewPart = needsExpand ? text.slice(0, DETAIL_REF_PREVIEW_CHARS) : text;
+    return (
+      '<div class="tx-detail-ref-wrap" data-tx-full-ref>' +
+      meta +
+      '<div class="tx-detail-ref tx-detail-ref--full' +
+      (needsExpand ? ' is-collapsed' : '') +
+      '">' +
+      '<div class="tx-detail-ref__scroll">' +
+      '<pre class="tx-detail-ref__text"><span class="tx-detail-ref__preview">' +
+      esc(previewPart) +
+      (needsExpand ? '\u2026' : '') +
+      '</span>' +
+      (needsExpand
+        ? '<span class="tx-detail-ref__remainder" hidden>' +
+          esc(text.slice(DETAIL_REF_PREVIEW_CHARS)) +
+          '</span>'
+        : '') +
+      '</pre></div></div>' +
+      '<div class="tx-detail-ref__toolbar">' +
+      (needsExpand
+        ? '<button type="button" class="tf-admin-toolbar__btn tx-detail-ref__toggle" data-tx-ref-toggle aria-expanded="false">Show full transcription</button>'
+        : '') +
+      '<button type="button" class="tf-admin-toolbar__btn tx-detail-ref__copy" data-tx-ref-copy>Copy full reference</button>' +
+      '</div></div>'
+    );
+  }
+
+  function bindDetailReferenceControls(root, item) {
+    if (!root) return;
+    var wrap = root.querySelector('[data-tx-full-ref]');
+    if (!wrap) return;
+    var text = resolveFullTranscriptionReference(item);
+    var toggle = wrap.querySelector('[data-tx-ref-toggle]');
+    var remainder = wrap.querySelector('.tx-detail-ref__remainder');
+    var refEl = wrap.querySelector('.tx-detail-ref');
+    if (toggle && remainder && refEl) {
+      toggle.addEventListener('click', function () {
+        var expanded = toggle.getAttribute('aria-expanded') === 'true';
+        if (expanded) {
+          remainder.setAttribute('hidden', '');
+          refEl.classList.add('is-collapsed');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.textContent = 'Show full transcription';
+        } else {
+          remainder.removeAttribute('hidden');
+          refEl.classList.remove('is-collapsed');
+          toggle.setAttribute('aria-expanded', 'true');
+          toggle.textContent = 'Collapse';
+        }
+      });
+    }
+    var copyBtn = wrap.querySelector('[data-tx-ref-copy]');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function () {
+        if (!text) {
+          toast('Nothing to copy.');
+          return;
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(
+            function () {
+              toast('Full reference copied.');
+            },
+            function () {
+              toast('Copy failed.');
+            }
+          );
+        } else {
+          toast('Clipboard not available.');
+        }
+      });
+    }
   }
 
   function detailSectionCard(title, bodyHtml) {
@@ -1015,7 +1195,7 @@
     if (copySummary) {
       copySummary.addEventListener('click', function () {
         if (!state.detailItem) return;
-        var text = itemSummaryParagraph(state.detailItem) || state.detailItem.title || '';
+        var text = itemDetailSummary(state.detailItem) || state.detailItem.title || '';
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(text).then(
             function () {
@@ -1043,10 +1223,14 @@
     var theme = catTheme(cat);
     var people = extractPeopleFromItem(item);
     var points = itemKeyPoints(item);
-    var summary = itemSummaryParagraph(item);
+    var summary = itemDetailSummary(item);
     var nextAction = itemNextActionLine(item);
     var heroStats = categoryBreakdownStats(cat, [item]);
-    var heroVisual = categoryVisualFromStats(heroStats, cat, 1, null, { legend: true, size: 'hero' });
+    var heroVisual = categoryVisualFromStats(heroStats, cat, 1, null, {
+      legend: true,
+      size: 'hero',
+      item: item,
+    });
     var processed = formatProcessedDate(item);
     var audioName = audioBasename(item);
 
@@ -1062,12 +1246,9 @@
       : '';
 
     var peopleBlock = renderPeopleInvolvedBlock(people);
-    var transcriptBlock = renderTranscriptSpeakersBlock(item, people);
 
     var summaryBody =
-      '<p class="tx-detail-page__prose">' +
-      highlightPeopleInText(summary || 'No summary available in the index for this item.', people) +
-      '</p>';
+      detailProseHtml(summary || 'No summary available in the index for this item.', people);
     if (nextAction) {
       summaryBody +=
         '<p class="tx-detail-page__next-action"><strong>Next action:</strong> ' +
@@ -1143,6 +1324,7 @@
         }
       });
     });
+    bindDetailReferenceControls(root, item);
   }
 
   function fetchDetailItem(id) {
@@ -1281,6 +1463,10 @@
     );
   }
   function renderLargeCategoryIcon(cat, extraClass) {
+    var TV = txTopicVisuals();
+    if (TV) {
+      return TV.renderTopicVisual(TV.categoryVisualKey(cat), { size: 'list', extraClass: extraClass });
+    }
     var theme = catTheme(cat);
     var cls = 'tx-dash-card__icon' + (extraClass ? ' ' + extraClass : '');
     return (
@@ -1442,12 +1628,21 @@
   function categoryVisualFromStats(stats, catKey, total, iconExtraClass, opts) {
     opts = opts || {};
     var segs = buildSegmentsFromStats(stats, catKey);
-    var sum = segs.reduce(function (s, c) {
+    var active = segs.filter(function (s) {
+      return (s.value || 0) > 0;
+    });
+    var sum = active.reduce(function (s, c) {
       return s + (c.value || 0);
     }, 0);
     var center = total != null ? total : sum;
-    if (segs.length >= 2 && center > 0) {
-      return renderCompactRing(segs, center, opts);
+    if (active.length >= 2 && center > 0) {
+      return renderCompactRing(active, center, opts);
+    }
+    var TV = txTopicVisuals();
+    if (TV) {
+      var key = opts.item ? TV.inferTopicVisualKey(opts.item) : TV.categoryVisualKey(catKey);
+      var size = opts.size === 'hero' ? 'hero' : 'list';
+      return TV.renderTopicVisual(key, { size: size, extraClass: iconExtraClass });
     }
     return renderLargeCategoryIcon(catKey, iconExtraClass);
   }
