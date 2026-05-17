@@ -104,6 +104,61 @@
     }
   }
 
+  function adminRouteIdFromShellPath(pathname) {
+    var path = normalizeAdminShellPath(pathname);
+    if (path === '/admin/activity') return 'activity';
+    if (path === '/admin/deploy-log') return 'deploy-log';
+    if (path === '/admin/site-appearance') return 'site-appearance';
+    if (path === '/admin/icons') return 'icons';
+    if (path === '/admin/report-catalog') return 'report-catalog';
+    if (path === '/admin/user-reports') return 'user-reports';
+    if (path === '/admin/user-profiling') return 'user-profiling';
+    if (path === '/admin/voice-recorder') return 'voice-recorder';
+    if (path === '/admin/transcriptions') return 'transcriptions';
+    if (path === '/admin/users') return 'users';
+    if (/\/admin\.html$/i.test(path)) return 'users';
+    return 'users';
+  }
+
+  /** Same-origin in-app admin paths only (not /operator/*). */
+  function isAdminShellInAppHref(href) {
+    var pathOnly = String(href || '').split('?')[0].split('#')[0];
+    return isAllowedAdminShellNextPath(pathOnly);
+  }
+
+  /**
+   * Client-side admin section change without carrying `?next=` (avoids redirect loops).
+   * @param {boolean} [replace] use replaceState (post-login handoff) instead of pushState
+   */
+  function adminShellNavigate(href, ev, replace) {
+    if (
+      ev &&
+      (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey || (ev.button != null && ev.button !== 0))
+    ) {
+      return false;
+    }
+    if (!isAdminShellInAppHref(href)) return false;
+    try {
+      var u = new URL(href, window.location.origin);
+      if (u.origin !== window.location.origin) return false;
+      var targetPath = normalizeAdminShellPath(u.pathname);
+      var target = targetPath + (u.hash || '');
+      if (ev && ev.preventDefault) ev.preventDefault();
+      var curPath = normalizeAdminShellPath(window.location.pathname);
+      if (curPath !== targetPath || window.location.search || window.location.hash !== (u.hash || '')) {
+        if (replace) history.replaceState(null, '', target);
+        else history.pushState(null, '', target);
+      }
+      stripAdminLoginNextQueryParam();
+      if (workspace && !workspace.classList.contains('is-hidden')) {
+        syncAdminRouteFromLocation();
+      }
+      return true;
+    } catch (eNav) {
+      return false;
+    }
+  }
+
   /** In-shell navigation for `?next=/admin/...` (e.g. transcriptions after auth redirect). */
   function applyAdminShellLoginNextIfPresent() {
     var next = readAdminLoginNextParam();
@@ -113,18 +168,7 @@
     try {
       var u = new URL(next, window.location.origin);
       if (u.origin !== window.location.origin) return false;
-      var targetPath = normalizeAdminShellPath(u.pathname);
-      var target = targetPath + u.search + u.hash;
-      var here =
-        normalizeAdminShellPath(window.location.pathname) +
-        window.location.search +
-        window.location.hash;
-      if (target !== here) {
-        history.replaceState(null, '', target);
-      } else {
-        stripAdminLoginNextQueryParam();
-      }
-      return true;
+      return adminShellNavigate(u.pathname + (u.hash || ''), null, true);
     } catch (e3) {
       return false;
     }
@@ -2147,20 +2191,16 @@
   }
 
   function getAdminRouteFromLocation() {
-    var raw = window.location.pathname || '';
-    var path = raw.replace(/\/+$/, '') || '/';
-    if (path === '/admin/activity') return 'activity';
-    if (path === '/admin/deploy-log') return 'deploy-log';
-    if (path === '/admin/site-appearance') return 'site-appearance';
-    if (path === '/admin/icons') return 'icons';
-    if (path === '/admin/report-catalog') return 'report-catalog';
-    if (path === '/admin/user-reports') return 'user-reports';
-    if (path === '/admin/user-profiling') return 'user-profiling';
-    if (path === '/admin/voice-recorder') return 'voice-recorder';
-    if (path === '/admin/transcriptions') return 'transcriptions';
-    if (path === '/admin/users' || path === '/admin') return 'users';
-    if (/\/admin\.html$/i.test(path)) return 'users';
-    return 'users';
+    var route = adminRouteIdFromShellPath(window.location.pathname || '');
+    if (route !== 'users') return route;
+    var pending = readAdminLoginNextParam();
+    if (pending) {
+      var pendingPath = pending.split('?')[0].split('#')[0];
+      if (isAllowedAdminShellNextPath(pendingPath)) {
+        return adminRouteIdFromShellPath(pendingPath);
+      }
+    }
+    return route;
   }
 
   function makePlacesLeadsNavControl() {
@@ -3615,6 +3655,23 @@
     });
   }
   var usersCsvBtn = document.getElementById('adminUsersCsvBtn');
+  if (tfNav) {
+    tfNav.addEventListener('click', function (ev) {
+      var a = ev.target && ev.target.closest && ev.target.closest('a.tf-admin-nav__pill[href]');
+      if (!a || !tfNav.contains(a)) return;
+      var href = a.getAttribute('href') || '';
+      if (!href || href === '#' || href.indexOf('/operator/') === 0) return;
+      adminShellNavigate(href, ev, false);
+    });
+  }
+
+  window.addEventListener('popstate', function () {
+    stripAdminLoginNextQueryParam();
+    if (workspace && !workspace.classList.contains('is-hidden')) {
+      syncAdminRouteFromLocation();
+    }
+  });
+
   if (usersCsvBtn) {
     usersCsvBtn.addEventListener('click', function () {
       var rows = applyUsersView();
