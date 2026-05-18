@@ -228,7 +228,6 @@
       <p class="portal-form__hint" id="loginHint"></p>
       <p class="portal-form__hint portal-form__hint--detail is-hidden" id="operatorConsoleHint" role="note">
         Operator console (separate password): <a href="/admin">/admin</a> — not the clinic portal form above.
-        <button type="button" class="tf-linkish" id="loginDebugLink" style="margin-left:0.35rem">Open DEBUG</button>
       </p>
     </form>
     </div>
@@ -383,7 +382,6 @@
   var registrationConfirmOk = false;
   var resendTestSender = false;
   var operatorConsoleHint = document.getElementById('operatorConsoleHint');
-  var loginDebugLink = document.getElementById('loginDebugLink');
 
   function stripVerifyQueryFromUrl() {
     try {
@@ -1706,16 +1704,6 @@
       } catch (eRp) {
         window.location.href = '/login.html';
       }
-    });
-  }
-
-  if (loginDebugLink) {
-    loginDebugLink.addEventListener('click', function () {
-      try {
-        if (typeof window.soDebugReveal === 'function') window.soDebugReveal();
-        var fab = document.getElementById('soDebugFab');
-        if (fab) fab.click();
-      } catch (eDl) {}
     });
   }
 

@@ -17,6 +17,13 @@
     return '***' + e.slice(at);
   }
 
+  /** Full email in admin shell only; portal/login/workspace mask PII. */
+  function emailForDebugReport(email) {
+    var e = String(email || '').trim();
+    if (!e) return '';
+    return isAdminShellPath() ? e : maskEmail(e);
+  }
+
   function isAdminShellPath() {
     var p = (location.pathname || '').replace(/\\/g, '/').toLowerCase();
     return /^\/(admin|operator)(\/|$)/.test(p) || /\/admin\.html$/.test(p);
@@ -1094,7 +1101,7 @@
       sessionProbe.ms +
       ' ms' +
       (sessionProbe.json && sessionProbe.json.ok && sessionProbe.json.email
-        ? ' · email=' + maskEmail(sessionProbe.json.email) + ' · reportSlug=' + sessionProbe.json.reportSlug
+        ? ' · email=' + emailForDebugReport(sessionProbe.json.email) + ' · reportSlug=' + sessionProbe.json.reportSlug
         : portalJwt
           ? ' · note=JWT present but session rejected or expired'
           : ' · note=no portal JWT in sessionStorage/localStorage'),
@@ -1653,10 +1660,9 @@
     mount();
   }
 
-  /** login.html calls after a failed sign-in so DEBUG is available without ?debug=1 */
+  /** login.html calls after a failed sign-in so DEBUG FAB is visible without ?debug=1 */
   global.soDebugReveal = function soDebugReveal() {
-    if (document.getElementById(BTN_ID)) return;
-    mount();
+    if (!document.getElementById(BTN_ID)) mount();
   };
 
   if (document.readyState === 'loading') {
