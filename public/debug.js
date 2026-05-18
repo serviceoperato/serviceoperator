@@ -5,6 +5,7 @@
   var DOCK_ID = 'soDebugDock';
   var PANEL_ID = 'soDebugPanel';
   var BTN_ID = 'soDebugFab';
+  var FAB_LABEL = 'DEBUG';
   var LS_PROBE = '__so_debug_probe__';
 
   function maskEmail(email) {
@@ -57,13 +58,9 @@
     }
   }
 
+  /** Any page that includes debug.js should show the FAB (marketing, portal, admin). */
   function shouldMountDebug() {
-    return (
-      isAdminShellPath() ||
-      isPortalTroubleshootPath() ||
-      isHomepagePath() ||
-      isDebugQueryEnabled()
-    );
+    return true;
   }
 
   function readAdminJwt() {
@@ -1548,7 +1545,7 @@
     fab.id = BTN_ID;
     fab.type = 'button';
     fab.className = 'debug-fab mono';
-    fab.textContent = '';
+    fab.textContent = FAB_LABEL;
     fab.setAttribute('aria-label', 'Show or hide debug information');
     fab.setAttribute('aria-expanded', 'false');
     fab.setAttribute('aria-controls', PANEL_ID);
@@ -1579,9 +1576,18 @@
       if (!ver) return;
       var v = String(ver).trim();
       if (!v) return;
-      fab.textContent = v;
+      fab.textContent = FAB_LABEL + ' · ' + v;
+      fab.setAttribute('data-so-debug-version', v);
       fab.removeAttribute('title');
       fab.setAttribute('aria-label', 'Show or hide debug information (version ' + v + ')');
+    }
+
+    function fabVersionLabel() {
+      var v = fab.getAttribute('data-so-debug-version');
+      if (v) return String(v).trim();
+      var t = String(fab.textContent || '').trim();
+      var parts = t.split('·');
+      return parts.length > 1 ? parts[parts.length - 1].trim() : '';
     }
 
     var verUrl =
@@ -1593,13 +1599,15 @@
       .then(function (j) {
         if (j && j.version) applyAppVersion(j.version);
         else {
-          fab.textContent = '';
-          fab.setAttribute('title', 'Debug information');
+          fab.textContent = FAB_LABEL;
+          fab.removeAttribute('data-so-debug-version');
+          fab.setAttribute('title', 'Debug information (version API unavailable)');
         }
       })
       .catch(function () {
-        fab.textContent = '';
-        fab.setAttribute('title', 'Debug information');
+        fab.textContent = FAB_LABEL;
+        fab.removeAttribute('data-so-debug-version');
+        fab.setAttribute('title', 'Debug information (version API unavailable)');
       });
 
     var out = document.getElementById('soDebugOut');
@@ -1619,7 +1627,7 @@
         .then(function (lines) {
           status.textContent = 'Complete · ' + lines.length + ' lines';
           var titleEl = document.getElementById('soDebugTitle');
-          var vv = fab.textContent ? fab.textContent.trim() : '';
+          var vv = fabVersionLabel();
           if (titleEl) {
             titleEl.textContent = vv ? '— DEBUG v' + vv + ' · ' + lines.length + ' checks' : '— DEBUG · ' + lines.length + ' checks';
           }
