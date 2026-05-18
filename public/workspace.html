@@ -113,12 +113,33 @@
     return parts.length === 3 && parts[0].length > 0 && parts[1].length > 0 && parts[2].length > 0;
   }
 
-  function redirectToLogin() {
+  function clearPortalJwt() {
+    try {
+      sessionStorage.removeItem(USER_JWT_KEY);
+      sessionStorage.removeItem(LEGACY_JWT_KEY);
+      sessionStorage.removeItem('so_user_session_id');
+      localStorage.removeItem(USER_JWT_KEY);
+      localStorage.removeItem(LEGACY_JWT_KEY);
+      localStorage.removeItem('so_user_session_id');
+    } catch (eClr) {}
+  }
+
+  function redirectToLogin(opts) {
+    opts = opts || {};
+    if (opts.sessionExpired) clearPortalJwt();
     var href =
       typeof soPortalLoginHrefWithNext === 'function'
         ? soPortalLoginHrefWithNext('/workspace.html')
         : '/login.html?next=%2Fworkspace.html';
-    window.location.replace(href);
+    try {
+      var u = new URL(href, window.location.origin);
+      if (opts.sessionExpired) u.searchParams.set('reason', 'session_expired');
+      window.location.replace(u.pathname + u.search);
+    } catch (eRl) {
+      window.location.replace(
+        href + (opts.sessionExpired ? (href.indexOf('?') >= 0 ? '&' : '?') + 'reason=session_expired' : '')
+      );
+    }
   }
 
   function decodeJwtReportSlug(token) {
@@ -198,7 +219,7 @@
     })
     .then(function (x) {
       if (x.status === 401 && x.json && x.json.ok === false) {
-        redirectToLogin();
+        redirectToLogin({ sessionExpired: true });
         return;
       }
       if (x.json && x.json.ok && x.json.passwordMustChange) {

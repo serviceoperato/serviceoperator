@@ -43,6 +43,12 @@
     );
   }
 
+  /** Marketing homepage (public DEBUG: FE/BE rows; emails masked; user-store stays admin-only). */
+  function isHomepagePath() {
+    var p = (location.pathname || '').replace(/\\/g, '/').toLowerCase();
+    return p === '/' || p === '/index.html' || p === '/index.htm';
+  }
+
   function isDebugQueryEnabled() {
     try {
       return new URLSearchParams(window.location.search).get('debug') === '1';
@@ -52,7 +58,12 @@
   }
 
   function shouldMountDebug() {
-    return isAdminShellPath() || isPortalTroubleshootPath() || isDebugQueryEnabled();
+    return (
+      isAdminShellPath() ||
+      isPortalTroubleshootPath() ||
+      isHomepagePath() ||
+      isDebugQueryEnabled()
+    );
   }
 
   function readAdminJwt() {

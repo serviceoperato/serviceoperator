@@ -382,6 +382,7 @@
   var registrationConfirmOk = false;
   var resendTestSender = false;
   var operatorConsoleHint = document.getElementById('operatorConsoleHint');
+  var hadSessionExpiredReason = params.get('reason') === 'session_expired';
 
   function stripVerifyQueryFromUrl() {
     try {
@@ -423,9 +424,12 @@
       history.replaceState({}, '', upw.pathname + (qpw ? '?' + qpw : '') + upw.hash);
     } catch (err2) {}
   }
-  if (params.get('reason') === 'session_expired' && bannerSession) {
-    bannerSession.textContent = MSG.sessionExpired;
-    bannerSession.classList.remove('is-hidden');
+  if (hadSessionExpiredReason) {
+    clearPortalJwtLogin();
+    if (bannerSession) {
+      bannerSession.textContent = MSG.sessionExpired;
+      bannerSession.classList.remove('is-hidden');
+    }
     try {
       var use = new URL(window.location.href);
       use.searchParams.delete('reason');
@@ -690,7 +694,7 @@
       typeof soPortalResolvePostLogin === 'function'
         ? soPortalResolvePostLogin(lj || {}, { nextPath: nextPath, slugHint: slugHint })
         : '/workspace.html';
-    window.location.href = dest;
+    window.location.replace(dest);
   }
 
   function showMustChangePasswordMode(bearer) {
@@ -1028,6 +1032,7 @@
     if (verifyToken) return;
     if (resetToken && resetForm) return;
     if (accountSettingsMode) return;
+    if (hadSessionExpiredReason) return;
 
     var adminTok = getAdminJwtLogin();
     var portalTok = getPortalJwtLogin();
@@ -1513,7 +1518,11 @@
         }
         setHint('Redirecting…', 'ok');
         setLoginErr('');
-        redirectAfterPortalLogin(lj);
+        var dest =
+          typeof soPortalResolvePostLogin === 'function'
+            ? soPortalResolvePostLogin(lj || {}, { nextPath: nextPath, slugHint: slugHint })
+            : '/workspace.html';
+        window.location.replace(dest);
       });
     });
   }
