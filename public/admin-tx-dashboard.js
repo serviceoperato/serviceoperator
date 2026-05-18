@@ -2877,7 +2877,7 @@
   }
 
   function isTaskLikeItem(item) {
-    if (item.category === 'tasks') return true;
+    if (itemPrimaryCategory(item) === 'tasks') return true;
     var text = itemText(item).trim();
     return ACTION_VERB_RE.test(text);
   }
@@ -2888,24 +2888,35 @@
       .toLowerCase()
       .trim();
     if (SERIOUS_PROJECTS[project]) return true;
-    if (item.category === 'projects') return true;
+    if (itemPrimaryCategory(item) === 'projects') return true;
     return false;
   }
 
   function priorityScore(item) {
     var text = itemText(item);
-    var cat = String(item.category || '').toLowerCase();
+    var cat = itemPrimaryCategory(item);
     var score = 0;
     if (hasRealCategory(item)) score += 2;
     if (text.length > 200) score += 1;
-    if (cat === 'decisions' || cat === 'meetings') score += 2;
+    if (cat === 'decisions' || cat === 'meetings' || cat === 'tasks') score += 2;
     return score;
   }
 
-  function todayOperationalItems() {
+  /** All AI-ready sources dated today — ignores category tab, project, and feed filters. */
+  function digestTodaySources() {
     return state.items.filter(function (it) {
       return isAiReadyItem(it) && isToday(parseItemDate(it));
     });
+  }
+
+  function digestTopPriorityPool() {
+    var pool = digestTodaySources();
+    if (state.hideJunk) {
+      pool = pool.filter(function (it) {
+        return !isJunkItem(it);
+      });
+    }
+    return pool;
   }
 
   function ensureTxDigest() {
