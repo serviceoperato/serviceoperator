@@ -46,6 +46,21 @@
     return !m || !String(m[1] || '').trim() || m[1] === 'undefined';
   }
 
+  /** Keep in sync with server.mjs PRIVATE_*_REPORT_IDS (010 clinic is public). */
+  var PUBLIC_NUMBERED_CLINIC_IDS = { '010': true };
+
+  function isAdminGatedNumberedReportPath(path) {
+    var pathOnly = normalizePath(path).split('?')[0].split('#')[0];
+    var m = /^\/(clinics|hotels)\/(\d{3})(\/.*)?$/i.exec(pathOnly);
+    if (!m) return false;
+    if (m[1].toLowerCase() === 'clinics' && PUBLIC_NUMBERED_CLINIC_IDS[m[2]]) return false;
+    return true;
+  }
+
+  function adminHandoffForNumberedReport(path) {
+    return '/admin/users?next=' + encodeURIComponent(path);
+  }
+
   /**
    * @param {{ reportSlug?: string, reportUrl?: string }} lj Login/onboarding JSON
    * @param {{ nextPath?: string, slugHint?: string }} opts
@@ -58,6 +73,9 @@
     var dest = '';
 
     if (isSafeNextPath(nextPath)) {
+      if (isAdminGatedNumberedReportPath(nextPath)) {
+        return adminHandoffForNumberedReport(nextPath);
+      }
       if (/^\/admin\.html$/i.test(nextPath) || /^\/admin(\/|$)/i.test(nextPath)) {
         var reportAdminNext = reportUrlFromLj(lj, slugHint);
         return reportAdminNext && !isBrokenReportDest(reportAdminNext)

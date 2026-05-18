@@ -905,6 +905,29 @@
     return '/admin/users';
   }
 
+  /** Numbered audit HTML (except public /clinics/010/) — operator HttpOnly cookie, not portal JWT. */
+  var PUBLIC_NUMBERED_CLINIC_IDS = { '010': true };
+
+  function isAdminGatedNumberedReportNext(path) {
+    var pathOnly = (path || '').split('?')[0].split('#')[0];
+    var m = /^\/(clinics|hotels)\/(\d{3})(\/.*)?$/i.exec(pathOnly);
+    if (!m) return false;
+    if (m[1].toLowerCase() === 'clinics' && PUBLIC_NUMBERED_CLINIC_IDS[m[2]]) return false;
+    return true;
+  }
+
+  function redirectPortalLoginToAdminForGatedReportNext() {
+    if (!nextPath || verifyToken || resetToken || accountSettingsMode) return false;
+    if (!isAdminGatedNumberedReportNext(nextPath)) return false;
+    var dest = adminUsersHandoffUrl();
+    try {
+      window.location.replace(dest);
+    } catch (eR) {
+      window.location.href = dest;
+    }
+    return true;
+  }
+
   /** For `?next=` when leaving account settings as admin: same-origin path, admin/operator only, never back to login/settings. */
   function resolveAdminBypassFromSettingsUrl() {
     if (nextPath && nextPath.charAt(0) === '/' && nextPath.indexOf('//') !== 0) {
@@ -1699,8 +1722,10 @@
   }
 
   applyLoginFieldMode();
-  maybeRedirectIfAlreadySignedIn();
-  maybeEnterAccountSettings();
+  if (!redirectPortalLoginToAdminForGatedReportNext()) {
+    maybeRedirectIfAlreadySignedIn();
+    maybeEnterAccountSettings();
+  }
 })();
 </script>
 </body>

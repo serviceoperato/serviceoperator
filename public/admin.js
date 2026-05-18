@@ -107,14 +107,31 @@
       });
   }
 
+  /** Bearer in storage but no cookie yet — mint HttpOnly cookie before full-page report navigation. */
+  function mintAdminCookieFromStoredJwt() {
+    var token = readStoredAdminJwt();
+    if (!token) return Promise.resolve(false);
+    return fetch(api('/api/admin/session'), {
+      method: 'GET',
+      credentials: apiCred(),
+      cache: 'no-store',
+      headers: { Authorization: 'Bearer ' + token },
+    })
+      .then(function (r) {
+        return r.ok;
+      })
+      .catch(function () {
+        return false;
+      });
+  }
+
   /** Full-page redirect for numbered clinic/hotel reports after admin sign-in (cookie must be set). */
   function redirectClinicHotelLoginNextIfPresent() {
     var next = readAdminLoginNextParam();
     if (!next) return Promise.resolve(false);
     var pathOnly = next.split('?')[0].split('#')[0];
     if (!isAllowedClinicHotelNextPath(pathOnly)) return Promise.resolve(false);
-    return probeAdminCookieSession().then(function (cookieOk) {
-      if (!cookieOk) return false;
+    function doClinicHotelNextRedirect() {
       try {
         var u = new URL(next, window.location.origin);
         if (u.origin !== window.location.origin) return false;
@@ -123,6 +140,16 @@
       } catch (e2) {
         return false;
       }
+    }
+    return probeAdminCookieSession().then(function (cookieOk) {
+      if (cookieOk) return doClinicHotelNextRedirect();
+      return mintAdminCookieFromStoredJwt().then(function (minted) {
+        if (!minted) return false;
+        return probeAdminCookieSession().then(function (cookieOk2) {
+          if (!cookieOk2) return false;
+          return doClinicHotelNextRedirect();
+        });
+      });
     });
   }
 
