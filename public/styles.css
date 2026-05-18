@@ -2102,7 +2102,7 @@ html.so-site-nav-open {
 .is-hidden { display: none !important; }
 
 /* ============================================
-   ADMIN (jack@serviceopera.to)
+   ADMIN (operator console)
    ============================================ */
 .page-admin { background: var(--ink); min-height: 100vh; }
 

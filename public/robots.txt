@@ -22,5 +22,7 @@ Disallow: /hotels/
 # Forms and internal catalogs
 Disallow: /pricing/inquiry
 Disallow: /reports/catalog.html
+Disallow: /clinics/report.html
+Disallow: /workspace.html
 
 Sitemap: https://serviceopera.to/sitemap.xml

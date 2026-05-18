@@ -1,11 +1,34 @@
 /**
  * Debug panel: storage (as "DB"), browser ("frontend"), same-origin HTTP ("backend").
  */
-(function () {
+(function (global) {
   var DOCK_ID = 'soDebugDock';
   var PANEL_ID = 'soDebugPanel';
   var BTN_ID = 'soDebugFab';
   var LS_PROBE = '__so_debug_probe__';
+
+  function maskEmail(email) {
+    if (global.SoSiteContact && typeof global.SoSiteContact.maskEmail === 'function') {
+      return global.SoSiteContact.maskEmail(email);
+    }
+    var e = String(email || '').trim();
+    var at = e.indexOf('@');
+    if (at <= 0) return e ? '(redacted)' : '';
+    return '***' + e.slice(at);
+  }
+
+  function isAdminShellPath() {
+    var p = (location.pathname || '').replace(/\\/g, '/').toLowerCase();
+    return /^\/(admin|operator)(\/|$)/.test(p) || /\/admin\.html$/.test(p);
+  }
+
+  function readAdminJwt() {
+    try {
+      return sessionStorage.getItem('so_admin_jwt') || localStorage.getItem('so_admin_jwt') || '';
+    } catch (e) {
+      return '';
+    }
+  }
 
   function mm(q) {
     try {
@@ -822,7 +845,10 @@
         : ''),
   });
 
-  var storeProbe = await timedJson('/api/debug/user-store');
+  var adminJwtForStore = readAdminJwt();
+  var storeProbe = adminJwtForStore
+    ? await timedJsonAuth('/api/debug/user-store', adminJwtForStore)
+    : { ok: false, status: 401, ms: 0, json: { error: 'admin JWT required' } };
   var storeJson = storeProbe.json || {};
   var store = storeJson.storage || null;
   var deploy = storeJson.deploy || null;
@@ -1042,7 +1068,7 @@
       sessionProbe.ms +
       ' ms' +
       (sessionProbe.json && sessionProbe.json.ok && sessionProbe.json.email
-        ? ' · email=' + sessionProbe.json.email + ' · reportSlug=' + sessionProbe.json.reportSlug
+        ? ' · email=' + maskEmail(sessionProbe.json.email) + ' · reportSlug=' + sessionProbe.json.reportSlug
         : portalJwt
           ? ' · note=JWT present but session rejected or expired'
           : ' · note=no portal JWT in sessionStorage/localStorage'),
@@ -1596,9 +1622,14 @@
     });
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', mount);
-  } else {
+  function boot() {
+    if (!isAdminShellPath()) return;
     mount();
   }
-})();
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+})(typeof window !== 'undefined' ? window : globalThis);

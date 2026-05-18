@@ -184,7 +184,7 @@ export function PricingInquiryClient() {
         {leadSource ? <input type="hidden" name="leadSource" value={leadSource} /> : null}
         <p className="so-pricing-inquiry__privacy">
           We collect your IP address, pages visited, and timestamps to deliver the audit or plan you requested and to protect the service.
-          Questions: <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a>.
+          Questions: <a href="mailto:hello@serviceopera.to">hello@serviceopera.to</a>.
         </p>
 
         <label className="inquiry-form__field" htmlFor="field-email">

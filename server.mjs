@@ -2064,7 +2064,7 @@ app.post('/api/auth/audit-ddc-magic', async (req, res) => {
   });
 });
 
-app.get('/api/debug/user-store', async (req, res) => {
+app.get('/api/debug/user-store', requireAdmin, async (req, res) => {
   allowDebugCors(req, res);
   res.setHeader('Cache-Control', 'no-store');
   try {
@@ -3720,11 +3720,14 @@ dualGet(
     if (!p || !isPortalSessionRole(p.role) || typeof p.email !== 'string')
       return res.status(401).json({ ok: false });
     const slug = typeof p.reportSlug === 'string' ? p.reportSlug : '';
+    const isOperator =
+      p.isOperator === true || portalUserIsOperator(p.email);
     return res.json({
       ok: true,
       email: p.email,
       reportSlug: slug,
       passwordMustChange: Boolean(p.passwordMustChange),
+      isOperator,
     });
   }
 );

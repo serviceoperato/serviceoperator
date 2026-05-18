@@ -74,7 +74,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               alternateName: ["www.serviceopera.to", "serviceopera.to"],
               url: "https://serviceopera.to/",
               logo: "https://serviceopera.to/assets/logo.png",
-              email: "jack@serviceopera.to",
+              email: "hello@serviceopera.to",
               description:
                 "AI operations and automation for hotels, clinics, and property operators.",
             }),

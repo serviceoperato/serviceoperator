@@ -1,7 +1,6 @@
 (function () {
   'use strict';
 
-  var ADMIN_EMAIL = 'jack@serviceopera.to';
   var ADMIN_PASSWORD =
     typeof window.__ADMIN_PASSWORD__ === 'string' ? window.__ADMIN_PASSWORD__.trim() : '';
 
@@ -312,12 +311,21 @@
     }
   }
 
-  function portalAdminEmailFromJwt() {
-    return decodeJwtEmail(getPortalJwt()).trim().toLowerCase();
+  function decodeJwtIsOperator(token) {
+    try {
+      var parts = String(token || '').split('.');
+      if (parts.length < 2) return false;
+      var payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      while (payload.length % 4) payload += '=';
+      var json = JSON.parse(atob(payload));
+      return json.isOperator === true;
+    } catch (e) {
+      return false;
+    }
   }
 
   function isPortalAdminSignedIn() {
-    return portalAdminEmailFromJwt() === ADMIN_EMAIL.toLowerCase();
+    return decodeJwtIsOperator(getPortalJwt());
   }
 
   function tryRestorePortalAdminWorkspace() {
@@ -3340,7 +3348,14 @@
         }
         return;
       }
-      if (email !== ADMIN_EMAIL.toLowerCase() || password !== ADMIN_PASSWORD) {
+      var adminEmailStatic =
+        typeof window.__ADMIN_EMAIL__ === 'string' ? window.__ADMIN_EMAIL__.trim().toLowerCase() : '';
+      if (adminEmailStatic && email !== adminEmailStatic) {
+        setHint('Invalid email or password.', 'error');
+        if (form.querySelector('input[type="password"]')) form.querySelector('input[type="password"]').value = '';
+        return;
+      }
+      if (password !== ADMIN_PASSWORD) {
         setHint('Invalid email or password.', 'error');
         if (form.querySelector('input[type="password"]')) form.querySelector('input[type="password"]').value = '';
         return;

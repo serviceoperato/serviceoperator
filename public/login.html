@@ -890,9 +890,6 @@
     }
   }
 
-  /** Same email as `ADMIN_EMAIL` in user-account-menu.js — operator menu / admin entry. */
-  var PORTAL_ADMIN_EMAIL_LOGIN = 'jack@serviceopera.to';
-
   function decodeJwtPayloadLogin(token) {
     try {
       var parts = String(token || '').split('.');
@@ -905,16 +902,14 @@
     }
   }
 
-  /**
-   * Same rule as user-account-menu.js `showAdmin` before async `/api/admin/session`:
-   * jack’s portal email, or a stored admin JWT whose payload is a non-expired `role: 'admin'` token.
-   */
+  function decodeJwtIsOperatorLogin(token) {
+    var pl = decodeJwtPayloadLogin(token);
+    return !!(pl && pl.isOperator === true);
+  }
+
   function isAdminCapableAccountSettingsLogin() {
     var portalTok = getPortalJwtLogin();
-    if (portalTok) {
-      var em = String(decodeJwtEmailLogin(portalTok) || '').toLowerCase();
-      if (em === PORTAL_ADMIN_EMAIL_LOGIN) return true;
-    }
+    if (portalTok && decodeJwtIsOperatorLogin(portalTok)) return true;
     var adm = getAdminJwtLogin();
     if (!adm) return false;
     var pl = decodeJwtPayloadLogin(adm);
@@ -1038,15 +1033,12 @@
 
     adminP.then(function (adm) {
       if (adm && adm.ok && adm.json && adm.json.ok) {
-        var emAd = String(adm.json.email || '').trim().toLowerCase();
-        if (emAd === PORTAL_ADMIN_EMAIL_LOGIN) {
-          try {
-            window.location.replace('/admin/users');
-          } catch (eRp) {
-            window.location.href = '/admin/users';
-          }
-          return;
+        try {
+          window.location.replace('/admin/users');
+        } catch (eRp) {
+          window.location.href = '/admin/users';
         }
+        return;
       }
       if (!portalTok || !looksLikeJwt(portalTok)) return;
       return fetchPortalUserSession(portalTok).then(function (x) {
