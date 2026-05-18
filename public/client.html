@@ -361,6 +361,7 @@
 </div>
 
 <script src="/site-nav-drawer.js"></script>
+<script src="/demo-portal-client.js"></script>
 <script src="theme.js"></script>
 <script src="debug.js"></script>
 <script>
@@ -368,26 +369,18 @@
 // Client workspace — auth + light interactivity
 // =============================================
 
-const CREDENTIALS = {
-  'amari-resort':   { password: 'demo2026', business: 'Amari Resort · Thailand' },
-  'serenity-dental':{ password: 'demo2026', business: 'Serenity Dental Clinic' },
-  'jomtien-living': { password: 'demo2026', business: 'Coastal Living Properties' },
-  'demo':           { password: 'demo',     business: 'Demo Property · Thailand' },
-};
-
 const gate = document.getElementById('gate');
 const workspace = document.getElementById('workspace');
 const gateForm = document.getElementById('gateForm');
 const gateHint = document.getElementById('gateHint');
 
-function showWorkspace(slug) {
-  const rec = CREDENTIALS[slug];
-  if (!rec) return false;
-  document.getElementById('clientName').textContent = rec.business;
-  document.getElementById('clientLabel').textContent = '— ' + rec.business.toUpperCase();
-  document.getElementById('clientFooter').textContent = rec.business.toUpperCase();
+function showWorkspace(slug, business) {
+  if (!slug || !business) return false;
+  document.getElementById('clientName').textContent = business;
+  document.getElementById('clientLabel').textContent = '— ' + business.toUpperCase();
+  document.getElementById('clientFooter').textContent = business.toUpperCase();
   const myRow = document.getElementById('myBusinessRow');
-  if (myRow) myRow.textContent = rec.business;
+  if (myRow) myRow.textContent = business;
   gate.classList.add('is-hidden');
   workspace.classList.remove('is-hidden');
   return true;
@@ -396,8 +389,9 @@ function showWorkspace(slug) {
 // Check if already authenticated this session (came from main page)
 (function checkSession() {
   const stored = sessionStorage.getItem('so_client');
-  if (stored && CREDENTIALS[stored]) {
-    showWorkspace(stored);
+  const business = sessionStorage.getItem('so_business');
+  if (stored && business) {
+    showWorkspace(stored, business);
   }
 })();
 
@@ -406,18 +400,27 @@ gateForm.addEventListener('submit', (e) => {
   e.preventDefault();
   const fd = new FormData(gateForm);
   const u = (fd.get('username') || '').toString().trim().toLowerCase();
-  const p = (fd.get('password') || '').toString().trim();
-  const rec = CREDENTIALS[u];
-
-  if (!rec || rec.password !== p) {
-    gateHint.textContent = 'Invalid credentials. Check the access details Jack sent you.';
+  const p = (fd.get('password') || '').toString();
+  if (typeof window.soDemoPortalLogin !== 'function') {
+    gateHint.textContent = 'Sign-in requires the Node server (credentials are not stored in the browser).';
     gateHint.className = 'portal-form__hint mono is-error';
-    gateForm.querySelector('input[type="password"]').value = '';
     return;
   }
-  sessionStorage.setItem('so_client', u);
-  sessionStorage.setItem('so_business', rec.business);
-  showWorkspace(u);
+  gateHint.textContent = 'Checking credentials…';
+  gateHint.className = 'portal-form__hint mono';
+  window
+    .soDemoPortalLogin(u, p)
+    .then((rec) => {
+      sessionStorage.setItem('so_client', rec.slug);
+      sessionStorage.setItem('so_business', rec.business);
+      showWorkspace(rec.slug, rec.business);
+    })
+    .catch((err) => {
+      gateHint.textContent = (err && err.message) || 'Invalid credentials. Check the access details you received.';
+      gateHint.className = 'portal-form__hint mono is-error';
+      const pw = gateForm.querySelector('input[type="password"]');
+      if (pw) pw.value = '';
+    });
 });
 
 // Logout

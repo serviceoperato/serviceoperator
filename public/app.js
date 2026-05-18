@@ -37,39 +37,45 @@
     if (e.key === 'Escape' && modal.classList.contains('is-open')) close();
   });
 
-  // Demo credentials map (static demo only).
-  // username -> { password, slug, business }
-  const CREDENTIALS = {
-    'amari-resort':   { password: 'demo2026', slug: 'amari-resort',   business: 'Amari Resort · Thailand' },
-    'serenity-dental':{ password: 'demo2026', slug: 'serenity-dental',business: 'Serenity Dental Clinic' },
-    'jomtien-living': { password: 'demo2026', slug: 'jomtien-living', business: 'Coastal Living Properties' },
-    'demo':           { password: 'demo',     slug: 'demo',           business: 'Demo Property · Thailand' },
-  };
-
   if (form) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const fd = new FormData(form);
       const u = (fd.get('username') || '').toString().trim().toLowerCase();
-      const p = (fd.get('password') || '').toString().trim();
-      const rec = CREDENTIALS[u];
-
-      if (!rec || rec.password !== p) {
-        hint.textContent = 'Invalid credentials. Check the access details you received.';
-        hint.className = 'portal-form__hint mono is-error';
-        form.querySelector('input[type="password"]').value = '';
+      const p = (fd.get('password') || '').toString();
+      if (typeof window.soDemoPortalLogin !== 'function') {
+        if (hint) {
+          hint.textContent = 'Demo sign-in requires the Node server (credentials are not stored in the browser).';
+          hint.className = 'portal-form__hint mono is-error';
+        }
         return;
       }
-
-      hint.textContent = 'Access granted. Opening workspace…';
-      hint.className = 'portal-form__hint mono is-ok';
-      // Pass the slug to client.html via hash so it can be themed.
-      // (Hash isn't sent to a server — fine for a static demo.)
-      sessionStorage.setItem('so_client', rec.slug);
-      sessionStorage.setItem('so_business', rec.business);
-      setTimeout(() => {
-        window.location.href = 'client.html#' + encodeURIComponent(rec.slug);
-      }, 500);
+      if (hint) {
+        hint.textContent = 'Checking credentials…';
+        hint.className = 'portal-form__hint mono';
+      }
+      window
+        .soDemoPortalLogin(u, p)
+        .then((rec) => {
+          if (hint) {
+            hint.textContent = 'Access granted. Opening workspace…';
+            hint.className = 'portal-form__hint mono is-ok';
+          }
+          sessionStorage.setItem('so_client', rec.slug);
+          sessionStorage.setItem('so_business', rec.business);
+          setTimeout(() => {
+            window.location.href = 'client.html#' + encodeURIComponent(rec.slug);
+          }, 500);
+        })
+        .catch((err) => {
+          if (hint) {
+            hint.textContent =
+              (err && err.message) || 'Invalid credentials. Check the access details you received.';
+            hint.className = 'portal-form__hint mono is-error';
+          }
+          const pw = form.querySelector('input[type="password"]');
+          if (pw) pw.value = '';
+        });
     });
   }
 })();
@@ -86,20 +92,25 @@
   var secondaryCta = document.getElementById('heroSecondaryCta');
   if (!pills.length || !heroCopy || !titleEl || !ledeEl || !primaryCta || !secondaryCta) return;
 
-  var MAIL_REPORT =
-    'mailto:jack@serviceopera.to?subject=' +
-    encodeURIComponent('Request: 48-hour private audit') +
-    '&body=' +
-    encodeURIComponent(
-      'Business name:\nSector (hotel / clinic / property):\nWebsite:\nPriority bottleneck:\n\nThanks.'
+  function contactMailto(subject, body) {
+    if (window.SoSiteContact && typeof window.SoSiteContact.contactMailto === 'function') {
+      return window.SoSiteContact.contactMailto(subject, body);
+    }
+    return (
+      'mailto:hello@serviceopera.to?subject=' +
+      encodeURIComponent(subject) +
+      '&body=' +
+      encodeURIComponent(body)
     );
-  var MAIL_AUDIT =
-    'mailto:jack@serviceopera.to?subject=' +
-    encodeURIComponent('Request: Automation audit') +
-    '&body=' +
-    encodeURIComponent(
-      'Business name:\nSector (hotel / clinic / property):\nWhat feels broken in operations today:\n\nThanks.'
-    );
+  }
+  var MAIL_REPORT = contactMailto(
+    'Request: 48-hour private audit',
+    'Business name:\nSector (hotel / clinic / property):\nWebsite:\nPriority bottleneck:\n\nThanks.'
+  );
+  var MAIL_AUDIT = contactMailto(
+    'Request: Automation audit',
+    'Business name:\nSector (hotel / clinic / property):\nWhat feels broken in operations today:\n\nThanks.'
+  );
 
   var TITLE_HTML =
     '<span class="line">AI Operations for Service Businesses</span>' +

@@ -1,4 +1,6 @@
 # Railway: run the Node API + static public/ host (not a static-only publish).
+# Custom domains: attach BOTH serviceopera.to and www.serviceopera.to to this service (www 404/502 at the edge
+# means the hostname is missing or points at a deleted service). server.mjs 301-redirects www → apex when both hit this app.
 # Settings → Deploy: leave Start Command empty to use this file, or set `node server.mjs`.
 # Settings → Build: Dockerfile (recommended) or Nixpacks with `npm start` from nixpacks.toml.
 

@@ -190,6 +190,17 @@ async function initUserStore() {
 
 const { userStore, telemetryStore, leadEventsStore, pgPool } = await initUserStore();
 
+const DEMO_PORTAL_ACCOUNTS = loadDemoPortalAccounts();
+if (isDemoPortalConfigured(DEMO_PORTAL_ACCOUNTS)) {
+  console.log(
+    `[serviceopera] Demo client portal: ${DEMO_PORTAL_ACCOUNTS.size} account(s) from DEMO_PORTAL_ACCOUNTS (POST /api/demo/portal-login).`
+  );
+} else if (String(process.env.DEMO_PORTAL_ACCOUNTS || '').trim()) {
+  console.warn('[serviceopera] DEMO_PORTAL_ACCOUNTS is set but parsed to zero valid accounts.');
+} else {
+  console.log('[serviceopera] Demo client portal: DEMO_PORTAL_ACCOUNTS unset — /api/demo/portal-login returns 503.');
+}
+
 /** Presence of env var (may still fall back to JSON if init failed). */
 const ENV_DATABASE_URL_CONFIGURED = Boolean((process.env.DATABASE_URL || '').trim());
 const POSTGRES_POOL_ACTIVE = Boolean(pgPool);
@@ -925,14 +936,24 @@ function normalizePageImageAlt(s, fallback) {
 }
 
 const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'jack@serviceopera.to').trim().toLowerCase();
+/** Marketing / footer / mailto on public pages (not the operator login identity). */
+const PUBLIC_CONTACT_EMAIL = (
+  process.env.PUBLIC_CONTACT_EMAIL || 'hello@serviceopera.to'
+).trim();
+/** Internal ops + Resend routing; not published in public HTML/JS bundles. */
+const OPERATOR_CONTACT_EMAIL = (
+  process.env.OPERATOR_CONTACT_EMAIL || process.env.ADMIN_EMAIL || 'jack@serviceopera.to'
+).trim();
 const RESEND_API_KEY = (process.env.RESEND_API_KEY || '').trim();
 const RESEND_FROM = (process.env.RESEND_FROM || 'ServiceOpera <onboarding@resend.dev>').trim();
 const RESEND_FROM_USES_TEST_SENDER = /@resend\.dev>/i.test(RESEND_FROM) || /onboarding@resend\.dev/i.test(RESEND_FROM);
 /** Sole operator identity string in portal email copy and user-facing contact errors. */
 const OPERATOR_IDENTITY = 'Jack from ServiceOpera.to';
-const OPERATOR_CONTACT_EMAIL = 'jack@serviceopera.to';
 function operatorContactForErrors() {
-  return OPERATOR_IDENTITY + ' (' + OPERATOR_CONTACT_EMAIL + ')';
+  return OPERATOR_IDENTITY + ' (' + PUBLIC_CONTACT_EMAIL + ')';
+}
+function portalUserIsOperator(email) {
+  return emailsEqualTiming(String(email || '').trim().toLowerCase(), ADMIN_EMAIL);
 }
 /** Public sign-up is on by default; set PORTAL_SELF_REGISTER=false or legacy CLINIC_SELF_REGISTER=false for invite-only. */
 const PORTAL_SELF_REGISTER = (function () {
@@ -1347,6 +1368,7 @@ function signPortalUserJwt(user) {
     reportSlug: user.reportSlug,
     sub: user.id,
     passwordMustChange: Boolean(user.passwordMustChange),
+    isOperator: portalUserIsOperator(user.email),
     exp: Date.now() + CLINIC_JWT_TTL_MS,
   });
 }
@@ -1760,6 +1782,16 @@ const app = express();
 app.set('trust proxy', 1);
 app.disable('x-powered-by');
 
+/** Canonical host: apex serves marketing; www → 301 (requires www custom domain on this Railway service). */
+app.use((req, res, next) => {
+  const host = String(req.headers.host || '').split(':')[0].toLowerCase();
+  if (host === 'www.serviceopera.to') {
+    const path = req.originalUrl || req.url || '/';
+    return res.redirect(301, `https://serviceopera.to${path}`);
+  }
+  next();
+});
+
 /** Before body parsers: stream /api to the backend when this host is frontend-only (split Railway). */
 if (API_UPSTREAM) {
   console.log(
@@ -1767,6 +1799,7 @@ if (API_UPSTREAM) {
   );
   app.use((req, res, next) => {
     if (!req.path.startsWith('/api/') || req.method === 'OPTIONS') return next();
+    if (req.path === '/api/demo/portal-login' || req.path === '/api/demo/portal-capabilities') return next();
     proxyApiToUpstream(req, res).catch((err) => {
       console.error('[serviceopera] API upstream proxy error:', err && err.message ? err.message : err);
       if (!res.headersSent) {
@@ -1906,6 +1939,15 @@ app.get('/api/site-appearance', async (_req, res) => {
   } catch (e) {
     res.status(500).json({ error: e.message || 'Could not load site appearance.' });
   }
+});
+
+/** Public site metadata (no operator/admin email). */
+app.get('/api/site-config', (_req, res) => {
+  res.setHeader('Cache-Control', 'public, max-age=300');
+  res.json({
+    publicContactEmail: PUBLIC_CONTACT_EMAIL,
+    operatorIdentity: OPERATOR_IDENTITY,
+  });
 });
 
 /** Public image bytes for admin “Site appearance” uploads when `DATABASE_URL` is set (Postgres `site_uploads`). */
@@ -2169,6 +2211,29 @@ async function handlePortalRegister(req, res) {
 app.post('/api/auth/user-register', handlePortalRegister);
 app.post('/api/auth/clinic-register', handlePortalRegister);
 
+app.get('/api/demo/portal-capabilities', (_req, res) => {
+  res.json({
+    service: 'serviceopera',
+    demoPortalConfigured: isDemoPortalConfigured(DEMO_PORTAL_ACCOUNTS),
+  });
+});
+
+app.post('/api/demo/portal-login', (req, res) => {
+  if (!isDemoPortalConfigured(DEMO_PORTAL_ACCOUNTS)) {
+    return res.status(503).json({
+      error:
+        'Demo client portal is not configured on this host. Set DEMO_PORTAL_ACCOUNTS (JSON) on the Node service and redeploy.',
+    });
+  }
+  const username = typeof req.body?.username === 'string' ? req.body.username : '';
+  const password = typeof req.body?.password === 'string' ? req.body.password : '';
+  const session = verifyDemoPortalLogin(DEMO_PORTAL_ACCOUNTS, username, password);
+  if (!session) {
+    return res.status(401).json({ error: 'Invalid credentials.' });
+  }
+  return res.json({ ok: true, slug: session.slug, business: session.business });
+});
+
 app.post('/api/admin/login', (req, res) => {
   const ip = clientIp(req);
   if (isAdminLoginIpBlocked(ip)) {
@@ -2205,7 +2270,7 @@ app.get('/api/admin/session', (req, res) => {
   /** Bearer-only restore (localStorage JWT): mint HttpOnly cookie so <script src> assets load. */
   const bearer = getBearer(req);
   if (bearer) setAdminJwtCookie(res, bearer);
-  return res.json({ ok: true, email: p.email });
+  return res.json({ ok: true, role: 'admin', isOperator: true });
 });
 
 app.post('/api/admin/bootstrap-from-portal', (req, res) => {
@@ -4249,6 +4314,9 @@ app.use(
     index: ['index.html'],
     setHeaders(res, filePath) {
       const norm = filePath.split(path.sep).join('/');
+      if (filePath.endsWith('.html')) {
+        res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+      }
       if (filePath.endsWith('sw.js') || filePath.endsWith('sw-register.js')) {
         res.setHeader('Cache-Control', 'no-store');
         return;
