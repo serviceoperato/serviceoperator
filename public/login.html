@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="styles.css" />
 <script src="/page-skeleton.js"></script>
 <script src="/so-api.js"></script>
-<script src="/portal-auth-routing.js"></script>
+<script src="/portal-auth-routing.js?v=1.6.15"></script>
 <script src="/portal-jwt.js"></script>
 <style>
   /* Portal login — serif title + sans UI (no monospace) */
@@ -898,47 +898,41 @@
     return true;
   }
 
-  function adminUsersHandoffUrl() {
+  function resolveSignedInDestination() {
+    if (
+      nextPath &&
+      nextPath.charAt(0) === '/' &&
+      nextPath.indexOf('//') !== 0 &&
+      typeof soPortalIsAdminShellNextPath === 'function' &&
+      soPortalIsAdminShellNextPath(nextPath)
+    ) {
+      return nextPath;
+    }
+    if (
+      nextPath &&
+      nextPath.charAt(0) === '/' &&
+      nextPath.indexOf('//') !== 0 &&
+      typeof soPortalIsSafeNextPath === 'function' &&
+      soPortalIsSafeNextPath(nextPath)
+    ) {
+      return nextPath;
+    }
     if (nextPath && nextPath.charAt(0) === '/' && nextPath.indexOf('//') !== 0) {
-      return '/admin/users?next=' + encodeURIComponent(nextPath);
+      return nextPath;
     }
-    return '/admin/users';
+    return typeof soPortalWorkspacePath === 'function' ? soPortalWorkspacePath() : '/workspace.html';
   }
 
-  /** Numbered audit HTML (except public /clinics/010/) — operator HttpOnly cookie, not portal JWT. */
-  var PUBLIC_NUMBERED_CLINIC_IDS = { '010': true };
-
-  function isAdminGatedNumberedReportNext(path) {
-    var pathOnly = (path || '').split('?')[0].split('#')[0];
-    var m = /^\/(clinics|hotels)\/(\d{3})(\/.*)?$/i.exec(pathOnly);
-    if (!m) return false;
-    if (m[1].toLowerCase() === 'clinics' && PUBLIC_NUMBERED_CLINIC_IDS[m[2]]) return false;
-    return true;
-  }
-
-  function redirectPortalLoginToAdminForGatedReportNext() {
-    if (!nextPath || verifyToken || resetToken || accountSettingsMode) return false;
-    if (!isAdminGatedNumberedReportNext(nextPath)) return false;
-    var dest = adminUsersHandoffUrl();
-    try {
-      window.location.replace(dest);
-    } catch (eR) {
-      window.location.href = dest;
-    }
-    return true;
-  }
-
-  /** For `?next=` when leaving account settings as admin: same-origin path, admin/operator only, never back to login/settings. */
+  /** For `?next=` when leaving account settings as operator: same-origin path, never back to login/settings. */
   function resolveAdminBypassFromSettingsUrl() {
     if (nextPath && nextPath.charAt(0) === '/' && nextPath.indexOf('//') !== 0) {
       var nl = nextPath.toLowerCase();
-      if (/^\/login(\.html)?(\/|$)/.test(nl)) return '/admin/users';
-      if (/^\/(admin|operator)(\/|$)/i.test(nextPath)) return nextPath;
-      if (/^\/(clinics|hotels)\/\d{3}(\/.*)?$/i.test(nextPath.split('?')[0].split('#')[0])) {
-        return adminUsersHandoffUrl();
+      if (/^\/login(\.html)?(\/|$)/.test(nl)) {
+        return typeof soPortalWorkspacePath === 'function' ? soPortalWorkspacePath() : '/workspace.html';
       }
+      return nextPath;
     }
-    return '/admin/users';
+    return typeof soPortalWorkspacePath === 'function' ? soPortalWorkspacePath() : '/workspace.html';
   }
 
   /** If admin-capable user opens account settings URL, skip account shell (no infinite loop: no JWT → not capable). */
@@ -1047,7 +1041,7 @@
 
     adminP.then(function (adm) {
       if (adm && adm.ok && adm.json && adm.json.ok) {
-        var adminDest = adminUsersHandoffUrl();
+        var adminDest = resolveSignedInDestination();
         try {
           window.location.replace(adminDest);
         } catch (eRp) {
@@ -1085,6 +1079,19 @@
         }
         if (x.json.passwordMustChange) {
           showMustChangePasswordMode(portalTok);
+          return;
+        }
+        if (
+          nextPath &&
+          typeof soPortalIsAdminShellNextPath === 'function' &&
+          soPortalIsAdminShellNextPath(nextPath) &&
+          (x.json.isOperator || decodeJwtIsOperatorLogin(portalTok))
+        ) {
+          try {
+            window.location.replace(nextPath);
+          } catch (eAdmNext) {
+            window.location.href = nextPath;
+          }
           return;
         }
         var slug =
@@ -1722,10 +1729,8 @@
   }
 
   applyLoginFieldMode();
-  if (!redirectPortalLoginToAdminForGatedReportNext()) {
-    maybeRedirectIfAlreadySignedIn();
-    maybeEnterAccountSettings();
-  }
+  maybeRedirectIfAlreadySignedIn();
+  maybeEnterAccountSettings();
 })();
 </script>
 </body>

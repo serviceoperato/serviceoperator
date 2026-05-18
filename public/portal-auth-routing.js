@@ -28,6 +28,20 @@
     return !isLoopPath(path);
   }
 
+  /** Operator console SPA (/admin/users, /admin/report-catalog, …) — never map to portal report URLs. */
+  function isAdminShellNextPath(path) {
+    var pathOnly = normalizePath(path).split('?')[0].split('#')[0];
+    if (!pathOnly || pathOnly.charAt(0) !== '/') return false;
+    if (pathOnly === '/admin' || /^\/admin\.html$/i.test(pathOnly)) return true;
+    return /^\/admin\/[a-z0-9-]+/i.test(pathOnly);
+  }
+
+  function resolveAdminShellNextPath(path) {
+    var pathOnly = normalizePath(path).split('?')[0].split('#')[0];
+    if (/^\/admin\.html$/i.test(pathOnly) || pathOnly === '/admin') return '/admin/users';
+    return path;
+  }
+
   function reportUrlFromLj(lj, slugHint) {
     var slug =
       (lj && lj.reportSlug ? String(lj.reportSlug).trim() : '') ||
@@ -58,10 +72,12 @@
     var dest = '';
 
     if (isSafeNextPath(nextPath)) {
-      if (/^\/admin\.html$/i.test(nextPath)) {
-        nextPath = '/admin/users';
+      if (isAdminShellNextPath(nextPath)) {
+        return normalizePath(resolveAdminShellNextPath(nextPath));
       }
       dest = nextPath;
+    } else if (nextPath && isAdminShellNextPath(nextPath)) {
+      dest = resolveAdminShellNextPath(nextPath);
     } else {
       dest = WORKSPACE_PATH;
     }
@@ -99,5 +115,6 @@
   g.soPortalResolvePostLogin = resolvePostLoginDestination;
   g.soPortalReportUrl = reportUrlFromLj;
   g.soPortalIsSafeNextPath = isSafeNextPath;
+  g.soPortalIsAdminShellNextPath = isAdminShellNextPath;
   g.soPortalLoginHrefWithNext = loginHrefWithNext;
 })(typeof window !== 'undefined' ? window : globalThis);

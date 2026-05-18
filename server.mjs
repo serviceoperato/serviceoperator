@@ -1263,6 +1263,7 @@ function getBearer(req) {
 }
 
 const ADMIN_JWT_COOKIE = 'so_admin_jwt';
+const PORTAL_JWT_COOKIE = 'so_portal_jwt';
 
 function getCookie(req, name) {
   const raw = req.headers.cookie;
@@ -1289,6 +1290,49 @@ function getVerifiedAdmin(req) {
   return p;
 }
 
+/** Portal JWT from Authorization (portal role) or HttpOnly cookie (HTML navigation). */
+function getPortalJwtFromRequest(req) {
+  const bearer = getBearer(req);
+  if (bearer) {
+    const p = verifyJwt(bearer);
+    if (p && isPortalSessionRole(p.role)) return bearer;
+  }
+  const fromCookie = getCookie(req, PORTAL_JWT_COOKIE);
+  if (!fromCookie) return '';
+  const p = verifyJwt(fromCookie);
+  return p && isPortalSessionRole(p.role) ? fromCookie : '';
+}
+
+function getVerifiedPortalSession(req) {
+  const tok = getPortalJwtFromRequest(req);
+  if (!tok) return null;
+  const p = verifyJwt(tok);
+  if (!p || !isPortalSessionRole(p.role) || typeof p.email !== 'string') return null;
+  return p;
+}
+
+function portalPayloadIsOperator(p) {
+  return Boolean(p && (p.isOperator === true || portalUserIsOperator(p.email)));
+}
+
+/**
+ * Operator access: legacy admin JWT or portal session for ADMIN_EMAIL / isOperator.
+ * Private numbered reports and /api/admin/* use this (no separate /api/admin/login required).
+ */
+function getVerifiedOperator(req) {
+  const admin = getVerifiedAdmin(req);
+  if (admin) return { email: admin.email, role: 'admin', isOperator: true, via: 'admin' };
+  const portal = getVerifiedPortalSession(req);
+  if (portal && portalPayloadIsOperator(portal)) {
+    return { email: portal.email, role: 'user', isOperator: true, via: 'portal' };
+  }
+  return null;
+}
+
+function canAccessPrivateNumberedReport(req) {
+  return getVerifiedOperator(req) != null;
+}
+
 function setAdminJwtCookie(res, token) {
   const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
   const maxAge = Math.floor(JWT_TTL_MS / 1000);
@@ -1306,20 +1350,29 @@ function clearAdminJwtCookie(res) {
   );
 }
 
-/** Operator portal sign-in: mint admin JWT + HttpOnly cookie for private reports and /admin/*. */
-function mintOperatorAdminSession(res) {
-  const token = signJwt({ v: 1, role: 'admin', email: ADMIN_EMAIL, exp: Date.now() + JWT_TTL_MS });
-  setAdminJwtCookie(res, token);
-  return token;
+function setPortalJwtCookie(res, token) {
+  const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
+  const maxAge = Math.floor(CLINIC_JWT_TTL_MS / 1000);
+  res.setHeader(
+    'Set-Cookie',
+    `${PORTAL_JWT_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${secure}`
+  );
 }
 
-function attachOperatorAdminSessionIfNeeded(res, user) {
-  if (!user?.email || !portalUserIsOperator(user.email)) return undefined;
-  return mintOperatorAdminSession(res);
+function clearPortalJwtCookie(res) {
+  const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
+  res.setHeader(
+    'Set-Cookie',
+    `${PORTAL_JWT_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secure}`
+  );
+}
+
+function attachPortalSessionCookie(res, portalToken) {
+  if (portalToken) setPortalJwtCookie(res, portalToken);
 }
 
 function requireAdmin(req, res, next) {
-  const p = getVerifiedAdmin(req);
+  const p = getVerifiedOperator(req);
   if (!p) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
@@ -1523,8 +1576,8 @@ const ADMIN_API_RATE_LIMIT_UNAUTH_PER_MIN = 10;
 const adminRouteTimestampsByKey = new Map();
 
 function adminRouteRateLimitKey(req) {
-  const admin = getVerifiedAdmin(req);
-  if (admin?.email) return `admin:${admin.email}`;
+  const op = getVerifiedOperator(req);
+  if (op?.email) return `admin:${op.email}`;
   return `ip:${clientIp(req)}`;
 }
 
@@ -1556,7 +1609,7 @@ function isAdminStaticAssetPath(pathname) {
 }
 
 function resolveAdminRouteRateLimitMax(req) {
-  if (getVerifiedAdmin(req)) return ADMIN_API_RATE_LIMIT_PER_MIN;
+  if (getVerifiedOperator(req)) return ADMIN_API_RATE_LIMIT_PER_MIN;
   return ADMIN_API_RATE_LIMIT_UNAUTH_PER_MIN;
 }
 
@@ -2141,6 +2194,7 @@ app.post('/api/auth/audit-ddc-magic', async (req, res) => {
   auditMagicExchangeTimestampsByIp.set(ip, hits);
   const sessionId = await recordPortalLogin(req, user);
   const portalToken = signPortalUserJwt(user);
+  attachPortalSessionCookie(res, portalToken);
   const reportPath = '/clinics/' + AUDIT_DDC_REPORT_SLUG + '/';
   return res.json({
     ok: true,
@@ -2352,16 +2406,29 @@ app.post('/api/admin/login', (req, res) => {
 
 app.post('/api/admin/logout', (_req, res) => {
   clearAdminJwtCookie(res);
+  clearPortalJwtCookie(res);
   return res.json({ ok: true });
 });
 
 app.get('/api/admin/session', (req, res) => {
-  const p = getVerifiedAdmin(req);
+  const p = getVerifiedOperator(req);
   if (!p) return res.status(401).json({ ok: false });
-  /** Bearer-only restore (localStorage JWT): mint HttpOnly cookie so <script src> assets load. */
+  /** Bearer-only restore: mint HttpOnly cookie so full-page HTML and assets load. */
   const bearer = getBearer(req);
-  if (bearer) setAdminJwtCookie(res, bearer);
-  return res.json({ ok: true, role: 'admin', isOperator: true });
+  if (bearer) {
+    const admin = getVerifiedAdmin(req);
+    if (admin) setAdminJwtCookie(res, bearer);
+    else {
+      const portal = verifyJwt(bearer);
+      if (portal && isPortalSessionRole(portal.role)) setPortalJwtCookie(res, bearer);
+    }
+  }
+  return res.json({
+    ok: true,
+    role: p.via === 'admin' ? 'admin' : 'operator',
+    isOperator: true,
+    via: p.via,
+  });
 });
 
 app.post('/api/admin/bootstrap-from-portal', (req, res) => {
@@ -2369,12 +2436,15 @@ app.post('/api/admin/bootstrap-from-portal', (req, res) => {
   if (!p || !isPortalSessionRole(p.role) || typeof p.email !== 'string') {
     return res.status(401).json({ ok: false, error: 'Unauthorized' });
   }
-  if (p.email.trim().toLowerCase() !== ADMIN_EMAIL) {
+  if (!portalPayloadIsOperator(p)) {
     return res.status(403).json({ ok: false, error: 'Forbidden' });
   }
+  const bearer = getBearer(req);
+  if (bearer) attachPortalSessionCookie(res, bearer);
+  /** Legacy clients: optional admin JWT; portal session is sufficient for operator APIs. */
   const token = signJwt({ v: 1, role: 'admin', email: ADMIN_EMAIL, exp: Date.now() + JWT_TTL_MS });
   setAdminJwtCookie(res, token);
-  return res.json({ ok: true, token, expiresInMs: JWT_TTL_MS });
+  return res.json({ ok: true, token, expiresInMs: JWT_TTL_MS, via: 'portal' });
 });
 
 /** Mint a short-lived token so GET /operator/places-leads.html?t=… can load the operator Places UI (no API keys in HTML). */
@@ -3439,7 +3509,7 @@ dualPost('/api/auth/user-login', '/api/auth/clinic-login', async (req, res) => {
   }
   const sessionId = await recordPortalLogin(req, user);
   const token = signPortalUserJwt(user);
-  const adminToken = attachOperatorAdminSessionIfNeeded(res, user);
+  attachPortalSessionCookie(res, token);
   const reportUrl = '/clinics/report.html?slug=' + encodeURIComponent(user.reportSlug);
   return res.json({
     ok: true,
@@ -3449,7 +3519,6 @@ dualPost('/api/auth/user-login', '/api/auth/clinic-login', async (req, res) => {
     sessionId,
     passwordMustChange: Boolean(user.passwordMustChange),
     isOperator: portalUserIsOperator(user.email),
-    ...(adminToken ? { adminToken } : {}),
   });
 });
 
@@ -3528,7 +3597,7 @@ dualPost('/api/auth/user-login-otp', '/api/auth/clinic-login-otp', async (req, r
   portalOtpByEmail.delete(email);
   const sessionId = await recordPortalLogin(req, user);
   const token = signPortalUserJwt(user);
-  const adminToken = attachOperatorAdminSessionIfNeeded(res, user);
+  attachPortalSessionCookie(res, token);
   const reportUrl = '/clinics/report.html?slug=' + encodeURIComponent(user.reportSlug);
   return res.json({
     ok: true,
@@ -3538,7 +3607,6 @@ dualPost('/api/auth/user-login-otp', '/api/auth/clinic-login-otp', async (req, r
     sessionId,
     passwordMustChange: Boolean(user.passwordMustChange),
     isOperator: portalUserIsOperator(user.email),
-    ...(adminToken ? { adminToken } : {}),
   });
 });
 
@@ -3729,6 +3797,7 @@ dualPost('/api/auth/user-complete-password-setup', '/api/auth/clinic-complete-pa
   const refreshed = await userStore.getUserById(p.sub);
   const user = refreshed || { ...row, passwordMustChange: false };
   const token = signPortalUserJwt(user);
+  attachPortalSessionCookie(res, token);
   const reportUrl = '/clinics/report.html?slug=' + encodeURIComponent(user.reportSlug);
   return res.json({
     ok: true,
@@ -3832,6 +3901,7 @@ dualPost('/api/auth/user-complete-onboarding', '/api/auth/clinic-complete-onboar
     };
     const sessionId = await recordPortalLogin(req, sessionUser);
     const portalToken = signPortalUserJwt(sessionUser);
+    attachPortalSessionCookie(res, portalToken);
     const reportUrl = '/clinics/report.html?slug=' + encodeURIComponent(sessionUser.reportSlug);
     return res.status(201).json({
       ok: true,
@@ -4316,7 +4386,7 @@ function sendAdminHtml(req, res) {
   if (isLikelyAutomatedScraper(req)) {
     return sendPrivateReportNotFound(res);
   }
-  if (!getVerifiedAdmin(req)) {
+  if (!getVerifiedOperator(req)) {
     const targetPath = req.originalUrl || req.path || '/admin/users';
     const next = encodeURIComponent(targetPath);
     return res.redirect(302, `/login.html?next=${next}`);
@@ -4412,6 +4482,10 @@ function sendPrivateReportNotFound(res) {
 }
 
 function denyPrivateNumberedReport(req, res) {
+  const portal = getVerifiedPortalSession(req);
+  if (portal && !portalPayloadIsOperator(portal)) {
+    return sendPrivateReportNotFound(res);
+  }
   const targetPath = req.originalUrl || req.path || '/';
   if (req.method === 'GET' || req.method === 'HEAD') {
     const accept = String(req.headers.accept || '');
@@ -4432,7 +4506,7 @@ function denyPrivateNumberedReport(req, res) {
 app.use((req, res, next) => {
   if (req.method !== 'GET' && req.method !== 'HEAD') return next();
   if (!matchPrivateNumberedReportPath(req.path)) return next();
-  if (!getVerifiedAdmin(req)) return denyPrivateNumberedReport(req, res);
+  if (!canAccessPrivateNumberedReport(req)) return denyPrivateNumberedReport(req, res);
   return next();
 });
 
@@ -4448,7 +4522,7 @@ app.use((req, res, next) => {
   const base = path.basename(req.path || '');
   if (!ADMIN_STATIC_REQUIRES_AUTH.has(base)) return next();
   if (isLikelyAutomatedScraper(req)) return sendPrivateReportNotFound(res);
-  if (!getVerifiedAdmin(req)) return denyPrivateNumberedReport(req, res);
+  if (!canAccessPrivateNumberedReport(req)) return denyPrivateNumberedReport(req, res);
   return next();
 });
 

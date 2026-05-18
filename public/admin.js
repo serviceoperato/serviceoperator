@@ -110,7 +110,10 @@
   /** Bearer in storage but no cookie yet — mint HttpOnly cookie before full-page report navigation. */
   function mintAdminCookieFromStoredJwt() {
     var token = readStoredAdminJwt();
-    if (!token) return Promise.resolve(false);
+    if (!token) {
+      token = getPortalJwt();
+      if (!token || !decodeJwtIsOperator(token)) return Promise.resolve(false);
+    }
     return fetch(api('/api/admin/session'), {
       method: 'GET',
       credentials: apiCred(),
@@ -3339,30 +3342,22 @@
       });
   }
 
-  function tryRestorePortalAdminSession() {
+  function tryRestorePortalOperatorSession() {
     var portalJwt = getPortalJwt();
-    if (!portalJwt) return Promise.resolve(false);
-    return fetch(api('/api/admin/bootstrap-from-portal'), {
-      method: 'POST',
+    if (!portalJwt || !decodeJwtIsOperator(portalJwt)) return Promise.resolve(false);
+    return fetch(api('/api/admin/session'), {
+      method: 'GET',
       credentials: apiCred(),
       headers: { Authorization: 'Bearer ' + portalJwt },
       cache: 'no-store',
     })
       .then(function (r) {
-        return r.json().then(function (j) {
-          return { ok: r.ok, j: j };
-        });
-      })
-      .then(function (x) {
-        if (x.ok && x.j && x.j.token) {
-          writeStoredAdminJwt(x.j.token);
-          showWorkspace();
-          return true;
-        }
-        return tryRestorePortalAdminWorkspace();
+        if (!r.ok) return false;
+        showWorkspace();
+        return true;
       })
       .catch(function () {
-        return tryRestorePortalAdminWorkspace();
+        return false;
       });
   }
 
@@ -3443,7 +3438,7 @@
     })
     .then(function (restored) {
       if (restored) return true;
-      return tryRestorePortalAdminSession();
+      return tryRestorePortalOperatorSession();
     })
     .then(function (restored) {
       if (restored) return true;
@@ -3454,12 +3449,17 @@
         revealAdminBootAfterPaint();
         return;
       }
+      if (capabilitiesFromOurServer && capabilitiesHttpOk) {
+        redirectToUnifiedLogin();
+        return;
+      }
       showAdminLoginGate();
       revealAdminBootAfterPaint();
     })
     .catch(function () {
       try {
-        showAdminLoginGate();
+        if (capabilitiesFromOurServer && capabilitiesHttpOk) redirectToUnifiedLogin();
+        else showAdminLoginGate();
       } catch (e) {}
       revealAdminBootAfterPaint();
     })
@@ -3536,7 +3536,24 @@
   }
 
   function getAdminBearer() {
-    return readStoredAdminJwt();
+    var adminTok = readStoredAdminJwt();
+    if (adminTok) return adminTok;
+    var portalTok = getPortalJwt();
+    if (portalTok && decodeJwtIsOperator(portalTok)) return portalTok;
+    return '';
+  }
+
+  function redirectToUnifiedLogin() {
+    var next = window.location.pathname + window.location.search + window.location.hash;
+    try {
+      var u = new URL('/login.html', window.location.origin);
+      if (next && next.charAt(0) === '/' && next.indexOf('//') !== 0) {
+        u.searchParams.set('next', next);
+      }
+      window.location.replace(u.pathname + u.search);
+    } catch (eLogin) {
+      window.location.replace('/login.html?next=' + encodeURIComponent(next));
+    }
   }
 
   window.readStoredAdminJwt = readStoredAdminJwt;
