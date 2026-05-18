@@ -46,6 +46,17 @@ const pattayaItem = {
   sourceTranscriptionContent: '11/3/24, 20:56 - Koragon Gicos: 6\n11/8/24, 20:27 - € 11\n?q=5,%20View%2E',
 };
 
+const koragonPattayaItem = {
+  title: 'WhatsApp Koragon Gicos — Pattaya e vita sociale',
+  summary:
+    'Chat 1:1 WhatsApp con Koragon Gicos (Gicos) dal 2021, prevalentemente da Pattaya. Argomenti ricorrenti: tamponi COVID in inglese, affitto scooter Morotino per due-tre mesi, mappe di locali e nightlife, contenuti OnlyFans e video (prezzi intorno a 1.500 THB, qualità, marketing), sauna (Sauna Bar, Sands), app budget senza export Excel, nickname «Birillo».',
+  importantPoints: [
+    'Contatto stabile in Thailandia per logistica quotidiana e uscite',
+    'Discussione economica su contenuti adulti e piattaforme (OnlyFans, Fansly)',
+  ],
+  category: 'notes',
+};
+
 const ratioText = 'We agreed on 50/50 ownership split for the project.';
 const moneyPair =
   'Budget totale 57.000 € mortgage; remaining rimanente 12.000 € per ristrutturazione.';
@@ -71,5 +82,17 @@ assert(n.length === 0, 'URL/encoding junk should produce no numbers');
 
 n = CN.extractContentNumbers({ summary: '200€ per affitto scooter Morotino' });
 assert(n.length === 1 && n[0].kind === 'money', 'Semantic money should extract');
+
+n = CN.extractContentNumbers(koragonPattayaItem);
+assert(n.length === 0, 'Koragon Pattaya summary must not yield stat segments, got: ' + JSON.stringify(n));
+assert(CN.toDonutSegments(n) === null, 'Koragon Pattaya must not produce donut');
+assert(
+  !n.some((s) => /…/.test(String(s.label || ''))),
+  'Koragon must not have ellipsis labels'
+);
+assert(
+  !n.some((s) => /…\d{2,}\s*THB/i.test(String(s.label || ''))),
+  'Koragon must not have truncated THB labels'
+);
 
 console.log('test-tx-content-numbers.mjs: all checks passed');

@@ -30,6 +30,16 @@
   var MAX_DONUT_SLICES = 6;
   var MAX_EXTRACT = 12;
   var MIN_MONEY_DISPLAY = 20;
+  var MIN_MEANINGFUL_LABEL_CHARS = 5;
+
+  var LABEL_ELLIPSIS_RE = /…|\.\.\./;
+  var LABEL_TRUNCATED_MONEY_RE = /…\d{2,}\s*(?:thb|eur|usd|gbp|baht|€|\$|£)/i;
+  var LABEL_BARE_MONEY_RE = /^[\d.,\s]*(?:thb|eur|usd|gbp|baht|€|\$|£)\b/i;
+  var LABEL_INCOMPLETE_PAREN_RE = /^[^()]*\)[,;)]|^\)[,;]/;
+  var LABEL_CHAT_FRAGMENT_RE =
+    /due-tre mesi|tre mesi,\s*mappe|mappe di lo|qualità,\s*marketing\),\s*sauna/i;
+  var LABEL_SEMANTIC_WORDS_RE =
+    /\b(?:per|affitto|rent|budget|mortgage|mutuo|saldo|stipendio|fee|costo|prezzo|price|prezzi|totale|total|remaining|riman|circa|about|intorno|almeno|least|scooter|onlyfans|sauna|split|ownership|propriet|share|vs\.?|versus)\b/i;
 
   /** Item keys that must never be scanned as prose. */
   var METADATA_ITEM_KEYS = {
@@ -224,11 +234,53 @@
     return text.slice(Math.max(0, start - radius), Math.min(text.length, end + radius)).replace(/\s+/g, ' ');
   }
 
-  function contextLabel(text, start, end, raw) {
+  function meaningfulLabelChars(label) {
+    return String(label || '')
+      .replace(/[\s….,;:!?()[\]{}\-+'"«»`]/g, '')
+      .replace(/(?:thb|eur|usd|gbp|baht)/gi, '').length;
+  }
+
+  function isValidDisplayLabel(label, seg) {
+    var t = String(label || '').replace(/\s+/g, ' ').trim();
+    if (!t) return false;
+    if (LABEL_ELLIPSIS_RE.test(t)) return false;
+    if (LABEL_TRUNCATED_MONEY_RE.test(t)) return false;
+    if (LABEL_INCOMPLETE_PAREN_RE.test(t)) return false;
+    if (LABEL_CHAT_FRAGMENT_RE.test(t)) return false;
+    if (/,\s*[a-zàèéìòù]{1,2}$/i.test(t)) return false;
+    if (meaningfulLabelChars(t) < MIN_MEANINGFUL_LABEL_CHARS) return false;
+
+    if (seg && seg.kind === 'money') {
+      if (LABEL_BARE_MONEY_RE.test(t) && !LABEL_SEMANTIC_WORDS_RE.test(t)) return false;
+      var stripped = t.replace(/[\d.,\s]/g, '').replace(/(?:thb|eur|usd|gbp|baht|€|\$|£)/gi, '').trim();
+      if (meaningfulLabelChars(stripped) < 3 && !LABEL_SEMANTIC_WORDS_RE.test(t)) return false;
+    }
+
+    if (seg && seg.kind === 'deadline') {
+      if (/\bdue[\s-]*tre\b/i.test(t) || /\bmappe di\b/i.test(t)) return false;
+    }
+
+    return true;
+  }
+
+  function filterVisualSegments(segments) {
+    if (!segments || !segments.length) return [];
+    return segments.filter(function (seg) {
+      return isValidDisplayLabel(seg.label, seg);
+    });
+  }
+
+  function contextLabel(text, start, end, raw, kind) {
     var slice = proseContext(text, start, end, 28);
     slice = slice.trim();
-    if (slice.length > 36) slice = '…' + slice.slice(-34);
-    return slice || shortLabel(raw, 'quantity');
+    var segStub = { kind: kind || 'quantity', raw: raw };
+    if (slice.length > 36) {
+      var tail = slice.slice(-34);
+      if (isValidDisplayLabel(tail, segStub)) slice = tail;
+      else return shortLabel(raw, kind || 'quantity');
+    }
+    if (!isValidDisplayLabel(slice, segStub)) return shortLabel(raw, kind || 'quantity');
+    return slice || shortLabel(raw, kind || 'quantity');
   }
 
   function endsTruncated(text, end) {
@@ -302,6 +354,7 @@
   function pushSegment(out, seen, seg, text, start, end) {
     if (!seg || seg.raw == null || String(seg.raw).trim() === '') return;
     if (!isValidSegment(seg, text, start, end)) return;
+    if (!isValidDisplayLabel(seg.label, seg)) return;
     var key = dedupeKey(seg);
     if (seen[key]) return;
     seen[key] = true;
@@ -328,7 +381,7 @@
           kind: 'money',
           value: val,
           raw: m[0].trim(),
-          label: contextLabel(t, m.index, m.index + m[0].length, m[0]),
+          label: contextLabel(t, m.index, m.index + m[0].length, m[0], 'money'),
           currency: (m[0].match(/(?:€|eur|usd|gbp|thb|baht|\$|£)/i) || [''])[0].toLowerCase(),
         },
         t,
@@ -350,7 +403,7 @@
           kind: 'percent',
           value: pv,
           raw: m[0].trim(),
-          label: contextLabel(t, m.index, m.index + m[0].length, m[0]),
+          label: contextLabel(t, m.index, m.index + m[0].length, m[0], 'percent'),
         },
         t,
         m.index,
@@ -413,7 +466,7 @@
           kind: 'quantity',
           value: qv,
           raw: m[0].trim(),
-          label: contextLabel(t, m.index, m.index + m[0].length, m[0]),
+          label: contextLabel(t, m.index, m.index + m[0].length, m[0], 'quantity'),
         },
         t,
         m.index,
@@ -433,7 +486,7 @@
           kind: 'duration',
           value: dv,
           raw: m[0].trim(),
-          label: contextLabel(t, m.index, m.index + m[0].length, m[0]),
+          label: contextLabel(t, m.index, m.index + m[0].length, m[0], 'duration'),
         },
         t,
         m.index,
@@ -476,7 +529,8 @@
       );
     }
 
-    var deadlineRe = /\b(?:deadline|scadenza|due|entro(?: il)?)\s*[:\-]?\s*([^.;\n]{4,40})/gi;
+    var deadlineRe =
+      /\b(?:deadline|scadenza|entro(?: il)?|due\s+(?:on|il|per|date|by))\s*[:\-]?\s*([^.;\n]{4,40})/gi;
     while ((m = deadlineRe.exec(t)) !== null) {
       pushSegment(
         out,
@@ -598,7 +652,7 @@
       var order = { money: 0, percent: 1, ratio: 2, quantity: 3, duration: 4, date: 5, time: 6, deadline: 7 };
       return (order[a.kind] != null ? order[a.kind] : 9) - (order[b.kind] != null ? order[b.kind] : 9);
     });
-    return dedupeVisualValues(out).slice(0, MAX_EXTRACT);
+    return filterVisualSegments(dedupeVisualValues(out)).slice(0, MAX_EXTRACT);
   }
 
   function isDonutSuitable(seg) {
@@ -727,5 +781,7 @@
     DONUT_KINDS: DONUT_KINDS,
     collectItemTextParts: collectItemTextParts,
     dedupeVisualValues: dedupeVisualValues,
+    filterVisualSegments: filterVisualSegments,
+    isValidDisplayLabel: isValidDisplayLabel,
   };
 })();

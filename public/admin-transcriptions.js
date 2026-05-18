@@ -2699,12 +2699,14 @@
     var CN = txContentNumbers();
     if (!CN) return { mode: 'topic', numbers: [] };
     var numbers = CN.extractContentNumbers(item);
+    if (CN.filterVisualSegments) numbers = CN.filterVisualSegments(numbers);
     if (!numbers.length) return { mode: 'topic', numbers: [] };
     var donutSegs = CN.toDonutSegments(numbers);
     if (donutSegs && donutSegs.length >= 2) {
       return { mode: 'donut', segments: donutSegs, numbers: numbers };
     }
-    return { mode: 'stats', numbers: numbers };
+    if (numbers.length) return { mode: 'stats', numbers: numbers };
+    return { mode: 'topic', numbers: [] };
   }
 
   function renderContentStatCards(numbers, opts) {
