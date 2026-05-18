@@ -941,9 +941,10 @@ function normalizePageImageAlt(s, fallback) {
 }
 
 const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'jack@serviceopera.to').trim().toLowerCase();
-/** Marketing / footer / mailto on public pages (not the operator login identity). */
-const PUBLIC_CONTACT_EMAIL = (
-  process.env.PUBLIC_CONTACT_EMAIL || 'hello@serviceopera.to'
+/** Optional public inbox for dynamic mailto helpers only; unset = form-only contact UX. */
+const PUBLIC_CONTACT_EMAIL = (process.env.PUBLIC_CONTACT_EMAIL || '').trim();
+const PUBLIC_CONTACT_FORM_URL = (
+  process.env.PUBLIC_CONTACT_FORM_URL || '/free-audit.html'
 ).trim();
 /** Internal ops + Resend routing; not published in public HTML/JS bundles. */
 const OPERATOR_CONTACT_EMAIL = (
@@ -955,7 +956,11 @@ const RESEND_FROM_USES_TEST_SENDER = /@resend\.dev>/i.test(RESEND_FROM) || /onbo
 /** Sole operator identity string in portal email copy and user-facing contact errors. */
 const OPERATOR_IDENTITY = 'Jack from ServiceOpera.to';
 function operatorContactForErrors() {
-  return OPERATOR_IDENTITY + ' (' + PUBLIC_CONTACT_EMAIL + ')';
+  return (
+    OPERATOR_IDENTITY +
+    ' — get in touch via the 48-hour audit request form at ' +
+    PUBLIC_CONTACT_FORM_URL
+  );
 }
 function portalUserIsOperator(email) {
   return emailsEqualTiming(String(email || '').trim().toLowerCase(), ADMIN_EMAIL);
@@ -2015,8 +2020,9 @@ app.get('/api/site-appearance', async (_req, res) => {
 app.get('/api/site-config', (_req, res) => {
   res.setHeader('Cache-Control', 'public, max-age=300');
   res.json({
-    publicContactEmail: PUBLIC_CONTACT_EMAIL,
+    contactFormUrl: PUBLIC_CONTACT_FORM_URL,
     operatorIdentity: OPERATOR_IDENTITY,
+    ...(PUBLIC_CONTACT_EMAIL ? { publicContactEmail: PUBLIC_CONTACT_EMAIL } : {}),
   });
 });
 

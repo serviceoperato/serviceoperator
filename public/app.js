@@ -92,25 +92,13 @@
   var secondaryCta = document.getElementById('heroSecondaryCta');
   if (!pills.length || !heroCopy || !titleEl || !ledeEl || !primaryCta || !secondaryCta) return;
 
-  function contactMailto(subject, body) {
-    if (window.SoSiteContact && typeof window.SoSiteContact.contactMailto === 'function') {
-      return window.SoSiteContact.contactMailto(subject, body);
+  function contactFormUrl() {
+    if (window.SoSiteContact && typeof window.SoSiteContact.contactFormUrl === 'function') {
+      return window.SoSiteContact.contactFormUrl();
     }
-    return (
-      'mailto:hello@serviceopera.to?subject=' +
-      encodeURIComponent(subject) +
-      '&body=' +
-      encodeURIComponent(body)
-    );
+    return '/free-audit.html';
   }
-  var MAIL_REPORT = contactMailto(
-    'Request: 48-hour private audit',
-    'Business name:\nSector (hotel / clinic / property):\nWebsite:\nPriority bottleneck:\n\nThanks.'
-  );
-  var MAIL_AUDIT = contactMailto(
-    'Request: Automation audit',
-    'Business name:\nSector (hotel / clinic / property):\nWhat feels broken in operations today:\n\nThanks.'
-  );
+  var CONTACT_FORM = contactFormUrl();
 
   var TITLE_HTML =
     '<span class="line">AI Operations for Service Businesses</span>' +
@@ -130,9 +118,9 @@
     titleEl.className = 'hero__title hero__title--lead';
     titleEl.innerHTML = TITLE_HTML;
     ledeEl.textContent = c.lede;
-    primaryCta.setAttribute('href', MAIL_REPORT);
+    primaryCta.setAttribute('href', CONTACT_FORM);
     primaryCta.innerHTML = 'View your private AI Operations Report<span class="ico-arrow-r" aria-hidden="true"></span>';
-    secondaryCta.setAttribute('href', MAIL_AUDIT);
+    secondaryCta.setAttribute('href', CONTACT_FORM);
     secondaryCta.textContent = 'Request an Automation Audit';
     heroCopy.classList.add('has-hero-sample');
   }

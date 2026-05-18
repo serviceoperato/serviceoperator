@@ -1,23 +1,36 @@
 /**
- * Public contact email for marketing footers and mailto links.
- * Operator/admin email stays server-side (ADMIN_EMAIL); optional override via GET /api/site-config.
+ * Public contact UX: audit request form (no default public inbox / mailto).
+ * Operator email stays server-side (OPERATOR_CONTACT_EMAIL / ADMIN_EMAIL).
+ * Optional override: GET /api/site-config → contactFormUrl, publicContactEmail (if configured).
  */
 (function (global) {
   'use strict';
 
-  var DEFAULT_PUBLIC_CONTACT = 'hello@serviceopera.to';
-  var publicEmail = DEFAULT_PUBLIC_CONTACT;
+  var DEFAULT_CONTACT_FORM = '/free-audit.html';
+  var contactFormPath = DEFAULT_CONTACT_FORM;
+  var publicEmail = '';
+
+  function setContactFormUrl(path) {
+    var p = String(path || '').trim();
+    if (p && p.charAt(0) === '/') contactFormPath = p;
+  }
 
   function setPublicContactEmail(addr) {
     var a = String(addr || '').trim();
-    if (a && a.indexOf('@') > 0) publicEmail = a;
+    publicEmail = a && a.indexOf('@') > 0 ? a : '';
+  }
+
+  function contactFormUrl() {
+    return contactFormPath;
   }
 
   function publicContactEmail() {
     return publicEmail;
   }
 
+  /** Returns mailto only when PUBLIC_CONTACT_EMAIL is configured; otherwise the audit form URL. */
   function contactMailto(subject, body) {
+    if (!publicEmail) return contactFormUrl();
     var q = [];
     if (subject) q.push('subject=' + encodeURIComponent(String(subject)));
     if (body) q.push('body=' + encodeURIComponent(String(body)));
@@ -41,37 +54,38 @@
         return r.ok ? r.json() : null;
       })
       .then(function (j) {
+        if (j && j.contactFormUrl) setContactFormUrl(j.contactFormUrl);
         if (j && j.publicContactEmail) setPublicContactEmail(j.publicContactEmail);
-        return publicEmail;
+        return contactFormUrl();
       })
       .catch(function () {
-        return publicEmail;
+        return contactFormUrl();
       });
   }
 
-  function applyMailtoAnchors(root) {
+  function applyContactAnchors(root) {
     var scope = root && root.querySelectorAll ? root : document;
-    var nodes = scope.querySelectorAll('a[data-so-contact-mailto]');
+    var nodes = scope.querySelectorAll('a[data-so-contact-form], a[data-so-contact-mailto]');
     for (var i = 0; i < nodes.length; i++) {
-      var el = nodes[i];
-      var subj = el.getAttribute('data-so-subject') || '';
-      var body = el.getAttribute('data-so-body') || '';
-      el.setAttribute('href', contactMailto(subj, body));
+      nodes[i].setAttribute('href', contactFormUrl());
     }
   }
 
   global.SoSiteContact = {
+    setContactFormUrl: setContactFormUrl,
     setPublicContactEmail: setPublicContactEmail,
+    contactFormUrl: contactFormUrl,
     publicContactEmail: publicContactEmail,
     contactMailto: contactMailto,
     maskEmail: maskEmail,
     loadFromApi: loadFromApi,
-    applyMailtoAnchors: applyMailtoAnchors,
+    applyContactAnchors: applyContactAnchors,
+    applyMailtoAnchors: applyContactAnchors,
   };
 
   if (typeof document !== 'undefined') {
     loadFromApi().then(function () {
-      applyMailtoAnchors(document);
+      applyContactAnchors(document);
     });
   }
 })(typeof window !== 'undefined' ? window : globalThis);
