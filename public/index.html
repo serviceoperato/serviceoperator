@@ -369,6 +369,19 @@
     filter: brightness(1.06);
     box-shadow: 0 4px 20px color-mix(in srgb, var(--so-workflow-accent) 38%, transparent);
   }
+  .page-home .so-b2b__btn--primary .so-b2b__btn-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    line-height: 1.25;
+  }
+  .page-home .so-b2b__btn--primary .so-b2b__btn-sub {
+    font-size: 0.75rem;
+    font-weight: 500;
+    opacity: 0.92;
+    letter-spacing: 0.01em;
+  }
   [data-theme="dark"] .page-home .so-b2b__btn--primary {
     background: var(--so-workflow-accent);
     color: var(--so-workflow-on-accent);
@@ -381,47 +394,6 @@
   .page-home .so-b2b__btn--ghost:hover {
     border-color: var(--so-indigo);
     color: var(--so-indigo);
-  }
-  .page-home .so-b2b__btn--ghost .so-b2b__btn-play {
-    border-color: var(--so-workflow-accent);
-    color: var(--so-workflow-accent);
-  }
-  .page-home .so-b2b__btn--ghost:hover .so-b2b__btn-play {
-    border-color: var(--so-indigo);
-    color: var(--so-indigo);
-  }
-  .page-home .so-b2b__btn-inner {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
-  }
-  .page-home .so-b2b__btn-play {
-    position: relative;
-    width: 1.35rem;
-    height: 1.35rem;
-    flex-shrink: 0;
-    border-radius: 50%;
-    border: 1.5px solid var(--so-workflow-accent);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-  }
-  .page-home .so-b2b__btn-play-ring {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    color: inherit;
-    pointer-events: none;
-  }
-  .page-home .so-b2b__btn-play-tri {
-    position: relative;
-    z-index: 1;
-    width: 0.45rem;
-    height: 0.45rem;
-    margin-left: 1px;
-    display: block;
   }
   .page-home .so-b2b__markets {
     margin: 0.35rem 0 0;
@@ -1104,8 +1076,12 @@
       <p class="client-hero__lede so-b2b__hero-lede">ServiceOpera is an operational audit studio for hotels, clinics, and property operators. We assess intake, scheduling, handoffs, and follow-up—then deliver a private brief with gaps, prioritized fixes, and one scoped pilot you can run.</p>
 
       <div class="so-b2b__cta-row">
-        <a class="so-b2b__btn so-b2b__btn--primary" href="/free-audit.html">Request your free 48-hour operational audit</a>
-        <a class="so-b2b__btn so-b2b__btn--ghost" href="/clinics/010/"><span class="so-b2b__btn-inner"><span class="so-b2b__btn-play" aria-hidden="true"><svg class="so-b2b__btn-play-ring" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15.75 18.495A7.5 7.5 0 0 1 8.25 18.495"/><path d="M5.505 15.75A7.5 7.5 0 0 1 5.505 8.25"/><path d="M8.25 5.505A7.5 7.5 0 0 1 15.75 5.505"/><path d="M18.495 8.25A7.5 7.5 0 0 1 18.495 15.75"/></svg><svg class="so-b2b__btn-play-tri" viewBox="0 0 10 12" width="10" height="12" aria-hidden="true"><polygon points="0,0 10,6 0,12" fill="currentColor"/></svg></span>See a sample audit</span></a>
+        <a class="so-b2b__btn so-b2b__btn--primary" href="/free-audit.html">
+          <span class="so-b2b__btn-stack">
+            <span class="so-b2b__btn-label">Request your free 48-hour operational audit</span>
+            <span class="so-b2b__btn-sub">See what you'll receive first</span>
+          </span>
+        </a>
       </div>
       <p class="so-b2b__cta-note">Written brief on operational gaps, prioritized fixes, and one scoped pilot—no obligation to engage us for execution.</p>
       <p class="so-b2b__markets">
