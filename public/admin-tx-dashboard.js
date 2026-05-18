@@ -2953,7 +2953,7 @@
       details.dataset.txDigestOpenSet = '1';
     }
 
-    var today = todayOperationalItems();
+    var today = digestTodaySources();
     var serious = 0;
     var taskCount = 0;
     var junkCount = 0;
@@ -2963,7 +2963,7 @@
       if (isTaskLikeItem(it)) taskCount += 1;
     });
 
-    var top = today
+    var top = digestTopPriorityPool()
       .slice()
       .sort(function (a, b) {
         return priorityScore(b) - priorityScore(a) || parseItemDate(b) - parseItemDate(a);
@@ -2973,11 +2973,15 @@
     var topHtml = top.length
       ? top
           .map(function (it) {
+            var cat = categoryShortLabel(itemPrimaryCategory(it));
             return (
               '<li><a class="tx-digest__pick" href="' +
               esc(txItemDetailPath(it.id)) +
               '">' +
               esc(it.title || it.path || 'Untitled') +
+              '<span class="tx-digest__cat mono">' +
+              esc(cat) +
+              '</span>' +
               '<span class="tx-digest__score mono">+' +
               esc(priorityScore(it)) +
               '</span></a></li>'
