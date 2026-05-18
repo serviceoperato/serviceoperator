@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
+<title>14-day operational audit case study · ServiceOpera</title>
+<meta name="description" content="Illustrative 14-day operational audit: lead response, follow-up recovery, and a modeled revenue range for a regional clinic operator. Composite scenario; results vary." />
+<link rel="canonical" href="https://serviceopera.to/case-study.html" />
+<meta name="robots" content="index,follow" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="www.serviceopera.to" />
+<meta property="og:url" content="https://serviceopera.to/case-study.html" />
+<meta property="og:title" content="14-day operational audit case study · ServiceOpera" />
+<meta property="og:description" content="Illustrative 14-day audit: intake SLAs, follow-up recovery, and a defensible revenue model. Composite scenario; not a performance guarantee." />
+<meta property="og:image" content="https://serviceopera.to/assets/logo.png" />
+<meta property="og:locale" content="en_US" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="14-day operational audit case study · ServiceOpera" />
+<meta name="twitter:description" content="Illustrative 14-day audit: lead response, follow-up recovery, modeled revenue range. Composite scenario; results vary." />
+<meta name="twitter:image" content="https://serviceopera.to/assets/logo.png" />
+<link rel="icon" href="/favicon.png" type="image/png" sizes="any" />
+<link rel="apple-touch-icon" href="/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+<script src="/page-skeleton.js"></script>
+<script src="/so-api.js"></script>
+<style>
+  .cs-page {
+    --cs-ink: #0a0a0f;
+    --cs-muted: #475569;
+    --cs-line: rgba(15, 23, 42, 0.1);
+    --cs-accent: #4f46e5;
+    --cs-surface: #ffffff;
+    --cs-subtle: #f8fafc;
+    --cs-warn-bg: #fffbeb;
+    --cs-warn-border: #fcd34d;
+    --cs-warn-text: #92400e;
+    font-family: var(--font-body), "Inter", system-ui, sans-serif;
+    color: var(--cs-muted);
+    background: var(--cs-surface);
+    -webkit-font-smoothing: antialiased;
+  }
+  [data-theme="dark"] .cs-page {
+    --cs-ink: #f1f5f9;
+    --cs-muted: #94a3b8;
+    --cs-line: rgba(148, 163, 184, 0.2);
+    --cs-accent: #a5b4fc;
+    --cs-surface: #0f172a;
+    --cs-subtle: #1e293b;
+    --cs-warn-bg: rgba(251, 191, 36, 0.12);
+    --cs-warn-border: rgba(251, 191, 36, 0.35);
+    --cs-warn-text: #fde68a;
+  }
+  .cs-page main {
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: calc(var(--site-nav-offset, 4.5rem) + 1.5rem) var(--gutter, 1.25rem) 4rem;
+  }
+  .cs-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0 0 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cs-accent);
+  }
+  .cs-kicker .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--cs-accent);
+  }
+  .cs-page h1 {
+    margin: 0 0 0.75rem;
+    font-size: clamp(1.5rem, 4.5vw, 2rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    color: var(--cs-ink);
+  }
+  .cs-lede {
+    margin: 0 0 1.25rem;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: var(--cs-muted);
+  }
+  .cs-disclaimer {
+    margin: 0 0 2rem;
+    padding: 0.85rem 1rem;
+    border-radius: 12px;
+    border: 1px solid var(--cs-warn-border);
+    background: var(--cs-warn-bg);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--cs-warn-text);
+  }
+  .cs-disclaimer strong {
+    font-weight: 600;
+  }
+  .cs-page section {
+    margin-bottom: 2rem;
+  }
+  .cs-page h2 {
+    margin: 0 0 0.65rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--cs-ink);
+  }
+  .cs-page p {
+    margin: 0 0 0.75rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+  .cs-page ul {
+    margin: 0 0 0.75rem;
+    padding-left: 1.15rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+  .cs-page li {
+    margin-bottom: 0.35rem;
+  }
+  .cs-metrics {
+    display: grid;
+    gap: 0.65rem;
+    margin: 0.75rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cs-metrics li {
+    margin: 0;
+    padding: 0.75rem 0.9rem;
+    border-radius: 12px;
+    border: 1px solid var(--cs-line);
+    background: var(--cs-subtle);
+    font-size: 0.875rem;
+    line-height: 1.45;
+  }
+  .cs-metrics strong {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--cs-ink);
+    margin-bottom: 0.2rem;
+  }
+  .cs-metrics .cs-mono {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 0.8125rem;
+    color: var(--cs-ink);
+  }
+  .cs-model {
+    margin: 0.75rem 0 0;
+    padding: 1rem 1.1rem;
+    border-radius: 14px;
+    border: 1px solid var(--cs-line);
+    border-left: 3px solid var(--cs-accent);
+    background: var(--cs-subtle);
+    font-size: 0.875rem;
+    line-height: 1.55;
+  }
+  .cs-model dt {
+    margin: 0.65rem 0 0.15rem;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cs-muted);
+  }
+  .cs-model dt:first-child {
+    margin-top: 0;
+  }
+  .cs-model dd {
+    margin: 0;
+    color: var(--cs-ink);
+    font-weight: 500;
+  }
+  .cs-model .cs-formula {
+    margin: 0.75rem 0 0;
+    padding: 0.65rem 0.75rem;
+    border-radius: 8px;
+    background: var(--cs-surface);
+    border: 1px solid var(--cs-line);
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--cs-ink);
+  }
+  .cs-foot {
+    margin-top: 2.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--cs-line);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--cs-muted);
+  }
+  .cs-cta {
+    display: inline-flex;
+    margin-top: 1rem;
+    padding: 0.75rem 1.15rem;
+    border-radius: var(--radius-btn, 10px);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: none;
+    background: #4f46e5;
+    color: #f8fafc;
+    border: 1px solid transparent;
+  }
+  .cs-cta:hover {
+    filter: brightness(1.06);
+  }
+  .cs-back {
+    display: inline-block;
+    margin-bottom: 1.25rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--cs-accent);
+    text-decoration: none;
+  }
+  .cs-back:hover {
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body class="cs-page" data-page-skeleton="native">
+
+<div class="grain" aria-hidden="true"></div>
+
+<nav class="nav">
+  <div class="nav__start">
+    <a href="/" class="nav__logo">
+      <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="www.serviceopera.to" decoding="async" />
+    </a>
+  </div>
+  <div class="nav__links">
+    <a href="/login.html" class="nav__login mono" id="navPortalAuth" aria-label="Login or Register">Login / Register</a>
+  </div>
+</nav>
+
+<main>
+  <a class="cs-back" href="/">← Operational audit studio</a>
+
+  <p class="cs-kicker"><span class="dot" aria-hidden="true"></span>Case study · 14-day audit window</p>
+  <h1>Faster lead response and follow-up recovery in 14 days</h1>
+  <p class="cs-lede">How a regional clinic operator tightened intake, cleared stale pipeline stages, and sized a <em>modeled</em> revenue range—without adding another tool on day one.</p>
+
+  <aside class="cs-disclaimer" role="note">
+    <strong>Illustrative composite.</strong> This narrative blends patterns from real operational audits; it is not a named client, not a guarantee, and uses no real patient or customer data. Metrics below are ranges and methodology examples from CRM exports and team interviews unless labeled hypothetical. Your results will vary with baseline, staffing, and seasonality.
+  </aside>
+
+  <section id="context" aria-labelledby="context-h">
+    <h2 id="context-h">Context</h2>
+    <p>A three-location dental and aesthetic clinic group (anonymized; ~45 staff) relied on web forms, WhatsApp, and referral partners for new inquiries. Front desk and treatment coordinators shared one CRM, but ownership after the first reply was unclear.</p>
+    <p><strong>Stated pain:</strong> slow first responses on high-intent channels, and follow-ups that stopped after one attempt—leads sat in “contacted” with no next step while coordinators focused on chair time.</p>
+  </section>
+
+  <section id="scope" aria-labelledby="scope-h">
+    <h2 id="scope-h">14-day audit scope</h2>
+    <p>We measured what their systems already recorded—no invented industry benchmarks.</p>
+    <ul>
+      <li><strong>Lead timestamps</strong> — inquiry created → first human reply (median and 90th percentile by channel)</li>
+      <li><strong>Pipeline hygiene</strong> — count and age of leads in “new,” “contacted,” and “stale” (no activity 14+ days)</li>
+      <li><strong>Handoff map</strong> — who owns intake vs. scheduling vs. treatment plan follow-up</li>
+      <li><strong>Volume baseline</strong> — qualified inquiries per week (forms + messenger, excluding spam)</li>
+      <li><strong>Conversion snapshot</strong> — booked consultation ÷ qualified inquiries (trailing 30 days, as reported in CRM)</li>
+    </ul>
+  </section>
+
+  <section id="findings" aria-labelledby="findings-h">
+    <h2 id="findings-h">Findings</h2>
+    <ul>
+      <li><strong>Intake:</strong> after-hours inquiries waited until the next business day with no queue or auto-acknowledgment; partners could not see status.</li>
+      <li><strong>SLA:</strong> no documented first-response target; median first reply during business hours was roughly <strong>4–7 hours</strong> (CRM-derived range for the audit window).</li>
+      <li><strong>Handoffs:</strong> coordinators assumed front desk had replied; duplicate or zero touches on the same lead.</li>
+      <li><strong>CRM hygiene:</strong> ~<strong>50–70</strong> leads aged 14+ days in “contacted” with no scheduled task; stages did not distinguish “waiting on patient” vs. “we owe a follow-up.”</li>
+    </ul>
+  </section>
+
+  <section id="interventions" aria-labelledby="interventions-h">
+    <h2 id="interventions-h">Interventions (process, not “AI”)</h2>
+    <ul>
+      <li><strong>Routing rules</strong> — channel owner for first touch; escalation if unclaimed after 30 minutes in business hours.</li>
+      <li><strong>Business-hours SLA</strong> — target first human reply within <strong>90 minutes</strong> for qualified inquiries (published internally).</li>
+      <li><strong>Follow-up cadence</strong> — three-touch template (day 0, 2, 7) with explicit “close or re-queue” on day 10.</li>
+      <li><strong>Weekly stale review</strong> — named owner clears or re-engages aged pipeline; stage definitions updated in CRM.</li>
+      <li><strong>Partner visibility</strong> — lightweight status note for referral sources (no new software in the pilot).</li>
+    </ul>
+  </section>
+
+  <section id="outcomes" aria-labelledby="outcomes-h">
+    <h2 id="outcomes-h">Outcomes (careful language)</h2>
+    <p>Figures below mix <strong>client-reported</strong> observations during the 14-day pilot window with an <strong>illustrative scenario</strong> for sizing. They are not audited financial statements.</p>
+    <ul class="cs-metrics" aria-label="Example outcome ranges">
+      <li>
+        <strong>Lead response (methodology)</strong>
+        Median first-response during business hours moved from a CRM-derived <span class="cs-mono">~4–7 h</span> baseline toward a <span class="cs-mono">~45–90 min</span> range while the SLA and routing rules were active (client-reported; channel mix dependent).
+      </li>
+      <li>
+        <strong>Follow-up recovery</strong>
+        In the illustrative scenario, <span class="cs-mono">~55</span> stale leads were re-queued; <span class="cs-mono">~12–18</span> booked a consultation after the three-touch cadence (client-reported range). Remaining stale records were closed-lost with reason codes.
+      </li>
+      <li>
+        <strong>Pipeline stages</strong>
+        “Contacted” without next step dropped from ~<span class="cs-mono">50–70</span> to under <span class="cs-mono">15</span> open items at week two (client-reported).
+      </li>
+    </ul>
+  </section>
+
+  <section id="revenue" aria-labelledby="revenue-h">
+    <h2 id="revenue-h">Modeled revenue impact (hypothetical inputs)</h2>
+    <p>If baseline inquiry volume and conversion hold, a modest improvement in booked consultations can be sized without claiming a fixed dollar outcome.</p>
+    <dl class="cs-model">
+      <dt>Assumptions (illustrative)</dt>
+      <dd>~85 qualified inquiries / month; consultation booking rate <span class="cs-mono">22%</span> baseline; illustrative improvement to <span class="cs-mono">25–26%</span> (+3–4 pp); average accepted treatment plan <span class="cs-mono">€1,100–€1,300</span> (hypothetical, regional private-pay band).</dd>
+      <dt>Formula</dt>
+      <dd class="cs-formula">additional revenue / month ≈ inquiries × (conversion<sub>after</sub> − conversion<sub>before</sub>) × avg case value</dd>
+      <dt>Modeled estimate (range)</dt>
+      <dd><span class="cs-mono">85 × 0.03 × €1,200 ≈ €3,060</span> to <span class="cs-mono">85 × 0.04 × €1,300 ≈ €4,420</span> per month—labeled illustrative, not guaranteed.</dd>
+    </dl>
+    <p>We present this as a <strong>sensitivity band</strong>, not proof of ROI. Seasonality, case mix, and discounting can move realized revenue outside the range.</p>
+  </section>
+
+  <footer class="cs-foot">
+    <p>ServiceOpera is an operational audit studio for hotels, clinics, and property operators—we map workflows, handoffs, and revenue leaks, then recommend one scoped pilot you can run in-house or with us.</p>
+    <a class="cs-cta" href="/free-audit.html">Request your free 48-hour operational audit</a>
+    <p style="margin-top:1.25rem;">Questions: <a href="mailto:jack@serviceopera.to">jack@serviceopera.to</a></p>
+  </footer>
+</main>
+
+<script src="/site-appearance-public.js" defer></script>
+<script src="/sw-register.js"></script>
+<script src="/site-nav-drawer.js"></script>
+<script src="/user-account-menu.js"></script>
+<script src="theme.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
