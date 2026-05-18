@@ -688,7 +688,11 @@
             '</td>' +
             '<td><button type="button" class="tf-admin-toolbar__btn js-edit-user" data-user-id="' +
             escapeHtml(String(u.id)) +
-            '">Edit profile</button> · <a href="' +
+            '">Edit profile</button> · <button type="button" class="tf-admin-toolbar__btn js-reset-user-pw" data-user-id="' +
+            escapeHtml(String(u.id)) +
+            '" data-user-email="' +
+            escapeHtml(String(u.email || '')) +
+            '">Reset password</button> · <a href="' +
             reportUrl +
             '">Open report</a></td>' +
             '</tr>'
@@ -702,6 +706,62 @@
             return String(u.id) === String(uid);
           })[0];
           if (match) openUserEditProfile(match);
+        });
+      });
+      tb.querySelectorAll('.js-reset-user-pw').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var uid = btn.getAttribute('data-user-id');
+          var em = btn.getAttribute('data-user-email') || '';
+          if (!uid) return;
+          var pw = window.prompt(
+            'New portal password for ' + (em || 'this user') + ' (min 8 characters):'
+          );
+          if (pw === null) return;
+          pw = String(pw);
+          if (pw.length < 8) {
+            window.alert('Password must be at least 8 characters.');
+            return;
+          }
+          var mustChange = window.confirm(
+            'Require password change on next sign-in? OK = yes, Cancel = no.'
+          );
+          var token = getAdminBearer();
+          if (!token) {
+            window.alert('Sign in on the Node host with operator credentials first.');
+            return;
+          }
+          btn.disabled = true;
+          fetch(api('/api/user-accounts/' + encodeURIComponent(uid) + '/password'), {
+            method: 'PUT',
+            credentials: apiCred(),
+            headers: {
+              Authorization: 'Bearer ' + token,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ password: pw, passwordMustChange: mustChange }),
+          })
+            .then(function (r) {
+              return r.json().then(function (j) {
+                return { ok: r.ok, j: j };
+              });
+            })
+            .then(function (x) {
+              btn.disabled = false;
+              if (!x.ok) {
+                window.alert((x.j && x.j.error) || 'Could not reset password.');
+                return;
+              }
+              window.alert(
+                'Portal password updated for ' +
+                  (em || 'user') +
+                  '. They can sign in at /login.html' +
+                  (mustChange ? ' and will be prompted to choose a new password.' : '.')
+              );
+            })
+            .catch(function () {
+              btn.disabled = false;
+              window.alert('Network error while resetting password.');
+            });
         });
       });
     }

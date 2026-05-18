@@ -9,10 +9,20 @@
   function isMarketingNodeHost() {
     try {
       var h = g.location && g.location.hostname ? String(g.location.hostname).toLowerCase() : '';
-      return h === 'www.serviceopera.to' || h === 'serviceopera.to';
+      /* Apex only — www may not run Node; see inferMarketingApiOrigin(). */
+      return h === 'serviceopera.to';
     } catch (e) {
       return false;
     }
+  }
+
+  /** When HTML is on www but API lives on apex/Railway, point /api/* at production Node. */
+  function inferMarketingApiOrigin() {
+    try {
+      var h = g.location && g.location.hostname ? String(g.location.hostname).toLowerCase() : '';
+      if (h === 'www.serviceopera.to') return SO_PRODUCTION_API_ORIGIN;
+    } catch (e) {}
+    return '';
   }
 
   function metaOrigin() {
@@ -62,6 +72,8 @@
     }
     var mo = metaOrigin();
     if (mo) return mo;
+    var marketingApi = inferMarketingApiOrigin();
+    if (marketingApi) return marketingApi;
     return inferRailwaySplit();
   }
 

@@ -961,15 +961,46 @@ function portalUserIsOperator(email) {
   return emailsEqualTiming(String(email || '').trim().toLowerCase(), ADMIN_EMAIL);
 }
 
+function envFlagTrue(name) {
+  const raw = process.env[name];
+  if (raw === undefined || raw === '') return false;
+  const s = String(raw).toLowerCase().trim();
+  return s === '1' || s === 'true' || s === 'yes' || s === 'on';
+}
+
 /** Optional: create portal_users row for ADMIN_EMAIL when OPERATOR_PORTAL_PASSWORD is set (min 8 chars). */
 async function ensureOperatorPortalAccount(store) {
   const pw = (process.env.OPERATOR_PORTAL_PASSWORD || '').trim();
-  if (!pw || pw.length < 8) return;
   const em = ADMIN_EMAIL;
   if (!em) return;
+  if (!pw) {
+    console.log(
+      '[serviceopera] OPERATOR_PORTAL_PASSWORD unset — portal auto-provision for operator disabled (set on Railway to create or sync jack@ portal login).'
+    );
+    return;
+  }
+  if (pw.length < 8) {
+    console.warn(
+      '[serviceopera] OPERATOR_PORTAL_PASSWORD is set but shorter than 8 characters — ignored. Use a longer password on Railway and redeploy.'
+    );
+    return;
+  }
+  const sync = envFlagTrue('OPERATOR_PORTAL_PASSWORD_SYNC');
   try {
     const existing = await store.getUserByEmail(em);
-    if (existing) return;
+    if (existing) {
+      if (sync && typeof store.setPasswordForUser === 'function') {
+        await store.setPasswordForUser(existing.id, pw);
+        console.log(
+          `[serviceopera] Synced portal password for operator (${em}) from OPERATOR_PORTAL_PASSWORD (OPERATOR_PORTAL_PASSWORD_SYNC=true).`
+        );
+      } else {
+        console.log(
+          `[serviceopera] Portal user already exists for operator (${em}); OPERATOR_PORTAL_PASSWORD not applied. To overwrite on deploy: OPERATOR_PORTAL_PASSWORD_SYNC=true, redeploy, then sign in at /login.html. Or use Forgot password / Admin → Users.`
+        );
+      }
+      return;
+    }
     const slugRaw = (process.env.OPERATOR_PORTAL_REPORT_SLUG || 'operator').trim() || 'operator';
     const reportSlug = assertReportSlug(slugRaw);
     await store.createUser({
@@ -3288,6 +3319,31 @@ async function updatePortalUserAdmin(req, res) {
 app.patch('/api/user-accounts/:id', requireAdmin, updatePortalUserAdmin);
 app.patch('/api/clinic-users/:id', requireAdmin, updatePortalUserAdmin);
 
+async function setPortalUserPasswordAdmin(req, res) {
+  try {
+    const userId = typeof req.params.id === 'string' ? req.params.id.trim() : '';
+    const password = typeof req.body?.password === 'string' ? req.body.password : '';
+    if (!userId) {
+      return res.status(400).json({ error: 'Invalid user.' });
+    }
+    if (password.length < 8) {
+      return res.status(400).json({ error: 'Password must be at least 8 characters.' });
+    }
+    const passwordMustChange = Boolean(req.body?.passwordMustChange);
+    if (passwordMustChange && typeof userStore.setPasswordWithMustChange === 'function') {
+      const updated = await userStore.setPasswordWithMustChange(userId, password);
+      return res.json({ ok: true, ...updated, passwordMustChange: true });
+    }
+    const updated = await userStore.setPasswordForUser(userId, password);
+    return res.json({ ok: true, ...updated, passwordMustChange: false });
+  } catch (e) {
+    const status = e.status || 400;
+    return res.status(status).json({ error: e.message || 'Bad request' });
+  }
+}
+app.put('/api/user-accounts/:id/password', requireAdmin, setPortalUserPasswordAdmin);
+app.put('/api/clinic-users/:id/password', requireAdmin, setPortalUserPasswordAdmin);
+
 app.get('/api/user-accounts/:id/telemetry', requireAdmin, async (req, res) => {
   if (!telemetryStore || typeof telemetryStore.getUserTelemetry !== 'function') {
     return res.status(501).json({ error: 'User telemetry is not available on this server.' });
@@ -3356,6 +3412,10 @@ dualPost('/api/auth/user-login', '/api/auth/clinic-login', async (req, res) => {
             'No portal account exists for this operator email. Sign in at /admin for the operator console (ADMIN_PASSWORD_HASH), or create a portal user in Admin → Users. To auto-provision on deploy, set OPERATOR_PORTAL_PASSWORD (8+ characters) on the Node service.',
         });
       }
+      return res.status(401).json({
+        error:
+          'Invalid password for this operator portal account. Use Forgot password on this page, or on Railway set OPERATOR_PORTAL_PASSWORD (8+ characters) with OPERATOR_PORTAL_PASSWORD_SYNC=true and redeploy. To reset from Admin → Users, configure ADMIN_PASSWORD_HASH on the same service.',
+      });
     }
     return res.status(401).json({ error: 'Invalid email or password.' });
   }
