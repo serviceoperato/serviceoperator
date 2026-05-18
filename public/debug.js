@@ -182,10 +182,21 @@
   }
 
   function looksLikeJwt(tok) {
+    if (typeof soLooksLikePortalJwt === 'function') return soLooksLikePortalJwt(tok);
     var s = String(tok || '').trim();
     if (!s) return false;
     var parts = s.split('.');
+    if (parts.length === 2) return parts[0].length > 0 && parts[1].length > 0;
     return parts.length === 3 && parts[0].length > 0 && parts[1].length > 0 && parts[2].length > 0;
+  }
+
+  function portalJwtShapeForDebug(tok) {
+    if (typeof soPortalJwtShapeLabel === 'function') return soPortalJwtShapeLabel(tok);
+    if (!String(tok || '').trim()) return 'missing';
+    var parts = String(tok).trim().split('.');
+    if (parts.length === 2 && parts[0] && parts[1]) return 'serviceopera-2part';
+    if (parts.length === 3 && parts[0] && parts[1] && parts[2]) return 'jwt-3part';
+    return 'malformed';
   }
 
   function readLoginProbe() {
@@ -212,10 +223,12 @@
   }
 
   function decodeJwtReportSlug(token) {
+    if (typeof soDecodePortalJwtReportSlug === 'function') return soDecodePortalJwtReportSlug(token);
     try {
       var parts = String(token || '').split('.');
-      if (parts.length < 2) return '';
-      var payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      var seg = parts.length === 2 ? parts[0] : parts.length >= 3 ? parts[1] : '';
+      if (!seg) return '';
+      var payload = seg.replace(/-/g, '+').replace(/_/g, '/');
       while (payload.length % 4) payload += '=';
       var json = JSON.parse(atob(payload));
       return typeof json.reportSlug === 'string' ? json.reportSlug.trim() : '';
@@ -1149,7 +1162,7 @@
         : '(none — sign in on login.html then reopen DEBUG here or on the report page)'),
   });
   var jwtSites = portalJwtStorageSites();
-  var jwtShape = portalJwt ? (looksLikeJwt(portalJwt) ? 'valid-shape' : 'malformed') : 'missing';
+  var jwtShape = portalJwtShapeForDebug(portalJwt);
   lines.push({
     cat: 'AUTH-L',
     text:

@@ -5,7 +5,7 @@
   'use strict';
 
   /** Bumped when dashboard markup/behavior changes (cache-bust aid). */
-  window.TX_DASHBOARD_UI_REV = 16;
+  window.TX_DASHBOARD_UI_REV = 18;
 
   /** Detail page: collapsed preview length for full transcription reference (chars). */
   var DETAIL_REF_PREVIEW_CHARS = 650;
@@ -76,6 +76,7 @@
   }
 
   var HIDE_JUNK_STORAGE_KEY = 'tf.tx.hideJunk';
+  var FAVORITES_STORAGE_KEY = 'tf.tx.favorites';
   var BULK_ONBOARDED_KEY = 'tf.tx.bulkOnboarded';
   var BULK_SYNC_CONCURRENCY = 5;
   var LONG_PRESS_MS = 500;
@@ -105,6 +106,7 @@
     needsReviewCount: 0,
     filters: { today: false, week: false, unreviewed: false, syncPending: false },
     hideJunk: true,
+    favoriteIds: {},
     project: '',
     searchQuery: '',
     searchLoading: false,
@@ -1394,6 +1396,7 @@
       '<header class="tx-detail-page__hero" style="--tx-cat-accent:' +
       esc(theme.accent) +
       '">' +
+      renderTxStarButton(item.id) +
       '<div class="tx-detail-page__hero-visual" aria-hidden="true">' +
       heroVisual +
       '</div>' +
@@ -1442,6 +1445,13 @@
     if (markBtn) markBtn.addEventListener('click', function () { markReviewed(item.id); });
     var syncBtn = byId('txDetailSyncBtn');
     if (syncBtn) syncBtn.addEventListener('click', function () { syncItem(item.id); });
+    var favBtn = root.querySelector('[data-tx-action="favorite"]');
+    if (favBtn) {
+      favBtn.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        toggleFavorite(item.id, { scrollToZone: false });
+      });
+    }
 
     root.querySelectorAll('.tx-detail-page__related-link').forEach(function (link) {
       link.addEventListener('click', function (ev) {
@@ -2812,6 +2822,157 @@
     }
   }
 
+  function loadFavoriteIds() {
+    try {
+      var raw = localStorage.getItem(FAVORITES_STORAGE_KEY);
+      if (!raw) return {};
+      var parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return {};
+      var out = {};
+      parsed.forEach(function (id) {
+        if (id) out[String(id)] = true;
+      });
+      return out;
+    } catch (eFav) {
+      return {};
+    }
+  }
+
+  function saveFavoriteIds() {
+    try {
+      var ids = Object.keys(state.favoriteIds).filter(function (id) {
+        return state.favoriteIds[id];
+      });
+      localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(ids));
+    } catch (eSave) {
+      /* ignore */
+    }
+  }
+
+  function isFavorite(id) {
+    return !!(id && state.favoriteIds[String(id)]);
+  }
+
+  function toggleFavorite(id, opts) {
+    if (!id) return;
+    var key = String(id);
+    var next = !isFavorite(key);
+    if (next) state.favoriteIds[key] = true;
+    else delete state.favoriteIds[key];
+    saveFavoriteIds();
+    if (state.detailItem && state.detailItem.id === key) {
+      var detailStar = document.querySelector('#txDetailPageRoot .tx-favorite-btn[data-tx-id="' + key + '"]');
+      if (detailStar) updateFavoriteButtonEl(detailStar, next);
+    }
+    if (!opts || !opts.skipFeedRender) renderFeed();
+    if (next && (!opts || opts.scrollToZone !== false)) scrollToFavoritesZone();
+    toast(next ? 'Aggiunto ai preferiti.' : 'Rimosso dai preferiti.');
+  }
+
+  function updateFavoriteButtonEl(btn, on) {
+    if (!btn) return;
+    btn.classList.toggle('is-active', !!on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.setAttribute('aria-label', on ? 'Rimuovi dai preferiti' : 'Aggiungi ai preferiti');
+    btn.setAttribute('title', on ? 'Preferito' : 'Aggiungi ai preferiti');
+    var path = btn.querySelector('path');
+    if (path) path.setAttribute('fill', on ? 'currentColor' : 'none');
+  }
+
+  function renderTxStarButton(id) {
+    var on = isFavorite(id);
+    return (
+      '<button type="button" class="tx-favorite-btn' +
+      (on ? ' is-active' : '') +
+      '" data-tx-action="favorite" data-tx-id="' +
+      esc(id) +
+      '" aria-label="' +
+      (on ? 'Rimuovi dai preferiti' : 'Aggiungi ai preferiti') +
+      '" aria-pressed="' +
+      (on ? 'true' : 'false') +
+      '" title="' +
+      (on ? 'Preferito' : 'Aggiungi ai preferiti') +
+      '">' +
+      '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">' +
+      '<path d="M12 2.5l2.85 5.77 6.37.93-4.61 4.49 1.09 6.35L12 17.2l-5.7 3.84 1.09-6.35-4.61-4.49 6.37-.93L12 2.5z" fill="' +
+      (on ? 'currentColor' : 'none') +
+      '" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/>' +
+      '</svg></button>'
+    );
+  }
+
+  function favoriteItemsForZone() {
+    var out = state.items.filter(function (it) {
+      return isFavorite(it.id) && isAiReadyItem(it);
+    });
+    if (state.searchQuery.trim() && state.searchResults) {
+      var searchIds = {};
+      state.searchResults.forEach(function (it) {
+        if (it && it.id) searchIds[it.id] = true;
+      });
+      out = out.filter(function (it) {
+        return searchIds[it.id];
+      });
+    } else if (state.searchQuery.trim() && state.searchLoading) {
+      return [];
+    }
+    if (state.project) {
+      out = out.filter(function (it) {
+        return (it.project || '') === state.project;
+      });
+    }
+    if (state.filters.today) {
+      out = out.filter(function (it) {
+        return isToday(parseItemDate(it));
+      });
+    }
+    if (state.filters.week) {
+      out = out.filter(function (it) {
+        return isThisWeek(parseItemDate(it));
+      });
+    }
+    if (state.filters.unreviewed) {
+      out = out.filter(function (it) {
+        return !it.reviewed;
+      });
+    }
+    if (state.filters.syncPending) {
+      out = out.filter(function (it) {
+        return it.googleSyncPending;
+      });
+    }
+    if (state.hideJunk) {
+      out = out.filter(function (it) {
+        return !isJunkItem(it);
+      });
+    }
+    return sortItemsNewestFirst(out, isSortAscending());
+  }
+
+  function renderFavoritesSection() {
+    var items = favoriteItemsForZone();
+    if (!items.length) return '';
+    return (
+      '<section id="txFavoritesZone" class="tx-favorites-zone" aria-label="Preferiti">' +
+      '<h3 class="tx-favorites-zone__title">Preferiti <span class="tx-favorites-zone__count">' +
+      esc(items.length) +
+      '</span></h3>' +
+      '<div class="tx-favorites-zone__items">' +
+      items.map(renderFeedCard).join('') +
+      '</div></section>'
+    );
+  }
+
+  function scrollToFavoritesZone() {
+    var zone = byId('txFavoritesZone');
+    if (!zone) return;
+    try {
+      zone.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (eScroll) {
+      zone.scrollIntoView(true);
+    }
+  }
+
   function itemText(item) {
     var parts = [
       item.title,
@@ -3796,7 +3957,9 @@
       '<div class="tx-dash-card__head-row">' +
       '<h3 class="tx-dash-card__title">' +
       highlightPeopleInText(title, people) +
-      '</h3></div>' +
+      '</h3>' +
+      renderTxStarButton(item.id) +
+      '</div>' +
       '<p class="tx-dash-card__meta">' +
       metaRows +
       '</p>' +
@@ -3831,6 +3994,7 @@
         if (action === 'read') markReviewed(id);
         else if (action === 'sync') syncItem(id);
         else if (action === 'copy') copyItem(id);
+        else if (action === 'favorite') toggleFavorite(id, { scrollToZone: true });
         closeCardMenus();
       });
     });
@@ -3888,7 +4052,12 @@
           ev.preventDefault();
           return;
         }
-        if (ev.target.closest('[data-tx-action]') || ev.target.closest('.tx-card__menu-wrap')) return;
+        if (
+          ev.target.closest('[data-tx-action]') ||
+          ev.target.closest('.tx-card__menu-wrap') ||
+          ev.target.closest('.tx-favorite-btn')
+        )
+          return;
         if (state.selectMode) {
           ev.preventDefault();
           if (state.itemSyncState[id] === 'fail') {
@@ -3952,24 +4121,30 @@
     state.filtered = list;
 
     if (!state.items.length && !state.loading) {
+      var favEmpty = renderFavoritesSection();
       feed.innerHTML =
-        (state.rawTranscriptionCount || 0) > 0 && !(state.counts.total || 0)
+        favEmpty ||
+        ((state.rawTranscriptionCount || 0) > 0 && !(state.counts.total || 0)
           ? emptyState('raw')
-          : emptyState('none');
+          : emptyState('none'));
       if (hint) hint.textContent = '';
+      if (favEmpty) bindFeedActions(feed);
       renderTimeline();
       return;
     }
 
     if (!list.length) {
-      feed.innerHTML = state.searchQuery.trim() ? emptyState('search') : emptyState('category');
-      if (hint) hint.textContent = '0 items';
+      var favOnly = renderFavoritesSection();
+      feed.innerHTML =
+        favOnly + (state.searchQuery.trim() ? emptyState('search') : emptyState('category'));
+      if (hint) hint.textContent = favOnly ? '' : '0 items';
+      if (favOnly) bindFeedActions(feed);
       renderTimeline();
       return;
     }
 
     if (hint) hint.textContent = list.length + ' item' + (list.length === 1 ? '' : 's');
-    feed.innerHTML = renderFeedBody(list);
+    feed.innerHTML = renderFavoritesSection() + renderFeedBody(list);
     bindFeedActions(feed);
     renderTimeline();
     txLog(
@@ -4489,6 +4664,7 @@
     }
 
     state.hideJunk = loadHideJunkPref();
+    state.favoriteIds = loadFavoriteIds();
     ensureHideJunkFilter();
 
     var filters = byId('txFilters');

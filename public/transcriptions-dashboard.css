@@ -771,6 +771,79 @@
   gap: 0.35rem;
 }
 
+.tx-dash-card__head-row .tx-dash-card__title {
+  flex: 1;
+  min-width: 0;
+}
+
+.tx-favorite-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  margin: -0.2rem -0.15rem 0 0;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--tx-dash-muted, #94a3b8);
+  cursor: pointer;
+  transition: color 0.15s, transform 0.12s;
+}
+
+.tx-favorite-btn:hover {
+  color: #ca8a04;
+  transform: scale(1.06);
+}
+
+.tx-favorite-btn.is-active {
+  color: #eab308;
+}
+
+.tx-favorite-btn:focus-visible {
+  outline: 2px solid color-mix(in srgb, #eab308 55%, transparent);
+  outline-offset: 2px;
+}
+
+.tx-favorites-zone {
+  margin: 0 0 1.15rem;
+  padding: 0.75rem 0.85rem 0.85rem;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, #eab308 35%, var(--tx-dash-line));
+  background: color-mix(in srgb, #eab308 6%, var(--tx-dash-card));
+}
+
+.tx-favorites-zone__title {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0 0 0.65rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--tx-dash-ink);
+}
+
+.tx-favorites-zone__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.35rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #a16207;
+  background: color-mix(in srgb, #eab308 22%, var(--tx-dash-card));
+}
+
+.tx-favorites-zone__items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
 .tx-feed-section {
   margin-bottom: 1.1rem;
 }
@@ -1051,6 +1124,7 @@
 }
 
 .tx-detail-page__hero {
+  position: relative;
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 1rem;
@@ -1059,6 +1133,13 @@
   border: 1px solid var(--tx-dash-line, #e2e8f0);
   background: color-mix(in srgb, var(--tx-cat-accent, #4f46e5) 6%, var(--tx-dash-card, #fff));
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 8px 24px rgba(15, 23, 42, 0.05);
+}
+
+.tx-detail-page__hero > .tx-favorite-btn {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.65rem;
+  z-index: 2;
 }
 
 .tx-detail-page__hero-visual {

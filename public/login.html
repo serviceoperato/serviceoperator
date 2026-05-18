@@ -15,6 +15,7 @@
 <script src="/page-skeleton.js"></script>
 <script src="/so-api.js"></script>
 <script src="/portal-auth-routing.js"></script>
+<script src="/portal-jwt.js"></script>
 <style>
   /* Portal login — serif title + sans UI (no monospace) */
   .page-user-portal {
@@ -854,12 +855,9 @@
     }
   }
 
-  /** Avoid treating random strings as Bearer tokens. */
+  /** Avoid treating random strings as Bearer tokens (2-part ServiceOpera or 3-part JWT). */
   function looksLikeJwt(tok) {
-    var s = String(tok || '').trim();
-    if (!s) return false;
-    var parts = s.split('.');
-    return parts.length === 3 && parts[0].length > 0 && parts[1].length > 0 && parts[2].length > 0;
+    return typeof soLooksLikePortalJwt === 'function' ? soLooksLikePortalJwt(tok) : false;
   }
 
   function clearPortalJwtLogin() {
@@ -874,46 +872,19 @@
   }
 
   function decodeJwtEmailLogin(token) {
-    try {
-      var parts = String(token || '').split('.');
-      if (parts.length < 2) return '';
-      var payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-      while (payload.length % 4) payload += '=';
-      var json = JSON.parse(atob(payload));
-      return typeof json.email === 'string' ? json.email : '';
-    } catch (eDec) {
-      return '';
-    }
+    return typeof soDecodePortalJwtEmail === 'function' ? soDecodePortalJwtEmail(token) : '';
   }
 
   function decodeJwtReportSlugLogin(token) {
-    try {
-      var parts = String(token || '').split('.');
-      if (parts.length < 2) return '';
-      var payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-      while (payload.length % 4) payload += '=';
-      var json = JSON.parse(atob(payload));
-      return typeof json.reportSlug === 'string' ? json.reportSlug : '';
-    } catch (eRs) {
-      return '';
-    }
+    return typeof soDecodePortalJwtReportSlug === 'function' ? soDecodePortalJwtReportSlug(token) : '';
   }
 
   function decodeJwtPayloadLogin(token) {
-    try {
-      var parts = String(token || '').split('.');
-      if (parts.length < 2) return null;
-      var payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-      while (payload.length % 4) payload += '=';
-      return JSON.parse(atob(payload));
-    } catch (ePl) {
-      return null;
-    }
+    return typeof soDecodePortalJwtPayload === 'function' ? soDecodePortalJwtPayload(token) : null;
   }
 
   function decodeJwtIsOperatorLogin(token) {
-    var pl = decodeJwtPayloadLogin(token);
-    return !!(pl && pl.isOperator === true);
+    return typeof soDecodePortalJwtIsOperator === 'function' ? soDecodePortalJwtIsOperator(token) : false;
   }
 
   function isAdminCapableAccountSettingsLogin() {
@@ -927,12 +898,22 @@
     return true;
   }
 
+  function adminUsersHandoffUrl() {
+    if (nextPath && nextPath.charAt(0) === '/' && nextPath.indexOf('//') !== 0) {
+      return '/admin/users?next=' + encodeURIComponent(nextPath);
+    }
+    return '/admin/users';
+  }
+
   /** For `?next=` when leaving account settings as admin: same-origin path, admin/operator only, never back to login/settings. */
   function resolveAdminBypassFromSettingsUrl() {
     if (nextPath && nextPath.charAt(0) === '/' && nextPath.indexOf('//') !== 0) {
       var nl = nextPath.toLowerCase();
       if (/^\/login(\.html)?(\/|$)/.test(nl)) return '/admin/users';
       if (/^\/(admin|operator)(\/|$)/i.test(nextPath)) return nextPath;
+      if (/^\/(clinics|hotels)\/\d{3}(\/.*)?$/i.test(nextPath.split('?')[0].split('#')[0])) {
+        return adminUsersHandoffUrl();
+      }
     }
     return '/admin/users';
   }
@@ -1043,10 +1024,11 @@
 
     adminP.then(function (adm) {
       if (adm && adm.ok && adm.json && adm.json.ok) {
+        var adminDest = adminUsersHandoffUrl();
         try {
-          window.location.replace('/admin/users');
+          window.location.replace(adminDest);
         } catch (eRp) {
-          window.location.href = '/admin/users';
+          window.location.href = adminDest;
         }
         return;
       }

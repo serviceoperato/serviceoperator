@@ -64,6 +64,7 @@
       norm === '/admin/deploy-log' ||
       norm === '/admin/site-appearance' ||
       norm === '/admin/icons' ||
+      norm === '/admin/homepage-icons' ||
       norm === '/admin/report-catalog' ||
       norm === '/admin/user-reports' ||
       norm === '/admin/user-profiling' ||
@@ -88,20 +89,41 @@
     } catch (e) {}
   }
 
-  /** Full-page redirect for numbered clinic/hotel reports after admin sign-in. */
+  /**
+   * Private /clinics|hotels/NNN/ HTML is gated by HttpOnly cookie on full navigation (not Bearer).
+   * Probe cookie-only session before leaving the admin shell to avoid /admin ↔ report redirect loops.
+   */
+  function probeAdminCookieSession() {
+    return fetch(api('/api/admin/session'), {
+      method: 'GET',
+      credentials: apiCred(),
+      cache: 'no-store',
+    })
+      .then(function (r) {
+        return r.ok;
+      })
+      .catch(function () {
+        return false;
+      });
+  }
+
+  /** Full-page redirect for numbered clinic/hotel reports after admin sign-in (cookie must be set). */
   function redirectClinicHotelLoginNextIfPresent() {
     var next = readAdminLoginNextParam();
-    if (!next) return false;
+    if (!next) return Promise.resolve(false);
     var pathOnly = next.split('?')[0].split('#')[0];
-    if (!isAllowedClinicHotelNextPath(pathOnly)) return false;
-    try {
-      var u = new URL(next, window.location.origin);
-      if (u.origin !== window.location.origin) return false;
-      window.location.replace(u.pathname + u.search + u.hash);
-      return true;
-    } catch (e2) {
-      return false;
-    }
+    if (!isAllowedClinicHotelNextPath(pathOnly)) return Promise.resolve(false);
+    return probeAdminCookieSession().then(function (cookieOk) {
+      if (!cookieOk) return false;
+      try {
+        var u = new URL(next, window.location.origin);
+        if (u.origin !== window.location.origin) return false;
+        window.location.replace(u.pathname + u.search + u.hash);
+        return true;
+      } catch (e2) {
+        return false;
+      }
+    });
   }
 
   function adminRouteIdFromShellPath(pathname) {
@@ -110,6 +132,7 @@
     if (path === '/admin/deploy-log') return 'deploy-log';
     if (path === '/admin/site-appearance') return 'site-appearance';
     if (path === '/admin/icons') return 'icons';
+    if (path === '/admin/homepage-icons') return 'homepage-icons';
     if (path === '/admin/report-catalog') return 'report-catalog';
     if (path === '/admin/user-reports') return 'user-reports';
     if (path === '/admin/user-profiling') return 'user-profiling';
@@ -329,10 +352,8 @@
   }
 
   function tryRestorePortalAdminWorkspace() {
-    if (!isPortalAdminSignedIn()) return false;
-    sessionStorage.setItem(SESSION_KEY, PORTAL_ADMIN_SESSION);
-    showWorkspace();
-    return true;
+    /* Portal JWT alone cannot open cookie-gated clinic/hotel HTML; bootstrap must succeed first. */
+    return false;
   }
 
   function applyUsersView() {
@@ -1977,42 +1998,54 @@
 
   }
 
-  function openIconsPanel() {
+  var ICON_ROWS_NAV = [
+    {
+      key: 'theme-sun',
+      title: 'Nav — theme (sun)',
+      hint: 'When the site is in dark mode, the header toggle shows this control (switch to light). Applies on every page that includes theme.js.',
+    },
+    {
+      key: 'theme-moon',
+      title: 'Nav — theme (moon)',
+      hint: 'When the site is in light mode, the toggle shows this control (switch to dark).',
+    },
+  ];
+
+  var ICON_ROWS_HOMEPAGE = [
+    {
+      key: 'home-sector-hotels',
+      title: 'Hotels sector card',
+      hint: 'Sector grid: Hotels & serviced apartments icon area on the homepage.',
+    },
+    {
+      key: 'home-sector-clinics',
+      title: 'Clinics sector card',
+      hint: 'Sector grid: Clinics, dental & wellness icon area on the homepage.',
+    },
+    {
+      key: 'home-sector-property',
+      title: 'Property sector card',
+      hint: 'Sector grid: Property & rental operators icon area on the homepage.',
+    },
+    {
+      key: 'home-markets',
+      title: '“Markets” row icon',
+      hint: 'Small icon beside “Thailand & International Markets” on the homepage.',
+    },
+  ];
+
+  function openIconEditorPanel(opts) {
     if (!panel || !panelTitle || !panelBody) return;
     if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.add('is-hidden');
-    panelTitle.textContent = 'Icons';
-    var rows = [
-      {
-        key: 'theme-sun',
-        title: 'Nav — theme (sun)',
-        hint: 'When the site is in dark mode, the header toggle shows this control (switch to light). Applies on every page that includes theme.js.',
-      },
-      {
-        key: 'theme-moon',
-        title: 'Nav — theme (moon)',
-        hint: 'When the site is in light mode, the toggle shows this control (switch to dark).',
-      },
-      {
-        key: 'home-sector-hotels',
-        title: 'Home — Hotels sector card',
-        hint: 'Homepage sector grid: Hotels & serviced apartments icon area.',
-      },
-      {
-        key: 'home-sector-clinics',
-        title: 'Home — Clinics sector card',
-        hint: 'Homepage sector grid: Clinics, dental & wellness icon area.',
-      },
-      {
-        key: 'home-sector-property',
-        title: 'Home — Property sector card',
-        hint: 'Homepage sector grid: Property & rental operators icon area.',
-      },
-      {
-        key: 'home-markets',
-        title: 'Home — “Markets” row icon',
-        hint: 'Small icon beside “Thailand & International Markets” on the homepage.',
-      },
-    ];
+    var title = opts && opts.title ? opts.title : 'Icons';
+    var rows = opts && opts.rows ? opts.rows : ICON_ROWS_NAV.concat(ICON_ROWS_HOMEPAGE);
+    var lede =
+      opts && opts.lede
+        ? opts.lede
+        : 'Replace icons. Values persist in <code class="mono">site-appearance.json</code> as an <code class="mono">icons</code> map and are published on <code class="mono">GET /api/site-appearance</code>. Use a path on this site (<code class="mono">/assets/…</code>), a public <strong>https</strong> image URL, or full inline <strong>&lt;svg&gt;…&lt;/svg&gt;</strong> markup. Clear a field and save to remove that override.';
+    var hintId = opts && opts.hintId ? opts.hintId : 'soIconsHint';
+    var saveId = opts && opts.saveId ? opts.saveId : 'soIconsSave';
+    panelTitle.textContent = title;
     var fieldsHtml = rows
       .map(function (row) {
         return (
@@ -2036,18 +2069,24 @@
       .join('');
     panelBody.innerHTML =
       '<div class="so-site-appearance">' +
-      '<p class="tf-admin-muted so-site-appearance__lede">Replace icons for the shared nav and the homepage B2B slots below. Values persist in <code class="mono">site-appearance.json</code> as an <code class="mono">icons</code> map and are published on <code class="mono">GET /api/site-appearance</code> (same document as hero images and the nav logo). Use a path on this site (<code class="mono">/assets/…</code>), a public <strong>https</strong> image URL, or full inline <strong>&lt;svg&gt;…&lt;/svg&gt;</strong> markup. Clear a field and save to remove that override.</p>' +
+      '<p class="tf-admin-muted so-site-appearance__lede">' +
+      lede +
+      '</p>' +
       fieldsHtml +
       '<div class="so-site-appearance__footer">' +
-      '<p class="portal-form__hint mono" id="soIconsHint" style="margin:0;flex:1;min-width:12rem"></p>' +
+      '<p class="portal-form__hint mono" id="' +
+      hintId +
+      '" style="margin:0;flex:1;min-width:12rem"></p>' +
       '<div class="admin-panel__actions" style="margin:0">' +
-      '<button type="button" class="btn btn--primary" id="soIconsSave">Save icons</button> ' +
-      '<a href="/admin/users" class="btn btn--ghost mono" id="soIconsBack">← Users &amp; payouts</a>' +
+      '<button type="button" class="btn btn--primary" id="' +
+      saveId +
+      '">Save icons</button> ' +
+      '<a href="/admin/users" class="btn btn--ghost mono">← Users &amp; payouts</a>' +
       '</div></div></div>';
     panel.classList.remove('is-hidden');
     window.scrollTo(0, 0);
 
-    var hintEl = document.getElementById('soIconsHint');
+    var hintEl = document.getElementById(hintId);
     var serverIcons = {};
     var token = getAdminBearer();
 
@@ -2099,7 +2138,7 @@
         fillFromServer();
       });
 
-    var saveBtn = document.getElementById('soIconsSave');
+    var saveBtn = document.getElementById(saveId);
     if (saveBtn) {
       saveBtn.addEventListener('click', function () {
         var next = Object.assign({}, serverIcons);
@@ -2138,6 +2177,26 @@
           });
       });
     }
+  }
+
+  function openIconsPanel() {
+    openIconEditorPanel({
+      title: 'Icons',
+      rows: ICON_ROWS_NAV,
+      lede:
+        'Replace icons for the shared nav (theme toggle). Values persist in <code class="mono">site-appearance.json</code> as an <code class="mono">icons</code> map and are published on <code class="mono">GET /api/site-appearance</code>. Use a path on this site (<code class="mono">/assets/…</code>), a public <strong>https</strong> image URL, or full inline <strong>&lt;svg&gt;…&lt;/svg&gt;</strong> markup. Clear a field and save to remove that override. For homepage sector and markets icons, use <a href="/admin/homepage-icons">Homepage icons</a>.',
+    });
+  }
+
+  function openHomepageIconsPanel() {
+    openIconEditorPanel({
+      title: 'Homepage icons',
+      rows: ICON_ROWS_HOMEPAGE,
+      hintId: 'soHomeIconsHint',
+      saveId: 'soHomeIconsSave',
+      lede:
+        'Replace the small icons on the public homepage (sector cards and the “Markets” row). Values persist in <code class="mono">site-appearance.json</code> as an <code class="mono">icons</code> map and are published on <code class="mono">GET /api/site-appearance</code> (same document as hero images and the nav logo). Use a path on this site (<code class="mono">/assets/…</code>), a public <strong>https</strong> image URL, or full inline <strong>&lt;svg&gt;…&lt;/svg&gt;</strong> markup. Clear a field and save to remove that override. Nav theme icons are edited under <a href="/admin/icons">Icons</a>.',
+    });
   }
 
   function renderUserProfilingTable() {
@@ -2342,6 +2401,7 @@
     tfNav.appendChild(makeNavLink('Deploy log', '/admin/deploy-log', 'deploy-log', id));
     tfNav.appendChild(makeNavLink('Site appearance', '/admin/site-appearance', 'site-appearance', id));
     tfNav.appendChild(makeNavLink('Icons', '/admin/icons', 'icons', id));
+    tfNav.appendChild(makeNavLink('Homepage icons', '/admin/homepage-icons', 'homepage-icons', id));
     tfNav.appendChild(makeNavLink('Reports', '/operator/reports', 'reports', id));
     tfNav.appendChild(makePlacesLeadsNavControl());
     tfNav.appendChild(makeNavLink('Report catalog', '/admin/report-catalog', 'report-catalog', id));
@@ -2379,6 +2439,13 @@
     if (routeId === 'icons') {
       if (main) main.classList.add('is-hidden');
       openIconsPanel();
+      buildTfNav(routeId);
+      window.scrollTo(0, 0);
+      return;
+    }
+    if (routeId === 'homepage-icons') {
+      if (main) main.classList.add('is-hidden');
+      openHomepageIconsPanel();
       buildTfNav(routeId);
       window.scrollTo(0, 0);
       return;
@@ -3107,8 +3174,7 @@
     });
   }
 
-  function showWorkspace() {
-    if (redirectClinicHotelLoginNextIfPresent()) return;
+  function revealAdminWorkspaceShell() {
     applyAdminShellLoginNextIfPresent();
     if (gate) gate.classList.add('is-hidden');
     if (workspace) workspace.classList.remove('is-hidden');
@@ -3121,6 +3187,13 @@
         window.soRebuildSiteNavDrawer();
       } catch (eNav) {}
     }
+  }
+
+  function showWorkspace() {
+    redirectClinicHotelLoginNextIfPresent().then(function (didRedirect) {
+      if (didRedirect) return;
+      revealAdminWorkspaceShell();
+    });
   }
 
   function hideWorkspace() {
@@ -3268,10 +3341,6 @@
 
   function tryRestoreLegacySession() {
     if (sessionStorage.getItem(SESSION_KEY) === PORTAL_ADMIN_SESSION) {
-      if (isPortalAdminSignedIn()) {
-        showWorkspace();
-        return true;
-      }
       sessionStorage.removeItem(SESSION_KEY);
       return false;
     }
@@ -3291,6 +3360,19 @@
     if (hint) {
       hint.textContent = '';
       hint.className = 'portal-form__hint mono';
+    }
+    var pendingNext = readAdminLoginNextParam();
+    if (
+      gateLede &&
+      pendingNext &&
+      configBanner &&
+      configBanner.classList.contains('is-hidden')
+    ) {
+      var pendingPath = pendingNext.split('?')[0].split('#')[0];
+      if (isAllowedClinicHotelNextPath(pendingPath) || isAllowedAdminShellNextPath(pendingPath)) {
+        gateLede.textContent =
+          'Sign in to continue to ' + pendingNext + ' (operator email and password on the server).';
+      }
     }
     try {
       window.scrollTo(0, 0);

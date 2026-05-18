@@ -54,10 +54,12 @@
   }
 
   function decodeJwtIsOperator(token) {
+    if (typeof soDecodePortalJwtIsOperator === 'function') return soDecodePortalJwtIsOperator(token);
     try {
       var parts = String(token || '').split('.');
-      if (parts.length < 2) return false;
-      var payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      var seg = parts.length === 2 ? parts[0] : parts.length >= 3 ? parts[1] : '';
+      if (!seg) return false;
+      var payload = seg.replace(/-/g, '+').replace(/_/g, '/');
       while (payload.length % 4) payload += '=';
       var json = JSON.parse(atob(payload));
       return json.isOperator === true;
@@ -75,10 +77,12 @@
   }
 
   function decodeJwtEmail(token) {
+    if (typeof soDecodePortalJwtEmail === 'function') return soDecodePortalJwtEmail(token);
     try {
       var parts = String(token || '').split('.');
-      if (parts.length < 2) return '';
-      var payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      var seg = parts.length === 2 ? parts[0] : parts.length >= 3 ? parts[1] : '';
+      if (!seg) return '';
+      var payload = seg.replace(/-/g, '+').replace(/_/g, '/');
       while (payload.length % 4) payload += '=';
       var json = JSON.parse(atob(payload));
       return typeof json.email === 'string' ? json.email : '';
@@ -147,6 +151,7 @@
     { label: 'Deploy log', path: '/admin/deploy-log' },
     { label: 'Site appearance', path: '/admin/site-appearance' },
     { label: 'Icons', path: '/admin/icons' },
+    { label: 'Homepage icons', path: '/admin/homepage-icons' },
     { label: 'Reports', path: '/operator/reports' },
     { label: 'Places leads', path: '', placesLeads: true },
     { label: 'Report catalog', path: '/admin/report-catalog' },

@@ -27,6 +27,9 @@ export default function OperatorReportsPage() {
           <Link className="tf-admin-nav__pill" href="/admin/icons">
             Icons
           </Link>
+          <Link className="tf-admin-nav__pill" href="/admin/homepage-icons">
+            Homepage icons
+          </Link>
           <Link className="tf-admin-nav__pill is-active" href="/operator/reports" aria-current="page">
             Reports
           </Link>

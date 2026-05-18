@@ -11,6 +11,8 @@
 /admin/site-appearance/ /admin.html 200
 /admin/icons /admin.html 200
 /admin/icons/ /admin.html 200
+/admin/homepage-icons /admin.html 200
+/admin/homepage-icons/ /admin.html 200
 /admin/user-reports /admin.html 200
 /admin/user-reports/ /admin.html 200
 /admin/user-profiling /admin.html 200

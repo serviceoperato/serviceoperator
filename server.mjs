@@ -4261,6 +4261,8 @@ const ADMIN_HTML_PATHS = [
   '/admin/site-appearance/',
   '/admin/icons',
   '/admin/icons/',
+  '/admin/homepage-icons',
+  '/admin/homepage-icons/',
   '/admin/user-reports',
   '/admin/user-reports/',
   '/admin/user-profiling',
@@ -4390,15 +4392,19 @@ function sendPrivateReportNotFound(res) {
 }
 
 function denyPrivateNumberedReport(req, res) {
-  const accept = String(req.headers.accept || '');
-  const wantsHtml =
-    (req.method === 'GET' || req.method === 'HEAD') && accept.includes('text/html');
   const targetPath = req.originalUrl || req.path || '/';
-  if (wantsHtml) {
-    res.setHeader('Cache-Control', 'no-store');
-    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
-    const next = encodeURIComponent(targetPath);
-    return res.redirect(302, `/admin/users?next=${next}`);
+  if (req.method === 'GET' || req.method === 'HEAD') {
+    const accept = String(req.headers.accept || '');
+    const pathOnly = String(req.path || '').split('?')[0];
+    const isCatalogRoot = /^\/(clinics|hotels)\/\d{3}\/?$/i.test(pathOnly);
+    const wantsSignInShell =
+      accept.includes('text/html') || accept === '*/*' || accept === '' || isCatalogRoot;
+    if (wantsSignInShell) {
+      res.setHeader('Cache-Control', 'no-store');
+      res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+      const next = encodeURIComponent(targetPath);
+      return res.redirect(302, `/admin/users?next=${next}`);
+    }
   }
   return sendPrivateReportNotFound(res);
 }
