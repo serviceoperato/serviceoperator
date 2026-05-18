@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="styles.css" />
 <script src="/page-skeleton.js"></script>
 <script src="/so-api.js"></script>
+<script src="/portal-auth-routing.js"></script>
 <style>
   .page-user-portal { font-family: var(--font-body); min-height: 100vh; }
   .tf-reg-wrap { max-width: 420px; margin: 0 auto; padding: 2rem 1.5rem; }
@@ -164,8 +165,10 @@
         } catch (eLs2) {}
       }
     } catch (err) {}
-    var dest = lj.reportUrl || '/clinics/report.html?slug=' + encodeURIComponent(lj.reportSlug || '');
-    if (dest.charAt(0) !== '/') dest = '/' + dest;
+    var dest =
+      typeof soPortalResolvePostLogin === 'function'
+        ? soPortalResolvePostLogin(lj || {}, { nextPath: '', slugHint: lj.reportSlug || '' })
+        : '/workspace.html';
     window.location.href = dest;
   }
 
@@ -178,6 +181,15 @@
   }
 
   var params = new URLSearchParams(window.location.search || '');
+  var nextFromUrl = (params.get('next') || '').trim();
+  var lnkLogin = document.getElementById('lnkLogin');
+  if (lnkLogin) {
+    var loginDest = 'login.html';
+    if (nextFromUrl && nextFromUrl.charAt(0) === '/' && nextFromUrl.indexOf('//') !== 0) {
+      loginDest += '?next=' + encodeURIComponent(nextFromUrl);
+    }
+    lnkLogin.setAttribute('href', loginDest);
+  }
   var onboardTok = (params.get('onboard') || '').trim();
   if (onboardTok) {
     document.getElementById('onboardToken').value = onboardTok;

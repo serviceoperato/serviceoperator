@@ -8,7 +8,6 @@
   var LEGACY_JWT_KEY = 'so_clinic_jwt';
   var ADMIN_JWT_KEY = 'so_admin_jwt';
   var USER_SESSION_KEY = 'so_user_session_id';
-  var ADMIN_EMAIL = 'jack@serviceopera.to';
 
   var sessionCache = null;
   var adminOk = false;
@@ -49,9 +48,30 @@
 
   function displayNameFromEmail(email) {
     var e = String(email || '').trim();
-    if (!e) return 'Account';
+    if (!e) return 'Signed in';
     var at = e.indexOf('@');
-    return at > 0 ? e.slice(0, at) : e;
+    return at > 0 ? e.slice(0, at) : 'Signed in';
+  }
+
+  function decodeJwtIsOperator(token) {
+    try {
+      var parts = String(token || '').split('.');
+      if (parts.length < 2) return false;
+      var payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      while (payload.length % 4) payload += '=';
+      var json = JSON.parse(atob(payload));
+      return json.isOperator === true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function navAccountLabel() {
+    if (adminOk) return 'Operator';
+    if (sessionCache && sessionCache.isOperator) return 'Operator';
+    var jwt = getPortalJwt();
+    if (jwt && decodeJwtIsOperator(jwt)) return 'Operator';
+    return displayNameFromEmail(portalEmail());
   }
 
   function decodeJwtEmail(token) {
@@ -71,7 +91,6 @@
     if (sessionCache && sessionCache.email) return sessionCache.email;
     var jwt = getPortalJwt();
     if (jwt) return decodeJwtEmail(jwt);
-    if (adminOk) return ADMIN_EMAIL;
     return '';
   }
 
@@ -240,6 +259,7 @@
             sessionCache = {
               email: x.json.email || '',
               reportSlug: x.json.reportSlug || '',
+              isOperator: Boolean(x.json.isOperator),
             };
             return;
           }
@@ -343,11 +363,13 @@
 
   function renderAuthed(root) {
     closeOpenMenu();
-    var email = portalEmail();
-    var label = displayNameFromEmail(email);
+    var label = navAccountLabel();
     var loginHref = resolveLoginHref(root);
     var settingsHref = resolveSettingsHref(loginHref);
-    var showAdmin = adminOk || String(email).toLowerCase() === ADMIN_EMAIL;
+    var showAdmin =
+      adminOk ||
+      (sessionCache && sessionCache.isOperator) ||
+      decodeJwtIsOperator(getPortalJwt());
 
     root.className = 'so-nav-account so-nav-account--authed';
     root.innerHTML = '';
@@ -378,6 +400,12 @@
     panel.className = 'so-user-menu__panel is-hidden';
     panel.setAttribute('role', 'menu');
 
+    panel.appendChild(
+      menuRow(
+        typeof soPortalWorkspacePath === 'function' ? soPortalWorkspacePath() : '/workspace.html',
+        'Workspace'
+      )
+    );
     panel.appendChild(menuRow(settingsHref, 'Settings'));
     if (showAdmin) {
       panel.classList.add('so-user-menu__panel--admin');

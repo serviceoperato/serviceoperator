@@ -52,3 +52,7 @@
 /clinics/sample-audit-teaser-011/ /clinics/011/ 301
 /hotels/melia-pattaya-audit /hotels/009/ 301
 /hotels/melia-pattaya-audit/ /hotels/009/ 301
+
+# Portal workspace (canonical short URL)
+/workspace /workspace.html 200
+/workspace/ /workspace.html 200

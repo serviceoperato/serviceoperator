@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="styles.css" />
 <script src="/page-skeleton.js"></script>
 <script src="/so-api.js"></script>
+<script src="/portal-auth-routing.js"></script>
 <style>
   /* Portal login — serif title + sans UI (no monospace) */
   .page-user-portal {
@@ -274,7 +275,8 @@
       <div id="accountPanelMeta" class="tf-account-meta mono" style="font-size: 0.9rem; line-height: 1.6; color: var(--mute-2); margin-bottom: 1.15rem"></div>
       <div id="accountPanelErr" class="tf-error-box is-hidden" role="alert"></div>
       <div style="display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 0.75rem">
-        <a href="#" class="btn btn--primary btn--block" id="accountOpenReport">Open my report<span class="ico-arrow-r" aria-hidden="true"></span></a>
+        <a href="/workspace.html" class="btn btn--primary btn--block" id="accountOpenWorkspace">Workspace<span class="ico-arrow-r" aria-hidden="true"></span></a>
+        <a href="#" class="btn btn--ghost btn--block" id="accountOpenReport">Open my report<span class="ico-arrow-r" aria-hidden="true"></span></a>
         <button type="button" class="btn btn--ghost btn--block" id="accountForgotPw">Change password</button>
         <button type="button" class="btn btn--ghost btn--block" id="accountSignOut">Sign out</button>
       </div>
@@ -387,10 +389,13 @@
 
   if (slugHint && lede) {
     lede.textContent =
-      'You were sent here for report “' + slugHint + '”. After sign-in you will be taken to that page.';
+      'You were sent here for report “' + slugHint + '”. After sign-in you will open your workspace, then your report.';
   } else if (nextPath && lede) {
     lede.textContent =
       'After sign-in you will be taken to: ' + nextPath + ' (password or email code below).';
+  } else if (lede) {
+    lede.textContent =
+      'After sign-in you will go to your workspace, where you can open your private report and account settings.';
   }
 
   if (params.get('registered') === '1' && bannerRegistered) {
@@ -676,21 +681,10 @@
   }
 
   function redirectAfterPortalLogin(lj) {
-    var dest = '';
-    if (nextPath && nextPath.charAt(0) === '/' && nextPath.indexOf('//') !== 0) {
-      if (/^\/admin\.html$/i.test(nextPath) || /^\/admin(\/|$)/i.test(nextPath)) {
-        dest = lj.reportUrl || '/clinics/report.html?slug=' + encodeURIComponent(lj.reportSlug);
-      } else {
-        dest = nextPath;
-      }
-    } else {
-      dest = lj.reportUrl || '/clinics/report.html?slug=' + encodeURIComponent(lj.reportSlug);
-    }
-    if (dest.charAt(0) !== '/') dest = '/' + dest;
-    var slugM = /[?&]slug=([^&]+)/.exec(dest);
-    if (dest.indexOf('/clinics/report.html') === 0 && (!slugM || !String(slugM[1] || '').trim() || slugM[1] === 'undefined')) {
-      dest = '/client.html';
-    }
+    var dest =
+      typeof soPortalResolvePostLogin === 'function'
+        ? soPortalResolvePostLogin(lj || {}, { nextPath: nextPath, slugHint: slugHint })
+        : '/workspace.html';
     window.location.href = dest;
   }
 
@@ -706,7 +700,7 @@
     }
     if (mustChangePwHelp && nextPath) {
       mustChangePwHelp.textContent =
-        'After you save, you will be redirected to: ' + nextPath + ' (or your report home if that path is unavailable).';
+        'After you save, you will be redirected to: ' + nextPath + ' (or your workspace if that path is unavailable).';
     } else if (mustChangePwHelp) {
       mustChangePwHelp.textContent = 'Your account requires a new password before you can continue.';
     }

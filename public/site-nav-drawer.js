@@ -29,8 +29,9 @@
       id: 'reports',
       title: 'Reports',
       links: [
-        { href: '/reports.html', label: 'My reports' },
-        { href: '/login.html#account', label: 'Account & reports' },
+        { href: '/workspace.html', label: 'Workspace', onlyIfSignedIn: true },
+        { href: '/reports.html', label: 'Request an audit' },
+        { href: '/login.html?settings=1#account', label: 'Account settings', onlyIfSignedIn: true },
       ],
     },
     {
@@ -46,7 +47,7 @@
       links: [
         { href: '/login.html', label: 'Log in' },
         { href: '/register.html', label: 'Create account' },
-        { href: '/login.html#account', label: 'Signed in', onlyIfSignedIn: true },
+        { href: '/workspace.html', label: 'Signed in', onlyIfSignedIn: true },
       ],
     },
   ];

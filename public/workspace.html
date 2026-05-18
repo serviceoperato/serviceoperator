@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
+<title>Workspace · www.serviceopera.to</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" href="/favicon.png" type="image/png" sizes="any" />
+<link rel="apple-touch-icon" href="/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+<script src="/page-skeleton.js"></script>
+<script src="/so-api.js"></script>
+<script src="/portal-auth-routing.js"></script>
+<style>
+  .page-user-portal { font-family: var(--font-body); min-height: 100vh; }
+  .ws-wrap { max-width: 520px; margin: 0 auto; padding: 2rem 1.5rem 3rem; }
+  .ws-card {
+    border: 1px solid var(--line-strong);
+    border-radius: 14px;
+    padding: 1.25rem 1.15rem;
+    background: var(--ink-2);
+    margin-top: 1rem;
+  }
+  .ws-card__title { font-size: 1rem; font-weight: 600; margin: 0 0 0.35rem; }
+  .ws-card__lede { font-size: 0.92rem; color: var(--mute-2); margin: 0 0 1rem; line-height: 1.5; }
+  .ws-meta { font-size: 0.88rem; color: var(--mute-2); line-height: 1.55; margin: 0 0 1rem; }
+  .ws-actions { display: flex; flex-direction: column; gap: 0.65rem; }
+  .page-user-portal .portal-caption {
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mute-2);
+  }
+  .page-user-portal .portal-caption--accent { color: var(--amber-2); }
+</style>
+</head>
+<body class="page-admin page-admin--with-nav page-user-portal">
+
+<div class="grain" aria-hidden="true"></div>
+
+<nav class="nav" aria-label="Primary">
+  <a href="/" class="nav__logo">
+    <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="www.serviceopera.to — home" decoding="async" />
+  </a>
+  <div class="nav__links">
+    <a href="/login.html" class="nav__login" id="navPortalAuth" data-login-href="/login.html?next=%2Fworkspace.html" aria-label="Login or Register">Login / Register</a>
+  </div>
+</nav>
+
+<div class="admin-gate">
+  <div class="admin-gate__card" style="max-width: 560px">
+    <div class="ws-wrap">
+      <p class="portal-caption portal-caption--accent">— YOUR WORKSPACE</p>
+      <h1 style="font-size:1.65rem;font-weight:700;margin:0;font-family:var(--font-body)">Workspace</h1>
+      <p class="admin-gate__lede" style="margin-top:0.65rem;font-size:0.95rem;color:var(--mute-2)">
+        Signed-in home for your private report and account settings.
+      </p>
+
+      <div id="wsLoading" class="ws-card">
+        <p class="ws-meta" style="margin:0">Loading your session…</p>
+      </div>
+
+      <div id="wsSignedIn" class="is-hidden">
+        <div class="ws-card">
+          <p class="ws-meta" id="wsEmailMeta"></p>
+          <div class="ws-actions">
+            <a href="#" class="btn btn--primary btn--block" id="wsOpenReport">Open my report<span class="ico-arrow-r" aria-hidden="true"></span></a>
+            <a href="/login.html?settings=1#account" class="btn btn--ghost btn--block" id="wsAccount">Account settings</a>
+          </div>
+        </div>
+        <div class="ws-card" id="wsNoReport" style="display:none">
+          <h2 class="ws-card__title">Report not linked yet</h2>
+          <p class="ws-card__lede">Your account is active. When Jack assigns your report slug, it will appear here.</p>
+          <a href="mailto:jack@serviceopera.to" class="btn btn--ghost btn--block">Email Jack</a>
+        </div>
+      </div>
+
+      <p class="modal__footnote" style="margin-top:1.5rem"><a href="/"><span class="ico-arrow-l" aria-hidden="true"></span>Back to site</a></p>
+    </div>
+  </div>
+</div>
+
+<script src="/sw-register.js"></script>
+<script src="/site-nav-drawer.js"></script>
+<script src="/user-account-menu.js"></script>
+<script src="/theme.js"></script>
+<script>
+(function () {
+  var USER_JWT_KEY = 'so_user_jwt';
+  var LEGACY_JWT_KEY = 'so_clinic_jwt';
+
+  function getPortalJwt() {
+    try {
+      return (
+        localStorage.getItem(USER_JWT_KEY) ||
+        localStorage.getItem(LEGACY_JWT_KEY) ||
+        sessionStorage.getItem(USER_JWT_KEY) ||
+        sessionStorage.getItem(LEGACY_JWT_KEY) ||
+        ''
+      );
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function looksLikeJwt(tok) {
+    var s = String(tok || '').trim();
+    if (!s) return false;
+    var parts = s.split('.');
+    return parts.length === 3 && parts[0].length > 0 && parts[1].length > 0 && parts[2].length > 0;
+  }
+
+  function redirectToLogin() {
+    var href =
+      typeof soPortalLoginHrefWithNext === 'function'
+        ? soPortalLoginHrefWithNext('/workspace.html')
+        : '/login.html?next=%2Fworkspace.html';
+    window.location.replace(href);
+  }
+
+  function decodeJwtReportSlug(token) {
+    try {
+      var parts = String(token || '').split('.');
+      if (parts.length < 2) return '';
+      var payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      while (payload.length % 4) payload += '=';
+      var json = JSON.parse(atob(payload));
+      return typeof json.reportSlug === 'string' ? json.reportSlug : '';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function decodeJwtEmail(token) {
+    try {
+      var parts = String(token || '').split('.');
+      if (parts.length < 2) return '';
+      var payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      while (payload.length % 4) payload += '=';
+      var json = JSON.parse(atob(payload));
+      return typeof json.email === 'string' ? json.email : '';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function showSignedIn(email, slug) {
+    var loading = document.getElementById('wsLoading');
+    var panel = document.getElementById('wsSignedIn');
+    var meta = document.getElementById('wsEmailMeta');
+    var openBtn = document.getElementById('wsOpenReport');
+    var noReport = document.getElementById('wsNoReport');
+    if (loading) loading.classList.add('is-hidden');
+    if (panel) panel.classList.remove('is-hidden');
+    if (meta) meta.textContent = email ? 'Signed in as ' + email + '.' : 'You are signed in.';
+    var reportHref =
+      typeof soPortalReportUrl === 'function'
+        ? soPortalReportUrl({ reportSlug: slug }, '')
+        : slug
+          ? '/clinics/report.html?slug=' + encodeURIComponent(slug)
+          : '';
+    if (slug && openBtn) {
+      openBtn.href = reportHref;
+      openBtn.classList.remove('is-hidden');
+      if (noReport) noReport.style.display = 'none';
+    } else if (openBtn) {
+      openBtn.classList.add('is-hidden');
+      if (noReport) noReport.style.display = 'block';
+    }
+  }
+
+  var tok = getPortalJwt();
+  if (!tok || !looksLikeJwt(tok)) {
+    redirectToLogin();
+    return;
+  }
+
+  var url =
+    typeof soApiUrl === 'function' ? soApiUrl('/api/auth/user-session') : '/api/auth/user-session';
+  var cred = typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin';
+  fetch(url, {
+    method: 'GET',
+    credentials: cred,
+    headers: { Authorization: 'Bearer ' + tok },
+    cache: 'no-store',
+  })
+    .then(function (r) {
+      return r.text().then(function (text) {
+        var j = null;
+        try {
+          j = text ? JSON.parse(text) : null;
+        } catch (e) {}
+        return { status: r.status, json: j };
+      });
+    })
+    .then(function (x) {
+      if (x.status === 401 && x.json && x.json.ok === false) {
+        redirectToLogin();
+        return;
+      }
+      if (x.json && x.json.ok && x.json.passwordMustChange) {
+        window.location.replace(
+          typeof soPortalLoginHrefWithNext === 'function'
+            ? soPortalLoginHrefWithNext('/workspace.html')
+            : '/login.html?next=%2Fworkspace.html'
+        );
+        return;
+      }
+      var email = (x.json && x.json.email) || decodeJwtEmail(tok);
+      var slug =
+        (x.json && x.json.reportSlug ? String(x.json.reportSlug).trim() : '') ||
+        decodeJwtReportSlug(tok);
+      showSignedIn(email, slug);
+    })
+    .catch(function () {
+      showSignedIn(decodeJwtEmail(tok), decodeJwtReportSlug(tok));
+    });
+})();
+</script>
+</body>
+</html>
