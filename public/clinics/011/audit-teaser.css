@@ -521,10 +521,41 @@
 .so-gate-inquiry .inquiry-form__control {
   font-size: 13px;
   padding: 10px 12px;
+  background: var(--card);
+  color: var(--ink);
+  border: 1.5px solid var(--border);
+}
+
+.so-gate-inquiry .inquiry-form__control:focus {
+  outline: none;
+  border-color: var(--ink);
+  box-shadow: none;
+}
+
+.so-gate-inquiry .inquiry-form__control:-webkit-autofill,
+.so-gate-inquiry .inquiry-form__control:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--card) inset;
+  -webkit-text-fill-color: var(--ink);
 }
 
 .so-gate-inquiry .inquiry-form__label {
   font-size: 11px;
+  color: var(--ink-2);
+}
+
+.so-gate-inquiry .so-sector-choice__opt {
+  background: var(--card);
+  color: var(--ink);
+  border: 1.5px solid var(--border);
+}
+
+.so-gate-inquiry .so-sector-choice__opt:has(:checked) {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 18%, transparent);
+}
+
+.so-gate-inquiry .inquiry-form__status {
+  color: var(--ink-3);
 }
 
 .so-gate-inquiry .so-sector-choice__grid {
