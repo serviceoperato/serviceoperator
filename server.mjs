@@ -1306,6 +1306,18 @@ function clearAdminJwtCookie(res) {
   );
 }
 
+/** Operator portal sign-in: mint admin JWT + HttpOnly cookie for private reports and /admin/*. */
+function mintOperatorAdminSession(res) {
+  const token = signJwt({ v: 1, role: 'admin', email: ADMIN_EMAIL, exp: Date.now() + JWT_TTL_MS });
+  setAdminJwtCookie(res, token);
+  return token;
+}
+
+function attachOperatorAdminSessionIfNeeded(res, user) {
+  if (!user?.email || !portalUserIsOperator(user.email)) return undefined;
+  return mintOperatorAdminSession(res);
+}
+
 function requireAdmin(req, res, next) {
   const p = getVerifiedAdmin(req);
   if (!p) {
@@ -3415,7 +3427,7 @@ dualPost('/api/auth/user-login', '/api/auth/clinic-login', async (req, res) => {
       if (!exists) {
         return res.status(401).json({
           error:
-            'No portal account exists for this operator email. Sign in at /admin for the operator console (ADMIN_PASSWORD_HASH), or create a portal user in Admin → Users. To auto-provision on deploy, set OPERATOR_PORTAL_PASSWORD (8+ characters) on the Node service.',
+            'No portal account exists for this operator email. Create a portal user for this address (Admin → Users after an existing operator signs in), or set OPERATOR_PORTAL_PASSWORD (8+ characters) on the Node service to auto-provision on deploy.',
         });
       }
       return res.status(401).json({
@@ -3427,6 +3439,7 @@ dualPost('/api/auth/user-login', '/api/auth/clinic-login', async (req, res) => {
   }
   const sessionId = await recordPortalLogin(req, user);
   const token = signPortalUserJwt(user);
+  const adminToken = attachOperatorAdminSessionIfNeeded(res, user);
   const reportUrl = '/clinics/report.html?slug=' + encodeURIComponent(user.reportSlug);
   return res.json({
     ok: true,
@@ -3435,6 +3448,8 @@ dualPost('/api/auth/user-login', '/api/auth/clinic-login', async (req, res) => {
     reportUrl,
     sessionId,
     passwordMustChange: Boolean(user.passwordMustChange),
+    isOperator: portalUserIsOperator(user.email),
+    ...(adminToken ? { adminToken } : {}),
   });
 });
 
@@ -3513,6 +3528,7 @@ dualPost('/api/auth/user-login-otp', '/api/auth/clinic-login-otp', async (req, r
   portalOtpByEmail.delete(email);
   const sessionId = await recordPortalLogin(req, user);
   const token = signPortalUserJwt(user);
+  const adminToken = attachOperatorAdminSessionIfNeeded(res, user);
   const reportUrl = '/clinics/report.html?slug=' + encodeURIComponent(user.reportSlug);
   return res.json({
     ok: true,
@@ -3521,6 +3537,8 @@ dualPost('/api/auth/user-login-otp', '/api/auth/clinic-login-otp', async (req, r
     reportUrl,
     sessionId,
     passwordMustChange: Boolean(user.passwordMustChange),
+    isOperator: portalUserIsOperator(user.email),
+    ...(adminToken ? { adminToken } : {}),
   });
 });
 
@@ -4298,8 +4316,10 @@ function sendAdminHtml(req, res) {
   if (isLikelyAutomatedScraper(req)) {
     return sendPrivateReportNotFound(res);
   }
-  if (!getVerifiedAdmin(req) && !isAdminLoginShellPath(req.path)) {
-    return denyPrivateNumberedReport(req, res);
+  if (!getVerifiedAdmin(req)) {
+    const targetPath = req.originalUrl || req.path || '/admin/users';
+    const next = encodeURIComponent(targetPath);
+    return res.redirect(302, `/login.html?next=${next}`);
   }
   return res.type('html').send(renderAdminHtml());
 }
@@ -4403,7 +4423,7 @@ function denyPrivateNumberedReport(req, res) {
       res.setHeader('Cache-Control', 'no-store');
       res.setHeader('X-Robots-Tag', 'noindex, nofollow');
       const next = encodeURIComponent(targetPath);
-      return res.redirect(302, `/admin/users?next=${next}`);
+      return res.redirect(302, `/login.html?next=${next}`);
     }
   }
   return sendPrivateReportNotFound(res);
