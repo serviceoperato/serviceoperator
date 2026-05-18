@@ -960,6 +960,36 @@ function operatorContactForErrors() {
 function portalUserIsOperator(email) {
   return emailsEqualTiming(String(email || '').trim().toLowerCase(), ADMIN_EMAIL);
 }
+
+/** Optional: create portal_users row for ADMIN_EMAIL when OPERATOR_PORTAL_PASSWORD is set (min 8 chars). */
+async function ensureOperatorPortalAccount(store) {
+  const pw = (process.env.OPERATOR_PORTAL_PASSWORD || '').trim();
+  if (!pw || pw.length < 8) return;
+  const em = ADMIN_EMAIL;
+  if (!em) return;
+  try {
+    const existing = await store.getUserByEmail(em);
+    if (existing) return;
+    const slugRaw = (process.env.OPERATOR_PORTAL_REPORT_SLUG || 'operator').trim() || 'operator';
+    const reportSlug = assertReportSlug(slugRaw);
+    await store.createUser({
+      email: em,
+      password: pw,
+      reportSlug,
+      passwordMustChange: false,
+    });
+    console.log(
+      `[serviceopera] Created portal account for operator (${em}) from OPERATOR_PORTAL_PASSWORD · report_slug=${reportSlug}.`
+    );
+  } catch (e) {
+    console.error(
+      '[serviceopera] ensureOperatorPortalAccount failed:',
+      e && e.message ? e.message : e
+    );
+  }
+}
+
+await ensureOperatorPortalAccount(userStore);
 /** Public sign-up is on by default; set PORTAL_SELF_REGISTER=false or legacy CLINIC_SELF_REGISTER=false for invite-only. */
 const PORTAL_SELF_REGISTER = (function () {
   const raw = process.env.PORTAL_SELF_REGISTER ?? process.env.CLINIC_SELF_REGISTER;
@@ -2134,6 +2164,9 @@ function sendPortalCapabilities(_req, res) {
     selfRegister: Boolean(PORTAL_SELF_REGISTER),
     registrationConfirmEmail: Boolean(RESEND_API_KEY && PORTAL_SELF_REGISTER),
     resendTestSender: Boolean(RESEND_API_KEY && RESEND_FROM_USES_TEST_SENDER),
+    /** Clinic portal vs operator console (no operator email in JSON). */
+    operatorConsolePath: '/admin',
+    adminPasswordConfigured: Boolean(ADMIN_PASSWORD_HASH),
   });
 }
 
@@ -3313,6 +3346,16 @@ dualPost('/api/auth/user-login', '/api/auth/clinic-login', async (req, res) => {
         error:
           'This email has a registration in progress. Open the latest link from ServiceOpera in your inbox to finish choosing your password, or use “Resend registration link” on the registration page.',
       });
+    }
+    const emNorm = normalizeEmail(email);
+    if (emNorm && emailsEqualTiming(emNorm, ADMIN_EMAIL)) {
+      const exists = await userStore.getUserByEmail(emNorm);
+      if (!exists) {
+        return res.status(401).json({
+          error:
+            'No portal account exists for this operator email. Sign in at /admin for the operator console (ADMIN_PASSWORD_HASH), or create a portal user in Admin → Users. To auto-provision on deploy, set OPERATOR_PORTAL_PASSWORD (8+ characters) on the Node service.',
+        });
+      }
     }
     return res.status(401).json({ error: 'Invalid email or password.' });
   }

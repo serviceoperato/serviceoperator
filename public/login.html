@@ -226,6 +226,10 @@
         <a href="register.html" class="portal-form__linkbtn" style="text-decoration:none">Create account</a>
       </div>
       <p class="portal-form__hint" id="loginHint"></p>
+      <p class="portal-form__hint portal-form__hint--detail is-hidden" id="operatorConsoleHint" role="note">
+        Operator console (separate password): <a href="/admin">/admin</a> — not the clinic portal form above.
+        <button type="button" class="tf-linkish" id="loginDebugLink" style="margin-left:0.35rem">Open DEBUG</button>
+      </p>
     </form>
     </div>
 
@@ -293,6 +297,7 @@
 <script src="/site-nav-drawer.js"></script>
 <script src="user-account-menu.js"></script>
 <script src="theme.js"></script>
+<script src="/site-contact.js"></script>
 <script src="debug.js"></script>
 <script>
 (function () {
@@ -377,6 +382,8 @@
   var selfRegisterEnabled = false;
   var registrationConfirmOk = false;
   var resendTestSender = false;
+  var operatorConsoleHint = document.getElementById('operatorConsoleHint');
+  var loginDebugLink = document.getElementById('loginDebugLink');
 
   function stripVerifyQueryFromUrl() {
     try {
@@ -1248,6 +1255,9 @@
       selfRegisterEnabled = portalApiFromOurServer && Boolean(cap && cap.selfRegister);
       registrationConfirmOk = portalApiFromOurServer && Boolean(cap && cap.registrationConfirmEmail);
       resendTestSender = portalApiFromOurServer && Boolean(cap && cap.resendTestSender);
+      if (operatorConsoleHint && portalApiFromOurServer) {
+        operatorConsoleHint.classList.remove('is-hidden');
+      }
       if (forgotHelp) forgotHelp.textContent = forgotResetHelpText();
     })
     .catch(function (err) {
@@ -1488,6 +1498,9 @@
           }
           setHint('', '');
           setLoginErr(eLogin);
+          try {
+            if (typeof window.soDebugReveal === 'function') window.soDebugReveal();
+          } catch (eDbg) {}
           var pwEl = document.getElementById('userPassword');
           if (pwEl) pwEl.value = '';
           if (otpInput) otpInput.value = '';
@@ -1693,6 +1706,16 @@
       } catch (eRp) {
         window.location.href = '/login.html';
       }
+    });
+  }
+
+  if (loginDebugLink) {
+    loginDebugLink.addEventListener('click', function () {
+      try {
+        if (typeof window.soDebugReveal === 'function') window.soDebugReveal();
+        var fab = document.getElementById('soDebugFab');
+        if (fab) fab.click();
+      } catch (eDl) {}
     });
   }
 

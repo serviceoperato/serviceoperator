@@ -22,6 +22,32 @@
     return /^\/(admin|operator)(\/|$)/.test(p) || /\/admin\.html$/.test(p);
   }
 
+  /** Portal sign-in / workspace pages (DEBUG with masked PII; not full admin shell). */
+  function isPortalTroubleshootPath() {
+    var p = (location.pathname || '').replace(/\\/g, '/').toLowerCase();
+    return (
+      /\/login(\.html)?$/.test(p) ||
+      p === '/login' ||
+      /\/register(\.html)?$/.test(p) ||
+      p === '/register' ||
+      /\/workspace(\.html)?$/.test(p) ||
+      p === '/workspace' ||
+      p === '/workspace/'
+    );
+  }
+
+  function isDebugQueryEnabled() {
+    try {
+      return new URLSearchParams(window.location.search).get('debug') === '1';
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function shouldMountDebug() {
+    return isAdminShellPath() || isPortalTroubleshootPath() || isDebugQueryEnabled();
+  }
+
   function readAdminJwt() {
     try {
       return sessionStorage.getItem('so_admin_jwt') || localStorage.getItem('so_admin_jwt') || '';
@@ -1623,9 +1649,15 @@
   }
 
   function boot() {
-    if (!isAdminShellPath()) return;
+    if (!shouldMountDebug()) return;
     mount();
   }
+
+  /** login.html calls after a failed sign-in so DEBUG is available without ?debug=1 */
+  global.soDebugReveal = function soDebugReveal() {
+    if (document.getElementById(BTN_ID)) return;
+    mount();
+  };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);
