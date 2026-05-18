@@ -32,6 +32,11 @@ import {
   searchIndexItems,
 } from './lib/transcriptions/store.mjs';
 import { appendAdminAuditLog } from './scripts/admin_audit_logger.js';
+import {
+  isDemoPortalConfigured,
+  loadDemoPortalAccounts,
+  verifyDemoPortalLogin,
+} from './lib/demo-portal-auth.mjs';
 
 const processFatalLogHandlersKey = Symbol.for('serviceopera.server.processFatalLogHandlers');
 if (!globalThis[processFatalLogHandlersKey]) {
@@ -1781,6 +1786,10 @@ async function proxyApiToUpstream(req, res) {
 const app = express();
 app.set('trust proxy', 1);
 app.disable('x-powered-by');
+
+app.get('/health', (_req, res) => {
+  res.status(200).type('text/plain').send('ok');
+});
 
 /** Canonical host: apex serves marketing; www → 301 (requires www custom domain on this Railway service). */
 app.use((req, res, next) => {
