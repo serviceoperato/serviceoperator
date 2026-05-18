@@ -113,3 +113,7 @@
 ## 2026-05-17
 - [ ] Estinguere debito/mutuo indicato (~57.000 € verso banca) — menzionato dal padre <!-- src: 42d821331d94 -->
 - [ ] Chiedere mutuo/rinegoziazione — opzione citata <!-- src: 42d821331d94 -->
+
+## 2026-05-18
+- [ ] Impostare nel calendario un blocco ricorrente di 1 ora/settimana per il progetto YouTube <!-- src: 2910dc062f2933c5 -->
+- [ ] Chiedere all’AI di usare l’asset YouTube per parlare dei due progetti <!-- src: 2910dc062f2933c5 -->

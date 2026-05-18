@@ -21,3 +21,9 @@ Ho preso la decisione che la realtà contrariamente a come stavamo facendo, dove
 2/14/22, 00:58 - Messages and calls are end-to-end encrypted.
 
 <!-- src: c52f33323d06 -->
+
+## Update 2026-05-18
+
+Pianificare slot calendario ricorrente (1 h/settimana) per progetto YouTube; usare asset YouTube con AI per parlare di due progetti (identità progetti da confermare).
+
+<!-- src: 2910dc062f2933c5 -->

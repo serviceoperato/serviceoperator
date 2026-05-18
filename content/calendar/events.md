@@ -71,3 +71,7 @@
 ## 2026-05-17
 
 - Apre alle 14,30 2/14/22, 19:51 - J: Buono! | confidence: low <!-- src: c52f33323d06 -->
+
+## 2026-05-18
+
+- Progetto YouTube — 1 ora/settimana (giorno e ora da confermare) | confidence: medium <!-- src: 2910dc062f2933c5 -->

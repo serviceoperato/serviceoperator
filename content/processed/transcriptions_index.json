@@ -1,49 +1,49 @@
 {
   "ok": true,
-  "generatedAt": "2026-05-17T16:05:08Z",
+  "generatedAt": "2026-05-18T06:49:23Z",
   "registryVersion": 2,
   "totals": {
     "meetings": 0,
     "notes": 0,
-    "tasks": 27,
-    "calendar": 2,
-    "projects": 1,
+    "tasks": 29,
+    "calendar": 3,
+    "projects": 2,
     "decisions": 8,
-    "open-points": 35,
-    "total": 73,
+    "open-points": 37,
+    "total": 79,
     "needsReview": 0
   },
   "counts": {
     "meetings": 0,
     "notes": 0,
-    "tasks": 27,
-    "calendar": 2,
-    "projects": 1,
+    "tasks": 29,
+    "calendar": 3,
+    "projects": 2,
     "decisions": 8,
-    "open-points": 35,
-    "total": 73,
+    "open-points": 37,
+    "total": 79,
     "needsReview": 0
   },
   "sourceTotals": {
     "meetings": 1,
-    "notes": 24,
+    "notes": 25,
     "tasks": 0,
     "calendar": 0,
     "projects": 0,
     "decisions": 0,
     "open-points": 0,
-    "total": 25,
+    "total": 26,
     "needsReview": 0
   },
-  "sourceCount": 25,
+  "sourceCount": 26,
   "rawSources": {
-    "total": 25,
-    "latestRawFile": "Voice_260517_181446.md",
-    "latestProcessedFile": "Voice_001.md",
+    "total": 26,
+    "latestRawFile": "Voice_260518_030558.md",
+    "latestProcessedFile": "Voice_260518_030558.md",
     "waitingForProcessing": 0,
     "pendingSources": []
   },
-  "rawTranscriptionCount": 25,
+  "rawTranscriptionCount": 26,
   "pipeline": {
     "lastRun": null,
     "status": "idle",
@@ -62,6 +62,247 @@
   "needsReview": [],
   "needsReviewCount": 0,
   "items": [
+    {
+      "category": "notes",
+      "categoryLabel": "Notes",
+      "filepath": "content/ai-ready-transcriptions/2026-05-18-voice-note-voice_260518_030558-2910dc062f2933c5.md",
+      "path": "content/ai-ready-transcriptions/2026-05-18-voice-note-voice_260518_030558-2910dc062f2933c5.md",
+      "source_audio": "Voice 260518_030558.m4a",
+      "source_transcription": "content/transcriptions/Voice_260518_030558.md",
+      "sourceAudio": "Voice 260518_030558.m4a",
+      "sourceTranscription": "content/transcriptions/Voice_260518_030558.md",
+      "project": "personal",
+      "date": "2026-05-18",
+      "eventDate": "2026-05-18",
+      "processing_date": "2026-05-18T06:50:00Z",
+      "processedDate": "2026-05-18T06:50:00Z",
+      "preview": "Nota vocale breve in italiano 17 18 maggio 2026 l autore vuole riservare nel calendario un ora a settimana dedicata al proprio progetto YouTube così da avere tempo strutturato per lavorarci Chiede inoltre all intelligenza artificiale di sfruttare un asset YouTube contenuto o materiale già disponibile sul canale per parlare o organizzare la narrazione intorno a due progetti senza nominarli nel frammento Implicazione pratica pianificare ricorrenza calendario chiarire quali sono…",
+      "cardSummary": "Nota vocale breve in italiano 17 18 maggio 2026 l autore vuole riservare nel calendario un ora a settimana dedicata al proprio progetto YouTube così da avere tempo strutturato per lavorarci Chiede inoltre all intelligenza artificiale di sfruttare un asset YouTube contenuto o materiale già disponibile sul canale per parlare o organizzare la narrazione intorno a due progetti senza nominarli nel frammento Implicazione pratica pianificare ricorrenza calendario chiarire quali sono…",
+      "summary": "Nota vocale breve in italiano (17–18 maggio 2026): l’autore vuole riservare nel calendario un’ora a settimana dedicata al proprio progetto YouTube, così da avere tempo strutturato per lavorarci. Chiede inoltre all’intelligenza artificiale di sfruttare un asset YouTube (contenuto o materiale già disponibile sul canale) per parlare o organizzare la narrazione intorno a due progetti — senza nominarli nel frammento. Implicazione pratica: pianificare ricorrenza calendario, chiarire quali sono i due progetti e definire come l’AI deve usare l’asset (script, outline, confronto tra progetti).",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 2,
+        "open_points_count": 2,
+        "calendar_events_count": 1,
+        "next_steps_count": 2
+      },
+      "has_chart_data": true,
+      "raw_sections": {
+        "Title": "Slot settimanale YouTube e uso asset per due progetti",
+        "Source": "- **Source audio:** Voice 260518_030558.m4a\n- **Source transcription:** `Voice_260518_030558.md`\n- **Processed date:** 2026-05-18T06:50:00Z\n- **Main category:** voice-note\n- **Project:** personal",
+        "Summary": "Nota vocale breve in italiano (17–18 maggio 2026): l’autore vuole riservare nel calendario un’ora a settimana dedicata al proprio progetto YouTube, così da avere tempo strutturato per lavorarci. Chiede inoltre all’intelligenza artificiale di sfruttare un asset YouTube (contenuto o materiale già disponibile sul canale) per parlare o organizzare la narrazione intorno a due progetti — senza nominarli nel frammento. Implicazione pratica: pianificare ricorrenza calendario, chiarire quali sono i due progetti e definire come l’AI deve usare l’asset (script, outline, confronto tra progetti).",
+        "Important Points": "- Calendario: un’ora a settimana per il progetto YouTube\n- Richiesta: usare asset YouTube con supporto AI\n- Contenuto: collegare la discussione a due progetti (non specificati nel audio)",
+        "People Involved": "- (speaker — owner to confirm)",
+        "Tasks": "- [ ] Impostare nel calendario un blocco ricorrente di 1 ora/settimana per il progetto YouTube\n- [ ] Chiedere all’AI di usare l’asset YouTube per parlare dei due progetti",
+        "Calendar Events": "- Progetto YouTube — 1 ora/settimana (giorno e ora da confermare)",
+        "Decisions": "- (none)",
+        "Open Points": "- Quali sono i due progetti da trattare con l’asset YouTube\n- Giorno, ora e fuso per lo slot settimanale ricorrente",
+        "Project Updates": "- Progetto YouTube: pianificazione slot settimanale e uso asset con AI per due progetti collegati",
+        "Next Steps": "- Confermare giorno/ora dello slot settimanale e registrarlo nel calendario\n- Elencare i due progetti e preparare prompt/materiale per l’AI sull’asset YouTube"
+      },
+      "extracted_items": {
+        "decisions": [],
+        "tasks": [
+          "Impostare nel calendario un blocco ricorrente di 1 ora/settimana per il progetto YouTube",
+          "Chiedere all’AI di usare l’asset YouTube per parlare dei due progetti"
+        ],
+        "open_points": [
+          "Quali sono i due progetti da trattare con l’asset YouTube",
+          "Giorno, ora e fuso per lo slot settimanale ricorrente"
+        ],
+        "next_steps": [
+          "Confermare giorno/ora dello slot settimanale e registrarlo nel calendario",
+          "Elencare i due progetti e preparare prompt/materiale per l’AI sull’asset YouTube"
+        ],
+        "important_points": [
+          "Calendario: un’ora a settimana per il progetto YouTube",
+          "Richiesta: usare asset YouTube con supporto AI",
+          "Contenuto: collegare la discussione a due progetti (non specificati nel audio)"
+        ],
+        "calendar_events": [
+          "Progetto YouTube — 1 ora/settimana (giorno e ora da confermare)"
+        ],
+        "people": [
+          "(speaker — owner to confirm)"
+        ],
+        "project_updates": [
+          "Progetto YouTube: pianificazione slot settimanale e uso asset con AI per due progetti collegati"
+        ],
+        "main_category": "voice-note"
+      },
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "source_entry",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true,
+      "id": "883cd86a0907",
+      "isSourceEntry": true,
+      "source_entry": true,
+      "primaryCategory": "notes",
+      "mainCategory": "notes",
+      "categories": [
+        "tasks",
+        "calendar",
+        "decisions",
+        "open-points",
+        "projects"
+      ],
+      "extractedCategories": [
+        "tasks",
+        "calendar",
+        "decisions",
+        "open-points",
+        "projects"
+      ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
+      "extractions": {
+        "notes": [
+          {
+            "id": "433fc350adf0",
+            "category": "notes",
+            "title": "Slot settimanale YouTube e uso asset per due progetti",
+            "path": "content/ai-ready-transcriptions/2026-05-18-voice-note-voice_260518_030558-2910dc062f2933c5.md",
+            "preview": "Nota vocale breve in italiano 17 18 maggio 2026 l autore vuole riservare nel calendario un ora a settimana dedicata al proprio progetto YouTube così da avere tempo strutturato per lavorarci Chiede inoltre all intelligenza artificiale di sfruttare un asset YouTube contenuto o materiale già disponibile sul canale per parlare o organizzare la narrazione intorno a due progetti senza nominarli nel frammento Implicazione pratica pianificare ricorrenza calendario chiarire quali sono…",
+            "summary": "Nota vocale breve in italiano (17–18 maggio 2026): l’autore vuole riservare nel calendario un’ora a settimana dedicata al proprio progetto YouTube, così da avere tempo strutturato per lavorarci. Chiede inoltre all’intelligenza artificiale di sfruttare un asset YouTube (contenuto o materiale già disponibile sul canale) per parlare o organizzare la narrazione intorno a due progetti — senza nominarli nel frammento. Implicazione pratica: pianificare ricorrenza calendario, chiarire quali sono i due progetti e definire come l’AI deve usare l’asset (script, outline, confronto tra progetti).",
+            "project": "personal",
+            "date": "2026-05-18",
+            "dueDate": null,
+            "eventDate": "2026-05-18",
+            "status": null,
+            "extracted_items": {
+              "decisions": [],
+              "tasks": [
+                "Impostare nel calendario un blocco ricorrente di 1 ora/settimana per il progetto YouTube",
+                "Chiedere all’AI di usare l’asset YouTube per parlare dei due progetti"
+              ],
+              "open_points": [
+                "Quali sono i due progetti da trattare con l’asset YouTube",
+                "Giorno, ora e fuso per lo slot settimanale ricorrente"
+              ],
+              "next_steps": [
+                "Confermare giorno/ora dello slot settimanale e registrarlo nel calendario",
+                "Elencare i due progetti e preparare prompt/materiale per l’AI sull’asset YouTube"
+              ],
+              "important_points": [
+                "Calendario: un’ora a settimana per il progetto YouTube",
+                "Richiesta: usare asset YouTube con supporto AI",
+                "Contenuto: collegare la discussione a due progetti (non specificati nel audio)"
+              ],
+              "calendar_events": [
+                "Progetto YouTube — 1 ora/settimana (giorno e ora da confermare)"
+              ],
+              "people": [
+                "(speaker — owner to confirm)"
+              ],
+              "project_updates": [
+                "Progetto YouTube: pianificazione slot settimanale e uso asset con AI per due progetti collegati"
+              ],
+              "main_category": "voice-note"
+            }
+          }
+        ]
+      },
+      "sourceEntries": [
+        {
+          "id": "433fc350adf0",
+          "category": "notes",
+          "title": "Slot settimanale YouTube e uso asset per due progetti",
+          "path": "content/ai-ready-transcriptions/2026-05-18-voice-note-voice_260518_030558-2910dc062f2933c5.md",
+          "preview": "Nota vocale breve in italiano 17 18 maggio 2026 l autore vuole riservare nel calendario un ora a settimana dedicata al proprio progetto YouTube così da avere tempo strutturato per lavorarci Chiede inoltre all intelligenza artificiale di sfruttare un asset YouTube contenuto o materiale già disponibile sul canale per parlare o organizzare la narrazione intorno a due progetti senza nominarli nel frammento Implicazione pratica pianificare ricorrenza calendario chiarire quali sono…",
+          "summary": "Nota vocale breve in italiano (17–18 maggio 2026): l’autore vuole riservare nel calendario un’ora a settimana dedicata al proprio progetto YouTube, così da avere tempo strutturato per lavorarci. Chiede inoltre all’intelligenza artificiale di sfruttare un asset YouTube (contenuto o materiale già disponibile sul canale) per parlare o organizzare la narrazione intorno a due progetti — senza nominarli nel frammento. Implicazione pratica: pianificare ricorrenza calendario, chiarire quali sono i due progetti e definire come l’AI deve usare l’asset (script, outline, confronto tra progetti).",
+          "project": "personal",
+          "date": "2026-05-18",
+          "dueDate": null,
+          "eventDate": "2026-05-18",
+          "status": null,
+          "extracted_items": {
+            "decisions": [],
+            "tasks": [
+              "Impostare nel calendario un blocco ricorrente di 1 ora/settimana per il progetto YouTube",
+              "Chiedere all’AI di usare l’asset YouTube per parlare dei due progetti"
+            ],
+            "open_points": [
+              "Quali sono i due progetti da trattare con l’asset YouTube",
+              "Giorno, ora e fuso per lo slot settimanale ricorrente"
+            ],
+            "next_steps": [
+              "Confermare giorno/ora dello slot settimanale e registrarlo nel calendario",
+              "Elencare i due progetti e preparare prompt/materiale per l’AI sull’asset YouTube"
+            ],
+            "important_points": [
+              "Calendario: un’ora a settimana per il progetto YouTube",
+              "Richiesta: usare asset YouTube con supporto AI",
+              "Contenuto: collegare la discussione a due progetti (non specificati nel audio)"
+            ],
+            "calendar_events": [
+              "Progetto YouTube — 1 ora/settimana (giorno e ora da confermare)"
+            ],
+            "people": [
+              "(speaker — owner to confirm)"
+            ],
+            "project_updates": [
+              "Progetto YouTube: pianificazione slot settimanale e uso asset con AI per due progetti collegati"
+            ],
+            "main_category": "voice-note"
+          }
+        }
+      ],
+      "groupedIds": [
+        "433fc350adf0"
+      ],
+      "decisions": [],
+      "tasks": [
+        "Impostare nel calendario un blocco ricorrente di 1 ora/settimana per il progetto YouTube",
+        "Chiedere all’AI di usare l’asset YouTube per parlare dei due progetti"
+      ],
+      "openPoints": [
+        "Quali sono i due progetti da trattare con l’asset YouTube",
+        "Giorno, ora e fuso per lo slot settimanale ricorrente"
+      ],
+      "open_points": [
+        "Quali sono i due progetti da trattare con l’asset YouTube",
+        "Giorno, ora e fuso per lo slot settimanale ricorrente"
+      ],
+      "nextSteps": [
+        "Confermare giorno/ora dello slot settimanale e registrarlo nel calendario",
+        "Elencare i due progetti e preparare prompt/materiale per l’AI sull’asset YouTube"
+      ],
+      "next_steps": [
+        "Confermare giorno/ora dello slot settimanale e registrarlo nel calendario",
+        "Elencare i due progetti e preparare prompt/materiale per l’AI sull’asset YouTube"
+      ],
+      "importantPoints": [
+        "Calendario: un’ora a settimana per il progetto YouTube",
+        "Richiesta: usare asset YouTube con supporto AI",
+        "Contenuto: collegare la discussione a due progetti (non specificati nel audio)"
+      ],
+      "important_points": [
+        "Calendario: un’ora a settimana per il progetto YouTube",
+        "Richiesta: usare asset YouTube con supporto AI",
+        "Contenuto: collegare la discussione a due progetti (non specificati nel audio)"
+      ],
+      "calendarEvents": [
+        "Progetto YouTube — 1 ora/settimana (giorno e ora da confermare)"
+      ],
+      "calendar_events": [
+        "Progetto YouTube — 1 ora/settimana (giorno e ora da confermare)"
+      ],
+      "possibleActions": [],
+      "possible_actions": [],
+      "childIds": [
+        "433fc350adf0"
+      ],
+      "related_files": [],
+      "sourceKey": "content/transcriptions/voice_260518_030558.md",
+      "sourceGroupKey": "content/transcriptions/voice_260518_030558.md",
+      "title": "Slot settimanale YouTube e uso asset per due progetti",
+      "displayTitle": "Slot settimanale YouTube e uso asset per due progetti"
+    },
     {
       "category": "notes",
       "categoryLabel": "Notes",

@@ -1419,6 +1419,42 @@
       "category": "meeting",
       "project": "thaifans",
       "primary_type": "meeting"
+    },
+    "G:\\My Drive\\Voice Recorder\\Voice 260518_030558.m4a": {
+      "id": "2910dc062f2933c5",
+      "sourceAudio": "Voice 260518_030558.m4a",
+      "sourceAudioPath": "G:\\My Drive\\Voice Recorder\\Voice 260518_030558.m4a",
+      "rawTranscriptionPath": "content/transcriptions/Voice_260518_030558.md",
+      "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-18-voice-note-voice_260518_030558-2910dc062f2933c5.md",
+      "aiOutputs": {
+        "meeting": null,
+        "note": "content/ai-ready-transcriptions/2026-05-18-voice-note-voice_260518_030558-2910dc062f2933c5.md",
+        "tasks": "content/tasks/todo.md",
+        "calendar": "content/calendar/events.md",
+        "project": "content/projects/personal.md",
+        "decisions": null,
+        "openPoints": "content/open-points/2026-05-18.md"
+      },
+      "detectedLanguage": "it",
+      "languageProbability": 0.9462392926216125,
+      "detected_language": "it",
+      "language_probability": 0.9462392926216125,
+      "rawCreatedAt": "2026-05-18 06:47:31 UTC",
+      "aiProcessedAt": "2026-05-18T06:50:00Z",
+      "status": "ready_for_site",
+      "readyForSite": true,
+      "error": null,
+      "size": 507341,
+      "modified_time": 1779048391.008,
+      "modified_datetime": "2026-05-17 20:06:31 UTC",
+      "file_name": "Voice 260518_030558.m4a",
+      "full_path": "G:\\My Drive\\Voice Recorder\\Voice 260518_030558.m4a",
+      "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_260518_030558.md",
+      "processed_datetime": "2026-05-18 06:47:31 UTC",
+      "source_checksum": "b84c7ec9ad5f6fc69a107d2dfb66db33d8dffafabf24f044d96ff726ea8aa6e0",
+      "category": "voice-note",
+      "project": "personal",
+      "primary_type": "note"
     }
   },
   "version": 2
