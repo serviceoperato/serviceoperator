@@ -151,6 +151,9 @@
     if (!path || path.charAt(0) !== '/') path = '/admin/users';
 
     if (isOperatorGateLoop(path)) {
+      if (typeof g.soDebugNoteLoginLoop === 'function') {
+        g.soDebugNoteLoginLoop('operator-gate', path);
+      }
       var loopMsg =
         'Operator console navigation was blocked to prevent a sign-in loop. ' +
         'Open /admin/users and sign in with the operator password, or clear site data and try again.';

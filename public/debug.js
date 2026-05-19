@@ -209,6 +209,182 @@
     }
   }
 
+  var LOGIN_LOOP_PROBE_KEY = 'so_login_loop_probe';
+
+  function readLoginLoopProbe() {
+    try {
+      var raw = sessionStorage.getItem(LOGIN_LOOP_PROBE_KEY) || '';
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (eLoop) {
+      return null;
+    }
+  }
+
+  var CLINIC_LOGIN_LOOP_KEY = 'so_clinic_login_loop';
+  var CLINIC_LOGIN_LOOP_MS = 15000;
+
+  function normalizeLoopPath(path) {
+    var p = String(path || '').split('?')[0].split('#')[0];
+    if (p.length > 1 && p.charAt(p.length - 1) === '/') p = p.slice(0, -1);
+    return p;
+  }
+
+  function parseNumberedReportPath(path) {
+    var pathOnly = normalizeLoopPath(path);
+    var m = /^\/(clinics|hotels)\/(\d{3})(\/.*)?$/i.exec(pathOnly);
+    if (!m) return null;
+    return { vertical: m[1].toLowerCase(), id: m[2], pathOnly: pathOnly };
+  }
+
+  function touchClinicLoginLoop(targetPath) {
+    try {
+      sessionStorage.setItem(
+        CLINIC_LOGIN_LOOP_KEY,
+        JSON.stringify({ path: normalizeLoopPath(targetPath), at: Date.now() })
+      );
+    } catch (eTouch) {}
+  }
+
+  function isClinicLoginLoopBlocked(targetPath) {
+    try {
+      var raw = sessionStorage.getItem(CLINIC_LOGIN_LOOP_KEY);
+      if (!raw) return false;
+      var rec = JSON.parse(raw);
+      if (!rec || !rec.at) return false;
+      if (Date.now() - Number(rec.at) > CLINIC_LOGIN_LOOP_MS) return false;
+      return normalizeLoopPath(rec.path) === normalizeLoopPath(targetPath);
+    } catch (eBlk) {
+      return false;
+    }
+  }
+
+  function clearClinicLoginLoop() {
+    try {
+      sessionStorage.removeItem(CLINIC_LOGIN_LOOP_KEY);
+    } catch (eClr) {}
+  }
+
+  function readLoginLoopCounters() {
+    var adminCount = 0;
+    var gateLoop = null;
+    var clinicLoop = null;
+    try {
+      adminCount = Number(sessionStorage.getItem('so_admin_auth_redirect_count') || '0');
+    } catch (eAc) {}
+    try {
+      var gr = sessionStorage.getItem('so_operator_gate_loop');
+      if (gr) gateLoop = JSON.parse(gr);
+    } catch (eGl) {}
+    try {
+      var cr = sessionStorage.getItem(CLINIC_LOGIN_LOOP_KEY);
+      if (cr) clinicLoop = JSON.parse(cr);
+    } catch (eCl) {}
+    return { adminCount: adminCount, gateLoop: gateLoop, clinicLoop: clinicLoop };
+  }
+
+  function buildLoginLoopLongMessage(source, detail) {
+    var nextParam = '';
+    try {
+      nextParam = (new URLSearchParams(window.location.search).get('next') || '').trim();
+    } catch (eNp) {}
+    var pagePath = (window.location.pathname || '') + (window.location.search || '');
+    var target = detail != null ? String(detail) : nextParam || '';
+    var parsed = parseNumberedReportPath(target || nextParam);
+    var counters = readLoginLoopCounters();
+    var portalSites = portalJwtStorageSites();
+    var adminJwt = readAdminJwt();
+    var portalJwt = readPortalJwt();
+    var clinicLoopTxt = '(none)';
+    if (counters.clinicLoop && counters.clinicLoop.path) {
+      clinicLoopTxt =
+        'path=' +
+        counters.clinicLoop.path +
+        (counters.clinicLoop.at
+          ? ' · at=' + new Date(Number(counters.clinicLoop.at)).toISOString()
+          : '');
+    }
+    var gateLoopTxt = '(none)';
+    if (counters.gateLoop && counters.gateLoop.path) {
+      gateLoopTxt =
+        'path=' +
+        counters.gateLoop.path +
+        (counters.gateLoop.at ? ' · at=' + new Date(Number(counters.gateLoop.at)).toISOString() : '');
+    }
+    return [
+      'SIGN-IN REDIRECT LOOP BLOCKED',
+      '',
+      'Navigation was stopped on purpose so this tab will not keep bouncing between login.html and a protected clinic/hotel report.',
+      '',
+      '— Where you are —',
+      'blocking source: ' + String(source || '(unknown)'),
+      'detail / target path: ' + (target || '(none)'),
+      'current page: ' + pagePath,
+      '?next= query: ' + (nextParam || '(none)'),
+      'document.referrer: ' + (document.referrer || '(empty)'),
+      'origin: ' + (window.location.origin || ''),
+      '',
+      '— Protected report —',
+      parsed
+        ? 'vertical=' +
+          parsed.vertical +
+          ' · catalog id=' +
+          parsed.id +
+          ' · path=' +
+          parsed.pathOnly
+        : 'not a /clinics|hotels/NNN path (admin shell or other gated URL)',
+      '',
+      '— Why this happens —',
+      'Full-page GET requests to private numbered reports (e.g. /clinics/011/) are gated in server.mjs by HttpOnly operator cookies (admin JWT or operator portal session).',
+      'localStorage/sessionStorage JWTs are used for API calls from JavaScript but are NOT sent on normal HTML navigation, so login.html can think you are signed in while the server still redirects you back to login.',
+      'If bootstrap-from-portal fails or the operator cookie is missing, you get login → report → login repeatedly.',
+      '',
+      '— Browser storage (JWT in JS only) —',
+      jwtKeySummary(),
+      'portal JWT shape: ' + portalJwtShapeForDebug(portalJwt),
+      'admin JWT in storage: ' + (adminJwt ? 'present · len=' + adminJwt.length : 'not set'),
+      'portal keys: sessionStorage=' + (portalSites.ss ? 'yes' : 'no') + ' · localStorage=' + (portalSites.ls ? 'yes' : 'no'),
+      '',
+      '— Loop counters (this tab, last ~15s) —',
+      'admin auth redirect count (so_admin_auth_redirect_count): ' + counters.adminCount,
+      'operator gate touch (so_operator_gate_loop): ' + gateLoopTxt,
+      'clinic login bounce (so_clinic_login_loop): ' + clinicLoopTxt,
+      '',
+      '— Suggested fix —',
+      '1. Stay on this page (do not refresh in a loop).',
+      '2. Open DEBUG (button bottom-right) → category [AUTH-L] rows 11–12.',
+      '3. Sign in at /admin/users with the operator password (ADMIN_PASSWORD_HASH on the Node server), or use the operator email on portal login so bootstrap-from-portal can mint the HttpOnly cookie.',
+      '4. If it still fails: clear site data for this hostname, sign in again, then open the report once.',
+      '5. Clinic 010 is a public sample; 011 requires operator access — compare behavior on /clinics/010/ vs /clinics/011/.',
+      '',
+      '— For engineers —',
+      'Probe: sessionStorage key ' + LOGIN_LOOP_PROBE_KEY + ' · touch clinic loop before navigate · block second attempt within ' + CLINIC_LOGIN_LOOP_MS + 'ms',
+    ].join('\n');
+  }
+
+  function showLoginLoopOnPageBanner(text) {
+    var id = 'soLoginLoopBanner';
+    var el = document.getElementById(id);
+    if (!el) {
+      el = document.createElement('section');
+      el.id = id;
+      el.setAttribute('role', 'alert');
+      el.className = 'so-login-loop-banner';
+      el.style.cssText =
+        'margin:1rem auto;max-width:42rem;padding:1rem 1.15rem;border:2px solid #b45309;background:#fffbeb;color:#1c1917;' +
+        'font-family:ui-monospace,monospace;font-size:12px;line-height:1.45;white-space:pre-wrap;overflow:auto;' +
+        'max-height:min(70vh,520px);z-index:9999;position:relative;box-sizing:border-box;';
+      var host = document.querySelector('.tf-portal') || document.querySelector('main') || document.body;
+      if (host && host.firstChild) host.insertBefore(el, host.firstChild);
+      else document.body.insertBefore(el, document.body.firstChild);
+    }
+    el.textContent = text;
+    el.style.display = 'block';
+    try {
+      el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    } catch (eScroll) {}
+  }
+
   function portalJwtStorageSites() {
     var keys = ['so_user_jwt', 'so_clinic_jwt'];
     var ss = false;
@@ -1332,6 +1508,55 @@
         ? ' · likely=JWT from different API host/secret or user missing in this origin’s store'
         : ''),
   });
+  var loopProbe = readLoginLoopProbe();
+  var loopCounters = readLoginLoopCounters();
+  var gateLoopTxt = '(none)';
+  if (loopCounters.gateLoop && loopCounters.gateLoop.path) {
+    gateLoopTxt =
+      'path=' +
+      loopCounters.gateLoop.path +
+      (loopCounters.gateLoop.at ? ' · at=' + new Date(Number(loopCounters.gateLoop.at)).toISOString() : '');
+  }
+  var clinicLoopTxt = '(none)';
+  if (loopCounters.clinicLoop && loopCounters.clinicLoop.path) {
+    clinicLoopTxt =
+      'path=' +
+      loopCounters.clinicLoop.path +
+      (loopCounters.clinicLoop.at
+        ? ' · at=' + new Date(Number(loopCounters.clinicLoop.at)).toISOString()
+        : '');
+  }
+  lines.push({
+    cat: 'AUTH-L',
+    text:
+      '11 · login loop guard: ' +
+      (loopProbe
+        ? 'BLOCKED · source=' +
+          (loopProbe.source || '?') +
+          (loopProbe.detail ? ' · detail=' + loopProbe.detail : '') +
+          ' · at=' +
+          (loopProbe.at || '?') +
+          (loopProbe.next ? ' · next=' + loopProbe.next : '')
+        : loopCounters.adminCount >= 2
+          ? 'likely loop (admin redirect count=' + loopCounters.adminCount + ') — no probe yet'
+          : loopCounters.adminCount === 1 || loopCounters.gateLoop || loopCounters.clinicLoop
+            ? 'watch · adminRedirectCount=' +
+              loopCounters.adminCount +
+              ' · operatorGate=' +
+              gateLoopTxt +
+              ' · clinicBounce=' +
+              clinicLoopTxt
+            : 'ok · no loop detected this session') +
+      ' · fix=open /admin/users with operator password or POST bootstrap-from-portal before /admin/* or private /clinics/NNN/',
+  });
+  if (loopProbe && loopProbe.longMessage) {
+    var lm = String(loopProbe.longMessage);
+    if (lm.length > 900) lm = lm.slice(0, 900) + '… (see on-page banner for full text)';
+    lines.push({
+      cat: 'AUTH-L',
+      text: '12 · loop diagnostic (full): ' + lm.replace(/\n/g, ' ↵ '),
+    });
+  }
 
   lines.push({
     cat: 'OPS',
@@ -1722,9 +1947,48 @@
   }
 
   /** login.html calls after a failed sign-in so DEBUG FAB is visible without ?debug=1 */
-  global.soDebugReveal = function soDebugReveal() {
+  global.soDebugReveal = function soDebugReveal(opts) {
     if (!document.getElementById(BTN_ID)) mount();
+    if (opts && opts.openPanel) {
+      var panel = document.getElementById(PANEL_ID);
+      var fab = document.getElementById(BTN_ID);
+      if (panel && fab && panel.classList.contains('is-hidden')) fab.click();
+    }
   };
+
+  /** Record a blocked login↔admin/clinic redirect loop; long on-page text + DEBUG [AUTH-L] 11–12. */
+  global.soDebugNoteLoginLoop = function soDebugNoteLoginLoop(source, detail) {
+    var nextParam = '';
+    try {
+      nextParam = (new URLSearchParams(window.location.search).get('next') || '').trim();
+    } catch (eNp) {}
+    var longMessage = buildLoginLoopLongMessage(source, detail);
+    try {
+      sessionStorage.setItem(
+        LOGIN_LOOP_PROBE_KEY,
+        JSON.stringify({
+          at: new Date().toISOString(),
+          source: String(source || ''),
+          detail: detail != null ? String(detail) : '',
+          path: (window.location.pathname || '') + (window.location.search || ''),
+          next: nextParam,
+          referrer: document.referrer || '',
+          longMessage: longMessage,
+        })
+      );
+    } catch (eStore) {}
+    showLoginLoopOnPageBanner(longMessage);
+    global.soDebugReveal({ openPanel: true });
+    var status = document.getElementById('soDebugStatus');
+    if (status) {
+      status.textContent =
+        'Login redirect loop blocked — full diagnostic on page + DEBUG [AUTH-L] rows 11–12';
+    }
+  };
+
+  global.soTouchClinicLoginLoop = touchClinicLoginLoop;
+  global.soIsClinicLoginLoopBlocked = isClinicLoginLoopBlocked;
+  global.soClearClinicLoginLoop = clearClinicLoginLoop;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);

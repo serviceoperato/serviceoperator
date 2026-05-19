@@ -13,6 +13,86 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="stylesheet" href="../../styles.css"/>
 <link rel="stylesheet" href="audit-teaser.css"/>
+<style>
+  .so-hero-band {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px 32px;
+    margin-bottom: 32px;
+  }
+  .so-hero-band__copy {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .so-hero-band__copy .so-subhead {
+    margin-bottom: 0;
+  }
+  .so-hero-band__stat {
+    flex: 0 1 340px;
+    margin: 0;
+    padding: 0;
+    text-align: right;
+    font-family: 'DM Sans', sans-serif;
+    font-size: clamp(17px, 2.4vw, 22px);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -.02em;
+    color: var(--ink);
+  }
+  .so-hero-band__stat-pct {
+    display: block;
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(40px, 7vw, 64px);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -.03em;
+    color: var(--red);
+    margin-bottom: 6px;
+  }
+  @media (max-width: 720px) {
+    .so-hero-band {
+      flex-direction: column;
+    }
+    .so-hero-band__stat {
+      flex: none;
+      width: 100%;
+      text-align: left;
+    }
+  }
+  .report-010 .so-sample-disclaimer {
+    margin: 0;
+    padding: 14px 20px 18px;
+    background: #f0f0f0;
+    color: #4a4a4a;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    line-height: 1.5;
+    border-top: 1px solid #e0e0e0;
+  }
+  .report-010 .so-sample-disclaimer p {
+    margin: 0;
+    max-width: 820px;
+    margin-inline: auto;
+  }
+  .report-010 .so-sample-disclaimer p + p {
+    margin-top: 6px;
+  }
+  .report-010 .so-sample-disclaimer__label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #333333;
+  }
+  .report-010 .so-sample-disclaimer__lead {
+    color: #333333;
+  }
+  .report-010 .so-sample-disclaimer__lead strong {
+    font-weight: 600;
+    color: #333333;
+  }
+</style>
 <script src="/page-skeleton.js"></script>
 <script src="/so-api.js"></script>
 </head>
@@ -47,12 +127,19 @@
     </div>
   </div>
 
-  <p class="so-eyebrow">ServiceOpera.to · AI Automation Audit · Sample Report · 010</p>
-  <h1 class="so-headline">Clinic ABC</h1>
-  <p class="so-subhead">
-    Pattaya, Thailand · fictional sample. All data invented for demonstration only.
-    Revenue is leaking every night through gaps automation closes in 14 days.
-  </p>
+  <header class="so-hero-band" aria-label="Clinic overview">
+    <div class="so-hero-band__copy">
+      <p class="so-eyebrow">48h · No call required · Free</p>
+      <h1 class="so-headline">Clinic ABC</h1>
+      <p class="so-subhead">
+        From an operator who's spent 5 years inside Pattaya's service economy.
+      </p>
+    </div>
+    <p class="so-hero-band__stat" lang="en">
+      <span class="so-hero-band__stat-pct">73%</span>
+      of clinics lose leads between 10&nbsp;PM and 8&nbsp;AM
+    </p>
+  </header>
 
   <!-- 1 · KPI bar — three headline numbers -->
   <div class="so-kpi-row so-kpi-row--shock" aria-label="Key audit metrics">
@@ -283,7 +370,7 @@
         data-inquiry-topic="48-hour private audit"
         data-inquiry-sector-preset="clinics"
         data-inquiry-source="/clinics/010/?from=sample&amp;utm_content=report_010"
-        data-inquiry-submit="Get full report →"
+        data-inquiry-submit="Get this audit for my business →"
       ></div>
       <p class="so-gate-text">
         <strong>9 more sections follow</strong> — Business Snapshot, Booking Friction, Review Gap,
@@ -308,12 +395,63 @@
   <div class="footer-tagline">Report 010 · Admin-only audit teaser · Fictional clinic ABC.<br/>Jack from ServiceOpera.to</div>
 </footer>
 
+<aside class="so-sample-disclaimer" role="note" aria-label="Sample report notice">
+  <p class="so-sample-disclaimer__label">Sample</p>
+  <p class="so-sample-disclaimer__lead">
+    <strong>SAMPLE REPORT</strong> — fictional clinic, real methodology.
+  </p>
+  <p lang="it">
+    Questo è un esempio del formato che riceveresti per la tua attività. I numeri qui sono inventati;
+    nel tuo audit sarebbero estratti dai tuoi canali pubblici reali in 48h.
+  </p>
+</aside>
+
+<div class="so-sticky-cta" id="soStickyCta" data-so-sticky-cta hidden>
+  <div class="so-sticky-cta__inner">
+    <span class="so-sticky-cta__hint" aria-hidden="true">48h · Free · No call</span>
+    <button type="button" class="so-sticky-cta__btn" id="soStickyCtaOpen" data-so-audit-modal-open>
+      Get your free audit
+    </button>
+  </div>
+</div>
+
+<div
+  class="so-modal"
+  id="soAuditModal"
+  role="dialog"
+  aria-modal="true"
+  aria-hidden="true"
+  aria-labelledby="soAuditModalTitle"
+  aria-describedby="soAuditModalDesc"
+>
+  <div class="so-modal__backdrop" data-so-modal-close tabindex="-1"></div>
+  <div class="so-modal__panel">
+    <button type="button" class="so-modal__close" data-so-modal-close aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h2 class="so-modal__title" id="soAuditModalTitle">Get your free audit</h2>
+    <p class="so-modal__lede" id="soAuditModalDesc">
+      48-hour private audit — no call required. Enter your work email and we will prepare an audit for your business.
+    </p>
+    <div
+      id="soModalInquiry"
+      class="so-gate-inquiry so-modal__inquiry"
+      data-inquiry-form
+      data-inquiry-topic="48-hour private audit"
+      data-inquiry-sector-preset="clinics"
+      data-inquiry-source="/clinics/010/?from=sample&amp;utm_content=report_010_sticky"
+      data-inquiry-submit="Get this audit for my business →"
+    ></div>
+  </div>
+</div>
+
 <script src="/sw-register.js"></script>
 <script src="/site-nav-drawer.js"></script>
 <script src="/user-account-menu.js"></script>
 <script src="../../theme.js"></script>
 <script src="../../debug.js"></script>
 <script src="/inquiry-form.js" defer></script>
+<script src="audit-inquiry-modal.js" defer></script>
 <script src="audit-teaser.js" defer></script>
 </body>
 </html>

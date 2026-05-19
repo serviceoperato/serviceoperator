@@ -782,6 +782,7 @@
   }
 
   function redirectAfterOperatorHtmlGateReady(path, bearer) {
+    if (path && blockClinicLoginLoopIfNeeded(path, 'clinic-operator-gate')) return;
     if (
       typeof window.soNavigateOperatorPath === 'function' &&
       path &&
@@ -817,6 +818,8 @@
         return;
       }
       if (typeof window.soClearOperatorGateLoop === 'function') window.soClearOperatorGateLoop();
+      if (typeof window.soClearClinicLoginLoop === 'function') window.soClearClinicLoginLoop();
+      touchClinicLoginLoopBeforeNavigate(path);
       try {
         window.location.replace(path);
       } catch (eGate) {
@@ -1100,6 +1103,58 @@
     return false;
   }
 
+  function normalizeClinicLoopPath(path) {
+    var p = String(path || '').split('?')[0].split('#')[0];
+    if (p.length > 1 && p.charAt(p.length - 1) === '/') p = p.slice(0, -1);
+    return p;
+  }
+
+  function recordClinicBounceOnLoginLanding() {
+    if (!nextPath || !isPrivateNumberedReportNextPath(nextPath)) return;
+    try {
+      var ref = document.referrer || '';
+      if (!ref) return;
+      var refPath = normalizeClinicLoopPath(new URL(ref, window.location.origin).pathname);
+      if (refPath === normalizeClinicLoopPath(nextPath)) {
+        if (typeof window.soTouchClinicLoginLoop === 'function') {
+          window.soTouchClinicLoginLoop(nextPath);
+        }
+      }
+    } catch (eBounce) {}
+  }
+
+  function blockClinicLoginLoopIfNeeded(targetPath, source) {
+    var path = targetPath || nextPath;
+    if (!path || !isPrivateNumberedReportNextPath(path)) return false;
+    if (
+      typeof window.soIsClinicLoginLoopBlocked === 'function' &&
+      window.soIsClinicLoginLoopBlocked(path)
+    ) {
+      if (typeof window.soDebugNoteLoginLoop === 'function') {
+        window.soDebugNoteLoginLoop(source || 'clinic-login-loop', path);
+      }
+      if (bannerSession) {
+        bannerSession.textContent =
+          'Sign-in redirect loop blocked for ' +
+          path +
+          '. Read the diagnostic box on this page and DEBUG → [AUTH-L] rows 11–12.';
+        bannerSession.classList.remove('is-hidden');
+      }
+      setLoginErr(
+        'Navigation stopped to prevent a loop. See the full diagnostic message above and the DEBUG panel.'
+      );
+      return true;
+    }
+    return false;
+  }
+
+  function touchClinicLoginLoopBeforeNavigate(targetPath) {
+    if (!targetPath || !isPrivateNumberedReportNextPath(targetPath)) return;
+    if (typeof window.soTouchClinicLoginLoop === 'function') {
+      window.soTouchClinicLoginLoop(targetPath);
+    }
+  }
+
   /** Paths whose HTML is gated by operator/admin HttpOnly cookies (server.mjs). */
   function nextPathRequiresOperatorHtmlGate(path) {
     if (!path || path.charAt(0) !== '/' || path.indexOf('//') === 0) return false;
@@ -1110,6 +1165,7 @@
   }
 
   function redirectToOperatorGatedNext(path, bearer) {
+    if (blockClinicLoginLoopIfNeeded(path, 'clinic-gated-next')) return;
     if (bearer && looksLikeJwt(bearer) && nextPathRequiresOperatorHtmlGate(path)) {
       return redirectAfterOperatorHtmlGateReady(path, bearer);
     }
@@ -1241,6 +1297,9 @@
     if (resetToken && resetForm) return;
     if (accountSettingsMode) return;
     if (hadSessionExpiredReason) return;
+
+    recordClinicBounceOnLoginLanding();
+    if (nextPath && blockClinicLoginLoopIfNeeded(nextPath, 'clinic-already-signed-in')) return;
 
     var adminTok = getAdminJwtLogin();
     var portalTok = getPortalJwtLogin();

@@ -3441,6 +3441,9 @@
           return;
         }
         if (noteAdminAuthRedirectLoop() >= 2) {
+          if (typeof window.soDebugNoteLoginLoop === 'function') {
+            window.soDebugNoteLoginLoop('admin-auth-redirect', window.location.pathname);
+          }
           showOperatorBootstrapFailure();
           return;
         }
@@ -3566,6 +3569,12 @@
       return;
     }
     if (noteAdminAuthRedirectLoop() >= 2) {
+      if (typeof window.soDebugNoteLoginLoop === 'function') {
+        window.soDebugNoteLoginLoop(
+          'admin-unified-login',
+          window.location.pathname + window.location.search
+        );
+      }
       showOperatorBootstrapFailure();
       return;
     }

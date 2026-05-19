@@ -28,11 +28,23 @@
     return wrap;
   }
 
+  var mountCounter = 0;
+
   function el(tag, className, text) {
     var node = document.createElement(tag);
     if (className) node.className = className;
     if (text != null) node.textContent = text;
     return node;
+  }
+
+  function fieldIds(root) {
+    var n = ++mountCounter;
+    var base = (root.id || 'inquiry').replace(/[^a-zA-Z0-9_-]/g, '') || 'inquiry';
+    return {
+      email: base + '-email-' + n,
+      improve: base + '-improve-' + n,
+      hp: base + '-company-url-' + n,
+    };
   }
 
   function mount(root) {
@@ -43,6 +55,7 @@
     var sectorPreset = (root.getAttribute('data-inquiry-sector-preset') || '').trim().toLowerCase();
     var source = (root.getAttribute('data-inquiry-source') || '').trim() || window.location.pathname || '/';
     var submitLabel = (root.getAttribute('data-inquiry-submit') || '').trim() || 'Send inquiry';
+    var ids = fieldIds(root);
 
     var form = el('form', 'inquiry-form');
     form.setAttribute('novalidate', 'novalidate');
@@ -53,11 +66,11 @@
     status.hidden = true;
 
     var emailWrap = el('label', 'inquiry-form__field');
-    emailWrap.setAttribute('for', 'inquiry-email');
+    emailWrap.setAttribute('for', ids.email);
     emailWrap.appendChild(el('span', 'inquiry-form__label', 'Work email'));
     var emailInput = document.createElement('input');
     emailInput.type = 'email';
-    emailInput.id = 'inquiry-email';
+    emailInput.id = ids.email;
     emailInput.name = 'email';
     emailInput.className = 'inquiry-form__control';
     emailInput.required = true;
@@ -97,10 +110,10 @@
     }
 
     var improveWrap = el('label', 'inquiry-form__field');
-    improveWrap.setAttribute('for', 'inquiry-improve');
+    improveWrap.setAttribute('for', ids.improve);
     improveWrap.appendChild(el('span', 'inquiry-form__label', 'What should we improve first?'));
     var improveTa = document.createElement('textarea');
-    improveTa.id = 'inquiry-improve';
+    improveTa.id = ids.improve;
     improveTa.name = 'improveFirst';
     improveTa.className = 'inquiry-form__control';
     improveTa.rows = 4;
@@ -111,10 +124,10 @@
     var hpWrap = el('div', 'inquiry-form__hp');
     hpWrap.setAttribute('aria-hidden', 'true');
     var hpLab = el('label', null, 'Company website');
-    hpLab.setAttribute('for', 'inquiry-company-url');
+    hpLab.setAttribute('for', ids.hp);
     var hpInput = document.createElement('input');
     hpInput.type = 'text';
-    hpInput.id = 'inquiry-company-url';
+    hpInput.id = ids.hp;
     hpInput.name = 'company_url';
     hpInput.tabIndex = -1;
     hpInput.autocomplete = 'off';
