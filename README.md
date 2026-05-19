@@ -256,4 +256,53 @@ Don't dilute the brand. The whole point is to *not* look like every other AI-age
 
 ---
 
+## 9. Dev log — 2026-05-19
+
+Session notes from production fixes and admin work (build **v1.7.20** at end of day).
+
+### Admin / operator login redirect loop (fix)
+
+**Problem:** After portal or operator sign-in, the browser bounced between `/login.html?next=/admin/…` (or `/admin/transcriptions`, `/admin/user-profiling`, private `/clinics/NNN/`) and the target page. Users saw a blank loop or the loop-block UI after two cycles. `/clinics/011/` was worse than `/clinics/010/` because 011 was still treated as private.
+
+**Root cause (two layers):**
+
+1. **HttpOnly vs `localStorage`:** Full-page navigations to `/admin/*` and gated clinic HTML are protected by an **HttpOnly operator cookie** (`server.mjs` + `operator-html-gate.js`). `login.html` often had a valid **JWT in `localStorage`** (`so_admin_jwt` / portal JWT) and redirected immediately, but the **cookie was missing** (never minted, blocked third-party cookie rules, or stale token). The server sent the user back to login → loop.
+2. **Policy mismatch for sample clinics:** `/clinics/010/` was public; `/clinics/011/` was in `PRIVATE_CLINIC_REPORT_IDS`, so unauthenticated GETs 302’d to login even though 011 is the same teaser funnel as 010.
+
+**Files changed (main):**
+
+| File | Role |
+|---|---|
+| `public/login.html` | `ensureOperatorHtmlGateCookie()` → `POST /api/admin/bootstrap-from-portal`, probe `GET /api/admin/session` **before** `location.replace` to gated paths; cookie-first branch in `maybeRedirectIfAlreadySignedIn()`; stop storage-only auto-redirect for gated `next` |
+| `public/admin.js` | Cookie-first session restore on admin shell; mint cookie from stored bearer before sending user to login; redirect-loop cap (~3 hops); shared `adminAuthHeaders()` for cookie-only API calls |
+| `public/operator-html-gate.js` | Gate helpers used by login + admin shell |
+| `server.mjs` | `PUBLIC_CLINIC_REPORT_IDS` = `010`, `011`; operator gate behavior |
+| `scripts/apply-admin-auth-fix.mjs` | Regenerated/consolidated admin auth restore logic (used during the sweep) |
+
+**Solution steps (what to do after deploy):**
+
+1. Ensure **`PORTAL_JWT_SECRET`** (or `ADMIN_JWT_SECRET`) is set on the Node service so cookies survive redeploys.
+2. Sign in on **`/login.html`** (or `/admin/users` with operator password). For `?next=/admin/transcriptions` (or any `/admin/*` path), the client must complete **`bootstrap-from-portal`** and see **`GET /api/admin/session` → `{ ok: true }`** before navigating.
+3. **`/api/*` must be same-origin** with the HTML host (`so-api.js`); cross-origin API calls cannot set HttpOnly cookies (see §5 troubleshooting).
+4. If a loop persists: clear site data for `serviceopera.to`, sign in again; use `/admin/users` + operator password as fallback (banner text in `login.html`).
+5. For sample audits, use **`/clinics/010/`** or **`/clinics/011/`** without expecting a private-report gate — both are public teasers now.
+
+Key commits: `cd7ba1e1` (transcriptions `next`), `192203df` (cookie-first admin), `0bb1e78b` (all operator shell routes), `9dfded4b` / `da61da76` (v1.7.17 mint-before-redirect), earlier `c072b694` / clinic `011` public alignment.
+
+### Other changes today
+
+- **Copyright footer:** Replaced mojibake `` (U+FFFD) with `&copy;` in `public/index.html` and `public/client.html` so footers render **© 2026 www.serviceopera.to**.
+- **SAMPLE REPORT label:** Clinic sample teasers use **SAMPLE REPORT** (not “Sample”) in `public/clinics/010/index.html`, `public/clinics/011/index.html`, and matching `audit-report.json` `en_lead` strings.
+- **Transcription counts 29 vs 26:** Voice Recorder (`/admin/voice-recorder`) counts **all** `content/transcriptions/*.md` on disk (**29**). Transcriptions admin indexed **26 AI-ready sources** (1 meeting + 25 notes); **3 raw `.md` files** were not in the index yet. Fix in progress: `lib/transcriptions/store.mjs` `refreshRawSourceCounts()`, clearer index hint in `public/admin-transcriptions.js` (`N transcription(s) · M AI-ready source(s)`). Rebuild index / deploy to align production UI.
+- **Duplicate admin SVG icons:** User flagged identical SVGs in admin/homepage icon sets (“must never be identical”). Investigation started (`scripts/find-dup-icons.mjs`); regenerate distinct line icons per semantic label — **not finished** at doc time.
+- **Release train:** Many patch releases today (**v1.7.0 → v1.7.20**): homepage hero/phone CTA, admin auth loop fixes, footer/journey pages, user-profiling cookie-only session (`72ccecc9`, v1.7.11).
+- **Homepage hero:** Restored **v1.7.0**-style primary CTA to free audit / sample paths; `phone.png` hero sizing tweaks; reduced repeated “audit” wording in footer/banner/Jack block.
+- **Typography:** Site-wide enforcement — only **Inter** (UI/display) and **JetBrains Mono** (labels/code); removed DM Sans / DM Serif / Fraunces from templates. Update §8 bullet if you still see old font names there.
+- **DEBUG FAB:** Shows **version number only** (no extra debug chrome in production footers).
+- **Admin transcriptions login:** Dedicated fix so `?next=/admin/transcriptions` mints operator cookie before shell load (`cd7ba1e1`).
+- **Railway / deploy:** Routine version bumps in `package.json`, `public/app-version.json`, and cache-bust query params on `admin.js` / `login.html` (`?v=1.7.20`).
+- **Operator console reminder:** `RESEND_*` still drives portal sign-up / forgot-password / login OTP — **not** operator console password login (`ADMIN_PASSWORD_HASH`).
+
+---
+
 Good hunting, Jack.

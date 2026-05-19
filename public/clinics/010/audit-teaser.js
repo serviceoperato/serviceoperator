@@ -2,7 +2,7 @@
   'use strict';
 
   var DONUT_DATA = [
-    { label: 'Booking Friction', value: 28, color: '#4f46e5' },
+    { label: 'Booking Friction', value: 28, color: '#dc2626' },
     { label: 'No Follow-Up', value: 22, color: '#f59e0b' },
     { label: 'Review Gap', value: 18, color: '#2563eb' },
     { label: 'Multilingual Miss', value: 15, color: '#7c3aed' },

@@ -5,7 +5,7 @@
   'use strict';
 
   /** Bumped when dashboard markup/behavior changes (cache-bust aid). */
-  window.TX_DASHBOARD_UI_REV = 18;
+  window.TX_DASHBOARD_UI_REV = 19;
 
   /** Detail page: collapsed preview length for full transcription reference (chars). */
   var DETAIL_REF_PREVIEW_CHARS = 650;
@@ -3786,6 +3786,18 @@
     };
   }
 
+  /** Total voice transcriptions on disk — same basis as /admin/voice-recorder "Transcriptions" stat. */
+  function voiceTranscriptionCount() {
+    var rs = state.rawSources || {};
+    var raw = rs.total != null ? rs.total : state.rawTranscriptionCount || 0;
+    if (raw > 0) return raw;
+    return state.items.length || (state.sourceCounts && state.sourceCounts.total) || 0;
+  }
+
+  function aiReadySourceCount() {
+    return state.items.length || (state.sourceCounts && state.sourceCounts.total) || 0;
+  }
+
   function setLoadHint(text, kind) {
     var el = byId('txLoadHint');
     if (!el) return;
@@ -5639,18 +5651,19 @@
 
         var rsHint = norm.rawSources || {};
         var waiting = rsHint.waitingForProcessing || 0;
-        var rawOnDisk = rsHint.total != null ? rsHint.total : norm.rawTranscriptionCount || 0;
+        var txTotal = voiceTranscriptionCount();
+        var aiReady = aiReadySourceCount();
         setLoadHint(
           'Index ' +
             (norm.generatedAt ? new Date(norm.generatedAt).toLocaleString() : 'now') +
             ' · ' +
-            (state.items.length || state.sourceCounts.total || 0) +
-            ' voice source(s) · ' +
+            txTotal +
+            ' transcription(s) · ' +
+            aiReady +
+            ' AI-ready source(s) · ' +
             (state.counts.total || 0) +
-            ' extracted item(s) · ' +
-            waiting +
-            ' source(s) waiting for AI' +
-            (rawOnDisk ? ' · ' + rawOnDisk + ' raw file(s) archived' : ''),
+            ' extracted item(s)' +
+            (waiting ? ' · ' + waiting + ' waiting for AI' : ''),
           'ok'
         );
 
