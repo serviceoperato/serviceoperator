@@ -996,6 +996,30 @@
       });
   }
 
+  function fetchAdminCookieSession() {
+    var url = typeof soApiUrl === 'function' ? soApiUrl('/api/admin/session') : '/api/admin/session';
+    var cred = typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin';
+    return fetch(url, {
+      method: 'GET',
+      credentials: cred,
+      cache: 'no-store',
+    })
+      .then(function (r) {
+        var status = r.status;
+        return r.text().then(function (text) {
+          var j = null;
+          try {
+            j = text ? JSON.parse(text) : null;
+          } catch (eCk) {
+            j = null;
+          }
+          return { ok: r.ok, status: status, json: j };
+        });
+      })
+      .catch(function () {
+        return { ok: false, status: 0, json: null };
+      });
+  }
   function fetchAdminUserSession(bearer) {
     var url = typeof soApiUrl === 'function' ? soApiUrl('/api/admin/session') : '/api/admin/session';
     var cred = typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin';

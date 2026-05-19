@@ -3351,6 +3351,14 @@
         return false;
       });
   }
+  /** HttpOnly operator cookie without localStorage JWT — server HTML gate already passed. */
+  function tryRestoreCookieOnlyOperatorSession() {
+    return probeAdminCookieSession().then(function (ok) {
+      if (!ok) return false;
+      showWorkspace();
+      return true;
+    });
+  }
 
   function showAdminLoginGate() {
     if (workspace) workspace.classList.add('is-hidden');
