@@ -258,10 +258,39 @@
   .page-home .so-b2b__hero {
     position: relative;
     isolation: isolate;
+    overflow: visible;
+  }
+  .page-home .so-b2b__hero-layout {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.75rem 1.25rem;
+    align-items: start;
+  }
+  .page-home .so-b2b__hero-copy {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     gap: 0.28rem;
-    overflow: visible;
+  }
+  .page-home .so-b2b__hero-media {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    align-self: start;
+    max-width: min(42vw, 19.25rem);
+  }
+  @media (max-width: 479px) {
+    .page-home .so-b2b__hero-layout {
+      grid-template-columns: minmax(0, 1fr) minmax(5.5rem, 38vw);
+      gap: 0.5rem 0.65rem;
+    }
+    .page-home .so-b2b__hero-media {
+      max-width: min(38vw, 14rem);
+    }
   }
   /* Reuse `.client-hero h1.clinics-hero__title` cascade like clinics report; strip shell padding (outer `.so-b2b` already gutters). */
   .page-home .so-b2b__hero.client-hero {
@@ -377,71 +406,24 @@
     background: var(--so-workflow-accent);
     color: var(--so-workflow-on-accent);
   }
-  .page-home .so-b2b__btn--ghost {
-    background: transparent;
-    color: var(--so-ink);
-    border-color: var(--so-line);
-  }
-  .page-home .so-b2b__btn--ghost:hover {
-    border-color: var(--so-indigo);
-    color: var(--so-indigo);
-  }
-  .page-home .so-b2b__btn--ghost .so-b2b__btn-play {
-    border-color: var(--so-workflow-accent);
-    color: var(--so-workflow-accent);
-  }
-  .page-home .so-b2b__btn--ghost:hover .so-b2b__btn-play {
-    border-color: var(--so-indigo);
-    color: var(--so-indigo);
-  }
-  .page-home .so-b2b__btn-inner {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
-  }
-  .page-home .so-b2b__btn-play {
-    position: relative;
-    width: 1.35rem;
-    height: 1.35rem;
-    flex-shrink: 0;
-    border-radius: 50%;
-    border: 1.5px solid var(--so-workflow-accent);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-  }
-  .page-home .so-b2b__btn-play-ring {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    color: inherit;
-    pointer-events: none;
-  }
-  .page-home .so-b2b__btn-play-tri {
-    position: relative;
-    z-index: 1;
-    width: 0.45rem;
-    height: 0.45rem;
-    margin-left: 1px;
-    display: block;
-  }
-  .page-home .so-b2b__markets-row {
+  .page-home .so-b2b__btn--primary .so-b2b__btn-stack {
     display: flex;
-    align-items: flex-end;
-    justify-content: flex-end;
-    gap: 0.65rem;
-    margin: 0.35rem 0 0;
-    width: 100%;
-    max-width: 100%;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    line-height: 1.25;
+  }
+  .page-home .so-b2b__btn--primary .so-b2b__btn-sub {
+    font-size: 0.75rem;
+    font-weight: 500;
+    opacity: 0.92;
+    letter-spacing: 0.01em;
   }
   .page-home .so-b2b__markets {
-    margin: 0;
+    margin: 0.35rem 0 0;
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
-    flex: 1;
     min-width: 0;
     font-size: clamp(0.7rem, 2vw, 0.75rem);
     font-weight: 500;
@@ -451,22 +433,11 @@
   }
   .page-home .so-b2b__markets-phone {
     display: block;
-    flex-shrink: 0;
     width: 100%;
-    max-width: min(100%, 19.25rem);
     height: auto;
     object-fit: contain;
-    align-self: flex-end;
     pointer-events: none;
     user-select: none;
-  }
-  @media (max-width: 480px) {
-    .page-home .so-b2b__markets-row {
-      gap: 0.45rem;
-    }
-    .page-home .so-b2b__markets-phone {
-      max-width: min(100%, 14rem);
-    }
   }
   .page-home .so-b2b__markets-ico-slot {
     display: inline-flex;
@@ -1142,7 +1113,9 @@
   <div class="so-b2b__wrap">
     <header class="so-b2b__hero client-hero">
       <div class="so-b2b__hero-deco so-b2b__hero-deco--tr" aria-hidden="true"></div>
-      <p class="so-b2b__brand">www.serviceopera.to</p>
+      <div class="so-b2b__hero-layout">
+        <div class="so-b2b__hero-copy">
+          <p class="so-b2b__brand">www.serviceopera.to</p>
       <div class="client-hero__eyebrow">
         <span class="dot dot--live" aria-hidden="true"></span>
         <span class="mono">OPERATIONAL REVIEWS · SERVICE BUSINESSES</span>
@@ -1154,20 +1127,25 @@
       <p class="client-hero__lede so-b2b__hero-lede">We run an operational review for service business owners. You get a written brief on delivery gaps, prioritized fixes, and one scoped next step.</p>
 
       <div class="so-b2b__cta-row">
-        <a class="so-b2b__btn so-b2b__btn--primary" href="/free-audit.html">Get your free 48-hour ROI audit</a>
-        <a class="so-b2b__btn so-b2b__btn--ghost" href="/clinics/010/"><span class="so-b2b__btn-inner"><span class="so-b2b__btn-play" aria-hidden="true"><svg class="so-b2b__btn-play-ring" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15.75 18.495A7.5 7.5 0 0 1 8.25 18.495"/><path d="M5.505 15.75A7.5 7.5 0 0 1 5.505 8.25"/><path d="M8.25 5.505A7.5 7.5 0 0 1 15.75 5.505"/><path d="M18.495 8.25A7.5 7.5 0 0 1 18.495 15.75"/></svg><svg class="so-b2b__btn-play-tri" viewBox="0 0 10 12" width="10" height="12" aria-hidden="true"><polygon points="0,0 10,6 0,12" fill="currentColor"/></svg></span>See what you'll get</span></a>
+        <a class="so-b2b__btn so-b2b__btn--primary" href="/free-audit.html">
+          <span class="so-b2b__btn-stack">
+            <span class="so-b2b__btn-label">Get your free 48-hour ROI audit</span>
+            <span class="so-b2b__btn-sub">See what you'll receive first</span>
+          </span>
+        </a>
       </div>
-      <p class="so-b2b__cta-note">Written brief on gaps, leverage points, and one pilot — no obligation to run execution.</p>
-      <div class="so-b2b__markets-row">
-        <img
-          class="so-b2b__markets-phone"
-          src="/assets/phone.png"
-          alt=""
-          width="308"
-          height="432"
-          decoding="async"
-          aria-hidden="true"
-        />
+          <p class="so-b2b__cta-note">Written brief on gaps, leverage points, and one pilot — no obligation to run execution.</p>
+        </div>
+        <div class="so-b2b__hero-media" aria-hidden="true">
+          <img
+            class="so-b2b__markets-phone"
+            src="/assets/phone.png"
+            alt=""
+            width="308"
+            height="432"
+            decoding="async"
+          />
+        </div>
       </div>
     </header>
 
