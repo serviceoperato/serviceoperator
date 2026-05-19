@@ -1571,7 +1571,7 @@
     panel.innerHTML =
       '<div class="debug-panel__card">' +
       '<div class="debug-panel__head">' +
-      '<span class="mono debug-panel__title" id="soDebugTitle">— DEBUG · … checks</span>' +
+      '<span class="mono debug-panel__title" id="soDebugTitle">— … checks</span>' +
       '<button type="button" class="debug-panel__close mono" data-debug-close aria-label="Close panel"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg></button>' +
       '</div>' +
       '<p class="debug-panel__sub mono">STORE = browser storage only · FE = browser · BE = same-origin HTTP · DB = server PostgreSQL / user store · OPS = deploy/Railway · AUTH = portal JWT/session · <strong>AUTH-L</strong> = login/report handoff (10 rows after sign-in). Rows 01–08b: localStorage/sessionStorage (not Railway tables). Rows 69–78: <code>/api/debug/user-store</code> plus reference Node probe when this host is static-only. On <code>/admin/transcriptions</code>, <strong>[TX]</strong> rows (5). On <code>login.html</code>, <strong>[PW]</strong> rows too. Select the text below and copy (Ctrl+C), or use the button.</p>' +
@@ -1585,11 +1585,16 @@
     dock.appendChild(panel);
     document.body.appendChild(dock);
 
+    function normalizeVersion(ver) {
+      var v = String(ver || '').trim();
+      if (!v) return '';
+      return v.charAt(0) === 'v' || v.charAt(0) === 'V' ? v.slice(1) : v;
+    }
+
     function applyAppVersion(ver) {
-      if (!ver) return;
-      var v = String(ver).trim();
+      var v = normalizeVersion(ver);
       if (!v) return;
-      fab.textContent = FAB_LABEL + ' · ' + v;
+      fab.textContent = v;
       fab.setAttribute('data-so-debug-version', v);
       fab.removeAttribute('title');
       fab.setAttribute('aria-label', 'Show or hide debug information (version ' + v + ')');
@@ -1597,31 +1602,53 @@
 
     function fabVersionLabel() {
       var v = fab.getAttribute('data-so-debug-version');
-      if (v) return String(v).trim();
+      if (v) return normalizeVersion(v);
       var t = String(fab.textContent || '').trim();
-      var parts = t.split('·');
-      return parts.length > 1 ? parts[parts.length - 1].trim() : '';
+      if (!t || t === FAB_LABEL) return '';
+      return normalizeVersion(t);
     }
 
-    var verUrl =
-      typeof soApiUrl === 'function' ? soApiUrl('/api/version') : new URL('/api/version', window.location.origin).href;
-    fetch(verUrl, { cache: 'no-store', credentials: typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin' })
-      .then(function (r) {
-        return r.ok ? r.json() : null;
+    function fetchStaticAppVersion() {
+      var staticUrl = new URL('/app-version.json', window.location.origin).href;
+      return fetch(staticUrl, { cache: 'no-store', credentials: 'same-origin' })
+        .then(function (r) {
+          return r.ok ? r.json() : null;
+        })
+        .then(function (j) {
+          return j && j.version ? normalizeVersion(j.version) : '';
+        })
+        .catch(function () {
+          return '';
+        });
+    }
+
+    function resolveAppVersion() {
+      var verUrl =
+        typeof soApiUrl === 'function' ? soApiUrl('/api/version') : new URL('/api/version', window.location.origin).href;
+      return fetch(verUrl, {
+        cache: 'no-store',
+        credentials: typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin',
       })
-      .then(function (j) {
-        if (j && j.version) applyAppVersion(j.version);
-        else {
-          fab.textContent = FAB_LABEL;
-          fab.removeAttribute('data-so-debug-version');
-          fab.setAttribute('title', 'Debug information (version API unavailable)');
-        }
-      })
-      .catch(function () {
+        .then(function (r) {
+          return r.ok ? r.json() : null;
+        })
+        .then(function (j) {
+          if (j && j.version) return normalizeVersion(j.version);
+          return fetchStaticAppVersion();
+        })
+        .catch(function () {
+          return fetchStaticAppVersion();
+        });
+    }
+
+    resolveAppVersion().then(function (v) {
+      if (v) applyAppVersion(v);
+      else {
         fab.textContent = FAB_LABEL;
         fab.removeAttribute('data-so-debug-version');
-        fab.setAttribute('title', 'Debug information (version API unavailable)');
-      });
+        fab.setAttribute('title', 'Debug information (version unavailable)');
+      }
+    });
 
     var out = document.getElementById('soDebugOut');
     var status = document.getElementById('soDebugStatus');
@@ -1642,7 +1669,9 @@
           var titleEl = document.getElementById('soDebugTitle');
           var vv = fabVersionLabel();
           if (titleEl) {
-            titleEl.textContent = vv ? '— DEBUG v' + vv + ' · ' + lines.length + ' checks' : '— DEBUG · ' + lines.length + ' checks';
+            titleEl.textContent = vv
+              ? '— ' + vv + ' · ' + lines.length + ' checks'
+              : '— ' + lines.length + ' checks';
           }
           out.textContent = lines
             .map(function (row) {
