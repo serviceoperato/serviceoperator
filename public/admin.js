@@ -291,9 +291,9 @@
 
   function noteAdminAuthRedirectLoop() {
     try {
-      var count = Number(sessionStorage.getItem(ADMIN_AUTH_LOOP_KEY) || '0') + 1;
-      sessionStorage.setItem(ADMIN_AUTH_LOOP_KEY, String(count));
-      return count;
+      var n = Number(sessionStorage.getItem(ADMIN_AUTH_LOOP_KEY) || '0') + 1;
+      sessionStorage.setItem(ADMIN_AUTH_LOOP_KEY, String(n));
+      return n;
     } catch (e) {
       return 0;
     }
@@ -2324,15 +2324,7 @@
   }
 
   function loadUserProfiling() {
-    var token = getAdminBearer();
     var hint = document.getElementById('userProfilingHint');
-    if (!token) {
-      if (hint) hint.textContent = 'Sign in with operator credentials on the Node host to load profiling.';
-      userProfilingLoadState = 'error';
-      userProfilingRows = [];
-      renderUserProfilingTable();
-      return;
-    }
     userProfilingLoadState = 'loading';
     userProfilingRows = [];
     renderUserProfilingTable();
@@ -2342,7 +2334,7 @@
       method: 'GET',
       credentials: apiCred(),
       cache: 'no-store',
-      headers: { Authorization: 'Bearer ' + token },
+      headers: adminAuthHeaders(),
     })
       .then(function (r) {
         return r.json().then(function (j) {
@@ -3386,6 +3378,7 @@
         return false;
       });
   }
+
   /** HttpOnly operator cookie without localStorage JWT — server HTML gate already passed. */
   function tryRestoreCookieOnlyOperatorSession() {
     return probeAdminCookieSession().then(function (ok) {
