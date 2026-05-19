@@ -3393,15 +3393,55 @@
     } catch (eBoot) {}
   }, 12000);
 
+  function showOperatorBootstrapFailure() {
+    clearAdminAuthRedirectLoop();
+    if (typeof window.soClearOperatorGateLoop === 'function') window.soClearOperatorGateLoop();
+    showAdminLoginGate();
+    if (hint) {
+      setHint(
+        typeof window.soOperatorGateFailMessage === 'string'
+          ? window.soOperatorGateFailMessage
+          : 'Signed in to the clinic portal, but this browser did not receive an operator session cookie. Use the operator password below (same host as /admin), or sign out and sign in again.',
+        'error'
+      );
+    }
+    revealAdminBootAfterPaint();
+  }
+
   function tryRedirectToUnifiedLogin() {
+    var portalJwt = getPortalJwt();
+    if (portalJwt && decodeJwtIsOperator(portalJwt)) {
+      return bootstrapOperatorFromPortalJwt(portalJwt).then(function (booted) {
+        if (booted) {
+          clearAdminAuthRedirectLoop();
+          if (typeof window.soClearOperatorGateLoop === 'function') window.soClearOperatorGateLoop();
+          return tryRestoreJwtSession().then(function (jwtOk) {
+            if (jwtOk) {
+              revealAdminBootAfterPaint();
+              return;
+            }
+            return tryRestoreCookieOnlyOperatorSession().then(function (cookieOk) {
+              if (cookieOk) revealAdminBootAfterPaint();
+              else showOperatorBootstrapFailure();
+            });
+          });
+        }
+        showOperatorBootstrapFailure();
+      });
+    }
     return mintAdminCookieFromStoredJwt()
       .then(function () {
         return probeAdminCookieSession();
       })
       .then(function (ok) {
         if (ok) {
+          clearAdminAuthRedirectLoop();
           showWorkspace();
           revealAdminBootAfterPaint();
+          return;
+        }
+        if (noteAdminAuthRedirectLoop() >= 2) {
+          showOperatorBootstrapFailure();
           return;
         }
         redirectToUnifiedLogin();
@@ -3436,7 +3476,14 @@
     })
     .then(function (restored) {
       if (restored) {
+        clearAdminAuthRedirectLoop();
+        if (typeof window.soClearOperatorGateLoop === 'function') window.soClearOperatorGateLoop();
         revealAdminBootAfterPaint();
+        return;
+      }
+      var portalJwtFail = getPortalJwt();
+      if (portalJwtFail && decodeJwtIsOperator(portalJwtFail)) {
+        showOperatorBootstrapFailure();
         return;
       }
       if (capabilitiesFromOurServer && capabilitiesHttpOk) {
@@ -3513,10 +3560,13 @@
   }
 
   function redirectToUnifiedLogin() {
-    if (noteAdminAuthRedirectLoop() >= 3) {
-      clearAdminAuthRedirectLoop();
-      showAdminLoginGate();
-      revealAdminBootAfterPaint();
+    var portalJwt = getPortalJwt();
+    if (portalJwt && decodeJwtIsOperator(portalJwt)) {
+      showOperatorBootstrapFailure();
+      return;
+    }
+    if (noteAdminAuthRedirectLoop() >= 2) {
+      showOperatorBootstrapFailure();
       return;
     }
     var next = window.location.pathname + window.location.search + window.location.hash;

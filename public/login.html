@@ -14,7 +14,8 @@
 <link rel="stylesheet" href="styles.css" />
 <script src="/page-skeleton.js"></script>
 <script src="/so-api.js"></script>
-<script src="/portal-auth-routing.js?v=1.7.18"></script>
+<script src="/operator-html-gate.js?v=1.7.20"></script>
+<script src="/portal-auth-routing.js?v=1.7.20"></script>
 <script src="/portal-jwt.js"></script>
 <style>
   /* Portal login — serif title + sans UI (no monospace) */
@@ -781,20 +782,41 @@
   }
 
   function redirectAfterOperatorHtmlGateReady(path, bearer) {
+    if (
+      typeof window.soNavigateOperatorPath === 'function' &&
+      path &&
+      typeof soPortalIsAdminShellNextPath === 'function' &&
+      soPortalIsAdminShellNextPath(path)
+    ) {
+      return window.soNavigateOperatorPath(path, bearer, {
+        onFail: function (msg) {
+          if (bannerSession) {
+            bannerSession.textContent = String(msg || '');
+            bannerSession.classList.remove('is-hidden');
+          }
+          setLoginErr(
+            'Could not open the operator console in this browser. Open /admin/users and use the operator password, or clear site data and sign in again.'
+          );
+        },
+      });
+    }
     return ensureOperatorHtmlGateCookie(bearer).then(function (ready) {
       if (!ready) {
         if (bannerSession) {
           bannerSession.textContent =
-            'Signed in, but this browser did not receive an operator session cookie (required for ' +
-            path +
-            '). Try again, sign in at /admin with the operator password, or clear site data for serviceopera.to and sign in again.';
+            typeof window.soOperatorGateFailMessage === 'string'
+              ? window.soOperatorGateFailMessage
+              : 'Signed in, but this browser did not receive an operator session cookie (required for ' +
+                path +
+                '). Open /admin/users and sign in with the operator password, or clear site data and sign in again.';
           bannerSession.classList.remove('is-hidden');
         }
         setLoginErr(
-          'Could not open the operator page in this browser. Use /admin to sign in with the operator password, or reset the portal password with Forgot password above.'
+          'Could not open the operator page in this browser. Use /admin/users with the operator password, or reset the portal password with Forgot password above.'
         );
         return;
       }
+      if (typeof window.soClearOperatorGateLoop === 'function') window.soClearOperatorGateLoop();
       try {
         window.location.replace(path);
       } catch (eGate) {

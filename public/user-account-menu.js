@@ -231,7 +231,12 @@
         );
         continue;
       }
-      panel.appendChild(menuRow(resolveAdminPath(item.path), item.label, { accent: true }));
+      panel.appendChild(
+        menuRow(resolveAdminPath(item.path), item.label, {
+          accent: true,
+          operatorGatePath: item.path,
+        })
+      );
     }
   }
 
@@ -342,6 +347,55 @@
   document.addEventListener('click', onDocPointer);
   document.addEventListener('keydown', onDocKey);
 
+  function operatorBearerForGate() {
+    var adminJwt = getAdminJwt();
+    if (adminJwt) return adminJwt;
+    return getPortalJwt();
+  }
+
+  function navigateAdminConsolePath(targetPath, e) {
+    if (e && e.preventDefault) e.preventDefault();
+    closeOpenMenu();
+    var path = resolveAdminPath(targetPath);
+    var bearer = operatorBearerForGate();
+
+    function go() {
+      if (typeof window.soNavigateOperatorPath === 'function') {
+        window.soNavigateOperatorPath(path, bearer, {
+          onFail: function (msg) {
+            window.alert(String(msg || 'Could not open the operator console.'));
+          },
+        });
+        return;
+      }
+      if (!bearer) {
+        try {
+          var u = new URL('/login.html', window.location.origin);
+          u.searchParams.set('next', path);
+          window.location.href = u.pathname + u.search;
+        } catch (eLogin) {
+          window.location.href = '/login.html?next=' + encodeURIComponent(path);
+        }
+        return;
+      }
+      window.location.href = path;
+    }
+
+    if (typeof window.soNavigateOperatorPath === 'function') {
+      go();
+      return;
+    }
+    var waits = 0;
+    var timer = setInterval(function () {
+      waits += 1;
+      if (typeof window.soNavigateOperatorPath === 'function' || waits > 40) {
+        clearInterval(timer);
+        go();
+      }
+    }, 25);
+    return;
+  }
+
   function menuRow(href, label, opts) {
     opts = opts || {};
     var a = document.createElement('a');
@@ -356,10 +410,14 @@
       b.textContent = String(opts.badge);
       a.appendChild(b);
     }
-  if (opts.onClick) {
+    if (opts.onClick) {
       a.addEventListener('click', function (e) {
         opts.onClick(e);
         closeOpenMenu();
+      });
+    } else if (opts.operatorGatePath) {
+      a.addEventListener('click', function (e) {
+        navigateAdminConsolePath(opts.operatorGatePath, e);
       });
     } else {
       a.addEventListener('click', closeOpenMenu);
@@ -514,6 +572,15 @@
   }
 
   window.__SO_USER_ACCOUNT_MENU__ = true;
+
+  (function loadOperatorHtmlGate() {
+    if (document.querySelector('script[data-so-operator-html-gate]')) return;
+    var gate = document.createElement('script');
+    gate.src = '/operator-html-gate.js';
+    gate.defer = true;
+    gate.setAttribute('data-so-operator-html-gate', '1');
+    document.head.appendChild(gate);
+  })();
 
   (function loadUserActivity() {
     if (document.querySelector('script[data-so-user-activity]')) return;
