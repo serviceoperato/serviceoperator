@@ -95,7 +95,15 @@
       cache: 'no-store',
     })
       .then(function (r) {
-        return r.ok;
+        if (!r.ok) return false;
+        return r
+          .json()
+          .then(function (j) {
+            return Boolean(j && j.ok);
+          })
+          .catch(function () {
+            return true;
+          });
       })
       .catch(function () {
         return false;
