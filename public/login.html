@@ -782,7 +782,6 @@
   }
 
   function redirectAfterOperatorHtmlGateReady(path, bearer) {
-    if (path && blockClinicLoginLoopIfNeeded(path, 'clinic-operator-gate')) return;
     if (
       typeof window.soNavigateOperatorPath === 'function' &&
       path &&
@@ -803,6 +802,7 @@
     }
     return ensureOperatorHtmlGateCookie(bearer).then(function (ready) {
       if (!ready) {
+        touchClinicLoginLoopBeforeNavigate(path);
         if (bannerSession) {
           bannerSession.textContent =
             typeof window.soOperatorGateFailMessage === 'string'
@@ -1110,22 +1110,16 @@
   }
 
   function recordClinicBounceOnLoginLanding() {
-    if (!nextPath || !isPrivateNumberedReportNextPath(nextPath)) return;
-    try {
-      var ref = document.referrer || '';
-      if (!ref) return;
-      var refPath = normalizeClinicLoopPath(new URL(ref, window.location.origin).pathname);
-      if (refPath === normalizeClinicLoopPath(nextPath)) {
-        if (typeof window.soTouchClinicLoginLoop === 'function') {
-          window.soTouchClinicLoginLoop(nextPath);
-        }
-      }
-    } catch (eBounce) {}
+    /* Bounce from /clinics/NNN/ without HttpOnly cookie is handled by bootstrap + touchClinicLoginLoopBeforeNavigate. */
   }
 
-  function blockClinicLoginLoopIfNeeded(targetPath, source) {
+  function blockClinicLoginLoopIfNeeded(targetPath, source, bearer) {
     var path = targetPath || nextPath;
     if (!path || !isPrivateNumberedReportNextPath(path)) return false;
+    if (bearer && looksLikeJwt(bearer)) {
+      if (typeof window.soClearClinicLoginLoop === 'function') window.soClearClinicLoginLoop();
+      return false;
+    }
     if (
       typeof window.soIsClinicLoginLoopBlocked === 'function' &&
       window.soIsClinicLoginLoopBlocked(path)
@@ -1165,7 +1159,7 @@
   }
 
   function redirectToOperatorGatedNext(path, bearer) {
-    if (blockClinicLoginLoopIfNeeded(path, 'clinic-gated-next')) return;
+    if (blockClinicLoginLoopIfNeeded(path, 'clinic-gated-next', bearer)) return;
     if (bearer && looksLikeJwt(bearer) && nextPathRequiresOperatorHtmlGate(path)) {
       return redirectAfterOperatorHtmlGateReady(path, bearer);
     }
@@ -1299,10 +1293,19 @@
     if (hadSessionExpiredReason) return;
 
     recordClinicBounceOnLoginLanding();
-    if (nextPath && blockClinicLoginLoopIfNeeded(nextPath, 'clinic-already-signed-in')) return;
 
     var adminTok = getAdminJwtLogin();
     var portalTok = getPortalJwtLogin();
+    var gateBearerForLoop =
+      (adminTok && looksLikeJwt(adminTok) && adminTok) ||
+      (portalTok && looksLikeJwt(portalTok) && portalTok) ||
+      '';
+    if (
+      nextPath &&
+      blockClinicLoginLoopIfNeeded(nextPath, 'clinic-already-signed-in', gateBearerForLoop)
+    ) {
+      return;
+    }
     var wantOperatorGatedNext = nextPath && nextPathRequiresOperatorHtmlGate(nextPath);
     var cookieP = wantOperatorGatedNext
       ? fetchAdminCookieSession()

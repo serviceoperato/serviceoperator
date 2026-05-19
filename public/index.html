@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8" />
@@ -24,7 +24,7 @@
 <link rel="apple-touch-icon" href="/favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css" />
 <link rel="stylesheet" href="/journey-progress.css" />
 <script src="/page-skeleton.js"></script>
@@ -56,6 +56,25 @@
 }
 </script>
 <style>
+  /* Typography — match /clinics/010/ audit teaser (DM Sans body, DM Serif Display headings) */
+  .page-home .so-b2b,
+  .page-home .so-b2b-footer {
+    --font-body: 'DM Sans', system-ui, sans-serif;
+    --font-display: 'DM Serif Display', serif;
+  }
+  .page-home .so-b2b .clinics-hero__title,
+  .page-home .so-b2b .client-hero h1.clinics-hero__title {
+    font-family: var(--font-display);
+    font-weight: 400;
+  }
+  .page-home .so-b2b__h2,
+  .page-home .so-b2b__pcard h3,
+  .page-home .so-b2b .home-lp__card-stat,
+  .page-home .so-b2b__jack-title,
+  .page-home .so-b2b__audit-preview-title {
+    font-family: var(--font-display);
+  }
+
   /* Homepage B2B landing — scoped to .page-home .so-b2b */
   .page-home .so-b2b {
     --so-ink: #0a0a0f;
@@ -382,14 +401,6 @@
       padding-left: 80px;
       padding-right: 80px;
     }
-  }
-  .page-home .so-b2b__segment-title {
-    margin: 0 0 1rem;
-    font-size: clamp(1.125rem, 2.5vw, 1.25rem);
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    color: var(--so-ink);
-    text-align: center;
   }
   .page-home .so-b2b__segment-row {
     display: flex;
@@ -798,7 +809,7 @@
     border-bottom: none;
   }
   .page-home .so-b2b__next-n {
-    font-family: var(--font-mono, ui-monospace, monospace);
+    font-family: var(--font-body);
     font-size: 0.6875rem;
     font-weight: 600;
     letter-spacing: 0.06em;
@@ -889,7 +900,7 @@
     background: rgba(30, 41, 59, 0.65);
   }
   .page-home .so-b2b__audit-preview-badge {
-    font-family: var(--font-mono, ui-monospace, monospace);
+    font-family: var(--font-body);
     font-size: 0.6rem;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -932,7 +943,7 @@
     flex: 1 1 auto;
     margin: 0;
     min-width: 0;
-    font-family: var(--font-mono, ui-monospace, monospace);
+    font-family: var(--font-body);
     font-size: 0.6rem;
     font-weight: 600;
     letter-spacing: 0.08em;
@@ -1186,10 +1197,44 @@
 <style>#homeSkeleton{display:none!important}#homeMain{display:block!important}</style>
 </noscript>
 
-<div id="homeSkeleton" class="clinics-skel clinics-skel--home" aria-hidden="true">
-  <div class="clinics-skel__b"></div>
-  <div class="clinics-skel__b"></div>
-  <div class="clinics-skel__b"></div>
+<div id="homeSkeleton" class="home-skel" role="status" aria-live="polite" aria-label="Loading homepage">
+  <div class="home-skel__inner">
+    <header class="home-skel__hero" aria-hidden="true">
+      <div class="home-skel__bar home-skel__bar--eyebrow"></div>
+      <div class="home-skel__bar home-skel__bar--title"></div>
+      <div class="home-skel__bar home-skel__bar--title home-skel__bar--title-sub"></div>
+      <div class="home-skel__bar home-skel__bar--lede"></div>
+      <div class="home-skel__bar home-skel__bar--lede home-skel__bar--lede-short"></div>
+      <div class="home-skel__cta-row">
+        <div class="home-skel__pill home-skel__pill--primary"></div>
+        <div class="home-skel__pill home-skel__pill--ghost"></div>
+      </div>
+      <div class="home-skel__media" aria-hidden="true"></div>
+    </header>
+    <section class="home-skel__section" aria-hidden="true">
+      <div class="home-skel__bar home-skel__bar--section"></div>
+      <div class="home-skel__grid">
+        <article class="home-skel__card"><div class="home-skel__icon"></div><div class="home-skel__bar home-skel__bar--card"></div><div class="home-skel__bar home-skel__bar--card-sub"></div></article>
+        <article class="home-skel__card"><div class="home-skel__icon"></div><div class="home-skel__bar home-skel__bar--card"></div><div class="home-skel__bar home-skel__bar--card-sub"></div></article>
+        <article class="home-skel__card"><div class="home-skel__icon"></div><div class="home-skel__bar home-skel__bar--card"></div><div class="home-skel__bar home-skel__bar--card-sub"></div></article>
+      </div>
+    </section>
+    <section class="home-skel__section home-skel__section--workflow" aria-hidden="true">
+      <div class="home-skel__bar home-skel__bar--section"></div>
+      <div class="home-skel__stack">
+        <div class="home-skel__row"></div>
+        <div class="home-skel__row"></div>
+        <div class="home-skel__row home-skel__row--short"></div>
+      </div>
+    </section>
+    <aside class="home-skel__cta-band" aria-hidden="true">
+      <div class="home-skel__bar home-skel__bar--cta"></div>
+      <div class="home-skel__pill home-skel__pill--cta"></div>
+    </aside>
+    <footer class="home-skel__footer" aria-hidden="true">
+      <div class="home-skel__bar home-skel__bar--footer"></div>
+    </footer>
+  </div>
 </div>
 
 <div id="homeMain" class="is-hidden">
@@ -1229,8 +1274,7 @@
       </div>
     </header>
 
-    <nav class="so-b2b__segment" aria-labelledby="choose-sector">
-      <h2 class="so-b2b__segment-title" id="choose-sector">Scegli il tuo settore</h2>
+    <nav class="so-b2b__segment" aria-label="Settori">
       <div class="so-b2b__segment-row">
         <a class="so-b2b__segment-btn" href="/hotels.html">
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 22v-6.557"/><path d="M14 22v-6.557"/><path d="M2 11h20"/><path d="M3 11v3a9 9 0 0 0 18 0v-3"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
