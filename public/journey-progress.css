@@ -1,0 +1,94 @@
+/* Linear journey: Home → Audit example → Workspace */
+.so-journey-progress {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 0.65rem var(--gutter, 1.25rem) 0;
+}
+.so-journey-progress__list {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.so-journey-progress__item {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.so-journey-progress__item:not(:last-child)::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 2px;
+  margin: 0 0.35rem;
+  background: var(--line-strong, rgba(15, 23, 42, 0.12));
+  border-radius: 1px;
+}
+.so-journey-progress__item.is-done:not(:last-child)::after {
+  background: #4f46e5;
+}
+.so-journey-progress__link,
+.so-journey-progress__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--mute-2, #64748b);
+  white-space: nowrap;
+}
+.so-journey-progress__link:hover {
+  color: var(--ink, #0f172a);
+}
+.so-journey-progress__item.is-current .so-journey-progress__link,
+.so-journey-progress__item.is-current .so-journey-progress__label {
+  color: var(--ink, #0f172a);
+}
+.so-journey-progress__item.is-done .so-journey-progress__link {
+  color: #4f46e5;
+}
+.so-journey-progress__num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  border: 1.5px solid currentColor;
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.so-journey-progress__item.is-current .so-journey-progress__num {
+  background: #4f46e5;
+  border-color: #4f46e5;
+  color: #f8fafc;
+}
+.so-journey-progress__item.is-done .so-journey-progress__num {
+  background: #4f46e5;
+  border-color: #4f46e5;
+  color: #f8fafc;
+}
+@media (max-width: 480px) {
+  .so-journey-progress__text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .so-journey-progress__link,
+  .so-journey-progress__label {
+    justify-content: center;
+  }
+}

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
+<title>Sample operational audit · ServiceOpera</title>
+<meta name="description" content="Public sample of a ServiceOpera 48-hour operational audit: executive summary, workflow gaps, prioritized fixes, and one scoped pilot. Fictional composite for hotels, clinics, and property operators." />
+<link rel="canonical" href="https://serviceopera.to/audit-example" />
+<meta name="robots" content="index,follow" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="www.serviceopera.to" />
+<meta property="og:url" content="https://serviceopera.to/audit-example" />
+<meta property="og:title" content="Sample operational audit · ServiceOpera" />
+<meta property="og:description" content="See how a private operational audit is structured: gaps, fixes, pilot scope, and tone—before you open your client workspace." />
+<meta property="og:image" content="https://serviceopera.to/assets/logo.png" />
+<link rel="icon" href="/favicon.png" type="image/png" sizes="any" />
+<link rel="apple-touch-icon" href="/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="/journey-progress.css" />
+<script src="/page-skeleton.js"></script>
+<script src="/so-api.js"></script>
+<script src="/portal-auth-routing.js"></script>
+<style>
+  .ae-page {
+    --ae-ink: #0a0a0f;
+    --ae-muted: #475569;
+    --ae-line: rgba(15, 23, 42, 0.1);
+    --ae-accent: #4f46e5;
+    --ae-surface: #ffffff;
+    --ae-subtle: #f8fafc;
+    --ae-warn-bg: #fffbeb;
+    --ae-warn-border: #fcd34d;
+    --ae-warn-text: #92400e;
+    font-family: var(--font-body), "Inter", system-ui, sans-serif;
+    color: var(--ae-muted);
+    background: var(--ae-surface);
+  }
+  [data-theme="dark"] .ae-page {
+    --ae-ink: #f1f5f9;
+    --ae-muted: #94a3b8;
+    --ae-line: rgba(148, 163, 184, 0.2);
+    --ae-accent: #a5b4fc;
+    --ae-surface: #0f172a;
+    --ae-subtle: #1e293b;
+    --ae-warn-bg: rgba(251, 191, 36, 0.12);
+    --ae-warn-border: rgba(251, 191, 36, 0.35);
+    --ae-warn-text: #fde68a;
+  }
+  .ae-page main {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 0 var(--gutter, 1.25rem) 4rem;
+  }
+  .ae-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 1rem 0 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ae-accent);
+  }
+  .ae-kicker .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ae-accent); }
+  .ae-page h1 {
+    margin: 0 0 0.75rem;
+    font-size: clamp(1.5rem, 4.5vw, 2.1rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    color: var(--ae-ink);
+  }
+  .ae-lede { margin: 0 0 1.25rem; font-size: 1.05rem; line-height: 1.55; }
+  .ae-disclaimer {
+    margin: 0 0 2rem;
+    padding: 0.85rem 1rem;
+    border-radius: 12px;
+    border: 1px solid var(--ae-warn-border);
+    background: var(--ae-warn-bg);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--ae-warn-text);
+  }
+  .ae-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.65rem;
+    margin: 0 0 2rem;
+    padding: 0;
+    list-style: none;
+  }
+  @media (max-width: 520px) { .ae-summary { grid-template-columns: 1fr; } }
+  .ae-summary li {
+    margin: 0;
+    padding: 0.85rem 0.9rem;
+    border-radius: 12px;
+    border: 1px solid var(--ae-line);
+    background: var(--ae-subtle);
+    text-align: center;
+  }
+  .ae-summary strong {
+    display: block;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--ae-ink);
+    line-height: 1.2;
+  }
+  .ae-summary span {
+    display: block;
+    margin-top: 0.2rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ae-muted);
+  }
+  .ae-page section { margin-bottom: 2rem; }
+  .ae-page h2 {
+    margin: 0 0 0.65rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--ae-ink);
+  }
+  .ae-finding {
+    margin: 0 0 0.75rem;
+    padding: 0.9rem 1rem;
+    border-radius: 12px;
+    border: 1px solid var(--ae-line);
+    border-left: 3px solid var(--ae-accent);
+    background: var(--ae-subtle);
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+  .ae-finding h3 {
+    margin: 0 0 0.35rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--ae-ink);
+  }
+  .ae-finding p { margin: 0; }
+  .ae-finding--high { border-left-color: #dc2626; }
+  .ae-finding--med { border-left-color: #ea580c; }
+  .ae-pilot {
+    margin: 0;
+    padding: 1rem 1.1rem;
+    border-radius: 14px;
+    border: 1px solid var(--ae-line);
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.08), transparent);
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+  .ae-pilot strong { color: var(--ae-ink); }
+  .ae-cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--ae-line);
+  }
+  .ae-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem 1.2rem;
+    border-radius: var(--radius-btn, 10px);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid transparent;
+  }
+  .ae-cta--primary { background: #4f46e5; color: #f8fafc; }
+  .ae-cta--primary:hover { filter: brightness(1.06); }
+  .ae-cta--ghost {
+    background: transparent;
+    color: var(--ae-accent);
+    border-color: var(--ae-line);
+  }
+  .ae-back {
+    display: inline-block;
+    margin: 0.5rem 0 0;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--ae-accent);
+    text-decoration: none;
+  }
+  .ae-back:hover { text-decoration: underline; }
+</style>
+</head>
+<body class="ae-page" data-page-skeleton="native" data-so-journey-step="2">
+
+<div class="grain" aria-hidden="true"></div>
+
+<nav class="nav" aria-label="Primary">
+  <div class="nav__start">
+    <a href="/" class="nav__logo">
+      <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="www.serviceopera.to" decoding="async" />
+    </a>
+  </div>
+  <div class="nav__links">
+    <a href="/login.html" class="nav__login mono" id="navPortalAuth" aria-label="Login or Register">Login / Register</a>
+  </div>
+</nav>
+
+<main>
+  <p class="ae-kicker"><span class="dot" aria-hidden="true"></span>Step 2 · Sample deliverable</p>
+  <h1>What your operational audit looks like</h1>
+  <p class="ae-lede">This is a <strong>fictional composite</strong> of the brief we deliver after a 48-hour assessment—same structure, tone, and prioritization you would see for a hotel, clinic, or property operator. Numbers are illustrative only.</p>
+
+  <aside class="ae-disclaimer" role="note">
+    <strong>Public preview.</strong> Real client audits live in your private workspace after sign-in. No patient, guest, or customer data appears here.
+  </aside>
+
+  <ul class="ae-summary" aria-label="Audit at a glance">
+    <li><strong>3</strong><span>Operational gaps</span></li>
+    <li><strong>3</strong><span>Prioritized fixes</span></li>
+    <li><strong>1</strong><span>Scoped pilot</span></li>
+  </ul>
+
+  <section id="exec" aria-labelledby="exec-h">
+    <h2 id="exec-h">Executive summary</h2>
+    <p>A three-location service business runs strong clinical or guest-facing quality, but digital intake and handoffs leak revenue. First human reply on high-intent channels averages <strong>4–7 hours</strong> during business days; follow-up stops after one attempt for roughly <strong>38%</strong> of open inquiries.</p>
+    <p>We mapped five journey stages, flagged three gaps with evidence from CRM timestamps and channel exports, and scoped one 14-day pilot that does not require a new platform on day one.</p>
+  </section>
+
+  <section id="gaps" aria-labelledby="gaps-h">
+    <h2 id="gaps-h">Operational gaps (excerpt)</h2>
+    <article class="ae-finding ae-finding--high">
+      <h3>Gap 1 — Inquiry routing</h3>
+      <p>Web forms and WhatsApp land in separate inboxes. No SLA, no owner after first touch. Median time-to-first-reply: <strong>4h 12m</strong> (business hours).</p>
+    </article>
+    <article class="ae-finding ae-finding--med">
+      <h3>Gap 2 — Stale pipeline</h3>
+      <p><strong>47 leads</strong> sat in “contacted” with no activity for 14+ days. Coordinators lacked a single re-engagement playbook.</p>
+    </article>
+    <article class="ae-finding ae-finding--med">
+      <h3>Gap 3 — Handoff to booking</h3>
+      <p>Treatment or stay coordinators re-keyed details already captured at intake. Estimated <strong>12–18 min</strong> lost per converted inquiry.</p>
+    </article>
+  </section>
+
+  <section id="fixes" aria-labelledby="fixes-h">
+    <h2 id="fixes-h">Prioritized fixes</h2>
+    <ol style="margin:0;padding-left:1.2rem;font-size:0.9rem;line-height:1.55;">
+      <li style="margin-bottom:0.5rem;"><strong>Intake SLA + owner</strong> — one queue, 60-minute first-response target on WhatsApp and web.</li>
+      <li style="margin-bottom:0.5rem;"><strong>Stale-stage sweep</strong> — weekly batch with templated second touch and close rules.</li>
+      <li><strong>Booking handoff card</strong> — required fields passed automatically from first qualified reply.</li>
+    </ol>
+  </section>
+
+  <section id="pilot" aria-labelledby="pilot-h">
+    <h2 id="pilot-h">Recommended pilot</h2>
+    <p class="ae-pilot"><strong>14-day intake &amp; follow-up sprint.</strong> Implement the SLA queue and stale re-engagement for one location first. Success = median first reply under 90 minutes and 25% fewer 14-day stale leads—measured from existing CRM exports, not new dashboards.</p>
+  </section>
+
+  <div class="ae-cta-row">
+    <a class="ae-cta ae-cta--primary" href="/operational-findings">View full operational findings<span class="ico-arrow-r" aria-hidden="true"></span></a>
+    <a class="ae-cta ae-cta--ghost" data-so-journey-workspace-cta href="/login.html?next=%2Fworkspace">Continue to private workspace</a>
+    <a class="ae-cta ae-cta--ghost" href="/">← Back to studio home</a>
+  </div>
+  <p style="margin:0.75rem 0 0;font-size:0.8125rem;line-height:1.5;">The findings page adds KPI snapshots, artifact screenshots, and illustrative recovery scenarios. Already engaged? Sign in for your confidential workspace.</p>
+</main>
+
+<script src="/sw-register.js"></script>
+<script src="/site-nav-drawer.js"></script>
+<script src="/user-account-menu.js"></script>
+<script src="/theme.js"></script>
+<script src="/site-contact.js"></script>
+<script src="/journey-progress.js"></script>
+<script src="/debug.js"></script>
+</body>
+</html>

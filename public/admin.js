@@ -1,12 +1,7 @@
 (function () {
   'use strict';
 
-  var ADMIN_PASSWORD =
-    typeof window.__ADMIN_PASSWORD__ === 'string' ? window.__ADMIN_PASSWORD__.trim() : '';
-
-  var SESSION_KEY = 'so_admin_session';
   var JWT_KEY = 'so_admin_jwt';
-  var PORTAL_ADMIN_SESSION = 'portal-admin';
   var PORTAL_JWT_KEYS = ['so_user_jwt', 'so_clinic_jwt'];
 
   /** Admin bearer: mirror portal JWT storage (local + session) so sign-in is not re-prompted on new tabs until expiry. */
@@ -3227,7 +3222,6 @@
   }
 
   function hideWorkspace() {
-    sessionStorage.removeItem(SESSION_KEY);
     var tok = getAdminBearer();
     if (tok) {
       fetch(api('/api/admin/logout'), {
@@ -3258,12 +3252,9 @@
         gateLede.textContent = serverPasswordAuth
           ? 'Sign in with the operator email and password configured on the server (hashed; never sent by email).'
           : 'The API is running, but admin password sign-in is not configured yet. Set ADMIN_PASSWORD_HASH on this service (see README), redeploy, then reload.';
-      } else if (ADMIN_PASSWORD) {
-        gateLede.textContent =
-          'Local preview: use the email and password from admin-config.js. Full admin APIs need the Node server with ADMIN_PASSWORD_HASH set.';
       } else {
         gateLede.textContent =
-          'Sign in with the operator email and password. Use the Node host, or add admin-config.js for a static-only preview password.';
+          'Sign in with the operator email and password on the Node server (npm start or deployed server.mjs).';
       }
     }
     if (submitBtn) submitBtn.innerHTML = 'Sign in<span class="ico-arrow-r" aria-hidden="true"></span>';
@@ -3272,9 +3263,9 @@
         configBanner.innerHTML =
           'Set <strong>ADMIN_PASSWORD_HASH</strong> on this Railway service. Generate it locally: <code>node scripts/hash-admin-password.mjs</code> — then paste the line into variables, redeploy, reload.';
         configBanner.classList.remove('is-hidden');
-      } else if (!capabilitiesHttpOk && !ADMIN_PASSWORD) {
+      } else if (!capabilitiesHttpOk) {
         configBanner.innerHTML =
-          'Could not reach <code>/api/admin/capabilities</code>. For a browser-only gate, copy <strong>admin-config.example.js</strong> to <strong>admin-config.js</strong> and set <strong>window.__ADMIN_PASSWORD__</strong>.';
+          'Could not reach <code>/api/admin/capabilities</code>. Run <code>npm start</code> (server.mjs) on this host, or open the deployed Node service URL.';
         configBanner.classList.remove('is-hidden');
       } else configBanner.classList.add('is-hidden');
     }
@@ -3361,21 +3352,6 @@
       });
   }
 
-  function tryRestoreLegacySession() {
-    if (sessionStorage.getItem(SESSION_KEY) === PORTAL_ADMIN_SESSION) {
-      sessionStorage.removeItem(SESSION_KEY);
-      return false;
-    }
-    if (sessionStorage.getItem(SESSION_KEY) === '1' && ADMIN_PASSWORD) {
-      showWorkspace();
-      return true;
-    }
-    if (sessionStorage.getItem(SESSION_KEY) === '1' && !ADMIN_PASSWORD) {
-      sessionStorage.removeItem(SESSION_KEY);
-    }
-    return false;
-  }
-
   function showAdminLoginGate() {
     if (workspace) workspace.classList.add('is-hidden');
     if (gate) gate.classList.remove('is-hidden');
@@ -3441,10 +3417,6 @@
       return tryRestorePortalOperatorSession();
     })
     .then(function (restored) {
-      if (restored) return true;
-      return !!tryRestoreLegacySession();
-    })
-    .then(function (restored) {
       if (restored) {
         revealAdminBootAfterPaint();
         return;
@@ -3503,35 +3475,17 @@
         return;
       }
 
-      if (!ADMIN_PASSWORD) {
-        if (!capabilitiesHttpOk) {
-          setHint(
-            'Cannot reach the Node API from this host. Run npm start / deploy server.mjs, or add admin-config.js with window.__ADMIN_PASSWORD__ for a static preview only.',
-            'error'
-          );
-        } else {
-          setHint(
-            'Password not configured. Copy admin-config.example.js to admin-config.js and set window.__ADMIN_PASSWORD__, or deploy the Node API with ADMIN_PASSWORD_HASH set.',
-            'error'
-          );
-        }
-        return;
+      if (!capabilitiesHttpOk) {
+        setHint(
+          'Cannot reach the Node API from this host. Run npm start or deploy server.mjs with ADMIN_PASSWORD_HASH set.',
+          'error'
+        );
+      } else {
+        setHint(
+          'Admin password sign-in is not configured on this server. Set ADMIN_PASSWORD_HASH (see README), redeploy, then try again.',
+          'error'
+        );
       }
-      var adminEmailStatic =
-        typeof window.__ADMIN_EMAIL__ === 'string' ? window.__ADMIN_EMAIL__.trim().toLowerCase() : '';
-      if (adminEmailStatic && email !== adminEmailStatic) {
-        setHint('Invalid email or password.', 'error');
-        if (form.querySelector('input[type="password"]')) form.querySelector('input[type="password"]').value = '';
-        return;
-      }
-      if (password !== ADMIN_PASSWORD) {
-        setHint('Invalid email or password.', 'error');
-        if (form.querySelector('input[type="password"]')) form.querySelector('input[type="password"]').value = '';
-        return;
-      }
-      sessionStorage.setItem(SESSION_KEY, '1');
-      setHint('Signed in.', 'ok');
-      showWorkspace();
     });
   }
 
@@ -3709,7 +3663,7 @@
     if (!token) {
       if (hint) {
         hint.textContent =
-          'Sign in on the live Node server (operator password) to load pending registrations, report files, and page timestamps. Browser-only admin-config password cannot call this API.';
+          'Sign in on the live Node server (operator password) to load pending registrations, report files, and page timestamps.';
         hint.className = 'admin-inbox__hint mono';
       }
       body.innerHTML =
@@ -3811,7 +3765,7 @@
     if (!token) {
       panelBody.innerHTML =
         '<p class="admin-panel__stub">After you sign in on the <strong>live Node server</strong> (operator password), you can register user emails and passwords here. They appear in the on-disk user store and can open <strong>/clinics/report.html?slug=…</strong> after using <strong>Log in</strong> in the site header.</p>' +
-        '<p class="admin-panel__stub">Browser-only admin password (local <code>admin-config.js</code>) cannot call this API.</p>';
+        '<p class="admin-panel__stub">Sign in on the Node server to load this data.</p>';
       panel.classList.remove('is-hidden');
       window.scrollTo(0, 0);
       return;

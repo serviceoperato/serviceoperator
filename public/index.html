@@ -4,21 +4,21 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
-<title>ServiceOpera — Serviceoperator audit studio for hotels, clinics &amp; property</title>
-<meta name="description" content="Private 48-hour operational audits for service businesses. We map workflows, handoffs, and revenue leaks—then deliver prioritized fixes and one scoped pilot for hotels, clinics, and property operators." />
+<title>ServiceOpera — Private operational audit studio for service businesses</title>
+<meta name="description" content="Confidential operational reviews for owners of service businesses. We assess delivery, handoffs, capacity, client experience, and margin leaks—then deliver findings, prioritized fixes, and one scoped recommendation." />
 <link rel="canonical" href="https://serviceopera.to/" />
 <meta name="robots" content="index,follow" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="www.serviceopera.to" />
 <meta property="og:url" content="https://serviceopera.to/" />
-<meta property="og:title" content="ServiceOpera — Serviceoperator audit studio for hotels, clinics &amp; property" />
-<meta property="og:description" content="Private 48-hour operational audits for service businesses. We map workflows, handoffs, and revenue leaks—then deliver prioritized fixes and one scoped pilot for hotels, clinics, and property operators." />
+<meta property="og:title" content="ServiceOpera — Private operational audit studio for service businesses" />
+<meta property="og:description" content="Confidential operational reviews for owners of service businesses. We assess delivery, handoffs, capacity, client experience, and margin leaks—then deliver findings, prioritized fixes, and one scoped recommendation." />
 <meta property="og:image" content="https://serviceopera.to/assets/logo.png" />
 <meta property="og:image:alt" content="www.serviceopera.to" />
 <meta property="og:locale" content="en_US" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="ServiceOpera — Serviceoperator audit studio for hotels, clinics &amp; property" />
-<meta name="twitter:description" content="Private 48-hour operational audits for service businesses. We map workflows, handoffs, and revenue leaks—then deliver prioritized fixes and one scoped pilot for hotels, clinics, and property operators." />
+<meta name="twitter:title" content="ServiceOpera — Private operational audit studio for service businesses" />
+<meta name="twitter:description" content="Confidential operational reviews for owners of service businesses. We assess delivery, handoffs, capacity, client experience, and margin leaks—then deliver findings, prioritized fixes, and one scoped recommendation." />
 <meta name="twitter:image" content="https://serviceopera.to/assets/logo.png" />
 <link rel="icon" href="/favicon.png" type="image/png" sizes="any" />
 <link rel="apple-touch-icon" href="/favicon.png" />
@@ -26,7 +26,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="/journey-progress.css" />
 <script src="/page-skeleton.js"></script>
+<script src="/portal-auth-routing.js"></script>
 <script src="/so-api.js"></script>
 <script type="application/ld+json">
 {
@@ -39,7 +41,7 @@
       "alternateName": ["www.serviceopera.to", "serviceopera.to"],
       "url": "https://serviceopera.to/",
       "logo": "https://serviceopera.to/assets/logo.png",
-      "description": "Serviceoperator audit studio for service businesses: private assessments of workflows, handoffs, and revenue leaks for hotels, clinics, and property operators.",
+      "description": "Private operational audit studio for service businesses: confidential reviews of delivery, handoffs, capacity, client experience, and margin leaks—with findings and prioritized fixes.",
       "sameAs": []
     },
     {
@@ -562,6 +564,20 @@
   .page-home .so-b2b .home-lp__card-cta a:hover {
     text-decoration: underline;
   }
+  .page-home .so-b2b .home-lp__card-cta--muted {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--so-muted);
+    margin: 0;
+  }
+  .page-home .so-b2b__audit-preview-foot a {
+    color: var(--so-indigo);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .page-home .so-b2b__audit-preview-foot a:hover {
+    text-decoration: underline;
+  }
   .page-home .so-b2b__section {
     display: flex;
     flex-direction: column;
@@ -1032,7 +1048,7 @@
   }
 </style>
 </head>
-<body class="page-home page-home--with-nav" data-page-skeleton="native">
+<body class="page-home page-home--with-nav" data-page-skeleton="native" data-so-journey-step="1">
 
 <div class="grain" aria-hidden="true"></div>
 
@@ -1066,23 +1082,24 @@
       <p class="so-b2b__brand">www.serviceopera.to</p>
       <div class="client-hero__eyebrow">
         <span class="dot dot--live" aria-hidden="true"></span>
-        <span class="mono">SERVICEOPERATOR AUDIT STUDIO · HOTELS — CLINICS — PROPERTY</span>
+        <span class="mono">PRIVATE OPERATIONAL AUDIT STUDIO · CONFIDENTIAL · LIMITED CAPACITY</span>
       </div>
       <h1 class="clinics-hero__title">
-        <span class="line">Find where your operations</span>
-        <span class="line"><span class="line--accent">leak revenue</span>—before you add another tool.</span>
+        <span class="line">Clarity on how your service business</span>
+        <span class="line"><span class="line--accent">actually runs</span>—and what to fix first.</span>
       </h1>
-      <p class="client-hero__lede so-b2b__hero-lede">ServiceOpera is a serviceoperator audit studio for hotels, clinics, and property operators. We assess intake, scheduling, handoffs, and follow-up—then deliver a private brief with gaps, prioritized fixes, and one scoped pilot you can run.</p>
+      <p class="client-hero__lede so-b2b__hero-lede">ServiceOpera is a private operational audit studio for owners and operators of service businesses—agencies, consultancies, professional services, and operators with real delivery complexity. We review how work moves from sale to delivery: handoffs, capacity, client experience, and where margin quietly leaks. You receive a confidential brief with findings, prioritized fixes, and one scoped recommendation you can act on—with your team, your partners, or the studio.</p>
 
       <div class="so-b2b__cta-row">
-        <a class="so-b2b__btn so-b2b__btn--primary" href="/free-audit.html">
+        <a class="so-b2b__btn so-b2b__btn--primary" href="/audit-example">
           <span class="so-b2b__btn-stack">
-            <span class="so-b2b__btn-label">Request your free 48-hour operational audit</span>
-            <span class="so-b2b__btn-sub">See what you'll receive first</span>
+            <span class="so-b2b__btn-label">View sample operational audit</span>
+            <span class="so-b2b__btn-sub">Step 2 — demo deliverable &amp; findings</span>
           </span>
         </a>
+        <a class="so-b2b__btn so-b2b__btn--ghost" href="/free-audit.html">Request a confidential 48-hour review</a>
       </div>
-      <p class="so-b2b__cta-note">Written brief on operational gaps, prioritized fixes, and one scoped pilot—no obligation to engage us for execution.</p>
+      <p class="so-b2b__cta-note">Written findings on operational gaps, prioritized fixes, and one scoped recommendation—no obligation to retain the studio for implementation.</p>
       <p class="so-b2b__markets">
         <span data-so-icon="home-markets" class="so-b2b__markets-ico-slot" aria-hidden="true">
           <span class="so-quad-ring so-quad-ring--xs" aria-hidden="true"><svg class="so-quad-ring__svg so-b2b__markets-ico" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
@@ -1093,12 +1110,12 @@
       <path d="M36.535 11.789A17.5 17.5 0 0 1 36.535 36.211"/>
     </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><path d="M3 12h18"/><path d="M12 3c2.4 2.9 3.7 6.2 3.7 9s-1.3 6.1-3.7 9"/><path d="M12 3c-2.4 2.9-3.7 6.2-3.7 9s1.3 6.1 3.7 9"/></g></svg></span>
         </span>
-        Hotels — Clinics — Property
+        Agencies · Consultancies · Professional services · Hospitality · Health · Property
       </p>
     </header>
 
     <section class="so-b2b__section" aria-labelledby="hold-back">
-      <h2 class="so-b2b__h2" id="hold-back">What we typically find in your operations.</h2>
+      <h2 class="so-b2b__h2" id="hold-back">What a confidential operational review typically surfaces.</h2>
       <div class="so-b2b__problem-grid">
         <article class="so-b2b__pcard">
           <div class="so-quad-ring so-quad-ring--sm so-b2b__picon" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
@@ -1109,7 +1126,7 @@
       <path d="M36.535 11.789A17.5 17.5 0 0 1 36.535 36.211"/>
     </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><path d="M12 12V7M12 12l3.5 2"/></g></svg></div>
           <h3>Broken handoffs</h3>
-          <p>Repeat work, unclear ownership, and staff time lost to coordination.</p>
+          <p>Work stalls between roles—repeat effort, unclear ownership, and coordination that consumes senior time.</p>
         </article>
         <article class="so-b2b__pcard">
           <div class="so-quad-ring so-quad-ring--sm so-b2b__picon" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
@@ -1119,8 +1136,8 @@
       <path d="M11.789 11.465A17.5 17.5 0 0 1 36.211 11.465"/>
       <path d="M36.535 11.789A17.5 17.5 0 0 1 36.535 36.211"/>
     </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><path d="M17 21v-2a4 4 0 0 0-3-3.87"/><path d="M7 21v-2a4 4 0 0 1 3-3.87"/><circle cx="9" cy="7" r="3.5"/><path d="M21 12a4 4 0 0 0-6.5-3.1"/></g></svg></div>
-          <h3>Intake gaps</h3>
-          <p>Inquiries stall without routing, SLAs, or follow-up discipline.</p>
+          <h3>Capacity without visibility</h3>
+          <p>Scheduling and workload hide bottlenecks until delivery slips and clients feel the strain.</p>
         </article>
         <article class="so-b2b__pcard">
           <div class="so-quad-ring so-quad-ring--sm so-b2b__picon" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
@@ -1130,8 +1147,8 @@
       <path d="M11.789 11.465A17.5 17.5 0 0 1 36.211 11.465"/>
       <path d="M36.535 11.789A17.5 17.5 0 0 1 36.535 36.211"/>
     </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><path d="M12 2.5l2.8 8.6h9l-7.3 5.3 2.8 8.6-7.3-5.3-7.3 5.3 2.8-8.6-7.3-5.3h9L12 2.5z"/></g></svg></div>
-          <h3>Service recovery gaps</h3>
-          <p>Reviews and complaints lack a defined response path.</p>
+          <h3>Client experience drift</h3>
+          <p>Standards differ by team; issues escalate instead of resolving inside the delivery system.</p>
         </article>
         <article class="so-b2b__pcard">
           <div class="so-quad-ring so-quad-ring--sm so-b2b__picon" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
@@ -1141,20 +1158,21 @@
       <path d="M11.789 11.465A17.5 17.5 0 0 1 36.211 11.465"/>
       <path d="M36.535 11.789A17.5 17.5 0 0 1 36.535 36.211"/>
     </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><path d="M3 3v18h18"/><path d="M7 16l4-5 3 3 6-7"/><path d="M17 9V5h-4"/></g></svg></div>
-          <h3>Revenue leaks</h3>
-          <p>Scheduling friction, conversion drop-offs, and pricing you cannot see in spreadsheets.</p>
+          <h3>Margin leaks in delivery</h3>
+          <p>Rework, scope creep, and billing lag that rarely appear as a single line on a P&amp;L.</p>
         </article>
       </div>
     </section>
 
-    <section class="so-b2b__section so-b2b__below-fold" aria-label="Sector highlights">
-      <figure class="so-b2b__visual" aria-label="Operations preview">
+    <section class="so-b2b__section so-b2b__below-fold" aria-label="Example sectors">
+      <p class="so-b2b__section-lede">We take a limited number of studio engagements. These are three service verticals we review often—they illustrate the same delivery, handoff, and margin patterns we see across agencies and professional services.</p>
+      <figure class="so-b2b__visual" aria-label="Operational review excerpt">
         <img
           id="soHomePageHero"
           src="/assets/home-page-hero.png"
           width="1280"
           height="720"
-          alt="Workflow map excerpt: intake routing, handoff SLAs, and follow-up gaps."
+          alt="Excerpt from an operational review: delivery handoffs, capacity signals, and client-experience gaps."
           loading="lazy"
           decoding="async"
           data-so-site-appearance="home-hero"
@@ -1171,11 +1189,11 @@
       <path d="M11.789 11.465A17.5 17.5 0 0 1 36.211 11.465"/>
       <path d="M36.535 11.789A17.5 17.5 0 0 1 36.535 36.211"/>
     </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><path d="M4 20h16"/><path d="M6 20V10L12 6.5l6 3.5V20"/><path d="M12 6.5V4"/><path d="M8 20v-6h8v6"/><rect x="8.5" y="11" width="2" height="2" rx="0.35"/><rect x="11" y="11" width="2" height="2" rx="0.35"/><rect x="13.5" y="11" width="2" height="2" rx="0.35"/><rect x="8.5" y="14.5" width="2" height="2" rx="0.35"/><rect x="11" y="14.5" width="2" height="2" rx="0.35"/><rect x="13.5" y="14.5" width="2" height="2" rx="0.35"/></g></svg></div>
-            <p class="home-lp__card-label"><a href="/hotels.html">Hotels &amp; serviced apartments</a></p>
+            <p class="home-lp__card-label">Hotels &amp; serviced apartments</p>
             <p class="home-lp__card-stat">48%</p>
-            <p class="home-lp__card-desc">Slow replies and pricing delays cost bookings.</p>
+            <p class="home-lp__card-desc">Inquiry routing, response discipline, and rate decisions that erode occupancy and margin.</p>
             <p class="home-lp__card-source"><a href="https://www.siteminder.com/news/dynamic-revenue-plus-global-release/" target="_blank" rel="noopener noreferrer">SiteMinder, Aug 2025 →</a></p>
-            <p class="home-lp__card-cta"><a href="/hotels.html">Explore hotels →</a></p>
+            <p class="home-lp__card-cta home-lp__card-cta--muted">Typical audit focus</p>
           </article>
           <article class="home-lp__card home-lp__card--sector home-lp__card--sector-clinics">
             <div class="so-quad-ring so-quad-ring--lg home-lp__card-icon-wrap" data-so-icon="home-sector-clinics" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
@@ -1185,11 +1203,11 @@
       <path d="M11.789 11.465A17.5 17.5 0 0 1 36.211 11.465"/>
       <path d="M36.535 11.789A17.5 17.5 0 0 1 36.535 36.211"/>
     </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><path d="M12 4.5c-1.8 2.8-4.5 5-4.5 8.8a4.5 4.5 0 0 0 9 0c0-3.8-2.7-6-4.5-8.8z"/><path d="M8.5 13c1.4 1.1 2.6 1.6 3.5 1.6s2.1-.5 3.5-1.6"/><path d="M7.5 15.5c1.8 1.5 3.2 2 4.5 2s2.7-.5 4.5-2"/><path d="M12 4.5v2"/></g></svg></div>
-            <p class="home-lp__card-label"><a href="/clinics.html">Clinics, dental &amp; wellness</a></p>
+            <p class="home-lp__card-label">Clinics, dental &amp; wellness</p>
             <p class="home-lp__card-stat">3M</p>
-            <p class="home-lp__card-desc">Lead follow-up and treatment coordination leak margin.</p>
+            <p class="home-lp__card-desc">Intake, treatment coordination, and follow-up that leak capacity and margin.</p>
             <p class="home-lp__card-source"><a href="https://us-uk.bookimed.com/article/thailand-dental-holiday/" target="_blank" rel="noopener noreferrer">Industry reporting, 2024 →</a></p>
-            <p class="home-lp__card-cta"><a href="/clinics.html">Explore clinics →</a></p>
+            <p class="home-lp__card-cta home-lp__card-cta--muted">Typical audit focus</p>
           </article>
           <article class="home-lp__card home-lp__card--sector home-lp__card--sector-property">
             <div class="so-quad-ring so-quad-ring--lg home-lp__card-icon-wrap" data-so-icon="home-sector-property" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
@@ -1201,9 +1219,9 @@
     </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V11.5z"/><path d="M9 21v-7h6v7"/></g></svg></div>
             <p class="home-lp__card-label"><a href="/property.html">Property &amp; rental operators</a></p>
             <p class="home-lp__card-stat">7–10%</p>
-            <p class="home-lp__card-desc">Manual handovers and owner reporting waste time.</p>
+            <p class="home-lp__card-desc">Manual handovers between field, office, and owners that consume operator time.</p>
             <p class="home-lp__card-source"><a href="https://www.globalpropertyguide.com/asia/thailand/rental-yields" target="_blank" rel="noopener noreferrer">Market data, 2025 →</a></p>
-            <p class="home-lp__card-cta"><a href="/property.html">Explore property →</a></p>
+            <p class="home-lp__card-cta"><a href="/property.html">Property operations review →</a></p>
           </article>
         </div>
       </div>
@@ -1211,7 +1229,7 @@
 
     <section class="so-b2b__section" id="how-it-works" aria-labelledby="next-h">
       <h2 class="so-b2b__h2" id="next-h">How it works</h2>
-      <p class="so-b2b__section-lede">One structured path from your public footprint to a prioritized fix list — no parallel consulting decks.</p>
+      <p class="so-b2b__section-lede">One studio engagement—from context to findings to a prioritized path forward. No software pitch, no build quote, no automation stack.</p>
       <div class="so-b2b__next-layout">
         <ol class="so-b2b__next-steps">
           <li>
@@ -1223,7 +1241,7 @@
       <path d="M36.535 11.789A17.5 17.5 0 0 1 36.535 36.211"/>
     </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></g></svg></span>
             <span class="so-b2b__next-n" aria-hidden="true">01</span>
-            <span class="so-b2b__next-copy"><strong>Send your website or business profile</strong></span>
+            <span class="so-b2b__next-copy"><strong>Share how clients enter your operation and how delivery is organized today</strong></span>
           </li>
           <li>
             <span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
@@ -1234,7 +1252,7 @@
       <path d="M36.535 11.789A17.5 17.5 0 0 1 36.535 36.211"/>
     </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></g></svg></span>
             <span class="so-b2b__next-n" aria-hidden="true">02</span>
-            <span class="so-b2b__next-copy"><strong>We audit workflows, handoffs, and revenue leaks</strong></span>
+            <span class="so-b2b__next-copy"><strong>We conduct a confidential operational review—delivery, handoffs, capacity, client experience</strong></span>
           </li>
           <li>
             <span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
@@ -1245,7 +1263,7 @@
       <path d="M36.535 11.789A17.5 17.5 0 0 1 36.535 36.211"/>
     </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><rect width="8" height="6" x="8" y="12" rx="1"/><path d="M10 12v-2a2 2 0 1 1 4 0v2"/></g></svg></span>
             <span class="so-b2b__next-n" aria-hidden="true">03</span>
-            <span class="so-b2b__next-copy"><strong>You receive a private operational audit brief</strong></span>
+            <span class="so-b2b__next-copy"><strong>You receive a private findings brief with evidence and prioritized recommendations</strong></span>
           </li>
           <li>
             <span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
@@ -1256,7 +1274,7 @@
       <path d="M36.535 11.789A17.5 17.5 0 0 1 36.535 36.211"/>
     </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></g></svg></span>
             <span class="so-b2b__next-n" aria-hidden="true">04</span>
-            <span class="so-b2b__next-copy"><strong>We recommend one scoped pilot fix</strong></span>
+            <span class="so-b2b__next-copy"><strong>We identify one scoped change to validate the operating model</strong></span>
           </li>
           <li>
             <span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
@@ -1267,14 +1285,14 @@
       <path d="M36.535 11.789A17.5 17.5 0 0 1 36.535 36.211"/>
     </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><rect width="20" height="12" x="2" y="6" rx="6" ry="6"/><circle cx="16" cy="12" r="2"/></g></svg></span>
             <span class="so-b2b__next-n" aria-hidden="true">05</span>
-            <span class="so-b2b__next-copy"><strong>You decide whether to run it with us or in-house</strong></span>
+            <span class="so-b2b__next-copy"><strong>You implement with your team, your partners, or the studio—on your terms</strong></span>
           </li>
         </ol>
         <div class="so-b2b__audit-preview" role="complementary" aria-label="Audit excerpt preview">
           <div class="so-b2b__audit-preview-doc">
             <header class="so-b2b__audit-preview-head">
               <span class="so-b2b__audit-preview-badge">Private — excerpt</span>
-              <span class="so-b2b__audit-preview-title">Operational audit</span>
+              <span class="so-b2b__audit-preview-title">Operational assessment</span>
             </header>
             <dl class="so-b2b__audit-preview-meta">
               <div>
@@ -1304,11 +1322,11 @@
       <path d="M11.465 36.211A17.5 17.5 0 0 1 11.465 11.789"/>
       <path d="M11.789 11.465A17.5 17.5 0 0 1 36.211 11.465"/>
       <path d="M36.535 11.789A17.5 17.5 0 0 1 36.535 36.211"/>
-    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></g></svg></span> Pilot</dt>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></g></svg></span> Scoped fix</dt>
                 <dd>1</dd>
               </div>
             </dl>
-            <p class="so-b2b__audit-preview-sub">Typical findings</p>
+            <p class="so-b2b__audit-preview-sub">Representative findings</p>
             <ul class="so-b2b__preview-list so-b2b__preview-list--signals">
               <li><span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
     <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="4" stroke-linecap="butt">
@@ -1316,21 +1334,21 @@
       <path d="M11.465 36.211A17.5 17.5 0 0 1 11.465 11.789"/>
       <path d="M11.789 11.465A17.5 17.5 0 0 1 36.211 11.465"/>
       <path d="M36.535 11.789A17.5 17.5 0 0 1 36.535 36.211"/>
-    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="m14.5 7.5-5 5"/><path d="m9.5 7.5 5 5"/></g></svg></span> Missed inquiries</li>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="m14.5 7.5-5 5"/><path d="m9.5 7.5 5 5"/></g></svg></span> Handoffs without owners</li>
               <li><span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
     <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="4" stroke-linecap="butt">
       <path d="M36.211 36.535A17.5 17.5 0 0 1 11.789 36.535"/>
       <path d="M11.465 36.211A17.5 17.5 0 0 1 11.465 11.789"/>
       <path d="M11.789 11.465A17.5 17.5 0 0 1 36.211 11.465"/>
       <path d="M36.535 11.789A17.5 17.5 0 0 1 36.535 36.211"/>
-    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><polyline points="12 6 12 12 16 14"/></g></svg></span> Delayed replies</li>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><polyline points="12 6 12 12 16 14"/></g></svg></span> Follow-up outside the delivery system</li>
               <li><span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
     <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="4" stroke-linecap="butt">
       <path d="M36.211 36.535A17.5 17.5 0 0 1 11.789 36.535"/>
       <path d="M11.465 36.211A17.5 17.5 0 0 1 11.465 11.789"/>
       <path d="M11.789 11.465A17.5 17.5 0 0 1 36.211 11.465"/>
       <path d="M36.535 11.789A17.5 17.5 0 0 1 36.535 36.211"/>
-    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><rect width="8" height="8" x="3" y="3" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><rect width="8" height="8" x="13" y="13" rx="2"/></g></svg></span> Manual follow-up gaps</li>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><rect width="8" height="8" x="3" y="3" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><rect width="8" height="8" x="13" y="13" rx="2"/></g></svg></span> Capacity strain at peak</li>
               <li><span class="so-quad-ring so-quad-ring--md so-b2b__icon-pill" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
     <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="4" stroke-linecap="butt">
       <path d="M36.211 36.535A17.5 17.5 0 0 1 11.789 36.535"/>
@@ -1339,17 +1357,17 @@
       <path d="M36.535 11.789A17.5 17.5 0 0 1 36.535 36.211"/>
     </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></g></svg></span> Booking bottlenecks</li>
             </ul>
-            <p class="so-b2b__audit-preview-foot">ServiceOpera serviceoperator audit studio</p>
+            <p class="so-b2b__audit-preview-foot">ServiceOpera — private operational audit studio · <a href="/operational-findings">Operational findings (demo) →</a></p>
           </div>
         </div>
       </div>
     </section>
 
     <section class="so-b2b__section" id="case-study" aria-labelledby="case-study-h">
-      <h2 class="so-b2b__h2" id="case-study-h">Illustrative 14-day results</h2>
-      <p class="so-b2b__section-lede">Lead response, follow-up recovery, and a modeled revenue range—from a composite clinic audit. Not a guarantee; no real patient data.</p>
-      <p style="margin:0;font-size:0.875rem;line-height:1.55;color:var(--so-muted);">Median first-response moved from a CRM-derived <strong style="color:var(--so-ink);font-weight:600;">~4–7 h</strong> baseline toward <strong style="color:var(--so-ink);font-weight:600;">~45–90 min</strong> during business hours; stale pipeline re-engagement and a defensible revenue band are walked through on the full write-up.</p>
-      <p style="margin:0.85rem 0 0;"><a class="so-b2b__btn so-b2b__btn--ghost" href="/case-study.html">Read the 14-day case study</a></p>
+      <h2 class="so-b2b__h2" id="case-study-h">Illustrative outcomes from an operational review</h2>
+      <p class="so-b2b__section-lede">Delivery timing, follow-up discipline, and a modeled impact range—from a composite clinic engagement. Illustrative only; not a guarantee; no real patient data.</p>
+      <p style="margin:0;font-size:0.875rem;line-height:1.55;color:var(--so-muted);">Median first-response moved from an observed <strong style="color:var(--so-ink);font-weight:600;">~4–7 h</strong> baseline toward <strong style="color:var(--so-ink);font-weight:600;">~45–90 min</strong> during business hours after operating-model changes—not a software rollout. Stale pipeline re-engagement and a defensible revenue band are walked through on the full write-up.</p>
+      <p style="margin:0.85rem 0 0;font-size:0.8125rem;color:var(--so-muted);">Background reading: <a href="/case-study.html" style="color:var(--so-indigo);font-weight:500;">illustrative case study</a> (optional; not part of the client path).</p>
     </section>
 
     <aside class="so-b2b__jack" aria-labelledby="so-contact-h">
@@ -1371,8 +1389,8 @@
       </div>
       <div class="so-b2b__jack-main">
         <div class="so-b2b__jack-head-copy">
-          <h2 class="so-b2b__jack-title" id="so-contact-h">Operator-led, evidence-based</h2>
-          <p class="so-b2b__jack-sub">A small audit studio: selective clients, clear deliverables, and judgment calls made with you—not buried in a ticket queue.</p>
+          <h2 class="so-b2b__jack-title" id="so-contact-h">Expert-led. Confidential. Accountable.</h2>
+          <p class="so-b2b__jack-sub">A small studio with limited capacity. One senior operator owns your review—judgment calls made with you, not routed through a delivery bench.</p>
         </div>
         <ul class="so-b2b__jack-list">
         <li>
@@ -1383,7 +1401,7 @@
       <path d="M11.789 11.465A17.5 17.5 0 0 1 36.211 11.465"/>
       <path d="M36.535 11.789A17.5 17.5 0 0 1 36.535 36.211"/>
     </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><path d="M20 6L9 17l-5-5"/></g></svg></span>
-          Named accountability on every audit
+          Direct accountability from intake through findings
         </li>
         <li>
           <span class="so-quad-ring so-quad-ring--xs so-quad-ring--on-dark so-b2b__jack-check" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
@@ -1393,7 +1411,7 @@
       <path d="M11.789 11.465A17.5 17.5 0 0 1 36.211 11.465"/>
       <path d="M36.535 11.789A17.5 17.5 0 0 1 36.535 36.211"/>
     </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><path d="M20 6L9 17l-5-5"/></g></svg></span>
-          Findings and fixes you can verify—not black-box recommendations
+          Recommendations you can verify in your operation—not slideware
         </li>
         <li>
           <span class="so-quad-ring so-quad-ring--xs so-quad-ring--on-dark so-b2b__jack-check" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
@@ -1403,7 +1421,7 @@
       <path d="M11.789 11.465A17.5 17.5 0 0 1 36.211 11.465"/>
       <path d="M36.535 11.789A17.5 17.5 0 0 1 36.535 36.211"/>
     </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><path d="M20 6L9 17l-5-5"/></g></svg></span>
-          <a href="/free-audit.html">Request a free 48h audit</a> to scope fit
+          <a href="/audit-example">Review the sample audit</a>, then <a href="/free-audit.html">request a confidential review</a> when ready
         </li>
         </ul>
       </div>
@@ -1419,7 +1437,7 @@
       <path d="M11.465 36.211A17.5 17.5 0 0 1 11.465 11.789"/>
       <path d="M11.789 11.465A17.5 17.5 0 0 1 36.211 11.465"/>
       <path d="M36.535 11.789A17.5 17.5 0 0 1 36.535 36.211"/>
-    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><circle cx="0" cy="0" r="1.1" fill="currentColor" stroke="none"/><path d="M-2.5 0h5M0-2.5v5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></g></svg></span><span>� 2026 www.serviceopera.to — Serviceoperator audit studio · Private audits &amp; workflow pilots — <a href="/free-audit.html">Free 48h audit</a> · <a href="/case-study.html">14-day case study</a> — <a href="/free-audit.html">Request free audit</a></span></span>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><circle cx="0" cy="0" r="1.1" fill="currentColor" stroke="none"/><path d="M-2.5 0h5M0-2.5v5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></g></svg></span><span>� 2026 www.serviceopera.to — Private operational audit studio · Confidential assessments &amp; scoped recommendations — <a href="/audit-example">Sample audit</a> · <a href="/free-audit.html">Request a review</a> · <a href="/case-study.html">Illustrative case study</a></span></span>
 </footer>
 </div>
 
@@ -1428,6 +1446,7 @@
 <script src="/sw-register.js"></script>
 <script src="/site-nav-drawer.js"></script>
 <script src="/user-account-menu.js"></script>
+<script src="/journey-progress.js"></script>
 <script src="theme.js"></script>
 <script src="/demo-portal-client.js"></script>
 <script src="app.js"></script>

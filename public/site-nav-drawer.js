@@ -7,12 +7,36 @@
   var USER_JWT_KEY = 'so_user_jwt';
   var LEGACY_JWT_KEY = 'so_clinic_jwt';
 
+  var JOURNEY_SECTIONS = [
+    {
+      id: 'path',
+      title: 'Your path',
+      links: [
+        { href: '/', label: 'Audit studio home' },
+        { href: '/audit-example', label: 'Sample operational audit' },
+        { href: '/operational-findings', label: 'Operational findings (demo)' },
+        { href: '/workspace', label: 'Private workspace', onlyIfSignedIn: true },
+        { href: '/login.html', label: 'Sign in for workspace', onlyIfSignedOut: true },
+      ],
+    },
+    {
+      id: 'account',
+      title: 'Account',
+      links: [
+        { href: '/login.html', label: 'Log in' },
+        { href: '/register.html', label: 'Create account' },
+        { href: '/workspace', label: 'Workspace', onlyIfSignedIn: true },
+      ],
+    },
+  ];
+
   var SECTIONS = [
     {
       id: 'overview',
       title: 'Overview',
       links: [
         { href: '/', label: 'Home' },
+        { href: '/audit-example', label: 'Sample audit' },
         { href: '/admin/report-catalog', label: 'Report catalog (operator)' },
       ],
     },
@@ -63,6 +87,21 @@
     } catch (e) {
       return false;
     }
+  }
+
+  function isJourneyPage() {
+    var p = window.location.pathname || '/';
+    return (
+      p === '/' ||
+      p === '/index.html' ||
+      /^\/audit-example(\.html)?\/?$/i.test(p) ||
+      /^\/operational-findings(\.html)?\/?$/i.test(p) ||
+      /^\/workspace(\.html)?\/?$/i.test(p)
+    );
+  }
+
+  function navSections() {
+    return isJourneyPage() ? JOURNEY_SECTIONS : SECTIONS;
   }
 
   function isActive(href) {
@@ -196,7 +235,7 @@
     themeRow.appendChild(themeBtn);
     inner.appendChild(themeRow);
 
-    SECTIONS.forEach(function (section) {
+    navSections().forEach(function (section) {
       var sectionId = 'soSiteNavSection-' + section.id;
       var toggle = document.createElement('button');
       toggle.type = 'button';
@@ -235,6 +274,7 @@
 
       (section.links || []).forEach(function (link) {
         if (link.onlyIfSignedIn && !hasPortalJwt()) return;
+        if (link.onlyIfSignedOut && hasPortalJwt()) return;
         var a = document.createElement('a');
         a.className = 'so-site-nav-link';
         if (isActive(link.href)) a.classList.add('so-site-nav-link--active');

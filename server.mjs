@@ -33,6 +33,7 @@ import {
 } from './lib/transcriptions/store.mjs';
 import { appendAdminAuditLog } from './scripts/admin_audit_logger.js';
 import {
+  DEMO_PORTAL_JWT_ROLE,
   isDemoPortalConfigured,
   loadDemoPortalAccounts,
   verifyDemoPortalLogin,
@@ -598,7 +599,7 @@ const defaultSiteAppearance = {
     'Dashboard preview: AI hotel operations inbox, booking recovery, guest replies and demand insights.',
   homePageImageUrl: '/assets/home-page-hero.png',
   homePageImageAlt:
-    'Dashboard preview: ServiceOpera AI inbox across hotels, clinics and property with regional market context.',
+    'Excerpt from an operational review: delivery handoffs, capacity signals, and client-experience gaps.',
   navLogoUrl: '/assets/logo.png',
   navLogoAlt: 'www.serviceopera.to',
   heroDecoTopRightUrl: '/assets/hero-corner-arc.svg',
@@ -1264,6 +1265,8 @@ function getBearer(req) {
 
 const ADMIN_JWT_COOKIE = 'so_admin_jwt';
 const PORTAL_JWT_COOKIE = 'so_portal_jwt';
+const DEMO_PORTAL_JWT_COOKIE = 'so_demo_portal_jwt';
+const DEMO_PORTAL_JWT_TTL_MS = 8 * 60 * 60 * 1000;
 
 function getCookie(req, name) {
   const raw = req.headers.cookie;
@@ -1365,6 +1368,39 @@ function clearPortalJwtCookie(res) {
     'Set-Cookie',
     `${PORTAL_JWT_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secure}`
   );
+}
+
+function setDemoPortalJwtCookie(res, token) {
+  const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
+  const maxAge = Math.floor(DEMO_PORTAL_JWT_TTL_MS / 1000);
+  res.setHeader(
+    'Set-Cookie',
+    `${DEMO_PORTAL_JWT_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${secure}`
+  );
+}
+
+function clearDemoPortalJwtCookie(res) {
+  const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
+  res.setHeader(
+    'Set-Cookie',
+    `${DEMO_PORTAL_JWT_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secure}`
+  );
+}
+
+/** Client workspace demo session from HttpOnly cookie (POST /api/demo/portal-login). */
+function getVerifiedDemoPortalSession(req) {
+  const tok = getCookie(req, DEMO_PORTAL_JWT_COOKIE);
+  if (!tok) return null;
+  const p = verifyJwt(tok);
+  if (
+    !p ||
+    p.role !== DEMO_PORTAL_JWT_ROLE ||
+    typeof p.slug !== 'string' ||
+    typeof p.business !== 'string'
+  ) {
+    return null;
+  }
+  return { slug: p.slug, business: p.business };
 }
 
 function attachPortalSessionCookie(res, portalToken) {
@@ -1939,7 +1975,14 @@ if (API_UPSTREAM) {
   );
   app.use((req, res, next) => {
     if (!req.path.startsWith('/api/') || req.method === 'OPTIONS') return next();
-    if (req.path === '/api/demo/portal-login' || req.path === '/api/demo/portal-capabilities') return next();
+    if (
+      req.path === '/api/demo/portal-login' ||
+      req.path === '/api/demo/portal-logout' ||
+      req.path === '/api/demo/portal-session' ||
+      req.path === '/api/demo/portal-capabilities'
+    ) {
+      return next();
+    }
     proxyApiToUpstream(req, res).catch((err) => {
       console.error('[serviceopera] API upstream proxy error:', err && err.message ? err.message : err);
       if (!res.headersSent) {
@@ -2363,6 +2406,21 @@ app.get('/api/demo/portal-capabilities', (_req, res) => {
   });
 });
 
+app.get('/api/demo/portal-session', (req, res) => {
+  if (!isDemoPortalConfigured(DEMO_PORTAL_ACCOUNTS)) {
+    return res.status(503).json({
+      ok: false,
+      error:
+        'Demo client portal is not configured on this host. Set DEMO_PORTAL_ACCOUNTS (JSON) on the Node service and redeploy.',
+    });
+  }
+  const session = getVerifiedDemoPortalSession(req);
+  if (!session) {
+    return res.status(401).json({ ok: false, error: 'Not signed in.' });
+  }
+  return res.json({ ok: true, slug: session.slug, business: session.business });
+});
+
 app.post('/api/demo/portal-login', (req, res) => {
   if (!isDemoPortalConfigured(DEMO_PORTAL_ACCOUNTS)) {
     return res.status(503).json({
@@ -2376,7 +2434,20 @@ app.post('/api/demo/portal-login', (req, res) => {
   if (!session) {
     return res.status(401).json({ error: 'Invalid credentials.' });
   }
+  const token = signJwt({
+    v: 1,
+    role: DEMO_PORTAL_JWT_ROLE,
+    slug: session.slug,
+    business: session.business,
+    exp: Date.now() + DEMO_PORTAL_JWT_TTL_MS,
+  });
+  setDemoPortalJwtCookie(res, token);
   return res.json({ ok: true, slug: session.slug, business: session.business });
+});
+
+app.post('/api/demo/portal-logout', (_req, res) => {
+  clearDemoPortalJwtCookie(res);
+  return res.json({ ok: true });
 });
 
 app.post('/api/admin/login', (req, res) => {
@@ -4296,6 +4367,21 @@ app.get(['/pricing/inquiry', '/pricing/inquiry/'], (_req, res) => {
 /** SEO hub: AI operations verticals (same document as long filename; canonical `/ai-operations/`). */
 app.get(['/ai-operations', '/ai-operations/'], (_req, res) => {
   res.sendFile(path.join(publicDir, 'ai-operations-for-hotels-clinics-property.html'));
+});
+
+/** Public journey — sample audit and portal workspace (canonical short URLs). */
+app.get(['/audit-example', '/audit-example/'], (_req, res) => {
+  res.sendFile(path.join(publicDir, 'audit-example.html'));
+});
+
+app.get(['/operational-findings', '/operational-findings/'], (_req, res) => {
+  res.sendFile(path.join(publicDir, 'operational-findings.html'));
+});
+
+app.get(['/workspace', '/workspace/'], (_req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+  res.sendFile(path.join(publicDir, 'workspace.html'));
 });
 
 app.get('/ai-operations-for-hotels-clinics-property.html', (_req, res) => {

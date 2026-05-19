@@ -1427,20 +1427,17 @@ strong { color: var(--color-text-primary); }
         reportPathDefault;
       applyReportLink(reportPath);
       var user = (cfg && (cfg.username || cfg.email)) || '';
-      var pw = (cfg && String(cfg.tempPassword || '').trim()) || '';
       if (userEl) userEl.textContent = user;
       if (pwEl) {
         pwEl.textContent =
-          pw ||
-          'Configure AUDIT_DDC_EMAIL and AUDIT_DDC_TEMP_PASSWORD on the server (see .env.example).';
+          'Set AUDIT_DDC_EMAIL and AUDIT_DDC_TEMP_PASSWORD on the server (see .env.example), or use GET /api/public/audit-ddc-first-access when configured.';
       }
       if (pwHint) {
-        pwHint.textContent = pw
-          ? 'After sign-in, clear the clipboard on shared devices.'
-          : 'The temporary password is not stored in the repository; it is injected at deploy time.';
+        pwHint.textContent =
+          'Temporary passwords are never shipped in static JSON; they are returned only from the server when configured.';
       }
-      setPasswordCopyEnabled(!!pw);
-      return { user: user, pw: pw, reportPath: reportPath };
+      setPasswordCopyEnabled(false);
+      return { user: user, pw: '', reportPath: reportPath };
     }
 
     if (pub.ok && pub.state === 'completed') {

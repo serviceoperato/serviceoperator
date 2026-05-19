@@ -386,13 +386,12 @@ function showWorkspace(slug, business) {
   return true;
 }
 
-// Check if already authenticated this session (came from main page)
+// Restore workspace only when the server validates the HttpOnly demo session cookie.
 (function checkSession() {
-  const stored = sessionStorage.getItem('so_client');
-  const business = sessionStorage.getItem('so_business');
-  if (stored && business) {
-    showWorkspace(stored, business);
-  }
+  if (typeof window.soFetchDemoPortalSession !== 'function') return;
+  window.soFetchDemoPortalSession().then((rec) => {
+    if (rec) showWorkspace(rec.slug, rec.business);
+  });
 })();
 
 // Gate form
@@ -411,8 +410,6 @@ gateForm.addEventListener('submit', (e) => {
   window
     .soDemoPortalLogin(u, p)
     .then((rec) => {
-      sessionStorage.setItem('so_client', rec.slug);
-      sessionStorage.setItem('so_business', rec.business);
       showWorkspace(rec.slug, rec.business);
     })
     .catch((err) => {
@@ -425,9 +422,10 @@ gateForm.addEventListener('submit', (e) => {
 
 // Logout
 document.getElementById('logoutBtn').addEventListener('click', () => {
-  sessionStorage.removeItem('so_client');
-  sessionStorage.removeItem('so_business');
-  window.location.href = '/';
+  const done = typeof window.soLogoutDemoPortal === 'function' ? window.soLogoutDemoPortal() : Promise.resolve();
+  Promise.resolve(done).finally(() => {
+    window.location.href = '/';
+  });
 });
 
 // ============== Chat demo ==============

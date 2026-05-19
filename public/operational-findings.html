@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
+<title>Operational findings (sample deliverable) · ServiceOpera</title>
+<meta name="description" content="Demo operational audit findings for a fictional multi-site service operator: illustrative KPIs, workflow gaps, estimated recovery ranges, and prioritized fixes. Not live client data." />
+<link rel="canonical" href="https://serviceopera.to/operational-findings.html" />
+<meta name="robots" content="index,follow" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="www.serviceopera.to" />
+<meta property="og:url" content="https://serviceopera.to/operational-findings.html" />
+<meta property="og:title" content="Operational findings (sample deliverable) · ServiceOpera" />
+<meta property="og:description" content="Sample operational audit deliverable with illustrative KPIs, findings, and recovery scenarios—not a performance guarantee." />
+<meta property="og:image" content="https://serviceopera.to/assets/logo.png" />
+<meta property="og:locale" content="en_US" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Operational findings (sample deliverable) · ServiceOpera" />
+<meta name="twitter:description" content="Demo audit findings with ranges and methodology notes. Fictional operator; not live client data." />
+<meta name="twitter:image" content="https://serviceopera.to/assets/logo.png" />
+<link rel="icon" href="/favicon.png" type="image/png" sizes="any" />
+<link rel="apple-touch-icon" href="/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="/journey-progress.css" />
+<script src="/page-skeleton.js"></script>
+<script src="/so-api.js"></script>
+<script src="/portal-auth-routing.js"></script>
+<style>
+  .of-page {
+    --of-ink: #0a0a0f;
+    --of-muted: #475569;
+    --of-line: rgba(15, 23, 42, 0.1);
+    --of-accent: #4f46e5;
+    --of-surface: #ffffff;
+    --of-subtle: #f8fafc;
+    --of-warn-bg: #fffbeb;
+    --of-warn-border: #fcd34d;
+    --of-warn-text: #92400e;
+    --of-demo-bg: #eef2ff;
+    --of-demo-border: #c7d2fe;
+    --of-demo-text: #3730a3;
+    font-family: var(--font-body), "Inter", system-ui, sans-serif;
+    color: var(--of-muted);
+    background: var(--of-surface);
+    -webkit-font-smoothing: antialiased;
+  }
+  [data-theme="dark"] .of-page {
+    --of-ink: #f1f5f9;
+    --of-muted: #94a3b8;
+    --of-line: rgba(148, 163, 184, 0.2);
+    --of-accent: #a5b4fc;
+    --of-surface: #0f172a;
+    --of-subtle: #1e293b;
+    --of-warn-bg: rgba(251, 191, 36, 0.12);
+    --of-warn-border: rgba(251, 191, 36, 0.35);
+    --of-warn-text: #fde68a;
+    --of-demo-bg: rgba(99, 102, 241, 0.12);
+    --of-demo-border: rgba(129, 140, 248, 0.35);
+    --of-demo-text: #c7d2fe;
+  }
+  .of-wrap {
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: calc(var(--site-nav-offset, 4.5rem) + 1rem) var(--gutter, 1.25rem) 4rem;
+  }
+  .of-journey {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.5rem;
+    align-items: center;
+    margin: 0 0 1.25rem;
+    padding: 0;
+    list-style: none;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .of-journey li { display: flex; align-items: center; gap: 0.5rem; }
+  .of-journey li:not(:last-child)::after {
+    content: "→";
+    opacity: 0.45;
+    font-weight: 400;
+  }
+  .of-journey a { color: var(--of-muted); text-decoration: none; }
+  .of-journey a:hover { color: var(--of-accent); text-decoration: underline; }
+  .of-journey [aria-current="step"] {
+    color: var(--of-ink);
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    background: var(--of-demo-bg);
+    border: 1px solid var(--of-demo-border);
+  }
+  .of-banner {
+    margin: 0 0 1.25rem;
+    padding: 0.85rem 1rem;
+    border-radius: 12px;
+    border: 1px solid var(--of-warn-border);
+    background: var(--of-warn-bg);
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    color: var(--of-warn-text);
+  }
+  .of-banner strong { font-weight: 600; }
+  .of-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0 0 0.65rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--of-accent);
+  }
+  .of-kicker .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--of-accent);
+  }
+  .of-page h1 {
+    margin: 0 0 0.75rem;
+    font-size: clamp(1.5rem, 4.5vw, 2rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    color: var(--of-ink);
+  }
+  .of-lede {
+    margin: 0 0 1.5rem;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+  }
+  .of-page section { margin-bottom: 2.25rem; }
+  .of-page h2 {
+    margin: 0 0 0.65rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--of-ink);
+  }
+  .of-page h3 {
+    margin: 0 0 0.4rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--of-ink);
+  }
+  .of-page p, .of-page li {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+  .of-page ul { margin: 0 0 0.75rem; padding-left: 1.15rem; }
+  .of-page li { margin-bottom: 0.45rem; }
+  .of-mono {
+    font-family: var(--font-mono), "JetBrains Mono", monospace;
+    font-size: 0.85em;
+  }
+  .of-tag {
+    display: inline-block;
+    margin-left: 0.35rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: var(--of-subtle);
+    border: 1px solid var(--of-line);
+    color: var(--of-muted);
+    vertical-align: middle;
+  }
+  .of-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+    gap: 0.65rem;
+    margin: 0.75rem 0 0.5rem;
+  }
+  .of-kpi {
+    padding: 0.75rem 0.85rem;
+    border-radius: 10px;
+    border: 1px solid var(--of-line);
+    background: var(--of-subtle);
+  }
+  .of-kpi__label {
+    margin: 0 0 0.25rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--of-muted);
+  }
+  .of-kpi__value {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--of-ink);
+    letter-spacing: -0.02em;
+  }
+  .of-kpi__unit {
+    display: block;
+    margin-top: 0.15rem;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--of-muted);
+  }
+  .of-kpi-note {
+    margin: 0.5rem 0 0;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--of-muted);
+  }
+  .of-finding {
+    margin-bottom: 1rem;
+    padding: 1rem 1.05rem;
+    border-radius: 12px;
+    border: 1px solid var(--of-line);
+    background: var(--of-surface);
+  }
+  .of-finding__meta {
+    margin: 0 0 0.35rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--of-accent);
+  }
+  .of-screens {
+    display: grid;
+    gap: 1rem;
+    margin: 1rem 0 0;
+  }
+  @media (min-width: 640px) {
+    .of-screens { grid-template-columns: 1fr 1fr; }
+    .of-screens .of-mock--wide { grid-column: 1 / -1; }
+  }
+  .of-mock {
+    border-radius: 10px;
+    border: 1px solid var(--of-line);
+    background: var(--of-subtle);
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+  }
+  .of-mock__chrome {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.45rem 0.65rem;
+    border-bottom: 1px solid var(--of-line);
+    background: rgba(15, 23, 42, 0.04);
+  }
+  [data-theme="dark"] .of-mock__chrome { background: rgba(0, 0, 0, 0.2); }
+  .of-mock__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--of-line);
+  }
+  .of-mock__title {
+    margin-left: 0.35rem;
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--of-muted);
+  }
+  .of-mock__body { padding: 0.85rem; font-size: 0.75rem; }
+  .of-mock__caption {
+    margin: 0.4rem 0 0;
+    padding: 0 0.15rem;
+    font-size: 0.75rem;
+    line-height: 1.45;
+    color: var(--of-muted);
+  }
+  .of-bars { display: flex; align-items: flex-end; gap: 0.35rem; height: 4.5rem; margin-top: 0.5rem; }
+  .of-bar {
+    flex: 1;
+    border-radius: 3px 3px 0 0;
+    background: var(--of-accent);
+    opacity: 0.85;
+  }
+  .of-bar--low { height: 35%; opacity: 0.35; }
+  .of-bar--mid { height: 58%; }
+  .of-bar--high { height: 82%; }
+  .of-flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.35rem;
+    margin-top: 0.5rem;
+  }
+  .of-flow__node {
+    padding: 0.35rem 0.5rem;
+    border-radius: 6px;
+    border: 1px solid var(--of-line);
+    background: var(--of-surface);
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: var(--of-ink);
+  }
+  .of-flow__node--gap {
+    border-color: #f59e0b;
+    background: #fffbeb;
+    color: #92400e;
+  }
+  [data-theme="dark"] .of-flow__node--gap {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fde68a;
+  }
+  .of-flow__arrow { color: var(--of-muted); font-size: 0.7rem; }
+  .of-card-stack { display: flex; flex-direction: column; gap: 0.4rem; }
+  .of-mini-card {
+    padding: 0.45rem 0.55rem;
+    border-radius: 6px;
+    border-left: 3px solid var(--of-accent);
+    background: var(--of-surface);
+    border: 1px solid var(--of-line);
+    border-left-width: 3px;
+  }
+  .of-mini-card strong { display: block; font-size: 0.7rem; color: var(--of-ink); }
+  .of-mini-card span { font-size: 0.65rem; color: var(--of-muted); }
+  .of-scenario {
+    margin: 0.65rem 0;
+    padding: 0.85rem 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--of-line);
+    background: var(--of-subtle);
+  }
+  .of-scenario dt {
+    margin: 0 0 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--of-ink);
+  }
+  .of-scenario dd {
+    margin: 0 0 0.65rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .of-scenario dd:last-child { margin-bottom: 0; }
+  .of-priority {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0.75rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .of-priority li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.65rem;
+    align-items: start;
+    padding: 0.75rem 0.85rem;
+    border-radius: 10px;
+    border: 1px solid var(--of-line);
+    background: var(--of-subtle);
+    margin: 0;
+  }
+  .of-priority__n {
+    font-family: var(--font-mono), monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--of-accent);
+  }
+  .of-foot {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--of-line);
+  }
+  .of-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.75rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 10px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: #fff;
+    background: var(--of-accent);
+    border: none;
+  }
+  .of-cta:hover { filter: brightness(1.05); }
+  .of-cta--ghost {
+    margin-left: 0.5rem;
+    color: var(--of-ink);
+    background: transparent;
+    border: 1px solid var(--of-line);
+  }
+  .of-back {
+    display: inline-block;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    color: var(--of-muted);
+    text-decoration: none;
+  }
+  .of-back:hover { color: var(--of-accent); }
+</style>
+</head>
+<body class="page-home page-home--with-nav" data-page-skeleton="native" data-so-journey-step="2">
+
+<div class="grain" aria-hidden="true"></div>
+
+<nav class="nav" aria-label="Primary">
+  <a href="/" class="nav__logo">
+    <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="www.serviceopera.to — home" decoding="async" />
+  </a>
+  <div class="nav__links">
+    <a href="/login.html?next=%2Fclient.html" class="nav__login mono" id="navPortalAuth" aria-label="Sign in to private workspace">Sign in</a>
+  </div>
+</nav>
+
+<main class="of-page">
+  <div class="of-wrap">
+    <a class="of-back" href="/audit-example">← Sample audit overview</a>
+
+    <aside class="of-banner" role="note">
+      <strong>Demo deliverable — not live client data.</strong> This page shows the structure and tone of a private operational audit brief using fictional metrics, redacted-style screenshots, and illustrative ranges. Nothing here is a performance guarantee. Real engagements are confidential, customized to your systems, and validated with your team before any recovery estimate is discussed.
+    </aside>
+
+    <p class="of-kicker"><span class="dot" aria-hidden="true"></span>Sample audit · operational review methodology</p>
+    <h1>Operational findings</h1>
+    <p class="of-lede">Excerpt from a <strong>48-hour operational review</strong> for a fictional multi-site hospitality and wellness operator (“Northline Collective”). Figures are rounded, labeled illustrative, and derived from a composite engagement pattern—not a named client.</p>
+
+    <section id="summary" aria-labelledby="summary-h">
+      <h2 id="summary-h">Executive summary</h2>
+      <p>Based on a sample engagement, intake and handoff friction—not clinical or guest-facing quality—appear to drive most recoverable drag. Teams spend an estimated <span class="of-mono">12–18 h/week</span> on duplicate status checks, manual follow-up, and channel switching across three locations.</p>
+      <p>We recommend sequencing fixes by <em>clarity of ownership</em> first (routing and SLAs), then <em>follow-up cadence</em>, then optional tooling—only where process changes need a lightweight anchor. A single scoped pilot on after-hours inquiry routing is the suggested starting point.</p>
+    </section>
+
+    <section id="kpis" aria-labelledby="kpis-h">
+      <h2 id="kpis-h">KPI snapshot <span class="of-tag">Illustrative · sample metric</span></h2>
+      <p>Trailing <strong>30-day window</strong> as modeled in the demo brief. Your live audit would pull from your CRM, PMS, or messenger exports with agreed definitions.</p>
+      <div class="of-kpi-grid" aria-label="Sample KPI cards">
+        <article class="of-kpi">
+          <p class="of-kpi__label">First response (median) <span class="of-tag">Sample</span></p>
+          <p class="of-kpi__value">4.5–6.2 h</p>
+          <span class="of-kpi__unit">Business hours · web + messenger</span>
+        </article>
+        <article class="of-kpi">
+          <p class="of-kpi__label">Stale pipeline <span class="of-tag">Sample</span></p>
+          <p class="of-kpi__value">48–62</p>
+          <span class="of-kpi__unit">Leads · no activity 14+ days</span>
+        </article>
+        <article class="of-kpi">
+          <p class="of-kpi__label">Handoff rework <span class="of-tag">Illustrative</span></p>
+          <p class="of-kpi__value">~22%</p>
+          <span class="of-kpi__unit">Tickets touched by 2+ roles</span>
+        </article>
+        <article class="of-kpi">
+          <p class="of-kpi__label">Booking conversion <span class="of-tag">Sample</span></p>
+          <p class="of-kpi__value">19–24%</p>
+          <span class="of-kpi__unit">Qualified inquiry → booked</span>
+        </article>
+      </div>
+      <p class="of-kpi-note"><strong>Methodology note:</strong> Percentages and counts are rounded fictional values for layout demonstration. A real brief cites source systems, date ranges, and exclusions (spam, staff tests, duplicate records).</p>
+
+      <div class="of-screens" aria-label="Sample audit artifact screenshots">
+        <figure class="of-mock">
+          <div class="of-mock__chrome" aria-hidden="true">
+            <span class="of-mock__dot"></span><span class="of-mock__dot"></span><span class="of-mock__dot"></span>
+            <span class="of-mock__title">KPI excerpt · redacted dashboard</span>
+          </div>
+          <div class="of-mock__body">
+            <div class="of-bars" aria-hidden="true">
+              <span class="of-bar of-bar--low" title="Week 1"></span>
+              <span class="of-bar of-bar--mid"></span>
+              <span class="of-bar of-bar--high"></span>
+              <span class="of-bar of-bar--mid"></span>
+              <span class="of-bar of-bar--low"></span>
+            </div>
+            <p style="margin:0.5rem 0 0;font-size:0.65rem;color:var(--of-muted)">Response time · by week (illustrative)</p>
+          </div>
+          <figcaption class="of-mock__caption">Plausible deliverable screenshot—synthetic chart, no client identifiers.</figcaption>
+        </figure>
+        <figure class="of-mock of-mock--wide">
+          <div class="of-mock__chrome" aria-hidden="true">
+            <span class="of-mock__dot"></span><span class="of-mock__dot"></span><span class="of-mock__dot"></span>
+            <span class="of-mock__title">Handoff map · workflow diagram</span>
+          </div>
+          <div class="of-mock__body">
+            <div class="of-flow" aria-hidden="true">
+              <span class="of-flow__node">Inquiry</span>
+              <span class="of-flow__arrow">→</span>
+              <span class="of-flow__node of-flow__node--gap">Unowned queue</span>
+              <span class="of-flow__arrow">→</span>
+              <span class="of-flow__node">Front desk</span>
+              <span class="of-flow__arrow">→</span>
+              <span class="of-flow__node of-flow__node--gap">Coordinator?</span>
+              <span class="of-flow__arrow">→</span>
+              <span class="of-flow__node">Booked</span>
+            </div>
+            <p style="margin:0.6rem 0 0;font-size:0.65rem;color:var(--of-muted)">Gap nodes = duplicate or zero touch (sample finding)</p>
+          </div>
+          <figcaption class="of-mock__caption">Workflow diagram from operational review methodology—highlights ownership breaks, not software brands.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="findings" aria-labelledby="findings-h">
+      <h2 id="findings-h">Key findings</h2>
+      <p>Five patterns commonly surfaced in comparable service-operator audits. Severity is relative to this fictional baseline.</p>
+
+      <article class="of-finding">
+        <p class="of-finding__meta">Finding 01 · Intake</p>
+        <h3>After-hours inquiries sit unowned until the next shift</h3>
+        <p>Estimated <span class="of-mono">35–45%</span> of qualified web and messenger inquiries arrive outside published business hours with no auto-acknowledgment or queue. Partners cannot see status; staff duplicate morning replies.</p>
+      </article>
+      <article class="of-finding">
+        <p class="of-finding__meta">Finding 02 · SLA</p>
+        <h3>No documented first-response target by channel</h3>
+        <p>Median first human reply during business hours falls in a modeled <span class="of-mono">4.5–6.2 h</span> band. High-intent channels are not prioritized over general inbox traffic.</p>
+      </article>
+      <article class="of-finding">
+        <p class="of-finding__meta">Finding 03 · Handoffs</p>
+        <h3>Coordinator vs. front desk ownership is ambiguous</h3>
+        <p>Illustrative rework rate <span class="of-mono">~22%</span> on intake tickets suggests duplicate or null touches. CRM stages do not distinguish “waiting on guest” from “we owe follow-up.”</p>
+      </article>
+      <article class="of-finding">
+        <p class="of-finding__meta">Finding 04 · Follow-up</p>
+        <h3>Single-touch follow-up then silence</h3>
+        <p>Sample pipeline shows <span class="of-mono">48–62</span> records in “contacted” with no scheduled next step. No standard cadence (e.g. day 0, 2, 7) is published internally.</p>
+      </article>
+      <article class="of-finding">
+        <p class="of-finding__meta">Finding 05 · Reporting</p>
+        <h3>Owner reporting is manual and lagging</h3>
+        <p>Weekly status is compiled by copy-paste across tools. Estimated <span class="of-mono">3–5 h/week</span> of coordinator time—illustrative—could shift to exception-based reporting once stages are trustworthy.</p>
+      </article>
+
+      <figure class="of-mock" style="margin-top:1rem">
+        <div class="of-mock__chrome" aria-hidden="true">
+          <span class="of-mock__dot"></span><span class="of-mock__dot"></span><span class="of-mock__dot"></span>
+          <span class="of-mock__title">Finding cards · excerpt</span>
+        </div>
+        <div class="of-mock__body">
+          <div class="of-card-stack" aria-hidden="true">
+            <div class="of-mini-card"><strong>Intake · Unowned after-hours queue</strong><span>Impact: high · Effort: low–medium</span></div>
+            <div class="of-mini-card"><strong>Handoffs · Stage definitions</strong><span>Impact: medium · Effort: low</span></div>
+            <div class="of-mini-card"><strong>Follow-up · Cadence template</strong><span>Impact: medium · Effort: medium</span></div>
+          </div>
+        </div>
+        <figcaption class="of-mock__caption">Finding-card layout from a sample brief—priority tags are illustrative, not prescriptions.</figcaption>
+      </figure>
+    </section>
+
+    <section id="impact" aria-labelledby="impact-h">
+      <h2 id="impact-h">Estimated recovery impact <span class="of-tag">Scenario · not guaranteed</span></h2>
+      <p>If the prioritized fixes below were adopted, comparable teams often recover capacity in the following <strong>illustrative ranges</strong>. We state assumptions openly; your audit would calibrate to your volume and seasonality.</p>
+
+      <dl class="of-scenario">
+        <dt>Scenario A — Response discipline only</dt>
+        <dd>If median first response during business hours moved from a modeled <span class="of-mono">~4.5–6 h</span> toward <span class="of-mono">~60–90 min</span> (routing + published SLA, no new software), front-line teams often report <span class="of-mono">~4–7 h/week</span> less chasing status—based on sample engagement patterns, not a promise.</dd>
+        <dt>Scenario B — Follow-up cadence + stale review</dt>
+        <dd>Re-queuing a fictional <span class="of-mono">48–62</span> stale pipeline with a three-touch template: in similar audits, <span class="of-mono">~10–18%</span> of re-engaged leads booked a next step (illustrative band; channel mix dependent).</dd>
+        <dt>Scenario C — Revenue sizing (hypothetical)</dt>
+        <dd>With ~<span class="of-mono">80–90</span> qualified inquiries/month and a conservative <span class="of-mono">+2–3 pp</span> booking lift, a sensitivity band might land near <span class="of-mono">€2.2k–€4.1k/month</span> incremental revenue—labeled hypothetical, using fictional average case values. Not audited financial statements.</dd>
+      </dl>
+      <p>We present recovery as <strong>ranges and scenarios</strong>, not “you will save $X.” Seasonality, discounting, and case mix can move realized outcomes outside these bands.</p>
+    </section>
+
+    <section id="priorities" aria-labelledby="priorities-h">
+      <h2 id="priorities-h">Recommended priorities</h2>
+      <p>Ordered for a 14–21 day pilot window in the sample brief. Your live engagement may reorder based on constraints you share under NDA.</p>
+      <ol class="of-priority">
+        <li>
+          <span class="of-priority__n">P1</span>
+          <div>
+            <h3>Publish channel owners + 90-minute business-hours SLA</h3>
+            <p>Clarify first touch by channel; escalation if unclaimed after 30 minutes. No new tooling required for the pilot.</p>
+          </div>
+        </li>
+        <li>
+          <span class="of-priority__n">P2</span>
+          <div>
+            <h3>After-hours acknowledgment + morning queue</h3>
+            <p>Auto-ack with honest timing; single queue reviewed at shift start. Reduces duplicate replies and partner anxiety.</p>
+          </div>
+        </li>
+        <li>
+          <span class="of-priority__n">P3</span>
+          <div>
+            <h3>CRM stage cleanup + weekly stale review</h3>
+            <p>Separate “waiting on guest” vs. “we owe follow-up”; named owner clears aged pipeline each week.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <footer class="of-foot">
+      <aside class="of-banner" role="note">
+        <strong>Reminder:</strong> This page is a public demo of deliverable format only. Confidential client audits use your data, your definitions, and your sign-off before any estimate is shared externally.
+      </aside>
+      <p>Continue the journey: see how a signed-in engagement workspace is structured (demo environment).</p>
+      <a class="of-cta" data-so-journey-workspace-cta href="/login.html?next=%2Fworkspace">Continue to private workspace<span class="ico-arrow-r" aria-hidden="true"></span></a>
+      <a class="of-cta of-cta--ghost" href="/free-audit.html">Request your own 48h audit</a>
+      <p style="margin-top:1.25rem;font-size:0.875rem">Prefer narrative depth? <a href="/case-study.html">Read the 14-day case study</a> (also illustrative).</p>
+    </footer>
+  </div>
+</main>
+
+<script src="/site-appearance-public.js" defer></script>
+<script src="/sw-register.js"></script>
+<script src="/site-nav-drawer.js"></script>
+<script src="/user-account-menu.js"></script>
+<script src="theme.js"></script>
+<script src="/journey-progress.js"></script>
+</body>
+</html>

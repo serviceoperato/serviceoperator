@@ -11,12 +11,12 @@ A complete, deployable site under **`serviceopera.to`**. All static assets live 
 | Path | What it is |
 |---|---|
 | `public/index.html` | Public landing page. **Jack — Service Operator** (`www.serviceopera.to`): AI operations for international hotels, clinics, and property businesses. |
-| `public/client.html` | **The "secret page".** Demo workspace behind a **browser-only** username/password (see `public/app.js`). For real data, replace with server-side auth. |
+| `public/client.html` | **The "secret page".** Demo workspace; credentials validated **only** on the server (`POST /api/demo/portal-login`, HttpOnly session cookie). |
 | `public/styles.css` | Shared black / white / indigo design system. |
-| `public/app.js` | Landing-page modal + demo credential check. |
-| `public/admin.html` | **Jack admin console** — email + password (server-verified hash) or local `admin-config.js` preview; loads `admin.js`. |
-| `public/admin.js` | Admin gate + users table, inbox, report catalog, site appearance. With **`ADMIN_PASSWORD_HASH`** on the Node host, sign-in uses **POST /api/admin/login** and a server-signed JWT; without the API, optional `admin-config.js` unlocks the UI only. |
-| `public/admin-config.js` | Optional: `window.__ADMIN_PASSWORD__` when the browser **cannot** reach the Node API — unlocks the admin **shell** only (no `/api/admin/*` calls). **Do not rely on this in production.** |
+| `public/app.js` | Landing-page modal; posts to `/api/demo/portal-login` via `demo-portal-client.js` (no credential map in the browser). |
+| `public/demo-portal-client.js` | Demo portal fetch helpers (`soDemoPortalLogin`, `soFetchDemoPortalSession`, `soLogoutDemoPortal`). |
+| `public/admin.html` | **Jack admin console** — email + password verified on the server; loads `admin.js`. |
+| `public/admin.js` | Admin gate + users table, inbox, report catalog, site appearance. Sign-in uses **POST /api/admin/login** and a server-signed JWT when **`ADMIN_PASSWORD_HASH`** is set. |
 | `server.mjs` | Static file host + `/api/admin/*` + **clinic users** (`/api/clinic-users`, `/api/auth/clinic-login`, `/api/clinics/report-data`). User rows live in **`DATA_DIR`/clinic_users.json** (default `./data`, Docker `/app/data`). |
 | `public/login.html` | Clinic log-in; stores `so_clinic_jwt` and redirects to `/clinics/report.html?slug=…`. |
 | `public/clinics/report.html` | Private report view (same layout as the public demo); needs a valid clinic session and slug-specific or fallback `_data.json`. |
@@ -60,14 +60,19 @@ This is the workflow you described, mapped to the assets:
 Find a real business in one of the 3 sectors. Owner's name + email + Instagram or website. Aim for 8–80 keys (hotels), independent clinics, 20–200 doors (property).
 
 ### Step 2 — Create their credentials
-Open `public/client.html` and `public/app.js`. Add a new entry in **both** `CREDENTIALS` objects:
+On the Node host (Railway / `.env`), add an account to **`DEMO_PORTAL_ACCOUNTS`** (JSON, server-only — see `.env.example`):
 
-```js
-'amari-resort': { password: 'demo2026', business: 'Amari Resort · Thailand' },
+```json
+{
+  "amari-resort": {
+    "password": "demo2026",
+    "slug": "amari-resort",
+    "business": "Amari Resort · Thailand"
+  }
+}
 ```
 
-Convention I used: `slug-of-business` as username, an 8-char password.
-(If you later move to a real backend, this becomes a database lookup. For now: static, fine.)
+Convention: `slug-of-business` as username, an 8-char password. Never commit real passwords; set the env var on deploy.
 
 ### Step 3 — *(Optional but recommended)* personalize the demo
 Open `public/client.html` and swap a few details so it feels truly built for them:
@@ -205,19 +210,12 @@ The portal user must already exist and **`reportSlug`** must match **`AUDIT_DDC_
 
 ---
 
-## 6. Hardening the "secret page" later
+## 6. Auth model (demo + operator)
 
-The **client** demo (`public/client.html`) still uses **client-side** `CREDENTIALS` in `public/app.js` — fine for fake data; anyone can read it in DevTools.
+- **Client demo:** `DEMO_PORTAL_ACCOUNTS` on the server only. Browser calls `POST /api/demo/portal-login`; session is an **HttpOnly** JWT cookie (`so_demo_portal_jwt`). `GET /api/demo/portal-session` restores the workspace — no credential map in `public/`.
+- **Admin / portal:** **`ADMIN_PASSWORD_HASH`** + **`POST /api/admin/login`** (Bearer JWT). Clinic users use `/api/auth/*` with server-stored password hashes.
 
-**Admin** on a Railway (or other) Node deploy with **`ADMIN_PASSWORD_HASH`** uses **email + password** and a **server-signed JWT** (same TTL and cookie-free Bearer pattern as before). `RESEND_API_KEY` is unrelated to operator sign-in.
-
-When you start handling real client data (e.g. a live competitor scrape for an actual paying client), switch to:
-
-- **Netlify Identity** or **Cloudflare Access** → real auth, free for small teams.
-- Or a tiny backend (Cloudflare Worker + KV) that validates credentials server-side and returns a short-lived JWT.
-- Each client gets their *own* URL like `/clients/amari-resort` so credentials can't be guessed by URL.
-
-For pure cold-outreach demos with fake data, the current setup is honestly enough.
+When you handle real client data, keep credentials server-side and issue per-tenant URLs or portal users — do not ship password maps in static assets.
 
 ---
 
@@ -230,15 +228,13 @@ npm install
 npm start
 ```
 
-Then open `http://localhost:8080` (or whatever `PORT` is). This runs **`server.mjs`** so `/api/admin/capabilities` exists; set **`ADMIN_PASSWORD_HASH`** in `.env` (see `.env.example`) for password sign-in, or use **`public/admin-config.js`** for a **UI-only** gate when testing static export.
+Then open `http://localhost:8080` (or whatever `PORT` is). Set **`ADMIN_PASSWORD_HASH`** and **`DEMO_PORTAL_ACCOUNTS`** in `.env` (see `.env.example`) for operator and client-demo sign-in.
 
-For a zero-dependency static check only (no admin API):
+For a zero-dependency static check only (no APIs — sign-in will not work):
 
 ```bash
 npx --yes serve@14 public -l 8000
 ```
-
-Try the client demo with username `demo` and password `demo` — it'll show the workspace themed as "Demo Property · Thailand".
 
 ---
 

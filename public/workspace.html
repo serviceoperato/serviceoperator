@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="/journey-progress.css" />
 <script src="/page-skeleton.js"></script>
 <script src="/so-api.js"></script>
 <script src="/portal-auth-routing.js"></script>
@@ -36,7 +37,7 @@
   .page-user-portal .portal-caption--accent { color: var(--amber-2); }
 </style>
 </head>
-<body class="page-admin page-admin--with-nav page-user-portal">
+<body class="page-admin page-admin--with-nav page-user-portal" data-so-journey-step="3">
 
 <div class="grain" aria-hidden="true"></div>
 
@@ -77,7 +78,7 @@
         </div>
       </div>
 
-      <p class="modal__footnote" style="margin-top:1.5rem"><a href="/"><span class="ico-arrow-l" aria-hidden="true"></span>Back to site</a></p>
+      <p class="modal__footnote" style="margin-top:1.5rem"><a href="/audit-example"><span class="ico-arrow-l" aria-hidden="true"></span>Back to sample audit</a> · <a href="/">Studio home</a></p>
     </div>
   </div>
 </div>
@@ -85,6 +86,7 @@
 <script src="/sw-register.js"></script>
 <script src="/site-nav-drawer.js"></script>
 <script src="/user-account-menu.js"></script>
+<script src="/journey-progress.js"></script>
 <script src="/theme.js"></script>
 <script src="/site-contact.js"></script>
 <script src="debug.js"></script>

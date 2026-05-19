@@ -61,10 +61,9 @@
             hint.textContent = 'Access granted. Opening workspace…';
             hint.className = 'portal-form__hint mono is-ok';
           }
-          sessionStorage.setItem('so_client', rec.slug);
-          sessionStorage.setItem('so_business', rec.business);
           setTimeout(() => {
-            window.location.href = 'client.html#' + encodeURIComponent(rec.slug);
+            const dest = 'client.html';
+            window.location.href = rec.slug ? dest + '#' + encodeURIComponent(rec.slug) : dest;
           }, 500);
         })
         .catch((err) => {

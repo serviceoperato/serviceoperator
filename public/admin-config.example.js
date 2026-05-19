@@ -1,7 +1,5 @@
 /**
- * Local / static preview only. Copy to admin-config.js in public/ (same folder as admin.js).
- * When the page cannot reach the Node API, this password unlocks the UI shell only (no server admin APIs).
- *
- * window.__ADMIN_PASSWORD__ = 'your-local-secret';
+ * Deprecated: operator sign-in is server-only (POST /api/admin/login + ADMIN_PASSWORD_HASH).
+ * This file is kept for backwards compatibility with bookmarks; do not put passwords here.
  */
 window.__ADMIN_PASSWORD__ = '';
