@@ -121,7 +121,7 @@
       method: 'GET',
       credentials: apiCred(),
       cache: 'no-store',
-      headers: { Authorization: 'Bearer ' + token },
+      headers: adminAuthHeaders(),
     })
       .then(function (r) {
         return r.ok;
@@ -279,6 +279,10 @@
     var token = getAdminBearer();
     if (token) headers.Authorization = 'Bearer ' + token;
     return headers;
+  }
+
+  function adminAuthHeadersJson() {
+    return Object.assign({ 'Content-Type': 'application/json' }, adminAuthHeaders());
   }
 
   var ADMIN_AUTH_LOOP_KEY = 'so_admin_auth_redirect_count';
@@ -534,7 +538,7 @@
     fetch(api('/api/user-accounts/' + encodeURIComponent(user.id) + '/telemetry'), {
       method: 'GET',
       credentials: apiCred(),
-      headers: { Authorization: 'Bearer ' + getAdminBearer() },
+      headers: adminAuthHeaders(),
     })
       .then(function (r) {
         return r.json().then(function (j) {
@@ -559,11 +563,7 @@
     if (!user || !user.id) return;
     if (document.getElementById('adminMainDefault')) document.getElementById('adminMainDefault').classList.add('is-hidden');
     panelTitle.textContent = 'Edit profile';
-    var adminToken = getAdminBearer();
     panelBody.innerHTML =
-      (adminToken
-        ? ''
-        : '<p class="admin-panel__body mono is-error">Sign in on the Node host (email + password) to save profile changes.</p>') +
       '<p class="admin-panel__body mono">Portal user <strong>' +
       escapeHtml(user.email) +
       '</strong> · report slug <code>' +
@@ -632,11 +632,6 @@
     }
     var profileForm = document.getElementById('adminUserProfileForm');
     var profileHint = document.getElementById('adminUserProfileHint');
-    if (profileForm && !adminToken) {
-      profileForm.querySelectorAll('input, select, button').forEach(function (el) {
-        el.disabled = true;
-      });
-    }
     if (profileForm) {
       profileForm.addEventListener('submit', function (e) {
         e.preventDefault();
@@ -658,10 +653,7 @@
         fetch(api('/api/user-accounts/' + encodeURIComponent(user.id)), {
           method: 'PATCH',
           credentials: apiCred(),
-          headers: {
-            Authorization: 'Bearer ' + getAdminBearer(),
-            'Content-Type': 'application/json',
-          },
+          headers: adminAuthHeadersJson(),
           body: JSON.stringify(body),
         })
           .then(function (r) {
@@ -805,19 +797,11 @@
           var mustChange = window.confirm(
             'Require password change on next sign-in? OK = yes, Cancel = no.'
           );
-          var token = getAdminBearer();
-          if (!token) {
-            window.alert('Sign in on the Node host with operator credentials first.');
-            return;
-          }
           btn.disabled = true;
           fetch(api('/api/user-accounts/' + encodeURIComponent(uid) + '/password'), {
             method: 'PUT',
             credentials: apiCred(),
-            headers: {
-              Authorization: 'Bearer ' + token,
-              'Content-Type': 'application/json',
-            },
+            headers: adminAuthHeadersJson(),
             body: JSON.stringify({ password: pw, passwordMustChange: mustChange }),
           })
             .then(function (r) {
@@ -913,7 +897,7 @@
       fetch(api('/api/admin/work-queue'), {
         cache: 'no-store',
         credentials: apiCred(),
-        headers: { Authorization: 'Bearer ' + getAdminBearer() },
+        headers: adminAuthHeaders(),
       }).then(function (r) {
         return r.json().then(function (j) {
           return { ok: r.ok, status: r.status, json: j };
@@ -1581,10 +1565,7 @@
         method: 'PUT',
         credentials: apiCred(),
         cache: 'no-store',
-        headers: {
-          Authorization: 'Bearer ' + tok,
-          'Content-Type': 'application/json',
-        },
+        headers: adminAuthHeadersJson(),
         body: JSON.stringify(body),
       })
         .then(function (r) {
@@ -1595,7 +1576,6 @@
         .then(function (x) {
           if (isSiteAppearancePanelStale()) return x;
           if (!x.ok || !x.j) return x;
-          var tok = getAdminBearer();
           function mergeSavedIntoForm(j) {
             if (isSiteAppearancePanelStale()) return;
             if (j) {
@@ -1613,7 +1593,7 @@
             method: 'GET',
             credentials: apiCred(),
             cache: 'no-store',
-            headers: { Authorization: 'Bearer ' + tok },
+            headers: adminAuthHeaders(),
           })
             .then(function (r) {
               return r.json().then(function (j) {
@@ -1653,13 +1633,6 @@
       if (isSiteAppearancePanelStale()) {
         return Promise.resolve({ ok: false, j: { error: 'Panel closed.' } });
       }
-      var tok = getAdminBearer();
-      if (!tok) {
-        return Promise.resolve({
-          ok: false,
-          j: { error: 'Not signed in as admin; cannot save site appearance.' },
-        });
-      }
       var domPayload = collectSiteAppearancePayloadFromDom();
       if (!domPayload) return Promise.resolve({ ok: false, j: { error: 'Nothing to save.' } });
       if (priorityPatch && typeof priorityPatch === 'object') {
@@ -1679,12 +1652,6 @@
       fin.addEventListener('change', function () {
         var file = fin.files && fin.files[0];
         if (!file) return;
-        var tok = getAdminBearer();
-        if (!tok) {
-          if (hintEl) hintEl.textContent = 'Sign in as admin to upload images to this server.';
-          fin.value = '';
-          return;
-        }
         if (hintEl) hintEl.textContent = 'Uploading…';
 
         function failRead(msg) {
@@ -1701,7 +1668,7 @@
             method: 'POST',
             credentials: apiCred(),
             cache: 'no-store',
-            headers: { Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json' },
+            headers: adminAuthHeadersJson(),
             body: JSON.stringify({ imageBase64: b64 }),
           })
             .then(function (r) {
@@ -1814,11 +1781,6 @@
       var btn = document.getElementById(btnId);
       if (!btn || !urlInput) return;
       btn.addEventListener('click', function () {
-        var tok = getAdminBearer();
-        if (!tok) {
-          if (hintEl) hintEl.textContent = 'Sign in as admin to remove uploaded files from this server.';
-          return;
-        }
         var current = String(urlInput.value || '').trim();
         if (!current) {
           if (hintEl) hintEl.textContent = 'Nothing to delete.';
@@ -1829,7 +1791,7 @@
           method: 'POST',
           credentials: apiCred(),
           cache: 'no-store',
-          headers: { Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json' },
+          headers: adminAuthHeadersJson(),
           body: JSON.stringify({ url: current }),
         })
           .then(function (r) {
@@ -1895,8 +1857,6 @@
       appearanceAutosaveTimer = setTimeout(function () {
         appearanceAutosaveTimer = null;
         if (isSiteAppearancePanelStale() || !siteAppearanceFormHydrated) return;
-        var tok = getAdminBearer();
-        if (!tok) return;
         var domPayload = collectSiteAppearancePayloadFromDom();
         if (!domPayload) return;
         if (hintEl) hintEl.textContent = 'Saving…';
@@ -1992,24 +1952,12 @@
       siteAppearanceFormHydrated = true;
     }
 
-    var token = getAdminBearer();
-    if (!token) {
-      if (!isSiteAppearancePanelStale()) {
-        applySiteAppearanceMerge({});
-        bumpSiteAppearanceUrlPreviews();
-      }
-      if (hintEl) {
-        hintEl.textContent =
-          'Sign in as admin on the Node host to load saved URLs; changes save automatically when signed in. Below: suggested paths from /assets/ on this host.';
-      }
-      return;
-    }
     if (hintEl) hintEl.textContent = 'Loading saved settings…';
     fetch(api('/api/admin/site-appearance'), {
       method: 'GET',
       credentials: apiCred(),
       cache: 'no-store',
-      headers: { Authorization: 'Bearer ' + token },
+      headers: adminAuthHeaders(),
     })
       .then(function (r) {
         return r.json().then(function (j) {
@@ -2147,7 +2095,6 @@
 
     var hintEl = document.getElementById(hintId);
     var serverIcons = {};
-    var token = getAdminBearer();
 
     function fillFromServer() {
       rows.forEach(function (row) {
@@ -2158,19 +2105,11 @@
       });
     }
 
-    if (!token) {
-      if (hintEl) {
-        hintEl.textContent =
-          'Sign in as admin on the Node host to load and save. Visitors read overrides from GET /api/site-appearance.';
-      }
-      return;
-    }
-
     fetch(api('/api/admin/site-appearance'), {
       method: 'GET',
       credentials: apiCred(),
       cache: 'no-store',
-      headers: { Authorization: 'Bearer ' + token },
+      headers: adminAuthHeaders(),
     })
       .then(function (r) {
         return r.json().then(function (j) {
@@ -2212,10 +2151,7 @@
           method: 'PUT',
           credentials: apiCred(),
           cache: 'no-store',
-          headers: {
-            Authorization: 'Bearer ' + getAdminBearer(),
-            'Content-Type': 'application/json',
-          },
+          headers: adminAuthHeadersJson(),
           body: JSON.stringify({ icons: next }),
         })
           .then(function (r) {
@@ -2400,7 +2336,7 @@
         method: 'POST',
         credentials: apiCred(),
         cache: 'no-store',
-        headers: { Authorization: 'Bearer ' + jwt },
+        headers: adminAuthHeaders(),
       })
         .then(function (r) {
           return r.json().then(function (j) {
@@ -2706,9 +2642,7 @@
   var voicePipelinePollTimer = null;
 
   function voicePipelineAdminHeaders() {
-    return {
-      Authorization: 'Bearer ' + getAdminBearer(),
-    };
+    return adminAuthHeaders();
   }
 
   function voicePipelineDepsHint(text) {
@@ -3161,16 +3095,12 @@
   }
 
   function loadReportCatalog() {
-    var token = getAdminBearer();
-    var manifestReq = token
-      ? fetch(api('/api/admin/report-catalog'), {
-          method: 'GET',
-          credentials: apiCred(),
-          headers: { Authorization: 'Bearer ' + token },
-        })
-      : fetch('/reports/index.json', { cache: 'no-store' });
-
-    var manifestChain = manifestReq
+    var manifestChain = fetch(api('/api/admin/report-catalog'), {
+      method: 'GET',
+      credentials: apiCred(),
+      cache: 'no-store',
+      headers: adminAuthHeaders(),
+    })
       .then(function (r) {
         return r.json().then(function (j) {
           return { ok: r.ok, j: j };
@@ -3178,8 +3108,23 @@
       })
       .then(function (x) {
         if (!x.ok || !x.j) {
-          reportCatalog = { clinics: [], hotels: [], properties: [] };
-          return;
+          return fetch('/reports/index.json', { cache: 'no-store' })
+            .then(function (r2) {
+              return r2.json().then(function (j2) {
+                return { ok: r2.ok, j: j2 };
+              });
+            })
+            .then(function (x2) {
+              if (!x2.ok || !x2.j) {
+                reportCatalog = { clinics: [], hotels: [], properties: [] };
+                return;
+              }
+              reportCatalog = {
+                clinics: x2.j.clinics || [],
+                hotels: x2.j.hotels || [],
+                properties: x2.j.properties || [],
+              };
+            });
         }
         reportCatalog = {
           clinics: x.j.clinics || [],
@@ -3191,34 +3136,30 @@
         reportCatalog = { clinics: [], hotels: [], properties: [] };
       });
 
-    var auditChain = token
-      ? fetch(api('/api/admin/audit-reports'), {
-          method: 'GET',
-          credentials: apiCred(),
-          headers: { Authorization: 'Bearer ' + token },
-        })
-          .then(function (r) {
-            return r.json().then(function (j) {
-              return { ok: r.ok, j: j };
-            });
-          })
-          .then(function (x) {
-            if (x.ok && x.j && x.j.ok && Array.isArray(x.j.reports)) {
-              auditReportsByVertical = groupAuditReports(x.j.reports);
-              auditReportsLoadState = 'ok';
-            } else {
-              auditReportsByVertical = null;
-              auditReportsLoadState = 'error';
-            }
-          })
-          .catch(function () {
-            auditReportsByVertical = null;
-            auditReportsLoadState = 'error';
-          })
-      : Promise.resolve().then(function () {
-          auditReportsByVertical = null;
-          auditReportsLoadState = 'skipped';
+    var auditChain = fetch(api('/api/admin/audit-reports'), {
+      method: 'GET',
+      credentials: apiCred(),
+      cache: 'no-store',
+      headers: adminAuthHeaders(),
+    })
+      .then(function (r) {
+        return r.json().then(function (j) {
+          return { ok: r.ok, j: j };
         });
+      })
+      .then(function (x) {
+        if (x.ok && x.j && x.j.ok && Array.isArray(x.j.reports)) {
+          auditReportsByVertical = groupAuditReports(x.j.reports);
+          auditReportsLoadState = 'ok';
+        } else {
+          auditReportsByVertical = null;
+          auditReportsLoadState = 'error';
+        }
+      })
+      .catch(function () {
+        auditReportsByVertical = null;
+        auditReportsLoadState = 'error';
+      });
 
     return Promise.all([manifestChain, auditChain]).then(function () {
       renderAdminReports();
@@ -3249,12 +3190,10 @@
   }
 
   function hideWorkspace() {
-    var tok = getAdminBearer();
-    if (tok) {
-      fetch(api('/api/admin/logout'), {
+    fetch(api('/api/admin/logout'), {
         method: 'POST',
         credentials: apiCred(),
-        headers: { Authorization: 'Bearer ' + tok },
+        headers: adminAuthHeaders(),
       }).catch(function () {});
     }
     clearStoredAdminJwt();
@@ -3343,7 +3282,7 @@
     return fetch(api('/api/admin/session'), {
       method: 'GET',
       credentials: apiCred(),
-      headers: { Authorization: 'Bearer ' + token },
+      headers: adminAuthHeaders(),
     })
       .then(function (r) {
         if (!r.ok) {
@@ -3572,6 +3511,8 @@
 
   window.readStoredAdminJwt = readStoredAdminJwt;
   window.getAdminBearer = getAdminBearer;
+  window.adminAuthHeaders = adminAuthHeaders;
+  window.adminAuthHeadersJson = adminAuthHeadersJson;
 
   function formatAdminTs(iso) {
     if (!iso) return '';
@@ -3787,7 +3728,7 @@
     fetch(api('/api/user-accounts'), {
       method: 'GET',
       credentials: apiCred(),
-      headers: { Authorization: 'Bearer ' + token },
+      headers: adminAuthHeaders(),
     })
       .then(function (r) {
         return r.json().then(function (j) {
@@ -3809,15 +3750,6 @@
   function openUserReportsPanel(tile) {
     if (!panel || !panelTitle || !panelBody) return;
     panelTitle.textContent = tile.label;
-    var token = getAdminBearer();
-    if (!token) {
-      panelBody.innerHTML =
-        '<p class="admin-panel__stub">After you sign in on the <strong>live Node server</strong> (operator password), you can register user emails and passwords here. They appear in the on-disk user store and can open <strong>/clinics/report.html?slug=…</strong> after using <strong>Log in</strong> in the site header.</p>' +
-        '<p class="admin-panel__stub">Sign in on the Node server to load this data.</p>';
-      panel.classList.remove('is-hidden');
-      window.scrollTo(0, 0);
-      return;
-    }
 
     panelBody.innerHTML =
       '<p class="admin-panel__body">Add a user: they sign in with this email and password, then only see the report for the <strong>slug</strong> you set. Data file: <code>public/clinics/data/&lt;slug&gt;.json</code> (falls back to <code>_data.json</code> if missing).</p>' +
@@ -3848,10 +3780,7 @@
         fetch(api('/api/user-accounts'), {
           method: 'POST',
           credentials: apiCred(),
-          headers: {
-            Authorization: 'Bearer ' + getAdminBearer(),
-            'Content-Type': 'application/json',
-          },
+          headers: adminAuthHeadersJson(),
           body: JSON.stringify(body),
         })
           .then(function (r) {

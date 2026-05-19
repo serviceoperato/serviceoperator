@@ -659,10 +659,14 @@
 
   function adminFetch(path, opts) {
     opts = opts || {};
-    var headers = Object.assign(
-      { Authorization: 'Bearer ' + adminJwt() },
-      opts.headers || {}
-    );
+    var headers = {};
+    if (typeof window.adminAuthHeaders === 'function') {
+      Object.assign(headers, window.adminAuthHeaders());
+    } else {
+      var jwt = adminJwt();
+      if (jwt) headers.Authorization = 'Bearer ' + jwt;
+    }
+    Object.assign(headers, opts.headers || {});
     if (opts.body && typeof opts.body === 'object' && !(opts.body instanceof FormData)) {
       headers['Content-Type'] = 'application/json';
       opts.body = JSON.stringify(opts.body);
