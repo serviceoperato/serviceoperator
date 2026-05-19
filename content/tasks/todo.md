@@ -117,3 +117,7 @@
 ## 2026-05-18
 - [ ] Impostare nel calendario un blocco ricorrente di 1 ora/settimana per il progetto YouTube <!-- src: 2910dc062f2933c5 -->
 - [ ] Chiedere all’AI di usare l’asset YouTube per parlare dei due progetti <!-- src: 2910dc062f2933c5 -->
+
+## 2026-05-19
+
+- [ ] Allora, mi devo ricordare che andrei a parte per rian dare in Italia il 20 luglio. <!-- src: 3126f3f5c590 -->
