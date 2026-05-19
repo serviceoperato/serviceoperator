@@ -1,20 +1,20 @@
 {
   "meta": {
     "report_id": "011",
-    "report_title": "Report 011 — Clinic ABC automation audit teaser",
+    "report_title": "Report 011 — Business ABC automation audit teaser",
     "prepared_by": "www.serviceopera.to",
     "audit_date": "2026-05",
     "report_type": "AI Automation Audit Teaser (Sample)",
     "visibility": "admin-only",
     "legacy_slug": "sample-audit-teaser-011",
     "disclaimer": {
-      "en_lead": "SAMPLE REPORT — fictional clinic, real methodology.",
+      "en_lead": "SAMPLE REPORT — fictional business, real methodology.",
       "it_body": "Questo è un esempio del formato che riceveresti per la tua attività. I numeri qui sono inventati; nel tuo audit sarebbero estratti dai tuoi canali pubblici reali in 48h.",
       "legal_footnote": "No real clinic referenced; any resemblance to existing businesses is coincidental."
     }
   },
   "business": {
-    "name": "Clinic ABC (Sample)",
+    "name": "Business ABC (Sample)",
     "location": "Pattaya, Thailand",
     "years_operating_estimate": "~12 years",
     "audit_potential_score": 9.2
