@@ -3425,6 +3425,10 @@
       return tryRestorePortalOperatorSession();
     })
     .then(function (restored) {
+      if (restored) return true;
+      return tryRestoreCookieOnlyOperatorSession();
+    })
+    .then(function (restored) {
       if (restored) {
         revealAdminBootAfterPaint();
         return;

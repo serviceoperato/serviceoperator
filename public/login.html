@@ -1058,76 +1058,93 @@
 
     var adminTok = getAdminJwtLogin();
     var portalTok = getPortalJwtLogin();
+    var wantAdminShellNext =
+      nextPath &&
+      typeof soPortalIsAdminShellNextPath === 'function' &&
+      soPortalIsAdminShellNextPath(nextPath);
+    var cookieP = wantAdminShellNext
+      ? fetchAdminCookieSession()
+      : Promise.resolve({ ok: false, status: 0, json: null });
     var adminP =
       adminTok && looksLikeJwt(adminTok)
         ? fetchAdminUserSession(adminTok)
         : Promise.resolve({ ok: false, status: 0, json: null });
 
-    adminP.then(function (adm) {
-      if (adm && adm.ok && adm.json && adm.json.ok) {
-        var adminDest = resolveSignedInDestination();
+    cookieP.then(function (ck) {
+      if (ck && ck.ok && ck.json && ck.json.ok) {
+        var cookieDest = resolveSignedInDestination();
         try {
-          window.location.replace(adminDest);
-        } catch (eRp) {
-          window.location.href = adminDest;
+          window.location.replace(cookieDest);
+        } catch (eCk) {
+          window.location.href = cookieDest;
         }
         return;
       }
-      if (!portalTok || !looksLikeJwt(portalTok)) return;
-      return fetchPortalUserSession(portalTok).then(function (x) {
-        /* Stale probe must not wipe a JWT saved while this request was in flight (login submit or other tab). */
-        if (getPortalJwtLogin() !== portalTok) return;
-        if (x.status === 401 && x.json && x.json.ok === false) {
-          clearPortalJwtLogin();
-          if (bannerSession) {
-            bannerSession.textContent = MSG.sessionExpired;
-            bannerSession.classList.remove('is-hidden');
+      adminP.then(function (adm) {
+        if (adm && adm.ok && adm.json && adm.json.ok) {
+          var adminDest = resolveSignedInDestination();
+          try {
+            window.location.replace(adminDest);
+          } catch (eRp) {
+            window.location.href = adminDest;
           }
           return;
         }
-        if (x.status === 401) return;
-        if (!x.ok || !x.json || !x.json.ok) {
-          try {
-            var uNav = new URL(window.location.href);
-            var hNav = (uNav.hash || '').toLowerCase();
-            if (hNav !== '#account' && hNav.indexOf('#account') !== 0) {
-              uNav.hash = '#account';
-              window.location.replace(uNav.pathname + uNav.search + uNav.hash);
+        if (!portalTok || !looksLikeJwt(portalTok)) return;
+        return fetchPortalUserSession(portalTok).then(function (x) {
+          if (getPortalJwtLogin() !== portalTok) return;
+          if (x.status === 401 && x.json && x.json.ok === false) {
+            clearPortalJwtLogin();
+            if (bannerSession) {
+              bannerSession.textContent = MSG.sessionExpired;
+              bannerSession.classList.remove('is-hidden');
             }
-          } catch (eNav) {
+            return;
+          }
+          if (x.status === 401) return;
+          if (!x.ok || !x.json || !x.json.ok) {
             try {
-              window.location.replace('/login.html#account');
-            } catch (eNav2) {}
+              var uNav = new URL(window.location.href);
+              var hNav = (uNav.hash || '').toLowerCase();
+              if (hNav !== '#account' && hNav.indexOf('#account') !== 0) {
+                uNav.hash = '#account';
+                window.location.replace(uNav.pathname + uNav.search + uNav.hash);
+              }
+            } catch (eNav) {
+              try {
+                window.location.replace('/login.html#account');
+              } catch (eNav2) {}
+            }
+            return;
           }
-          return;
-        }
-        if (x.json.passwordMustChange) {
-          showMustChangePasswordMode(portalTok);
-          return;
-        }
-        if (
-          nextPath &&
-          typeof soPortalIsAdminShellNextPath === 'function' &&
-          soPortalIsAdminShellNextPath(nextPath) &&
-          (x.json.isOperator || decodeJwtIsOperatorLogin(portalTok))
-        ) {
-          try {
-            window.location.replace(nextPath);
-          } catch (eAdmNext) {
-            window.location.href = nextPath;
+          if (x.json.passwordMustChange) {
+            showMustChangePasswordMode(portalTok);
+            return;
           }
-          return;
-        }
-        var slug =
-          (x.json.reportSlug ? String(x.json.reportSlug).trim() : '') ||
-          decodeJwtReportSlugLogin(portalTok) ||
-          slugHint;
-        var lj = {
-          reportSlug: slug,
-          reportUrl: slug ? '/clinics/report.html?slug=' + encodeURIComponent(slug) : '',
-        };
-        redirectAfterPortalLogin(lj);
-      });
+          if (
+            nextPath &&
+            typeof soPortalIsAdminShellNextPath === 'function' &&
+            soPortalIsAdminShellNextPath(nextPath) &&
+            (x.json.isOperator || decodeJwtIsOperatorLogin(portalTok))
+          ) {
+            return fetchAdminUserSession(portalTok).then(function () {
+              try {
+                window.location.replace(nextPath);
+              } catch (eAdmNext) {
+                window.location.href = nextPath;
+              }
+            });
+          }
+          var slug =
+            (x.json.reportSlug ? String(x.json.reportSlug).trim() : '') ||
+            decodeJwtReportSlugLogin(portalTok) ||
+            slugHint;
+          var lj = {
+            reportSlug: slug,
+            reportUrl: slug ? '/clinics/report.html?slug=' + encodeURIComponent(slug) : '',
+          };
+          redirectAfterPortalLogin(lj);
+        });
       });
     });
   }
