@@ -121,7 +121,7 @@
       method: 'GET',
       credentials: apiCred(),
       cache: 'no-store',
-      headers: adminAuthHeaders(),
+      headers: { Authorization: 'Bearer ' + token },
     })
       .then(function (r) {
         return r.ok;
@@ -1554,13 +1554,6 @@
       var putKeys = Object.keys(body && typeof body === 'object' ? body : {}).filter(function (k) {
         return k !== 'ok';
       });
-      var tok = getAdminBearer();
-      if (!tok) {
-        return Promise.resolve({
-          ok: false,
-          j: { error: 'Not signed in as admin; cannot save site appearance.' },
-        });
-      }
       return fetch(api('/api/admin/site-appearance'), {
         method: 'PUT',
         credentials: apiCred(),
@@ -1584,10 +1577,6 @@
               else applySiteAppearanceMerge(j, { force: true });
             }
             bumpSiteAppearanceUrlPreviews();
-          }
-          if (!tok) {
-            mergeSavedIntoForm(x.j);
-            return x;
           }
           return fetch(api('/api/admin/site-appearance'), {
             method: 'GET',
@@ -2327,11 +2316,6 @@
     a.setAttribute('aria-label', 'Open Google Places lead collector in a new tab');
     a.addEventListener('click', function (ev) {
       ev.preventDefault();
-      var jwt = readStoredAdminJwt();
-      if (!jwt) {
-        window.location.href = '/admin/users';
-        return;
-      }
       fetch(api('/api/admin/places-page-token'), {
         method: 'POST',
         credentials: apiCred(),
@@ -2460,6 +2444,7 @@
     buildTfNav(routeId);
     window.scrollTo(0, 0);
     if (routeId === 'user-profiling') loadUserProfiling();
+    if (routeId === 'activity') loadWorkQueue();
     if (routeId === 'voice-recorder') initVoiceRecorderPipelineUi();
     if (routeId === 'transcriptions' || routeId === 'transcriptions-detail') {
       ensureTranscriptionsDashboard(function () {
@@ -3191,11 +3176,10 @@
 
   function hideWorkspace() {
     fetch(api('/api/admin/logout'), {
-        method: 'POST',
-        credentials: apiCred(),
-        headers: adminAuthHeaders(),
-      }).catch(function () {});
-    }
+      method: 'POST',
+      credentials: apiCred(),
+      headers: adminAuthHeaders(),
+    }).catch(function () {});
     clearStoredAdminJwt();
     if (workspace) workspace.classList.add('is-hidden');
     if (gate) gate.classList.remove('is-hidden');
@@ -3282,7 +3266,7 @@
     return fetch(api('/api/admin/session'), {
       method: 'GET',
       credentials: apiCred(),
-      headers: adminAuthHeaders(),
+      headers: { Authorization: 'Bearer ' + token },
     })
       .then(function (r) {
         if (!r.ok) {
@@ -3724,7 +3708,6 @@
   function loadPortalUsersList() {
     var listEl = document.getElementById('portalUserList');
     if (!listEl) return;
-    var token = getAdminBearer();
     fetch(api('/api/user-accounts'), {
       method: 'GET',
       credentials: apiCred(),
