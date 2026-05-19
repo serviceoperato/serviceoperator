@@ -782,6 +782,12 @@
           localStorage.setItem('so_user_session_id', lj.sessionId);
         } catch (eLs2) {}
       }
+      if (lj.adminToken) {
+        sessionStorage.setItem('so_admin_jwt', lj.adminToken);
+        try {
+          localStorage.setItem('so_admin_jwt', lj.adminToken);
+        } catch (eAdmLs) {}
+      }
     } catch (err) {}
   }
 
