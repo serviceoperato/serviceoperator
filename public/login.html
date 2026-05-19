@@ -690,6 +690,38 @@
     mustChangePwHint.className = hintClasses(kind, detail);
   }
 
+  /** Mint/probe HttpOnly operator cookie before full-page /admin/* navigation (avoids login ↔ admin loops). */
+  function ensureOperatorHtmlGateCookie(bearer) {
+    return fetchAdminCookieSession().then(function (ck) {
+      if (ck && ck.ok && ck.json && ck.json.ok) return true;
+      if (!bearer || !looksLikeJwt(bearer)) return false;
+      return fetchAdminUserSession(bearer).then(function (adm) {
+        if (!adm || !adm.ok || !adm.json || !adm.json.ok) return false;
+        return fetchAdminCookieSession().then(function (ck2) {
+          return Boolean(ck2 && ck2.ok && ck2.json && ck2.json.ok);
+        });
+      });
+    });
+  }
+
+  function redirectAfterOperatorHtmlGateReady(path, bearer) {
+    return ensureOperatorHtmlGateCookie(bearer).then(function (ready) {
+      if (!ready) {
+        if (bannerSession) {
+          bannerSession.textContent =
+            'Signed in, but this browser did not receive an operator session cookie. Try again or open /admin/users after signing in.';
+          bannerSession.classList.remove('is-hidden');
+        }
+        return;
+      }
+      try {
+        window.location.replace(path);
+      } catch (eGate) {
+        window.location.href = path;
+      }
+    });
+  }
+
   function redirectAfterPortalLogin(lj, bearer) {
     var dest =
       typeof soPortalResolvePostLogin === 'function'
@@ -702,11 +734,7 @@
       nextPathRequiresOperatorHtmlGate(nextPath || dest) &&
       (decodeJwtIsOperatorLogin(tok) || (lj && lj.isOperator))
     ) {
-      return fetchAdminUserSession(tok).then(function () {
-        window.location.replace(dest);
-      }).catch(function () {
-        window.location.replace(dest);
-      });
+      return redirectAfterOperatorHtmlGateReady(dest, tok);
     }
     window.location.replace(dest);
   }
@@ -979,17 +1007,14 @@
   }
 
   function redirectToOperatorGatedNext(path, bearer) {
-    function go() {
-      try {
-        window.location.replace(path);
-      } catch (eGo) {
-        window.location.href = path;
-      }
-    }
     if (bearer && looksLikeJwt(bearer) && nextPathRequiresOperatorHtmlGate(path)) {
-      return fetchAdminUserSession(bearer).then(go).catch(go);
+      return redirectAfterOperatorHtmlGateReady(path, bearer);
     }
-    go();
+    try {
+      window.location.replace(path);
+    } catch (eGo) {
+      window.location.href = path;
+    }
   }
 
   /** If admin-capable user opens account settings URL, skip account shell (no infinite loop: no JWT → not capable). */
@@ -1146,15 +1171,7 @@
             }
           }
           if (wantOperatorGatedNext) {
-            return fetchAdminCookieSession().then(function (ck) {
-              if (ck && ck.ok && ck.json && ck.json.ok) {
-                goAdminDest();
-                return;
-              }
-              return fetchAdminUserSession(adminTok).then(function () {
-                goAdminDest();
-              });
-            });
+            return redirectAfterOperatorHtmlGateReady(resolveSignedInDestination(), adminTok);
           }
           goAdminDest();
           return;
