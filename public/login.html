@@ -690,11 +690,24 @@
     mustChangePwHint.className = hintClasses(kind, detail);
   }
 
-  function redirectAfterPortalLogin(lj) {
+  function redirectAfterPortalLogin(lj, bearer) {
     var dest =
       typeof soPortalResolvePostLogin === 'function'
         ? soPortalResolvePostLogin(lj || {}, { nextPath: nextPath, slugHint: slugHint })
         : '/workspace.html';
+    var tok = bearer || '';
+    if (
+      tok &&
+      looksLikeJwt(tok) &&
+      nextPathRequiresOperatorHtmlGate(nextPath || dest) &&
+      (decodeJwtIsOperatorLogin(tok) || (lj && lj.isOperator))
+    ) {
+      return fetchAdminUserSession(tok).then(function () {
+        window.location.replace(dest);
+      }).catch(function () {
+        window.location.replace(dest);
+      });
+    }
     window.location.replace(dest);
   }
 
@@ -935,6 +948,44 @@
     return typeof soPortalWorkspacePath === 'function' ? soPortalWorkspacePath() : '/workspace.html';
   }
 
+  /** Public numbered clinic (home funnel) — no operator HttpOnly gate. */
+  var PUBLIC_NUMBERED_CLINIC_IDS = { '010': true };
+
+  function isPrivateNumberedReportNextPath(path) {
+    var pathOnly = (path || '').split('?')[0].split('#')[0];
+    var m = /^\/(clinics|hotels)\/(\d{3})(\/.*)?$/i.exec(pathOnly);
+    if (!m) return false;
+    if (m[1].toLowerCase() === 'clinics' && PUBLIC_NUMBERED_CLINIC_IDS[m[2]]) return false;
+    if (m[1].toLowerCase() === 'clinics') {
+      return /^(001|002|003|004|005|006|007|008|011)$/.test(m[2]);
+    }
+    if (m[1].toLowerCase() === 'hotels') return m[2] === '009';
+    return false;
+  }
+
+  /** Paths whose HTML is gated by operator/admin HttpOnly cookies (server.mjs). */
+  function nextPathRequiresOperatorHtmlGate(path) {
+    if (!path || path.charAt(0) !== '/' || path.indexOf('//') === 0) return false;
+    if (typeof soPortalIsAdminShellNextPath === 'function' && soPortalIsAdminShellNextPath(path)) {
+      return true;
+    }
+    return isPrivateNumberedReportNextPath(path);
+  }
+
+  function redirectToOperatorGatedNext(path, bearer) {
+    function go() {
+      try {
+        window.location.replace(path);
+      } catch (eGo) {
+        window.location.href = path;
+      }
+    }
+    if (bearer && looksLikeJwt(bearer) && nextPathRequiresOperatorHtmlGate(path)) {
+      return fetchAdminUserSession(bearer).then(go).catch(go);
+    }
+    go();
+  }
+
   /** If admin-capable user opens account settings URL, skip account shell (no infinite loop: no JWT → not capable). */
   function redirectAdminAwayFromAccountSettingsIfNeeded() {
     if (!accountSettingsMode) return false;
@@ -1059,11 +1110,8 @@
 
     var adminTok = getAdminJwtLogin();
     var portalTok = getPortalJwtLogin();
-    var wantAdminShellNext =
-      nextPath &&
-      typeof soPortalIsAdminShellNextPath === 'function' &&
-      soPortalIsAdminShellNextPath(nextPath);
-    var cookieP = wantAdminShellNext
+    var wantOperatorGatedNext = nextPath && nextPathRequiresOperatorHtmlGate(nextPath);
+    var cookieP = wantOperatorGatedNext
       ? fetchAdminCookieSession()
       : Promise.resolve({ ok: false, status: 0, json: null });
     var adminP =
@@ -1091,7 +1139,7 @@
               window.location.href = adminDest;
             }
           }
-          if (wantAdminShellNext) {
+          if (wantOperatorGatedNext) {
             return fetchAdminCookieSession().then(function (ck) {
               if (ck && ck.ok && ck.json && ck.json.ok) {
                 goAdminDest();
@@ -1139,17 +1187,10 @@
         }
         if (
           nextPath &&
-          typeof soPortalIsAdminShellNextPath === 'function' &&
-          soPortalIsAdminShellNextPath(nextPath) &&
+          nextPathRequiresOperatorHtmlGate(nextPath) &&
           (x.json.isOperator || decodeJwtIsOperatorLogin(portalTok))
         ) {
-          return fetchAdminUserSession(portalTok).then(function () {
-            try {
-              window.location.replace(nextPath);
-            } catch (eAdmNext) {
-              window.location.href = nextPath;
-            }
-          });
+          return redirectToOperatorGatedNext(nextPath, portalTok);
         }
         var slug =
           (x.json.reportSlug ? String(x.json.reportSlug).trim() : '') ||
@@ -1159,7 +1200,7 @@
           reportSlug: slug,
           reportUrl: slug ? '/clinics/report.html?slug=' + encodeURIComponent(slug) : '',
         };
-        redirectAfterPortalLogin(lj);
+        redirectAfterPortalLogin(lj, portalTok);
       });
       });
     });
@@ -1588,11 +1629,7 @@
         }
         setHint('Redirecting…', 'ok');
         setLoginErr('');
-        var dest =
-          typeof soPortalResolvePostLogin === 'function'
-            ? soPortalResolvePostLogin(lj || {}, { nextPath: nextPath, slugHint: slugHint })
-            : '/workspace.html';
-        window.location.replace(dest);
+        redirectAfterPortalLogin(lj, lj.token);
       });
     });
   }
@@ -1736,7 +1773,7 @@
         pendingBearerForPwChange = null;
         applyUserJwt(jr);
         setMustChangePwHint('Redirecting…', 'ok');
-        redirectAfterPortalLogin(jr);
+        redirectAfterPortalLogin(jr, jr.token);
       });
     });
   }
