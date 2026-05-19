@@ -3351,7 +3351,7 @@
         return false;
       });
   }
-  /** HttpOnly operator cookie without localStorage JWT — server HTML gate already passed. */
+  /** HttpOnly operator cookie without localStorage JWT â€” server HTML gate already passed. */
   function tryRestoreCookieOnlyOperatorSession() {
     return probeAdminCookieSession().then(function (ok) {
       if (!ok) return false;
