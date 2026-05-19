@@ -1344,19 +1344,34 @@ function canAccessPrivateNumberedReport(req) {
   return getVerifiedOperator(req) != null;
 }
 
+function appendSetCookie(res, value) {
+  if (typeof res.appendHeader === 'function') {
+    res.appendHeader('Set-Cookie', value);
+    return;
+  }
+  const prev = res.getHeader('Set-Cookie');
+  if (!prev) {
+    res.setHeader('Set-Cookie', value);
+  } else if (Array.isArray(prev)) {
+    res.setHeader('Set-Cookie', [...prev, value]);
+  } else {
+    res.setHeader('Set-Cookie', [prev, value]);
+  }
+}
+
 function setAdminJwtCookie(res, token) {
   const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
   const maxAge = Math.floor(JWT_TTL_MS / 1000);
-  res.setHeader(
-    'Set-Cookie',
+  appendSetCookie(
+    res,
     `${ADMIN_JWT_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${secure}`
   );
 }
 
 function clearAdminJwtCookie(res) {
   const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
-  res.setHeader(
-    'Set-Cookie',
+  appendSetCookie(
+    res,
     `${ADMIN_JWT_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secure}`
   );
 }
@@ -1364,16 +1379,16 @@ function clearAdminJwtCookie(res) {
 function setPortalJwtCookie(res, token) {
   const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
   const maxAge = Math.floor(CLINIC_JWT_TTL_MS / 1000);
-  res.setHeader(
-    'Set-Cookie',
+  appendSetCookie(
+    res,
     `${PORTAL_JWT_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${secure}`
   );
 }
 
 function clearPortalJwtCookie(res) {
   const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
-  res.setHeader(
-    'Set-Cookie',
+  appendSetCookie(
+    res,
     `${PORTAL_JWT_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secure}`
   );
 }
@@ -1381,16 +1396,16 @@ function clearPortalJwtCookie(res) {
 function setDemoPortalJwtCookie(res, token) {
   const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
   const maxAge = Math.floor(DEMO_PORTAL_JWT_TTL_MS / 1000);
-  res.setHeader(
-    'Set-Cookie',
+  appendSetCookie(
+    res,
     `${DEMO_PORTAL_JWT_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${secure}`
   );
 }
 
 function clearDemoPortalJwtCookie(res) {
   const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
-  res.setHeader(
-    'Set-Cookie',
+  appendSetCookie(
+    res,
     `${DEMO_PORTAL_JWT_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secure}`
   );
 }
@@ -2513,9 +2528,15 @@ app.get('/api/admin/session', (req, res) => {
 app.post('/api/admin/bootstrap-from-portal', (req, res) => {
   const p = verifyJwt(getBearer(req));
   if (!p || !isPortalSessionRole(p.role) || typeof p.email !== 'string') {
+    if (process.env.DEBUG_AUTH_L === '1') {
+      console.debug('[AUTH-L] bootstrap-from-portal rejected: unauthorized');
+    }
     return res.status(401).json({ ok: false, error: 'Unauthorized' });
   }
   if (!portalPayloadIsOperator(p)) {
+    if (process.env.DEBUG_AUTH_L === '1') {
+      console.debug('[AUTH-L] bootstrap-from-portal rejected: not operator', p.email);
+    }
     return res.status(403).json({ ok: false, error: 'Forbidden' });
   }
   const bearer = getBearer(req);
@@ -2523,6 +2544,9 @@ app.post('/api/admin/bootstrap-from-portal', (req, res) => {
   /** Legacy clients: optional admin JWT; portal session is sufficient for operator APIs. */
   const token = signJwt({ v: 1, role: 'admin', email: ADMIN_EMAIL, exp: Date.now() + JWT_TTL_MS });
   setAdminJwtCookie(res, token);
+  if (process.env.DEBUG_AUTH_L === '1') {
+    console.debug('[AUTH-L] bootstrap-from-portal ok', p.email, 'cookies=portal+admin');
+  }
   return res.json({ ok: true, token, expiresInMs: JWT_TTL_MS, via: 'portal' });
 });
 
