@@ -1283,8 +1283,16 @@ function getCookie(req, name) {
 /** Admin JWT from Authorization header or HttpOnly cookie (HTML report pages). */
 function getAdminJwtFromRequest(req) {
   const bearer = getBearer(req);
-  if (bearer) return bearer;
-  return getCookie(req, ADMIN_JWT_COOKIE);
+  const fromCookie = getCookie(req, ADMIN_JWT_COOKIE);
+  if (bearer) {
+    const p = verifyJwt(bearer);
+    if (p && p.role === 'admin') return bearer;
+  }
+  if (fromCookie) {
+    const p = verifyJwt(fromCookie);
+    if (p && p.role === 'admin') return fromCookie;
+  }
+  return bearer || fromCookie;
 }
 
 function getVerifiedAdmin(req) {

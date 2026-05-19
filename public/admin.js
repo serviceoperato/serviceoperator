@@ -273,6 +273,32 @@
     return typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin';
   }
 
+  /** Bearer when present; HttpOnly operator cookie alone is enough for /api/admin/* on same origin. */
+  function adminAuthHeaders() {
+    var headers = {};
+    var token = getAdminBearer();
+    if (token) headers.Authorization = 'Bearer ' + token;
+    return headers;
+  }
+
+  var ADMIN_AUTH_LOOP_KEY = 'so_admin_auth_redirect_count';
+
+  function clearAdminAuthRedirectLoop() {
+    try {
+      sessionStorage.removeItem(ADMIN_AUTH_LOOP_KEY);
+    } catch (e) {}
+  }
+
+  function noteAdminAuthRedirectLoop() {
+    try {
+      var count = Number(sessionStorage.getItem(ADMIN_AUTH_LOOP_KEY) || '0') + 1;
+      sessionStorage.setItem(ADMIN_AUTH_LOOP_KEY, String(count));
+      return count;
+    } catch (e) {
+      return 0;
+    }
+  }
+
   function loadTfVersion() {
     if (!tfVerNum) return;
     var wrap = tfVerNum.closest ? tfVerNum.closest('.tf-admin-version') : null;
@@ -3223,6 +3249,7 @@
   }
 
   function showWorkspace() {
+    clearAdminAuthRedirectLoop();
     redirectClinicHotelLoginNextIfPresent().then(function (didRedirect) {
       if (didRedirect) return;
       revealAdminWorkspaceShell();
@@ -3421,11 +3448,30 @@
     } catch (eBoot) {}
   }, 12000);
 
+  function tryRedirectToUnifiedLogin() {
+    return mintAdminCookieFromStoredJwt()
+      .then(function () {
+        return probeAdminCookieSession();
+      })
+      .then(function (ok) {
+        if (ok) {
+          showWorkspace();
+          revealAdminBootAfterPaint();
+          return;
+        }
+        redirectToUnifiedLogin();
+      });
+  }
+
   Promise.all([fetchCapabilitiesData(), fetchAdminVersionProbe()])
     .then(function () {
       applyCapabilities();
     })
     .then(function () {
+      return tryRestoreCookieOnlyOperatorSession();
+    })
+    .then(function (restored) {
+      if (restored) return true;
       return tryRestoreJwtSession();
     })
     .then(function (restored) {
@@ -3433,24 +3479,19 @@
       return tryRestorePortalOperatorSession();
     })
     .then(function (restored) {
-      if (restored) return true;
-      return tryRestoreCookieOnlyOperatorSession();
-    })
-    .then(function (restored) {
       if (restored) {
         revealAdminBootAfterPaint();
         return;
       }
       if (capabilitiesFromOurServer && capabilitiesHttpOk) {
-        redirectToUnifiedLogin();
-        return;
+        return tryRedirectToUnifiedLogin();
       }
       showAdminLoginGate();
       revealAdminBootAfterPaint();
     })
     .catch(function () {
       try {
-        if (capabilitiesFromOurServer && capabilitiesHttpOk) redirectToUnifiedLogin();
+        if (capabilitiesFromOurServer && capabilitiesHttpOk) tryRedirectToUnifiedLogin();
         else showAdminLoginGate();
       } catch (e) {}
       revealAdminBootAfterPaint();
@@ -3518,6 +3559,12 @@
   }
 
   function redirectToUnifiedLogin() {
+    if (noteAdminAuthRedirectLoop() >= 3) {
+      clearAdminAuthRedirectLoop();
+      showAdminLoginGate();
+      revealAdminBootAfterPaint();
+      return;
+    }
     var next = window.location.pathname + window.location.search + window.location.hash;
     try {
       var u = new URL('/login.html', window.location.origin);
@@ -3679,18 +3726,6 @@
     var hint = document.getElementById('adminInboxHint');
     var body = document.getElementById('adminInboxBody');
     if (!body) return;
-    var token = getAdminBearer();
-    if (!token) {
-      if (hint) {
-        hint.textContent =
-          'Sign in on the live Node server (operator password) to load pending registrations, report files, and page timestamps.';
-        hint.className = 'admin-inbox__hint mono';
-      }
-      body.innerHTML =
-        '<p class="admin-inbox__empty">Operations inbox requires an admin JWT from the server.</p>';
-      renderTfUsersTable({ users: [], pendingRegistrations: [] });
-      return;
-    }
     if (hint) {
       hint.textContent = 'Loading…';
       hint.className = 'admin-inbox__hint mono';
@@ -3698,7 +3733,7 @@
     fetch(api('/api/admin/work-queue'), {
       method: 'GET',
       credentials: apiCred(),
-      headers: { Authorization: 'Bearer ' + token },
+      headers: adminAuthHeaders(),
     })
       .then(function (r) {
         return r.json().then(function (j) {
