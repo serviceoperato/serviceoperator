@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8" />
@@ -385,10 +385,11 @@
   }
   .page-home .so-b2b__markets-row {
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
+    align-items: flex-end;
+    justify-content: flex-end;
     gap: 0.65rem;
     margin: 0.35rem 0 0;
+    width: 100%;
     max-width: 100%;
   }
   .page-home .so-b2b__markets {
@@ -405,11 +406,13 @@
     color: var(--mute-2);
   }
   .page-home .so-b2b__markets-phone {
+    display: block;
     flex-shrink: 0;
-    width: clamp(2.25rem, 11vw, 3.5rem);
+    width: 100%;
+    max-width: min(100%, 19.25rem);
     height: auto;
     object-fit: contain;
-    align-self: flex-start;
+    align-self: flex-end;
     pointer-events: none;
     user-select: none;
   }
@@ -418,7 +421,7 @@
       gap: 0.45rem;
     }
     .page-home .so-b2b__markets-phone {
-      width: clamp(1.85rem, 9vw, 2.5rem);
+      max-width: min(100%, 14rem);
     }
   }
   .page-home .so-b2b__markets-ico-slot {
@@ -1107,15 +1110,21 @@
       <p class="client-hero__lede so-b2b__hero-lede">We run an operational review for service business owners. You get a written brief on delivery gaps, prioritized fixes, and one scoped next step.</p>
 
       <div class="so-b2b__cta-row">
-        <a class="so-b2b__btn so-b2b__btn--primary" href="/audit-example">See sample audit →</a>
+        <a class="so-b2b__btn so-b2b__btn--primary" href="/audit-example">
+          <span class="so-b2b__btn-stack">
+            <span class="so-b2b__btn-label">Request your free 48-hour operational audit</span>
+            <span class="so-b2b__btn-sub">See what you'll receive first</span>
+          </span>
+        </a>
       </div>
-      <div class="so-b2b__markets-row" style="justify-content: flex-end">
+      <p class="so-b2b__cta-note">Written brief on operational gaps, prioritized fixes, and one scoped pilot—no obligation to engage us for execution.</p>
+      <div class="so-b2b__markets-row">
         <img
           class="so-b2b__markets-phone"
           src="/assets/phone.png"
           alt=""
-          width="56"
-          height="56"
+          width="308"
+          height="432"
           decoding="async"
           aria-hidden="true"
         />
