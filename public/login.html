@@ -174,7 +174,6 @@
     <div class="tf-portal">
       <p class="portal-caption portal-caption--accent tf-portal__eyebrow">— USER ACCESS</p>
       <h1 id="userGateTitle">Log in</h1>
-      <p class="admin-gate__lede" id="loginLede">Sign in with password or a one-time email code.</p>
       <div id="bannerSession" class="tf-banner tf-banner--hint is-hidden" role="status"></div>
       <div id="bannerRegistered" class="tf-banner tf-banner--ok is-hidden" role="status"></div>
       <div id="bannerPasswordUpdated" class="tf-banner tf-banner--ok is-hidden" role="status"></div>
@@ -228,9 +227,6 @@
         <a href="register.html" class="portal-form__linkbtn" style="text-decoration:none">Create account</a>
       </div>
       <p class="portal-form__hint" id="loginHint"></p>
-      <p class="portal-form__hint portal-form__hint--detail is-hidden" id="operatorConsoleHint" role="note">
-        Operator console (separate password): <a href="/admin">/admin</a> — not the clinic portal form above.
-      </p>
     </form>
     </div>
 
@@ -299,12 +295,11 @@
 <script src="user-account-menu.js"></script>
 <script src="theme.js"></script>
 <script src="/site-contact.js"></script>
-<script src="debug.js"></script>
+<script src="/debug.js?v=1.7.21"></script>
 <script>
 (function () {
   var form = document.getElementById('userLoginForm');
   var hint = document.getElementById('loginHint');
-  var lede = document.getElementById('loginLede');
   var forgotToggle = document.getElementById('userForgotToggle');
   var forgotPanel = document.getElementById('userForgotPanel');
   var forgotHelp = document.getElementById('userForgotHelp');
@@ -383,7 +378,6 @@
   var selfRegisterEnabled = false;
   var registrationConfirmOk = false;
   var resendTestSender = false;
-  var operatorConsoleHint = document.getElementById('operatorConsoleHint');
   var hadSessionExpiredReason = params.get('reason') === 'session_expired';
 
   function stripVerifyQueryFromUrl() {
@@ -393,25 +387,6 @@
       var q = u.searchParams.toString();
       history.replaceState({}, '', u.pathname + (q ? '?' + q : '') + u.hash);
     } catch (err) {}
-  }
-
-  if (slugHint && lede) {
-    lede.textContent =
-      'You were sent here for report “' + slugHint + '”. After sign-in you will open your workspace, then your report.';
-  } else if (nextPath && lede) {
-    var nextIsAdminShell =
-      typeof soPortalIsAdminShellNextPath === 'function' && soPortalIsAdminShellNextPath(nextPath);
-    lede.textContent = nextIsAdminShell
-      ? 'After sign-in you will be taken to: ' +
-        nextPath +
-        '. Use your portal account password below (not the separate operator password on /admin). If sign-in fails, open /admin and sign in there, or use Forgot password below.'
-      : 'After sign-in you will be taken to: ' + nextPath + ' (password or email code below).';
-    if (nextIsAdminShell && operatorConsoleHint) {
-      operatorConsoleHint.classList.remove('is-hidden');
-    }
-  } else if (lede) {
-    lede.textContent =
-      'After sign-in you will go to your workspace, where you can open your private report and account settings.';
   }
 
   if (params.get('registered') === '1' && bannerRegistered) {
@@ -821,6 +796,8 @@
       }
       if (typeof window.soClearOperatorGateLoop === 'function') window.soClearOperatorGateLoop();
       if (typeof window.soClearClinicLoginLoop === 'function') window.soClearClinicLoginLoop();
+      if (typeof window.soClearLoginRedirectCycle === 'function') window.soClearLoginRedirectCycle();
+      noteLoginRedirectAttempt(path, 'redirectAfterOperatorHtmlGateReady', 'operator HttpOnly cookie ready');
       if (typeof console !== 'undefined' && console.debug) {
         console.debug('[AUTH-L] operator HtmlOnly cookie ready; navigating', path);
       }
@@ -860,6 +837,8 @@
         }
       });
     }
+    if (typeof window.soClearLoginRedirectCycle === 'function') window.soClearLoginRedirectCycle();
+    if (typeof window.soClearClinicLoginLoop === 'function') window.soClearClinicLoginLoop();
     window.location.replace(dest);
   }
 
@@ -869,10 +848,6 @@
     setMustChangePwErr('');
     setMustChangePwHint('', '');
     if (gateTitle) gateTitle.textContent = 'Choose your password';
-    if (lede) {
-      lede.textContent =
-        'Set a new password for your account (at least 8 characters). You will then continue to the page you requested.';
-    }
     if (mustChangePwHelp && nextPath) {
       mustChangePwHelp.textContent =
         'After you save, you will be redirected to: ' + nextPath + ' (or your workspace if that path is unavailable).';
@@ -991,7 +966,6 @@
     var portalRoot = document.querySelector('.tf-portal');
     if (portalRoot) portalRoot.classList.add('is-hidden');
     if (resetForm) resetForm.classList.remove('is-hidden');
-    if (lede) lede.textContent = 'Use the form below to set a new password for your account.';
   }
 
   function hideUserAccountPanel() {
@@ -1120,8 +1094,39 @@
     return p;
   }
 
+  function isLoginDebugMode() {
+    try {
+      if (/(?:^|[?&])debug=1(?:&|$)/i.test(window.location.search || '')) return true;
+      if (sessionStorage.getItem('so_debug') === '1') return true;
+    } catch (eDbg) {}
+    return false;
+  }
+
+  function maybeShowLoginDebugPanel(reason) {
+    if (!isLoginDebugMode()) return;
+    if (typeof window.soDebugShowLoginPageReport === 'function') {
+      window.soDebugShowLoginPageReport({ reason: reason || 'debug mode', source: 'login-debug-load' });
+    }
+  }
+
+  function noteLoginRedirectAttempt(targetPath, source, reason) {
+    if (typeof window.soAppendLoginRedirectChain === 'function') {
+      window.soAppendLoginRedirectChain({
+        source: source || 'login-redirect',
+        target: targetPath || '',
+        reason: reason || '',
+        script: 'login.html',
+      });
+    }
+    touchClinicLoginLoopBeforeNavigate(targetPath);
+  }
+
   function recordClinicBounceOnLoginLanding() {
-    /* Bounce from /clinics/NNN/ without HttpOnly cookie is handled by bootstrap + touchClinicLoginLoopBeforeNavigate. */
+    if (!nextPath || !isPrivateNumberedReportNextPath(nextPath)) return;
+    if (typeof window.soRecordLoginPageLanding === 'function') {
+      window.soRecordLoginPageLanding(nextPath);
+    }
+    maybeShowLoginDebugPanel('login.html with ?next= to private report');
   }
 
   function resolveGateBearerForLoop(bearer) {
@@ -1135,34 +1140,40 @@
     );
   }
 
+  function showLoginLoopBlockedUI(source, path) {
+    if (typeof window.soDebugNoteLoginLoop === 'function') {
+      window.soDebugNoteLoginLoop(source || 'clinic-login-loop', path);
+    }
+    if (typeof console !== 'undefined' && console.debug) {
+      console.debug('[AUTH-L] login redirect loop blocked', source || 'clinic-login-loop', path);
+    }
+    if (bannerSession) {
+      bannerSession.textContent =
+        'Sign-in redirect loop blocked for ' +
+        path +
+        '. Read the diagnostic box on this page and DEBUG → [AUTH-L] rows 11–12.';
+      bannerSession.classList.remove('is-hidden');
+    }
+    setLoginErr(
+      'Navigation stopped to prevent a loop. See the full diagnostic message above and the DEBUG panel.'
+    );
+  }
+
   function blockClinicLoginLoopIfNeeded(targetPath, source, bearer) {
     var path = targetPath || nextPath;
     if (!path || !isPrivateNumberedReportNextPath(path)) return false;
-    var gateBearer = resolveGateBearerForLoop(bearer);
-    if (gateBearer) {
-      if (typeof window.soClearClinicLoginLoop === 'function') window.soClearClinicLoginLoop();
-      return false;
+    if (
+      typeof window.soIsLoginRedirectCycleExceeded === 'function' &&
+      window.soIsLoginRedirectCycleExceeded(path)
+    ) {
+      showLoginLoopBlockedUI(source || 'redirect-cycle', path);
+      return true;
     }
     if (
       typeof window.soIsClinicLoginLoopBlocked === 'function' &&
       window.soIsClinicLoginLoopBlocked(path)
     ) {
-      if (typeof window.soDebugNoteLoginLoop === 'function') {
-        window.soDebugNoteLoginLoop(source || 'clinic-login-loop', path);
-      }
-      if (typeof console !== 'undefined' && console.debug) {
-        console.debug('[AUTH-L] clinic login loop blocked', source || 'clinic-login-loop', path);
-      }
-      if (bannerSession) {
-        bannerSession.textContent =
-          'Sign-in redirect loop blocked for ' +
-          path +
-          '. Read the diagnostic box on this page and DEBUG → [AUTH-L] rows 11–12.';
-        bannerSession.classList.remove('is-hidden');
-      }
-      setLoginErr(
-        'Navigation stopped to prevent a loop. See the full diagnostic message above and the DEBUG panel.'
-      );
+      showLoginLoopBlockedUI(source || 'clinic-login-loop', path);
       return true;
     }
     return false;
@@ -1187,9 +1198,19 @@
   function redirectToOperatorGatedNext(path, bearer) {
     var gateBearer = resolveGateBearerForLoop(bearer);
     if (blockClinicLoginLoopIfNeeded(path, 'clinic-gated-next', gateBearer)) return;
-    if (gateBearer && nextPathRequiresOperatorHtmlGate(path)) {
+    if (isPrivateNumberedReportNextPath(path)) {
+      noteLoginRedirectAttempt(path, 'redirectToOperatorGatedNext', 'private numbered report');
+      if (!gateBearer) {
+        showLoginLoopBlockedUI('clinic-gated-no-bearer', path);
+        return;
+      }
       return redirectAfterOperatorHtmlGateReady(path, gateBearer);
     }
+    if (gateBearer && nextPathRequiresOperatorHtmlGate(path)) {
+      noteLoginRedirectAttempt(path, 'redirectToOperatorGatedNext', 'operator/admin shell');
+      return redirectAfterOperatorHtmlGateReady(path, gateBearer);
+    }
+    noteLoginRedirectAttempt(path, 'redirectToOperatorGatedNext', 'ungated path');
     try {
       window.location.replace(path);
     } catch (eGo) {
@@ -1326,11 +1347,11 @@
     var gateBearerForLoop = resolveGateBearerForLoop('');
     var wantOperatorGatedNext = nextPath && nextPathRequiresOperatorHtmlGate(nextPath);
     if (
-      wantOperatorGatedNext &&
-      gateBearerForLoop &&
-      (decodeJwtIsOperatorLogin(portalTok) || (adminTok && looksLikeJwt(adminTok)))
+      nextPath &&
+      isPrivateNumberedReportNextPath(nextPath) &&
+      blockClinicLoginLoopIfNeeded(nextPath, 'login-landing-guard', gateBearerForLoop)
     ) {
-      if (typeof window.soClearClinicLoginLoop === 'function') window.soClearClinicLoginLoop();
+      return;
     }
     if (
       wantOperatorGatedNext &&
@@ -1363,12 +1384,17 @@
       if (ck && ck.ok && ck.json && ck.json.ok) {
         var cookieDest = resolveSignedInDestination();
         if (wantOperatorGatedNext) {
+          if (blockClinicLoginLoopIfNeeded(cookieDest, 'cookie-session-gated', gateBearerForLoop)) {
+            return;
+          }
           var gateBearer =
             (adminTok && looksLikeJwt(adminTok) && adminTok) ||
             (portalTok && looksLikeJwt(portalTok) && portalTok) ||
             '';
           return redirectAfterOperatorHtmlGateReady(cookieDest, gateBearer);
         }
+        if (blockClinicLoginLoopIfNeeded(cookieDest, 'cookie-session', gateBearerForLoop)) return;
+        noteLoginRedirectAttempt(cookieDest, 'maybeRedirect-cookie', 'admin HttpOnly cookie ok');
         try {
           window.location.replace(cookieDest);
         } catch (eCk) {
@@ -1380,6 +1406,8 @@
         if (adm && adm.ok && adm.json && adm.json.ok) {
           function goAdminDest() {
             var adminDest = resolveSignedInDestination();
+            if (blockClinicLoginLoopIfNeeded(adminDest, 'admin-jwt-session', adminTok)) return;
+            noteLoginRedirectAttempt(adminDest, 'maybeRedirect-admin-jwt', 'admin bearer session ok');
             try {
               window.location.replace(adminDest);
             } catch (eRp) {
@@ -1387,7 +1415,9 @@
             }
           }
           if (wantOperatorGatedNext) {
-            return redirectAfterOperatorHtmlGateReady(resolveSignedInDestination(), adminTok);
+            var adminDestGated = resolveSignedInDestination();
+            if (blockClinicLoginLoopIfNeeded(adminDestGated, 'admin-jwt-gated', adminTok)) return;
+            return redirectAfterOperatorHtmlGateReady(adminDestGated, adminTok);
           }
           goAdminDest();
           return;
@@ -1496,6 +1526,18 @@
     if (!accountSettingsMode) return;
     if (redirectAdminAwayFromAccountSettingsIfNeeded()) return;
     var tok = getPortalJwtLogin();
+    if (tok && looksLikeJwt(tok)) {
+      var acctDest =
+        typeof soPortalAccountSettingsCanonical === 'function'
+          ? soPortalAccountSettingsCanonical()
+          : '/account-settings';
+      try {
+        window.location.replace(acctDest);
+      } catch (eAc) {
+        window.location.href = acctDest;
+      }
+      return;
+    }
     if (!tok) {
       if (bannerSession) {
         bannerSession.textContent = MSG.accountNoJwt;
@@ -1547,6 +1589,19 @@
         emailFb
       );
     });
+  }
+
+  function openForgotFromAccountSettingsIfRequested() {
+    try {
+      if (sessionStorage.getItem('so_portal_open_forgot') !== '1') return;
+      sessionStorage.removeItem('so_portal_open_forgot');
+    } catch (eOf) {
+      return;
+    }
+    if (resetEmailEnabled) {
+      showForgotMode();
+      setHint('', '');
+    }
   }
 
   function forgotResetHelpText() {
@@ -1609,10 +1664,8 @@
       selfRegisterEnabled = portalApiFromOurServer && Boolean(cap && cap.selfRegister);
       registrationConfirmOk = portalApiFromOurServer && Boolean(cap && cap.registrationConfirmEmail);
       resendTestSender = portalApiFromOurServer && Boolean(cap && cap.resendTestSender);
-      if (operatorConsoleHint && portalApiFromOurServer) {
-        operatorConsoleHint.classList.remove('is-hidden');
-      }
       if (forgotHelp) forgotHelp.textContent = forgotResetHelpText();
+      openForgotFromAccountSettingsIfRequested();
     })
     .catch(function (err) {
       capabilitiesStatus = 0;
@@ -1621,6 +1674,7 @@
         window.soPortalCapabilitiesProbeError = err;
       } catch (e) {}
       if (forgotHelp) forgotHelp.textContent = forgotResetHelpText();
+      openForgotFromAccountSettingsIfRequested();
     });
 
   if (verifyToken) {
@@ -1795,13 +1849,6 @@
         } catch (err) {}
         resetToken = '';
         showLoginMode();
-        if (lede && slugHint) {
-          lede.textContent =
-            'You were sent here for report “' + slugHint + '”. After sign-in you will be taken to that page.';
-        } else if (lede) {
-          lede.textContent =
-            'Sign in with password or a one-time email code.';
-        }
       });
     });
   }
@@ -2064,6 +2111,7 @@
   }
 
   applyLoginFieldMode();
+  maybeShowLoginDebugPanel('login.html load');
   maybeRedirectIfAlreadySignedIn();
   maybeEnterAccountSettings();
 })();

@@ -119,21 +119,12 @@
     return '/login.html';
   }
 
-  /** Settings: same host as login but skip re-auth when JWT is valid (login.html handles ?settings=1#account). */
-  function resolveSettingsHref(loginHref) {
-    var base = String(loginHref || '/login.html');
-    try {
-      var u = new URL(base, window.location.href);
-      u.searchParams.set('settings', '1');
-      u.hash = '#account';
-      return u.pathname + u.search + u.hash;
-    } catch (e) {
-      var sep = base.indexOf('?') >= 0 ? '&' : '?';
-      if (base.indexOf('settings=') !== -1) {
-        return base.indexOf('#') >= 0 ? base : base + '#account';
-      }
-      return base + sep + 'settings=1#account';
+  /** Settings: dedicated account page (canonical /account-settings). */
+  function resolveSettingsHref() {
+    if (typeof g.soPortalAccountSettingsCanonical === 'function') {
+      return g.soPortalAccountSettingsCanonical();
     }
+    return '/account-settings';
   }
 
   function resolveAdminHref(root) {

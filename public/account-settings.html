@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
+<title>Account settings · www.serviceopera.to</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" href="/favicon.png" type="image/png" sizes="any" />
+<link rel="apple-touch-icon" href="/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="/journey-progress.css" />
+<script src="/page-skeleton.js"></script>
+<script src="/so-api.js"></script>
+<script src="/operator-html-gate.js?v=1.7.20"></script>
+<script src="/portal-auth-routing.js?v=1.7.20"></script>
+<script src="/portal-jwt.js"></script>
+<style>
+  .page-user-portal { font-family: var(--font-body); min-height: 100vh; }
+  .as-wrap { max-width: 520px; margin: 0 auto; padding: 2rem 1.5rem 3rem; }
+  .as-card {
+    border: 1px solid var(--line-strong);
+    border-radius: 14px;
+    padding: 1.25rem 1.15rem;
+    background: var(--ink-2);
+    margin-top: 1rem;
+  }
+  .as-card__title { font-size: 1rem; font-weight: 600; margin: 0 0 0.35rem; }
+  .as-card__lede { font-size: 0.92rem; color: var(--mute-2); margin: 0 0 1rem; line-height: 1.5; }
+  .as-meta { font-size: 0.88rem; color: var(--mute-2); line-height: 1.55; margin: 0 0 0.75rem; }
+  .as-meta p { margin: 0 0 0.65rem; }
+  .as-meta .portal-caption { display: block; margin-bottom: 0.2rem; }
+  .as-actions { display: flex; flex-direction: column; gap: 0.65rem; }
+  .page-user-portal .portal-caption {
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mute-2);
+  }
+  .page-user-portal .portal-caption--accent { color: var(--amber-2); }
+  .as-linkish {
+    display: inline;
+    background: none;
+    border: none;
+    color: var(--mute-2);
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+    font: inherit;
+    font-size: 0.88rem;
+  }
+  .as-linkish:hover { color: var(--amber-2); }
+</style>
+</head>
+<body class="page-admin page-admin--with-nav page-user-portal" data-so-journey-step="3">
+
+<div class="grain" aria-hidden="true"></div>
+
+<nav class="nav" aria-label="Primary">
+  <a href="/" class="nav__logo">
+    <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="www.serviceopera.to — home" decoding="async" />
+  </a>
+  <div class="nav__links">
+    <a href="/login.html" class="nav__login" id="navPortalAuth" data-login-href="/login.html?next=%2Faccount-settings" aria-label="Sign in">Sign in</a>
+  </div>
+</nav>
+
+<div class="admin-gate">
+  <div class="admin-gate__card" style="max-width: 560px">
+    <div class="as-wrap">
+      <p class="portal-caption portal-caption--accent">— ACCOUNT</p>
+      <h1 style="font-size:1.65rem;font-weight:700;margin:0;font-family:var(--font-body)">Account settings</h1>
+      <p class="admin-gate__lede" style="margin-top:0.65rem;font-size:0.95rem;color:var(--mute-2)">
+        Profile, report access, and sign-in options for your portal account.
+      </p>
+
+      <div id="asLoading" class="as-card">
+        <p class="as-meta" style="margin:0">Loading your session…</p>
+      </div>
+
+      <div id="asSignedIn" class="is-hidden">
+        <section class="as-card" aria-labelledby="asProfileTitle">
+          <h2 class="as-card__title" id="asProfileTitle">Profile</h2>
+          <p class="as-card__lede" id="asProfileLede">Signed-in portal identity.</p>
+          <div id="asProfileMeta" class="as-meta mono"></div>
+        </section>
+
+        <section class="as-card" aria-labelledby="asAccessTitle">
+          <h2 class="as-card__title" id="asAccessTitle">Workspace &amp; report</h2>
+          <p class="as-card__lede">Jump back to your signed-in home or private report.</p>
+          <div class="as-actions">
+            <a href="/workspace" class="btn btn--primary btn--block" id="asOpenWorkspace">Workspace<span class="ico-arrow-r" aria-hidden="true"></span></a>
+            <a href="#" class="btn btn--ghost btn--block" id="asOpenReport">Open my report<span class="ico-arrow-r" aria-hidden="true"></span></a>
+          </div>
+        </section>
+
+        <section class="as-card" aria-labelledby="asSecurityTitle">
+          <h2 class="as-card__title" id="asSecurityTitle">Security</h2>
+          <p class="as-card__lede" id="asSecurityLede">Password and session for this browser.</p>
+          <div id="asErr" class="tf-error-box is-hidden" role="alert"></div>
+          <div class="as-actions">
+            <button type="button" class="btn btn--ghost btn--block" id="asChangePw">Change password</button>
+            <button type="button" class="btn btn--ghost btn--block" id="asSignOut">Sign out</button>
+          </div>
+          <p style="margin-top:0.85rem">
+            <button type="button" class="as-linkish" id="asUseOther">Use a different account</button>
+          </p>
+        </section>
+      </div>
+
+      <p class="modal__footnote" style="margin-top:1.5rem"><a href="/workspace"><span class="ico-arrow-l" aria-hidden="true"></span>Back to workspace</a> · <a href="/audit-example">Sample audit</a> · <a href="/">Studio home</a></p>
+    </div>
+  </div>
+</div>
+
+<footer class="mkt-footer">
+  <span>&copy; 2026 www.serviceopera.to</span>
+</footer>
+
+<script src="/sw-register.js"></script>
+<script src="/site-nav-drawer.js"></script>
+<script src="/user-account-menu.js"></script>
+<script src="/journey-progress.js"></script>
+<script src="/theme.js"></script>
+<script src="/site-contact.js"></script>
+<script src="debug.js"></script>
+<script src="/account-settings.js?v=1.7.20"></script>
+</body>
+</html>

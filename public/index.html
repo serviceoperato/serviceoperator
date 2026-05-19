@@ -24,7 +24,7 @@
 <link rel="apple-touch-icon" href="/favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css" />
 <link rel="stylesheet" href="/journey-progress.css" />
 <script src="/page-skeleton.js"></script>
@@ -56,15 +56,31 @@
 }
 </script>
 <style>
-  /* Typography — match /clinics/010/ audit teaser (DM Sans body, DM Serif Display headings) */
+  /* Typography — section headings: DM Sans/Serif; hero matches clinics report (Inter + JetBrains Mono). */
   .page-home .so-b2b,
   .page-home .so-b2b-footer {
     --font-body: 'DM Sans', system-ui, sans-serif;
     --font-display: 'DM Serif Display', serif;
   }
-  .page-home .so-b2b .clinics-hero__title,
-  .page-home .so-b2b .client-hero h1.clinics-hero__title {
-    font-family: var(--font-display);
+  /* Hero eyebrow / H1 / lede — same stack as SEA medical vertical (styles.css .client-hero) */
+  .page-home .so-b2b__hero {
+    --hero-font-body: 'Inter', system-ui, sans-serif;
+    --hero-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  .page-home .so-b2b__hero .mono {
+    font-family: var(--hero-font-mono);
+  }
+  .page-home .so-b2b__hero .clinics-hero__title,
+  .page-home .so-b2b__hero .client-hero h1.clinics-hero__title {
+    font-family: var(--hero-font-body);
+    font-weight: 700;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+  .page-home .so-b2b__hero .client-hero__lede,
+  .page-home .so-b2b__hero .client-hero__lede.so-b2b__hero-lede {
+    font-family: var(--hero-font-body);
     font-weight: 400;
   }
   .page-home .so-b2b__h2,
@@ -368,7 +384,7 @@
     margin-bottom: 1rem;
   }
   /* Title + `.line` stagger: shared `styles.css` (matches clinics report). Lede: static like report (no extra `rise`). */
-  .page-home .so-b2b .client-hero__lede.so-b2b__hero-lede {
+  .page-home .so-b2b__hero .client-hero__lede.so-b2b__hero-lede {
     max-width: 40em;
     font-size: 1.15rem;
     line-height: 1.55;
@@ -540,19 +556,19 @@
     background: var(--so-workflow-accent);
     color: var(--so-workflow-on-accent);
   }
-  .page-home .so-b2b__cta-preview {
-    font-size: 0.875rem;
-    font-style: italic;
+  .page-home .so-b2b__btn--primary .so-b2b__btn-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    line-height: 1.25;
+  }
+  .page-home .so-b2b__btn--primary .so-b2b__btn-sub {
+    font-size: 0.75rem;
     font-weight: 500;
-    color: var(--so-workflow-accent);
-    text-decoration: none;
-    align-self: center;
-  }
-  .page-home .so-b2b__cta-preview:hover {
-    text-decoration: underline;
-  }
-  [data-theme="dark"] .page-home .so-b2b__cta-preview {
-    color: var(--so-workflow-accent);
+    font-style: italic;
+    opacity: 0.92;
+    letter-spacing: 0.01em;
   }
   .page-home .so-b2b__markets {
     margin: 0.35rem 0 0;
@@ -1296,8 +1312,12 @@
       <p class="client-hero__lede so-b2b__hero-lede">We run an operational review for service business owners. You get a written brief on delivery gaps, prioritized fixes, and one scoped next step.</p>
 
       <div class="so-b2b__cta-row">
-        <a class="so-b2b__btn so-b2b__btn--primary" href="/free-audit.html">Get your free 48-hour ROI audit</a>
-        <a class="so-b2b__cta-preview" href="/clinics/010/">See what you'll receive first</a>
+        <a class="so-b2b__btn so-b2b__btn--primary" href="/free-audit.html">
+          <span class="so-b2b__btn-stack">
+            <span class="so-b2b__btn-label">Get your free 48-hour ROI audit</span>
+            <span class="so-b2b__btn-sub">See what you'll receive first</span>
+          </span>
+        </a>
       </div>
           <p class="so-b2b__cta-note">Written brief on gaps, leverage points, and one pilot — no obligation to run execution.</p>
         </div>

@@ -59,6 +59,10 @@
 /workspace /workspace.html 200
 /workspace/ /workspace.html 200
 
+# Portal account settings (canonical short URL)
+/account-settings /account-settings.html 200
+/account-settings/ /account-settings.html 200
+
 # Public journey — audit sample (canonical short URL)
 /audit-example /audit-example.html 200
 /audit-example/ /audit-example.html 200

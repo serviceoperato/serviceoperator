@@ -18,9 +18,9 @@ export function SiteNav() {
           href="/login.html"
           className="nav__login"
           id="navPortalAuth"
-          aria-label="Login or Register"
+          aria-label="Sign in"
         >
-          Login / Register
+          Sign in
         </a>
       </div>
     </nav>

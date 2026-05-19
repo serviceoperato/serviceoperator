@@ -4416,6 +4416,12 @@ app.get(['/workspace', '/workspace/'], (_req, res) => {
   res.sendFile(path.join(publicDir, 'workspace.html'));
 });
 
+app.get(['/account-settings', '/account-settings/'], (_req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+  res.sendFile(path.join(publicDir, 'account-settings.html'));
+});
+
 app.get('/ai-operations-for-hotels-clinics-property.html', (_req, res) => {
   res.redirect(301, '/ai-operations/');
 });

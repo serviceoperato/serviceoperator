@@ -40,7 +40,10 @@
       p === '/register' ||
       /\/workspace(\.html)?$/.test(p) ||
       p === '/workspace' ||
-      p === '/workspace/'
+      p === '/workspace/' ||
+      /\/account-settings(\.html)?$/.test(p) ||
+      p === '/account-settings' ||
+      p === '/account-settings/'
     );
   }
 
@@ -223,6 +226,11 @@
 
   var CLINIC_LOGIN_LOOP_KEY = 'so_clinic_login_loop';
   var CLINIC_LOGIN_LOOP_MS = 15000;
+  var LOGIN_REDIRECT_CYCLE_KEY = 'so_login_redirect_cycle';
+  var LOGIN_REDIRECT_CYCLE_MS = 120000;
+  var LOGIN_REDIRECT_CHAIN_KEY = 'so_login_redirect_chain';
+  /** Block auto-redirect after more than this many login.html landings for the same ?next= path. */
+  var LOGIN_REDIRECT_MAX_CYCLES = 2;
 
   function normalizeLoopPath(path) {
     var p = String(path || '').split('?')[0].split('#')[0];
@@ -265,6 +273,145 @@
     } catch (eClr) {}
   }
 
+  function appendLoginRedirectChain(entry) {
+    try {
+      var raw = sessionStorage.getItem(LOGIN_REDIRECT_CHAIN_KEY) || '[]';
+      var chain = JSON.parse(raw);
+      if (!Array.isArray(chain)) chain = [];
+      chain.push({
+        at: new Date().toISOString(),
+        page: (window.location.pathname || '') + (window.location.search || ''),
+        source: String((entry && entry.source) || ''),
+        target: String((entry && entry.target) || ''),
+        script: String((entry && entry.script) || 'login.html'),
+        reason: String((entry && entry.reason) || ''),
+      });
+      while (chain.length > 16) chain.shift();
+      sessionStorage.setItem(LOGIN_REDIRECT_CHAIN_KEY, JSON.stringify(chain));
+    } catch (eCh) {}
+  }
+
+  function readLoginRedirectChain() {
+    try {
+      var raw = sessionStorage.getItem(LOGIN_REDIRECT_CHAIN_KEY) || '[]';
+      var chain = JSON.parse(raw);
+      return Array.isArray(chain) ? chain : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function bumpLoginRedirectCycle(targetPath) {
+    var norm = normalizeLoopPath(targetPath);
+    var count = 1;
+    try {
+      var raw = sessionStorage.getItem(LOGIN_REDIRECT_CYCLE_KEY);
+      if (raw) {
+        var rec = JSON.parse(raw);
+        if (rec && rec.path === norm && Date.now() - Number(rec.at) < LOGIN_REDIRECT_CYCLE_MS) {
+          count = (Number(rec.count) || 0) + 1;
+        }
+      }
+      sessionStorage.setItem(
+        LOGIN_REDIRECT_CYCLE_KEY,
+        JSON.stringify({ path: norm, count: count, at: Date.now() })
+      );
+    } catch (eBump) {}
+    return count;
+  }
+
+  function readLoginRedirectCycle(targetPath) {
+    try {
+      var norm = normalizeLoopPath(targetPath);
+      var raw = sessionStorage.getItem(LOGIN_REDIRECT_CYCLE_KEY);
+      if (!raw) return null;
+      var rec = JSON.parse(raw);
+      if (!rec || rec.path !== norm) return null;
+      if (Date.now() - Number(rec.at) > LOGIN_REDIRECT_CYCLE_MS) return null;
+      return rec;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function isLoginRedirectCycleExceeded(targetPath) {
+    var rec = readLoginRedirectCycle(targetPath);
+    return Boolean(rec && Number(rec.count) > LOGIN_REDIRECT_MAX_CYCLES);
+  }
+
+  function clearLoginRedirectCycle() {
+    try {
+      sessionStorage.removeItem(LOGIN_REDIRECT_CYCLE_KEY);
+    } catch (eClr) {}
+  }
+
+  function sanitizedAuthSessionStorage() {
+    var lines = [];
+    try {
+      for (var i = 0; i < sessionStorage.length; i++) {
+        var k = sessionStorage.key(i);
+        if (!k) continue;
+        if (
+          k.indexOf('so_') !== 0 &&
+          k.indexOf('tf_') !== 0 &&
+          k.indexOf('jwt') < 0 &&
+          k.indexOf('auth') < 0 &&
+          k.indexOf('login') < 0 &&
+          k.indexOf('portal') < 0 &&
+          k.indexOf('operator') < 0
+        ) {
+          continue;
+        }
+        var v = sessionStorage.getItem(k) || '';
+        var preview = /jwt|token|secret|password/i.test(k)
+          ? v
+            ? '(redacted · len=' + v.length + ')'
+            : '(empty)'
+          : v.length > 96
+            ? v.slice(0, 48) + '…(len=' + v.length + ')'
+            : v || '(empty)';
+        lines.push(k + '=' + preview);
+      }
+    } catch (eSs) {
+      lines.push('(sessionStorage read error)');
+    }
+    return lines.length ? lines.join('\n') : '(no auth-related sessionStorage keys)';
+  }
+
+  function isLoginDebugMode() {
+    try {
+      if (/(?:^|[?&])debug=1(?:&|$)/i.test(window.location.search || '')) return true;
+      if (sessionStorage.getItem('so_debug') === '1') return true;
+    } catch (e) {}
+    return false;
+  }
+
+  function recordLoginPageLanding(targetPath) {
+    var norm = normalizeLoopPath(targetPath);
+    var fromClinic = false;
+    try {
+      var ref = document.referrer;
+      if (ref) {
+        var refUrl = new URL(ref, window.location.origin);
+        fromClinic = normalizeLoopPath(refUrl.pathname) === norm;
+      }
+    } catch (eRef) {}
+    var count = bumpLoginRedirectCycle(targetPath);
+    if (fromClinic) touchClinicLoginLoop(targetPath);
+    appendLoginRedirectChain({
+      source: 'login-landing',
+      target: norm,
+      reason: fromClinic
+        ? 'referrer matched protected report (likely server 302 to login)'
+        : 'login.html loaded with ?next=',
+    });
+    return {
+      count: count,
+      blocked: isLoginRedirectCycleExceeded(targetPath) || isClinicLoginLoopBlocked(targetPath),
+      fromClinic: fromClinic,
+    };
+  }
+
   function readLoginLoopCounters() {
     var adminCount = 0;
     var gateLoop = null;
@@ -280,13 +427,34 @@
       var cr = sessionStorage.getItem(CLINIC_LOGIN_LOOP_KEY);
       if (cr) clinicLoop = JSON.parse(cr);
     } catch (eCl) {}
-    return { adminCount: adminCount, gateLoop: gateLoop, clinicLoop: clinicLoop };
+    var redirectCycle = null;
+    try {
+      var nextForCycle = '';
+      try {
+        nextForCycle = (new URLSearchParams(window.location.search).get('next') || '').trim();
+      } catch (eNfc) {}
+      redirectCycle = readLoginRedirectCycle(nextForCycle);
+    } catch (eRc) {}
+    return {
+      adminCount: adminCount,
+      gateLoop: gateLoop,
+      clinicLoop: clinicLoop,
+      redirectCycle: redirectCycle,
+    };
   }
 
   function buildLoginLoopLongMessage(source, detail) {
     var nextParam = '';
+    var nextDecoded = '';
     try {
       nextParam = (new URLSearchParams(window.location.search).get('next') || '').trim();
+      if (nextParam) {
+        try {
+          nextDecoded = decodeURIComponent(nextParam);
+        } catch (eDec) {
+          nextDecoded = nextParam + ' (decode failed: ' + (eDec && eDec.message ? eDec.message : 'invalid') + ')';
+        }
+      }
     } catch (eNp) {}
     var pagePath = (window.location.pathname || '') + (window.location.search || '');
     var target = detail != null ? String(detail) : nextParam || '';
@@ -295,6 +463,43 @@
     var portalSites = portalJwtStorageSites();
     var adminJwt = readAdminJwt();
     var portalJwt = readPortalJwt();
+    var chain = readLoginRedirectChain();
+    var chainLines = chain.length
+      ? chain
+          .map(function (c, idx) {
+            return (
+              String(idx + 1) +
+              '. ' +
+              (c.at || '?') +
+              ' · ' +
+              (c.source || '?') +
+              ' → ' +
+              (c.target || c.page || '?') +
+              (c.reason ? ' · ' + c.reason : '') +
+              (c.script ? ' · script=' + c.script : '')
+            );
+          })
+          .join('\n')
+      : '(empty — first visit or chain cleared)';
+    var ua = '';
+    try {
+      ua = String(navigator.userAgent || '').slice(0, 220);
+    } catch (eUa) {
+      ua = '(unavailable)';
+    }
+    var loggedInGuess =
+      looksLikeJwt(portalJwt) || looksLikeJwt(adminJwt) ? 'likely yes (JWT in storage)' : 'no JWT in storage';
+    var redirectCycleTxt = '(none)';
+    if (counters.redirectCycle && counters.redirectCycle.path) {
+      redirectCycleTxt =
+        'path=' +
+        counters.redirectCycle.path +
+        ' · count=' +
+        (counters.redirectCycle.count != null ? counters.redirectCycle.count : '?') +
+        (counters.redirectCycle.at
+          ? ' · at=' + new Date(Number(counters.redirectCycle.at)).toISOString()
+          : '');
+    }
     var clinicLoopTxt = '(none)';
     if (counters.clinicLoop && counters.clinicLoop.path) {
       clinicLoopTxt =
@@ -317,12 +522,17 @@
       'Navigation was stopped on purpose so this tab will not keep bouncing between login.html and a protected clinic/hotel report.',
       '',
       '— Where you are —',
+      'timestamp (UTC): ' + new Date().toISOString(),
+      'user-agent (snippet): ' + ua,
       'blocking source: ' + String(source || '(unknown)'),
       'detail / target path: ' + (target || '(none)'),
+      'current URL: ' + (window.location.href || pagePath),
       'current page: ' + pagePath,
-      '?next= query: ' + (nextParam || '(none)'),
+      '?next= (raw): ' + (nextParam || '(none)'),
+      '?next= (decoded): ' + (nextDecoded || '(none)'),
       'document.referrer: ' + (document.referrer || '(empty)'),
       'origin: ' + (window.location.origin || ''),
+      'auth state (heuristic): ' + loggedInGuess,
       '',
       '— Protected report —',
       parsed
@@ -345,7 +555,15 @@
       'admin JWT in storage: ' + (adminJwt ? 'present · len=' + adminJwt.length : 'not set'),
       'portal keys: sessionStorage=' + (portalSites.ss ? 'yes' : 'no') + ' · localStorage=' + (portalSites.ls ? 'yes' : 'no'),
       '',
-      '— Loop counters (this tab, last ~15s) —',
+      '— Redirect chain (sessionStorage ' + LOGIN_REDIRECT_CHAIN_KEY + ') —',
+      chainLines,
+      '',
+      '— sessionStorage (auth-related, sanitized) —',
+      sanitizedAuthSessionStorage(),
+      '',
+      '— Loop counters (this tab) —',
+      'login landings for same ?next= (' + LOGIN_REDIRECT_CYCLE_KEY + ', max ' + LOGIN_REDIRECT_MAX_CYCLES + ' then block): ' +
+        redirectCycleTxt,
       'admin auth redirect count (so_admin_auth_redirect_count): ' + counters.adminCount,
       'operator gate touch (so_operator_gate_loop): ' + gateLoopTxt,
       'clinic login bounce (so_clinic_login_loop): ' + clinicLoopTxt,
@@ -1989,6 +2207,25 @@
   global.soTouchClinicLoginLoop = touchClinicLoginLoop;
   global.soIsClinicLoginLoopBlocked = isClinicLoginLoopBlocked;
   global.soClearClinicLoginLoop = clearClinicLoginLoop;
+  global.soRecordLoginPageLanding = recordLoginPageLanding;
+  global.soIsLoginRedirectCycleExceeded = isLoginRedirectCycleExceeded;
+  global.soClearLoginRedirectCycle = clearLoginRedirectCycle;
+  global.soAppendLoginRedirectChain = appendLoginRedirectChain;
+
+  /** Long on-page diagnostic for login.html (?debug=1 or loop). */
+  global.soDebugShowLoginPageReport = function soDebugShowLoginPageReport(opts) {
+    opts = opts || {};
+    var nextParam = '';
+    try {
+      nextParam = (new URLSearchParams(window.location.search).get('next') || '').trim();
+    } catch (eNp) {}
+    var header = opts.reason
+      ? 'LOGIN PAGE DIAGNOSTIC — ' + String(opts.reason)
+      : 'LOGIN PAGE DIAGNOSTIC';
+    var body = buildLoginLoopLongMessage(opts.source || 'login-debug', opts.detail || nextParam);
+    showLoginLoopOnPageBanner(header + '\n\n' + body);
+    global.soDebugReveal({ openPanel: true });
+  };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);

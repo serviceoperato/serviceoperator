@@ -7,6 +7,8 @@
 
   var WORKSPACE_PATH = '/workspace.html';
   var WORKSPACE_CANONICAL = '/workspace';
+  var ACCOUNT_SETTINGS_PATH = '/account-settings.html';
+  var ACCOUNT_SETTINGS_CANONICAL = '/account-settings';
 
   function normalizePath(p) {
     var s = String(p || '').trim();
@@ -19,7 +21,8 @@
     return (
       /^\/login(\.html)?(\/|$|\?|#)/.test(nl) ||
       /^\/register(\.html)?(\/|$|\?|#)/.test(nl) ||
-      /^\/workspace(\.html)?(\/|$|\?|#)/.test(nl)
+      /^\/workspace(\.html)?(\/|$|\?|#)/.test(nl) ||
+      /^\/account-settings(\.html)?(\/|$|\?|#)/.test(nl)
     );
   }
 
@@ -110,6 +113,14 @@
 
   g.soPortalWorkspaceCanonical = function () {
     return WORKSPACE_CANONICAL;
+  };
+
+  g.soPortalAccountSettingsPath = function () {
+    return ACCOUNT_SETTINGS_PATH;
+  };
+
+  g.soPortalAccountSettingsCanonical = function () {
+    return ACCOUNT_SETTINGS_CANONICAL;
   };
 
   g.soPortalResolvePostLogin = resolvePostLoginDestination;

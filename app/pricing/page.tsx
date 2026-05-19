@@ -54,7 +54,9 @@ export default function PricingPage() {
             <p id="tier-free-heading" className="so-pricing-label">
               48-hour private audit
             </p>
-            <p className="so-pricing-price">฿0</p>
+            <div className="so-pricing-priceBlock">
+              <p className="so-pricing-price so-pricing-price--thb">฿0</p>
+            </div>
             <p className="so-pricing-subtext">One-time · No card required</p>
             <p className="so-pricing-description">{freeDescription}</p>
             <a
@@ -77,7 +79,15 @@ export default function PricingPage() {
             <p id="tier-operator-heading" className="so-pricing-label">
               Operator
             </p>
-            <p className="so-pricing-price">฿3,900 / month</p>
+            <div className="so-pricing-priceBlock">
+              <span className="so-pricing-priceWas" aria-hidden="true">
+                <s>฿7,800</s>
+              </span>
+              <p className="so-pricing-price">
+                <span className="sr-only">50% off, was ฿7,800 per month. </span>
+                ฿3,900 / month
+              </p>
+            </div>
             <p className="so-pricing-subtext">Cancel anytime · Prices in THB excl. VAT</p>
             <ul className="so-pricing-features">
               <li>Monthly audit refresh</li>
@@ -99,7 +109,15 @@ export default function PricingPage() {
             <p id="tier-white-heading" className="so-pricing-label">
               White-Glove
             </p>
-            <p className="so-pricing-price">฿9,900 / month</p>
+            <div className="so-pricing-priceBlock">
+              <span className="so-pricing-priceWas" aria-hidden="true">
+                <s>฿19,800</s>
+              </span>
+              <p className="so-pricing-price">
+                <span className="sr-only">50% off, was ฿19,800 per month. </span>
+                ฿9,900 / month
+              </p>
+            </div>
             <p className="so-pricing-subtext">Limited to 5 active clients</p>
             <ul className="so-pricing-features">
               <li>Everything in Operator</li>

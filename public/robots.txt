@@ -24,5 +24,6 @@ Disallow: /pricing/inquiry
 Disallow: /reports/catalog.html
 Disallow: /clinics/report.html
 Disallow: /workspace.html
+Disallow: /account-settings.html
 
 Sitemap: https://serviceopera.to/sitemap.xml

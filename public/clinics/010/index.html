@@ -11,6 +11,7 @@
 <link rel="apple-touch-icon" href="/favicon.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="../../styles.css"/>
 <link rel="stylesheet" href="audit-teaser.css"/>
 <style>
@@ -25,8 +26,23 @@
     flex: 1 1 auto;
     min-width: 0;
   }
-  .so-hero-band__copy .so-subhead {
+  .report-010 .so-hero-band .client-hero__eyebrow {
+    margin-bottom: 1rem;
+  }
+  .report-010 .so-hero-band .report-caption {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--mute-2);
+  }
+  .report-010 .so-hero-band .clinics-hero__title {
+    margin: 0 0 1rem;
+  }
+  .report-010 .so-hero-band .client-hero__lede {
     margin-bottom: 0;
+    max-width: 40em;
   }
   .so-hero-band__stat {
     flex: 0 1 340px;
@@ -116,9 +132,14 @@
 
   <header class="so-hero-band" aria-label="Business overview">
     <div class="so-hero-band__copy">
-      <p class="so-eyebrow">48h · No call required · Free</p>
-      <h1 class="so-headline">Business ABC</h1>
-      <p class="so-subhead">
+      <div class="client-hero__eyebrow">
+        <span class="dot dot--live" aria-hidden="true"></span>
+        <span class="report-caption">48h · No call required · Free</span>
+      </div>
+      <h1 class="clinics-hero__title">
+        <span class="line">Business ABC</span>
+      </h1>
+      <p class="client-hero__lede">
         From an operator who's spent 5 years inside Thailand's service economy.
       </p>
     </div>

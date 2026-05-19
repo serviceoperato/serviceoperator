@@ -15,6 +15,7 @@
         { href: '/', label: 'Audit studio home' },
         { href: '/audit-example', label: 'Sample operational audit' },
         { href: '/operational-findings', label: 'Operational findings (demo)' },
+        { href: '/pricing', label: 'Pricing' },
         { href: '/workspace', label: 'Private workspace', onlyIfSignedIn: true },
         { href: '/login.html', label: 'Sign in for workspace', onlyIfSignedOut: true },
       ],
@@ -37,6 +38,7 @@
       links: [
         { href: '/', label: 'Home' },
         { href: '/audit-example', label: 'Sample audit' },
+        { href: '/pricing', label: 'Pricing' },
         { href: '/admin/report-catalog', label: 'Report catalog (operator)' },
       ],
     },
@@ -55,7 +57,7 @@
       links: [
         { href: '/workspace.html', label: 'Workspace', onlyIfSignedIn: true },
         { href: '/reports.html', label: 'Request an audit' },
-        { href: '/login.html?settings=1#account', label: 'Account settings', onlyIfSignedIn: true },
+        { href: '/account-settings', label: 'Account settings', onlyIfSignedIn: true },
       ],
     },
     {
@@ -89,6 +91,11 @@
     }
   }
 
+  function isHomePage() {
+    var p = window.location.pathname || '/';
+    return p === '/' || p === '/index.html';
+  }
+
   function isJourneyPage() {
     var p = window.location.pathname || '/';
     return (
@@ -100,8 +107,85 @@
     );
   }
 
+  function normalizePathname(path) {
+    var p = path || '/';
+    if (p === '/index.html') return '/';
+    p = p.replace(/\/index\.html$/i, '/');
+    if (p.length > 1) p = p.replace(/\/+$/, '');
+    return p || '/';
+  }
+
+  function linkLabelFromAnchor(anchor) {
+    if (!anchor) return 'Link';
+    var btnLbl = anchor.querySelector('.so-b2b__btn-label');
+    if (btnLbl && btnLbl.textContent.trim()) return btnLbl.textContent.trim();
+    var aria = anchor.getAttribute('aria-label');
+    if (aria && aria.trim()) return aria.trim();
+    var img = anchor.querySelector('img[alt]');
+    if (img) {
+      var alt = (img.getAttribute('alt') || '').trim();
+      if (alt) return alt;
+    }
+    var text = (anchor.textContent || '').trim().replace(/\s+/g, ' ');
+    if (text) return text;
+    return anchor.getAttribute('href') || 'Link';
+  }
+
+  function isInternalNavHref(href) {
+    if (!href || href === '#') return false;
+    if (href.charAt(0) === '#') return false;
+    if (/^(mailto:|tel:|javascript:)/i.test(href)) return false;
+    if (/^https?:\/\//i.test(href)) {
+      try {
+        return new URL(href, window.location.origin).origin === window.location.origin;
+      } catch (eHref) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function collectHomepageLinks() {
+    var seen = Object.create(null);
+    var out = [];
+    var roots = [];
+    var topNav = document.querySelector('nav.nav');
+    if (topNav) roots.push(topNav);
+    var homeMain = document.getElementById('homeMain');
+    if (homeMain) roots.push(homeMain);
+
+    roots.forEach(function (root) {
+      root.querySelectorAll('a[href]').forEach(function (a) {
+        var rawHref = (a.getAttribute('href') || '').trim();
+        if (!isInternalNavHref(rawHref)) return;
+        var external = /^https?:\/\//i.test(rawHref);
+        var label = linkLabelFromAnchor(a);
+        var key = rawHref + '\0' + label;
+        if (seen[key]) return;
+        seen[key] = true;
+        out.push({ href: rawHref, label: label, external: external });
+      });
+    });
+    return out;
+  }
+
   function navSections() {
-    return isJourneyPage() ? JOURNEY_SECTIONS : SECTIONS;
+    if (!isHomePage()) {
+      return isJourneyPage() ? JOURNEY_SECTIONS : SECTIONS;
+    }
+    var homepageLinks = collectHomepageLinks();
+    var sections = [];
+    if (homepageLinks.length) {
+      sections.push({
+        id: 'homepage',
+        title: 'Homepage',
+        links: homepageLinks,
+      });
+    }
+    JOURNEY_SECTIONS.forEach(function (section) {
+      sections.push(section);
+    });
+    return sections;
   }
 
   function isActive(href) {
@@ -112,14 +196,21 @@
       var hashIdx = href.indexOf('#');
       var pathPart = hashIdx >= 0 ? href.slice(0, hashIdx) : href;
       var wantHash = hashIdx >= 0 ? href.slice(hashIdx).toLowerCase() : '';
-      if (pathPart === '/') return (path === '/' || path === '/index.html') && !wantHash;
-      var pathMatch = path === pathPart || path.endsWith(pathPart);
+      var current = normalizePathname(path);
+      var target;
+      try {
+        target = normalizePathname(new URL(pathPart, window.location.origin).pathname);
+      } catch (eUrl) {
+        target = normalizePathname(pathPart);
+      }
+      if (target === '/') return current === '/' && !wantHash;
+      var pathMatch = current === target || current.indexOf(target + '/') === 0;
       if (!pathMatch) return false;
       if (wantHash) return hash === wantHash;
       var onLogin =
-        pathPart === '/login.html' ||
-        pathPart.endsWith('/login.html') ||
-        pathPart === 'login.html';
+        target === '/login.html' ||
+        target.endsWith('/login.html') ||
+        target === 'login.html';
       if (onLogin && hash) return false;
       return true;
     } catch (e) {

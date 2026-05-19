@@ -115,6 +115,40 @@
   color: var(--mute-2);
 }
 
+.so-pricing-priceBlock {
+  position: relative;
+  margin: 0 0 0.25rem;
+  padding-top: 0.15rem;
+  padding-right: 0.25rem;
+  min-height: 2.35rem;
+}
+
+.so-pricing-priceBlock .so-pricing-price {
+  margin: 0;
+  padding-right: 4.5rem;
+}
+
+.so-pricing-priceWas {
+  position: absolute;
+  top: 0;
+  right: 0;
+  max-width: 42%;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  color: var(--mute-2);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.so-pricing-priceWas s {
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+  text-decoration-color: color-mix(in srgb, var(--mute-2) 65%, transparent);
+}
+
 .so-pricing-price {
   margin: 0 0 0.25rem;
   font-family: var(--font-body);
