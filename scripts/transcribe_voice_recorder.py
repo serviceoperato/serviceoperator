@@ -283,12 +283,29 @@ def process_file(model, registry: dict, source: Path) -> bool:
     return True
 
 
+def _merge_recent_sources_taken(
+    new_names: list[str], existing: list[str] | None = None, *, limit: int = 10
+) -> list[str]:
+    merged: list[str] = []
+    seen: set[str] = set()
+    for name in list(new_names) + list(existing or []):
+        trimmed = str(name).strip()
+        if not trimmed or trimmed in seen:
+            continue
+        seen.add(trimmed)
+        merged.append(trimmed)
+        if len(merged) >= limit:
+            break
+    return merged
+
+
 def _save_pipeline_last_files(
     *,
     last_scanned: str | None,
     last_processed: str | None,
+    recent_sources_taken: list[str] | None = None,
 ) -> None:
-    if not last_scanned and not last_processed:
+    if not last_scanned and not last_processed and not recent_sources_taken:
         return
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
     data: dict = {}
@@ -305,6 +322,16 @@ def _save_pipeline_last_files(
     if last_processed:
         data["last_file_processed"] = last_processed
         data["last_file_processed_at"] = now
+    if recent_sources_taken:
+        merged = _merge_recent_sources_taken(
+            recent_sources_taken,
+            data.get("recent_sources_taken")
+            if isinstance(data.get("recent_sources_taken"), list)
+            else None,
+        )
+        if merged:
+            data["recent_sources_taken"] = merged
+            data["last_source_taken"] = merged[0]
     PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
     PIPELINE_LAST_FILES_JSON.write_text(
         json.dumps(data, indent=2, ensure_ascii=False) + "\n",
@@ -392,6 +419,7 @@ def run_transcription() -> tuple[int, int, list[str], str | None, str | None]:
         return audio_found, 0, errors, last_scanned, None
 
     processed_count = 0
+    sources_taken_this_run: list[str] = []
     run_started = time.monotonic()
     total = len(queue)
     for index, (source, _full_path, size, _mtime) in enumerate(queue, start=1):
@@ -407,6 +435,7 @@ def run_transcription() -> tuple[int, int, list[str], str | None, str | None]:
             if process_file(model, registry, source):
                 processed_count += 1
                 last_processed = source.name
+                sources_taken_this_run.insert(0, source.name)
                 save_registry(registry)
                 mark_file_done(processed_count, total)
         except Exception as exc:
@@ -431,7 +460,11 @@ def run_transcription() -> tuple[int, int, list[str], str | None, str | None]:
             message=f"Transcription complete: {processed_count} new file(s).",
         )
     log.info("Transcription complete. New transcriptions: %d", processed_count)
-    _save_pipeline_last_files(last_scanned=last_scanned, last_processed=last_processed)
+    _save_pipeline_last_files(
+        last_scanned=last_scanned,
+        last_processed=last_processed,
+        recent_sources_taken=sources_taken_this_run,
+    )
     return audio_found, processed_count, errors, last_scanned, last_processed
 
 

@@ -24,7 +24,7 @@
 <link rel="apple-touch-icon" href="/favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css" />
 <link rel="stylesheet" href="/journey-progress.css" />
 <script src="/page-skeleton.js"></script>
@@ -56,11 +56,11 @@
 }
 </script>
 <style>
-  /* Typography — section headings: DM Sans/Serif; hero matches clinics report (Inter + JetBrains Mono). */
+  /* Typography — Inter + JetBrains Mono sitewide. */
   .page-home .so-b2b,
   .page-home .so-b2b-footer {
-    --font-body: 'DM Sans', system-ui, sans-serif;
-    --font-display: 'DM Serif Display', serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-display: 'Inter', system-ui, sans-serif;
   }
   /* Hero eyebrow / H1 / lede — same stack as SEA medical vertical (styles.css .client-hero) */
   .page-home .so-b2b__hero {
@@ -99,6 +99,10 @@
     /* Matches workflow rail icons (e.g. "Market & rate signals" `.so-b2b__feat-ico`). */
     --so-workflow-accent: #4f46e5;
     --so-workflow-on-accent: #f8fafc;
+    /* Primary CTA (.so-b2b__btn--primary): padding + two-line stack */
+    --so-b2b-cta-min-height: calc(
+      2 * 0.9rem + 0.2rem + 2px + 0.9375rem * 1.25 + 0.75rem * 1.25
+    );
     --so-indigo: var(--so-workflow-accent);
     --so-indigo-deep: var(--so-workflow-accent);
     --so-surface: #ffffff;
@@ -445,8 +449,8 @@
     align-items: center;
     justify-content: center;
     gap: 0.65rem;
-    min-height: 52px;
-    padding: 0.85rem 1rem;
+    min-height: var(--so-b2b-cta-min-height);
+    padding: 0.9rem 1rem;
     box-sizing: border-box;
     border: 1px solid var(--so-workflow-accent);
     border-radius: 8px;
@@ -468,7 +472,6 @@
     }
     .page-home .so-b2b__segment-btn {
       gap: 0.35rem;
-      min-height: 52px;
       padding: 0.5rem 0.35rem;
       font-size: 0.6875rem;
       letter-spacing: 0.03em;
@@ -490,11 +493,6 @@
     .page-home .so-b2b__segment-btn svg {
       width: 0.875rem;
       height: 0.875rem;
-    }
-  }
-  @media (min-width: 768px) {
-    .page-home .so-b2b__segment-btn {
-      min-height: 80px;
     }
   }
   .page-home .so-b2b__segment-btn svg {

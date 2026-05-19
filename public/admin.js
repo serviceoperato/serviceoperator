@@ -2848,32 +2848,40 @@
         '<p class="tf-admin-muted" style="margin:0">No pipeline stats yet.</p>' + emptyLast;
     }
 
-    var files = (payload && payload.files) || null;
-    var fileBlocks = [];
-    function fileList(label, items) {
-      if (!items || (Array.isArray(items) && !items.length)) return;
-      var rows = Array.isArray(items) ? items : [items];
-      fileBlocks.push(
-        '<p style="margin:0.35rem 0 0.15rem"><strong>' +
-          escapeHtml(label) +
-          '</strong></p><ul style="margin:0 0 0.35rem;padding-left:1.1rem">' +
-          rows
-            .map(function (p) {
-              return '<li><code class="mono">' + escapeHtml(p) + '</code></li>';
-            })
-            .join('') +
-          '</ul>'
-      );
+    var lastSourceTaken =
+      (payload && payload.lastSourceTaken) ||
+      (stats && stats.lastSourceTaken) ||
+      lastProcessed ||
+      null;
+    var recentSources =
+      (payload && Array.isArray(payload.recentSourcesTaken) && payload.recentSourcesTaken) ||
+      (stats && Array.isArray(stats.recentSourcesTaken) && stats.recentSourcesTaken) ||
+      [];
+    var sourceRows = recentSources.slice(0, 10);
+    var sourcesHtml =
+      '<p style="margin:0 0 0.35rem"><strong>Sources taken</strong></p>' +
+      '<ul style="margin:0 0 0.5rem;padding-left:1.1rem">' +
+      '<li>Last source taken: ' +
+      (lastSourceTaken
+        ? '<code class="mono">' + escapeHtml(lastSourceTaken) + '</code>'
+        : '<span class="tf-admin-muted">—</span>') +
+      '</li>' +
+      '</ul>';
+    if (sourceRows.length) {
+      sourcesHtml +=
+        '<p style="margin:0 0 0.15rem"><strong>Last 10 sources taken</strong></p>' +
+        '<ol style="margin:0;padding-left:1.35rem;max-height:14rem;overflow:auto">' +
+        sourceRows
+          .map(function (name) {
+            return '<li style="margin-bottom:0.2rem"><code class="mono">' + escapeHtml(name) + '</code></li>';
+          })
+          .join('') +
+        '</ol>';
+    } else {
+      sourcesHtml +=
+        '<p class="tf-admin-muted" style="margin:0">No sources recorded yet.</p>';
     }
-    if (files) {
-      fileList('Transcriptions', files.transcriptions);
-      if (files.dailyReport) fileList('Daily report', files.dailyReport);
-      if (files.tasks) fileList('Tasks', files.tasks);
-      if (files.calendar) fileList('Calendar', files.calendar);
-    }
-    filesEl.innerHTML = fileBlocks.length
-      ? '<p style="margin:0 0 0.35rem"><strong>Generated files</strong></p>' + fileBlocks.join('')
-      : '<p class="tf-admin-muted" style="margin:0">No generated file paths recorded yet.</p>';
+    filesEl.innerHTML = sourcesHtml;
 
     if (logEl) {
       var stderr = payload && payload.stderr ? String(payload.stderr) : '';

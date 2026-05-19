@@ -2774,6 +2774,77 @@ function deriveLastVoiceFilesFromRegistry() {
   return { lastFileScanned: lastScanned, lastFileProcessed: lastProcessed };
 }
 
+const VOICE_RECENT_SOURCES_LIMIT = 10;
+
+function deriveRecentVoiceSourcesFromRegistry(limit = VOICE_RECENT_SOURCES_LIMIT) {
+  const doc = readVoiceJsonFile(voiceProcessedRegistryPath, { processed: {} });
+  const rows = [];
+  for (const entry of Object.values(doc.processed || {})) {
+    if (!entry || typeof entry !== 'object') continue;
+    const name = pickVoiceLastFileName(entry.sourceAudio, entry.file_name);
+    if (!name) continue;
+    const takenAt = Math.max(
+      parseVoicePipelineTimestamp(entry.processed_datetime),
+      parseVoicePipelineTimestamp(entry.rawCreatedAt),
+      parseVoicePipelineTimestamp(entry.pipeline_classified_datetime),
+      parseVoicePipelineTimestamp(entry.aiProcessedAt),
+      Number(entry.modified_time) || 0,
+    );
+    if (takenAt <= 0) continue;
+    rows.push({ name, takenAt });
+  }
+  rows.sort((a, b) => b.takenAt - a.takenAt);
+  const seen = new Set();
+  const recentSourcesTaken = [];
+  for (const row of rows) {
+    if (seen.has(row.name)) continue;
+    seen.add(row.name);
+    recentSourcesTaken.push(row.name);
+    if (recentSourcesTaken.length >= limit) break;
+  }
+  return {
+    lastSourceTaken: recentSourcesTaken[0] || null,
+    recentSourcesTaken,
+  };
+}
+
+function resolveVoicePipelineRecentSources({ stats, history }) {
+  const persisted = readVoiceJsonFile(voicePipelineLastFilesPath, {});
+  const fromPersisted = Array.isArray(persisted.recent_sources_taken)
+    ? persisted.recent_sources_taken.filter((n) => typeof n === 'string' && n.trim())
+    : [];
+  const fromRegistry = deriveRecentVoiceSourcesFromRegistry(VOICE_RECENT_SOURCES_LIMIT);
+  const fromRun =
+    history && Array.isArray(history.sources_taken)
+      ? history.sources_taken.filter((n) => typeof n === 'string' && n.trim())
+      : [];
+  const fromStats =
+    stats && Array.isArray(stats.recentSourcesTaken)
+      ? stats.recentSourcesTaken.filter((n) => typeof n === 'string' && n.trim())
+      : [];
+
+  const merged = [];
+  const seen = new Set();
+  for (const list of [fromPersisted, fromRun, fromStats, fromRegistry.recentSourcesTaken]) {
+    for (const name of list) {
+      const trimmed = name.trim();
+      if (!trimmed || seen.has(trimmed)) continue;
+      seen.add(trimmed);
+      merged.push(trimmed);
+    }
+  }
+  const recentSourcesTaken = merged.slice(0, VOICE_RECENT_SOURCES_LIMIT);
+  const lastSourceTaken = pickVoiceLastFileName(
+    persisted.last_source_taken,
+    fromRegistry.lastSourceTaken,
+    recentSourcesTaken[0],
+    stats && stats.lastSourceTaken,
+    stats && stats.lastFileProcessed,
+    history && history.last_file_processed,
+  );
+  return { lastSourceTaken, recentSourcesTaken };
+}
+
 function resolveVoicePipelineLastFiles({ stats, history, progress, running }) {
   const persisted = readVoiceJsonFile(voicePipelineLastFilesPath, {});
   const fromStats = stats && typeof stats === 'object' ? stats : {};
@@ -2868,28 +2939,15 @@ function buildVoicePipelineStatusPayload() {
       error_messages: [],
     };
   }
-  if (progressRunning && progress.filesCompleted > 0) {
-    const transDir = path.join(__dirname, 'content', 'transcriptions');
-    try {
-      if (fs.existsSync(transDir)) {
-        const md = fs
-          .readdirSync(transDir)
-          .filter((f) => f.endsWith('.md'))
-          .map((f) => `content/transcriptions/${f}`);
-        if (md.length) {
-          files = { ...(files && typeof files === 'object' ? files : {}), transcriptions: md };
-        }
-      }
-    } catch {
-      /* ignore */
-    }
-  }
+  const recentSources = resolveVoicePipelineRecentSources({ stats, history });
   const lastFiles = resolveVoicePipelineLastFiles({ stats, history, progress, running });
   if (stats && typeof stats === 'object') {
     stats = {
       ...stats,
       lastFileScanned: lastFiles.lastFileScanned,
       lastFileProcessed: lastFiles.lastFileProcessed,
+      lastSourceTaken: recentSources.lastSourceTaken,
+      recentSourcesTaken: recentSources.recentSourcesTaken,
     };
   }
   return {
@@ -2898,6 +2956,8 @@ function buildVoicePipelineStatusPayload() {
     running,
     lastFileScanned: lastFiles.lastFileScanned,
     lastFileProcessed: lastFiles.lastFileProcessed,
+    lastSourceTaken: recentSources.lastSourceTaken,
+    recentSourcesTaken: recentSources.recentSourcesTaken,
     success: latest && typeof latest.success === 'boolean' ? latest.success : null,
     startedAt:
       (running && voicePipelineActive.startedAt) ||

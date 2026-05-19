@@ -651,11 +651,9 @@
 
 /* Typography + light audit palette (modal/sticky sit outside .so-audit-wrap). */
 body.report-010 {
-  --font-body: 'DM Sans', system-ui, sans-serif;
-  --font-display: 'DM Serif Display', serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-display: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-  --hero-font-body: 'Inter', system-ui, sans-serif;
-  --hero-font-mono: 'JetBrains Mono', ui-monospace, monospace;
   font-family: var(--font-body);
   --so-report-accent: #4f46e5;
   --so-report-accent-2: #6366f1;
@@ -670,22 +668,26 @@ body.report-010 {
   padding-top: var(--site-nav-offset, 72px);
 }
 
+body.report-010 .mono {
+  font-family: var(--font-mono);
+}
+
 body.report-010 .so-hero-band .report-caption {
-  font-family: var(--hero-font-mono);
+  font-family: var(--font-body);
   font-size: 0.72rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--mute-2);
 }
 
 body.report-010 .so-hero-band .clinics-hero__title {
-  font-family: var(--hero-font-body);
+  font-family: var(--font-body);
   font-weight: 700;
 }
 
 body.report-010 .so-hero-band .client-hero__lede {
-  font-family: var(--hero-font-body);
+  font-family: var(--font-body);
   font-weight: 400;
 }
 
@@ -694,7 +696,8 @@ body.report-010 .so-hero-band__stat {
 }
 
 body.report-010 .so-hero-band__stat-pct {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
+  font-weight: 600;
 }
 
 body.report-010 .so-sample-disclaimer {

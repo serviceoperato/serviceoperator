@@ -1,5 +1,5 @@
 /* Public sample clinic audit — light-first, deep indigo. Scoped to body.sample-clinic-audit only. */
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 html:has(body.sample-clinic-audit) {
   background-color: #ffffff;
@@ -29,9 +29,9 @@ body.sample-clinic-audit {
   --color-blue: #1d4ed8;
   --color-blue-light: #2563eb;
   --color-blue-bg: rgba(37, 99, 235, 0.08);
-  --font-display: 'DM Serif Display', Georgia, serif;
-  --font-body: 'DM Sans', system-ui, sans-serif;
-  --font-mono: 'DM Mono', ui-monospace, monospace;
+  --font-display: 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
   --space-md: 1rem;
