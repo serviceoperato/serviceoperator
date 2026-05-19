@@ -4,7 +4,7 @@
   --ink: #0f0f0f;
   --ink-2: #444;
   --ink-3: #888;
-  --surface: #fafaf8;
+  --surface: var(--so-surface, #ffffff);
   --card: #ffffff;
   --border: #e5e4df;
   --amber: #d97706;
@@ -437,7 +437,7 @@
   gap: 12px;
   flex-wrap: wrap;
   padding: 10px 14px;
-  background: #fafaf8;
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 8px;
   margin-bottom: 8px;
@@ -463,7 +463,7 @@
 
 .so-gate {
   position: relative;
-  margin-top: 48px;
+  margin-top: 40px;
 }
 
 .so-gate-blur {
@@ -485,7 +485,7 @@
   flex-direction: column;
   align-items: stretch;
   gap: 16px;
-  margin-top: 32px;
+  margin-top: 18px;
   padding: 0 4px 8px;
   text-align: center;
 }
@@ -651,6 +651,8 @@
 
 /* Typography + light audit palette (modal/sticky sit outside .so-audit-wrap). */
 body.report-010 {
+  /* Match homepage .page-home .so-b2b canvas (--so-surface). */
+  --so-surface: #ffffff;
   --font-body: 'Inter', system-ui, sans-serif;
   --font-display: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
@@ -662,10 +664,22 @@ body.report-010 {
   --so-audit-ink: #0f0f0f;
   --so-audit-ink-2: #444444;
   --so-audit-ink-3: #888888;
-  --so-audit-surface: #fafaf8;
+  --so-audit-surface: var(--so-surface);
   --so-audit-card: #ffffff;
   --so-audit-border: #e5e4df;
+  /* Light audit doc — warm highlight (not site indigo --amber from styles.css). */
+  --amber-bg: #fffbeb;
   padding-top: var(--site-nav-offset, 72px);
+}
+
+body.report-010 ::selection,
+body.report-010 ::-moz-selection {
+  background: var(--amber-bg);
+  color: var(--so-audit-ink);
+}
+
+[data-theme="dark"] body.report-010 {
+  --so-surface: #0f172a;
 }
 
 body.report-010 .mono {
@@ -878,7 +892,7 @@ body.report-010.has-so-sticky-cta {
 
 .so-modal__close:hover {
   color: var(--so-audit-ink, #0f0f0f);
-  background: var(--so-audit-surface, #fafaf8);
+  background: var(--so-audit-surface, var(--so-surface, #ffffff));
 }
 
 .so-modal__close:focus-visible {
