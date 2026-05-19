@@ -2766,12 +2766,30 @@
     hint.textContent = parts.join(' · ');
 
     var stats = (payload && payload.stats) || null;
+    var lastScanned =
+      (payload && payload.lastFileScanned) ||
+      (stats && stats.lastFileScanned) ||
+      null;
+    var lastProcessed =
+      (payload && payload.lastFileProcessed) ||
+      (stats && stats.lastFileProcessed) ||
+      null;
     if (stats) {
       statsEl.innerHTML =
         '<p style="margin:0 0 0.35rem"><strong>Latest stats</strong></p>' +
         '<ul style="margin:0;padding-left:1.1rem">' +
         '<li>Files scanned: ' +
         escapeHtml(stats.filesScanned != null ? stats.filesScanned : '—') +
+        '</li>' +
+        '<li>Last file scanned: ' +
+        (lastScanned
+          ? '<code class="mono">' + escapeHtml(lastScanned) + '</code>'
+          : '<span class="tf-admin-muted">—</span>') +
+        '</li>' +
+        '<li>Last file processed: ' +
+        (lastProcessed
+          ? '<code class="mono">' + escapeHtml(lastProcessed) + '</code>'
+          : '<span class="tf-admin-muted">—</span>') +
         '</li>' +
         '<li>New processed: ' +
         escapeHtml(stats.newProcessed != null ? stats.newProcessed : '—') +
@@ -2821,7 +2839,13 @@
           '</ul>';
       }
     } else {
-      statsEl.innerHTML = '<p class="tf-admin-muted" style="margin:0">No pipeline stats yet.</p>';
+      var emptyLast =
+        '<ul style="margin:0.35rem 0 0;padding-left:1.1rem">' +
+        '<li>Last file scanned: <span class="tf-admin-muted">—</span></li>' +
+        '<li>Last file processed: <span class="tf-admin-muted">—</span></li>' +
+        '</ul>';
+      statsEl.innerHTML =
+        '<p class="tf-admin-muted" style="margin:0">No pipeline stats yet.</p>' + emptyLast;
     }
 
     var files = (payload && payload.files) || null;

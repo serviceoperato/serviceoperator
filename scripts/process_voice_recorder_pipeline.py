@@ -31,6 +31,7 @@ PROCESSED_DIR = CONTENT / "processed"
 PROCESSED_JSON = PROCESSED_DIR / "processed_files.json"
 PIPELINE_RUNS_JSON = PROCESSED_DIR / "pipeline_runs.json"
 LATEST_PIPELINE_RUN_JSON = PROCESSED_DIR / "latest_pipeline_run.json"
+PIPELINE_LAST_FILES_JSON = PROCESSED_DIR / "pipeline_last_files.json"
 NOTES_DIR = CONTENT / "notes"
 MEETINGS_DIR = CONTENT / "meetings"
 TASKS_DIR = CONTENT / "tasks"
@@ -87,6 +88,8 @@ class ClassificationResult:
 class RunStats:
     run_datetime: str = ""
     files_scanned: int = 0
+    last_file_scanned: str | None = None
+    last_file_processed: str | None = None
     files_transcribed: int = 0
     transcriptions_classified: int = 0
     notes_created: int = 0
@@ -163,6 +166,35 @@ def load_pipeline_runs() -> dict:
     return data
 
 
+def persist_pipeline_last_files(
+    stats: RunStats,
+    *,
+    last_scanned: str | None = None,
+    last_processed: str | None = None,
+) -> None:
+    """Persist last scan/process file names for admin UI (content/processed/pipeline_last_files.json)."""
+    data = load_json(PIPELINE_LAST_FILES_JSON, {})
+    scanned = last_scanned or stats.last_file_scanned
+    processed = last_processed or stats.last_file_processed
+    if scanned:
+        data["last_file_scanned"] = scanned
+        data["last_file_scanned_at"] = stats.run_datetime or utc_now_str()
+    if processed:
+        data["last_file_processed"] = processed
+        data["last_file_processed_at"] = stats.run_datetime or utc_now_str()
+    if data:
+        save_json(PIPELINE_LAST_FILES_JSON, data)
+
+
+def voice_stats_last_files(stats: RunStats) -> dict:
+    out: dict = {}
+    if stats.last_file_scanned:
+        out["lastFileScanned"] = stats.last_file_scanned
+    if stats.last_file_processed:
+        out["lastFileProcessed"] = stats.last_file_processed
+    return out
+
+
 def append_pipeline_run(stats: RunStats, processed_files: list[str]) -> None:
     data = load_pipeline_runs()
     err_count = len(stats.errors)
@@ -185,6 +217,7 @@ def append_pipeline_run(stats: RunStats, processed_files: list[str]) -> None:
         "calendar": stats.calendar_events,
         "errors": err_count,
         "error_messages": list(stats.errors),
+        **voice_stats_last_files(stats),
     }
     daily_report = f"content/voice-reports/{today_date()}-voice-report.md"
     run_files: dict = {
@@ -212,6 +245,8 @@ def append_pipeline_run(stats: RunStats, processed_files: list[str]) -> None:
             "calendar_events": stats.calendar_events,
             "project_updates": stats.project_updates,
             "ambiguous_items": stats.ambiguous_items,
+            "last_file_scanned": stats.last_file_scanned,
+            "last_file_processed": stats.last_file_processed,
             "errors": stats.errors,
             "error_details": [
                 {"index": i + 1, "message": line}
@@ -220,6 +255,7 @@ def append_pipeline_run(stats: RunStats, processed_files: list[str]) -> None:
         }
     )
     save_json(PIPELINE_RUNS_JSON, data)
+    persist_pipeline_last_files(stats)
     write_latest_pipeline_run(stats, processed_files)
 
 
@@ -258,6 +294,7 @@ def write_latest_pipeline_run(stats: RunStats, processed_files: list[str]) -> No
         "calendar": stats.calendar_events,
         "errors": err_count,
         "error_messages": list(stats.errors),
+        **voice_stats_last_files(stats),
     }
     rel_trans = []
     for name in processed_files:
@@ -294,10 +331,16 @@ def run_transcription_step(stats: RunStats) -> None:
     log.info("Step 1: Running transcription...")
     try:
         transcribe = import_transcribe_module()
-        scanned, new_count, errors = transcribe.run_transcription()
+        scanned, new_count, errors, last_scanned, last_processed = transcribe.run_transcription()
         stats.files_scanned = scanned
         stats.files_transcribed = new_count
+        stats.last_file_scanned = last_scanned
+        if last_processed:
+            stats.last_file_processed = last_processed
         stats.errors.extend(errors)
+        persist_pipeline_last_files(
+            stats, last_scanned=last_scanned, last_processed=last_processed
+        )
     except Exception as exc:
         record_error(stats, "Transcription step failed", exc)
 
@@ -820,6 +863,9 @@ def process_transcription(
     entry["pipeline_confidence"] = round(result.confidence, 4)
     registry["processed"][key] = entry
     stats.transcriptions_classified += 1
+    stats.last_file_processed = (
+        parsed.source_file or entry.get("file_name") or entry.get("sourceAudio") or md_path.name
+    )
 
 
 def run_pipeline() -> RunStats:

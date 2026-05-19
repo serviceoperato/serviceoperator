@@ -52,6 +52,7 @@ INPUT_DIR = Path(os.environ.get("VOICE_RECORDER_INPUT_DIR", _DEFAULT_INPUT))
 TRANSCRIPTIONS_DIR = REPO_ROOT / "content" / "transcriptions"
 PROCESSED_DIR = REPO_ROOT / "content" / "processed"
 PROCESSED_JSON = PROCESSED_DIR / "processed_files.json"
+PIPELINE_LAST_FILES_JSON = PROCESSED_DIR / "pipeline_last_files.json"
 
 AUDIO_EXTENSIONS = {".mp3", ".wav", ".m4a", ".mp4", ".mkv", ".ogg", ".flac"}
 WHISPER_MODEL = "small"
@@ -282,11 +283,42 @@ def process_file(model, registry: dict, source: Path) -> bool:
     return True
 
 
-def run_transcription() -> tuple[int, int, list[str]]:
-    """Run transcription batch. Returns (audio_found, new_count, errors)."""
+def _save_pipeline_last_files(
+    *,
+    last_scanned: str | None,
+    last_processed: str | None,
+) -> None:
+    if not last_scanned and not last_processed:
+        return
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+    data: dict = {}
+    if PIPELINE_LAST_FILES_JSON.exists():
+        try:
+            data = json.loads(PIPELINE_LAST_FILES_JSON.read_text(encoding="utf-8"))
+            if not isinstance(data, dict):
+                data = {}
+        except (json.JSONDecodeError, OSError):
+            data = {}
+    if last_scanned:
+        data["last_file_scanned"] = last_scanned
+        data["last_file_scanned_at"] = now
+    if last_processed:
+        data["last_file_processed"] = last_processed
+        data["last_file_processed_at"] = now
+    PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
+    PIPELINE_LAST_FILES_JSON.write_text(
+        json.dumps(data, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
+
+
+def run_transcription() -> tuple[int, int, list[str], str | None, str | None]:
+    """Run transcription batch. Returns (audio_found, new_count, errors, last_scanned, last_processed)."""
     ensure_directories()
     registry = load_registry()
     errors: list[str] = []
+    last_scanned: str | None = None
+    last_processed: str | None = None
 
     audio_files = discover_audio_files()
     audio_found = len(audio_files)
@@ -295,12 +327,13 @@ def run_transcription() -> tuple[int, int, list[str]]:
     if not audio_files:
         log.info("No audio files to process.")
         save_registry(registry)
-        return 0, 0, errors
+        return 0, 0, errors, None, None
 
     queue: list[tuple[Path, str, int, float]] = []
     skipped = 0
     bytes_total = 0
     for source in audio_files:
+        last_scanned = source.name
         try:
             full_path, size, mtime = file_identity(source)
         except OSError:
@@ -325,11 +358,14 @@ def run_transcription() -> tuple[int, int, list[str]]:
     pending = len(queue)
     log.info("New files to transcribe: %d", pending)
     mark_running_scan(audio_found, skipped, pending, bytes_total)
+    if last_scanned:
+        write_progress(last_file_scanned=last_scanned)
 
     if pending == 0:
         write_progress(status="success", phase="done", message="All audio files already transcribed.")
         save_registry(registry)
-        return audio_found, 0, errors
+        _save_pipeline_last_files(last_scanned=last_scanned, last_processed=None)
+        return audio_found, 0, errors, last_scanned, None
 
     try:
         from faster_whisper import WhisperModel
@@ -339,7 +375,8 @@ def run_transcription() -> tuple[int, int, list[str]]:
         errors.append(msg)
         errors.append(traceback.format_exc().strip())
         write_progress(status="error", phase="transcribe", message=msg)
-        return audio_found, 0, errors
+        _save_pipeline_last_files(last_scanned=last_scanned, last_processed=None)
+        return audio_found, 0, errors, last_scanned, None
 
     log.info("Loading Whisper model %r (cpu, int8)...", WHISPER_MODEL)
     write_progress(phase="load_model", message=f"Loading Whisper model {WHISPER_MODEL!r}…")
@@ -351,7 +388,8 @@ def run_transcription() -> tuple[int, int, list[str]]:
         errors.append(msg)
         errors.append(traceback.format_exc().strip())
         write_progress(status="error", phase="transcribe", message=msg)
-        return audio_found, 0, errors
+        _save_pipeline_last_files(last_scanned=last_scanned, last_processed=None)
+        return audio_found, 0, errors, last_scanned, None
 
     processed_count = 0
     run_started = time.monotonic()
@@ -368,6 +406,7 @@ def run_transcription() -> tuple[int, int, list[str]]:
         try:
             if process_file(model, registry, source):
                 processed_count += 1
+                last_processed = source.name
                 save_registry(registry)
                 mark_file_done(processed_count, total)
         except Exception as exc:
@@ -392,11 +431,12 @@ def run_transcription() -> tuple[int, int, list[str]]:
             message=f"Transcription complete: {processed_count} new file(s).",
         )
     log.info("Transcription complete. New transcriptions: %d", processed_count)
-    return audio_found, processed_count, errors
+    _save_pipeline_last_files(last_scanned=last_scanned, last_processed=last_processed)
+    return audio_found, processed_count, errors, last_scanned, last_processed
 
 
 def main() -> int:
-    audio_found, processed_count, errors = run_transcription()
+    audio_found, processed_count, errors, _last_scanned, _last_processed = run_transcription()
     log.info(
         "Final summary: scanned=%d, new_transcriptions=%d, errors=%d",
         audio_found,

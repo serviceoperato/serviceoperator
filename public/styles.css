@@ -695,7 +695,8 @@ html.so-site-nav-open {
 }
 
 @media (max-width: 720px) {
-  .nav__links a:not(.nav__cta):not(.nav__login):not(.nav__text) {
+  /* Direct nav bar links only — not account dropdown rows inside .so-user-menu */
+  .nav__links > a:not(.nav__cta):not(.nav__login):not(.nav__text) {
     display: none;
   }
 }
@@ -905,8 +906,9 @@ html.so-site-nav-open {
 
 /* In-flow loading skeleton (native `data-page-skeleton` pages, e.g. clinic report, home) */
 .clinics-skel {
-  display: grid;
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
   max-width: 720px;
   margin: 2rem auto;
   padding: 0 var(--gutter);
@@ -915,6 +917,9 @@ html.so-site-nav-open {
   max-width: var(--max);
 }
 .clinics-skel__b {
+  display: block;
+  width: 100%;
+  flex: 0 0 auto;
   height: 72px;
   background: var(--ink-2);
   border: 1px solid var(--line);
@@ -949,6 +954,8 @@ html.so-site-nav-open {
 .page-home .home-skel__icon,
 .page-home .home-skel__media,
 .page-home .home-skel__row {
+  display: block;
+  flex: 0 0 auto;
   border-radius: var(--radius-sm);
   border: 1px solid color-mix(in srgb, var(--paper) 12%, transparent);
   background: linear-gradient(
@@ -1143,14 +1150,18 @@ html.so-site-nav-open {
   padding: 6.5rem var(--gutter) 1.5rem;
   background: color-mix(in srgb, var(--ink) 92%, transparent);
   backdrop-filter: blur(2px);
-  display: grid;
-  gap: 0.85rem;
-  align-content: start;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  align-content: flex-start;
   max-width: 760px;
   margin: 0 auto;
   pointer-events: none;
 }
 .so-page-skeleton__block {
+  display: block;
+  width: 100%;
+  flex: 0 0 auto;
   height: 64px;
   border-radius: 6px;
   border: 1px solid var(--line);

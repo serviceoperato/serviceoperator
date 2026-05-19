@@ -121,8 +121,8 @@
 
   /** Settings: dedicated account page (canonical /account-settings). */
   function resolveSettingsHref() {
-    if (typeof g.soPortalAccountSettingsCanonical === 'function') {
-      return g.soPortalAccountSettingsCanonical();
+    if (typeof window.soPortalAccountSettingsCanonical === 'function') {
+      return window.soPortalAccountSettingsCanonical();
     }
     return '/account-settings';
   }
@@ -429,9 +429,21 @@
 
   function renderAuthed(root) {
     closeOpenMenu();
+    try {
+      renderAuthedInner(root);
+    } catch (err) {
+      try {
+        console.error('[user-account-menu] renderAuthed failed', err);
+      } catch (eLog) {}
+      root.removeAttribute('data-so-nav-mounted');
+      renderGuest(root);
+    }
+  }
+
+  function renderAuthedInner(root) {
     var label = navAccountLabel();
     var loginHref = resolveLoginHref(root);
-    var settingsHref = resolveSettingsHref(loginHref);
+    var settingsHref = resolveSettingsHref();
     var showAdmin =
       adminOk ||
       (sessionCache && sessionCache.isOperator) ||

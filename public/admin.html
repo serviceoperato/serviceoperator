@@ -174,13 +174,6 @@
         <h2 class="tf-admin-section-title" style="margin:0">Voice Recorder</h2>
         <a href="/admin/transcriptions" class="tf-admin-nav__pill">Transcriptions</a>
       </div>
-      <p class="tf-admin-muted" style="margin-bottom:0.85rem">
-        <strong>Do not install faster-whisper on Railway.</strong> Transcription runs only on this Windows PC
-        (Google Drive). In PowerShell: <code class="mono">.\scripts\run-voice-pipeline.ps1</code>
-        (installs deps from <code class="mono">requirements-voice.txt</code> if needed).
-        Open <code class="mono">http://localhost:8080/admin/voice-recorder</code> after <code class="mono">node server.mjs</code> on this PC
-        (default port <strong>8080</strong>, not 3000). Production URL shows Railway data only — not local transcriptions.
-      </p>
       <div class="tf-admin-payout-card" style="margin-top:0">
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.65rem;margin-bottom:0.85rem">
           <h3 class="tf-admin-section-title" style="margin:0">Voice pipeline</h3>

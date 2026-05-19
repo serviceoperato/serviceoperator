@@ -448,10 +448,10 @@
     min-height: 52px;
     padding: 0.85rem 1rem;
     box-sizing: border-box;
-    border: 1px solid var(--so-ink);
+    border: 1px solid var(--so-workflow-accent);
     border-radius: 8px;
     background: transparent;
-    color: var(--so-ink);
+    color: var(--so-workflow-accent);
     font-family: var(--font-body), system-ui, sans-serif;
     font-size: clamp(1rem, 2.2vw, 1.125rem);
     font-weight: 600;
@@ -508,16 +508,19 @@
     stroke-linejoin: round;
   }
   .page-home .so-b2b__segment-btn:hover,
-  .page-home .so-b2b__segment-btn:focus-visible {
-    background: var(--so-ink);
-    color: #ffffff;
+  .page-home .so-b2b__segment-btn:focus-visible,
+  .page-home .so-b2b__segment-btn:active {
+    background: var(--so-workflow-accent);
+    border-color: var(--so-workflow-accent);
+    color: var(--so-workflow-on-accent);
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--so-workflow-accent) 32%, transparent);
     outline: none;
   }
   [data-theme="dark"] .page-home .so-b2b__segment-btn:hover,
-  [data-theme="dark"] .page-home .so-b2b__segment-btn:focus-visible {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  [data-theme="dark"] .page-home .so-b2b__segment-btn:focus-visible,
+  [data-theme="dark"] .page-home .so-b2b__segment-btn:active {
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--so-workflow-accent) 45%, transparent);
   }
   .page-home .so-b2b__below-fold {
     margin-top: 2rem;
@@ -1254,43 +1257,43 @@
 </noscript>
 
 <div id="homeSkeleton" class="home-skel" role="status" aria-live="polite" aria-label="Loading homepage">
-  <motion.div class="home-skel__inner">
+  <div class="home-skel__inner">
     <header class="home-skel__hero" aria-hidden="true">
-      <div class="home-skel__bar home-skel__bar--eyebrow"></motion.div>
-      <div class="home-skel__bar home-skel__bar--title"></motion.div>
-      <div class="home-skel__bar home-skel__bar--title home-skel__bar--title-sub"></motion.div>
-      <div class="home-skel__bar home-skel__bar--lede"></motion.div>
-      <div class="home-skel__bar home-skel__bar--lede home-skel__bar--lede-short"></motion.div>
+      <div class="home-skel__bar home-skel__bar--eyebrow"></div>
+      <div class="home-skel__bar home-skel__bar--title"></div>
+      <div class="home-skel__bar home-skel__bar--title home-skel__bar--title-sub"></div>
+      <div class="home-skel__bar home-skel__bar--lede"></div>
+      <div class="home-skel__bar home-skel__bar--lede home-skel__bar--lede-short"></div>
       <div class="home-skel__cta-row">
-        <div class="home-skel__pill home-skel__pill--primary"></motion.div>
-        <div class="home-skel__pill home-skel__pill--ghost"></motion.div>
-      </motion.div>
-      <div class="home-skel__media" aria-hidden="true"></motion.div>
+        <div class="home-skel__pill home-skel__pill--primary"></div>
+        <div class="home-skel__pill home-skel__pill--ghost"></div>
+      </div>
+      <div class="home-skel__media" aria-hidden="true"></div>
     </header>
     <section class="home-skel__section" aria-hidden="true">
-      <div class="home-skel__bar home-skel__bar--section"></motion.div>
+      <div class="home-skel__bar home-skel__bar--section"></div>
       <div class="home-skel__grid">
-        <article class="home-skel__card"><div class="home-skel__icon"></motion.div><motion.div class="home-skel__bar home-skel__bar--card"></motion.div><motion.div class="home-skel__bar home-skel__bar--card-sub"></motion.div></article>
-        <article class="home-skel__card"><div class="home-skel__icon"></motion.div><motion.div class="home-skel__bar home-skel__bar--card"></motion.div><motion.div class="home-skel__bar home-skel__bar--card-sub"></motion.div></article>
-        <article class="home-skel__card"><motion.div class="home-skel__icon"></motion.div><motion.div class="home-skel__bar home-skel__bar--card"></motion.div><motion.div class="home-skel__bar home-skel__bar--card-sub"></motion.div></article>
-      </motion.div>
+        <article class="home-skel__card"><div class="home-skel__icon"></div><div class="home-skel__bar home-skel__bar--card"></div><div class="home-skel__bar home-skel__bar--card-sub"></div></article>
+        <article class="home-skel__card"><div class="home-skel__icon"></div><div class="home-skel__bar home-skel__bar--card"></div><div class="home-skel__bar home-skel__bar--card-sub"></div></article>
+        <article class="home-skel__card"><div class="home-skel__icon"></div><div class="home-skel__bar home-skel__bar--card"></div><div class="home-skel__bar home-skel__bar--card-sub"></div></article>
+      </div>
     </section>
     <section class="home-skel__section home-skel__section--workflow" aria-hidden="true">
-      <div class="home-skel__bar home-skel__bar--section"></motion.div>
+      <div class="home-skel__bar home-skel__bar--section"></div>
       <div class="home-skel__stack">
-        <div class="home-skel__row"></motion.div>
-        <div class="home-skel__row"></motion.div>
-        <div class="home-skel__row home-skel__row--short"></motion.div>
-      </motion.div>
+        <div class="home-skel__row"></div>
+        <div class="home-skel__row"></div>
+        <div class="home-skel__row home-skel__row--short"></div>
+      </div>
     </section>
     <aside class="home-skel__cta-band" aria-hidden="true">
-      <div class="home-skel__bar home-skel__bar--cta"></motion.div>
-      <div class="home-skel__pill home-skel__pill--cta"></motion.div>
+      <div class="home-skel__bar home-skel__bar--cta"></div>
+      <div class="home-skel__pill home-skel__pill--cta"></div>
     </aside>
     <footer class="home-skel__footer" aria-hidden="true">
-      <div class="home-skel__bar home-skel__bar--footer"></motion.div>
+      <div class="home-skel__bar home-skel__bar--footer"></div>
     </footer>
-  </motion.div>
+  </div>
 </div>
 
 <div id="homeMain" class="is-hidden">

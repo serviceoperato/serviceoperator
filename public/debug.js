@@ -573,7 +573,7 @@
       '2. Open DEBUG (button bottom-right) → category [AUTH-L] rows 11–12.',
       '3. On login.html with a portal JWT, the page should POST bootstrap-from-portal before redirecting to private /clinics/NNN/. If that fails, sign in at /admin/users with the operator password, or use the operator email on portal login.',
       '4. If it still fails: clear site data for this hostname, sign in again, then open the report once.',
-      '5. Clinic 010 is a public sample; 011 requires operator access — compare behavior on /clinics/010/ vs /clinics/011/.',
+      '5. Clinic 010 and 011 are public sample teasers (no operator HttpOnly gate); private reports 001–008 require operator cookies.',
       '',
       '— For engineers —',
       'Probe: sessionStorage key ' + LOGIN_LOOP_PROBE_KEY + ' · touch clinic loop before navigate · block second attempt within ' + CLINIC_LOGIN_LOOP_MS + 'ms',

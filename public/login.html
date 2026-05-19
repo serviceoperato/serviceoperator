@@ -779,7 +779,6 @@
     }
     return ensureOperatorHtmlGateCookie(bearer).then(function (ready) {
       if (!ready) {
-        touchClinicLoginLoopBeforeNavigate(path);
         if (bannerSession) {
           bannerSession.textContent =
             typeof window.soOperatorGateFailMessage === 'string'
@@ -1074,7 +1073,7 @@
   }
 
   /** Public numbered clinic (home funnel) — no operator HttpOnly gate. */
-  var PUBLIC_NUMBERED_CLINIC_IDS = { '010': true };
+  var PUBLIC_NUMBERED_CLINIC_IDS = { '010': true, '011': true };
 
   function isPrivateNumberedReportNextPath(path) {
     var pathOnly = (path || '').split('?')[0].split('#')[0];
@@ -1082,7 +1081,7 @@
     if (!m) return false;
     if (m[1].toLowerCase() === 'clinics' && PUBLIC_NUMBERED_CLINIC_IDS[m[2]]) return false;
     if (m[1].toLowerCase() === 'clinics') {
-      return /^(001|002|003|004|005|006|007|008|011)$/.test(m[2]);
+      return /^(001|002|003|004|005|006|007|008)$/.test(m[2]);
     }
     if (m[1].toLowerCase() === 'hotels') return m[2] === '009';
     return false;
@@ -1200,11 +1199,7 @@
     if (blockClinicLoginLoopIfNeeded(path, 'clinic-gated-next', gateBearer)) return;
     if (isPrivateNumberedReportNextPath(path)) {
       noteLoginRedirectAttempt(path, 'redirectToOperatorGatedNext', 'private numbered report');
-      if (!gateBearer) {
-        showLoginLoopBlockedUI('clinic-gated-no-bearer', path);
-        return;
-      }
-      return redirectAfterOperatorHtmlGateReady(path, gateBearer);
+      return redirectAfterOperatorHtmlGateReady(path, gateBearer || '');
     }
     if (gateBearer && nextPathRequiresOperatorHtmlGate(path)) {
       noteLoginRedirectAttempt(path, 'redirectToOperatorGatedNext', 'operator/admin shell');
@@ -1348,28 +1343,8 @@
     var wantOperatorGatedNext = nextPath && nextPathRequiresOperatorHtmlGate(nextPath);
     if (
       nextPath &&
-      isPrivateNumberedReportNextPath(nextPath) &&
-      blockClinicLoginLoopIfNeeded(nextPath, 'login-landing-guard', gateBearerForLoop)
-    ) {
-      return;
-    }
-    if (
-      wantOperatorGatedNext &&
-      nextPath &&
-      gateBearerForLoop &&
-      portalTok &&
-      looksLikeJwt(portalTok) &&
-      decodeJwtIsOperatorLogin(portalTok)
-    ) {
-      return redirectToOperatorGatedNext(nextPath, gateBearerForLoop);
-    }
-    if (
-      nextPath &&
       blockClinicLoginLoopIfNeeded(nextPath, 'clinic-already-signed-in', gateBearerForLoop)
     ) {
-      if (wantOperatorGatedNext && gateBearerForLoop) {
-        return redirectToOperatorGatedNext(nextPath, gateBearerForLoop);
-      }
       return;
     }
     var cookieP = wantOperatorGatedNext
@@ -1908,6 +1883,9 @@
           return;
         }
         applyUserJwt(lj);
+        if (typeof window.soClearClinicLoginLoop === 'function') window.soClearClinicLoginLoop();
+        if (typeof window.soClearLoginRedirectCycle === 'function') window.soClearLoginRedirectCycle();
+        if (typeof window.soClearOperatorGateLoop === 'function') window.soClearOperatorGateLoop();
         if (lj.passwordMustChange) {
           setHint('', '');
           setLoginErr('');

@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
 <meta name="robots" content="noindex, nofollow"/>
-<title>Report 010 — Business ABC automation audit teaser | ServiceOpera.to</title>
-<meta name="description" content="Admin-only sample audit teaser: Business ABC (fictional), Pattaya — patient journey, booking friction, review gap, and revenue leak distribution."/>
+<title>Business ABC — automation audit sample</title>
+<meta name="description" content="Sample audit for Business ABC (fictional), Pattaya — patient journey, booking friction, review gap, and revenue leak distribution."/>
 <link rel="icon" href="/favicon.png" type="image/png" sizes="any"/>
 <link rel="apple-touch-icon" href="/favicon.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="../../styles.css"/>
 <link rel="stylesheet" href="audit-teaser.css"/>
 <style>
@@ -29,14 +29,6 @@
   .report-010 .so-hero-band .client-hero__eyebrow {
     margin-bottom: 1rem;
   }
-  .report-010 .so-hero-band .report-caption {
-    font-family: var(--font-body);
-    font-size: 0.72rem;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--mute-2);
-  }
   .report-010 .so-hero-band .clinics-hero__title {
     margin: 0 0 1rem;
   }
@@ -49,7 +41,6 @@
     margin: 0;
     padding: 0;
     text-align: right;
-    font-family: 'DM Sans', sans-serif;
     font-size: clamp(17px, 2.4vw, 22px);
     font-weight: 600;
     line-height: 1.25;
@@ -58,12 +49,11 @@
   }
   .so-hero-band__stat-pct {
     display: block;
-    font-family: 'DM Serif Display', serif;
     font-size: clamp(40px, 7vw, 64px);
     font-weight: 400;
     line-height: 1;
     letter-spacing: -.03em;
-    color: var(--red);
+    color: var(--so-report-accent);
     margin-bottom: 6px;
   }
   @media (max-width: 720px) {
@@ -81,7 +71,6 @@
     padding: 14px 20px 18px;
     background: #f0f0f0;
     color: #4a4a4a;
-    font-family: 'DM Sans', sans-serif;
     font-size: 11px;
     line-height: 1.5;
     border-top: 1px solid #e0e0e0;
@@ -123,7 +112,7 @@
     </a>
   </div>
   <div class="nav__links">
-    <a href="/login.html?next=/clinics/010/" class="nav__login mono" id="navPortalAuth" data-login-href="/login.html?next=/clinics/010/" aria-label="Login or Register">Login / Register</a>
+    <a href="/login.html?next=/clinics/010/" class="nav__login mono" id="navPortalAuth" data-login-href="/login.html?next=/clinics/010/" data-admin-href="/admin/report-catalog" aria-label="Login or Register">Login / Register</a>
   </div>
 </nav>
 
@@ -156,7 +145,7 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
       </div>
       <div class="so-kpi-label">Inquiry Response</div>
-      <div class="so-kpi-value red" style="font-size:22px">4–24h</div>
+      <div class="so-kpi-value accent" style="font-size:22px">4–24h</div>
       <div class="so-kpi-sub">Target: &lt; 2 min</div>
     </div>
     <div class="so-kpi">
@@ -164,15 +153,15 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="#f59e0b"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
       </div>
       <div class="so-kpi-label">Review Velocity</div>
-      <div class="so-kpi-value red">1–3 <span style="font-size:14px">/mo</span></div>
+      <div class="so-kpi-value accent">1–3 <span style="font-size:14px">/mo</span></div>
       <div class="so-kpi-sub">Target: 8–15</div>
     </div>
     <div class="so-kpi">
       <div class="so-kpi-icon" aria-hidden="true">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><path d="M23 6l-9.5 9.5-5-5L1 18M17 6h6v6"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="so-kpi-icon--accent" aria-hidden="true"><path d="M23 6l-9.5 9.5-5-5L1 18M17 6h6v6"/></svg>
       </div>
       <div class="so-kpi-label">Est. Annual Leak</div>
-      <div class="so-kpi-value red" style="font-size:20px">฿500K–1.5M</div>
+      <div class="so-kpi-value accent" style="font-size:20px">฿500K–1.5M</div>
       <div class="so-kpi-sub">Conservative 12-month</div>
     </div>
   </div>
@@ -249,8 +238,8 @@
     <div id="soDonutChart" class="so-donut-wrap">
       <div class="so-donut-svg-wrap">
         <svg class="so-donut-svg" width="200" height="200" viewBox="0 0 200 200" aria-label="Revenue gap donut chart">
-          <text data-donut-center-main x="100" y="92" text-anchor="middle" style="font-family:'DM Serif Display',serif;font-size:22px;fill:#0f0f0f">100%</text>
-          <text data-donut-center-sub x="100" y="110" text-anchor="middle" style="font-family:'DM Sans',sans-serif;font-size:9px;fill:#888;letter-spacing:.06em;text-transform:uppercase">GAPS</text>
+          <text data-donut-center-main x="100" y="92" text-anchor="middle" style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;fill:#0f0f0f">100%</text>
+          <text data-donut-center-sub x="100" y="110" text-anchor="middle" style="font-family:'DM Sans',system-ui,sans-serif;font-size:9px;fill:#888;letter-spacing:.06em;text-transform:uppercase">GAPS</text>
         </svg>
       </div>
       <div class="so-donut-legend"></div>
@@ -310,10 +299,10 @@
         <div id="soReviewGap">
           <p class="so-review-bars-label">Google Reviews / Month</p>
           <div class="so-review-bars">
-            <div class="so-review-bar-col">
-              <span class="so-review-bar-caption" style="color:#dc2626">~2/mo</span>
-              <div class="so-review-bar-shell" style="background:#fef2f2;border:1px solid #dc262633">
-                <div class="so-review-bar-fill" style="background:#dc2626" data-height="13.3%"></div>
+            <div class="so-review-bar-col so-review-bar-col--accent">
+              <span class="so-review-bar-caption">~2/mo</span>
+              <div class="so-review-bar-shell">
+                <div class="so-review-bar-fill" data-height="13.3%"></div>
               </div>
               <span class="so-review-bar-label">Now</span>
             </div>
@@ -397,11 +386,6 @@
 
 </div>
 </main>
-
-<!-- footer removed -->
-  <div class="footer-brand">www.serviceopera.to</div>
-  <div class="footer-tagline">Report 010 · Admin-only audit teaser · Fictional business ABC.<br/>Jack from ServiceOpera.to</div>
-</footer>
 
 <aside class="so-sample-disclaimer" role="note" aria-label="Sample report notice">
   <p class="so-sample-disclaimer__label">Sample</p>

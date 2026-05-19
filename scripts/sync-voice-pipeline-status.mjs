@@ -13,6 +13,7 @@ const processedDir = path.join(root, 'content', 'processed');
 const transDir = path.join(root, 'content', 'transcriptions');
 const latestPath = path.join(processedDir, 'latest_pipeline_run.json');
 const runsPath = path.join(processedDir, 'pipeline_runs.json');
+const lastFilesPath = path.join(processedDir, 'pipeline_last_files.json');
 
 function readJson(p, fallback) {
   try {
@@ -31,6 +32,7 @@ const registry = readJson(path.join(processedDir, 'processed_files.json'), { pro
 const processedCount = Object.keys(registry.processed || {}).length;
 
 const stats = last?.stats || {};
+const lastFiles = readJson(lastFilesPath, {});
 const hasLocalWork = mdFiles.length > 0;
 const payload = {
   status: hasLocalWork ? 'success' : last?.errors?.length ? 'error' : 'idle',
@@ -52,6 +54,8 @@ const payload = {
     calendar: stats.calendar ?? 0,
     errors: hasLocalWork ? 0 : (last?.errors || []).length,
     error_messages: hasLocalWork ? [] : last?.errors || [],
+    lastFileScanned: stats.lastFileScanned ?? lastFiles.last_file_scanned ?? null,
+    lastFileProcessed: stats.lastFileProcessed ?? lastFiles.last_file_processed ?? null,
   },
   files: {
     transcriptions: mdFiles.map((f) => `content/transcriptions/${f}`),

@@ -2600,6 +2600,8 @@ app.get('/api/admin/work-queue', requireAdmin, async (_req, res) => {
 const voiceProcessedDir = path.join(__dirname, 'content', 'processed');
 const voiceLatestPipelineRunPath = path.join(voiceProcessedDir, 'latest_pipeline_run.json');
 const voicePipelineRunsPath = path.join(voiceProcessedDir, 'pipeline_runs.json');
+const voicePipelineLastFilesPath = path.join(voiceProcessedDir, 'pipeline_last_files.json');
+const voiceProcessedRegistryPath = path.join(voiceProcessedDir, 'processed_files.json');
 const voicePipelineProgressPath = path.join(voiceProcessedDir, 'pipeline_progress.json');
 const voicePipelineScriptPath = path.join(__dirname, 'scripts', 'process_voice_recorder_pipeline.py');
 
@@ -2617,6 +2619,7 @@ function sanitizeVoicePipelineText(text) {
 function sanitizeVoicePipelineFileRef(filePath) {
   if (typeof filePath !== 'string' || !filePath.trim()) return filePath;
   const norm = filePath.replace(/\\/g, '/');
+  if (!norm.includes('/') && !/^[A-Za-z]:/.test(filePath)) return norm.trim();
   const contentIdx = norm.toLowerCase().indexOf('content/');
   if (contentIdx >= 0) return norm.slice(contentIdx);
   if (norm.startsWith('content/')) return norm;
@@ -2663,6 +2666,22 @@ function sanitizeVoicePipelineHistoryRun(run) {
 function sanitizeVoicePipelineClientPayload(payload) {
   if (!payload || typeof payload !== 'object') return payload;
   const out = { ...payload };
+  if (typeof out.lastFileScanned === 'string') {
+    out.lastFileScanned = sanitizeVoicePipelineFileRef(out.lastFileScanned);
+  }
+  if (typeof out.lastFileProcessed === 'string') {
+    out.lastFileProcessed = sanitizeVoicePipelineFileRef(out.lastFileProcessed);
+  }
+  if (out.stats && typeof out.stats === 'object') {
+    const s = { ...out.stats };
+    if (typeof s.lastFileScanned === 'string') {
+      s.lastFileScanned = sanitizeVoicePipelineFileRef(s.lastFileScanned);
+    }
+    if (typeof s.lastFileProcessed === 'string') {
+      s.lastFileProcessed = sanitizeVoicePipelineFileRef(s.lastFileProcessed);
+    }
+    out.stats = s;
+  }
   if (typeof out.error === 'string') out.error = sanitizeVoicePipelineText(out.error);
   if (typeof out.stdout === 'string') out.stdout = sanitizeVoicePipelineText(out.stdout);
   if (typeof out.stderr === 'string') out.stderr = sanitizeVoicePipelineText(out.stderr);
@@ -2709,6 +2728,95 @@ function lastVoicePipelineRunFromHistory() {
   return runs.length ? runs[runs.length - 1] : null;
 }
 
+function parseVoicePipelineTimestamp(value) {
+  if (value == null || value === '') return 0;
+  const s = String(value).trim();
+  const iso = Date.parse(s.replace(' UTC', 'Z').replace(' ', 'T'));
+  if (!Number.isNaN(iso)) return iso;
+  const n = Number(s);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function pickVoiceLastFileName(...candidates) {
+  for (const c of candidates) {
+    if (typeof c === 'string' && c.trim()) return c.trim();
+  }
+  return null;
+}
+
+function deriveLastVoiceFilesFromRegistry() {
+  const doc = readVoiceJsonFile(voiceProcessedRegistryPath, { processed: {} });
+  const entries = Object.values(doc.processed || {});
+  let lastScanned = null;
+  let lastScannedAt = 0;
+  let lastProcessed = null;
+  let lastProcessedAt = 0;
+  for (const entry of entries) {
+    if (!entry || typeof entry !== 'object') continue;
+    const name = pickVoiceLastFileName(entry.sourceAudio, entry.file_name);
+    if (!name) continue;
+    const seenAt = Number(entry.modified_time) || parseVoicePipelineTimestamp(entry.modified_datetime);
+    if (seenAt >= lastScannedAt) {
+      lastScannedAt = seenAt;
+      lastScanned = name;
+    }
+    const doneAt = Math.max(
+      parseVoicePipelineTimestamp(entry.pipeline_classified_datetime),
+      parseVoicePipelineTimestamp(entry.processed_datetime),
+      parseVoicePipelineTimestamp(entry.rawCreatedAt),
+      parseVoicePipelineTimestamp(entry.aiProcessedAt),
+    );
+    if (doneAt >= lastProcessedAt) {
+      lastProcessedAt = doneAt;
+      lastProcessed = name;
+    }
+  }
+  return { lastFileScanned: lastScanned, lastFileProcessed: lastProcessed };
+}
+
+function resolveVoicePipelineLastFiles({ stats, history, progress, running }) {
+  const persisted = readVoiceJsonFile(voicePipelineLastFilesPath, {});
+  const fromStats = stats && typeof stats === 'object' ? stats : {};
+  const fromHistory =
+    history && history.stats && typeof history.stats === 'object' ? history.stats : {};
+  const fromRun =
+    history && typeof history === 'object'
+      ? {
+          lastFileScanned: history.last_file_scanned,
+          lastFileProcessed: history.last_file_processed,
+        }
+      : {};
+  const fromRegistry = deriveLastVoiceFilesFromRegistry();
+  const progressScanned =
+    progress && progress.lastFileScanned
+      ? progress.lastFileScanned
+      : progress && progress.currentFile && running
+        ? progress.currentFile
+        : null;
+  return {
+    lastFileScanned: pickVoiceLastFileName(
+      progressScanned,
+      fromStats.lastFileScanned,
+      fromStats.last_file_scanned,
+      fromRun.lastFileScanned,
+      fromRun.last_file_scanned,
+      fromHistory.lastFileScanned,
+      fromHistory.last_file_scanned,
+      persisted.last_file_scanned,
+    ),
+    lastFileProcessed: pickVoiceLastFileName(
+      fromStats.lastFileProcessed,
+      fromStats.last_file_processed,
+      fromRun.lastFileProcessed,
+      fromRun.last_file_processed,
+      fromHistory.lastFileProcessed,
+      fromHistory.last_file_processed,
+      persisted.last_file_processed,
+      fromRegistry.lastFileProcessed,
+    ),
+  };
+}
+
 function isVoicePipelineChildRunning() {
   return Boolean(voicePipelineActive.child && voicePipelineActive.child.exitCode == null);
 }
@@ -2724,6 +2832,7 @@ function sanitizeVoicePipelineProgress(progress) {
     filesToProcess: progress.files_to_process ?? null,
     filesCompleted: progress.files_completed ?? null,
     currentFile: progress.current_file || null,
+    lastFileScanned: progress.last_file_scanned || null,
     currentIndex: progress.current_index ?? null,
     currentOf: progress.current_of ?? null,
     currentSizeBytes: progress.current_size_bytes ?? null,
@@ -2775,10 +2884,20 @@ function buildVoicePipelineStatusPayload() {
       /* ignore */
     }
   }
+  const lastFiles = resolveVoicePipelineLastFiles({ stats, history, progress, running });
+  if (stats && typeof stats === 'object') {
+    stats = {
+      ...stats,
+      lastFileScanned: lastFiles.lastFileScanned,
+      lastFileProcessed: lastFiles.lastFileProcessed,
+    };
+  }
   return {
     ok: true,
     status,
     running,
+    lastFileScanned: lastFiles.lastFileScanned,
+    lastFileProcessed: lastFiles.lastFileProcessed,
     success: latest && typeof latest.success === 'boolean' ? latest.success : null,
     startedAt:
       (running && voicePipelineActive.startedAt) ||
@@ -4585,13 +4704,14 @@ app.get(/^\/clinics\/admin(\/.*)?$/, (req, res) => {
   res.redirect(301, `/admin${suffix}`);
 });
 
-/** Numbered audit reports — admin session required on Node. 010 is public (home funnel “See what you'll get”). */
-const PRIVATE_CLINIC_REPORT_IDS = new Set(['001', '002', '003', '004', '005', '006', '007', '008', '011']);
+/** Numbered audit reports — admin session required on Node. 010/011 are public sample teasers (home funnel). */
+const PRIVATE_CLINIC_REPORT_IDS = new Set(['001', '002', '003', '004', '005', '006', '007', '008']);
+const PUBLIC_CLINIC_REPORT_IDS = new Set(['010', '011']);
 const PRIVATE_HOTEL_REPORT_IDS = new Set(['009']);
 
 function matchPrivateNumberedReportPath(pathname) {
   const c = pathname.match(/^\/clinics\/(\d{3})(\/.*)?$/);
-  if (c && PRIVATE_CLINIC_REPORT_IDS.has(c[1])) {
+  if (c && !PUBLIC_CLINIC_REPORT_IDS.has(c[1]) && PRIVATE_CLINIC_REPORT_IDS.has(c[1])) {
     return { vertical: 'clinics', id: c[1] };
   }
   const h = pathname.match(/^\/hotels\/(\d{3})(\/.*)?$/);

@@ -1,6 +1,6 @@
 {
   "schema": "report-catalog-v2",
-  "note": "Stable catalog IDs (001–013 clinics pages, 009 hotels). Every entry has a three-digit id. URLs use /clinics/NNN/ or /hotels/NNN/ where applicable. Private reports require admin session on Node except public sample 010. Legacy slugs redirect via public/_redirects.",
+  "note": "Stable catalog IDs (001–013 clinics pages, 009 hotels). Every entry has a three-digit id. URLs use /clinics/NNN/ or /hotels/NNN/ where applicable. Private reports require admin session on Node except public sample teasers 010 and 011. Legacy slugs redirect via public/_redirects.",
   "visibility": "admin-only",
   "clinics": [
     {

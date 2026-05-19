@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
-
 .so-audit-wrap * { box-sizing: border-box; }
 
 .so-audit-wrap {
@@ -11,12 +9,13 @@
   --border: #e5e4df;
   --amber: #d97706;
   --amber-bg: #fffbeb;
-  --red: #dc2626;
-  --red-bg: #fef2f2;
+  --accent: var(--so-report-accent, #4f46e5);
+  --accent-bg: var(--so-report-accent-bg, #eef2ff);
+  --accent-border: var(--so-report-accent-border, #c7d2fe);
   --green: #16a34a;
   --green-bg: #f0fdf4;
   --radius: 10px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-body);
   color: var(--ink);
   background: var(--surface);
   padding: 48px 24px 64px;
@@ -117,7 +116,7 @@
 }
 
 .so-kpi-value {
-  font-family: 'DM Serif Display', serif;
+  font-family: var(--font-display);
   font-size: 26px;
   line-height: 1;
   color: var(--ink);
@@ -126,7 +125,7 @@
 .so-kpi-sub { font-size: 11px; color: var(--ink-3); margin-top: 4px; }
 
 .so-kpi-value.amber { color: var(--amber); }
-.so-kpi-value.red { color: var(--red); }
+.so-kpi-value.accent { color: var(--accent); }
 
 .so-section {
   background: var(--card);
@@ -179,7 +178,7 @@
 }
 
 .so-section-title {
-  font-family: 'DM Serif Display', serif;
+  font-family: var(--font-display);
   font-size: 20px;
   margin: 0;
 }
@@ -225,7 +224,7 @@
 
 .so-badge.ok { background: var(--green-bg); color: var(--green); }
 .so-badge.warn { background: var(--amber-bg); color: var(--amber); }
-.so-badge.crit { background: var(--red-bg); color: var(--red); }
+.so-badge.crit { background: var(--accent-bg); color: var(--accent); }
 
 .so-stage-content { flex: 1; }
 .so-stage-title { font-weight: 600; margin-bottom: 2px; }
@@ -238,15 +237,15 @@
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  background: var(--red-bg);
-  border: 1px solid #fecaca;
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
   border-radius: 8px;
   padding: 12px 14px;
   font-size: 12px;
   min-width: 90px;
 }
 
-.so-pill .pill-label { font-weight: 700; font-size: 12px; color: var(--red); text-align: center; }
+.so-pill .pill-label { font-weight: 700; font-size: 12px; color: var(--accent); text-align: center; }
 .so-pill .pill-sev { color: var(--ink-3); font-size: 10px; text-transform: uppercase; letter-spacing: .06em; }
 .so-pill.orange { background: var(--amber-bg); border-color: #fcd34d; }
 .so-pill.orange .pill-label { color: var(--amber); }
@@ -399,6 +398,17 @@
   letter-spacing: .06em;
 }
 
+.so-review-bar-col--accent .so-review-bar-caption { color: var(--accent); }
+
+.so-review-bar-col--accent .so-review-bar-shell {
+  background: var(--accent-bg);
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.so-review-bar-col--accent .so-review-bar-fill { background: var(--accent); }
+
+.so-kpi-icon--accent { color: var(--accent); }
+
 .so-review-aside {
   flex: 1;
   padding-bottom: 28px;
@@ -418,7 +428,7 @@
   font-size: 11px;
 }
 
-.so-review-trends .down { color: var(--red); display: flex; align-items: center; gap: 4px; }
+.so-review-trends .down { color: var(--accent); display: flex; align-items: center; gap: 4px; }
 .so-review-trends .up { color: var(--green); display: flex; align-items: center; gap: 4px; }
 
 .so-platform-row {
@@ -444,7 +454,7 @@
   white-space: nowrap;
 }
 
-.so-risk-badge.high { background: var(--red-bg); color: var(--red); }
+.so-risk-badge.high { background: var(--accent-bg); color: var(--accent); }
 .so-risk-badge.mod { background: var(--amber-bg); color: var(--amber); }
 .so-risk-badge.low { background: var(--green-bg); color: var(--green); }
 .so-risk-badge.action { background: #eff6ff; color: #2563eb; }
@@ -536,13 +546,17 @@
   color: var(--ink-3);
 }
 
+.so-gate-inquiry .inquiry-form__status.is-error {
+  color: var(--accent);
+}
+
 .so-gate-inquiry .so-sector-choice__grid {
   grid-template-columns: repeat(2, 1fr);
 }
 
 .so-gate-inquiry .inquiry-form__submit {
   width: 100%;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-body);
   font-size: 14px;
   font-weight: 600;
   padding: 11px 18px;
@@ -597,7 +611,7 @@
   border: 1.5px solid var(--border);
   border-radius: 8px;
   font-size: 14px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-body);
   outline: none;
   background: var(--card);
   transition: border-color .2s;
@@ -613,7 +627,7 @@
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-body);
   cursor: pointer;
   white-space: nowrap;
   transition: opacity .15s;
@@ -635,8 +649,18 @@
   color: var(--ink-2);
 }
 
-/* Light audit palette — modal/sticky sit outside .so-audit-wrap (no scoped --card/--ink there). */
+/* Typography + light audit palette (modal/sticky sit outside .so-audit-wrap). */
 body.report-010 {
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-display: 'DM Serif Display', serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --hero-font-body: 'Inter', system-ui, sans-serif;
+  --hero-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-body);
+  --so-report-accent: #4f46e5;
+  --so-report-accent-2: #6366f1;
+  --so-report-accent-bg: #eef2ff;
+  --so-report-accent-border: #c7d2fe;
   --so-audit-ink: #0f0f0f;
   --so-audit-ink-2: #444444;
   --so-audit-ink-3: #888888;
@@ -644,6 +668,37 @@ body.report-010 {
   --so-audit-card: #ffffff;
   --so-audit-border: #e5e4df;
   padding-top: var(--site-nav-offset, 72px);
+}
+
+body.report-010 .so-hero-band .report-caption {
+  font-family: var(--hero-font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mute-2);
+}
+
+body.report-010 .so-hero-band .clinics-hero__title {
+  font-family: var(--hero-font-body);
+  font-weight: 700;
+}
+
+body.report-010 .so-hero-band .client-hero__lede {
+  font-family: var(--hero-font-body);
+  font-weight: 400;
+}
+
+body.report-010 .so-hero-band__stat {
+  font-family: var(--font-body);
+}
+
+body.report-010 .so-hero-band__stat-pct {
+  font-family: var(--font-display);
+}
+
+body.report-010 .so-sample-disclaimer {
+  font-family: var(--font-body);
 }
 
 body.report-010.has-so-sticky-cta {
@@ -700,7 +755,7 @@ body.report-010.has-so-sticky-cta {
   max-width: 280px;
   margin-left: auto;
   padding: 13px 18px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-body);
   font-size: 15px;
   font-weight: 600;
   color: #fff;
@@ -829,7 +884,7 @@ body.report-010.has-so-sticky-cta {
 }
 
 .so-modal__title {
-  font-family: 'DM Serif Display', serif;
+  font-family: var(--font-display);
   font-size: 1.5rem;
   line-height: 1.15;
   margin: 0 2.25rem 8px 0;
@@ -903,7 +958,7 @@ body.report-010.has-so-sticky-cta {
 }
 
 .so-modal .so-gate-inquiry .inquiry-form__status.is-error {
-  color: var(--red, #dc2626);
+  color: var(--so-report-accent, #4f46e5);
 }
 
 .so-modal .so-gate-inquiry .inquiry-form__status.is-success {
@@ -912,7 +967,7 @@ body.report-010.has-so-sticky-cta {
 
 .so-modal .so-gate-inquiry .inquiry-form__submit {
   width: 100%;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-body);
   font-size: 14px;
   font-weight: 600;
   padding: 11px 18px;
