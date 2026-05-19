@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8" />
@@ -374,6 +374,16 @@
     background: var(--so-workflow-accent);
     color: var(--so-workflow-on-accent);
   }
+  .page-home .so-b2b__btn--primary .so-b2b__btn-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .page-home .so-b2b__btn--primary .so-b2b__btn-sub {
+    font-size: 0.75rem;
+    font-weight: 500;
+    opacity: 0.92;
+  }
   .page-home .so-b2b__btn--ghost {
     background: transparent;
     color: var(--so-ink);
@@ -382,6 +392,47 @@
   .page-home .so-b2b__btn--ghost:hover {
     border-color: var(--so-indigo);
     color: var(--so-indigo);
+  }
+  .page-home .so-b2b__btn--ghost .so-b2b__btn-play {
+    border-color: var(--so-workflow-accent);
+    color: var(--so-workflow-accent);
+  }
+  .page-home .so-b2b__btn--ghost:hover .so-b2b__btn-play {
+    border-color: var(--so-indigo);
+    color: var(--so-indigo);
+  }
+  .page-home .so-b2b__btn-inner {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+  .page-home .so-b2b__btn-play {
+    position: relative;
+    width: 1.35rem;
+    height: 1.35rem;
+    flex-shrink: 0;
+    border-radius: 50%;
+    border: 1.5px solid var(--so-workflow-accent);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+  .page-home .so-b2b__btn-play-ring {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    color: inherit;
+    pointer-events: none;
+  }
+  .page-home .so-b2b__btn-play-tri {
+    position: relative;
+    z-index: 1;
+    width: 0.45rem;
+    height: 0.45rem;
+    margin-left: 1px;
+    display: block;
   }
   .page-home .so-b2b__markets-row {
     display: flex;
@@ -1110,14 +1161,14 @@
       <p class="client-hero__lede so-b2b__hero-lede">We run an operational review for service business owners. You get a written brief on delivery gaps, prioritized fixes, and one scoped next step.</p>
 
       <div class="so-b2b__cta-row">
-        <a class="so-b2b__btn so-b2b__btn--primary" href="/audit-example">
+        <a class="so-b2b__btn so-b2b__btn--primary" href="/free-audit.html">
           <span class="so-b2b__btn-stack">
             <span class="so-b2b__btn-label">Request your free 48-hour operational audit</span>
             <span class="so-b2b__btn-sub">See what you'll receive first</span>
           </span>
         </a>
       </div>
-      <p class="so-b2b__cta-note">Written brief on operational gaps, prioritized fixes, and one scoped pilot—no obligation to engage us for execution.</p>
+      <p class="so-b2b__cta-note">Written brief on operational gaps, prioritized fixes, and one scoped pilot-no obligation to engage us for execution.</p>
       <div class="so-b2b__markets-row">
         <img
           class="so-b2b__markets-phone"
@@ -1373,7 +1424,7 @@
       <path d="M36.535 11.789A17.5 17.5 0 0 1 36.535 36.211"/>
     </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></g></svg></span> Booking bottlenecks</li>
             </ul>
-            <p class="so-b2b__audit-preview-foot">ServiceOpera — <a href="/audit-example">Read the full sample assessment →</a></p>
+            <p class="so-b2b__audit-preview-foot">ServiceOpera — <a href="/clinics/010/">See what you'll get →</a></p>
           </div>
         </div>
       </div>
@@ -1433,7 +1484,7 @@
       <path d="M11.789 11.465A17.5 17.5 0 0 1 36.211 11.465"/>
       <path d="M36.535 11.789A17.5 17.5 0 0 1 36.535 36.211"/>
     </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><path d="M20 6L9 17l-5-5"/></g></svg></span>
-          <a href="/audit-example">Review the sample assessment</a>, then <a href="/free-audit.html">request a confidential review</a> when ready
+          <a href="/clinics/010/">See what you'll get</a>, then <a href="/free-audit.html">get your free 48-hour ROI audit</a> when ready
         </li>
         </ul>
       </div>
@@ -1443,8 +1494,13 @@
 </main>
 
 <footer class="so-b2b-footer">
-  <p class="so-b2b-footer__row">ServiceOpera © 2026 · <a href="/audit-example">Sample audit</a> · <a href="/free-audit.html">Request a review</a></p>
-  <p class="so-b2b-footer__micro">Limited capacity</p>
+  <span class="so-b2b-footer__row"><span class="so-quad-ring so-quad-ring--2xs so-b2b-footer__mark" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="4" stroke-linecap="butt">
+      <path d="M36.211 36.535A17.5 17.5 0 0 1 11.789 36.535"/>
+      <path d="M11.465 36.211A17.5 17.5 0 0 1 11.465 11.789"/>
+      <path d="M11.789 11.465A17.5 17.5 0 0 1 36.211 11.465"/>
+      <path d="M36.535 11.789A17.5 17.5 0 0 1 36.535 36.211"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><circle cx="0" cy="0" r="1.1" fill="currentColor" stroke="none"/><path d="M-2.5 0h5M0-2.5v5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></g></svg></span><span>� 2026 www.serviceopera.to — Private operational audit studio · Confidential assessments &amp; scoped recommendations — <a href="/audit-example">Sample audit</a> · <a href="/free-audit.html">Request a review</a> · <a href="/case-study.html">Illustrative case study</a></span></span>
 </footer>
 </div>
 
