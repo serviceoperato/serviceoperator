@@ -945,27 +945,15 @@
     return true;
   }
 
+  /**
+   * Post-login destination for sessions that are already valid on /login.html (HttpOnly cookie,
+   * admin JWT probe, or portal JWT probe). Uses the same resolver as redirectAfterPortalLogin —
+   * one path for admin shell and clinic portal: honor safe ?next=, normalize /admin → /admin/users,
+   * otherwise workspace (never login/register/workspace loops).
+   */
   function resolveSignedInDestination() {
-    if (
-      nextPath &&
-      nextPath.charAt(0) === '/' &&
-      nextPath.indexOf('//') !== 0 &&
-      typeof soPortalIsAdminShellNextPath === 'function' &&
-      soPortalIsAdminShellNextPath(nextPath)
-    ) {
-      return nextPath;
-    }
-    if (
-      nextPath &&
-      nextPath.charAt(0) === '/' &&
-      nextPath.indexOf('//') !== 0 &&
-      typeof soPortalIsSafeNextPath === 'function' &&
-      soPortalIsSafeNextPath(nextPath)
-    ) {
-      return nextPath;
-    }
-    if (nextPath && nextPath.charAt(0) === '/' && nextPath.indexOf('//') !== 0) {
-      return nextPath;
+    if (typeof soPortalResolvePostLogin === 'function') {
+      return soPortalResolvePostLogin({}, { nextPath: nextPath, slugHint: slugHint });
     }
     return typeof soPortalWorkspacePath === 'function' ? soPortalWorkspacePath() : '/workspace.html';
   }
