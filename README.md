@@ -190,6 +190,12 @@ The portal user must already exist and **`reportSlug`** must match **`AUDIT_DDC_
 4. Remove any obsolete automation that called **`POST /api/admin/send-code`** or **`POST /api/admin/verify-code`** (those routes are gone).
 5. Open `/admin.html`, sign in with **email + password**. The UI stores the same **`so_admin_jwt`** (Bearer + local/session storage) as before.
 
+**Operator console after portal login (`/login.html?next=/admin/…`)**
+
+- **`ADMIN_EMAIL`** (default `jack@serviceopera.to`) can use the normal portal form on `/login.html`; the server marks the session as operator and **`POST /api/admin/bootstrap-from-portal`** mints the HttpOnly cookie required for `/admin/*` HTML.
+- If you land back on login with a valid portal JWT, sign in at **`/admin`** with the **operator password** (`ADMIN_PASSWORD_HASH`) or redeploy after updating `login.html` / `admin.js` (bootstrap + cookie gate).
+- **`/api/*` must be same-origin** as the HTML host (see `so-api.js`): cross-origin API calls cannot store HttpOnly cookies, so `?next=/admin/site-appearance` will loop.
+
 **Troubleshooting — “Forgot password?” / Resend**
 
 - `RESEND_API_KEY` must be on **the same Railway service that runs `node server.mjs`** (the Docker deploy from this repo). A separate static-only service or a CDN in front of the site will not see those variables unless `/api/*` is routed to Node.

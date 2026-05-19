@@ -4480,10 +4480,14 @@ function sendAdminHtml(req, res) {
   if (isLikelyAutomatedScraper(req)) {
     return sendPrivateReportNotFound(res);
   }
+  const pathOnly = String(req.path || '').split('?')[0];
+  if (isAdminLoginShellPath(pathOnly)) {
+    return res.type('html').send(renderAdminHtml());
+  }
   if (!getVerifiedOperator(req)) {
     const targetPath = req.originalUrl || req.path || '/admin/users';
     const next = encodeURIComponent(targetPath);
-    return res.redirect(302, `/login.html?next=${next}`);
+    return res.redirect(302, `/admin/users?next=${next}`);
   }
   return res.type('html').send(renderAdminHtml());
 }

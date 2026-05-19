@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="styles.css" />
 <script src="/page-skeleton.js"></script>
 <script src="/so-api.js"></script>
-<script src="/portal-auth-routing.js?v=1.6.15"></script>
+<script src="/portal-auth-routing.js?v=1.7.18"></script>
 <script src="/portal-jwt.js"></script>
 <style>
   /* Portal login — serif title + sans UI (no monospace) */
@@ -398,8 +398,16 @@
     lede.textContent =
       'You were sent here for report “' + slugHint + '”. After sign-in you will open your workspace, then your report.';
   } else if (nextPath && lede) {
-    lede.textContent =
-      'After sign-in you will be taken to: ' + nextPath + ' (password or email code below).';
+    var nextIsAdminShell =
+      typeof soPortalIsAdminShellNextPath === 'function' && soPortalIsAdminShellNextPath(nextPath);
+    lede.textContent = nextIsAdminShell
+      ? 'After sign-in you will be taken to: ' +
+        nextPath +
+        '. Use your portal account password below (not the separate operator password on /admin). If sign-in fails, open /admin and sign in there, or use Forgot password below.'
+      : 'After sign-in you will be taken to: ' + nextPath + ' (password or email code below).';
+    if (nextIsAdminShell && operatorConsoleHint) {
+      operatorConsoleHint.classList.remove('is-hidden');
+    }
   } else if (lede) {
     lede.textContent =
       'After sign-in you will go to your workspace, where you can open your private report and account settings.';
@@ -690,17 +698,85 @@
     mustChangePwHint.className = hintClasses(kind, detail);
   }
 
+  function applyAdminJwtFromBootstrap(json) {
+    if (!json || !json.token) return;
+    try {
+      sessionStorage.setItem('so_admin_jwt', json.token);
+      try {
+        localStorage.setItem('so_admin_jwt', json.token);
+      } catch (eLs) {}
+    } catch (eSt) {}
+  }
+
+  /** Mint HttpOnly operator cookie before full-page /admin/* navigation (avoids login ↔ admin loops). */
+  function bootstrapOperatorSessionFromPortal(bearer) {
+    var url =
+      typeof soApiUrl === 'function'
+        ? soApiUrl('/api/admin/bootstrap-from-portal')
+        : '/api/admin/bootstrap-from-portal';
+    return fetch(url, {
+      method: 'POST',
+      credentials: typeof soApiCredentials === 'function' ? soApiCredentials() : 'same-origin',
+      headers: { Authorization: 'Bearer ' + bearer, 'Content-Type': 'application/json' },
+      cache: 'no-store',
+    })
+      .then(function (r) {
+        return r.text().then(function (text) {
+          var j = null;
+          try {
+            j = text ? JSON.parse(text) : null;
+          } catch (eParse) {
+            j = null;
+          }
+          return { ok: r.ok, json: j };
+        });
+      })
+      .catch(function () {
+        return { ok: false, json: null };
+      });
+  }
+
+  function probeOperatorHtmlGateCookie() {
+    return fetchAdminCookieSession().then(function (ck) {
+      return Boolean(ck && ck.ok && ck.json && ck.json.ok);
+    });
+  }
+
   /** Mint/probe HttpOnly operator cookie before full-page /admin/* navigation (avoids login ↔ admin loops). */
   function ensureOperatorHtmlGateCookie(bearer) {
-    return fetchAdminCookieSession().then(function (ck) {
-      if (ck && ck.ok && ck.json && ck.json.ok) return true;
+    return probeOperatorHtmlGateCookie().then(function (ready) {
+      if (ready) return true;
       if (!bearer || !looksLikeJwt(bearer)) return false;
+
+      function mintAdminCookieThenProbe() {
+        return bootstrapOperatorSessionFromPortal(bearer).then(function (boot) {
+          if (boot.ok && boot.json && boot.json.token) {
+            applyAdminJwtFromBootstrap(boot.json);
+          }
+          return fetchAdminUserSession(bearer).then(function () {
+            return probeOperatorHtmlGateCookie();
+          });
+        });
+      }
+
       return fetchAdminUserSession(bearer).then(function (adm) {
-        if (!adm || !adm.ok || !adm.json || !adm.json.ok) return false;
-        return fetchAdminCookieSession().then(function (ck2) {
-          return Boolean(ck2 && ck2.ok && ck2.json && ck2.json.ok);
+        if (!(adm && adm.ok && adm.json && adm.json.ok)) {
+          return mintAdminCookieThenProbe();
+        }
+        return probeOperatorHtmlGateCookie().then(function (ready2) {
+          if (ready2) return true;
+          return mintAdminCookieThenProbe();
         });
       });
+    });
+  }
+
+  function portalBearerIsOperator(bearer, lj) {
+    if (lj && lj.isOperator) return Promise.resolve(true);
+    if (bearer && decodeJwtIsOperatorLogin(bearer)) return Promise.resolve(true);
+    if (!bearer || !looksLikeJwt(bearer)) return Promise.resolve(false);
+    return fetchPortalUserSession(bearer).then(function (x) {
+      return Boolean(x.ok && x.json && x.json.isOperator);
     });
   }
 
@@ -709,9 +785,14 @@
       if (!ready) {
         if (bannerSession) {
           bannerSession.textContent =
-            'Signed in, but this browser did not receive an operator session cookie. Try again or open /admin/users after signing in.';
+            'Signed in, but this browser did not receive an operator session cookie (required for ' +
+            path +
+            '). Try again, sign in at /admin with the operator password, or clear site data for serviceopera.to and sign in again.';
           bannerSession.classList.remove('is-hidden');
         }
+        setLoginErr(
+          'Could not open the operator page in this browser. Use /admin to sign in with the operator password, or reset the portal password with Forgot password above.'
+        );
         return;
       }
       try {
@@ -728,13 +809,25 @@
         ? soPortalResolvePostLogin(lj || {}, { nextPath: nextPath, slugHint: slugHint })
         : '/workspace.html';
     var tok = bearer || '';
-    if (
-      tok &&
-      looksLikeJwt(tok) &&
-      nextPathRequiresOperatorHtmlGate(nextPath || dest) &&
-      (decodeJwtIsOperatorLogin(tok) || (lj && lj.isOperator))
-    ) {
-      return redirectAfterOperatorHtmlGateReady(dest, tok);
+    var needsGate = nextPathRequiresOperatorHtmlGate(nextPath || dest);
+    if (tok && looksLikeJwt(tok) && needsGate) {
+      return portalBearerIsOperator(tok, lj).then(function (isOp) {
+        if (isOp) {
+          return redirectAfterOperatorHtmlGateReady(dest, tok);
+        }
+        var ws =
+          typeof soPortalWorkspacePath === 'function' ? soPortalWorkspacePath() : '/workspace.html';
+        if (bannerSession) {
+          bannerSession.textContent =
+            'Signed in to the clinic portal. Operator console (/admin) needs the operator email or /admin sign-in.';
+          bannerSession.classList.remove('is-hidden');
+        }
+        try {
+          window.location.replace(ws);
+        } catch (eWs) {
+          window.location.href = ws;
+        }
+      });
     }
     window.location.replace(dest);
   }
@@ -1141,6 +1234,13 @@
     cookieP.then(function (ck) {
       if (ck && ck.ok && ck.json && ck.json.ok) {
         var cookieDest = resolveSignedInDestination();
+        if (wantOperatorGatedNext) {
+          var gateBearer =
+            (adminTok && looksLikeJwt(adminTok) && adminTok) ||
+            (portalTok && looksLikeJwt(portalTok) && portalTok) ||
+            '';
+          return redirectAfterOperatorHtmlGateReady(cookieDest, gateBearer);
+        }
         try {
           window.location.replace(cookieDest);
         } catch (eCk) {
@@ -1210,6 +1310,7 @@
         var lj = {
           reportSlug: slug,
           reportUrl: slug ? '/clinics/report.html?slug=' + encodeURIComponent(slug) : '',
+          isOperator: Boolean(x.json.isOperator),
         };
         redirectAfterPortalLogin(lj, portalTok);
       });

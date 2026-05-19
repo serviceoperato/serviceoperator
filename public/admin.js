@@ -110,12 +110,33 @@
       });
   }
 
+  function bootstrapOperatorFromPortalJwt(portalJwt) {
+    return fetch(api('/api/admin/bootstrap-from-portal'), {
+      method: 'POST',
+      credentials: apiCred(),
+      cache: 'no-store',
+      headers: { Authorization: 'Bearer ' + portalJwt, 'Content-Type': 'application/json' },
+    })
+      .then(function (r) {
+        return r.json().then(function (j) {
+          if (!r.ok || !j || !j.token) return false;
+          writeStoredAdminJwt(j.token);
+          return true;
+        });
+      })
+      .catch(function () {
+        return false;
+      });
+  }
+
   /** Bearer in storage but no cookie yet — mint HttpOnly cookie before full-page report navigation. */
   function mintAdminCookieFromStoredJwt() {
     var token = readStoredAdminJwt();
+    var portalOnly = false;
     if (!token) {
       token = getPortalJwt();
-      if (!token || !decodeJwtIsOperator(token)) return Promise.resolve(false);
+      portalOnly = Boolean(token);
+      if (!token) return Promise.resolve(false);
     }
     return fetch(api('/api/admin/session'), {
       method: 'GET',
@@ -124,7 +145,9 @@
       headers: { Authorization: 'Bearer ' + token },
     })
       .then(function (r) {
-        return r.ok;
+        if (r.ok) return true;
+        if (!portalOnly) return false;
+        return bootstrapOperatorFromPortalJwt(token);
       })
       .catch(function () {
         return false;
@@ -398,10 +421,14 @@
   }
 
   function decodeJwtIsOperator(token) {
+    if (typeof soDecodePortalJwtIsOperator === 'function') {
+      return soDecodePortalJwtIsOperator(token);
+    }
     try {
       var parts = String(token || '').split('.');
       if (parts.length < 2) return false;
-      var payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      var payloadSeg = parts.length === 2 ? parts[0] : parts[1];
+      var payload = payloadSeg.replace(/-/g, '+').replace(/_/g, '/');
       while (payload.length % 4) payload += '=';
       var json = JSON.parse(atob(payload));
       return json.isOperator === true;
@@ -3285,7 +3312,7 @@
 
   function tryRestorePortalOperatorSession() {
     var portalJwt = getPortalJwt();
-    if (!portalJwt || !decodeJwtIsOperator(portalJwt)) return Promise.resolve(false);
+    if (!portalJwt) return Promise.resolve(false);
     return fetch(api('/api/admin/session'), {
       method: 'GET',
       credentials: apiCred(),
@@ -3294,8 +3321,10 @@
     })
       .then(function (r) {
         if (!r.ok) return false;
-        showWorkspace();
-        return true;
+        return mintAdminCookieFromStoredJwt().then(function () {
+          showWorkspace();
+          return true;
+        });
       })
       .catch(function () {
         return false;
@@ -3395,6 +3424,17 @@
       return tryRestorePortalOperatorSession();
     })
     .then(function (restored) {
+      if (restored) return true;
+      var portalJwt = getPortalJwt();
+      if (!portalJwt) return false;
+      return bootstrapOperatorFromPortalJwt(portalJwt).then(function (booted) {
+        if (!booted) return false;
+        return tryRestoreJwtSession().then(function (jwtOk) {
+          return jwtOk || tryRestoreCookieOnlyOperatorSession();
+        });
+      });
+    })
+    .then(function (restored) {
       if (restored) {
         revealAdminBootAfterPaint();
         return;
@@ -3469,9 +3509,7 @@
   function getAdminBearer() {
     var adminTok = readStoredAdminJwt();
     if (adminTok) return adminTok;
-    var portalTok = getPortalJwt();
-    if (portalTok && decodeJwtIsOperator(portalTok)) return portalTok;
-    return '';
+    return getPortalJwt() || '';
   }
 
   function redirectToUnifiedLogin() {

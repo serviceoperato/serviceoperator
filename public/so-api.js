@@ -9,19 +9,18 @@
   function isMarketingNodeHost() {
     try {
       var h = g.location && g.location.hostname ? String(g.location.hostname).toLowerCase() : '';
-      /* Apex only — www may not run Node; see inferMarketingApiOrigin(). */
-      return h === 'serviceopera.to';
+      /* Apex + www: server.mjs serves HTML and /api on the same host (www 301 → apex). */
+      return h === 'serviceopera.to' || h === 'www.serviceopera.to';
     } catch (e) {
       return false;
     }
   }
 
-  /** When HTML is on www but API lives on apex/Railway, point /api/* at production Node. */
+  /**
+   * Legacy: static www on Netlify pointed /api at Railway. Production www now 301s to apex with
+   * same-origin /api — never force a cross-origin API here (cookies would not stick on www).
+   */
   function inferMarketingApiOrigin() {
-    try {
-      var h = g.location && g.location.hostname ? String(g.location.hostname).toLowerCase() : '';
-      if (h === 'www.serviceopera.to') return SO_PRODUCTION_API_ORIGIN;
-    } catch (e) {}
     return '';
   }
 
