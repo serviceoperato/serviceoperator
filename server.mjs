@@ -945,7 +945,7 @@ const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'jack@serviceopera.to').trim().t
 /** Optional public inbox for dynamic mailto helpers only; unset = form-only contact UX. */
 const PUBLIC_CONTACT_EMAIL = (process.env.PUBLIC_CONTACT_EMAIL || '').trim();
 const PUBLIC_CONTACT_FORM_URL = (
-  process.env.PUBLIC_CONTACT_FORM_URL || '/free-audit.html'
+  process.env.PUBLIC_CONTACT_FORM_URL || '/clinics/010/'
 ).trim();
 /** Internal ops + Resend routing; not published in public HTML/JS bundles. */
 const OPERATOR_CONTACT_EMAIL = (

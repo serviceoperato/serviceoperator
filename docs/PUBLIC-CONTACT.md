@@ -2,7 +2,7 @@
 
 ## Intentional public contact (no default inbox)
 
-Marketing pages do **not** publish a public email or `mailto:` link by default. Visitors reach the team via the **48-hour audit request form** at [`/free-audit.html`](/free-audit.html) (homepage form, pricing inquiry, vertical pages).
+Marketing pages do **not** publish a public email or `mailto:` link by default. Visitors reach the team via the **48-hour audit request form** at [`/clinics/010/`](/clinics/010/) (homepage form, pricing inquiry, vertical pages).
 
 Runtime config: `GET /api/site-config` → `{ contactFormUrl, operatorIdentity }` and optionally `publicContactEmail` when `PUBLIC_CONTACT_EMAIL` is set in env (advanced; not used on static HTML unless wired explicitly).
 
@@ -16,7 +16,7 @@ Client helper: `public/site-contact.js` (`SoSiteContact.contactFormUrl`, `applyC
 ## Optional env
 
 - **`PUBLIC_CONTACT_EMAIL`** — If set, exposed in `/api/site-config` for dynamic mailto helpers only. Leave unset for form-only contact UX.
-- **`contactFormUrl`** in API defaults to `/free-audit.html`.
+- **`contactFormUrl`** in API defaults to `/clinics/010/`.
 
 ## Account UX
 

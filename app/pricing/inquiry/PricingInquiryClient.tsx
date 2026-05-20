@@ -185,7 +185,7 @@ export function PricingInquiryClient() {
         <p className="so-pricing-inquiry__privacy">
           We collect your IP address, pages visited, and timestamps to deliver the audit or plan you requested and to protect the service.
           Questions? Use the form below or{" "}
-          <a href="/free-audit.html">request a free audit</a>.
+          <a href="/clinics/010/">request a free audit</a>.
         </p>
 
         <label className="inquiry-form__field" htmlFor="field-email">

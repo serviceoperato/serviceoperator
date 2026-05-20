@@ -6,7 +6,7 @@
 (function (global) {
   'use strict';
 
-  var DEFAULT_CONTACT_FORM = '/free-audit.html';
+  var DEFAULT_CONTACT_FORM = '/clinics/010/';
   var contactFormPath = DEFAULT_CONTACT_FORM;
   var publicEmail = '';
 
