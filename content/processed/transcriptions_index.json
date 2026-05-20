@@ -1,46 +1,46 @@
 {
   "ok": true,
-  "generatedAt": "2026-05-20T09:30:10Z",
+  "generatedAt": "2026-05-20T10:53:44Z",
   "registryVersion": 2,
   "totals": {
     "meetings": 0,
     "notes": 0,
-    "tasks": 26,
+    "tasks": 21,
     "calendar": 3,
     "projects": 2,
     "decisions": 8,
-    "open-points": 30,
-    "total": 69,
-    "needsReview": 1
+    "open-points": 29,
+    "total": 63,
+    "needsReview": 6
   },
   "counts": {
     "meetings": 0,
     "notes": 0,
-    "tasks": 26,
+    "tasks": 21,
     "calendar": 3,
     "projects": 2,
     "decisions": 8,
-    "open-points": 30,
-    "total": 69,
-    "needsReview": 1
+    "open-points": 29,
+    "total": 63,
+    "needsReview": 6
   },
   "sourceTotals": {
-    "meetings": 2,
-    "notes": 21,
+    "meetings": 1,
+    "notes": 17,
     "tasks": 0,
     "calendar": 0,
     "projects": 0,
     "decisions": 0,
     "open-points": 0,
-    "total": 23,
-    "needsReview": 1
+    "total": 18,
+    "needsReview": 6
   },
-  "sourceCount": 23,
+  "sourceCount": 18,
   "rawSources": {
     "total": 29,
     "latestRawFile": "Voice_260519_190028.md",
     "latestProcessedFile": "Memo_001.md",
-    "waitingForProcessing": 5,
+    "waitingForProcessing": 11,
     "pendingSources": [
       {
         "id": "9c47ef78ab5393a1",
@@ -224,6 +224,325 @@
   },
   "needsReview": [
     {
+      "id": "9831b00f6391",
+      "category": "notes",
+      "categoryLabel": "Notes",
+      "title": "Audio non decodificabile (giu 2025)",
+      "filepath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_250621_185357-69216cdbadfb.md",
+      "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_250621_185357-69216cdbadfb.md",
+      "source_audio": "Voice 250621 185357.m4a",
+      "source_transcription": "content/transcriptions/Voice_250621_185357.md",
+      "sourceAudio": "Voice 250621 185357.m4a",
+      "sourceTranscription": "content/transcriptions/Voice_250621_185357.md",
+      "project": "uncategorized",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T15:06:39Z",
+      "processedDate": "2026-05-17T15:06:39Z",
+      "preview": "Clip quasi vuota sul trascritto automatico: durata brevissima senza contenuto lessicale utile. Probabile test microfono o registrazione accidentale. Limited content available.",
+      "cardSummary": "Clip quasi vuota sul trascritto automatico: durata brevissima senza contenuto lessicale utile. Probabile test microfono o registrazione accidentale. Limited content available.",
+      "summary": "Clip quasi vuota sul trascritto automatico: durata brevissima senza contenuto lessicale utile. Probabile test microfono o registrazione accidentale. Limited content available.",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 0,
+        "open_points_count": 1,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {
+        "Title": "Audio non decodificabile (giu 2025)",
+        "Source": "- **Source audio:** Voice 250621 185357.m4a\n- **Source transcription:** `Voice_250621_185357.md`\n- **Processed date:** 2026-05-17T15:06:39Z\n- **Main category:** voice-note\n- **Project:** uncategorized",
+        "Summary": "Clip quasi vuota sul trascritto automatico: durata brevissima senza contenuto lessicale utile. Probabile test microfono o registrazione accidentale. Limited content available.",
+        "Important Points": "- Checksum e header pipeline ok; contenuto semantico assente\n- Probabile rumore, lingua non supportata o audio corrotto\n- (none)",
+        "People Involved": "- to confirm",
+        "Tasks": "- (none)",
+        "Calendar Events": "- (none)",
+        "Decisions": "- (none)",
+        "Open Points": "- Utilità di conservare il file nel feed — owner to confirm",
+        "Project Updates": "- (none)",
+        "Next Steps": "- (none)"
+      },
+      "extracted_items": {
+        "decisions": [],
+        "tasks": [],
+        "open_points": [
+          "Utilità di conservare il file nel feed — owner to confirm"
+        ],
+        "next_steps": [],
+        "important_points": [
+          "Checksum e header pipeline ok; contenuto semantico assente",
+          "Probabile rumore, lingua non supportata o audio corrotto"
+        ],
+        "calendar_events": [],
+        "people": [],
+        "project_updates": [],
+        "main_category": "voice-note"
+      },
+      "related_files": [],
+      "source_only": false,
+      "needs_review": true,
+      "item_type": "grouped",
+      "reviewed": false,
+      "icon_concept": "empty-transcript",
+      "icon_keywords": [
+        "empty transcript"
+      ],
+      "icon_shape_signature": "blank-doc-warning-dot",
+      "icon_concept_label": "Empty transcript"
+    },
+    {
+      "id": "abf1e4c778be",
+      "category": "notes",
+      "categoryLabel": "Notes",
+      "title": "Frase in spagnolo (limpio)",
+      "filepath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_250621_185410-a4d50b0e6da1.md",
+      "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_250621_185410-a4d50b0e6da1.md",
+      "source_audio": "Voice 250621 185410.m4a",
+      "source_transcription": "content/transcriptions/Voice_250621_185410.md",
+      "sourceAudio": "Voice 250621 185410.m4a",
+      "sourceTranscription": "content/transcriptions/Voice_250621_185410.md",
+      "project": "uncategorized",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T15:06:39Z",
+      "processedDate": "2026-05-17T15:06:39Z",
+      "preview": "Registrazione brevissima senza testo significativo nel trascritto Whisper: nessun tema, persona o impegno identificabile. Limited content available.",
+      "cardSummary": "Registrazione brevissima senza testo significativo nel trascritto Whisper: nessun tema, persona o impegno identificabile. Limited content available.",
+      "summary": "Registrazione brevissima senza testo significativo nel trascritto Whisper: nessun tema, persona o impegno identificabile. Limited content available.",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 0,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {
+        "Title": "Frase in spagnolo (limpio)",
+        "Source": "- **Source audio:** Voice 250621 185410.m4a\n- **Source transcription:** `Voice_250621_185410.md`\n- **Processed date:** 2026-05-17T15:06:39Z\n- **Main category:** voice-note\n- **Project:** uncategorized",
+        "Summary": "Registrazione brevissima senza testo significativo nel trascritto Whisper: nessun tema, persona o impegno identificabile. Limited content available.",
+        "Important Points": "- Frase: cercare/trovare «el limpio»\n- (none)\n- (none)",
+        "People Involved": "- to confirm",
+        "Tasks": "- (none)",
+        "Calendar Events": "- (none)",
+        "Decisions": "- (none)",
+        "Open Points": "- (none)",
+        "Project Updates": "- (none)",
+        "Next Steps": "- (none)"
+      },
+      "extracted_items": {
+        "decisions": [],
+        "tasks": [],
+        "open_points": [],
+        "next_steps": [],
+        "important_points": [
+          "Frase: cercare/trovare «el limpio»"
+        ],
+        "calendar_events": [],
+        "people": [],
+        "project_updates": [],
+        "main_category": "voice-note"
+      },
+      "related_files": [],
+      "source_only": false,
+      "needs_review": true,
+      "item_type": "grouped",
+      "reviewed": false,
+      "icon_concept": "spanish-language",
+      "icon_keywords": [
+        "spagnolo",
+        "limpio",
+        "frase in"
+      ],
+      "icon_shape_signature": "globe-speech-es",
+      "icon_concept_label": "Spanish phrase"
+    },
+    {
+      "id": "6f97f6e7035f",
+      "category": "notes",
+      "categoryLabel": "Notes",
+      "title": "Prova registrazione audio → testo",
+      "filepath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_260516_191818-596e527d5382.md",
+      "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_260516_191818-596e527d5382.md",
+      "source_audio": "Voice 260516 191818.m4a",
+      "source_transcription": "content/transcriptions/Voice_260516_191818.md",
+      "sourceAudio": "Voice 260516 191818.m4a",
+      "sourceTranscription": "content/transcriptions/Voice_260516_191818.md",
+      "project": "uncategorized",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T15:06:39Z",
+      "processedDate": "2026-05-17T15:06:39Z",
+      "preview": "Nota del 16 maggio 2026 con trascritto troppo corto per ricostruire un argomento completo; possibile avvio registrazione senza dialogo utile. Limited content available.",
+      "cardSummary": "Nota del 16 maggio 2026 con trascritto troppo corto per ricostruire un argomento completo; possibile avvio registrazione senza dialogo utile. Limited content available.",
+      "summary": "Nota del 16 maggio 2026 con trascritto troppo corto per ricostruire un argomento completo; possibile avvio registrazione senza dialogo utile. Limited content available.",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 0,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {
+        "Title": "Prova registrazione audio → testo",
+        "Source": "- **Source audio:** Voice 260516 191818.m4a\n- **Source transcription:** `Voice_260516_191818.md`\n- **Processed date:** 2026-05-17T15:06:39Z\n- **Main category:** voice-note\n- **Project:** uncategorized",
+        "Summary": "Nota del 16 maggio 2026 con trascritto troppo corto per ricostruire un argomento completo; possibile avvio registrazione senza dialogo utile. Limited content available.",
+        "Important Points": "- Test pipeline trascrizione\n- (none)\n- (none)",
+        "People Involved": "- to confirm",
+        "Tasks": "- (none)",
+        "Calendar Events": "- (none)",
+        "Decisions": "- (none)",
+        "Open Points": "- (none)",
+        "Project Updates": "- (none)",
+        "Next Steps": "- (none)"
+      },
+      "extracted_items": {
+        "decisions": [],
+        "tasks": [],
+        "open_points": [],
+        "next_steps": [],
+        "important_points": [
+          "Test pipeline trascrizione"
+        ],
+        "calendar_events": [],
+        "people": [],
+        "project_updates": [],
+        "main_category": "voice-note"
+      },
+      "related_files": [],
+      "source_only": false,
+      "needs_review": true,
+      "item_type": "grouped",
+      "reviewed": false,
+      "icon_concept": "recording-test",
+      "icon_keywords": [
+        "prova registrazione",
+        "testo"
+      ],
+      "icon_shape_signature": "mic-waveform-check",
+      "icon_concept_label": "Recording test"
+    },
+    {
+      "id": "2efa2c49c2e4",
+      "category": "meetings",
+      "categoryLabel": "Meetings",
+      "title": "so guys we can start we are waiting someone else maybe an…",
+      "filepath": "content/meetings/2026-05-20-meeting-0519-dc086e74533d.md",
+      "path": "content/meetings/2026-05-20-meeting-0519-dc086e74533d.md",
+      "source_audio": "0519.MP3",
+      "source_transcription": "content/transcriptions/0519.md",
+      "sourceAudio": "0519.MP3",
+      "sourceTranscription": "content/transcriptions/0519.md",
+      "project": "uncategorized",
+      "date": "2026-05-19",
+      "eventDate": "2026-05-19",
+      "processing_date": "2026-05-20T09:30:01Z",
+      "processedDate": "2026-05-20T09:30:01Z",
+      "preview": "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re...",
+      "cardSummary": "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re...",
+      "summary": "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re...",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 0,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 1
+      },
+      "has_chart_data": false,
+      "raw_sections": {
+        "Source": "- **Source audio:** 0519.MP3\n- **Source transcription:** `0519.md`\n- **Processing datetime:** 2026-05-20T09:30:01Z\n- **Category:** meeting (75%)\n- **Project:** uncategorized",
+        "Summary": "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re...",
+        "Important Points": "- so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re...",
+        "Decisions": "- (none)",
+        "Tasks": "- (none)",
+        "Calendar Events": "- (none)",
+        "Open Points": "- (none)",
+        "Next Steps": "- so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re..."
+      },
+      "extracted_items": {
+        "decisions": [],
+        "tasks": [],
+        "open_points": [],
+        "next_steps": [
+          "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re..."
+        ],
+        "important_points": [
+          "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re..."
+        ]
+      },
+      "related_files": [],
+      "source_only": false,
+      "needs_review": true,
+      "item_type": "file",
+      "reviewed": false,
+      "icon_concept": "meeting-conversation",
+      "icon_keywords": [
+        "meeting",
+        "we can start",
+        "waiting someone"
+      ],
+      "icon_shape_signature": "roundtable-speech-arrows",
+      "icon_concept_label": "Group meeting"
+    },
+    {
+      "id": "c7e8a4686abd",
+      "category": "notes",
+      "categoryLabel": "Notes",
+      "title": "Voice 260518_233520.m4a · Voice note",
+      "filepath": "content/notes/2026-05-20-voice-note-voice_260518_233520-d80a63516fef.md",
+      "path": "content/notes/2026-05-20-voice-note-voice_260518_233520-d80a63516fef.md",
+      "source_audio": "Voice 260518_233520.m4a",
+      "source_transcription": "content/transcriptions/Voice_260518_233520.md",
+      "sourceAudio": "Voice 260518_233520.m4a",
+      "sourceTranscription": "content/transcriptions/Voice_260518_233520.md",
+      "project": "thaifans",
+      "date": "2026-05-19",
+      "eventDate": "2026-05-19",
+      "processing_date": "2026-05-20T09:30:01Z",
+      "processedDate": "2026-05-20T09:30:01Z",
+      "preview": "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta...",
+      "cardSummary": "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta...",
+      "summary": "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta...",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 0,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {
+        "Source": "- **Source audio:** Voice 260518_233520.m4a\n- **Source transcription:** `Voice_260518_233520.md`\n- **Processing datetime:** 2026-05-20T09:30:01Z\n- **Category:** voice-note (65%)\n- **Project:** thaifans",
+        "Summary": "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta...",
+        "Important Points": "- Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta...",
+        "Decisions": "- (none)",
+        "Tasks": "- (none)",
+        "Calendar Events": "- (none)",
+        "Open Points": "- (none)",
+        "Next Steps": "- Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta..."
+      },
+      "extracted_items": {
+        "important_points": [
+          "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta..."
+        ],
+        "possible_actions": []
+      },
+      "related_files": [],
+      "source_only": false,
+      "needs_review": true,
+      "item_type": "file",
+      "reviewed": false,
+      "icon_concept": "thaifans-community",
+      "icon_keywords": [
+        "thaifans",
+        "thai fans"
+      ],
+      "icon_shape_signature": "users-pin-chat",
+      "icon_concept_label": "ThaiFans business community"
+    },
+    {
       "id": "0ffc67628ae0",
       "category": "notes",
       "categoryLabel": "Notes",
@@ -270,321 +589,18 @@
       "source_only": false,
       "needs_review": true,
       "item_type": "file",
-      "reviewed": false
+      "reviewed": false,
+      "icon_concept": "italy-travel",
+      "icon_keywords": [
+        "italia",
+        "luglio"
+      ],
+      "icon_shape_signature": "plane-italy-pin",
+      "icon_concept_label": "Italy travel"
     }
   ],
-  "needsReviewCount": 1,
+  "needsReviewCount": 6,
   "items": [
-    {
-      "category": "notes",
-      "categoryLabel": "Notes",
-      "filepath": "content/notes/2026-05-20-voice-note-voice_260518_233520-d80a63516fef.md",
-      "path": "content/notes/2026-05-20-voice-note-voice_260518_233520-d80a63516fef.md",
-      "source_audio": "Voice 260518_233520.m4a",
-      "source_transcription": "content/transcriptions/Voice_260518_233520.md",
-      "sourceAudio": "Voice 260518_233520.m4a",
-      "sourceTranscription": "content/transcriptions/Voice_260518_233520.md",
-      "project": "thaifans",
-      "date": "2026-05-19",
-      "eventDate": "2026-05-19",
-      "processing_date": "2026-05-20T09:30:01Z",
-      "processedDate": "2026-05-20T09:30:01Z",
-      "preview": "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta...",
-      "cardSummary": "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta...",
-      "summary": "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta...",
-      "stats": {
-        "decisions_count": 0,
-        "tasks_count": 1,
-        "open_points_count": 0,
-        "calendar_events_count": 0,
-        "next_steps_count": 0
-      },
-      "has_chart_data": false,
-      "raw_sections": {
-        "Source": "- **Source audio:** Voice 260518_233520.m4a\n- **Source transcription:** `Voice_260518_233520.md`\n- **Processing datetime:** 2026-05-20T09:30:01Z\n- **Category:** voice-note (65%)\n- **Project:** thaifans",
-        "Summary": "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta...",
-        "Important Points": "- Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta...",
-        "Decisions": "- (none)",
-        "Tasks": "- (none)",
-        "Calendar Events": "- (none)",
-        "Open Points": "- (none)",
-        "Next Steps": "- Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta..."
-      },
-      "extracted_items": {
-        "important_points": [
-          "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta..."
-        ],
-        "possible_actions": [],
-        "tasks": [
-          "(none)"
-        ]
-      },
-      "source_only": false,
-      "needs_review": false,
-      "item_type": "source_entry",
-      "reviewed": false,
-      "pipelineStatus": "ready_for_site",
-      "readyForSite": true,
-      "id": "15ad1e4e9637",
-      "isSourceEntry": true,
-      "source_entry": true,
-      "primaryCategory": "notes",
-      "mainCategory": "notes",
-      "categories": [
-        "tasks",
-        "calendar",
-        "decisions",
-        "open-points"
-      ],
-      "extractedCategories": [
-        "tasks",
-        "calendar",
-        "decisions",
-        "open-points"
-      ],
-      "hasTasks": true,
-      "hasCalendar": true,
-      "hasDecisions": true,
-      "hasOpenPoints": true,
-      "hasProjects": false,
-      "extractions": {
-        "notes": [
-          {
-            "id": "c7e8a4686abd",
-            "category": "notes",
-            "title": "Voice 260518_233520.m4a · Voice note",
-            "path": "content/notes/2026-05-20-voice-note-voice_260518_233520-d80a63516fef.md",
-            "preview": "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta...",
-            "summary": "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta...",
-            "project": "thaifans",
-            "date": "2026-05-19",
-            "dueDate": null,
-            "eventDate": "2026-05-19",
-            "status": null,
-            "extracted_items": {
-              "important_points": [
-                "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta..."
-              ],
-              "possible_actions": []
-            }
-          }
-        ]
-      },
-      "sourceEntries": [
-        {
-          "id": "c7e8a4686abd",
-          "category": "notes",
-          "title": "Voice 260518_233520.m4a · Voice note",
-          "path": "content/notes/2026-05-20-voice-note-voice_260518_233520-d80a63516fef.md",
-          "preview": "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta...",
-          "summary": "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta...",
-          "project": "thaifans",
-          "date": "2026-05-19",
-          "dueDate": null,
-          "eventDate": "2026-05-19",
-          "status": null,
-          "extracted_items": {
-            "important_points": [
-              "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta..."
-            ],
-            "possible_actions": []
-          }
-        }
-      ],
-      "groupedIds": [
-        "c7e8a4686abd"
-      ],
-      "decisions": [],
-      "tasks": [
-        "(none)"
-      ],
-      "openPoints": [],
-      "open_points": [],
-      "nextSteps": [],
-      "next_steps": [],
-      "importantPoints": [
-        "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta..."
-      ],
-      "important_points": [
-        "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta..."
-      ],
-      "calendarEvents": [],
-      "calendar_events": [],
-      "possibleActions": [],
-      "possible_actions": [],
-      "childIds": [
-        "c7e8a4686abd"
-      ],
-      "related_files": [],
-      "sourceKey": "content/transcriptions/voice_260518_233520.md",
-      "sourceGroupKey": "content/transcriptions/voice_260518_233520.md",
-      "title": "Voice 260518_233520.m4a · Voice note",
-      "displayTitle": "Voice 260518_233520.m4a · Voice note"
-    },
-    {
-      "category": "meetings",
-      "categoryLabel": "Meetings",
-      "filepath": "content/meetings/2026-05-20-meeting-0519-dc086e74533d.md",
-      "path": "content/meetings/2026-05-20-meeting-0519-dc086e74533d.md",
-      "source_audio": "0519.MP3",
-      "source_transcription": "content/transcriptions/0519.md",
-      "sourceAudio": "0519.MP3",
-      "sourceTranscription": "content/transcriptions/0519.md",
-      "project": "uncategorized",
-      "date": "2026-05-19",
-      "eventDate": "2026-05-19",
-      "processing_date": "2026-05-20T09:30:01Z",
-      "processedDate": "2026-05-20T09:30:01Z",
-      "preview": "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re...",
-      "cardSummary": "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re...",
-      "summary": "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re...",
-      "stats": {
-        "decisions_count": 0,
-        "tasks_count": 1,
-        "open_points_count": 0,
-        "calendar_events_count": 0,
-        "next_steps_count": 1
-      },
-      "has_chart_data": true,
-      "raw_sections": {
-        "Source": "- **Source audio:** 0519.MP3\n- **Source transcription:** `0519.md`\n- **Processing datetime:** 2026-05-20T09:30:01Z\n- **Category:** meeting (75%)\n- **Project:** uncategorized",
-        "Summary": "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re...",
-        "Important Points": "- so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re...",
-        "Decisions": "- (none)",
-        "Tasks": "- (none)",
-        "Calendar Events": "- (none)",
-        "Open Points": "- (none)",
-        "Next Steps": "- so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re..."
-      },
-      "extracted_items": {
-        "decisions": [],
-        "tasks": [
-          "(none)"
-        ],
-        "open_points": [],
-        "next_steps": [
-          "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re..."
-        ],
-        "important_points": [
-          "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re..."
-        ]
-      },
-      "source_only": false,
-      "needs_review": false,
-      "item_type": "source_entry",
-      "reviewed": false,
-      "pipelineStatus": "ready_for_site",
-      "readyForSite": true,
-      "id": "e945b3d7d06c",
-      "isSourceEntry": true,
-      "source_entry": true,
-      "primaryCategory": "meetings",
-      "mainCategory": "meetings",
-      "categories": [
-        "tasks",
-        "calendar",
-        "decisions",
-        "open-points"
-      ],
-      "extractedCategories": [
-        "tasks",
-        "calendar",
-        "decisions",
-        "open-points"
-      ],
-      "hasTasks": true,
-      "hasCalendar": true,
-      "hasDecisions": true,
-      "hasOpenPoints": true,
-      "hasProjects": false,
-      "extractions": {
-        "meetings": [
-          {
-            "id": "2efa2c49c2e4",
-            "category": "meetings",
-            "title": "so guys we can start we are waiting someone else maybe an…",
-            "path": "content/meetings/2026-05-20-meeting-0519-dc086e74533d.md",
-            "preview": "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re...",
-            "summary": "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re...",
-            "project": "uncategorized",
-            "date": "2026-05-19",
-            "dueDate": null,
-            "eventDate": "2026-05-19",
-            "status": null,
-            "extracted_items": {
-              "decisions": [],
-              "tasks": [],
-              "open_points": [],
-              "next_steps": [
-                "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re..."
-              ],
-              "important_points": [
-                "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re..."
-              ]
-            }
-          }
-        ]
-      },
-      "sourceEntries": [
-        {
-          "id": "2efa2c49c2e4",
-          "category": "meetings",
-          "title": "so guys we can start we are waiting someone else maybe an…",
-          "path": "content/meetings/2026-05-20-meeting-0519-dc086e74533d.md",
-          "preview": "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re...",
-          "summary": "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re...",
-          "project": "uncategorized",
-          "date": "2026-05-19",
-          "dueDate": null,
-          "eventDate": "2026-05-19",
-          "status": null,
-          "extracted_items": {
-            "decisions": [],
-            "tasks": [],
-            "open_points": [],
-            "next_steps": [
-              "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re..."
-            ],
-            "important_points": [
-              "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re..."
-            ]
-          }
-        }
-      ],
-      "groupedIds": [
-        "2efa2c49c2e4"
-      ],
-      "decisions": [],
-      "tasks": [
-        "(none)"
-      ],
-      "openPoints": [],
-      "open_points": [],
-      "nextSteps": [
-        "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re..."
-      ],
-      "next_steps": [
-        "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re..."
-      ],
-      "importantPoints": [
-        "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re..."
-      ],
-      "important_points": [
-        "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re..."
-      ],
-      "calendarEvents": [],
-      "calendar_events": [],
-      "possibleActions": [],
-      "possible_actions": [],
-      "childIds": [
-        "2efa2c49c2e4"
-      ],
-      "related_files": [],
-      "sourceKey": "content/transcriptions/0519.md",
-      "sourceGroupKey": "content/transcriptions/0519.md",
-      "title": "so guys we can start we are waiting someone else maybe an…",
-      "displayTitle": "so guys we can start we are waiting someone else maybe an…"
-    },
     {
       "category": "notes",
       "categoryLabel": "Notes",
@@ -772,7 +788,15 @@
               "Progetto YouTube: pianificazione slot settimanale e uso asset con AI per due progetti collegati"
             ],
             "main_category": "voice-note"
-          }
+          },
+          "icon_concept": "youtube-schedule",
+          "icon_keywords": [
+            "youtube",
+            "slot settimanale",
+            "canale"
+          ],
+          "icon_shape_signature": "play-button-calendar",
+          "icon_concept_label": "YouTube planning"
         }
       ],
       "groupedIds": [
@@ -824,7 +848,15 @@
       "sourceKey": "content/transcriptions/voice_260518_030558.md",
       "sourceGroupKey": "content/transcriptions/voice_260518_030558.md",
       "title": "Slot settimanale YouTube e uso asset per due progetti",
-      "displayTitle": "Slot settimanale YouTube e uso asset per due progetti"
+      "displayTitle": "Slot settimanale YouTube e uso asset per due progetti",
+      "icon_concept": "youtube-schedule",
+      "icon_keywords": [
+        "youtube",
+        "slot settimanale",
+        "canale"
+      ],
+      "icon_shape_signature": "play-button-calendar",
+      "icon_concept_label": "YouTube planning"
     },
     {
       "category": "meetings",
@@ -1007,7 +1039,15 @@
               "Thai Fans: avvio coordinamento meeting settimanali con G-Cos e Giovanni"
             ],
             "main_category": "meeting"
-          }
+          },
+          "icon_concept": "thaifans-community",
+          "icon_keywords": [
+            "thaifans",
+            "thai fans",
+            "google meet"
+          ],
+          "icon_shape_signature": "users-pin-chat",
+          "icon_concept_label": "ThaiFans business community"
         }
       ],
       "groupedIds": [
@@ -1056,7 +1096,15 @@
       "sourceKey": "content/transcriptions/voice_260517_181446.md",
       "sourceGroupKey": "content/transcriptions/voice_260517_181446.md",
       "title": "Thai Fans — meeting ricorrente martedì su Google Meet",
-      "displayTitle": "Thai Fans — meeting ricorrente martedì su Google Meet"
+      "displayTitle": "Thai Fans — meeting ricorrente martedì su Google Meet",
+      "icon_concept": "thaifans-community",
+      "icon_keywords": [
+        "thaifans",
+        "thai fans",
+        "google meet"
+      ],
+      "icon_shape_signature": "users-pin-chat",
+      "icon_concept_label": "ThaiFans business community"
     },
     {
       "category": "notes",
@@ -1209,7 +1257,14 @@
             "people": [],
             "project_updates": [],
             "main_category": "voice-note"
-          }
+          },
+          "icon_concept": "water-park-leisure",
+          "icon_keywords": [
+            "parco acquatico",
+            "water park"
+          ],
+          "icon_shape_signature": "pool-slide-sun",
+          "icon_concept_label": "Water park outing"
         }
       ],
       "groupedIds": [
@@ -1246,535 +1301,14 @@
       "sourceKey": "content/transcriptions/voice_260516_235502.md",
       "sourceGroupKey": "content/transcriptions/voice_260516_235502.md",
       "title": "Promemoria parco acquatico con Khan",
-      "displayTitle": "Promemoria parco acquatico con Khan"
-    },
-    {
-      "category": "notes",
-      "categoryLabel": "Notes",
-      "filepath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_260516_191818-596e527d5382.md",
-      "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_260516_191818-596e527d5382.md",
-      "source_audio": "Voice 260516 191818.m4a",
-      "source_transcription": "content/transcriptions/Voice_260516_191818.md",
-      "sourceAudio": "Voice 260516 191818.m4a",
-      "sourceTranscription": "content/transcriptions/Voice_260516_191818.md",
-      "project": "uncategorized",
-      "date": "2026-05-17",
-      "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T15:06:39Z",
-      "processedDate": "2026-05-17T15:06:39Z",
-      "preview": "Nota del 16 maggio 2026 con trascritto troppo corto per ricostruire un argomento completo; possibile avvio registrazione senza dialogo utile. Limited content available.",
-      "cardSummary": "Nota del 16 maggio 2026 con trascritto troppo corto per ricostruire un argomento completo; possibile avvio registrazione senza dialogo utile. Limited content available.",
-      "summary": "Nota del 16 maggio 2026 con trascritto troppo corto per ricostruire un argomento completo; possibile avvio registrazione senza dialogo utile. Limited content available.",
-      "stats": {
-        "decisions_count": 0,
-        "tasks_count": 1,
-        "open_points_count": 0,
-        "calendar_events_count": 0,
-        "next_steps_count": 0
-      },
-      "has_chart_data": false,
-      "raw_sections": {
-        "Title": "Prova registrazione audio → testo",
-        "Source": "- **Source audio:** Voice 260516 191818.m4a\n- **Source transcription:** `Voice_260516_191818.md`\n- **Processed date:** 2026-05-17T15:06:39Z\n- **Main category:** voice-note\n- **Project:** uncategorized",
-        "Summary": "Nota del 16 maggio 2026 con trascritto troppo corto per ricostruire un argomento completo; possibile avvio registrazione senza dialogo utile. Limited content available.",
-        "Important Points": "- Test pipeline trascrizione\n- (none)\n- (none)",
-        "People Involved": "- to confirm",
-        "Tasks": "- (none)",
-        "Calendar Events": "- (none)",
-        "Decisions": "- (none)",
-        "Open Points": "- (none)",
-        "Project Updates": "- (none)",
-        "Next Steps": "- (none)"
-      },
-      "extracted_items": {
-        "decisions": [],
-        "tasks": [
-          "(none)"
-        ],
-        "open_points": [],
-        "next_steps": [],
-        "important_points": [
-          "Test pipeline trascrizione"
-        ],
-        "calendar_events": [],
-        "people": [],
-        "project_updates": [],
-        "main_category": "voice-note"
-      },
-      "source_only": false,
-      "needs_review": false,
-      "item_type": "source_entry",
-      "reviewed": false,
-      "pipelineStatus": "ready_for_site",
-      "readyForSite": true,
-      "id": "22d4a0df7d6f",
-      "isSourceEntry": true,
-      "source_entry": true,
-      "primaryCategory": "notes",
-      "mainCategory": "notes",
-      "categories": [
-        "tasks",
-        "calendar",
-        "decisions",
-        "open-points",
-        "projects"
+      "displayTitle": "Promemoria parco acquatico con Khan",
+      "icon_concept": "water-park-leisure",
+      "icon_keywords": [
+        "parco acquatico",
+        "water park"
       ],
-      "extractedCategories": [
-        "tasks",
-        "calendar",
-        "decisions",
-        "open-points",
-        "projects"
-      ],
-      "hasTasks": true,
-      "hasCalendar": true,
-      "hasDecisions": true,
-      "hasOpenPoints": true,
-      "hasProjects": true,
-      "extractions": {
-        "notes": [
-          {
-            "id": "6f97f6e7035f",
-            "category": "notes",
-            "title": "Prova registrazione audio → testo",
-            "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_260516_191818-596e527d5382.md",
-            "preview": "Nota del 16 maggio 2026 con trascritto troppo corto per ricostruire un argomento completo; possibile avvio registrazione senza dialogo utile. Limited content available.",
-            "summary": "Nota del 16 maggio 2026 con trascritto troppo corto per ricostruire un argomento completo; possibile avvio registrazione senza dialogo utile. Limited content available.",
-            "project": "uncategorized",
-            "date": "2026-05-17",
-            "dueDate": null,
-            "eventDate": "2026-05-17",
-            "status": null,
-            "extracted_items": {
-              "decisions": [],
-              "tasks": [],
-              "open_points": [],
-              "next_steps": [],
-              "important_points": [
-                "Test pipeline trascrizione"
-              ],
-              "calendar_events": [],
-              "people": [],
-              "project_updates": [],
-              "main_category": "voice-note"
-            }
-          }
-        ]
-      },
-      "sourceEntries": [
-        {
-          "id": "6f97f6e7035f",
-          "category": "notes",
-          "title": "Prova registrazione audio → testo",
-          "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_260516_191818-596e527d5382.md",
-          "preview": "Nota del 16 maggio 2026 con trascritto troppo corto per ricostruire un argomento completo; possibile avvio registrazione senza dialogo utile. Limited content available.",
-          "summary": "Nota del 16 maggio 2026 con trascritto troppo corto per ricostruire un argomento completo; possibile avvio registrazione senza dialogo utile. Limited content available.",
-          "project": "uncategorized",
-          "date": "2026-05-17",
-          "dueDate": null,
-          "eventDate": "2026-05-17",
-          "status": null,
-          "extracted_items": {
-            "decisions": [],
-            "tasks": [],
-            "open_points": [],
-            "next_steps": [],
-            "important_points": [
-              "Test pipeline trascrizione"
-            ],
-            "calendar_events": [],
-            "people": [],
-            "project_updates": [],
-            "main_category": "voice-note"
-          }
-        }
-      ],
-      "groupedIds": [
-        "6f97f6e7035f"
-      ],
-      "decisions": [],
-      "tasks": [
-        "(none)"
-      ],
-      "openPoints": [],
-      "open_points": [],
-      "nextSteps": [],
-      "next_steps": [],
-      "importantPoints": [
-        "Test pipeline trascrizione"
-      ],
-      "important_points": [
-        "Test pipeline trascrizione"
-      ],
-      "calendarEvents": [],
-      "calendar_events": [],
-      "possibleActions": [],
-      "possible_actions": [],
-      "childIds": [
-        "6f97f6e7035f"
-      ],
-      "related_files": [],
-      "sourceKey": "content/transcriptions/voice_260516_191818.md",
-      "sourceGroupKey": "content/transcriptions/voice_260516_191818.md",
-      "title": "Prova registrazione audio → testo",
-      "displayTitle": "Prova registrazione audio → testo"
-    },
-    {
-      "category": "notes",
-      "categoryLabel": "Notes",
-      "filepath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_250621_185410-a4d50b0e6da1.md",
-      "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_250621_185410-a4d50b0e6da1.md",
-      "source_audio": "Voice 250621 185410.m4a",
-      "source_transcription": "content/transcriptions/Voice_250621_185410.md",
-      "sourceAudio": "Voice 250621 185410.m4a",
-      "sourceTranscription": "content/transcriptions/Voice_250621_185410.md",
-      "project": "uncategorized",
-      "date": "2026-05-17",
-      "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T15:06:39Z",
-      "processedDate": "2026-05-17T15:06:39Z",
-      "preview": "Registrazione brevissima senza testo significativo nel trascritto Whisper: nessun tema, persona o impegno identificabile. Limited content available.",
-      "cardSummary": "Registrazione brevissima senza testo significativo nel trascritto Whisper: nessun tema, persona o impegno identificabile. Limited content available.",
-      "summary": "Registrazione brevissima senza testo significativo nel trascritto Whisper: nessun tema, persona o impegno identificabile. Limited content available.",
-      "stats": {
-        "decisions_count": 0,
-        "tasks_count": 1,
-        "open_points_count": 0,
-        "calendar_events_count": 0,
-        "next_steps_count": 0
-      },
-      "has_chart_data": false,
-      "raw_sections": {
-        "Title": "Frase in spagnolo (limpio)",
-        "Source": "- **Source audio:** Voice 250621 185410.m4a\n- **Source transcription:** `Voice_250621_185410.md`\n- **Processed date:** 2026-05-17T15:06:39Z\n- **Main category:** voice-note\n- **Project:** uncategorized",
-        "Summary": "Registrazione brevissima senza testo significativo nel trascritto Whisper: nessun tema, persona o impegno identificabile. Limited content available.",
-        "Important Points": "- Frase: cercare/trovare «el limpio»\n- (none)\n- (none)",
-        "People Involved": "- to confirm",
-        "Tasks": "- (none)",
-        "Calendar Events": "- (none)",
-        "Decisions": "- (none)",
-        "Open Points": "- (none)",
-        "Project Updates": "- (none)",
-        "Next Steps": "- (none)"
-      },
-      "extracted_items": {
-        "decisions": [],
-        "tasks": [
-          "(none)"
-        ],
-        "open_points": [],
-        "next_steps": [],
-        "important_points": [
-          "Frase: cercare/trovare «el limpio»"
-        ],
-        "calendar_events": [],
-        "people": [],
-        "project_updates": [],
-        "main_category": "voice-note"
-      },
-      "source_only": false,
-      "needs_review": false,
-      "item_type": "source_entry",
-      "reviewed": false,
-      "pipelineStatus": "ready_for_site",
-      "readyForSite": true,
-      "id": "f86ae6e7a8e4",
-      "isSourceEntry": true,
-      "source_entry": true,
-      "primaryCategory": "notes",
-      "mainCategory": "notes",
-      "categories": [
-        "tasks",
-        "calendar",
-        "decisions",
-        "open-points",
-        "projects"
-      ],
-      "extractedCategories": [
-        "tasks",
-        "calendar",
-        "decisions",
-        "open-points",
-        "projects"
-      ],
-      "hasTasks": true,
-      "hasCalendar": true,
-      "hasDecisions": true,
-      "hasOpenPoints": true,
-      "hasProjects": true,
-      "extractions": {
-        "notes": [
-          {
-            "id": "abf1e4c778be",
-            "category": "notes",
-            "title": "Frase in spagnolo (limpio)",
-            "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_250621_185410-a4d50b0e6da1.md",
-            "preview": "Registrazione brevissima senza testo significativo nel trascritto Whisper: nessun tema, persona o impegno identificabile. Limited content available.",
-            "summary": "Registrazione brevissima senza testo significativo nel trascritto Whisper: nessun tema, persona o impegno identificabile. Limited content available.",
-            "project": "uncategorized",
-            "date": "2026-05-17",
-            "dueDate": null,
-            "eventDate": "2026-05-17",
-            "status": null,
-            "extracted_items": {
-              "decisions": [],
-              "tasks": [],
-              "open_points": [],
-              "next_steps": [],
-              "important_points": [
-                "Frase: cercare/trovare «el limpio»"
-              ],
-              "calendar_events": [],
-              "people": [],
-              "project_updates": [],
-              "main_category": "voice-note"
-            }
-          }
-        ]
-      },
-      "sourceEntries": [
-        {
-          "id": "abf1e4c778be",
-          "category": "notes",
-          "title": "Frase in spagnolo (limpio)",
-          "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_250621_185410-a4d50b0e6da1.md",
-          "preview": "Registrazione brevissima senza testo significativo nel trascritto Whisper: nessun tema, persona o impegno identificabile. Limited content available.",
-          "summary": "Registrazione brevissima senza testo significativo nel trascritto Whisper: nessun tema, persona o impegno identificabile. Limited content available.",
-          "project": "uncategorized",
-          "date": "2026-05-17",
-          "dueDate": null,
-          "eventDate": "2026-05-17",
-          "status": null,
-          "extracted_items": {
-            "decisions": [],
-            "tasks": [],
-            "open_points": [],
-            "next_steps": [],
-            "important_points": [
-              "Frase: cercare/trovare «el limpio»"
-            ],
-            "calendar_events": [],
-            "people": [],
-            "project_updates": [],
-            "main_category": "voice-note"
-          }
-        }
-      ],
-      "groupedIds": [
-        "abf1e4c778be"
-      ],
-      "decisions": [],
-      "tasks": [
-        "(none)"
-      ],
-      "openPoints": [],
-      "open_points": [],
-      "nextSteps": [],
-      "next_steps": [],
-      "importantPoints": [
-        "Frase: cercare/trovare «el limpio»"
-      ],
-      "important_points": [
-        "Frase: cercare/trovare «el limpio»"
-      ],
-      "calendarEvents": [],
-      "calendar_events": [],
-      "possibleActions": [],
-      "possible_actions": [],
-      "childIds": [
-        "abf1e4c778be"
-      ],
-      "related_files": [],
-      "sourceKey": "content/transcriptions/voice_250621_185410.md",
-      "sourceGroupKey": "content/transcriptions/voice_250621_185410.md",
-      "title": "Frase in spagnolo (limpio)",
-      "displayTitle": "Frase in spagnolo (limpio)"
-    },
-    {
-      "category": "notes",
-      "categoryLabel": "Notes",
-      "filepath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_250621_185357-69216cdbadfb.md",
-      "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_250621_185357-69216cdbadfb.md",
-      "source_audio": "Voice 250621 185357.m4a",
-      "source_transcription": "content/transcriptions/Voice_250621_185357.md",
-      "sourceAudio": "Voice 250621 185357.m4a",
-      "sourceTranscription": "content/transcriptions/Voice_250621_185357.md",
-      "project": "uncategorized",
-      "date": "2026-05-17",
-      "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T15:06:39Z",
-      "processedDate": "2026-05-17T15:06:39Z",
-      "preview": "Clip quasi vuota sul trascritto automatico: durata brevissima senza contenuto lessicale utile. Probabile test microfono o registrazione accidentale. Limited content available.",
-      "cardSummary": "Clip quasi vuota sul trascritto automatico: durata brevissima senza contenuto lessicale utile. Probabile test microfono o registrazione accidentale. Limited content available.",
-      "summary": "Clip quasi vuota sul trascritto automatico: durata brevissima senza contenuto lessicale utile. Probabile test microfono o registrazione accidentale. Limited content available.",
-      "stats": {
-        "decisions_count": 0,
-        "tasks_count": 1,
-        "open_points_count": 1,
-        "calendar_events_count": 0,
-        "next_steps_count": 0
-      },
-      "has_chart_data": true,
-      "raw_sections": {
-        "Title": "Audio non decodificabile (giu 2025)",
-        "Source": "- **Source audio:** Voice 250621 185357.m4a\n- **Source transcription:** `Voice_250621_185357.md`\n- **Processed date:** 2026-05-17T15:06:39Z\n- **Main category:** voice-note\n- **Project:** uncategorized",
-        "Summary": "Clip quasi vuota sul trascritto automatico: durata brevissima senza contenuto lessicale utile. Probabile test microfono o registrazione accidentale. Limited content available.",
-        "Important Points": "- Checksum e header pipeline ok; contenuto semantico assente\n- Probabile rumore, lingua non supportata o audio corrotto\n- (none)",
-        "People Involved": "- to confirm",
-        "Tasks": "- (none)",
-        "Calendar Events": "- (none)",
-        "Decisions": "- (none)",
-        "Open Points": "- Utilità di conservare il file nel feed — owner to confirm",
-        "Project Updates": "- (none)",
-        "Next Steps": "- (none)"
-      },
-      "extracted_items": {
-        "decisions": [],
-        "tasks": [
-          "(none)"
-        ],
-        "open_points": [
-          "Utilità di conservare il file nel feed — owner to confirm"
-        ],
-        "next_steps": [],
-        "important_points": [
-          "Checksum e header pipeline ok; contenuto semantico assente",
-          "Probabile rumore, lingua non supportata o audio corrotto"
-        ],
-        "calendar_events": [],
-        "people": [],
-        "project_updates": [],
-        "main_category": "voice-note"
-      },
-      "source_only": false,
-      "needs_review": false,
-      "item_type": "source_entry",
-      "reviewed": false,
-      "pipelineStatus": "ready_for_site",
-      "readyForSite": true,
-      "id": "554affa677a1",
-      "isSourceEntry": true,
-      "source_entry": true,
-      "primaryCategory": "notes",
-      "mainCategory": "notes",
-      "categories": [
-        "tasks",
-        "calendar",
-        "decisions",
-        "open-points",
-        "projects"
-      ],
-      "extractedCategories": [
-        "tasks",
-        "calendar",
-        "decisions",
-        "open-points",
-        "projects"
-      ],
-      "hasTasks": true,
-      "hasCalendar": true,
-      "hasDecisions": true,
-      "hasOpenPoints": true,
-      "hasProjects": true,
-      "extractions": {
-        "notes": [
-          {
-            "id": "9831b00f6391",
-            "category": "notes",
-            "title": "Audio non decodificabile (giu 2025)",
-            "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_250621_185357-69216cdbadfb.md",
-            "preview": "Clip quasi vuota sul trascritto automatico: durata brevissima senza contenuto lessicale utile. Probabile test microfono o registrazione accidentale. Limited content available.",
-            "summary": "Clip quasi vuota sul trascritto automatico: durata brevissima senza contenuto lessicale utile. Probabile test microfono o registrazione accidentale. Limited content available.",
-            "project": "uncategorized",
-            "date": "2026-05-17",
-            "dueDate": null,
-            "eventDate": "2026-05-17",
-            "status": null,
-            "extracted_items": {
-              "decisions": [],
-              "tasks": [],
-              "open_points": [
-                "Utilità di conservare il file nel feed — owner to confirm"
-              ],
-              "next_steps": [],
-              "important_points": [
-                "Checksum e header pipeline ok; contenuto semantico assente",
-                "Probabile rumore, lingua non supportata o audio corrotto"
-              ],
-              "calendar_events": [],
-              "people": [],
-              "project_updates": [],
-              "main_category": "voice-note"
-            }
-          }
-        ]
-      },
-      "sourceEntries": [
-        {
-          "id": "9831b00f6391",
-          "category": "notes",
-          "title": "Audio non decodificabile (giu 2025)",
-          "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_250621_185357-69216cdbadfb.md",
-          "preview": "Clip quasi vuota sul trascritto automatico: durata brevissima senza contenuto lessicale utile. Probabile test microfono o registrazione accidentale. Limited content available.",
-          "summary": "Clip quasi vuota sul trascritto automatico: durata brevissima senza contenuto lessicale utile. Probabile test microfono o registrazione accidentale. Limited content available.",
-          "project": "uncategorized",
-          "date": "2026-05-17",
-          "dueDate": null,
-          "eventDate": "2026-05-17",
-          "status": null,
-          "extracted_items": {
-            "decisions": [],
-            "tasks": [],
-            "open_points": [
-              "Utilità di conservare il file nel feed — owner to confirm"
-            ],
-            "next_steps": [],
-            "important_points": [
-              "Checksum e header pipeline ok; contenuto semantico assente",
-              "Probabile rumore, lingua non supportata o audio corrotto"
-            ],
-            "calendar_events": [],
-            "people": [],
-            "project_updates": [],
-            "main_category": "voice-note"
-          }
-        }
-      ],
-      "groupedIds": [
-        "9831b00f6391"
-      ],
-      "decisions": [],
-      "tasks": [
-        "(none)"
-      ],
-      "openPoints": [
-        "Utilità di conservare il file nel feed — owner to confirm"
-      ],
-      "open_points": [
-        "Utilità di conservare il file nel feed — owner to confirm"
-      ],
-      "nextSteps": [],
-      "next_steps": [],
-      "importantPoints": [
-        "Checksum e header pipeline ok; contenuto semantico assente",
-        "Probabile rumore, lingua non supportata o audio corrotto"
-      ],
-      "important_points": [
-        "Checksum e header pipeline ok; contenuto semantico assente",
-        "Probabile rumore, lingua non supportata o audio corrotto"
-      ],
-      "calendarEvents": [],
-      "calendar_events": [],
-      "possibleActions": [],
-      "possible_actions": [],
-      "childIds": [
-        "9831b00f6391"
-      ],
-      "related_files": [],
-      "sourceKey": "content/transcriptions/voice_250621_185357.md",
-      "sourceGroupKey": "content/transcriptions/voice_250621_185357.md",
-      "title": "Audio non decodificabile (giu 2025)",
-      "displayTitle": "Audio non decodificabile (giu 2025)"
+      "icon_shape_signature": "pool-slide-sun",
+      "icon_concept_label": "Water park outing"
     },
     {
       "category": "notes",
@@ -1917,7 +1451,15 @@
             "people": [],
             "project_updates": [],
             "main_category": "voice-note"
-          }
+          },
+          "icon_concept": "memory-recall",
+          "icon_keywords": [
+            "ricorda",
+            "ricord",
+            "cosa si ricorda"
+          ],
+          "icon_shape_signature": "brain-question-lightbulb",
+          "icon_concept_label": "Memory recall"
         }
       ],
       "groupedIds": [
@@ -1950,7 +1492,15 @@
       "sourceKey": "content/transcriptions/voice_007.md",
       "sourceGroupKey": "content/transcriptions/voice_007.md",
       "title": "Domanda su cosa si ricorda",
-      "displayTitle": "Domanda su cosa si ricorda"
+      "displayTitle": "Domanda su cosa si ricorda",
+      "icon_concept": "memory-recall",
+      "icon_keywords": [
+        "ricorda",
+        "ricord",
+        "cosa si ricorda"
+      ],
+      "icon_shape_signature": "brain-question-lightbulb",
+      "icon_concept_label": "Memory recall"
     },
     {
       "category": "notes",
@@ -2099,7 +1649,15 @@
             "people": [],
             "project_updates": [],
             "main_category": "voice-note"
-          }
+          },
+          "icon_concept": "knee-injection",
+          "icon_keywords": [
+            "condropatia",
+            "infiltrazione",
+            "acido ialuronico"
+          ],
+          "icon_shape_signature": "knee-joint-syringe",
+          "icon_concept_label": "Knee medical injection"
         }
       ],
       "groupedIds": [
@@ -2136,7 +1694,15 @@
       "sourceKey": "content/transcriptions/voice_006.md",
       "sourceGroupKey": "content/transcriptions/voice_006.md",
       "title": "Condropatia: infiltrazione acido ialuronico",
-      "displayTitle": "Condropatia: infiltrazione acido ialuronico"
+      "displayTitle": "Condropatia: infiltrazione acido ialuronico",
+      "icon_concept": "knee-injection",
+      "icon_keywords": [
+        "condropatia",
+        "infiltrazione",
+        "acido ialuronico"
+      ],
+      "icon_shape_signature": "knee-joint-syringe",
+      "icon_concept_label": "Knee medical injection"
     },
     {
       "category": "notes",
@@ -2307,7 +1873,18 @@
             "people": [],
             "project_updates": [],
             "main_category": "conversation"
-          }
+          },
+          "icon_concept": "crypto-finance",
+          "icon_keywords": [
+            "bitcoin",
+            "crypto",
+            "borsa",
+            "finance",
+            "soldi",
+            "azioni"
+          ],
+          "icon_shape_signature": "bitcoin-chart-wallet",
+          "icon_concept_label": "Crypto & finance"
         }
       ],
       "groupedIds": [
@@ -2355,7 +1932,18 @@
       "sourceKey": "content/transcriptions/voice_005.md",
       "sourceGroupKey": "content/transcriptions/voice_005.md",
       "title": "Riprese canale YouTube «Tanti Soldi» e prove ChatGPT",
-      "displayTitle": "Riprese canale YouTube «Tanti Soldi» e prove ChatGPT"
+      "displayTitle": "Riprese canale YouTube «Tanti Soldi» e prove ChatGPT",
+      "icon_concept": "crypto-finance",
+      "icon_keywords": [
+        "bitcoin",
+        "crypto",
+        "borsa",
+        "finance",
+        "soldi",
+        "azioni"
+      ],
+      "icon_shape_signature": "bitcoin-chart-wallet",
+      "icon_concept_label": "Crypto & finance"
     },
     {
       "category": "notes",
@@ -2498,7 +2086,15 @@
             "people": [],
             "project_updates": [],
             "main_category": "voice-note"
-          }
+          },
+          "icon_concept": "recording-test",
+          "icon_keywords": [
+            "prova registrazione",
+            "test audio",
+            "audio/video"
+          ],
+          "icon_shape_signature": "mic-waveform-check",
+          "icon_concept_label": "Recording test"
         }
       ],
       "groupedIds": [
@@ -2531,7 +2127,15 @@
       "sourceKey": "content/transcriptions/voice_004.md",
       "sourceGroupKey": "content/transcriptions/voice_004.md",
       "title": "Prova registrazione audio/video",
-      "displayTitle": "Prova registrazione audio/video"
+      "displayTitle": "Prova registrazione audio/video",
+      "icon_concept": "recording-test",
+      "icon_keywords": [
+        "prova registrazione",
+        "test audio",
+        "audio/video"
+      ],
+      "icon_shape_signature": "mic-waveform-check",
+      "icon_concept_label": "Recording test"
     },
     {
       "category": "notes",
@@ -2674,7 +2278,15 @@
             "people": [],
             "project_updates": [],
             "main_category": "voice-note"
-          }
+          },
+          "icon_concept": "video-editing",
+          "icon_keywords": [
+            "clip video",
+            "montaggio",
+            "registrazioni insieme"
+          ],
+          "icon_shape_signature": "film-strip-scissors",
+          "icon_concept_label": "Video editing"
         }
       ],
       "groupedIds": [
@@ -2707,7 +2319,15 @@
       "sourceKey": "content/transcriptions/voice_003.md",
       "sourceGroupKey": "content/transcriptions/voice_003.md",
       "title": "Clip video: mettere registrazioni insieme",
-      "displayTitle": "Clip video: mettere registrazioni insieme"
+      "displayTitle": "Clip video: mettere registrazioni insieme",
+      "icon_concept": "video-editing",
+      "icon_keywords": [
+        "clip video",
+        "montaggio",
+        "registrazioni insieme"
+      ],
+      "icon_shape_signature": "film-strip-scissors",
+      "icon_concept_label": "Video editing"
     },
     {
       "category": "notes",
@@ -2862,7 +2482,13 @@
             "people": [],
             "project_updates": [],
             "main_category": "voice-note"
-          }
+          },
+          "icon_concept": "empty-transcript",
+          "icon_keywords": [
+            "empty transcript"
+          ],
+          "icon_shape_signature": "blank-doc-warning-dot",
+          "icon_concept_label": "Empty transcript"
         }
       ],
       "groupedIds": [
@@ -2903,7 +2529,13 @@
       "sourceKey": "content/transcriptions/voice_002.md",
       "sourceGroupKey": "content/transcriptions/voice_002.md",
       "title": "Trascrizione vuota (Voice 002)",
-      "displayTitle": "Trascrizione vuota (Voice 002)"
+      "displayTitle": "Trascrizione vuota (Voice 002)",
+      "icon_concept": "empty-transcript",
+      "icon_keywords": [
+        "empty transcript"
+      ],
+      "icon_shape_signature": "blank-doc-warning-dot",
+      "icon_concept_label": "Empty transcript"
     },
     {
       "category": "notes",
@@ -3058,7 +2690,13 @@
             "people": [],
             "project_updates": [],
             "main_category": "voice-note"
-          }
+          },
+          "icon_concept": "unclear-audio",
+          "icon_keywords": [
+            "unclear audio"
+          ],
+          "icon_shape_signature": "broken-wave-question",
+          "icon_concept_label": "Unclear audio"
         }
       ],
       "groupedIds": [
@@ -3099,7 +2737,13 @@
       "sourceKey": "content/transcriptions/voice_001.md",
       "sourceGroupKey": "content/transcriptions/voice_001.md",
       "title": "Registrazione non intellegibile (Voice 001)",
-      "displayTitle": "Registrazione non intellegibile (Voice 001)"
+      "displayTitle": "Registrazione non intellegibile (Voice 001)",
+      "icon_concept": "unclear-audio",
+      "icon_keywords": [
+        "unclear audio"
+      ],
+      "icon_shape_signature": "broken-wave-question",
+      "icon_concept_label": "Unclear audio"
     },
     {
       "category": "notes",
@@ -3290,7 +2934,16 @@
             "people": [],
             "project_updates": [],
             "main_category": "conversation"
-          }
+          },
+          "icon_concept": "family-inheritance-money",
+          "icon_keywords": [
+            "famiglia",
+            "figli",
+            "genitori",
+            "soldi senza condizioni"
+          ],
+          "icon_shape_signature": "family-tree-coins",
+          "icon_concept_label": "Family & inheritance"
         }
       ],
       "groupedIds": [
@@ -3349,7 +3002,16 @@
       "sourceKey": "content/transcriptions/seconda.md",
       "sourceGroupKey": "content/transcriptions/seconda.md",
       "title": "Famiglia: soldi senza condizioni, libertà reciproca e pace",
-      "displayTitle": "Famiglia: soldi senza condizioni, libertà reciproca e pace"
+      "displayTitle": "Famiglia: soldi senza condizioni, libertà reciproca e pace",
+      "icon_concept": "family-inheritance-money",
+      "icon_keywords": [
+        "famiglia",
+        "figli",
+        "genitori",
+        "soldi senza condizioni"
+      ],
+      "icon_shape_signature": "family-tree-coins",
+      "icon_concept_label": "Family & inheritance"
     },
     {
       "category": "notes",
@@ -3513,7 +3175,18 @@
             "people": [],
             "project_updates": [],
             "main_category": "conversation"
-          }
+          },
+          "icon_concept": "space-science",
+          "icon_keywords": [
+            "marte",
+            "proxima",
+            "quantist",
+            "einstein",
+            "inception",
+            "fisica"
+          ],
+          "icon_shape_signature": "rocket-planet-orbit",
+          "icon_concept_label": "Space & science"
         }
       ],
       "groupedIds": [
@@ -3560,7 +3233,18 @@
       "sourceKey": "content/transcriptions/memo_006.md",
       "sourceGroupKey": "content/transcriptions/memo_006.md",
       "title": "Vita, Marte, tempo e libro in scrittura",
-      "displayTitle": "Vita, Marte, tempo e libro in scrittura"
+      "displayTitle": "Vita, Marte, tempo e libro in scrittura",
+      "icon_concept": "space-science",
+      "icon_keywords": [
+        "marte",
+        "proxima",
+        "quantist",
+        "einstein",
+        "inception",
+        "fisica"
+      ],
+      "icon_shape_signature": "rocket-planet-orbit",
+      "icon_concept_label": "Space & science"
     },
     {
       "category": "notes",
@@ -3724,7 +3408,15 @@
             "people": [],
             "project_updates": [],
             "main_category": "conversation"
-          }
+          },
+          "icon_concept": "school-youth-health",
+          "icon_keywords": [
+            "scuola",
+            "minori",
+            "compiti"
+          ],
+          "icon_shape_signature": "grad-cap-heart-shield",
+          "icon_concept_label": "School & youth health"
         }
       ],
       "groupedIds": [
@@ -3771,7 +3463,15 @@
       "sourceKey": "content/transcriptions/memo_005.md",
       "sourceGroupKey": "content/transcriptions/memo_005.md",
       "title": "Scuola, YouTube minori e salute",
-      "displayTitle": "Scuola, YouTube minori e salute"
+      "displayTitle": "Scuola, YouTube minori e salute",
+      "icon_concept": "school-youth-health",
+      "icon_keywords": [
+        "scuola",
+        "minori",
+        "compiti"
+      ],
+      "icon_shape_signature": "grad-cap-heart-shield",
+      "icon_concept_label": "School & youth health"
     },
     {
       "category": "notes",
@@ -3935,7 +3635,15 @@
             "people": [],
             "project_updates": [],
             "main_category": "conversation"
-          }
+          },
+          "icon_concept": "journalism-paywall",
+          "icon_keywords": [
+            "paywall",
+            "giornalismo",
+            "abbonamento"
+          ],
+          "icon_shape_signature": "newspaper-lock-coins",
+          "icon_concept_label": "Journalism paywall"
         }
       ],
       "groupedIds": [
@@ -3982,7 +3690,15 @@
       "sourceKey": "content/transcriptions/memo_004.md",
       "sourceGroupKey": "content/transcriptions/memo_004.md",
       "title": "Paywall giornalismo, pranzo e raggi UV",
-      "displayTitle": "Paywall giornalismo, pranzo e raggi UV"
+      "displayTitle": "Paywall giornalismo, pranzo e raggi UV",
+      "icon_concept": "journalism-paywall",
+      "icon_keywords": [
+        "paywall",
+        "giornalismo",
+        "abbonamento"
+      ],
+      "icon_shape_signature": "newspaper-lock-coins",
+      "icon_concept_label": "Journalism paywall"
     },
     {
       "category": "notes",
@@ -4146,7 +3862,20 @@
             "people": [],
             "project_updates": [],
             "main_category": "conversation"
-          }
+          },
+          "icon_concept": "journalism-paywall",
+          "icon_keywords": [
+            "paywall",
+            "abbonamento",
+            "huffington",
+            "dagospia",
+            "sunto",
+            "telegiornale",
+            "rai play",
+            "mediaset"
+          ],
+          "icon_shape_signature": "newspaper-lock-coins",
+          "icon_concept_label": "Journalism paywall"
         }
       ],
       "groupedIds": [
@@ -4193,7 +3922,20 @@
       "sourceKey": "content/transcriptions/memo_003.md",
       "sourceGroupKey": "content/transcriptions/memo_003.md",
       "title": "Contraddittorio TV e servizi di sunto",
-      "displayTitle": "Contraddittorio TV e servizi di sunto"
+      "displayTitle": "Contraddittorio TV e servizi di sunto",
+      "icon_concept": "journalism-paywall",
+      "icon_keywords": [
+        "paywall",
+        "abbonamento",
+        "huffington",
+        "dagospia",
+        "sunto",
+        "telegiornale",
+        "rai play",
+        "mediaset"
+      ],
+      "icon_shape_signature": "newspaper-lock-coins",
+      "icon_concept_label": "Journalism paywall"
     },
     {
       "category": "notes",
@@ -4357,7 +4099,19 @@
             "people": [],
             "project_updates": [],
             "main_category": "conversation"
-          }
+          },
+          "icon_concept": "political-debate",
+          "icon_keywords": [
+            "politic",
+            "dibattit",
+            "contraddittorio",
+            "destra",
+            "sinistra",
+            "par condicio",
+            "vaccini"
+          ],
+          "icon_shape_signature": "podium-bubbles-scale",
+          "icon_concept_label": "Political debate"
         }
       ],
       "groupedIds": [
@@ -4404,7 +4158,19 @@
       "sourceKey": "content/transcriptions/memo_002.md",
       "sourceGroupKey": "content/transcriptions/memo_002.md",
       "title": "Dibattiti politici e informazione bilanciata",
-      "displayTitle": "Dibattiti politici e informazione bilanciata"
+      "displayTitle": "Dibattiti politici e informazione bilanciata",
+      "icon_concept": "political-debate",
+      "icon_keywords": [
+        "politic",
+        "dibattit",
+        "contraddittorio",
+        "destra",
+        "sinistra",
+        "par condicio",
+        "vaccini"
+      ],
+      "icon_shape_signature": "podium-bubbles-scale",
+      "icon_concept_label": "Political debate"
     },
     {
       "category": "notes",
@@ -4574,7 +4340,13 @@
             "people": [],
             "project_updates": [],
             "main_category": "conversation"
-          }
+          },
+          "icon_concept": "thaifans-community",
+          "icon_keywords": [
+            "whatsapp"
+          ],
+          "icon_shape_signature": "users-pin-chat",
+          "icon_concept_label": "ThaiFans business community"
         }
       ],
       "groupedIds": [
@@ -4623,7 +4395,13 @@
       "sourceKey": "content/transcriptions/memo_001.md",
       "sourceGroupKey": "content/transcriptions/memo_001.md",
       "title": "Idea servizio riassunti e registrazione per AI",
-      "displayTitle": "Idea servizio riassunti e registrazione per AI"
+      "displayTitle": "Idea servizio riassunti e registrazione per AI",
+      "icon_concept": "thaifans-community",
+      "icon_keywords": [
+        "whatsapp"
+      ],
+      "icon_shape_signature": "users-pin-chat",
+      "icon_concept_label": "ThaiFans business community"
     },
     {
       "category": "notes",
@@ -4809,7 +4587,16 @@
             "people": [],
             "project_updates": [],
             "main_category": "conversation"
-          }
+          },
+          "icon_concept": "family-inheritance-money",
+          "icon_keywords": [
+            "eredità",
+            "eredit",
+            "figli",
+            "genitori"
+          ],
+          "icon_shape_signature": "family-tree-coins",
+          "icon_concept_label": "Family & inheritance"
         }
       ],
       "groupedIds": [
@@ -4864,7 +4651,16 @@
       "sourceKey": "content/transcriptions/christian.md",
       "sourceGroupKey": "content/transcriptions/christian.md",
       "title": "Dono ~50.000 €, casa cointestata e timori su separazione",
-      "displayTitle": "Dono ~50.000 €, casa cointestata e timori su separazione"
+      "displayTitle": "Dono ~50.000 €, casa cointestata e timori su separazione",
+      "icon_concept": "family-inheritance-money",
+      "icon_keywords": [
+        "eredità",
+        "eredit",
+        "figli",
+        "genitori"
+      ],
+      "icon_shape_signature": "family-tree-coins",
+      "icon_concept_label": "Family & inheritance"
     }
   ],
   "errors": []

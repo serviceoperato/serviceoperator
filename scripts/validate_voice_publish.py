@@ -14,6 +14,7 @@ _SCRIPTS_DIR = Path(__file__).resolve().parent
 if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
 
+from voice_ai_validation import validate_paths  # noqa: E402
 from voice_registry import (  # noqa: E402
     ALLOWED_OUTPUT_PREFIXES,
     PENDING_STATUSES,
@@ -23,6 +24,7 @@ from voice_registry import (  # noqa: E402
     load_registry,
     normalize_entry,
     normalize_raw_rel,
+    primary_output_rel,
 )
 
 REPO = _SCRIPTS_DIR.parent
@@ -91,7 +93,13 @@ def validate_registry(registry: dict) -> list[str]:
         if status in PENDING_STATUSES and ready:
             errors.append(f"Pending status {status!r} cannot be readyForSite for {label}")
         if ready and not is_visible_on_main_page(entry):
-            errors.append(f"readyForSite set without AI outputs or visible status: {label}")
+            errors.append(f"readyForSite set without validated AI outputs: {label}")
+        out_rel = primary_output_rel(entry) if ready else None
+        if ready and raw_rel and out_rel:
+            check = validate_paths(raw_rel, out_rel)
+            if not check.get("ok"):
+                reasons = "; ".join(check.get("reasons") or [])
+                errors.append(f"AI-ready content failed validation for {label}: {reasons}")
         if raw_rel and ready:
             raw_path = REPO / raw_rel
             if raw_path.is_file():

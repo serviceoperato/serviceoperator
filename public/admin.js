@@ -2907,9 +2907,25 @@
         payload.historyRun.errors.length
           ? payload.historyRun.errors.join('\n')
           : '';
-      var combined = [stderr, stdout, historyErrs].filter(Boolean).join('\n').trim();
+      var valLines = '';
+      if (payload && Array.isArray(payload.validationLog) && payload.validationLog.length) {
+        valLines =
+          '--- AI publish validation (latest) ---\n' +
+          payload.validationLog
+            .slice(-12)
+            .map(function (row) {
+              var name = row.filename || row.rawRel || '—';
+              var st = row.status || '—';
+              var model = row.aiModel || '—';
+              var why =
+                row.reasons && row.reasons.length ? row.reasons.join('; ') : 'ok';
+              return name + ' | ' + st + ' | model=' + model + ' | ' + why;
+            })
+            .join('\n');
+      }
+      var combined = [stderr, stdout, historyErrs, valLines].filter(Boolean).join('\n').trim();
       var deps = voicePipelineDepsHint(combined);
-      if (status === 'error' || deps) {
+      if (status === 'error' || deps || valLines) {
         var logText = deps ? deps + '\n\n' + combined : combined;
         logEl.textContent = logText || 'Pipeline finished with an error.';
         logEl.classList.remove('is-hidden');

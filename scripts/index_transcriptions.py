@@ -25,6 +25,7 @@ if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
 
 from key_point_validation import is_valid_key_point  # noqa: E402
+from tx_icon_concept import assign_icon_concepts_for_items, assign_icon_concepts_tree  # noqa: E402
 from tx_speaker_format import apply_speaker_format_to_item  # noqa: E402
 from tx_summary_utils import card_preview_of  # noqa: E402
 from voice_registry import (  # noqa: E402
@@ -344,7 +345,22 @@ def output_is_canonical(filepath: str, source_transcription: str | None, registr
 def summary_looks_like_raw_paste(summary: str, source_transcription: str | None) -> bool:
     if not summary or not source_transcription:
         return False
-    raw_path = REPO_ROOT / normalize_raw_rel(source_transcription)
+    raw_rel = normalize_raw_rel(source_transcription)
+    match = None
+    try:
+        from voice_ai_validation import validate_paths
+
+        entry = find_entry_by_raw_path(load_registry(), raw_rel)
+        if entry:
+            out_rel = entry[1].get("groupedOutputPath") or (entry[1].get("aiOutputs") or {}).get(
+                "meeting"
+            ) or (entry[1].get("aiOutputs") or {}).get("note")
+            if out_rel:
+                check = validate_paths(raw_rel, str(out_rel))
+                return not bool(check.get("ok"))
+    except Exception:
+        pass
+    raw_path = REPO_ROOT / raw_rel
     if not raw_path.is_file():
         return False
     raw_text = raw_path.read_text(encoding="utf-8")
@@ -890,7 +906,19 @@ def item_allowed_on_site(item: dict[str, Any], registry: dict[str, Any]) -> bool
         item["sourceTranscription"] = raw
         if is_chat_import_source(raw) and item.get("item_type") != "grouped":
             return False
-        return raw_source_allowed_for_site(raw, registry)
+        if not raw_source_allowed_for_site(raw, registry):
+            return False
+        try:
+            from voice_ai_validation import validate_paths
+
+            check = validate_paths(raw, path)
+            if not check.get("ok"):
+                item["needs_review"] = True
+                item["publishValidation"] = check
+                return False
+        except Exception:
+            return False
+        return True
     return False
 
 
@@ -1414,6 +1442,8 @@ def build_index() -> dict[str, Any]:
             if isinstance(child, dict):
                 apply_speaker_format_to_item(child)
     compute_related_files(source_entries)
+    assign_icon_concepts_tree(source_entries)
+    assign_icon_concepts_for_items(needs_review)
     extraction_totals, source_totals = compute_index_totals(source_entries)
     extraction_totals["needsReview"] = len(needs_review)
     source_totals["needsReview"] = len(needs_review)

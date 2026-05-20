@@ -112,6 +112,15 @@ def has_primary_ai_output(ai_outputs: dict[str, str | None] | None, raw: dict[st
     return bool(ai_outputs.get("meeting") or ai_outputs.get("note"))
 
 
+def primary_output_rel(entry: dict[str, Any]) -> str | None:
+    grouped = entry.get("groupedOutputPath")
+    if grouped and str(grouped).startswith("content/"):
+        return str(grouped)
+    ai = entry.get("aiOutputs") or {}
+    rel = ai.get("meeting") or ai.get("note")
+    return str(rel) if rel else None
+
+
 def primary_output_exists(ai_outputs: dict[str, str | None] | None, raw: dict[str, Any] | None = None) -> bool:
     if raw and grouped_output_exists(raw):
         return True
@@ -296,16 +305,24 @@ def find_entry_by_source_id(registry: dict[str, Any], source_id: str) -> tuple[s
 
 
 def is_visible_on_main_page(entry: dict[str, Any]) -> bool:
-    """Main Transcriptions list: ONLY ready_for_site with primary AI output on disk."""
+    """Main Transcriptions list: ONLY ready_for_site with validated primary AI output on disk."""
     return is_ready_for_site(entry)
 
 
 def is_ready_for_site(entry: dict[str, Any]) -> bool:
-    return (
+    if not (
         bool(entry.get("readyForSite"))
         and entry.get("status") == STATUS_READY
         and primary_output_exists(entry.get("aiOutputs"), entry)
-    )
+    ):
+        return False
+    try:
+        from voice_ai_validation import validate_registry_entry
+
+        check = validate_registry_entry(entry)
+        return bool(check.get("ok"))
+    except Exception:
+        return False
 
 
 def list_pending_sources(registry: dict[str, Any]) -> list[dict[str, Any]]:

@@ -15,6 +15,7 @@ if str(_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS))
 
 from key_point_validation import filter_key_points  # noqa: E402
+from voice_ai_validation import append_validation_log, validate_paths  # noqa: E402
 from tx_summary_utils import card_preview_of  # noqa: E402
 from voice_registry import find_entry_by_raw_path, normalize_raw_rel  # noqa: E402
 
@@ -210,12 +211,19 @@ def main() -> None:
         )
 
         force_ready = bool(item.get("force_ready") or item.get("ready_for_site"))
-        low_quality = (
-            not force_ready
-            and (
-                raw_name in ("Voice_001.md", "Voice_002.md", "Voice_250621_185357.md")
-                or not item.get("clean_summary")
-            )
+        raw_rel = f"content/transcriptions/{raw_name}"
+        check = validate_paths(raw_rel, grouped_rel)
+        append_validation_log(
+            source="apply_grouped_ai_ready",
+            filename=raw_name,
+            status="ready_for_site" if check.get("ok") else "needs_review",
+            result=check,
+            ai_model="composer-grouped",
+        )
+        low_quality = not force_ready and (
+            raw_name in ("Voice_001.md", "Voice_002.md", "Voice_250621_185357.md")
+            or not item.get("clean_summary")
+            or not check.get("ok")
         )
         status = "ready_for_site" if force_ready or not low_quality else "needs_review"
         ready = status == "ready_for_site"

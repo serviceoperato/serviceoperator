@@ -5,7 +5,7 @@
   'use strict';
 
   /** Bumped when dashboard markup/behavior changes (cache-bust aid). */
-  window.TX_DASHBOARD_UI_REV = 19;
+  window.TX_DASHBOARD_UI_REV = 20;
 
   /** Detail page: collapsed preview length for full transcription reference (chars). */
   var DETAIL_REF_PREVIEW_CHARS = 650;
@@ -28,6 +28,9 @@
     { key: 'decisions', label: 'Decision log', short: 'Decisions' },
     { key: 'open-points', label: 'Open points', short: 'Open' },
   ];
+
+  /** Nav-only filter — not a content category folder. */
+  var NAV_ALL_CATEGORY = { key: 'all', label: 'All transcriptions', short: 'All' };
 
   var CATEGORY_LABELS = {
     meetings: 'Meeting summary',
@@ -849,6 +852,7 @@
   }
 
   var CATEGORY_THEME = {
+    all: { accent: '#64748b', subtitle: 'Every AI-ready transcription' },
     meetings: { accent: '#2563eb', subtitle: 'Discussions, decisions, and follow-ups' },
     notes: { accent: '#4f46e5', subtitle: 'Ideas, reminders, and personal takeaways' },
     tasks: { accent: '#10b981', subtitle: 'Action items and checklists' },
@@ -1114,6 +1118,7 @@
 
   function sourceHasCategory(item, cat) {
     if (!item || !cat) return false;
+    if (cat === 'all') return true;
     return itemPrimaryCategory(item) === cat;
   }
 
@@ -1152,12 +1157,14 @@
   }
 
   function categoryItems(cat) {
+    if (cat === 'all') return aiReadyItems().slice();
     return aiReadyItems().filter(function (it) {
       return sourceHasCategory(it, cat);
     });
   }
 
   function categoryCount(key) {
+    if (key === 'all') return aiReadyItems().length;
     var sourceCounts = state.sourceCounts || {};
     if (sourceCounts[key] != null) return sourceCounts[key];
     return categoryItems(key).length;
@@ -1174,17 +1181,21 @@
   }
 
   function shouldShowCategory(key) {
+    if (key === 'all') return true;
     if (state.showEmptyCategories) return true;
     return categoryCount(key) > 0;
   }
 
   function categoriesForNav() {
-    return CATEGORIES.filter(function (c) {
-      return shouldShowCategory(c.key);
-    });
+    return [NAV_ALL_CATEGORY].concat(
+      CATEGORIES.filter(function (c) {
+        return shouldShowCategory(c.key);
+      })
+    );
   }
 
   function ensureActiveCategory() {
+    if (state.category === 'all') return;
     if (shouldShowCategory(state.category)) return;
     var first = categoriesForNav()[0];
     if (first) state.category = first.key;
@@ -2794,6 +2805,18 @@
     if (!n) return [];
     var lines = [];
     switch (cat) {
+      case 'all':
+        lines.push(
+          countWhere(items, function (it) {
+            return it.reviewed;
+          }) + ' reviewed'
+        );
+        lines.push(
+          countWhere(items, function (it) {
+            return !it.reviewed;
+          }) + ' unreviewed'
+        );
+        break;
       case 'meetings':
         lines.push(
           countWhere(items, function (it) {
@@ -3675,14 +3698,26 @@
     'content/open-points/',
   ];
 
+  function looksLikeRawEcho(item) {
+    var summary = String(item.summary || item.preview || item.cardSummary || '').trim();
+    if (!summary || summary.length < 40) return false;
+    var prefix = summary.slice(0, 80).toLowerCase();
+    if (prefix.indexOf('so guys we can start') === 0) return true;
+    if (prefix.indexOf('allora, oggi sto lavorando') === 0 && summary.length < 200) return true;
+    var raw = String(item.sourceTranscriptionContent || '').toLowerCase();
+    if (raw && prefix.length >= 40 && raw.indexOf(prefix) >= 0) return true;
+    return false;
+  }
+
   function isAiReadyItem(it) {
     if (!it || it.source_only || it.sourceOnly) return false;
     var path = String(it.path || '');
     if (path.indexOf('content/transcriptions/') === 0) return false;
     if (path && !ALLOWED_OUTPUT_PREFIXES.some(function (p) { return path.indexOf(p) === 0; })) return false;
-    if (it.readyForSite === false) return false;
+    if (it.readyForSite === false || it.needs_review || it.needsReview) return false;
     var st = it.pipelineStatus;
     if (st && !VISIBLE_PIPELINE_STATUSES[st]) return false;
+    if (looksLikeRawEcho(it)) return false;
     return true;
   }
 
@@ -3824,6 +3859,7 @@
 
 
   function categoryShortLabel(key) {
+    if (key === 'all') return NAV_ALL_CATEGORY.short;
     for (var i = 0; i < CATEGORIES.length; i++) {
       if (CATEGORIES[i].key === key) return CATEGORIES[i].short;
     }
@@ -4442,13 +4478,29 @@
     return map[status] || status || 'Unknown';
   }
 
+  function isRawPendingSource(p) {
+    if (!p) return false;
+    var st = p.status || 'raw_created';
+    if (st === 'ready_for_site' || st === 'ai_processed') return false;
+    return (
+      st === 'detected' ||
+      st === 'raw_created' ||
+      st === 'ai_processing_pending' ||
+      st === 'ai_processing_running' ||
+      st === 'failed' ||
+      st === 'needs_review'
+    );
+  }
+
   function renderRawSourcesBox() {
     var el = byId('txRawSources');
     if (!el) return;
     var rs = state.rawSources || {};
     var total = rs.total != null ? rs.total : state.rawTranscriptionCount || 0;
     var waiting = rs.waitingForProcessing || 0;
-    var pending = sortPendingSourcesNewestFirst(rs.pendingSources || [], isSortAscending());
+    var pending = sortPendingSourcesNewestFirst(rs.pendingSources || [], isSortAscending()).filter(
+      isRawPendingSource,
+    );
     var rows = pending
       .slice(0, 24)
       .map(function (p) {
@@ -4496,7 +4548,7 @@
   }
 
   function renderCategoryButton(c, counts, activeKey) {
-    var n = counts[c.key] != null ? counts[c.key] : 0;
+    var n = categoryCount(c.key);
     var active = activeKey === c.key ? ' is-active' : '';
     var emptyCls = n === 0 ? ' tx-cat-card--empty' : '';
     var theme = catTheme(c.key);
@@ -5175,6 +5227,11 @@
     }
 
     state.filtered = list;
+
+    var TV = txTopicVisuals();
+    if (TV && TV.assignIconConceptsForItems && list.length) {
+      TV.assignIconConceptsForItems(list);
+    }
 
     if (!state.items.length && !state.loading) {
       var favEmpty = renderFavoritesSection();

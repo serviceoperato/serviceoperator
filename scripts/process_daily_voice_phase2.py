@@ -162,12 +162,31 @@ def build_ai_outputs(result: Phase2Result, out_rel: str, parsed) -> dict[str, st
     return outputs
 
 
-def resolve_final_status(result: Phase2Result, ai_outputs: dict[str, str | None]) -> tuple[str, bool]:
+def resolve_final_status(
+    result: Phase2Result,
+    ai_outputs: dict[str, str | None],
+    *,
+    raw_rel: str | None = None,
+    output_rel: str | None = None,
+) -> tuple[str, bool, list[str]]:
     if not has_primary_ai_output(ai_outputs) or not primary_output_exists(ai_outputs):
-        return STATUS_FAILED, False
+        return STATUS_FAILED, False, ["no primary AI output on disk"]
     if result.confidence < 0.6:
-        return STATUS_NEEDS_REVIEW, False
-    return STATUS_READY, True
+        return STATUS_NEEDS_REVIEW, False, [f"low confidence ({result.confidence:.2f})"]
+    if raw_rel and output_rel:
+        from voice_ai_validation import append_validation_log, validate_paths
+
+        check = validate_paths(raw_rel, output_rel)
+        append_validation_log(
+            source="phase2",
+            filename=Path(raw_rel).name,
+            status="ready_for_site" if check.get("ok") else "needs_review",
+            result=check,
+            ai_model="heuristic-phase2",
+        )
+        if not check.get("ok"):
+            return STATUS_NEEDS_REVIEW, False, list(check.get("reasons") or ["validation failed"])
+    return STATUS_READY, True, []
 
 
 def classify_daily(mod, parsed) -> Phase2Result:
@@ -469,7 +488,10 @@ def process_file(mod, md_path: Path, registry: dict, stats: dict) -> None:
         append_aggregates(result, parsed, source_id)
 
         ai_outputs = build_ai_outputs(result, out_rel, parsed)
-        final_status, ready = resolve_final_status(result, ai_outputs)
+        final_status, ready, val_reasons = resolve_final_status(
+            result, ai_outputs, raw_rel=rel, output_rel=out_rel
+        )
+        val_error = "; ".join(val_reasons) if val_reasons else None
 
         if audio_key:
             upsert_entry(
@@ -481,7 +503,7 @@ def process_file(mod, md_path: Path, registry: dict, stats: dict) -> None:
                 aiProcessedAt=processing_date,
                 status=final_status,
                 readyForSite=ready,
-                error=None,
+                error=val_error,
                 category=result.category,
                 project=result.project,
             )
@@ -527,13 +549,20 @@ def migrate_legacy_ready_flags(registry: dict) -> None:
         ai_outputs = normalize_ai_outputs(entry.get("aiOutputs"))
         ready = primary_output_exists(ai_outputs)
         if raw_rel and (REPO / raw_rel).is_file() and val.get("pipeline_classified") and ready:
+            from voice_ai_validation import validate_paths
+
+            out_rel = grouped_output_path(val) or (ai_outputs or {}).get("meeting") or (ai_outputs or {}).get("note")
+            can_publish = True
+            if out_rel:
+                check = validate_paths(raw_rel, str(out_rel))
+                can_publish = bool(check.get("ok"))
             upsert_entry(
                 registry,
                 key,
                 rawTranscriptionPath=raw_rel,
                 aiOutputs=ai_outputs,
-                status=STATUS_READY,
-                readyForSite=True,
+                status=STATUS_READY if can_publish else STATUS_NEEDS_REVIEW,
+                readyForSite=can_publish,
                 aiProcessedAt=entry.get("aiProcessedAt") or utc_now_iso(),
             )
 

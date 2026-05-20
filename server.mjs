@@ -2629,6 +2629,7 @@ const voicePipelineRunsPath = path.join(voiceProcessedDir, 'pipeline_runs.json')
 const voicePipelineLastFilesPath = path.join(voiceProcessedDir, 'pipeline_last_files.json');
 const voiceProcessedRegistryPath = path.join(voiceProcessedDir, 'processed_files.json');
 const voicePipelineProgressPath = path.join(voiceProcessedDir, 'pipeline_progress.json');
+const voicePipelineValidationLogPath = path.join(voiceProcessedDir, 'pipeline_validation_log.jsonl');
 const voicePipelineScriptPath = path.join(__dirname, 'scripts', 'process_voice_recorder_pipeline.py');
 
 /** Strip host-specific paths from voice-pipeline API responses (admin JSON only). */
@@ -2976,6 +2977,21 @@ function buildVoicePipelineStatusPayload() {
       recentSourcesTaken: recentSources.recentSourcesTaken,
     };
   }
+  let validationLog = [];
+  try {
+    if (fs.existsSync(voicePipelineValidationLogPath)) {
+      const lines = fs.readFileSync(voicePipelineValidationLogPath, 'utf8').trim().split('\n').filter(Boolean);
+      validationLog = lines.slice(-40).map((line) => {
+        try {
+          return JSON.parse(line);
+        } catch {
+          return { raw: line };
+        }
+      });
+    }
+  } catch {
+    validationLog = [];
+  }
   return {
     ok: true,
     status,
@@ -2998,6 +3014,7 @@ function buildVoicePipelineStatusPayload() {
     files,
     historyRun: history,
     progress,
+    validationLog,
   };
 }
 
@@ -3249,9 +3266,76 @@ app.post('/api/admin/transcriptions/mark-reviewed', requireAdmin, (req, res) => 
   }
 });
 
-app.post('/api/admin/transcriptions/reprocess', requireAdmin, (_req, res) => {
+app.post('/api/admin/transcriptions/reprocess', requireAdmin, async (req, res) => {
   transcriptionsApiNoStore(res);
-  return res.status(501).json({ error: 'Coming soon' });
+  const body = req.body && typeof req.body === 'object' ? req.body : {};
+  let rawRel =
+    typeof body.rawTranscription === 'string'
+      ? body.rawTranscription.trim()
+      : typeof body.raw === 'string'
+        ? body.raw.trim()
+        : '';
+  if (!rawRel) {
+    return res.status(400).json({ error: 'Body field rawTranscription (or raw) is required.' });
+  }
+  if (!rawRel.startsWith('content/transcriptions/')) {
+    rawRel = `content/transcriptions/${path.basename(rawRel)}`;
+  }
+  const dataPath = path.join(voiceProcessedDir, '_reprocess_0519.json');
+  const scriptPath = path.join(__dirname, 'scripts', 'reprocess_raw_transcription.py');
+  const composerData =
+    typeof body.composerData === 'string' && body.composerData.trim()
+      ? body.composerData.trim()
+      : fs.existsSync(dataPath) && rawRel.endsWith('0519.md')
+        ? dataPath
+        : '';
+  const args = [scriptPath, rawRel];
+  if (composerData) args.push('--data', composerData);
+  try {
+    const result = await new Promise((resolve) => {
+      const child = spawn(voiceRecorderPythonBin(), args, {
+        cwd: __dirname,
+        env: process.env,
+        windowsHide: true,
+      });
+      let stdout = '';
+      let stderr = '';
+      child.stdout.on('data', (c) => {
+        stdout += c.toString();
+      });
+      child.stderr.on('data', (c) => {
+        stderr += c.toString();
+      });
+      child.on('close', (code) => resolve({ code, stdout, stderr }));
+      child.on('error', (err) => resolve({ code: -1, stdout, stderr: err.message }));
+    });
+    if (result.code !== 0) {
+      console.warn('[transcriptions/reprocess]', rawRel, result.stderr || result.stdout);
+      return res.status(500).json({
+        error: 'Reprocess failed.',
+        raw: rawRel,
+        stderr: result.stderr,
+        stdout: result.stdout,
+      });
+    }
+    let parsed = null;
+    try {
+      const line = result.stdout.trim().split('\n').pop();
+      parsed = line ? JSON.parse(line) : null;
+    } catch {
+      parsed = null;
+    }
+    const indexResult = await runTranscriptionsIndexScript();
+    return res.json({
+      ok: true,
+      raw: rawRel,
+      reprocess: parsed || { ok: true },
+      index: indexResult,
+    });
+  } catch (e) {
+    console.warn('[transcriptions/reprocess]', e && e.message ? e.message : e);
+    return res.status(500).json({ error: 'Reprocess failed.' });
+  }
 });
 
 app.post('/api/admin/transcriptions/sync-item', requireAdmin, async (req, res) => {
