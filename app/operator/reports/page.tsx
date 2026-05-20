@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { OperatorReportsClient } from "./OperatorReportsClient";
+import { PlacesLeadsNavPill } from "./PlacesLeadsNavPill";
 
 export const metadata: Metadata = {
   title: "Reports",
@@ -18,8 +19,14 @@ export default function OperatorReportsPage() {
           <Link className="tf-admin-nav__pill" href="/admin/activity">
             Activity log
           </Link>
+          <Link className="tf-admin-nav__pill" href="/admin/user-profiling">
+            User profiling
+          </Link>
           <Link className="tf-admin-nav__pill" href="/admin/deploy-log">
             Deploy log
+          </Link>
+          <Link className="tf-admin-nav__pill" href="/admin/auth-debug">
+            Auth debug
           </Link>
           <Link className="tf-admin-nav__pill" href="/admin/site-appearance">
             Site appearance
@@ -30,9 +37,13 @@ export default function OperatorReportsPage() {
           <Link className="tf-admin-nav__pill" href="/admin/homepage-icons">
             Homepage icons
           </Link>
+          <Link className="tf-admin-nav__pill" href="/pricing">
+            Pricing
+          </Link>
           <Link className="tf-admin-nav__pill is-active" href="/operator/reports" aria-current="page">
             Reports
           </Link>
+          <PlacesLeadsNavPill />
           <Link className="tf-admin-nav__pill" href="/admin/report-catalog">
             Report catalog
           </Link>

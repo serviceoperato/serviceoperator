@@ -36,12 +36,15 @@
       <div class="tf-admin-nav__pills">
         <a class="tf-admin-nav__pill" href="/admin/users">Users &amp; payouts</a>
         <a class="tf-admin-nav__pill" href="/admin/activity">Activity log</a>
+        <a class="tf-admin-nav__pill" href="/admin/user-profiling">User profiling</a>
         <a class="tf-admin-nav__pill" href="/admin/deploy-log">Deploy log</a>
+        <a class="tf-admin-nav__pill" href="/admin/auth-debug">Auth debug</a>
         <a class="tf-admin-nav__pill" href="/admin/site-appearance">Site appearance</a>
         <a class="tf-admin-nav__pill" href="/admin/icons">Icons</a>
         <a class="tf-admin-nav__pill" href="/admin/homepage-icons">Homepage icons</a>
         <a class="tf-admin-nav__pill" href="/pricing">Pricing</a>
         <a class="tf-admin-nav__pill is-active" href="/operator/reports" aria-current="page">Reports</a>
+        <a class="tf-admin-nav__pill" href="#" id="orPlacesLeadsNav" aria-label="Open Google Places lead collector in a new tab">Places leads</a>
         <a class="tf-admin-nav__pill" href="/admin/report-catalog">Report catalog</a>
         <a class="tf-admin-nav__pill" href="/admin/user-reports">User reports</a>
         <a class="tf-admin-nav__pill" href="/admin/voice-recorder">Voice Recorder</a>
@@ -116,6 +119,46 @@
   var tbody = document.getElementById('orTbody');
   var empty = document.getElementById('orEmpty');
   var verEl = document.getElementById('orTfVer');
+  var placesLeadsBtn = document.getElementById('orPlacesLeadsNav');
+
+  if (placesLeadsBtn) {
+    placesLeadsBtn.addEventListener('click', function (ev) {
+      ev.preventDefault();
+      var adminToken = jwt();
+      if (!adminToken) {
+        window.location.href = '/admin/users';
+        return;
+      }
+      fetch(api('/api/admin/places-page-token'), {
+        method: 'POST',
+        credentials: cred(),
+        cache: 'no-store',
+        headers: { Authorization: 'Bearer ' + adminToken },
+      })
+        .then(function (r) {
+          return r.json().then(function (j) {
+            return { ok: r.ok, j: j };
+          });
+        })
+        .then(function (pack) {
+          if (!pack.ok || !pack.j || !pack.j.page_token) {
+            var msg =
+              (pack.j && (pack.j.error || pack.j.message)) || 'Could not open Places tool. Sign in again.';
+            window.alert(String(msg));
+            return;
+          }
+          var origin =
+            typeof window !== 'undefined' && window.location && window.location.origin
+              ? window.location.origin
+              : '';
+          var url = origin + '/operator/places-leads.html?t=' + encodeURIComponent(pack.j.page_token);
+          window.open(url, '_blank', 'noopener,noreferrer');
+        })
+        .catch(function () {
+          window.alert('Network error opening Places tool.');
+        });
+    });
+  }
 
   fetch(api('/api/version'), { credentials: cred() })
     .then(function (r) {

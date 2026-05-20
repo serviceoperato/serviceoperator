@@ -15,57 +15,6 @@
 <link rel="stylesheet" href="../../styles.css"/>
 <link rel="stylesheet" href="audit-teaser.css"/>
 <style>
-  .so-hero-band {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 24px 32px;
-    margin-bottom: 32px;
-  }
-  .so-hero-band__copy {
-    flex: 1 1 auto;
-    min-width: 0;
-  }
-  .report-010 .so-hero-band .client-hero__eyebrow {
-    margin-bottom: 1rem;
-  }
-  .report-010 .so-hero-band .clinics-hero__title {
-    margin: 0 0 1rem;
-  }
-  .report-010 .so-hero-band .client-hero__lede {
-    margin-bottom: 0;
-    max-width: 40em;
-  }
-  .so-hero-band__stat {
-    flex: 0 1 340px;
-    margin: 0;
-    padding: 0;
-    text-align: right;
-    font-size: clamp(17px, 2.4vw, 22px);
-    font-weight: 600;
-    line-height: 1.25;
-    letter-spacing: -.02em;
-    color: var(--ink);
-  }
-  .so-hero-band__stat-pct {
-    display: block;
-    font-size: clamp(40px, 7vw, 64px);
-    font-weight: 400;
-    line-height: 1;
-    letter-spacing: -.03em;
-    color: var(--so-report-accent);
-    margin-bottom: 6px;
-  }
-  @media (max-width: 720px) {
-    .so-hero-band {
-      flex-direction: column;
-    }
-    .so-hero-band__stat {
-      flex: none;
-      width: 100%;
-      text-align: left;
-    }
-  }
   .report-010 .so-sample-disclaimer {
     margin: 0;
     padding: 14px 20px 18px;
@@ -117,9 +66,7 @@
 </nav>
 
 <main>
-<div class="so-audit-wrap">
-
-  <header class="so-hero-band" aria-label="Business overview">
+  <header class="client-hero client-hero--010 so-hero-band" aria-label="Business overview">
     <div class="so-hero-band__copy">
       <div class="client-hero__eyebrow">
         <span class="dot dot--live" aria-hidden="true"></span>
@@ -137,6 +84,8 @@
       of clinics lose leads between 10&nbsp;PM and 8&nbsp;AM
     </p>
   </header>
+
+<div class="so-audit-wrap">
 
   <!-- 1 · KPI bar — three headline numbers -->
   <div class="so-kpi-row so-kpi-row--shock" aria-label="Key audit metrics">
@@ -388,9 +337,8 @@
 </main>
 
 <aside class="so-sample-disclaimer" role="note" aria-label="Sample report notice">
-  <p class="so-sample-disclaimer__label">SAMPLE REPORT</p>
   <p class="so-sample-disclaimer__lead">
-    <strong>SAMPLE REPORT</strong> — fictional business, real methodology.
+    <strong>SAMPLE REPORT — fictional business, real methodology.</strong>
   </p>
   <p lang="en">
     This is an example of the format you would receive for your business. The numbers here are invented;
