@@ -4575,6 +4575,19 @@ app.get(['/pricing/inquiry', '/pricing/inquiry/'], (_req, res) => {
   res.sendFile(path.join(publicDir, 'pricing-inquiry.html'));
 });
 
+/** Always serve current so-api.js (no CDN stale split-host routing). */
+app.get('/so-api.js', (_req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+  res.setHeader('Content-Type', 'application/javascript; charset=UTF-8');
+  res.sendFile(path.join(publicDir, 'so-api.js'));
+});
+
+app.get('/so-api-same-origin-shim.js', (_req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+  res.setHeader('Content-Type', 'application/javascript; charset=UTF-8');
+  res.sendFile(path.join(publicDir, 'so-api-same-origin-shim.js'));
+});
+
 /** SEO hub: AI operations verticals (same document as long filename; canonical `/ai-operations/`). */
 app.get(['/ai-operations', '/ai-operations/'], (_req, res) => {
   res.sendFile(path.join(publicDir, 'ai-operations-for-hotels-clinics-property.html'));
@@ -4861,6 +4874,7 @@ app.use(
         filePath.endsWith('register.html') ||
         filePath.endsWith('admin.html') ||
         filePath.endsWith('so-api.js') ||
+        filePath.endsWith('so-api-same-origin-shim.js') ||
         filePath.endsWith('operator-html-gate.js') ||
         filePath.endsWith('admin.js') ||
         filePath.endsWith('admin-transcriptions.js') ||

@@ -63,9 +63,9 @@
 
   g.soApiCredentials = function () {
     var o = origin();
-    if (!o) return 'same-origin';
+    if (!o) return 'include';
     try {
-      if (new URL(o).origin === g.location.origin) return 'same-origin';
+      if (new URL(o).origin === g.location.origin) return 'include';
     } catch (e) {}
     return 'omit';
   };
