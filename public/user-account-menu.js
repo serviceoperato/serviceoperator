@@ -145,6 +145,7 @@
     { label: 'Activity log', path: '/admin/activity' },
     { label: 'User profiling', path: '/admin/user-profiling' },
     { label: 'Deploy log', path: '/admin/deploy-log' },
+    { label: 'Auth debug', path: '/admin/auth-debug', publicLink: true },
     { label: 'Site appearance', path: '/admin/site-appearance' },
     { label: 'Icons', path: '/admin/icons' },
     { label: 'Homepage icons', path: '/admin/homepage-icons' },

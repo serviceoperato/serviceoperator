@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>(function(){var k='so-theme',d=document.documentElement,t;try{t=localStorage.getItem(k)}catch(e){}if(t!=='light'&&t!=='dark')t='light';d.setAttribute('data-theme',t)})();</script>
+<title>Auth debug · Operator · www.serviceopera.to</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" href="/favicon.png" type="image/png" sizes="any" />
+<link rel="stylesheet" href="/styles.css" />
+<style>
+  .auth-debug-page {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: calc(var(--site-nav-offset, 5.5rem) + 1.25rem) 1.25rem 3rem;
+  }
+  .auth-debug-page h1 {
+    font-size: 1.35rem;
+    margin: 0 0 0.35rem;
+  }
+  .auth-debug-page__lede {
+    color: var(--mute-2);
+    font-size: 0.92rem;
+    line-height: 1.55;
+    margin: 0 0 1.25rem;
+  }
+  .auth-debug__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0 0 1rem;
+  }
+  .auth-debug__toolbar .btn { font-size: 0.85rem; }
+  .auth-debug__status {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--mute-2);
+    margin: 0 0 1rem;
+  }
+  .auth-debug__section {
+    margin: 0 0 1.35rem;
+    padding: 1rem 1.1rem;
+    background: var(--ink-2, #1a1d24);
+    border: 1px solid var(--line, #2a2f3a);
+    border-radius: 10px;
+  }
+  [data-theme="light"] .auth-debug__section {
+    background: #fff;
+    border-color: #e5e4df;
+  }
+  .auth-debug__section h2 {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 0.75rem;
+    color: var(--mute-2);
+  }
+  .auth-debug__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+  .auth-debug__table th {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.35rem 0.75rem 0.35rem 0;
+    width: 38%;
+    color: var(--mute-2);
+    font-weight: 500;
+  }
+  .auth-debug__table td {
+    padding: 0.35rem 0;
+    word-break: break-word;
+  }
+  .auth-debug__table code {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+  }
+  .auth-debug__status--ok code { color: #16a34a; }
+  .auth-debug__status--fail code { color: #dc2626; }
+  .auth-debug__status--warn code { color: #d97706; }
+  .auth-debug__fixes {
+    margin: 0;
+    padding-left: 1.1rem;
+    color: #fca5a5;
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  [data-theme="light"] .auth-debug__fixes { color: #b91c1c; }
+  .auth-debug__ok {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--mute);
+  }
+  .auth-debug__fail { color: #dc2626; }
+</style>
+<script src="/so-api.js?v=1.8.1"></script>
+<script src="/so-api-same-origin-shim.js?v=1.8.1"></script>
+</head>
+<body class="page-admin page-user-portal" data-page-skeleton="native">
+
+<nav class="nav" aria-label="Primary">
+  <div class="nav__start">
+    <a href="/" class="nav__logo">
+      <img class="nav__logo-img brand-logo" src="/assets/logo.png" width="220" height="90" alt="Home" decoding="async" />
+    </a>
+  </div>
+  <div class="nav__links">
+    <a href="/login.html" class="nav__login mono">Log in</a>
+    <a href="/admin/users" class="nav__login mono">Admin</a>
+  </div>
+</nav>
+
+<main class="auth-debug-page">
+  <h1>Operator auth debug</h1>
+  <p class="auth-debug-page__lede">
+    Live checks for the <strong>HttpOnly operator cookie</strong> (<code class="mono">so_admin_jwt</code>) required for
+    <code class="mono">/admin/*</code>. Use this page when you see
+    “Signed in to the clinic portal, but this browser did not receive an operator session cookie”.
+    <code class="mono">document.cookie</code> will <em>not</em> show HttpOnly cookies — use
+    <strong>GET /api/debug/auth-probe</strong> instead.
+  </p>
+  <div class="auth-debug__toolbar">
+    <button type="button" class="btn btn--primary" id="authDebugRefresh">Refresh probes</button>
+    <button type="button" class="btn btn--ghost" id="authDebugBootstrap">Run bootstrap-from-portal</button>
+    <a class="btn btn--ghost" href="/admin/users">Open /admin/users</a>
+    <a class="btn btn--ghost" href="/login.html?next=/admin/users">Log in → admin</a>
+  </div>
+  <p class="auth-debug__status" id="authDebugStatus" aria-live="polite">Loading…</p>
+  <div id="authDebugOut"></div>
+</main>
+
+<script src="/admin-auth-debug.js?v=1.8.1"></script>
+<script src="/debug.js"></script>
+</body>
+</html>

@@ -2138,6 +2138,34 @@ app.get('/api/version', (req, res) => {
   res.json({ version: appVersion });
 });
 
+/** Public auth diagnostics — booleans only; no JWT values (HttpOnly cookie visibility). */
+app.get('/api/debug/auth-probe', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+  const adminTok = getCookie(req, ADMIN_JWT_COOKIE);
+  const portalTok = getCookie(req, PORTAL_JWT_COOKIE);
+  const adminValid = adminTok ? verifyJwt(adminTok) : null;
+  const portalValid = portalTok ? verifyJwt(portalTok) : null;
+  const op = getVerifiedOperator(req);
+  res.json({
+    ok: true,
+    host: String(req.headers.host || ''),
+    forwardedHost: String(req.headers['x-forwarded-host'] || ''),
+    hasAdminCookie: Boolean(adminTok),
+    adminCookieValid: Boolean(adminValid && adminValid.role === 'admin'),
+    hasPortalCookie: Boolean(portalTok),
+    portalCookieValid: Boolean(portalValid && isPortalSessionRole(portalValid.role)),
+    hasAuthorizationBearer: Boolean(getBearer(req)),
+    operator: op
+      ? { email: op.email, via: op.via, isOperator: true }
+      : null,
+    proxiedApi: Boolean(API_UPSTREAM),
+    apiUpstream: API_UPSTREAM || undefined,
+    service: 'serviceopera',
+    version: appVersion,
+  });
+});
+
 app.get('/api/site-appearance', async (_req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   try {
@@ -4717,6 +4745,13 @@ function sendAdminHtml(req, res) {
 app.get(['/admin', '/admin/'], (_req, res) => {
   res.redirect(302, '/admin/users');
 });
+
+app.get(['/admin/auth-debug', '/admin/auth-debug.html'], (_req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+  res.sendFile(path.join(publicDir, 'admin', 'auth-debug.html'));
+});
+
 app.get(ADMIN_HTML_PATHS, sendAdminHtml);
 
 const operatorReportsHtmlPath = path.join(publicDir, 'operator', 'reports.html');

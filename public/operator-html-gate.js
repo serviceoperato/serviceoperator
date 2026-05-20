@@ -145,7 +145,8 @@
 
   function gateFailMessage() {
     return (
-      'Signed in to the clinic portal, but this browser did not receive an operator session cookie (required for /admin). Stay on this page — use the operator password below on /admin/users, or sign out, clear site data for ' +
+      'Signed in to the clinic portal, but this browser did not receive an operator session cookie (required for /admin). ' +
+      'Open /admin/auth-debug for live diagnostics, use the operator password on /admin/users, or sign out, clear site data for ' +
       gateFailHostLabel() +
       ', and sign in again.'
     );

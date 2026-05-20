@@ -2409,6 +2409,7 @@
     tfNav.appendChild(makeNavLink('Activity log', '/admin/activity', 'activity', id));
     tfNav.appendChild(makeNavLink('User profiling', '/admin/user-profiling', 'user-profiling', id));
     tfNav.appendChild(makeNavLink('Deploy log', '/admin/deploy-log', 'deploy-log', id));
+    tfNav.appendChild(makeNavLink('Auth debug', '/admin/auth-debug', 'auth-debug', id));
     tfNav.appendChild(makeNavLink('Site appearance', '/admin/site-appearance', 'site-appearance', id));
     tfNav.appendChild(makeNavLink('Icons', '/admin/icons', 'icons', id));
     tfNav.appendChild(makeNavLink('Homepage icons', '/admin/homepage-icons', 'homepage-icons', id));
