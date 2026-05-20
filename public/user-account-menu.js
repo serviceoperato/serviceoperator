@@ -162,14 +162,7 @@
     if (e && e.preventDefault) e.preventDefault();
     var jwt = getAdminJwt();
     if (!jwt) {
-      var next = '/operator/places-leads.html';
-      try {
-        var u = new URL('/login.html', window.location.origin);
-        u.searchParams.set('next', next);
-        window.location.href = u.pathname + u.search;
-      } catch (ePl) {
-        window.location.href = '/login.html?next=' + encodeURIComponent(next);
-      }
+      window.location.href = resolveAdminPath('/admin/users');
       return;
     }
     var url = typeof soApiUrl === 'function' ? soApiUrl('/api/admin/places-page-token') : '/api/admin/places-page-token';

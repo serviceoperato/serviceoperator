@@ -2587,6 +2587,17 @@ app.post('/api/admin/places-page-token', requireAdmin, (_req, res) => {
   return res.json({ ok: true, page_token: pageToken, expires_in_ms: PLACES_PAGE_DOCUMENT_TTL_MS });
 });
 
+/** Validate `t` query token for GET /operator/places-leads.html (used by split frontend hosts). */
+app.get('/api/admin/places-page-token/verify', (req, res) => {
+  const raw = typeof req.query.t === 'string' ? req.query.t.trim() : '';
+  if (!raw || !isValidPlacesPageDocumentJwt(raw)) {
+    res.setHeader('Cache-Control', 'no-store');
+    return res.status(401).json({ ok: false, error: 'Invalid or expired token.' });
+  }
+  res.setHeader('Cache-Control', 'no-store');
+  return res.json({ ok: true });
+});
+
 async function listPortalUsersForAdmin(_req, res) {
   res.json({ users: await userStore.listUsers() });
 }
@@ -3176,7 +3187,7 @@ function sendTranscriptionItemJson(res, id) {
   if (!item) return res.status(404).json({ error: 'Item not found.' });
   return res.json({
     ok: true,
-    item: sanitizeIndexItemForClient(item),
+    item: sanitizeIndexItemForClient(item, { includeRawSource: true }),
     related: (item.related || []).map(sanitizeIndexItemForClient),
   });
 }
@@ -4855,9 +4866,28 @@ function isValidPlacesPageDocumentJwt(token) {
   return Boolean(p && p.kind === 'places_page');
 }
 
-app.get(['/operator/places-leads.html', '/operator/places-leads', '/operator/places-leads/'], (req, res) => {
+/** Split Railway: page token is minted on API upstream; HTML is served on frontend. */
+async function verifyPlacesPageDocumentToken(token) {
+  const raw = typeof token === 'string' ? token.trim() : '';
+  if (!raw) return false;
+  if (!API_UPSTREAM) return isValidPlacesPageDocumentJwt(raw);
+  try {
+    const base = String(API_UPSTREAM).replace(/\/+$/, '');
+    const url = `${base}/api/admin/places-page-token/verify?t=${encodeURIComponent(raw)}`;
+    const r = await fetch(url, { method: 'GET', headers: { Accept: 'application/json' } });
+    if (!r.ok) return false;
+    const j = await r.json();
+    return Boolean(j && j.ok === true);
+  } catch (err) {
+    console.error('[serviceopera] places-page-token verify upstream failed:', err && err.message ? err.message : err);
+    return false;
+  }
+}
+
+app.get(['/operator/places-leads.html', '/operator/places-leads', '/operator/places-leads/'], async (req, res) => {
   const raw = typeof req.query.t === 'string' ? req.query.t.trim() : '';
-  if (!raw || !isValidPlacesPageDocumentJwt(raw)) {
+  const ok = await verifyPlacesPageDocumentToken(raw);
+  if (!ok) {
     const p404 = path.join(publicDir, '404.html');
     if (fs.existsSync(p404)) return res.status(404).sendFile(p404);
     return res.status(404).type('text/plain').send('Not found');
