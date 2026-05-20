@@ -7,8 +7,8 @@
   --surface: var(--so-surface, #ffffff);
   --card: #ffffff;
   --border: #e5e4df;
-  --amber: #d97706;
-  --amber-bg: #fffbeb;
+  --audit-warn: #d97706;
+  --audit-warn-bg: #fffbeb;
   --accent: var(--so-report-accent, #4f46e5);
   --accent-bg: var(--so-report-accent-bg, #eef2ff);
   --accent-border: var(--so-report-accent-border, #c7d2fe);
@@ -34,9 +34,9 @@
   gap: 14px;
   margin-bottom: 20px;
   padding: 16px 18px;
-  background: var(--amber-bg);
+  background: var(--audit-warn-bg);
   border: 1px solid #fcd34d;
-  border-left: 4px solid var(--amber);
+  border-left: 4px solid var(--audit-warn);
   border-radius: var(--radius);
   line-height: 1.55;
 }
@@ -47,7 +47,7 @@
   font-weight: 700;
   letter-spacing: .08em;
   text-transform: uppercase;
-  color: var(--amber);
+  color: var(--audit-warn);
   background: #fff;
   border: 1px solid #fcd34d;
   border-radius: 6px;
@@ -124,7 +124,7 @@
 
 .so-kpi-sub { font-size: 11px; color: var(--ink-3); margin-top: 4px; }
 
-.so-kpi-value.amber { color: var(--amber); }
+.so-kpi-value.amber { color: var(--audit-warn); }
 .so-kpi-value.accent { color: var(--accent); }
 
 .so-section {
@@ -223,7 +223,7 @@
 }
 
 .so-badge.ok { background: var(--green-bg); color: var(--green); }
-.so-badge.warn { background: var(--amber-bg); color: var(--amber); }
+.so-badge.warn { background: var(--audit-warn-bg); color: var(--audit-warn); }
 .so-badge.crit { background: var(--accent-bg); color: var(--accent); }
 
 .so-stage-content { flex: 1; }
@@ -247,12 +247,12 @@
 
 .so-pill .pill-label { font-weight: 700; font-size: 12px; color: var(--accent); text-align: center; }
 .so-pill .pill-sev { color: var(--ink-3); font-size: 10px; text-transform: uppercase; letter-spacing: .06em; }
-.so-pill.orange { background: var(--amber-bg); border-color: #fcd34d; }
-.so-pill.orange .pill-label { color: var(--amber); }
+.so-pill.orange { background: var(--audit-warn-bg); border-color: #fcd34d; }
+.so-pill.orange .pill-label { color: var(--audit-warn); }
 
 .so-insight {
-  background: var(--amber-bg);
-  border-left: 3px solid var(--amber);
+  background: var(--audit-warn-bg);
+  border-left: 3px solid var(--audit-warn);
   border-radius: 0 8px 8px 0;
   padding: 12px 16px;
   font-size: 13px;
@@ -261,7 +261,7 @@
   line-height: 1.5;
 }
 
-.so-insight strong { color: var(--amber); }
+.so-insight strong { color: var(--audit-warn); }
 
 .so-chart-label {
   font-size: 12px;
@@ -455,7 +455,7 @@
 }
 
 .so-risk-badge.high { background: var(--accent-bg); color: var(--accent); }
-.so-risk-badge.mod { background: var(--amber-bg); color: var(--amber); }
+.so-risk-badge.mod { background: var(--audit-warn-bg); color: var(--audit-warn); }
 .so-risk-badge.low { background: var(--green-bg); color: var(--green); }
 .so-risk-badge.action { background: #eff6ff; color: #2563eb; }
 
@@ -668,19 +668,15 @@ body.report-010 {
   --so-audit-surface: var(--so-surface);
   --so-audit-card: #ffffff;
   --so-audit-border: #e5e4df;
-  /* Light audit doc — warm highlight (not site indigo --amber from styles.css). */
-  --amber-bg: #fffbeb;
+  /* Light audit doc — warm highlight uses --audit-warn; site --amber stays indigo for ::selection. */
+  --audit-warn-bg: #fffbeb;
   padding-top: var(--site-nav-offset, 72px);
 }
 
 body.report-010 ::selection,
+body.report-010 *::selection,
 body.report-010 ::-moz-selection,
-body.report-010 .so-audit-wrap ::selection,
-body.report-010 .so-audit-wrap ::-moz-selection,
-body.report-010 .so-gate-inquiry ::selection,
-body.report-010 .so-gate-inquiry ::-moz-selection,
-body.report-010 .so-sample-disclaimer ::selection,
-body.report-010 .so-sample-disclaimer ::-moz-selection {
+body.report-010 *::-moz-selection {
   background: #4f46e5;
   color: #ffffff;
 }
