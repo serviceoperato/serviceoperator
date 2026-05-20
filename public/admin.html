@@ -208,7 +208,7 @@
           <div class="tx-admin__header-actions">
             <button type="button" id="txProcessRawBtn" class="tf-admin-toolbar__btn">Process raw transcriptions</button>
             <button type="button" id="txReindexBtn" class="tf-admin-toolbar__btn">Rebuild AI-ready index</button>
-            <button type="button" id="txViewRawBtn" class="tf-admin-toolbar__btn" disabled title="Coming soon">View raw sources</button>
+            <button type="button" id="txViewRawBtn" class="tf-admin-toolbar__btn" title="Show processing diagnostics">Processing diagnostics</button>
             <label class="tx-admin__toggle mono" title="Auto-sync extracted items to Google">
               <input type="checkbox" id="txAutoSyncToggle" />
               <span>Auto-sync Google</span>
@@ -228,8 +228,10 @@
         <div id="txStats" class="tx-stats tx-stats--compact" aria-hidden="true"></div>
       </div>
 
-      <h3 class="tx-section-heading tx-section-heading--secondary">Raw / Pending / Failed Sources</h3>
-      <aside id="txRawSources" class="tx-raw-sources" aria-label="Raw, pending, and failed sources"></aside>
+      <details id="txDiagnostics" class="tx-diagnostics">
+        <summary class="tx-diagnostics__summary">Processing diagnostics</summary>
+        <aside id="txRawSources" class="tx-raw-sources" aria-label="Processing diagnostics"></aside>
+      </details>
 
       <div id="txMobileBar" class="tx-mobile-bar" aria-label="Feed controls">
         <button type="button" id="txMobileCatBtn" class="tx-mobile-bar__cat" aria-haspopup="dialog" aria-controls="txCatSheet"></button>
