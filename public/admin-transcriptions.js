@@ -4474,14 +4474,6 @@
       { label: 'Extracted · Decisions', n: ex.decisions || 0, extraction: true },
       { label: 'Extracted · Open points', n: ex['open-points'] || 0, extraction: true },
       { label: 'Extracted · Project lines', n: ex.projects || 0, extraction: true },
-      { label: 'Sources waiting for AI', n: rs.waitingForProcessing || 0, muted: true },
-      { label: 'Raw files on disk', n: rs.total != null ? rs.total : state.rawTranscriptionCount || 0, muted: true },
-      { label: 'Needs review', n: state.needsReviewCount || 0, muted: true },
-      {
-        label: 'Last pipeline run',
-        n: pipe.lastRun ? new Date(pipe.lastRun).toLocaleString() : '—',
-        text: true,
-      },
     ];
     el.innerHTML = cards
       .filter(function (card) {
@@ -4567,21 +4559,27 @@
         );
       })
       .join('');
+    var pipe = state.pipeline || {};
     el.innerHTML =
-      '<h3 class="tx-raw-sources__title">Raw / Pending / Failed Sources</h3>' +
-      '<p class="tx-raw-sources__note tf-admin-muted">Admin only. Shows detected, raw_created, ai_processing_pending, ai_processing_running, failed, and needs_review. Not mixed with AI-ready category lists above.</p>' +
+      '<p class="tx-raw-sources__note tf-admin-muted">Admin/debug only — not part of the AI-ready feed above.</p>' +
       '<ul class="tx-raw-sources__list mono">' +
       '<li><strong>Raw files on disk:</strong> ' +
       esc(total) +
-      ' <span class="tf-admin-muted">(archived sources, not the main feed)</span></li>' +
+      '</li>' +
       '<li><strong>Waiting for AI / review:</strong> ' +
       esc(waiting) +
+      '</li>' +
+      '<li><strong>Needs review (index):</strong> ' +
+      esc(state.needsReviewCount || 0) +
       '</li>' +
       '<li><strong>Latest raw file:</strong> ' +
       esc(rs.latestRawFile || '—') +
       '</li>' +
       '<li><strong>Latest AI-processed:</strong> ' +
       esc(rs.latestProcessedFile || '—') +
+      '</li>' +
+      '<li><strong>Last pipeline run:</strong> ' +
+      esc(pipe.lastRun ? new Date(pipe.lastRun).toLocaleString() : '—') +
       '</li>' +
       '</ul>' +
       (rows
@@ -5748,21 +5746,15 @@
         var tgl = byId('txAutoSyncToggle');
         if (tgl) tgl.checked = state.syncSettings.auto_sync_google;
 
-        var rsHint = norm.rawSources || {};
-        var waiting = rsHint.waitingForProcessing || 0;
-        var txTotal = voiceTranscriptionCount();
         var aiReady = aiReadySourceCount();
         setLoadHint(
           'Index ' +
             (norm.generatedAt ? new Date(norm.generatedAt).toLocaleString() : 'now') +
             ' · ' +
-            txTotal +
-            ' transcription(s) · ' +
             aiReady +
             ' AI-ready source(s) · ' +
             (state.counts.total || 0) +
-            ' extracted item(s)' +
-            (waiting ? ' · ' + waiting + ' waiting for AI' : ''),
+            ' extracted item(s)',
           'ok'
         );
 
@@ -5801,6 +5793,17 @@
     if (processRaw) {
       processRaw.addEventListener('click', function () {
         window.location.href = '/admin/voice-recorder';
+      });
+    }
+
+    var viewDiag = byId('txViewRawBtn');
+    var diagDetails = byId('txDiagnostics');
+    if (viewDiag && diagDetails) {
+      viewDiag.disabled = false;
+      viewDiag.addEventListener('click', function () {
+        diagDetails.open = !diagDetails.open;
+        renderRawSourcesBox();
+        diagDetails.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       });
     }
 
