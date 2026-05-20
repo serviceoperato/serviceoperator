@@ -11,11 +11,18 @@ if str(_SCRIPTS) not in sys.path:
 
 from voice_ai_validation import append_validation_log, validate_registry_entry  # noqa: E402
 from voice_registry import (  # noqa: E402
+    STATUS_FAILED,
     STATUS_NEEDS_REVIEW,
     load_registry,
     normalize_entry,
     primary_output_rel,
     save_registry,
+)
+
+SIMILARITY_FAIL_MARKERS = (
+    "summary matches raw",
+    "summary too similar",
+    "title echoes raw",
 )
 
 
@@ -40,12 +47,16 @@ def main() -> int:
         val = reg["processed"][key]
         if not isinstance(val, dict):
             continue
+        reasons = check.get("reasons") or ["validation failed"]
         val["readyForSite"] = False
-        val["status"] = STATUS_NEEDS_REVIEW
-        val["error"] = "; ".join(check.get("reasons") or ["validation failed"])
+        if any(any(m in r.lower() for m in SIMILARITY_FAIL_MARKERS) for r in reasons):
+            val["status"] = STATUS_FAILED
+        else:
+            val["status"] = STATUS_NEEDS_REVIEW
+        val["error"] = "; ".join(reasons)
         demoted += 1
         out = primary_output_rel(entry)
-        print(f"DEMOTE {raw_name} → needs_review ({out}): {val['error']}")
+        print(f"DEMOTE {raw_name} -> {val['status']} ({out}): {val['error']}")
     if demoted:
         save_registry(reg)
     print(f"Done: {demoted} demoted")
