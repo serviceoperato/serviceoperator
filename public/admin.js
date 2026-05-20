@@ -2805,11 +2805,20 @@
           ? '<code class="mono">' + escapeHtml(lastProcessed) + '</code>'
           : '<span class="tf-admin-muted">—</span>') +
         '</li>' +
+        '<li>Raw files on disk: ' +
+        escapeHtml(stats.rawFilesOnDisk != null ? stats.rawFilesOnDisk : stats.transcriptions != null ? stats.transcriptions : '—') +
+        '</li>' +
+        (stats.aiReadySources != null
+          ? '<li>AI-ready sources: ' + escapeHtml(stats.aiReadySources) + '</li>'
+          : '') +
+        (stats.excludedFromFeed != null && stats.excludedFromFeed > 0
+          ? '<li>Not in main feed: ' +
+            escapeHtml(stats.excludedFromFeed) +
+            ' <span class="tf-admin-muted">(see Transcriptions → Processing diagnostics)</span></li>'
+          : '') +
+        '<li class="tf-admin-muted" style="list-style:none;margin-left:-1.1rem;font-size:0.78rem">Voice Recorder counts raw <code>.md</code> files; Transcriptions shows validated AI-ready cards only.</li>' +
         '<li>New processed: ' +
         escapeHtml(stats.newProcessed != null ? stats.newProcessed : '—') +
-        '</li>' +
-        '<li>Transcriptions: ' +
-        escapeHtml(stats.transcriptions != null ? stats.transcriptions : '—') +
         '</li>' +
         '<li>Notes: ' +
         escapeHtml(stats.notes != null ? stats.notes : '—') +

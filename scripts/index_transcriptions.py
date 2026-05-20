@@ -24,7 +24,7 @@ _SCRIPTS_DIR = Path(__file__).resolve().parent
 if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
 
-from key_point_validation import is_valid_key_point  # noqa: E402
+from key_point_validation import is_valid_key_point, summary_explains_sparse_points  # noqa: E402
 from tx_icon_concept import assign_icon_concepts_for_items, assign_icon_concepts_tree  # noqa: E402
 from tx_speaker_format import apply_speaker_format_to_item  # noqa: E402
 from tx_summary_utils import card_preview_of  # noqa: E402
@@ -922,8 +922,11 @@ def structured_feed_ok(item: dict[str, Any]) -> bool:
         + len([b for b in (extracted.get("decisions") or []) if is_meaningful_line(str(b))])
         + len([b for b in (extracted.get("open_points") or []) if is_meaningful_line(str(b))])
     )
-    if len(points) < 3 and (len(points) < 2 or ext_n < 1):
-        return False
+    if len(points) < 3:
+        if len(points) >= 2 and summary_explains_sparse_points(summary):
+            return True
+        if len(points) < 2 or ext_n < 1:
+            return False
     return True
 
 

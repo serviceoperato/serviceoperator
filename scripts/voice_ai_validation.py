@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from key_point_validation import filter_key_points, is_valid_key_point
+from key_point_validation import filter_key_points, is_valid_key_point, summary_explains_sparse_points
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 VALIDATION_LOG = REPO_ROOT / "content" / "processed" / "pipeline_validation_log.jsonl"
@@ -169,8 +169,18 @@ def validate_ai_ready_content(
             reasons.append("summary matches raw transcript opening (paste)")
         if similarity >= SIMILARITY_FAIL_THRESHOLD:
             reasons.append(f"summary too similar to raw transcript (jaccard={similarity:.2f})")
-    if len(key_points) < 2 and len(extracted) < 1:
-        reasons.append("need at least 2 key points or 1 extracted task/decision/open point")
+    title_norm = normalize_compare_text(str(fm.get("title", "") or sections.get("title", "")))
+    if title_norm.startswith("so guys we can start"):
+        reasons.append("title echoes raw transcript opening")
+    if len(key_points) < 3:
+        if len(key_points) >= 2 and summary_explains_sparse_points(summary):
+            pass
+        elif len(key_points) < 1 and len(extracted) < 1:
+            reasons.append("need at least 3 key points or extracted tasks/decisions/open points")
+        elif len(key_points) < 3 and len(extracted) < 2:
+            reasons.append(
+                f"need 3 key points (have {len(key_points)}) or more extracted items"
+            )
 
     ok = len(reasons) == 0
     return {

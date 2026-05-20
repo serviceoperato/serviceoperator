@@ -54,6 +54,31 @@ def is_valid_key_point(text: str) -> bool:
     return True
 
 
+def summary_explains_sparse_points(summary: str) -> bool:
+    """True when summary states why fewer than 3 key points are available."""
+    s = str(summary or "").strip().lower()
+    if not s:
+        return False
+    markers = (
+        "limited content",
+        "limited content available",
+        "frammenti",
+        "rumore",
+        "senza tema",
+        "non intellegibile",
+        "empty transcript",
+        "no strong key points",
+        "insufficient",
+        "sparse",
+        "brief note",
+        "nota vocale breve",
+        "few extractable",
+        "not enough",
+        "unclear audio",
+    )
+    return any(m in s for m in markers)
+
+
 def filter_key_points(points: list[str], *, max_items: int = 3) -> list[str]:
     """Return up to max_items unique valid key points, preserving order."""
     out: list[str] = []

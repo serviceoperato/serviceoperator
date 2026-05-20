@@ -25,12 +25,6 @@ export const metadata: Metadata = {
   },
 };
 
-const subtitle =
-  "Remote AI operations for hotels, clinics and property operators serving international customers. Start free, scale when it works.";
-
-const credibility =
-  "Remote AI operations for hotels, clinics, wellness brands, and property portfolios serving international demand — delivery and support on a fixed cadence.";
-
 const freeDescription =
   "Private audit within 48 hours: public footprint review, three visible operational gaps, three automation opportunities, and one pilot idea — structured, not generic.";
 
@@ -45,8 +39,6 @@ export default function PricingPage() {
           <h1 id="pricing-heading" className="so-pricing-title">
             Pricing
           </h1>
-          <p className="so-pricing-subtitle">{subtitle}</p>
-          <p className="so-pricing-credibility">{credibility}</p>
         </header>
 
         <div className="so-pricing-grid">

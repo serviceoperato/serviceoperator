@@ -62,6 +62,32 @@
     return out;
   }
 
+  function summaryExplainsSparsePoints(summary) {
+    var s = String(summary || '').trim().toLowerCase();
+    if (!s) return false;
+    var markers = [
+      'limited content',
+      'limited content available',
+      'frammenti',
+      'rumore',
+      'senza tema',
+      'non intellegibile',
+      'empty transcript',
+      'no strong key points',
+      'insufficient',
+      'sparse',
+      'brief note',
+      'nota vocale breve',
+      'few extractable',
+      'not enough',
+      'unclear audio',
+    ];
+    for (var i = 0; i < markers.length; i++) {
+      if (s.indexOf(markers[i]) !== -1) return true;
+    }
+    return false;
+  }
+
   function keyPointsHeading(count) {
     return count === 3 ? 'Top 3 key points' : 'Top key points';
   }
@@ -72,5 +98,6 @@
     isValidKeyPoint: isValidKeyPoint,
     filterValidKeyPoints: filterValidKeyPoints,
     keyPointsHeading: keyPointsHeading,
+    summaryExplainsSparsePoints: summaryExplainsSparsePoints,
   };
 })();

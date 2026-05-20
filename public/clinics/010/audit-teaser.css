@@ -807,15 +807,18 @@ body.report-010.has-so-sticky-cta {
 }
 
 .so-sticky-cta__inner {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 12px;
   max-width: 820px;
   margin: 0 auto;
 }
 
 .so-sticky-cta__hint {
+  position: absolute;
+  left: 0;
   flex: 0 1 auto;
   font-size: 11px;
   font-weight: 600;
@@ -826,29 +829,29 @@ body.report-010.has-so-sticky-cta {
 }
 
 .so-sticky-cta__btn {
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   min-width: 0;
-  max-width: 280px;
-  margin-left: auto;
+  max-width: 320px;
+  margin: 0;
   padding: 13px 18px;
   font-family: var(--font-body);
   font-size: 15px;
   font-weight: 600;
   color: #fff;
-  background: var(--ink);
+  background: var(--so-report-accent, #4f46e5);
   border: none;
   border-radius: 8px;
   cursor: pointer;
   white-space: nowrap;
-  transition: opacity 0.15s ease;
+  transition: background 0.15s ease;
 }
 
 .so-sticky-cta__btn:hover {
-  opacity: 0.88;
+  background: var(--so-report-accent-2, #6366f1);
 }
 
 .so-sticky-cta__btn:focus-visible {
-  outline: 2px solid var(--ink);
+  outline: 2px solid var(--so-report-accent, #4f46e5);
   outline-offset: 2px;
 }
 
@@ -858,14 +861,10 @@ body.report-010.has-so-sticky-cta {
   }
 
   .so-sticky-cta__btn {
-    max-width: none;
-    width: 100%;
+    max-width: min(320px, 100%);
+    width: auto;
     font-size: 16px;
     padding: 14px 20px;
-  }
-
-  .so-sticky-cta__inner {
-    justify-content: stretch;
   }
 }
 

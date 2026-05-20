@@ -827,6 +827,45 @@
       grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
       gap: 1.5rem;
     }
+    .page-home .so-b2b__next-steps {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    .page-home .so-b2b__method-note {
+      grid-column: 1;
+      grid-row: 2;
+    }
+    .page-home .so-b2b__audit-preview {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+    }
+  }
+  .page-home .so-b2b__method-note {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+  .page-home .so-b2b__method-h {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--so-ink);
+    font-family: var(--font-display);
+  }
+  .page-home .so-b2b__method-icon.so-quad-ring {
+    flex-shrink: 0;
+  }
+  .page-home .so-b2b__method-copy {
+    margin: 0;
+    max-width: 42rem;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--so-muted);
   }
   .page-home .so-b2b__next-steps {
     list-style: none;
@@ -1530,6 +1569,19 @@
             <span class="so-b2b__next-copy"><strong>You implement with your crew, your partners, or with us—on your terms</strong></span>
           </li>
         </ol>
+        <aside class="so-b2b__method-note" aria-labelledby="method-h">
+          <h3 class="so-b2b__method-h" id="method-h">
+            <span class="so-quad-ring so-quad-ring--sm so-b2b__method-icon" aria-hidden="true"><svg class="so-quad-ring__svg" viewBox="0 0 48 48" focusable="false" aria-hidden="true"><circle class="so-quad-ring__outer" cx="24" cy="24" r="22.5" fill="var(--so-quad-fill,#fff)" stroke="var(--so-quad-outer-stroke,rgba(30,58,95,0.12))" stroke-width="0.75"/>
+    <g class="so-quad-ring__arcs" fill="none" stroke="var(--so-quad-accent, #4f46e5)" stroke-width="4" stroke-linecap="butt">
+      <path d="M36.211 36.535A17.5 17.5 0 0 1 11.789 36.535"/>
+      <path d="M11.465 36.211A17.5 17.5 0 0 1 11.465 11.789"/>
+      <path d="M11.789 11.465A17.5 17.5 0 0 1 36.211 11.465"/>
+      <path d="M36.535 11.789A17.5 17.5 0 0 1 36.535 36.211"/>
+    </g><g class="so-quad-ring__icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="translate(24 24) scale(0.93) translate(-12 -12)"><path d="M16 21v-2a4 4 0 0 0-4-3.87"/><path d="M6 21v-2a4 4 0 0 1 4-3.87"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></g></svg></span>
+            How we work
+          </h3>
+          <p class="so-b2b__method-copy">The method is human: interviews, on-site observation, and document review. You would expect a modern accounting firm to use Excel; you should expect us to use modern analytical tooling as well—we apply AI-assisted analysis and computational support for pattern detection internally, to process volume and surface patterns faster. Every conclusion in the printed brief is reviewed and signed by the operator who ran the assignment. The product is the judgment, not the toolchain.</p>
+        </aside>
         <div class="so-b2b__audit-preview" role="complementary" aria-label="Brief excerpt preview">
           <div class="so-b2b__audit-preview-doc">
             <header class="so-b2b__audit-preview-head">

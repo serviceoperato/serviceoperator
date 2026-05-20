@@ -1,41 +1,41 @@
 {
   "ok": true,
-  "generatedAt": "2026-05-20T10:58:58Z",
+  "generatedAt": "2026-05-20T11:48:03Z",
   "registryVersion": 2,
   "totals": {
     "meetings": 0,
     "notes": 0,
-    "tasks": 20,
+    "tasks": 23,
     "calendar": 3,
     "projects": 2,
     "decisions": 8,
     "open-points": 31,
-    "total": 64,
+    "total": 67,
     "needsReview": 5
   },
   "counts": {
     "meetings": 0,
     "notes": 0,
-    "tasks": 20,
+    "tasks": 23,
     "calendar": 3,
     "projects": 2,
     "decisions": 8,
     "open-points": 31,
-    "total": 64,
+    "total": 67,
     "needsReview": 5
   },
   "sourceTotals": {
     "meetings": 2,
-    "notes": 14,
+    "notes": 17,
     "tasks": 0,
     "calendar": 0,
     "projects": 0,
     "decisions": 0,
     "open-points": 0,
-    "total": 16,
+    "total": 19,
     "needsReview": 5
   },
-  "sourceCount": 16,
+  "sourceCount": 19,
   "rawSources": {
     "total": 29,
     "latestRawFile": "0519.md",
@@ -1629,6 +1629,198 @@
     {
       "category": "notes",
       "categoryLabel": "Notes",
+      "filepath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_007-793016bc4f37.md",
+      "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_007-793016bc4f37.md",
+      "source_audio": "Voice 007.m4a",
+      "source_transcription": "content/transcriptions/Voice_007.md",
+      "sourceAudio": "Voice 007.m4a",
+      "sourceTranscription": "content/transcriptions/Voice_007.md",
+      "project": "uncategorized",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T15:06:39Z",
+      "processedDate": "2026-05-17T15:06:39Z",
+      "preview": "Frammento conversazionale molto corto e rumoroso (domande su «cosa si ricorda», tono confuso). Non permette sintesi tematica né azioni follow-up affidabili. Limited content available.",
+      "cardSummary": "Frammento conversazionale molto corto e rumoroso (domande su «cosa si ricorda», tono confuso). Non permette sintesi tematica né azioni follow-up affidabili. Limited content available.",
+      "summary": "Frammento conversazionale molto corto e rumoroso (domande su «cosa si ricorda», tono confuso). Non permette sintesi tematica né azioni follow-up affidabili. Limited content available.",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 1,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {
+        "Title": "Domanda su cosa si ricorda",
+        "Source": "- **Source audio:** Voice 007.m4a\n- **Source transcription:** `Voice_007.md`\n- **Processed date:** 2026-05-17T15:06:39Z\n- **Main category:** voice-note\n- **Project:** uncategorized",
+        "Summary": "Frammento conversazionale molto corto e rumoroso (domande su «cosa si ricorda», tono confuso). Non permette sintesi tematica né azioni follow-up affidabili. Limited content available.",
+        "Important Points": "- Domanda su memoria/ricordi\n- Attività «ricordi» in corso\n- (none)",
+        "People Involved": "- to confirm",
+        "Tasks": "- (none)",
+        "Calendar Events": "- (none)",
+        "Decisions": "- (none)",
+        "Open Points": "- (none)",
+        "Project Updates": "- (none)",
+        "Next Steps": "- (none)"
+      },
+      "extracted_items": {
+        "decisions": [],
+        "tasks": [
+          "(none)"
+        ],
+        "open_points": [],
+        "next_steps": [],
+        "important_points": [
+          "Domanda su memoria/ricordi",
+          "Attività «ricordi» in corso"
+        ],
+        "calendar_events": [],
+        "people": [],
+        "project_updates": [],
+        "main_category": "voice-note"
+      },
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "source_entry",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true,
+      "id": "d607c16b005c",
+      "isSourceEntry": true,
+      "source_entry": true,
+      "primaryCategory": "notes",
+      "mainCategory": "notes",
+      "categories": [
+        "tasks",
+        "calendar",
+        "decisions",
+        "open-points",
+        "projects"
+      ],
+      "extractedCategories": [
+        "tasks",
+        "calendar",
+        "decisions",
+        "open-points",
+        "projects"
+      ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
+      "extractions": {
+        "notes": [
+          {
+            "id": "3f7ab9573607",
+            "category": "notes",
+            "title": "Domanda su cosa si ricorda",
+            "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_007-793016bc4f37.md",
+            "preview": "Frammento conversazionale molto corto e rumoroso (domande su «cosa si ricorda», tono confuso). Non permette sintesi tematica né azioni follow-up affidabili. Limited content available.",
+            "summary": "Frammento conversazionale molto corto e rumoroso (domande su «cosa si ricorda», tono confuso). Non permette sintesi tematica né azioni follow-up affidabili. Limited content available.",
+            "project": "uncategorized",
+            "date": "2026-05-17",
+            "dueDate": null,
+            "eventDate": "2026-05-17",
+            "status": null,
+            "extracted_items": {
+              "decisions": [],
+              "tasks": [],
+              "open_points": [],
+              "next_steps": [],
+              "important_points": [
+                "Domanda su memoria/ricordi",
+                "Attività «ricordi» in corso"
+              ],
+              "calendar_events": [],
+              "people": [],
+              "project_updates": [],
+              "main_category": "voice-note"
+            }
+          }
+        ]
+      },
+      "sourceEntries": [
+        {
+          "id": "3f7ab9573607",
+          "category": "notes",
+          "title": "Domanda su cosa si ricorda",
+          "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_007-793016bc4f37.md",
+          "preview": "Frammento conversazionale molto corto e rumoroso (domande su «cosa si ricorda», tono confuso). Non permette sintesi tematica né azioni follow-up affidabili. Limited content available.",
+          "summary": "Frammento conversazionale molto corto e rumoroso (domande su «cosa si ricorda», tono confuso). Non permette sintesi tematica né azioni follow-up affidabili. Limited content available.",
+          "project": "uncategorized",
+          "date": "2026-05-17",
+          "dueDate": null,
+          "eventDate": "2026-05-17",
+          "status": null,
+          "extracted_items": {
+            "decisions": [],
+            "tasks": [],
+            "open_points": [],
+            "next_steps": [],
+            "important_points": [
+              "Domanda su memoria/ricordi",
+              "Attività «ricordi» in corso"
+            ],
+            "calendar_events": [],
+            "people": [],
+            "project_updates": [],
+            "main_category": "voice-note"
+          },
+          "icon_concept": "memory-recall",
+          "icon_keywords": [
+            "ricorda",
+            "ricord",
+            "cosa si ricorda"
+          ],
+          "icon_shape_signature": "brain-question-lightbulb",
+          "icon_concept_label": "Memory recall"
+        }
+      ],
+      "groupedIds": [
+        "3f7ab9573607"
+      ],
+      "decisions": [],
+      "tasks": [
+        "(none)"
+      ],
+      "openPoints": [],
+      "open_points": [],
+      "nextSteps": [],
+      "next_steps": [],
+      "importantPoints": [
+        "Domanda su memoria/ricordi",
+        "Attività «ricordi» in corso"
+      ],
+      "important_points": [
+        "Domanda su memoria/ricordi",
+        "Attività «ricordi» in corso"
+      ],
+      "calendarEvents": [],
+      "calendar_events": [],
+      "possibleActions": [],
+      "possible_actions": [],
+      "childIds": [
+        "3f7ab9573607"
+      ],
+      "related_files": [],
+      "sourceKey": "content/transcriptions/voice_007.md",
+      "sourceGroupKey": "content/transcriptions/voice_007.md",
+      "title": "Domanda su cosa si ricorda",
+      "displayTitle": "Domanda su cosa si ricorda",
+      "icon_concept": "memory-recall",
+      "icon_keywords": [
+        "ricorda",
+        "ricord",
+        "cosa si ricorda"
+      ],
+      "icon_shape_signature": "brain-question-lightbulb",
+      "icon_concept_label": "Memory recall"
+    },
+    {
+      "category": "notes",
+      "categoryLabel": "Notes",
       "filepath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_006-4d392948d577.md",
       "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_006-4d392948d577.md",
       "source_audio": "Voice 006.m4a",
@@ -2068,6 +2260,390 @@
       ],
       "icon_shape_signature": "bitcoin-chart-wallet",
       "icon_concept_label": "Crypto & finance"
+    },
+    {
+      "category": "notes",
+      "categoryLabel": "Notes",
+      "filepath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_004-d58c88f66165.md",
+      "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_004-d58c88f66165.md",
+      "source_audio": "Voice 004.m4a",
+      "source_transcription": "content/transcriptions/Voice_004.md",
+      "sourceAudio": "Voice 004.m4a",
+      "sourceTranscription": "content/transcriptions/Voice_004.md",
+      "project": "uncategorized",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T15:06:39Z",
+      "processedDate": "2026-05-17T15:06:39Z",
+      "preview": "Prova tecnica di registrazione: setup microfono, tracce e ripartenza per test suoni; confronto tra ripresa video e solo audio con preferenza per test audio senza video. Nessun progetto o decisione oltre alla sperimentazione di attrezzatura. Limited content available.",
+      "cardSummary": "Prova tecnica di registrazione: setup microfono, tracce e ripartenza per test suoni; confronto tra ripresa video e solo audio con preferenza per test audio senza video. Nessun progetto o decisione oltre alla sperimentazione di attrezzatura. Limited content available.",
+      "summary": "Prova tecnica di registrazione: setup microfono, tracce e ripartenza per test suoni; confronto tra ripresa video e solo audio con preferenza per test audio senza video. Nessun progetto o decisione oltre alla sperimentazione di attrezzatura. Limited content available.",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 1,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {
+        "Title": "Prova registrazione audio/video",
+        "Source": "- **Source audio:** Voice 004.m4a\n- **Source transcription:** `Voice_004.md`\n- **Processed date:** 2026-05-17T15:06:39Z\n- **Main category:** voice-note\n- **Project:** uncategorized",
+        "Summary": "Prova tecnica di registrazione: setup microfono, tracce e ripartenza per test suoni; confronto tra ripresa video e solo audio con preferenza per test audio senza video. Nessun progetto o decisione oltre alla sperimentazione di attrezzatura. Limited content available.",
+        "Important Points": "- Setup microfono e tracce per prova\n- Preferenza per prova registrazione suoni senza video\n- (none)",
+        "People Involved": "- to confirm",
+        "Tasks": "- (none)",
+        "Calendar Events": "- (none)",
+        "Decisions": "- (none)",
+        "Open Points": "- (none)",
+        "Project Updates": "- (none)",
+        "Next Steps": "- (none)"
+      },
+      "extracted_items": {
+        "decisions": [],
+        "tasks": [
+          "(none)"
+        ],
+        "open_points": [],
+        "next_steps": [],
+        "important_points": [
+          "Setup microfono e tracce per prova",
+          "Preferenza per prova registrazione suoni senza video"
+        ],
+        "calendar_events": [],
+        "people": [],
+        "project_updates": [],
+        "main_category": "voice-note"
+      },
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "source_entry",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true,
+      "id": "a3ece9a0d2a4",
+      "isSourceEntry": true,
+      "source_entry": true,
+      "primaryCategory": "notes",
+      "mainCategory": "notes",
+      "categories": [
+        "tasks",
+        "calendar",
+        "decisions",
+        "open-points",
+        "projects"
+      ],
+      "extractedCategories": [
+        "tasks",
+        "calendar",
+        "decisions",
+        "open-points",
+        "projects"
+      ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
+      "extractions": {
+        "notes": [
+          {
+            "id": "7da45b019d2d",
+            "category": "notes",
+            "title": "Prova registrazione audio/video",
+            "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_004-d58c88f66165.md",
+            "preview": "Prova tecnica di registrazione: setup microfono, tracce e ripartenza per test suoni; confronto tra ripresa video e solo audio con preferenza per test audio senza video. Nessun progetto o decisione oltre alla sperimentazione di attrezzatura. Limited content available.",
+            "summary": "Prova tecnica di registrazione: setup microfono, tracce e ripartenza per test suoni; confronto tra ripresa video e solo audio con preferenza per test audio senza video. Nessun progetto o decisione oltre alla sperimentazione di attrezzatura. Limited content available.",
+            "project": "uncategorized",
+            "date": "2026-05-17",
+            "dueDate": null,
+            "eventDate": "2026-05-17",
+            "status": null,
+            "extracted_items": {
+              "decisions": [],
+              "tasks": [],
+              "open_points": [],
+              "next_steps": [],
+              "important_points": [
+                "Setup microfono e tracce per prova",
+                "Preferenza per prova registrazione suoni senza video"
+              ],
+              "calendar_events": [],
+              "people": [],
+              "project_updates": [],
+              "main_category": "voice-note"
+            }
+          }
+        ]
+      },
+      "sourceEntries": [
+        {
+          "id": "7da45b019d2d",
+          "category": "notes",
+          "title": "Prova registrazione audio/video",
+          "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_004-d58c88f66165.md",
+          "preview": "Prova tecnica di registrazione: setup microfono, tracce e ripartenza per test suoni; confronto tra ripresa video e solo audio con preferenza per test audio senza video. Nessun progetto o decisione oltre alla sperimentazione di attrezzatura. Limited content available.",
+          "summary": "Prova tecnica di registrazione: setup microfono, tracce e ripartenza per test suoni; confronto tra ripresa video e solo audio con preferenza per test audio senza video. Nessun progetto o decisione oltre alla sperimentazione di attrezzatura. Limited content available.",
+          "project": "uncategorized",
+          "date": "2026-05-17",
+          "dueDate": null,
+          "eventDate": "2026-05-17",
+          "status": null,
+          "extracted_items": {
+            "decisions": [],
+            "tasks": [],
+            "open_points": [],
+            "next_steps": [],
+            "important_points": [
+              "Setup microfono e tracce per prova",
+              "Preferenza per prova registrazione suoni senza video"
+            ],
+            "calendar_events": [],
+            "people": [],
+            "project_updates": [],
+            "main_category": "voice-note"
+          },
+          "icon_concept": "recording-test",
+          "icon_keywords": [
+            "prova registrazione",
+            "test audio",
+            "audio/video"
+          ],
+          "icon_shape_signature": "mic-waveform-check",
+          "icon_concept_label": "Recording test"
+        }
+      ],
+      "groupedIds": [
+        "7da45b019d2d"
+      ],
+      "decisions": [],
+      "tasks": [
+        "(none)"
+      ],
+      "openPoints": [],
+      "open_points": [],
+      "nextSteps": [],
+      "next_steps": [],
+      "importantPoints": [
+        "Setup microfono e tracce per prova",
+        "Preferenza per prova registrazione suoni senza video"
+      ],
+      "important_points": [
+        "Setup microfono e tracce per prova",
+        "Preferenza per prova registrazione suoni senza video"
+      ],
+      "calendarEvents": [],
+      "calendar_events": [],
+      "possibleActions": [],
+      "possible_actions": [],
+      "childIds": [
+        "7da45b019d2d"
+      ],
+      "related_files": [],
+      "sourceKey": "content/transcriptions/voice_004.md",
+      "sourceGroupKey": "content/transcriptions/voice_004.md",
+      "title": "Prova registrazione audio/video",
+      "displayTitle": "Prova registrazione audio/video",
+      "icon_concept": "recording-test",
+      "icon_keywords": [
+        "prova registrazione",
+        "test audio",
+        "audio/video"
+      ],
+      "icon_shape_signature": "mic-waveform-check",
+      "icon_concept_label": "Recording test"
+    },
+    {
+      "category": "notes",
+      "categoryLabel": "Notes",
+      "filepath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_003-8ae8c30860dd.md",
+      "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_003-8ae8c30860dd.md",
+      "source_audio": "Voice 003.m4a",
+      "source_transcription": "content/transcriptions/Voice_003.md",
+      "sourceAudio": "Voice 003.m4a",
+      "sourceTranscription": "content/transcriptions/Voice_003.md",
+      "project": "uncategorized",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T15:06:39Z",
+      "processedDate": "2026-05-17T15:06:39Z",
+      "preview": "Nota vocale breve del 9 dicembre 2022: il trascritto contiene solo frammenti e rumore, senza tema ricorrente né impegni verificabili. Non emergono nomi, date operative o deliverable. Limited content available.",
+      "cardSummary": "Nota vocale breve del 9 dicembre 2022: il trascritto contiene solo frammenti e rumore, senza tema ricorrente né impegni verificabili. Non emergono nomi, date operative o deliverable. Limited content available.",
+      "summary": "Nota vocale breve del 9 dicembre 2022: il trascritto contiene solo frammenti e rumore, senza tema ricorrente né impegni verificabili. Non emergono nomi, date operative o deliverable. Limited content available.",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 1,
+        "open_points_count": 0,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": false,
+      "raw_sections": {
+        "Title": "Clip video: mettere registrazioni insieme",
+        "Source": "- **Source audio:** Voice 003.m4a\n- **Source transcription:** `Voice_003.md`\n- **Processed date:** 2026-05-17T15:06:39Z\n- **Main category:** voice-note\n- **Project:** uncategorized",
+        "Summary": "Nota vocale breve del 9 dicembre 2022: il trascritto contiene solo frammenti e rumore, senza tema ricorrente né impegni verificabili. Non emergono nomi, date operative o deliverable. Limited content available.",
+        "Important Points": "- Suggerimento di portare la telecamera ogni volta e mettere tutte le riprese insieme\n- Riferimento a montaggio/trascodifica automatica\n- (none)",
+        "People Involved": "- to confirm",
+        "Tasks": "- (none)",
+        "Calendar Events": "- (none)",
+        "Decisions": "- (none)",
+        "Open Points": "- (none)",
+        "Project Updates": "- (none)",
+        "Next Steps": "- (none)"
+      },
+      "extracted_items": {
+        "decisions": [],
+        "tasks": [
+          "(none)"
+        ],
+        "open_points": [],
+        "next_steps": [],
+        "important_points": [
+          "Suggerimento di portare la telecamera ogni volta e mettere tutte le riprese insieme",
+          "Riferimento a montaggio/trascodifica automatica"
+        ],
+        "calendar_events": [],
+        "people": [],
+        "project_updates": [],
+        "main_category": "voice-note"
+      },
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "source_entry",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true,
+      "id": "5980d367d3ee",
+      "isSourceEntry": true,
+      "source_entry": true,
+      "primaryCategory": "notes",
+      "mainCategory": "notes",
+      "categories": [
+        "tasks",
+        "calendar",
+        "decisions",
+        "open-points",
+        "projects"
+      ],
+      "extractedCategories": [
+        "tasks",
+        "calendar",
+        "decisions",
+        "open-points",
+        "projects"
+      ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
+      "extractions": {
+        "notes": [
+          {
+            "id": "2121579235c0",
+            "category": "notes",
+            "title": "Clip video: mettere registrazioni insieme",
+            "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_003-8ae8c30860dd.md",
+            "preview": "Nota vocale breve del 9 dicembre 2022: il trascritto contiene solo frammenti e rumore, senza tema ricorrente né impegni verificabili. Non emergono nomi, date operative o deliverable. Limited content available.",
+            "summary": "Nota vocale breve del 9 dicembre 2022: il trascritto contiene solo frammenti e rumore, senza tema ricorrente né impegni verificabili. Non emergono nomi, date operative o deliverable. Limited content available.",
+            "project": "uncategorized",
+            "date": "2026-05-17",
+            "dueDate": null,
+            "eventDate": "2026-05-17",
+            "status": null,
+            "extracted_items": {
+              "decisions": [],
+              "tasks": [],
+              "open_points": [],
+              "next_steps": [],
+              "important_points": [
+                "Suggerimento di portare la telecamera ogni volta e mettere tutte le riprese insieme",
+                "Riferimento a montaggio/trascodifica automatica"
+              ],
+              "calendar_events": [],
+              "people": [],
+              "project_updates": [],
+              "main_category": "voice-note"
+            }
+          }
+        ]
+      },
+      "sourceEntries": [
+        {
+          "id": "2121579235c0",
+          "category": "notes",
+          "title": "Clip video: mettere registrazioni insieme",
+          "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_003-8ae8c30860dd.md",
+          "preview": "Nota vocale breve del 9 dicembre 2022: il trascritto contiene solo frammenti e rumore, senza tema ricorrente né impegni verificabili. Non emergono nomi, date operative o deliverable. Limited content available.",
+          "summary": "Nota vocale breve del 9 dicembre 2022: il trascritto contiene solo frammenti e rumore, senza tema ricorrente né impegni verificabili. Non emergono nomi, date operative o deliverable. Limited content available.",
+          "project": "uncategorized",
+          "date": "2026-05-17",
+          "dueDate": null,
+          "eventDate": "2026-05-17",
+          "status": null,
+          "extracted_items": {
+            "decisions": [],
+            "tasks": [],
+            "open_points": [],
+            "next_steps": [],
+            "important_points": [
+              "Suggerimento di portare la telecamera ogni volta e mettere tutte le riprese insieme",
+              "Riferimento a montaggio/trascodifica automatica"
+            ],
+            "calendar_events": [],
+            "people": [],
+            "project_updates": [],
+            "main_category": "voice-note"
+          },
+          "icon_concept": "video-editing",
+          "icon_keywords": [
+            "clip video",
+            "montaggio",
+            "registrazioni insieme"
+          ],
+          "icon_shape_signature": "film-strip-scissors",
+          "icon_concept_label": "Video editing"
+        }
+      ],
+      "groupedIds": [
+        "2121579235c0"
+      ],
+      "decisions": [],
+      "tasks": [
+        "(none)"
+      ],
+      "openPoints": [],
+      "open_points": [],
+      "nextSteps": [],
+      "next_steps": [],
+      "importantPoints": [
+        "Suggerimento di portare la telecamera ogni volta e mettere tutte le riprese insieme",
+        "Riferimento a montaggio/trascodifica automatica"
+      ],
+      "important_points": [
+        "Suggerimento di portare la telecamera ogni volta e mettere tutte le riprese insieme",
+        "Riferimento a montaggio/trascodifica automatica"
+      ],
+      "calendarEvents": [],
+      "calendar_events": [],
+      "possibleActions": [],
+      "possible_actions": [],
+      "childIds": [
+        "2121579235c0"
+      ],
+      "related_files": [],
+      "sourceKey": "content/transcriptions/voice_003.md",
+      "sourceGroupKey": "content/transcriptions/voice_003.md",
+      "title": "Clip video: mettere registrazioni insieme",
+      "displayTitle": "Clip video: mettere registrazioni insieme",
+      "icon_concept": "video-editing",
+      "icon_keywords": [
+        "clip video",
+        "montaggio",
+        "registrazioni insieme"
+      ],
+      "icon_shape_signature": "film-strip-scissors",
+      "icon_concept_label": "Video editing"
     },
     {
       "category": "notes",

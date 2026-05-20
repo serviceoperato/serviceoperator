@@ -3745,7 +3745,14 @@
     if (!cat || cat === 'all') return false;
     var points = feedKeyPoints(it);
     var extracted = feedExtractedCount(it);
-    if (points.length < 3 && (points.length < 2 || extracted < 1)) return false;
+    if (points.length < 3) {
+      var sparseOk =
+        points.length >= 2 &&
+        (window.TxKeyPoints && typeof window.TxKeyPoints.summaryExplainsSparsePoints === 'function'
+          ? window.TxKeyPoints.summaryExplainsSparsePoints(summary)
+          : /limited content|frammenti|rumore|nota vocale breve|non intellegibile/i.test(summary));
+      if (!sparseOk && (points.length < 2 || extracted < 1)) return false;
+    }
     return true;
   }
 
@@ -5747,6 +5754,11 @@
         if (tgl) tgl.checked = state.syncSettings.auto_sync_google;
 
         var aiReady = aiReadySourceCount();
+        var rawTotal = (state.rawSources && state.rawSources.total) || state.rawTranscriptionCount || 0;
+        var excludedHint =
+          rawTotal > aiReady
+            ? ' · ' + (rawTotal - aiReady) + ' not in feed (open Processing diagnostics)'
+            : '';
         setLoadHint(
           'Index ' +
             (norm.generatedAt ? new Date(norm.generatedAt).toLocaleString() : 'now') +
@@ -5754,7 +5766,8 @@
             aiReady +
             ' AI-ready source(s) · ' +
             (state.counts.total || 0) +
-            ' extracted item(s)',
+            ' extracted item(s)' +
+            excludedHint,
           'ok'
         );
 

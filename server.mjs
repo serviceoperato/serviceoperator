@@ -2641,6 +2641,7 @@ const voicePipelineLastFilesPath = path.join(voiceProcessedDir, 'pipeline_last_f
 const voiceProcessedRegistryPath = path.join(voiceProcessedDir, 'processed_files.json');
 const voicePipelineProgressPath = path.join(voiceProcessedDir, 'pipeline_progress.json');
 const voicePipelineValidationLogPath = path.join(voiceProcessedDir, 'pipeline_validation_log.jsonl');
+const voiceTranscriptionsIndexPath = path.join(voiceProcessedDir, 'transcriptions_index.json');
 const voicePipelineScriptPath = path.join(__dirname, 'scripts', 'process_voice_recorder_pipeline.py');
 
 /** Strip host-specific paths from voice-pipeline API responses (admin JSON only). */
@@ -2987,6 +2988,28 @@ function buildVoicePipelineStatusPayload() {
       lastSourceTaken: recentSources.lastSourceTaken,
       recentSourcesTaken: recentSources.recentSourcesTaken,
     };
+    try {
+      const txIndex = readVoiceJsonFile(voiceTranscriptionsIndexPath, null);
+      if (txIndex && typeof txIndex === 'object') {
+        const rawTotal =
+          txIndex.rawSources && txIndex.rawSources.total != null
+            ? txIndex.rawSources.total
+            : txIndex.rawTranscriptionCount;
+        const aiReady =
+          txIndex.sourceCount != null
+            ? txIndex.sourceCount
+            : Array.isArray(txIndex.items)
+              ? txIndex.items.length
+              : null;
+        if (rawTotal != null) stats.rawFilesOnDisk = rawTotal;
+        if (aiReady != null) stats.aiReadySources = aiReady;
+        if (rawTotal != null && aiReady != null && rawTotal >= aiReady) {
+          stats.excludedFromFeed = rawTotal - aiReady;
+        }
+      }
+    } catch {
+      /* optional index enrichment */
+    }
   }
   let validationLog = [];
   try {
