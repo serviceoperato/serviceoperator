@@ -4860,6 +4860,8 @@ app.use(
         filePath.endsWith('login.html') ||
         filePath.endsWith('register.html') ||
         filePath.endsWith('admin.html') ||
+        filePath.endsWith('so-api.js') ||
+        filePath.endsWith('operator-html-gate.js') ||
         filePath.endsWith('admin.js') ||
         filePath.endsWith('admin-transcriptions.js') ||
         filePath.endsWith('admin-tx-dashboard.js') ||

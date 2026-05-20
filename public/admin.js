@@ -121,7 +121,19 @@
         return r.json().then(function (j) {
           if (!r.ok || !j || !j.token) return false;
           writeStoredAdminJwt(j.token);
-          return true;
+          return fetch(api('/api/admin/session'), {
+            method: 'GET',
+            credentials: apiCred(),
+            cache: 'no-store',
+            headers: { Authorization: 'Bearer ' + j.token },
+          })
+            .then(function (sess) {
+              if (sess.ok) return probeAdminCookieSession();
+              return probeAdminCookieSession();
+            })
+            .catch(function () {
+              return probeAdminCookieSession();
+            });
         });
       })
       .catch(function () {
