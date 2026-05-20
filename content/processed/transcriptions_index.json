@@ -1,46 +1,46 @@
 {
   "ok": true,
-  "generatedAt": "2026-05-20T10:56:00Z",
+  "generatedAt": "2026-05-20T10:57:31Z",
   "registryVersion": 2,
   "totals": {
     "meetings": 0,
     "notes": 0,
-    "tasks": 19,
+    "tasks": 20,
     "calendar": 3,
     "projects": 2,
     "decisions": 8,
-    "open-points": 30,
-    "total": 62,
-    "needsReview": 9
+    "open-points": 31,
+    "total": 64,
+    "needsReview": 5
   },
   "counts": {
     "meetings": 0,
     "notes": 0,
-    "tasks": 19,
+    "tasks": 20,
     "calendar": 3,
     "projects": 2,
     "decisions": 8,
-    "open-points": 30,
-    "total": 62,
-    "needsReview": 9
+    "open-points": 31,
+    "total": 64,
+    "needsReview": 5
   },
   "sourceTotals": {
     "meetings": 2,
-    "notes": 13,
+    "notes": 14,
     "tasks": 0,
     "calendar": 0,
     "projects": 0,
     "decisions": 0,
     "open-points": 0,
-    "total": 15,
-    "needsReview": 9
+    "total": 16,
+    "needsReview": 5
   },
-  "sourceCount": 15,
+  "sourceCount": 16,
   "rawSources": {
     "total": 29,
     "latestRawFile": "0519.md",
     "latestProcessedFile": "0519.md",
-    "waitingForProcessing": 14,
+    "waitingForProcessing": 10,
     "pendingSources": [
       {
         "id": "9c47ef78ab5393a1",
@@ -171,230 +171,6 @@
         "processed_datetime": null
       },
       {
-        "id": "596e527d5382984f",
-        "sourceAudio": "Voice 260516 191818.m4a",
-        "sourceAudioPath": "content/transcriptions/Voice_260516_191818.md",
-        "rawTranscriptionPath": "content/transcriptions/Voice_260516_191818.md",
-        "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_260516_191818-596e527d5382.md",
-        "aiOutputs": {
-          "meeting": null,
-          "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_260516_191818-596e527d5382.md",
-          "tasks": null,
-          "calendar": null,
-          "project": "content/projects/uncategorized.md",
-          "decisions": null,
-          "openPoints": null
-        },
-        "detectedLanguage": null,
-        "languageProbability": null,
-        "detected_language": null,
-        "language_probability": null,
-        "rawCreatedAt": null,
-        "aiProcessedAt": "2026-05-20T09:30:01Z",
-        "status": "needs_review",
-        "readyForSite": false,
-        "error": "summary too brief (23 words); need 3 key points (have 1) or more extracted items",
-        "size": null,
-        "modified_time": null,
-        "modified_datetime": null,
-        "file_name": "Voice_260516_191818.md",
-        "full_path": "content/transcriptions/Voice_260516_191818.md",
-        "output_markdown": null,
-        "processed_datetime": null
-      },
-      {
-        "id": "a4d50b0e6da1c7ed",
-        "sourceAudio": "Voice 250621 185410.m4a",
-        "sourceAudioPath": "content/transcriptions/Voice_250621_185410.md",
-        "rawTranscriptionPath": "content/transcriptions/Voice_250621_185410.md",
-        "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_250621_185410-a4d50b0e6da1.md",
-        "aiOutputs": {
-          "meeting": null,
-          "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_250621_185410-a4d50b0e6da1.md",
-          "tasks": null,
-          "calendar": null,
-          "project": "content/projects/uncategorized.md",
-          "decisions": null,
-          "openPoints": null
-        },
-        "detectedLanguage": null,
-        "languageProbability": null,
-        "detected_language": null,
-        "language_probability": null,
-        "rawCreatedAt": null,
-        "aiProcessedAt": "2026-05-20T09:30:01Z",
-        "status": "needs_review",
-        "readyForSite": false,
-        "error": "summary too brief (17 words); need 3 key points (have 1) or more extracted items",
-        "size": null,
-        "modified_time": null,
-        "modified_datetime": null,
-        "file_name": "Voice_250621_185410.md",
-        "full_path": "content/transcriptions/Voice_250621_185410.md",
-        "output_markdown": null,
-        "processed_datetime": null
-      },
-      {
-        "id": "69216cdbadfb4089",
-        "sourceAudio": "Voice 250621 185357.m4a",
-        "sourceAudioPath": "content/transcriptions/Voice_250621_185357.md",
-        "rawTranscriptionPath": "content/transcriptions/Voice_250621_185357.md",
-        "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_250621_185357-69216cdbadfb.md",
-        "aiOutputs": {
-          "meeting": null,
-          "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_250621_185357-69216cdbadfb.md",
-          "tasks": null,
-          "calendar": null,
-          "project": "content/projects/uncategorized.md",
-          "decisions": null,
-          "openPoints": null
-        },
-        "detectedLanguage": null,
-        "languageProbability": null,
-        "detected_language": null,
-        "language_probability": null,
-        "rawCreatedAt": null,
-        "aiProcessedAt": "2026-05-20T09:30:01Z",
-        "status": "needs_review",
-        "readyForSite": false,
-        "error": "summary too brief (21 words); need 3 key points (have 2) or more extracted items",
-        "size": null,
-        "modified_time": null,
-        "modified_datetime": null,
-        "file_name": "Voice_250621_185357.md",
-        "full_path": "content/transcriptions/Voice_250621_185357.md",
-        "output_markdown": null,
-        "processed_datetime": null
-      },
-      {
-        "id": "793016bc4f3780d3",
-        "sourceAudio": "Voice 007.m4a",
-        "sourceAudioPath": "content/transcriptions/Voice_007.md",
-        "rawTranscriptionPath": "content/transcriptions/Voice_007.md",
-        "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_007-793016bc4f37.md",
-        "aiOutputs": {
-          "meeting": null,
-          "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_007-793016bc4f37.md",
-          "tasks": null,
-          "calendar": null,
-          "project": "content/projects/uncategorized.md",
-          "decisions": null,
-          "openPoints": "content/open-points/2026-05-20.md"
-        },
-        "detectedLanguage": null,
-        "languageProbability": null,
-        "detected_language": null,
-        "language_probability": null,
-        "rawCreatedAt": null,
-        "aiProcessedAt": "2026-05-20T09:30:01Z",
-        "status": "needs_review",
-        "readyForSite": false,
-        "error": "need 3 key points (have 2) or more extracted items",
-        "size": null,
-        "modified_time": null,
-        "modified_datetime": null,
-        "file_name": "Voice_007.md",
-        "full_path": "content/transcriptions/Voice_007.md",
-        "output_markdown": null,
-        "processed_datetime": null
-      },
-      {
-        "id": "4d392948d5779b1f",
-        "sourceAudio": "Voice 006.m4a",
-        "sourceAudioPath": "content/transcriptions/Voice_006.md",
-        "rawTranscriptionPath": "content/transcriptions/Voice_006.md",
-        "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_006-4d392948d577.md",
-        "aiOutputs": {
-          "meeting": null,
-          "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_006-4d392948d577.md",
-          "tasks": null,
-          "calendar": null,
-          "project": "content/projects/uncategorized.md",
-          "decisions": null,
-          "openPoints": "content/open-points/2026-05-20.md"
-        },
-        "detectedLanguage": null,
-        "languageProbability": null,
-        "detected_language": null,
-        "language_probability": null,
-        "rawCreatedAt": null,
-        "aiProcessedAt": "2026-05-20T09:30:01Z",
-        "status": "needs_review",
-        "readyForSite": false,
-        "error": "need 3 key points (have 2) or more extracted items",
-        "size": null,
-        "modified_time": null,
-        "modified_datetime": null,
-        "file_name": "Voice_006.md",
-        "full_path": "content/transcriptions/Voice_006.md",
-        "output_markdown": null,
-        "processed_datetime": null
-      },
-      {
-        "id": "d58c88f66165b766",
-        "sourceAudio": "Voice 004.m4a",
-        "sourceAudioPath": "content/transcriptions/Voice_004.md",
-        "rawTranscriptionPath": "content/transcriptions/Voice_004.md",
-        "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_004-d58c88f66165.md",
-        "aiOutputs": {
-          "meeting": null,
-          "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_004-d58c88f66165.md",
-          "tasks": "content/tasks/todo.md",
-          "calendar": null,
-          "project": "content/projects/uncategorized.md",
-          "decisions": null,
-          "openPoints": "content/open-points/2026-05-20.md"
-        },
-        "detectedLanguage": null,
-        "languageProbability": null,
-        "detected_language": null,
-        "language_probability": null,
-        "rawCreatedAt": null,
-        "aiProcessedAt": "2026-05-20T09:30:01Z",
-        "status": "needs_review",
-        "readyForSite": false,
-        "error": "need 3 key points (have 2) or more extracted items",
-        "size": null,
-        "modified_time": null,
-        "modified_datetime": null,
-        "file_name": "Voice_004.md",
-        "full_path": "content/transcriptions/Voice_004.md",
-        "output_markdown": null,
-        "processed_datetime": null
-      },
-      {
-        "id": "8ae8c30860dd9a86",
-        "sourceAudio": "Voice 003.m4a",
-        "sourceAudioPath": "content/transcriptions/Voice_003.md",
-        "rawTranscriptionPath": "content/transcriptions/Voice_003.md",
-        "groupedOutputPath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_003-8ae8c30860dd.md",
-        "aiOutputs": {
-          "meeting": null,
-          "note": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_003-8ae8c30860dd.md",
-          "tasks": null,
-          "calendar": null,
-          "project": "content/projects/uncategorized.md",
-          "decisions": null,
-          "openPoints": null
-        },
-        "detectedLanguage": null,
-        "languageProbability": null,
-        "detected_language": null,
-        "language_probability": null,
-        "rawCreatedAt": null,
-        "aiProcessedAt": "2026-05-20T09:30:01Z",
-        "status": "needs_review",
-        "readyForSite": false,
-        "error": "need 3 key points (have 2) or more extracted items",
-        "size": null,
-        "modified_time": null,
-        "modified_datetime": null,
-        "file_name": "Voice_003.md",
-        "full_path": "content/transcriptions/Voice_003.md",
-        "output_markdown": null,
-        "processed_datetime": null
-      },
-      {
         "id": "37d2a3a4fa59550f",
         "sourceAudio": "Chat history with Karn",
         "sourceAudioPath": "content/transcriptions/Chat history with Karn.md",
@@ -425,70 +201,6 @@
         "full_path": "content/transcriptions/Chat history with Karn.md",
         "output_markdown": null,
         "processed_datetime": null
-      },
-      {
-        "id": "748ed8d4aa61a27a",
-        "sourceAudio": "Voice 260519_190028.m4a",
-        "sourceAudioPath": "G:\\My Drive\\Voice Recorder\\Voice 260519_190028.m4a",
-        "rawTranscriptionPath": "content/transcriptions/Voice_260519_190028.md",
-        "groupedOutputPath": null,
-        "aiOutputs": {
-          "meeting": null,
-          "note": "content/notes/2026-05-20-voice-note-voice_260519_190028-3126f3f5c590.md",
-          "tasks": "content/tasks/todo.md",
-          "calendar": null,
-          "project": "content/projects/uncategorized.md",
-          "decisions": null,
-          "openPoints": null
-        },
-        "detectedLanguage": "it",
-        "languageProbability": 0.9842237830162048,
-        "detected_language": "it",
-        "language_probability": 0.9842237830162048,
-        "rawCreatedAt": "2026-05-19 14:42:49 UTC",
-        "aiProcessedAt": "2026-05-20T09:30:01Z",
-        "status": "failed",
-        "readyForSite": false,
-        "error": "summary too brief (16 words); summary matches raw transcript opening (paste); summary too similar to raw transcript (jaccard=1.00)",
-        "size": 146047,
-        "modified_time": 1779192038.611,
-        "modified_datetime": "2026-05-19 12:00:38 UTC",
-        "file_name": "Voice 260519_190028.m4a",
-        "full_path": "G:\\My Drive\\Voice Recorder\\Voice 260519_190028.m4a",
-        "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_260519_190028.md",
-        "processed_datetime": "2026-05-19 14:42:49 UTC"
-      },
-      {
-        "id": "bf1cdd50813972e3",
-        "sourceAudio": "Voice 260518_233520.m4a",
-        "sourceAudioPath": "G:\\My Drive\\Voice Recorder\\Voice 260518_233520.m4a",
-        "rawTranscriptionPath": "content/transcriptions/Voice_260518_233520.md",
-        "groupedOutputPath": null,
-        "aiOutputs": {
-          "meeting": null,
-          "note": "content/notes/2026-05-20-voice-note-voice_260518_233520-d80a63516fef.md",
-          "tasks": null,
-          "calendar": null,
-          "project": "content/projects/thaifans.md",
-          "decisions": null,
-          "openPoints": null
-        },
-        "detectedLanguage": "it",
-        "languageProbability": 0.9847579002380371,
-        "detected_language": "it",
-        "language_probability": 0.9847579002380371,
-        "rawCreatedAt": "2026-05-19 14:39:43 UTC",
-        "aiProcessedAt": "2026-05-20T09:30:01Z",
-        "status": "failed",
-        "readyForSite": false,
-        "error": "summary matches raw transcript opening (paste); summary too similar to raw transcript (jaccard=0.86); need 3 key points (have 1) or more extracted items",
-        "size": 558852,
-        "modified_time": 1779122155.613,
-        "modified_datetime": "2026-05-18 16:35:55 UTC",
-        "file_name": "Voice 260518_233520.m4a",
-        "full_path": "G:\\My Drive\\Voice Recorder\\Voice 260518_233520.m4a",
-        "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\Voice_260518_233520.md",
-        "processed_datetime": "2026-05-19 14:39:43 UTC"
       }
     ]
   },
@@ -511,280 +223,6 @@
     }
   },
   "needsReview": [
-    {
-      "id": "2121579235c0",
-      "category": "notes",
-      "categoryLabel": "Notes",
-      "title": "Clip video: mettere registrazioni insieme",
-      "filepath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_003-8ae8c30860dd.md",
-      "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_003-8ae8c30860dd.md",
-      "source_audio": "Voice 003.m4a",
-      "source_transcription": "content/transcriptions/Voice_003.md",
-      "sourceAudio": "Voice 003.m4a",
-      "sourceTranscription": "content/transcriptions/Voice_003.md",
-      "project": "uncategorized",
-      "date": "2026-05-17",
-      "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T15:06:39Z",
-      "processedDate": "2026-05-17T15:06:39Z",
-      "preview": "Nota vocale breve del 9 dicembre 2022: il trascritto contiene solo frammenti e rumore, senza tema ricorrente né impegni verificabili. Non emergono nomi, date operative o deliverable. Limited content available.",
-      "cardSummary": "Nota vocale breve del 9 dicembre 2022: il trascritto contiene solo frammenti e rumore, senza tema ricorrente né impegni verificabili. Non emergono nomi, date operative o deliverable. Limited content available.",
-      "summary": "Nota vocale breve del 9 dicembre 2022: il trascritto contiene solo frammenti e rumore, senza tema ricorrente né impegni verificabili. Non emergono nomi, date operative o deliverable. Limited content available.",
-      "stats": {
-        "decisions_count": 0,
-        "tasks_count": 0,
-        "open_points_count": 0,
-        "calendar_events_count": 0,
-        "next_steps_count": 0
-      },
-      "has_chart_data": false,
-      "raw_sections": {
-        "Title": "Clip video: mettere registrazioni insieme",
-        "Source": "- **Source audio:** Voice 003.m4a\n- **Source transcription:** `Voice_003.md`\n- **Processed date:** 2026-05-17T15:06:39Z\n- **Main category:** voice-note\n- **Project:** uncategorized",
-        "Summary": "Nota vocale breve del 9 dicembre 2022: il trascritto contiene solo frammenti e rumore, senza tema ricorrente né impegni verificabili. Non emergono nomi, date operative o deliverable. Limited content available.",
-        "Important Points": "- Suggerimento di portare la telecamera ogni volta e mettere tutte le riprese insieme\n- Riferimento a montaggio/trascodifica automatica\n- (none)",
-        "People Involved": "- to confirm",
-        "Tasks": "- (none)",
-        "Calendar Events": "- (none)",
-        "Decisions": "- (none)",
-        "Open Points": "- (none)",
-        "Project Updates": "- (none)",
-        "Next Steps": "- (none)"
-      },
-      "extracted_items": {
-        "decisions": [],
-        "tasks": [],
-        "open_points": [],
-        "next_steps": [],
-        "important_points": [
-          "Suggerimento di portare la telecamera ogni volta e mettere tutte le riprese insieme",
-          "Riferimento a montaggio/trascodifica automatica"
-        ],
-        "calendar_events": [],
-        "people": [],
-        "project_updates": [],
-        "main_category": "voice-note"
-      },
-      "related_files": [],
-      "source_only": false,
-      "needs_review": true,
-      "item_type": "grouped",
-      "reviewed": false,
-      "icon_concept": "video-editing",
-      "icon_keywords": [
-        "clip video",
-        "montaggio",
-        "registrazioni insieme"
-      ],
-      "icon_shape_signature": "film-strip-scissors",
-      "icon_concept_label": "Video editing"
-    },
-    {
-      "id": "7da45b019d2d",
-      "category": "notes",
-      "categoryLabel": "Notes",
-      "title": "Prova registrazione audio/video",
-      "filepath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_004-d58c88f66165.md",
-      "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_004-d58c88f66165.md",
-      "source_audio": "Voice 004.m4a",
-      "source_transcription": "content/transcriptions/Voice_004.md",
-      "sourceAudio": "Voice 004.m4a",
-      "sourceTranscription": "content/transcriptions/Voice_004.md",
-      "project": "uncategorized",
-      "date": "2026-05-17",
-      "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T15:06:39Z",
-      "processedDate": "2026-05-17T15:06:39Z",
-      "preview": "Prova tecnica di registrazione: setup microfono, tracce e ripartenza per test suoni; confronto tra ripresa video e solo audio con preferenza per test audio senza video. Nessun progetto o decisione oltre alla sperimentazione di attrezzatura. Limited content available.",
-      "cardSummary": "Prova tecnica di registrazione: setup microfono, tracce e ripartenza per test suoni; confronto tra ripresa video e solo audio con preferenza per test audio senza video. Nessun progetto o decisione oltre alla sperimentazione di attrezzatura. Limited content available.",
-      "summary": "Prova tecnica di registrazione: setup microfono, tracce e ripartenza per test suoni; confronto tra ripresa video e solo audio con preferenza per test audio senza video. Nessun progetto o decisione oltre alla sperimentazione di attrezzatura. Limited content available.",
-      "stats": {
-        "decisions_count": 0,
-        "tasks_count": 0,
-        "open_points_count": 0,
-        "calendar_events_count": 0,
-        "next_steps_count": 0
-      },
-      "has_chart_data": false,
-      "raw_sections": {
-        "Title": "Prova registrazione audio/video",
-        "Source": "- **Source audio:** Voice 004.m4a\n- **Source transcription:** `Voice_004.md`\n- **Processed date:** 2026-05-17T15:06:39Z\n- **Main category:** voice-note\n- **Project:** uncategorized",
-        "Summary": "Prova tecnica di registrazione: setup microfono, tracce e ripartenza per test suoni; confronto tra ripresa video e solo audio con preferenza per test audio senza video. Nessun progetto o decisione oltre alla sperimentazione di attrezzatura. Limited content available.",
-        "Important Points": "- Setup microfono e tracce per prova\n- Preferenza per prova registrazione suoni senza video\n- (none)",
-        "People Involved": "- to confirm",
-        "Tasks": "- (none)",
-        "Calendar Events": "- (none)",
-        "Decisions": "- (none)",
-        "Open Points": "- (none)",
-        "Project Updates": "- (none)",
-        "Next Steps": "- (none)"
-      },
-      "extracted_items": {
-        "decisions": [],
-        "tasks": [],
-        "open_points": [],
-        "next_steps": [],
-        "important_points": [
-          "Setup microfono e tracce per prova",
-          "Preferenza per prova registrazione suoni senza video"
-        ],
-        "calendar_events": [],
-        "people": [],
-        "project_updates": [],
-        "main_category": "voice-note"
-      },
-      "related_files": [],
-      "source_only": false,
-      "needs_review": true,
-      "item_type": "grouped",
-      "reviewed": false,
-      "icon_concept": "recording-test",
-      "icon_keywords": [
-        "prova registrazione",
-        "test audio",
-        "audio/video"
-      ],
-      "icon_shape_signature": "mic-waveform-check",
-      "icon_concept_label": "Recording test"
-    },
-    {
-      "id": "f3431209645b",
-      "category": "notes",
-      "categoryLabel": "Notes",
-      "title": "Condropatia: infiltrazione acido ialuronico",
-      "filepath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_006-4d392948d577.md",
-      "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_006-4d392948d577.md",
-      "source_audio": "Voice 006.m4a",
-      "source_transcription": "content/transcriptions/Voice_006.md",
-      "sourceAudio": "Voice 006.m4a",
-      "sourceTranscription": "content/transcriptions/Voice_006.md",
-      "project": "personal",
-      "date": "2026-05-17",
-      "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T15:06:39Z",
-      "processedDate": "2026-05-17T15:06:39Z",
-      "preview": "Frammento audio breve senza argomento chiaro nel trascritto: possibile prova o conversazione di fondo non decifrabile in modo affidabile. Non estrarre task o decisioni da questo file senza revisione umana dell’audio originale. Limited content available.",
-      "cardSummary": "Frammento audio breve senza argomento chiaro nel trascritto: possibile prova o conversazione di fondo non decifrabile in modo affidabile. Non estrarre task o decisioni da questo file senza revisione umana dell’audio originale. Limited content available.",
-      "summary": "Frammento audio breve senza argomento chiaro nel trascritto: possibile prova o conversazione di fondo non decifrabile in modo affidabile. Non estrarre task o decisioni da questo file senza revisione umana dell’audio originale. Limited content available.",
-      "stats": {
-        "decisions_count": 0,
-        "tasks_count": 0,
-        "open_points_count": 1,
-        "calendar_events_count": 0,
-        "next_steps_count": 0
-      },
-      "has_chart_data": false,
-      "raw_sections": {
-        "Title": "Condropatia: infiltrazione acido ialuronico",
-        "Source": "- **Source audio:** Voice 006.m4a\n- **Source transcription:** `Voice_006.md`\n- **Processed date:** 2026-05-17T15:06:39Z\n- **Main category:** voice-note\n- **Project:** personal",
-        "Summary": "Frammento audio breve senza argomento chiaro nel trascritto: possibile prova o conversazione di fondo non decifrabile in modo affidabile. Non estrarre task o decisioni da questo file senza revisione umana dell’audio originale. Limited content available.",
-        "Important Points": "- Diagnosi/contesto: condropatia\n- Trattamento proposto: infiltrazione con acido ialuronico\n- (none)",
-        "People Involved": "- to confirm",
-        "Tasks": "- (none)",
-        "Calendar Events": "- (none)",
-        "Decisions": "- (none)",
-        "Open Points": "- Dettagli clinici e conferma trattamento — owner to confirm",
-        "Project Updates": "- (none)",
-        "Next Steps": "- (none)"
-      },
-      "extracted_items": {
-        "decisions": [],
-        "tasks": [],
-        "open_points": [
-          "Dettagli clinici e conferma trattamento — owner to confirm"
-        ],
-        "next_steps": [],
-        "important_points": [
-          "Diagnosi/contesto: condropatia",
-          "Trattamento proposto: infiltrazione con acido ialuronico"
-        ],
-        "calendar_events": [],
-        "people": [],
-        "project_updates": [],
-        "main_category": "voice-note"
-      },
-      "related_files": [],
-      "source_only": false,
-      "needs_review": true,
-      "item_type": "grouped",
-      "reviewed": false,
-      "icon_concept": "knee-injection",
-      "icon_keywords": [
-        "condropatia",
-        "infiltrazione",
-        "acido ialuronico"
-      ],
-      "icon_shape_signature": "knee-joint-syringe",
-      "icon_concept_label": "Knee medical injection"
-    },
-    {
-      "id": "3f7ab9573607",
-      "category": "notes",
-      "categoryLabel": "Notes",
-      "title": "Domanda su cosa si ricorda",
-      "filepath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_007-793016bc4f37.md",
-      "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_007-793016bc4f37.md",
-      "source_audio": "Voice 007.m4a",
-      "source_transcription": "content/transcriptions/Voice_007.md",
-      "sourceAudio": "Voice 007.m4a",
-      "sourceTranscription": "content/transcriptions/Voice_007.md",
-      "project": "uncategorized",
-      "date": "2026-05-17",
-      "eventDate": "2026-05-17",
-      "processing_date": "2026-05-17T15:06:39Z",
-      "processedDate": "2026-05-17T15:06:39Z",
-      "preview": "Frammento conversazionale molto corto e rumoroso (domande su «cosa si ricorda», tono confuso). Non permette sintesi tematica né azioni follow-up affidabili. Limited content available.",
-      "cardSummary": "Frammento conversazionale molto corto e rumoroso (domande su «cosa si ricorda», tono confuso). Non permette sintesi tematica né azioni follow-up affidabili. Limited content available.",
-      "summary": "Frammento conversazionale molto corto e rumoroso (domande su «cosa si ricorda», tono confuso). Non permette sintesi tematica né azioni follow-up affidabili. Limited content available.",
-      "stats": {
-        "decisions_count": 0,
-        "tasks_count": 0,
-        "open_points_count": 0,
-        "calendar_events_count": 0,
-        "next_steps_count": 0
-      },
-      "has_chart_data": false,
-      "raw_sections": {
-        "Title": "Domanda su cosa si ricorda",
-        "Source": "- **Source audio:** Voice 007.m4a\n- **Source transcription:** `Voice_007.md`\n- **Processed date:** 2026-05-17T15:06:39Z\n- **Main category:** voice-note\n- **Project:** uncategorized",
-        "Summary": "Frammento conversazionale molto corto e rumoroso (domande su «cosa si ricorda», tono confuso). Non permette sintesi tematica né azioni follow-up affidabili. Limited content available.",
-        "Important Points": "- Domanda su memoria/ricordi\n- Attività «ricordi» in corso\n- (none)",
-        "People Involved": "- to confirm",
-        "Tasks": "- (none)",
-        "Calendar Events": "- (none)",
-        "Decisions": "- (none)",
-        "Open Points": "- (none)",
-        "Project Updates": "- (none)",
-        "Next Steps": "- (none)"
-      },
-      "extracted_items": {
-        "decisions": [],
-        "tasks": [],
-        "open_points": [],
-        "next_steps": [],
-        "important_points": [
-          "Domanda su memoria/ricordi",
-          "Attività «ricordi» in corso"
-        ],
-        "calendar_events": [],
-        "people": [],
-        "project_updates": [],
-        "main_category": "voice-note"
-      },
-      "related_files": [],
-      "source_only": false,
-      "needs_review": true,
-      "item_type": "grouped",
-      "reviewed": false,
-      "icon_concept": "memory-recall",
-      "icon_keywords": [
-        "ricorda",
-        "ricord",
-        "cosa si ricorda"
-      ],
-      "icon_shape_signature": "brain-question-lightbulb",
-      "icon_concept_label": "Memory recall"
-    },
     {
       "id": "9831b00f6391",
       "category": "notes",
@@ -1099,7 +537,7 @@
       "icon_concept_label": "Italy travel"
     }
   ],
-  "needsReviewCount": 9,
+  "needsReviewCount": 5,
   "items": [
     {
       "category": "meetings",
@@ -1113,8 +551,8 @@
       "project": "uncategorized",
       "date": "2026-05-20",
       "eventDate": "2026-05-20",
-      "processing_date": "2026-05-20T10:55:53Z",
-      "processedDate": "2026-05-20T10:55:53Z",
+      "processing_date": "2026-05-20T10:57:27Z",
+      "processedDate": "2026-05-20T10:57:27Z",
       "preview": "English language standup on Cohesity Tesla infrastructure set 3 hardware refresh and node removal still in progress Andrea Kiarra action plan GBC replacement SFP cable change overdue 20 days with Fabio to contact Jaluka by end of day SQL protected cluster risk if downtime repeats additional cases on node removal CCM replication batch HDD RMA closure and data protect backup restart Freedom Team asked Paolo to update owner column E…",
       "cardSummary": "English language standup on Cohesity Tesla infrastructure set 3 hardware refresh and node removal still in progress Andrea Kiarra action plan GBC replacement SFP cable change overdue 20 days with Fabio to contact Jaluka by end of day SQL protected cluster risk if downtime repeats additional cases on node removal CCM replication batch HDD RMA closure and data protect backup restart Freedom Team asked Paolo to update owner column E…",
       "summary": "English-language standup on Cohesity/Tesla infrastructure: set-3 hardware refresh and node removal still in progress (Andrea/Kiarra action plan); GBC replacement / SFP cable change overdue (~20+ days) with Fabio to contact Jaluka by end of day; SQL-protected cluster risk if downtime repeats; additional cases on node removal (CCM), replication batch, HDD RMA closure, and data-protect backup restart (Freedom). Team asked Paolo to update owner column E. No new escalations from Fabio/Paolo; Mattia newly on the call.",
@@ -1128,7 +566,7 @@
       "has_chart_data": true,
       "raw_sections": {
         "Title": "Cohesity / Tesla infrastructure standup — open cases",
-        "Source": "- **Source audio:** 0519.m4a\n- **Source transcription:** `0519.md`\n- **Processed date:** 2026-05-20T10:55:53Z\n- **Main category:** meeting\n- **Project:** uncategorized",
+        "Source": "- **Source audio:** 0519.m4a\n- **Source transcription:** `0519.md`\n- **Processed date:** 2026-05-20T10:57:27Z\n- **Main category:** meeting\n- **Project:** uncategorized",
         "Summary": "English-language standup on Cohesity/Tesla infrastructure: set-3 hardware refresh and node removal still in progress (Andrea/Kiarra action plan); GBC replacement / SFP cable change overdue (~20+ days) with Fabio to contact Jaluka by end of day; SQL-protected cluster risk if downtime repeats; additional cases on node removal (CCM), replication batch, HDD RMA closure, and data-protect backup restart (Freedom). Team asked Paolo to update owner column E. No new escalations from Fabio/Paolo; Mattia newly on the call.",
         "Important Points": "- Set-3 hardware refresh / node removal still in progress; Andrea to confirm action plan with Kiarra\n- GBC / SFP cable change pending 20+ days — Fabio to check with Jaluka today (priority: SQL cluster)\n- Data-protect backup restarted; monitor full backup completion tomorrow",
         "People Involved": "- Francesco\n- Fabio\n- Paolo\n- Freedom\n- Andrea\n- Mattia",
@@ -2027,6 +1465,208 @@
       ],
       "icon_shape_signature": "pool-slide-sun",
       "icon_concept_label": "Water park outing"
+    },
+    {
+      "category": "notes",
+      "categoryLabel": "Notes",
+      "filepath": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_006-4d392948d577.md",
+      "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_006-4d392948d577.md",
+      "source_audio": "Voice 006.m4a",
+      "source_transcription": "content/transcriptions/Voice_006.md",
+      "sourceAudio": "Voice 006.m4a",
+      "sourceTranscription": "content/transcriptions/Voice_006.md",
+      "project": "personal",
+      "date": "2026-05-17",
+      "eventDate": "2026-05-17",
+      "processing_date": "2026-05-17T15:06:39Z",
+      "processedDate": "2026-05-17T15:06:39Z",
+      "preview": "Frammento audio breve senza argomento chiaro nel trascritto: possibile prova o conversazione di fondo non decifrabile in modo affidabile. Non estrarre task o decisioni da questo file senza revisione umana dell’audio originale. Limited content available.",
+      "cardSummary": "Frammento audio breve senza argomento chiaro nel trascritto: possibile prova o conversazione di fondo non decifrabile in modo affidabile. Non estrarre task o decisioni da questo file senza revisione umana dell’audio originale. Limited content available.",
+      "summary": "Frammento audio breve senza argomento chiaro nel trascritto: possibile prova o conversazione di fondo non decifrabile in modo affidabile. Non estrarre task o decisioni da questo file senza revisione umana dell’audio originale. Limited content available.",
+      "stats": {
+        "decisions_count": 0,
+        "tasks_count": 1,
+        "open_points_count": 1,
+        "calendar_events_count": 0,
+        "next_steps_count": 0
+      },
+      "has_chart_data": true,
+      "raw_sections": {
+        "Title": "Condropatia: infiltrazione acido ialuronico",
+        "Source": "- **Source audio:** Voice 006.m4a\n- **Source transcription:** `Voice_006.md`\n- **Processed date:** 2026-05-17T15:06:39Z\n- **Main category:** voice-note\n- **Project:** personal",
+        "Summary": "Frammento audio breve senza argomento chiaro nel trascritto: possibile prova o conversazione di fondo non decifrabile in modo affidabile. Non estrarre task o decisioni da questo file senza revisione umana dell’audio originale. Limited content available.",
+        "Important Points": "- Diagnosi/contesto: condropatia\n- Trattamento proposto: infiltrazione con acido ialuronico\n- (none)",
+        "People Involved": "- to confirm",
+        "Tasks": "- (none)",
+        "Calendar Events": "- (none)",
+        "Decisions": "- (none)",
+        "Open Points": "- Dettagli clinici e conferma trattamento — owner to confirm",
+        "Project Updates": "- (none)",
+        "Next Steps": "- (none)"
+      },
+      "extracted_items": {
+        "decisions": [],
+        "tasks": [
+          "(none)"
+        ],
+        "open_points": [
+          "Dettagli clinici e conferma trattamento — owner to confirm"
+        ],
+        "next_steps": [],
+        "important_points": [
+          "Diagnosi/contesto: condropatia",
+          "Trattamento proposto: infiltrazione con acido ialuronico"
+        ],
+        "calendar_events": [],
+        "people": [],
+        "project_updates": [],
+        "main_category": "voice-note"
+      },
+      "source_only": false,
+      "needs_review": false,
+      "item_type": "source_entry",
+      "reviewed": false,
+      "pipelineStatus": "ready_for_site",
+      "readyForSite": true,
+      "id": "8d0b44bafdc2",
+      "isSourceEntry": true,
+      "source_entry": true,
+      "primaryCategory": "notes",
+      "mainCategory": "notes",
+      "categories": [
+        "tasks",
+        "calendar",
+        "decisions",
+        "open-points",
+        "projects"
+      ],
+      "extractedCategories": [
+        "tasks",
+        "calendar",
+        "decisions",
+        "open-points",
+        "projects"
+      ],
+      "hasTasks": true,
+      "hasCalendar": true,
+      "hasDecisions": true,
+      "hasOpenPoints": true,
+      "hasProjects": true,
+      "extractions": {
+        "notes": [
+          {
+            "id": "f3431209645b",
+            "category": "notes",
+            "title": "Condropatia: infiltrazione acido ialuronico",
+            "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_006-4d392948d577.md",
+            "preview": "Frammento audio breve senza argomento chiaro nel trascritto: possibile prova o conversazione di fondo non decifrabile in modo affidabile. Non estrarre task o decisioni da questo file senza revisione umana dell’audio originale. Limited content available.",
+            "summary": "Frammento audio breve senza argomento chiaro nel trascritto: possibile prova o conversazione di fondo non decifrabile in modo affidabile. Non estrarre task o decisioni da questo file senza revisione umana dell’audio originale. Limited content available.",
+            "project": "personal",
+            "date": "2026-05-17",
+            "dueDate": null,
+            "eventDate": "2026-05-17",
+            "status": null,
+            "extracted_items": {
+              "decisions": [],
+              "tasks": [],
+              "open_points": [
+                "Dettagli clinici e conferma trattamento — owner to confirm"
+              ],
+              "next_steps": [],
+              "important_points": [
+                "Diagnosi/contesto: condropatia",
+                "Trattamento proposto: infiltrazione con acido ialuronico"
+              ],
+              "calendar_events": [],
+              "people": [],
+              "project_updates": [],
+              "main_category": "voice-note"
+            }
+          }
+        ]
+      },
+      "sourceEntries": [
+        {
+          "id": "f3431209645b",
+          "category": "notes",
+          "title": "Condropatia: infiltrazione acido ialuronico",
+          "path": "content/ai-ready-transcriptions/2026-05-17-voice-note-voice_006-4d392948d577.md",
+          "preview": "Frammento audio breve senza argomento chiaro nel trascritto: possibile prova o conversazione di fondo non decifrabile in modo affidabile. Non estrarre task o decisioni da questo file senza revisione umana dell’audio originale. Limited content available.",
+          "summary": "Frammento audio breve senza argomento chiaro nel trascritto: possibile prova o conversazione di fondo non decifrabile in modo affidabile. Non estrarre task o decisioni da questo file senza revisione umana dell’audio originale. Limited content available.",
+          "project": "personal",
+          "date": "2026-05-17",
+          "dueDate": null,
+          "eventDate": "2026-05-17",
+          "status": null,
+          "extracted_items": {
+            "decisions": [],
+            "tasks": [],
+            "open_points": [
+              "Dettagli clinici e conferma trattamento — owner to confirm"
+            ],
+            "next_steps": [],
+            "important_points": [
+              "Diagnosi/contesto: condropatia",
+              "Trattamento proposto: infiltrazione con acido ialuronico"
+            ],
+            "calendar_events": [],
+            "people": [],
+            "project_updates": [],
+            "main_category": "voice-note"
+          },
+          "icon_concept": "knee-injection",
+          "icon_keywords": [
+            "condropatia",
+            "infiltrazione",
+            "acido ialuronico"
+          ],
+          "icon_shape_signature": "knee-joint-syringe",
+          "icon_concept_label": "Knee medical injection"
+        }
+      ],
+      "groupedIds": [
+        "f3431209645b"
+      ],
+      "decisions": [],
+      "tasks": [
+        "(none)"
+      ],
+      "openPoints": [
+        "Dettagli clinici e conferma trattamento — owner to confirm"
+      ],
+      "open_points": [
+        "Dettagli clinici e conferma trattamento — owner to confirm"
+      ],
+      "nextSteps": [],
+      "next_steps": [],
+      "importantPoints": [
+        "Diagnosi/contesto: condropatia",
+        "Trattamento proposto: infiltrazione con acido ialuronico"
+      ],
+      "important_points": [
+        "Diagnosi/contesto: condropatia",
+        "Trattamento proposto: infiltrazione con acido ialuronico"
+      ],
+      "calendarEvents": [],
+      "calendar_events": [],
+      "possibleActions": [],
+      "possible_actions": [],
+      "childIds": [
+        "f3431209645b"
+      ],
+      "related_files": [],
+      "sourceKey": "content/transcriptions/voice_006.md",
+      "sourceGroupKey": "content/transcriptions/voice_006.md",
+      "title": "Condropatia: infiltrazione acido ialuronico",
+      "displayTitle": "Condropatia: infiltrazione acido ialuronico",
+      "icon_concept": "knee-injection",
+      "icon_keywords": [
+        "condropatia",
+        "infiltrazione",
+        "acido ialuronico"
+      ],
+      "icon_shape_signature": "knee-joint-syringe",
+      "icon_concept_label": "Knee medical injection"
     },
     {
       "category": "notes",
