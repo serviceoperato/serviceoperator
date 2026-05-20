@@ -105,6 +105,8 @@ LEGACY_SKIP_FILES = frozenset(
         "2026-05-17-voice-note.md",
         "2026-05-17-meeting-voice-note.md",
         "2026-05-17-meeting-memo_003-c890c918890b.md",
+        "2026-05-19-meeting-0519-dc086e74533d.md",
+        "2026-05-20-meeting-0519-dc086e74533d.md",
         "todo.md",
         "events.md",
     }
@@ -527,6 +529,9 @@ def index_meeting_file(abs_path: Path, registry: dict[str, Any] | None = None) -
     important = [
         b for b in bullets_from(sections.get("Important Points", "")) if is_meaningful_line(b)
     ]
+    for alt in ("Top 3 Important Points", "Top 3 Key Points"):
+        if not important and sections.get(alt):
+            important = [b for b in bullets_from(sections[alt]) if is_meaningful_line(b)]
     if not summary and not important:
         return None
     if is_garbage_text(summary) and not important:
@@ -891,6 +896,37 @@ def path_is_allowed_output(path: str) -> bool:
     return any(path.startswith(prefix) for prefix in ALLOWED_OUTPUT_PREFIXES)
 
 
+def structured_feed_ok(item: dict[str, Any]) -> bool:
+    """Main feed: title, summary, key points, category, and extracted structure."""
+    title = str(item.get("title") or "").strip()
+    if not title or len(title) < 8:
+        return False
+    if title.lower().startswith("so guys we can start"):
+        return False
+    summary = str(item.get("summary") or item.get("preview") or "").strip()
+    if len(summary) < 80:
+        return False
+    if summary.lower().startswith("so guys we can start"):
+        return False
+    cat = item.get("category")
+    if cat not in CATEGORIES:
+        return False
+    extracted = item.get("extracted_items") or {}
+    points = [
+        p
+        for p in (extracted.get("important_points") or [])
+        if is_valid_key_point(str(p))
+    ]
+    ext_n = (
+        len([b for b in (extracted.get("tasks") or []) if is_meaningful_line(str(b))])
+        + len([b for b in (extracted.get("decisions") or []) if is_meaningful_line(str(b))])
+        + len([b for b in (extracted.get("open_points") or []) if is_meaningful_line(str(b))])
+    )
+    if len(points) < 3 and (len(points) < 2 or ext_n < 1):
+        return False
+    return True
+
+
 def item_allowed_on_site(item: dict[str, Any], registry: dict[str, Any]) -> bool:
     path = str(item.get("path") or "")
     if path.startswith("content/transcriptions/"):
@@ -899,6 +935,8 @@ def item_allowed_on_site(item: dict[str, Any], registry: dict[str, Any]) -> bool
         return False
     cat = item.get("category")
     if cat not in CATEGORIES:
+        return False
+    if not structured_feed_ok(item):
         return False
     raw = resolve_source_transcription(item, registry)
     if raw:
