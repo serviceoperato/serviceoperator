@@ -1401,15 +1401,6 @@ strong { color: var(--color-text-primary); }
     root.hidden = false;
     root.removeAttribute('aria-hidden');
   }
-  function loadDemoPortalJson() {
-    return fetch('demo-portal.json', { credentials: 'same-origin', cache: 'no-store' })
-      .then(function (r) {
-        return r.ok ? r.json() : null;
-      })
-      .catch(function () {
-        return null;
-      });
-  }
   function fetchPublicAccess() {
     return fetch(api('/api/public/audit-ddc-first-access'), {
       method: 'GET',
@@ -1464,40 +1455,21 @@ strong { color: var(--color-text-primary); }
     });
   }
 
-  Promise.all([fetchPublicAccess(), loadDemoPortalJson()]).then(function (results) {
-    var pub = results[0] || {};
-    var cfg = results[1] || {};
+  fetchPublicAccess().then(function (pub) {
+    pub = pub || {};
     var reportPathDefault = '/clinics/004/';
-
-    function fillFromDemo() {
-      var reportPath =
-        (cfg && String(cfg.reportPath || '').trim()) ||
-        (cfg && String(cfg.loginNextPath || '').trim()) ||
-        reportPathDefault;
-      applyReportLink(reportPath);
-      var user = (cfg && (cfg.username || cfg.email)) || '';
-      if (userEl) userEl.textContent = user;
-      if (pwEl) {
-        pwEl.textContent =
-          'Set AUDIT_DDC_EMAIL and AUDIT_DDC_TEMP_PASSWORD on the server (see .env.example), or use GET /api/public/audit-ddc-first-access when configured.';
-      }
-      if (pwHint) {
-        pwHint.textContent =
-          'Temporary passwords are never shipped in static JSON; they are returned only from the server when configured.';
-      }
-      setPasswordCopyEnabled(false);
-      return { user: user, pw: '', reportPath: reportPath };
-    }
 
     if (pub.ok && pub.state === 'completed') {
       hideRoot();
       return;
     }
 
+    var reportPath = (pub.reportPath && String(pub.reportPath).trim()) || reportPathDefault;
+    applyReportLink(reportPath);
+
     var expectedEmail = '';
     if (pub.ok && pub.state === 'credentials' && pub.email && pub.tempPassword) {
       expectedEmail = normEmail(pub.email);
-      applyReportLink(pub.reportPath || reportPathDefault);
       if (userEl) userEl.textContent = pub.email;
       if (pwEl) pwEl.textContent = pub.tempPassword;
       if (pwHint) {
@@ -1506,8 +1478,17 @@ strong { color: var(--color-text-primary); }
       setPasswordCopyEnabled(true);
       applyActivationUrl(pub.activationUrl, pub.activationExpiresAt);
     } else {
-      fillFromDemo();
-      expectedEmail = normEmail((cfg && (cfg.username || cfg.email)) || '');
+      if (userEl) userEl.textContent = pub.email || '—';
+      if (pwEl) {
+        pwEl.textContent =
+          'Set AUDIT_DDC_EMAIL and AUDIT_DDC_TEMP_PASSWORD on the server (see .env.example).';
+      }
+      if (pwHint) {
+        pwHint.textContent =
+          'Temporary passwords are returned only from GET /api/public/audit-ddc-first-access when configured.';
+      }
+      setPasswordCopyEnabled(false);
+      if (pub.email) expectedEmail = normEmail(pub.email);
     }
 
     showRoot();

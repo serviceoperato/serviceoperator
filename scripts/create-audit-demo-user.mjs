@@ -14,10 +14,6 @@
  *   AUDIT_DDC_EMAIL, AUDIT_DDC_TEMP_PASSWORD, AUDIT_DDC_REPORT_SLUG (optional)
  * Legacy aliases: AUDIT_DEMO_EMAIL, AUDIT_DEMO_TEMP_PASSWORD, AUDIT_DEMO_REPORT_SLUG
  *
- * Public paths for the report are still listed in:
- *   public/clinics/004/demo-portal.json
- * (no temporary password is stored in that file).
- *
  * Passwords use the same scrypt format as server.mjs (`hashPassword` in clinic-store.mjs).
  *
  * Postgres manual equivalent (generate hash with this script or Node REPL):
@@ -28,7 +24,6 @@
  */
 
 import crypto from 'crypto';
-import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { assertReportSlug, createUserStore, normalizeEmail } from '../clinic-store.mjs';
@@ -36,29 +31,13 @@ import { createPostgresUserStore, ensurePostgresUserSchema } from '../postgres-u
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.join(__dirname, '..');
-const DEMO_PORTAL_JSON = path.join(
-  rootDir,
-  'public/clinics/004/demo-portal.json'
-);
 
 function randomTempPassword() {
   return crypto.randomBytes(24).toString('base64url').slice(0, 32);
 }
 
-function loadDemoPortalFile() {
-  try {
-    if (!fs.existsSync(DEMO_PORTAL_JSON)) return null;
-    return JSON.parse(fs.readFileSync(DEMO_PORTAL_JSON, 'utf8'));
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Resolve email / slug / password from env (AUDIT_DDC_* preferred) and demo-portal.json paths.
- */
+/** Resolve email / slug / password from env (AUDIT_DDC_* preferred). */
 function resolveDemoCredentials() {
-  const file = loadDemoPortalFile();
   const envEmail = (
     process.env.AUDIT_DDC_EMAIL ||
     process.env.AUDIT_DEMO_EMAIL ||
@@ -75,24 +54,16 @@ function resolveDemoCredentials() {
     ''
   ).trim();
 
-  const email = normalizeEmail(
-    envEmail ||
-      (file && String(file.email || file.username || '').trim()) ||
-      'info@dentaldesignpattaya.com'
-  );
-  const reportSlug = assertReportSlug(
-    envSlug || (file && String(file.reportSlug || '').trim()) || '004'
-  );
-  let tempPassword = envPw || (file && String(file.tempPassword || '').trim()) || '';
+  const email = normalizeEmail(envEmail || 'info@dentaldesignpattaya.com');
+  const reportSlug = assertReportSlug(envSlug || '004');
+  let tempPassword = envPw.trim();
   if (!tempPassword) {
     tempPassword = randomTempPassword();
     console.warn(
-      '[create-audit-demo-user] No AUDIT_DDC_TEMP_PASSWORD (or legacy AUDIT_DEMO_TEMP_PASSWORD / demo-portal tempPassword); generated random. Set AUDIT_DDC_TEMP_PASSWORD on Railway and re-run.'
+      '[create-audit-demo-user] No AUDIT_DDC_TEMP_PASSWORD (or legacy AUDIT_DEMO_TEMP_PASSWORD); generated random. Set AUDIT_DDC_TEMP_PASSWORD on Railway and re-run.'
     );
   }
-  const loginNextPath =
-    (file && String(file.loginNextPath || file.reportPath || '').trim()) ||
-    '/clinics/004/';
+  const loginNextPath = '/clinics/' + reportSlug + '/';
   return { email, reportSlug, tempPassword, loginNextPath };
 }
 
@@ -132,7 +103,7 @@ async function runPostgres() {
     console.log('Sign-in path (same as on the audit page):');
     console.log('  /login.html?next=' + encodeURIComponent(loginNextPath));
     console.log('');
-    console.log('Temporary password (synced with demo-portal.json unless AUDIT_DEMO_TEMP_PASSWORD):');
+    console.log('Temporary password (set AUDIT_DDC_TEMP_PASSWORD on the server to match):');
     console.log(tempPassword);
     console.log('');
     return true;
@@ -163,7 +134,7 @@ function runJson() {
   console.log('Sign-in path:');
   console.log('  /login.html?next=' + encodeURIComponent(loginNextPath));
   console.log('');
-  console.log('Temporary password:');
+  console.log('Temporary password (set AUDIT_DDC_TEMP_PASSWORD on the server to match):');
   console.log(tempPassword);
   console.log('');
 }

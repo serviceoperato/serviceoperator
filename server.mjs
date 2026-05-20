@@ -1656,8 +1656,7 @@ function isAdminStaticAssetPath(pathname) {
     p === '/admin.html' ||
     p === '/admin.js' ||
     p === '/admin-transcriptions.js' ||
-    p === '/admin-tx-dashboard.js' ||
-    p === '/admin-config.js'
+    p === '/admin-tx-dashboard.js'
   )
     return true;
   return (
@@ -1677,7 +1676,6 @@ function isAdminProtectedRequestPath(pathname) {
   if (p === '/admin.html' || p === '/admin.js' || p === '/admin-transcriptions.js' || p === '/admin-tx-dashboard.js')
     return true;
   if (
-    p === '/admin-config.js' ||
     p === '/transcriptions-admin.css' ||
     p === '/admin-transcriptions.css' ||
     p === '/transcriptions-dashboard.css'
@@ -4859,6 +4857,16 @@ function denyPrivateNumberedReport(req, res) {
   return sendPrivateReportNotFound(res);
 }
 
+/** Credential maps and deprecated admin-config must never be served from public/. */
+app.use((req, res, next) => {
+  const p = (req.path || '').toLowerCase();
+  if (p.endsWith('/demo-portal.json') || p === '/admin-config.js' || p === '/admin-config.example.js') {
+    res.setHeader('Cache-Control', 'no-store');
+    return res.status(404).type('text/plain').send('Not found');
+  }
+  return next();
+});
+
 app.use((req, res, next) => {
   if (req.method !== 'GET' && req.method !== 'HEAD') return next();
   if (!matchPrivateNumberedReportPath(req.path)) return next();
@@ -4896,11 +4904,6 @@ app.use(
       }
       if (filePath.endsWith('sw.js') || filePath.endsWith('sw-register.js')) {
         res.setHeader('Cache-Control', 'no-store');
-        return;
-      }
-      if (norm.endsWith('demo-portal.json')) {
-        res.setHeader('Cache-Control', 'no-store');
-        res.setHeader('X-Robots-Tag', 'noindex, nofollow');
         return;
       }
       if (

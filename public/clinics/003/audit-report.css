@@ -805,7 +805,7 @@ body.audit-report.page-client {
   color: var(--color-text-primary);
 }
 
-/* Portal access (same credentials as scripts/create-audit-demo-user.mjs + demo-portal.json) */
+/* Portal first-visit callout — credentials from GET /api/public/audit-ddc-first-access only */
 .audit-portal-access {
   max-width: 1100px;
   margin: 0 auto;
