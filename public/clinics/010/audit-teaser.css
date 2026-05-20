@@ -463,7 +463,7 @@
 
 .so-gate {
   position: relative;
-  margin-top: 28px;
+  margin-top: 12px;
 }
 
 .so-gate-blur {
@@ -471,7 +471,7 @@
   pointer-events: none;
   user-select: none;
   opacity: .5;
-  max-height: 280px;
+  max-height: 200px;
   overflow: hidden;
   background: var(--card);
   border: 1px solid var(--border);
@@ -486,7 +486,7 @@
   flex-direction: column;
   align-items: stretch;
   gap: 12px;
-  margin-top: -36px;
+  margin-top: -96px;
   padding: 0 4px 8px;
   text-align: center;
 }
@@ -674,9 +674,15 @@ body.report-010 {
 }
 
 body.report-010 ::selection,
-body.report-010 ::-moz-selection {
-  background: var(--so-report-accent, #4f46e5);
-  color: var(--on-accent-text, #ffffff);
+body.report-010 ::-moz-selection,
+body.report-010 .so-audit-wrap ::selection,
+body.report-010 .so-audit-wrap ::-moz-selection,
+body.report-010 .so-gate-inquiry ::selection,
+body.report-010 .so-gate-inquiry ::-moz-selection,
+body.report-010 .so-sample-disclaimer ::selection,
+body.report-010 .so-sample-disclaimer ::-moz-selection {
+  background: #4f46e5;
+  color: #ffffff;
 }
 
 [data-theme="dark"] body.report-010 {

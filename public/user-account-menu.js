@@ -148,6 +148,7 @@
     { label: 'Site appearance', path: '/admin/site-appearance' },
     { label: 'Icons', path: '/admin/icons' },
     { label: 'Homepage icons', path: '/admin/homepage-icons' },
+    { label: 'Pricing', path: '/pricing', publicLink: true },
     { label: 'Reports', path: '/operator/reports' },
     { label: 'Places leads', path: '', placesLeads: true },
     { label: 'Report catalog', path: '/admin/report-catalog' },
@@ -220,6 +221,10 @@
             onClick: openPlacesLeadsFromMenu,
           })
         );
+        continue;
+      }
+      if (item.publicLink) {
+        panel.appendChild(menuRow(item.path, item.label));
         continue;
       }
       panel.appendChild(

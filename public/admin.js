@@ -2412,6 +2412,7 @@
     tfNav.appendChild(makeNavLink('Site appearance', '/admin/site-appearance', 'site-appearance', id));
     tfNav.appendChild(makeNavLink('Icons', '/admin/icons', 'icons', id));
     tfNav.appendChild(makeNavLink('Homepage icons', '/admin/homepage-icons', 'homepage-icons', id));
+    tfNav.appendChild(makeNavLink('Pricing', '/pricing', 'pricing', id));
     tfNav.appendChild(makeNavLink('Reports', '/operator/reports', 'reports', id));
     tfNav.appendChild(makePlacesLeadsNavControl());
     tfNav.appendChild(makeNavLink('Report catalog', '/admin/report-catalog', 'report-catalog', id));
