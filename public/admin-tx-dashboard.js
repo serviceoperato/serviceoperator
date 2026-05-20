@@ -5,7 +5,7 @@
   'use strict';
 
   /** Bumped when dashboard markup/behavior changes (cache-bust aid). */
-  window.TX_DASHBOARD_UI_REV = 18;
+  window.TX_DASHBOARD_UI_REV = 20;
 
   /** Detail page: collapsed preview length for full transcription reference (chars). */
   var DETAIL_REF_PREVIEW_CHARS = 650;
@@ -25,6 +25,9 @@
     { key: 'decisions', label: 'Decision log', short: 'Decisions' },
     { key: 'open-points', label: 'Open points', short: 'Open' },
   ];
+
+  /** Nav-only filter — not a content category folder. */
+  var NAV_ALL_CATEGORY = { key: 'all', label: 'All transcriptions', short: 'All' };
 
   var CATEGORY_LABELS = {
     meetings: 'Meeting summary',
@@ -829,6 +832,7 @@
   }
 
   var CATEGORY_THEME = {
+    all: { accent: '#64748b', subtitle: 'Every AI-ready transcription' },
     meetings: { accent: '#2563eb', subtitle: 'Discussions, decisions, and follow-ups' },
     notes: { accent: '#4f46e5', subtitle: 'Ideas, reminders, and personal takeaways' },
     tasks: { accent: '#10b981', subtitle: 'Action items and checklists' },
@@ -894,15 +898,21 @@
   }
 
   function categoryItems(cat) {
+    if (cat === 'all') return aiReadyItems().slice();
     return aiReadyItems().filter(function (it) {
       return itemPrimaryCategory(it) === cat;
     });
   }
 
   function categoryCount(key) {
+    if (key === 'all') return aiReadyItems().length;
     var sourceCounts = state.sourceCounts || {};
     if (sourceCounts[key] != null) return sourceCounts[key];
     return categoryItems(key).length;
+  }
+
+  function categoriesForNav() {
+    return [NAV_ALL_CATEGORY].concat(CATEGORIES);
   }
 
   function truncatePoint(s, max) {
@@ -2075,6 +2085,18 @@
     if (!n) return [];
     var lines = [];
     switch (cat) {
+      case 'all':
+        lines.push(
+          countWhere(items, function (it) {
+            return it.reviewed;
+          }) + ' reviewed'
+        );
+        lines.push(
+          countWhere(items, function (it) {
+            return !it.reviewed;
+          }) + ' unreviewed'
+        );
+        break;
       case 'meetings':
         lines.push(
           countWhere(items, function (it) {
@@ -2193,7 +2215,8 @@
       txLog('renderOverview: #txOverview missing');
       return;
     }
-    el.innerHTML = CATEGORIES.map(function (c) {
+    el.innerHTML = categoriesForNav()
+      .map(function (c) {
       var items = categoryItems(c.key);
       var n = items.length;
       var theme = catTheme(c.key);
@@ -2784,6 +2807,7 @@
 
 
   function categoryShortLabel(key) {
+    if (key === 'all') return NAV_ALL_CATEGORY.short;
     for (var i = 0; i < CATEGORIES.length; i++) {
       if (CATEGORIES[i].key === key) return CATEGORIES[i].short;
     }
@@ -3232,9 +3256,11 @@
 
   function applyClientFilters(list) {
     var out = list.slice().filter(isAiReadyItem);
-    out = out.filter(function (it) {
-      return it.category === state.category;
-    });
+    if (state.category !== 'all') {
+      out = out.filter(function (it) {
+        return it.category === state.category;
+      });
+    }
     if (state.project) {
       out = out.filter(function (it) {
         return (it.project || '') === state.project;
@@ -3446,7 +3472,7 @@
   }
 
   function renderCategoryButton(c, counts, activeKey) {
-    var n = counts[c.key] != null ? counts[c.key] : 0;
+    var n = categoryCount(c.key);
     var active = activeKey === c.key ? ' is-active' : '';
     var theme = catTheme(c.key);
     return (
@@ -3481,9 +3507,11 @@
     var el = byId('txCatScroll');
     var sheetList = byId('txCatSheetList');
     var counts = state.counts || {};
-    var html = CATEGORIES.map(function (c) {
+    var html = categoriesForNav()
+      .map(function (c) {
       return renderCategoryButton(c, counts, state.category);
-    }).join('');
+    })
+      .join('');
     if (el) {
       el.innerHTML = html;
       el.querySelectorAll('[data-tx-cat]').forEach(function (btn) {
@@ -3502,7 +3530,7 @@
     }
     var mobileCat = byId('txMobileCatBtn');
     if (mobileCat) {
-      var n = counts[state.category] != null ? counts[state.category] : 0;
+      var n = categoryCount(state.category);
       mobileCat.textContent = categoryShortLabel(state.category) + ' · ' + n;
       mobileCat.setAttribute('aria-label', 'Category: ' + categoryShortLabel(state.category));
     }
