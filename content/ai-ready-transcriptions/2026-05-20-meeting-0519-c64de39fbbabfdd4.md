@@ -4,12 +4,12 @@ main_category: meeting
 category: meetings
 project: uncategorized
 date: 2026-05-20
-processing_date: 2026-05-20T10:57:27Z
-processed_date: 2026-05-20T10:57:27Z
+processing_date: 2026-05-20T10:58:53Z
+processed_date: 2026-05-20T10:58:53Z
 source_audio: 0519.m4a
 source_transcription: content/transcriptions/0519.md
 source_id: c64de39fbbabfdd4
-source_checksum: 1e3535f117ed2256e7ae89658b3c27f13d58c9e09cb26a2d3e4260f72960c7c4
+source_checksum: 99efe4a17acda79d416cf64dce95eaee9ecc0d084c81d036317947b28e3ad12a
 grouped_output: content/ai-ready-transcriptions/2026-05-20-meeting-0519-c64de39fbbabfdd4.md
 primary_type: meeting
 processed: true
@@ -22,7 +22,7 @@ Cohesity / Tesla infrastructure standup — open cases
 ## Source
 - **Source audio:** 0519.m4a
 - **Source transcription:** `0519.md`
-- **Processed date:** 2026-05-20T10:57:27Z
+- **Processed date:** 2026-05-20T10:58:53Z
 - **Main category:** meeting
 - **Project:** uncategorized
 

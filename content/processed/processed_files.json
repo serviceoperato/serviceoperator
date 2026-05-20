@@ -1795,7 +1795,7 @@
       "detected_language": "en",
       "language_probability": 0.39945903420448303,
       "rawCreatedAt": "2026-05-19 14:42:41 UTC",
-      "aiProcessedAt": "2026-05-20T10:57:27Z",
+      "aiProcessedAt": "2026-05-20T10:58:53Z",
       "status": "ready_for_site",
       "readyForSite": true,
       "error": null,
@@ -1806,7 +1806,7 @@
       "full_path": "G:\\My Drive\\Voice Recorder\\0519.MP3",
       "output_markdown": "C:\\Users\\NITRO\\Documents\\serviceopera.to\\content\\transcriptions\\0519.md",
       "processed_datetime": "2026-05-19 14:42:41 UTC",
-      "source_checksum": "1e3535f117ed2256e7ae89658b3c27f13d58c9e09cb26a2d3e4260f72960c7c4",
+      "source_checksum": "99efe4a17acda79d416cf64dce95eaee9ecc0d084c81d036317947b28e3ad12a",
       "category": "meeting",
       "project": "uncategorized",
       "primary_type": "meeting"

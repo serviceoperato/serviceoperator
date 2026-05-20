@@ -1,5 +1,6 @@
 .DS_Store
 *.log
+content/processed/pipeline_validation_log.jsonl
 .vscode/
 .idea/
 node_modules/
