@@ -3700,6 +3700,8 @@
 
   function looksLikeRawEcho(item) {
     var summary = String(item.summary || item.preview || item.cardSummary || '').trim();
+    var title = String(item.title || item.displayTitle || '').trim();
+    if (title && title.toLowerCase().indexOf('so guys we can start') === 0) return true;
     if (!summary || summary.length < 40) return false;
     var prefix = summary.slice(0, 80).toLowerCase();
     if (prefix.indexOf('so guys we can start') === 0) return true;
@@ -3709,6 +3711,44 @@
     return false;
   }
 
+  function feedKeyPoints(item) {
+    var ex = item.extracted_items || item.extractedItems || {};
+    var pts = []
+      .concat(ex.important_points || item.importantPoints || [])
+      .concat(item.bullets || []);
+    return pts.filter(function (p) {
+      return isValidKeyPoint(p) && !isGenericPlaceholderText(p);
+    });
+  }
+
+  function feedExtractedCount(item) {
+    var ex = item.extracted_items || item.extractedItems || {};
+    var n = 0;
+    ['tasks', 'decisions', 'open_points', 'openPoints'].forEach(function (k) {
+      var list = ex[k] || item[k] || [];
+      if (Array.isArray(list)) {
+        list.forEach(function (line) {
+          if (line && isValidKeyPoint(line) && !isGenericPlaceholderText(line)) n += 1;
+        });
+      }
+    });
+    return n;
+  }
+
+  function hasStructuredFeedFields(it) {
+    if (!it) return false;
+    var title = String(it.title || it.displayTitle || '').trim();
+    if (!title || title.length < 8) return false;
+    var summary = String(it.summary || it.preview || it.cardSummary || '').trim();
+    if (summary.length < 80) return false;
+    var cat = normalizePrimaryCategory(it.primaryCategory || it.mainCategory || it.category, '');
+    if (!cat || cat === 'all') return false;
+    var points = feedKeyPoints(it);
+    var extracted = feedExtractedCount(it);
+    if (points.length < 3 && (points.length < 2 || extracted < 1)) return false;
+    return true;
+  }
+
   function isAiReadyItem(it) {
     if (!it || it.source_only || it.sourceOnly) return false;
     var path = String(it.path || '');
@@ -3716,8 +3756,10 @@
     if (path && !ALLOWED_OUTPUT_PREFIXES.some(function (p) { return path.indexOf(p) === 0; })) return false;
     if (it.readyForSite === false || it.needs_review || it.needsReview) return false;
     var st = it.pipelineStatus;
+    if (st === 'failed') return false;
     if (st && !VISIBLE_PIPELINE_STATUSES[st]) return false;
     if (looksLikeRawEcho(it)) return false;
+    if (!hasStructuredFeedFields(it)) return false;
     return true;
   }
 
