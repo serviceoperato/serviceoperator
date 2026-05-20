@@ -6,28 +6,30 @@
 (function (g) {
   'use strict';
 
-  function isMarketingNodeHost() {
+  /**
+   * Hosts where server.mjs serves HTML and proxies /api/* on the same origin (split Railway
+   * frontend, or apex Node). HttpOnly operator/portal cookies must use same-origin /api here.
+   */
+  function usesSameOriginProxiedApi() {
     try {
       var h = g.location && g.location.hostname ? String(g.location.hostname).toLowerCase() : '';
-      /* Apex + www: server.mjs serves HTML and /api on the same host (www 301 → apex). */
-      return h === 'serviceopera.to' || h === 'www.serviceopera.to';
+      if (!h) return false;
+      if (h === 'serviceopera.to' || h === 'www.serviceopera.to') return true;
+      if (h === 'serviceoperato-frontend-production.up.railway.app') return true;
+      return /^[\w-]+-frontend[\w.-]*\.up\.railway\.app$/.test(h);
     } catch (e) {
       return false;
     }
   }
 
-  /**
-   * Legacy: static www on Netlify pointed /api at Railway. Production www now 301s to apex with
-   * same-origin /api — never force a cross-origin API here (cookies would not stick on www).
-   */
-  function inferMarketingApiOrigin() {
-    return '';
+  /** @deprecated alias */
+  function isMarketingNodeHost() {
+    return usesSameOriginProxiedApi();
   }
 
   function metaOrigin() {
     try {
-      /* Split Railway: frontend server.mjs proxies /api on this host — ignore page meta so login + report share same-origin /api (admin cookies + portal JWT). */
-      if (isMarketingNodeHost()) return '';
+      if (usesSameOriginProxiedApi()) return '';
       var m = document.querySelector('meta[name="so-api-origin"]');
       if (m && m.getAttribute('content')) {
         var c = m.getAttribute('content').trim();
@@ -37,43 +39,14 @@
     return '';
   }
 
-  /** Production Node API (Railway). Marketing static/custom domains must point /api here or use meta / __SO_API_ORIGIN__. */
-  var SO_PRODUCTION_API_ORIGIN = 'https://serviceoperato-backend-production.up.railway.app';
-
-  function inferRailwaySplit() {
-    try {
-      var h = g.location && g.location.hostname ? String(g.location.hostname).toLowerCase() : '';
-      if (!h) return '';
-      if (h === 'serviceoperato-frontend-production.up.railway.app') {
-        return SO_PRODUCTION_API_ORIGIN;
-      }
-      /*
-       * Any Railway frontend service on *.up.railway.app matching *-frontend*… → sibling *-backend*…
-       * (e.g. preview deploys or renamed services; production pair still matched above).
-       */
-      var split = /^([\w-]+)-frontend([\w.-]*)\.up\.railway\.app$/.exec(h);
-      if (split) {
-        return 'https://' + split[1] + '-backend' + (split[2] || '') + '.up.railway.app';
-      }
-      /*
-       * serviceopera.to / www.serviceopera.to run Node (server.mjs) on the same host as HTML.
-       * Use same-origin /api so admin login sets the HttpOnly cookie on this host (required for
-       * private /clinics/NNN/ HTML after ?next= redirect). Static-only Netlify on a custom domain:
-       * add <meta name="so-api-origin" content="https://your-node-host"> before so-api.js.
-       */
-    } catch (e2) {}
-    return '';
-  }
-
   function origin() {
     if (typeof g.__SO_API_ORIGIN__ === 'string' && g.__SO_API_ORIGIN__.trim()) {
       return g.__SO_API_ORIGIN__.trim().replace(/\/+$/, '');
     }
+    if (usesSameOriginProxiedApi()) return '';
     var mo = metaOrigin();
     if (mo) return mo;
-    var marketingApi = inferMarketingApiOrigin();
-    if (marketingApi) return marketingApi;
-    return inferRailwaySplit();
+    return '';
   }
 
   g.soApiOrigin = function () {
@@ -96,4 +69,7 @@
     } catch (e) {}
     return 'omit';
   };
+
+  g.soUsesSameOriginProxiedApi = usesSameOriginProxiedApi;
+  g.soIsMarketingNodeHost = isMarketingNodeHost;
 })(typeof window !== 'undefined' ? window : globalThis);

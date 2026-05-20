@@ -1,4 +1,4 @@
-<!-- PROCESSED: true | date: 2026-05-19T17:07:09Z | output: content/notes/2026-05-19-self-recap-christian-42d821331d94.md | checksum: 6201c3fa340497ef1a087377adbe40b7c7d7458b218a58e15f185dd5fd34fa2a -->
+<!-- PROCESSED: true | date: 2026-05-20T09:30:01Z | output: content/notes/2026-05-20-self-recap-christian-42d821331d94.md | checksum: b228f73caa2181111ac5a9cabf00952b42d63ac9c8f2c8ff2d05f5e220f6369e -->
 # Transcription: Christian.m4a
 
 - **Source file:** Christian.m4a

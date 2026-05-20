@@ -131,7 +131,7 @@ The `Dockerfile` runs **Node**: `server.mjs` serves **`public/`** and sets the s
 
 **Railway — split frontend + backend (serviceopera.to on frontend)**
 
-Many projects run two Railway services from the same Dockerfile: `…-frontend-production` (custom domain `serviceopera.to`) and `…-backend-production` (API + Postgres). Since v1.5.37, `so-api.js` uses **same-origin** `/api` on `serviceopera.to` so admin **HttpOnly** cookies work for `/admin/*` and private `/clinics/NNN/` after `?next=`.
+Many projects run two Railway services from the same Dockerfile: `…-frontend-production` (custom domain `serviceopera.to`) and `…-backend-production` (API + Postgres). `so-api.js` uses **same-origin** `/api` on `serviceopera.to` and on `*-frontend*.up.railway.app` (the frontend `server.mjs` proxies `/api/*` to the backend) so admin **HttpOnly** cookies work for `/admin/*` and private `/clinics/NNN/` after `?next=`. Do **not** point the browser at the backend origin for login on the Railway frontend URL — cookies are host-scoped.
 
 | Where | Variables |
 |---|---|
@@ -256,7 +256,21 @@ Don't dilute the brand. The whole point is to *not* look like every other AI-age
 
 ---
 
-## 9. Dev log — 2026-05-19
+## 9. Dev log — 2026-05-20
+
+### Railway frontend URL — operator cookie gate (fix)
+
+**Problem:** On `serviceoperato-frontend-production.up.railway.app`, clinic portal sign-in succeeded but `/admin` showed: *"Signed in to the clinic portal, but this browser did not receive an operator session cookie"* (`operator-html-gate.js`).
+
+**Root cause:** `so-api.js` routed `/api/*` to `serviceoperato-backend-production.up.railway.app` with `fetch(..., credentials: 'omit')`. HttpOnly cookies from `POST /api/admin/bootstrap-from-portal` were set on the **backend** host, not the **frontend** host that serves `/admin` HTML. `serviceopera.to` was already same-origin; the Railway `*.up.railway.app` frontend hostname was not.
+
+**Fix:** `public/so-api.js` — treat `*-frontend*.up.railway.app` like `serviceopera.to`: same-origin `/api` (frontend `server.mjs` already proxies to backend). `public/operator-html-gate.js` — gate failure copy uses current hostname instead of hard-coded `serviceopera.to`.
+
+**After deploy:** Clear site data for the Railway frontend host once, sign in on `/login.html`, then open `/admin/users` or `?next=/admin/…`. Confirm `GET /api/admin/session` is same-origin (Network tab: request URL host = page host).
+
+---
+
+## 9b. Dev log — 2026-05-19
 
 Session notes from production fixes and admin work (build **v1.7.20** at end of day).
 

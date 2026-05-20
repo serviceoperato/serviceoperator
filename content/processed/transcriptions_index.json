@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "generatedAt": "2026-05-19T17:07:22Z",
+  "generatedAt": "2026-05-20T09:30:10Z",
   "registryVersion": 2,
   "totals": {
     "meetings": 0,
@@ -39,7 +39,7 @@
   "rawSources": {
     "total": 29,
     "latestRawFile": "Voice_260519_190028.md",
-    "latestProcessedFile": "Voice_260518_030558.md",
+    "latestProcessedFile": "Memo_001.md",
     "waitingForProcessing": 5,
     "pendingSources": [
       {
@@ -62,7 +62,7 @@
         "detected_language": null,
         "language_probability": null,
         "rawCreatedAt": null,
-        "aiProcessedAt": "2026-05-19T17:07:10Z",
+        "aiProcessedAt": "2026-05-20T09:30:02Z",
         "status": "needs_review",
         "readyForSite": false,
         "error": "chat import — not published to site",
@@ -94,7 +94,7 @@
         "detected_language": null,
         "language_probability": null,
         "rawCreatedAt": null,
-        "aiProcessedAt": "2026-05-19T17:07:10Z",
+        "aiProcessedAt": "2026-05-20T09:30:02Z",
         "status": "needs_review",
         "readyForSite": false,
         "error": "chat import — not published to site",
@@ -126,7 +126,7 @@
         "detected_language": null,
         "language_probability": null,
         "rawCreatedAt": null,
-        "aiProcessedAt": "2026-05-19T17:07:10Z",
+        "aiProcessedAt": "2026-05-20T09:30:02Z",
         "status": "needs_review",
         "readyForSite": false,
         "error": "chat import — not published to site",
@@ -158,7 +158,7 @@
         "detected_language": null,
         "language_probability": null,
         "rawCreatedAt": null,
-        "aiProcessedAt": "2026-05-19T17:07:10Z",
+        "aiProcessedAt": "2026-05-20T09:30:01Z",
         "status": "needs_review",
         "readyForSite": false,
         "error": "chat import — not published to site",
@@ -190,7 +190,7 @@
         "detected_language": null,
         "language_probability": null,
         "rawCreatedAt": null,
-        "aiProcessedAt": "2026-05-19T17:07:09Z",
+        "aiProcessedAt": "2026-05-20T09:30:01Z",
         "status": "needs_review",
         "readyForSite": false,
         "error": "chat import — not published to site",
@@ -224,12 +224,12 @@
   },
   "needsReview": [
     {
-      "id": "3f2432169f6a",
+      "id": "0ffc67628ae0",
       "category": "notes",
       "categoryLabel": "Notes",
       "title": "Voice 260519_190028.m4a · Voice note",
-      "filepath": "content/notes/2026-05-19-voice-note-voice_260519_190028-3126f3f5c590.md",
-      "path": "content/notes/2026-05-19-voice-note-voice_260519_190028-3126f3f5c590.md",
+      "filepath": "content/notes/2026-05-20-voice-note-voice_260519_190028-3126f3f5c590.md",
+      "path": "content/notes/2026-05-20-voice-note-voice_260519_190028-3126f3f5c590.md",
       "source_audio": "Voice 260519_190028.m4a",
       "source_transcription": "content/transcriptions/Voice_260519_190028.md",
       "sourceAudio": "Voice 260519_190028.m4a",
@@ -237,8 +237,8 @@
       "project": "uncategorized",
       "date": "2026-05-19",
       "eventDate": "2026-05-19",
-      "processing_date": "2026-05-19T17:07:10Z",
-      "processedDate": "2026-05-19T17:07:10Z",
+      "processing_date": "2026-05-20T09:30:01Z",
+      "processedDate": "2026-05-20T09:30:01Z",
       "preview": "Allora, mi devo ricordare che andrei a parte per rian dare in Italia il 20 luglio.",
       "cardSummary": "Allora, mi devo ricordare che andrei a parte per rian dare in Italia il 20 luglio.",
       "summary": "Allora, mi devo ricordare che andrei a parte per rian dare in Italia il 20 luglio.",
@@ -251,7 +251,7 @@
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Voice 260519_190028.m4a\n- **Source transcription:** `Voice_260519_190028.md`\n- **Processing datetime:** 2026-05-19T17:07:10Z\n- **Category:** voice-note (65%)\n- **Project:** uncategorized",
+        "Source": "- **Source audio:** Voice 260519_190028.m4a\n- **Source transcription:** `Voice_260519_190028.md`\n- **Processing datetime:** 2026-05-20T09:30:01Z\n- **Category:** voice-note (65%)\n- **Project:** uncategorized",
         "Summary": "Allora, mi devo ricordare che andrei a parte per rian dare in Italia il 20 luglio.",
         "Important Points": "- Allora, mi devo ricordare che andrei a parte per rian dare in Italia il 20 luglio.",
         "Decisions": "- (none)",
@@ -278,8 +278,8 @@
     {
       "category": "notes",
       "categoryLabel": "Notes",
-      "filepath": "content/notes/2026-05-19-voice-note-voice_260518_233520-d80a63516fef.md",
-      "path": "content/notes/2026-05-19-voice-note-voice_260518_233520-d80a63516fef.md",
+      "filepath": "content/notes/2026-05-20-voice-note-voice_260518_233520-d80a63516fef.md",
+      "path": "content/notes/2026-05-20-voice-note-voice_260518_233520-d80a63516fef.md",
       "source_audio": "Voice 260518_233520.m4a",
       "source_transcription": "content/transcriptions/Voice_260518_233520.md",
       "sourceAudio": "Voice 260518_233520.m4a",
@@ -287,8 +287,8 @@
       "project": "thaifans",
       "date": "2026-05-19",
       "eventDate": "2026-05-19",
-      "processing_date": "2026-05-19T17:07:10Z",
-      "processedDate": "2026-05-19T17:07:10Z",
+      "processing_date": "2026-05-20T09:30:01Z",
+      "processedDate": "2026-05-20T09:30:01Z",
       "preview": "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta...",
       "cardSummary": "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta...",
       "summary": "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta...",
@@ -301,7 +301,7 @@
       },
       "has_chart_data": false,
       "raw_sections": {
-        "Source": "- **Source audio:** Voice 260518_233520.m4a\n- **Source transcription:** `Voice_260518_233520.md`\n- **Processing datetime:** 2026-05-19T17:07:10Z\n- **Category:** voice-note (65%)\n- **Project:** thaifans",
+        "Source": "- **Source audio:** Voice 260518_233520.m4a\n- **Source transcription:** `Voice_260518_233520.md`\n- **Processing datetime:** 2026-05-20T09:30:01Z\n- **Category:** voice-note (65%)\n- **Project:** thaifans",
         "Summary": "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta...",
         "Important Points": "- Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta...",
         "Decisions": "- (none)",
@@ -350,10 +350,10 @@
       "extractions": {
         "notes": [
           {
-            "id": "9912b523d826",
+            "id": "c7e8a4686abd",
             "category": "notes",
             "title": "Voice 260518_233520.m4a · Voice note",
-            "path": "content/notes/2026-05-19-voice-note-voice_260518_233520-d80a63516fef.md",
+            "path": "content/notes/2026-05-20-voice-note-voice_260518_233520-d80a63516fef.md",
             "preview": "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta...",
             "summary": "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta...",
             "project": "thaifans",
@@ -372,10 +372,10 @@
       },
       "sourceEntries": [
         {
-          "id": "9912b523d826",
+          "id": "c7e8a4686abd",
           "category": "notes",
           "title": "Voice 260518_233520.m4a · Voice note",
-          "path": "content/notes/2026-05-19-voice-note-voice_260518_233520-d80a63516fef.md",
+          "path": "content/notes/2026-05-20-voice-note-voice_260518_233520-d80a63516fef.md",
           "preview": "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta...",
           "summary": "Il mio interesse è fare in modo che il business di Thai fans non sia più strutturato con solo due persone di Gcos che ha le idee e io che faccio lo sviluppatore ma ci dovranno essere altre persone come ad esempio i miei due amici che sono Andrea e Marco che possono fare i beta...",
           "project": "thaifans",
@@ -392,7 +392,7 @@
         }
       ],
       "groupedIds": [
-        "9912b523d826"
+        "c7e8a4686abd"
       ],
       "decisions": [],
       "tasks": [
@@ -413,7 +413,7 @@
       "possibleActions": [],
       "possible_actions": [],
       "childIds": [
-        "9912b523d826"
+        "c7e8a4686abd"
       ],
       "related_files": [],
       "sourceKey": "content/transcriptions/voice_260518_233520.md",
@@ -424,8 +424,8 @@
     {
       "category": "meetings",
       "categoryLabel": "Meetings",
-      "filepath": "content/meetings/2026-05-19-meeting-0519-dc086e74533d.md",
-      "path": "content/meetings/2026-05-19-meeting-0519-dc086e74533d.md",
+      "filepath": "content/meetings/2026-05-20-meeting-0519-dc086e74533d.md",
+      "path": "content/meetings/2026-05-20-meeting-0519-dc086e74533d.md",
       "source_audio": "0519.MP3",
       "source_transcription": "content/transcriptions/0519.md",
       "sourceAudio": "0519.MP3",
@@ -433,8 +433,8 @@
       "project": "uncategorized",
       "date": "2026-05-19",
       "eventDate": "2026-05-19",
-      "processing_date": "2026-05-19T17:07:09Z",
-      "processedDate": "2026-05-19T17:07:09Z",
+      "processing_date": "2026-05-20T09:30:01Z",
+      "processedDate": "2026-05-20T09:30:01Z",
       "preview": "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re...",
       "cardSummary": "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re...",
       "summary": "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re...",
@@ -447,7 +447,7 @@
       },
       "has_chart_data": true,
       "raw_sections": {
-        "Source": "- **Source audio:** 0519.MP3\n- **Source transcription:** `0519.md`\n- **Processing datetime:** 2026-05-19T17:07:09Z\n- **Category:** meeting (75%)\n- **Project:** uncategorized",
+        "Source": "- **Source audio:** 0519.MP3\n- **Source transcription:** `0519.md`\n- **Processing datetime:** 2026-05-20T09:30:01Z\n- **Category:** meeting (75%)\n- **Project:** uncategorized",
         "Summary": "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re...",
         "Important Points": "- so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re...",
         "Decisions": "- (none)",
@@ -500,10 +500,10 @@
       "extractions": {
         "meetings": [
           {
-            "id": "0ef196c29c96",
+            "id": "2efa2c49c2e4",
             "category": "meetings",
             "title": "so guys we can start we are waiting someone else maybe an…",
-            "path": "content/meetings/2026-05-19-meeting-0519-dc086e74533d.md",
+            "path": "content/meetings/2026-05-20-meeting-0519-dc086e74533d.md",
             "preview": "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re...",
             "summary": "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re...",
             "project": "uncategorized",
@@ -527,10 +527,10 @@
       },
       "sourceEntries": [
         {
-          "id": "0ef196c29c96",
+          "id": "2efa2c49c2e4",
           "category": "meetings",
           "title": "so guys we can start we are waiting someone else maybe an…",
-          "path": "content/meetings/2026-05-19-meeting-0519-dc086e74533d.md",
+          "path": "content/meetings/2026-05-20-meeting-0519-dc086e74533d.md",
           "preview": "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re...",
           "summary": "so guys we can start we are waiting someone else maybe another one minute okay sure okay I think we can start all right share the screen let me know if you guys can see the screen now yes yes okay so let's start with the first one I think the set 3 hardware refresh the node re...",
           "project": "uncategorized",
@@ -552,7 +552,7 @@
         }
       ],
       "groupedIds": [
-        "0ef196c29c96"
+        "2efa2c49c2e4"
       ],
       "decisions": [],
       "tasks": [
@@ -577,7 +577,7 @@
       "possibleActions": [],
       "possible_actions": [],
       "childIds": [
-        "0ef196c29c96"
+        "2efa2c49c2e4"
       ],
       "related_files": [],
       "sourceKey": "content/transcriptions/0519.md",

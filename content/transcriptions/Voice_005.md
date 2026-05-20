@@ -1,4 +1,4 @@
-<!-- PROCESSED: true | date: 2026-05-19T17:07:09Z | output: content/notes/2026-05-19-self-recap-voice_005-6921c6f5bc0a.md | checksum: 2268ca2ec785c6887854d2cf767705aac478f4b831a349184ffddddcb5ef5d91 -->
+<!-- PROCESSED: true | date: 2026-05-20T09:30:01Z | output: content/notes/2026-05-20-self-recap-voice_005-6921c6f5bc0a.md | checksum: a323534bdf071b23c7d61c30f031c2c0a41ea0a28c97ef0e7380d062c9754994 -->
 # Transcription: Voice 005.m4a
 
 - **Source file:** Voice 005.m4a

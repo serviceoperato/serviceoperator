@@ -135,8 +135,23 @@
     });
   }
 
-  var GATE_FAIL_MSG =
-    'Signed in to the clinic portal, but this browser did not receive an operator session cookie (required for /admin). Stay on this page — use the operator password below on /admin/users, or sign out, clear site data for serviceopera.to, and sign in again.';
+  function gateFailHostLabel() {
+    try {
+      return g.location && g.location.hostname ? String(g.location.hostname) : 'this site';
+    } catch (e) {
+      return 'this site';
+    }
+  }
+
+  function gateFailMessage() {
+    return (
+      'Signed in to the clinic portal, but this browser did not receive an operator session cookie (required for /admin). Stay on this page — use the operator password below on /admin/users, or sign out, clear site data for ' +
+      gateFailHostLabel() +
+      ', and sign in again.'
+    );
+  }
+
+  var GATE_FAIL_MSG = gateFailMessage();
 
   /**
    * Bootstrap cookie then navigate, or show one message — never redirect to login.html in a loop.
@@ -167,7 +182,7 @@
     return ensureOperatorHtmlGate(bearer).then(function (ready) {
       if (!ready) {
         clearOperatorGateLoop();
-        var msg = opts.failMessage || GATE_FAIL_MSG;
+        var msg = opts.failMessage || gateFailMessage();
         if (typeof opts.onFail === 'function') opts.onFail(msg);
         else g.alert(msg);
         return false;
@@ -186,5 +201,5 @@
   g.soEnsureOperatorHtmlGate = ensureOperatorHtmlGate;
   g.soNavigateOperatorPath = navigateOperatorPath;
   g.soClearOperatorGateLoop = clearOperatorGateLoop;
-  g.soOperatorGateFailMessage = GATE_FAIL_MSG;
+  g.soOperatorGateFailMessage = gateFailMessage();
 })(typeof window !== 'undefined' ? window : globalThis);
